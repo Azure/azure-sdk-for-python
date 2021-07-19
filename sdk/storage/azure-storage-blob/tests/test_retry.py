@@ -15,7 +15,7 @@ from azure.core.exceptions import (
 from azure.core.pipeline.transport import(
     RequestsTransport
 )
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, RetryCounter, ResponseCallback
 from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
@@ -25,19 +25,15 @@ from azure.storage.blob import (
     ExponentialRetry,
 )
 
-from _shared.testcase import (
-    StorageTestCase,
-    ResponseCallback,
-    RetryCounter,
-    GlobalStorageAccountPreparer
-)
+from _shared.testcase import GlobalStorageAccountPreparer
+from devtools_testutils.storage import StorageTestCase
 
 class RetryRequestTransport(RequestsTransport):
     """Transport to test retry"""
     def __init__(self, *args, **kwargs):
         super(RetryRequestTransport, self).__init__(*args, **kwargs)
         self.count = 0
-    
+
     def send(self, request, **kwargs):
         self.count += 1
         response = super(RetryRequestTransport, self).send(request, **kwargs)
@@ -324,7 +320,7 @@ class StorageRetryTest(StorageTestCase):
     def test_retry_secondary(self, resource_group, location, storage_account, storage_account_key):
         """Secondary location test.
 
-        This test is special, since in pratical term, we don't have time to wait
+        This test is special, since in practical term, we don't have time to wait
         for the georeplication to be done (can take a loooooong time).
         So for the purpose of this test, we fake a 408 on the primary request,
         and then we check we do a 408. AND DONE.

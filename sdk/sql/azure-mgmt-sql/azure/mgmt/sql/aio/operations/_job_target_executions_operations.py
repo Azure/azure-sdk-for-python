@@ -56,7 +56,7 @@ class JobTargetExecutionsOperations:
         is_active: Optional[bool] = None,
         skip: Optional[int] = None,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.JobExecutionListResult"]:
         """Lists target executions for all steps of a job execution.
 
@@ -183,7 +183,7 @@ class JobTargetExecutionsOperations:
         is_active: Optional[bool] = None,
         skip: Optional[int] = None,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.JobExecutionListResult"]:
         """Lists the target executions of a job step execution.
 
@@ -307,7 +307,7 @@ class JobTargetExecutionsOperations:
         job_execution_id: str,
         step_name: str,
         target_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.JobExecution":
         """Gets a target execution.
 

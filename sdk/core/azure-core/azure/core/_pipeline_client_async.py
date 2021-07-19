@@ -26,6 +26,7 @@
 
 import logging
 from collections.abc import Iterable
+from typing import Any, Awaitable
 from .configuration import Configuration
 from .pipeline import AsyncPipeline
 from .pipeline.transport._base import PipelineClientBase
@@ -36,16 +37,20 @@ from .pipeline.policies import (
     RequestIdPolicy,
     AsyncRetryPolicy,
 )
+from ._pipeline_client import _prepare_request
+from .pipeline._tools_async import to_rest_response as _to_rest_response
 
 try:
-    from typing import TYPE_CHECKING
+    from typing import TYPE_CHECKING, TypeVar
 except ImportError:
     TYPE_CHECKING = False
+
+HTTPRequestType = TypeVar("HTTPRequestType")
+AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 
 if TYPE_CHECKING:
     from typing import (
         List,
-        Any,
         Dict,
         Union,
         IO,
@@ -168,3 +173,56 @@ class AsyncPipelineClient(PipelineClientBase):
             transport = AioHttpTransport(**kwargs)
 
         return AsyncPipeline(transport, policies)
+
+    async def _make_pipeline_call(self, request, **kwargs):
+        rest_request, request_to_run = _prepare_request(request)
+        return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
+        pipeline_response = await self._pipeline.run(
+            request_to_run, **kwargs  # pylint: disable=protected-access
+        )
+        response = pipeline_response.http_response
+        if rest_request:
+            rest_response = _to_rest_response(response)
+            if not kwargs.get("stream"):
+                try:
+                    # in this case, the pipeline transport response already called .load_body(), so
+                    # the body is loaded. instead of doing response.read(), going to set the body
+                    # to the internal content
+                    rest_response._content = response.body()  # pylint: disable=protected-access
+                    await rest_response.close()
+                except Exception as exc:
+                    await rest_response.close()
+                    raise exc
+            response = rest_response
+        if return_pipeline_response:
+            pipeline_response.http_response = response
+            pipeline_response.http_request = request
+            return pipeline_response
+        return response
+
+    def send_request(
+        self,
+        request: HTTPRequestType,
+        *,
+        stream: bool = False,
+        **kwargs: Any
+    ) -> Awaitable[AsyncHTTPResponseType]:
+        """**Provisional** method that runs the network request through the client's chained policies.
+
+        This method is marked as **provisional**, meaning it may be changed in a future release.
+
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest('GET', 'http://www.example.com')
+        <HttpRequest [GET], url: 'http://www.example.com'>
+        >>> response = await client.send_request(request)
+        <AsyncHttpResponse: 200 OK>
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.AsyncHttpResponse
+        """
+        from .rest._rest_py3 import _AsyncContextManager
+        wrapped = self._make_pipeline_call(request, stream=stream, **kwargs)
+        return _AsyncContextManager(wrapped=wrapped)

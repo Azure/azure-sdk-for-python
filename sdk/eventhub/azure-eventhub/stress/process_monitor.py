@@ -39,6 +39,7 @@ class ProcessMonitor:
     def __enter__(self):
         print('Process monitor start working.')
         self.start()
+        return self
 
     def __exit__(self, *args):
         self.stop()
@@ -55,6 +56,14 @@ class ProcessMonitor:
                 )
             self._logger.info(log_content)
             time.sleep(self._log_interval)
+
+    @property
+    def memory_usage_percent(self):
+        return self._process_instance.memory_percent() * 100
+
+    @property
+    def cpu_usage_percent(self):
+        return self._process_instance.cpu_percent()
 
     def start(self):
         self.running = True

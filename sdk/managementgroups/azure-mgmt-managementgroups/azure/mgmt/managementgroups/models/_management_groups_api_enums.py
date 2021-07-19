@@ -30,6 +30,7 @@ class Enum0(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     CHILDREN = "children"
     PATH = "path"
+    ANCESTORS = "ancestors"
 
 class Enum2(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -45,11 +46,6 @@ class Enum3(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     GROUPS_ONLY = "GroupsOnly"
     SUBSCRIPTIONS_ONLY = "SubscriptionsOnly"
     AUDIT = "Audit"
-
-class Enum5(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    CREATE = "create"
-    DELETE = "delete"
 
 class ManagementGroupChildType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of child resource.

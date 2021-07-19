@@ -49,7 +49,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         managed_instance_name: str,
         database_name: str,
         backup_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagedInstanceLongTermRetentionBackup":
         """Gets a long term retention backup for a managed database.
 
@@ -115,7 +115,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         managed_instance_name: str,
         database_name: str,
         backup_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -161,7 +161,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         managed_instance_name: str,
         database_name: str,
         backup_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a long term retention backup.
 
@@ -175,8 +175,8 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         :type backup_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -236,7 +236,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         database_name: str,
         only_latest_per_database: Optional[bool] = None,
         database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ManagedInstanceLongTermRetentionBackupListResult"]:
         """Lists all long term retention backups for a managed database.
 
@@ -325,7 +325,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         managed_instance_name: str,
         only_latest_per_database: Optional[bool] = None,
         database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ManagedInstanceLongTermRetentionBackupListResult"]:
         """Lists the long term retention backups for a given managed instance.
 
@@ -410,7 +410,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         location_name: str,
         only_latest_per_database: Optional[bool] = None,
         database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ManagedInstanceLongTermRetentionBackupListResult"]:
         """Lists the long term retention backups for managed databases in a given location.
 
@@ -494,7 +494,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         managed_instance_name: str,
         database_name: str,
         backup_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagedInstanceLongTermRetentionBackup":
         """Gets a long term retention backup for a managed database.
 
@@ -565,7 +565,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         managed_instance_name: str,
         database_name: str,
         backup_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -613,7 +613,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         managed_instance_name: str,
         database_name: str,
         backup_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a long term retention backup.
 
@@ -630,8 +630,8 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         :type backup_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -694,7 +694,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         database_name: str,
         only_latest_per_database: Optional[bool] = None,
         database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ManagedInstanceLongTermRetentionBackupListResult"]:
         """Lists all long term retention backups for a managed database.
 
@@ -788,7 +788,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         managed_instance_name: str,
         only_latest_per_database: Optional[bool] = None,
         database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ManagedInstanceLongTermRetentionBackupListResult"]:
         """Lists the long term retention backups for a given managed instance.
 
@@ -878,7 +878,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         location_name: str,
         only_latest_per_database: Optional[bool] = None,
         database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ManagedInstanceLongTermRetentionBackupListResult"]:
         """Lists the long term retention backups for managed databases in a given location.
 

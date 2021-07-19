@@ -50,7 +50,7 @@ class ManagedDatabaseSecurityEventsOperations:
         skip: Optional[int] = None,
         top: Optional[int] = None,
         skiptoken: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SecurityEventCollection"]:
         """Gets a list of security events.
 

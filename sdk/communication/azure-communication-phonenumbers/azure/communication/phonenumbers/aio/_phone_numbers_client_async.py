@@ -50,7 +50,7 @@ class PhoneNumbersClient(object):
         self._endpoint = endpoint
         self._phone_number_client = PhoneNumbersClientGen(
             self._endpoint,
-            authentication_policy=get_authentication_policy(endpoint, credential),
+            authentication_policy=get_authentication_policy(endpoint, credential, is_async=True),
             sdk_moniker=SDK_MONIKER,
             **kwargs)
 

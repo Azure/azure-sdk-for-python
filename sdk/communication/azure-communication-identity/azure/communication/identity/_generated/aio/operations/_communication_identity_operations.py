@@ -42,7 +42,7 @@ class CommunicationIdentityOperations:
     async def create(
         self,
         create_token_with_scopes: Optional[List[Union[str, "_models.CommunicationTokenScope"]]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CommunicationIdentityAccessTokenResult":
         """Create a new identity.
 
@@ -108,7 +108,7 @@ class CommunicationIdentityOperations:
     async def delete(
         self,
         id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete the identity, revoke all tokens for the identity and delete all associated data.
 
@@ -162,7 +162,7 @@ class CommunicationIdentityOperations:
     async def revoke_access_tokens(
         self,
         id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Revoke all access tokens for the specific identity.
 
@@ -217,7 +217,7 @@ class CommunicationIdentityOperations:
         self,
         id: str,
         scopes: List[Union[str, "_models.CommunicationTokenScope"]],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CommunicationIdentityAccessToken":
         """Issue a new token for an identity.
 

@@ -8,6 +8,7 @@
 
 from typing import Any, Optional, TYPE_CHECKING
 
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Deserializer, Serializer
 
@@ -16,23 +17,30 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 from ._configuration import AzureStackHCIClientConfiguration
-from .operations import Operations
+from .operations import ArcSettingsOperations
 from .operations import ClustersOperations
+from .operations import ExtensionsOperations
+from .operations import Operations
 from .. import models
 
 
 class AzureStackHCIClient(object):
     """Azure Stack HCI management service.
 
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.azurestackhci.aio.operations.Operations
+    :ivar arc_settings: ArcSettingsOperations operations
+    :vartype arc_settings: azure_stack_hci_client.aio.operations.ArcSettingsOperations
     :ivar clusters: ClustersOperations operations
-    :vartype clusters: azure.mgmt.azurestackhci.aio.operations.ClustersOperations
+    :vartype clusters: azure_stack_hci_client.aio.operations.ClustersOperations
+    :ivar extensions: ExtensionsOperations operations
+    :vartype extensions: azure_stack_hci_client.aio.operations.ExtensionsOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure_stack_hci_client.aio.operations.Operations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
     :param str base_url: Service URL
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     def __init__(
@@ -52,10 +60,31 @@ class AzureStackHCIClient(object):
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
-        self.operations = Operations(
+        self.arc_settings = ArcSettingsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.clusters = ClustersOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.extensions = ExtensionsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize)
+
+    async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
+        """Runs the network request through the client's chained policies.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+        """
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+        }
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = await self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
 
     async def close(self) -> None:
         await self._client.close()

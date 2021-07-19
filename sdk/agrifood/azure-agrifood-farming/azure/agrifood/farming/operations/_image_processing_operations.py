@@ -48,7 +48,7 @@ class ImageProcessingOperations(object):
     def _create_rasterize_job_initial(
         self,
         job_id,  # type: str
-        body=None,  # type: Optional["_models.ImageProcessingRasterizeJob"]
+        job=None,  # type: Optional["_models.ImageProcessingRasterizeJob"]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.ImageProcessingRasterizeJob"
@@ -79,8 +79,8 @@ class ImageProcessingOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'ImageProcessingRasterizeJob')
+        if job is not None:
+            body_content = self._serialize.body(job, 'ImageProcessingRasterizeJob')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
@@ -103,7 +103,7 @@ class ImageProcessingOperations(object):
     def begin_create_rasterize_job(
         self,
         job_id,  # type: str
-        body=None,  # type: Optional["_models.ImageProcessingRasterizeJob"]
+        job=None,  # type: Optional["_models.ImageProcessingRasterizeJob"]
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller["_models.ImageProcessingRasterizeJob"]
@@ -111,8 +111,8 @@ class ImageProcessingOperations(object):
 
         :param job_id: JobId provided by user.
         :type job_id: str
-        :param body: Job parameters supplied by user.
-        :type body: ~azure.agrifood.farming.models.ImageProcessingRasterizeJob
+        :param job: Job parameters supplied by user.
+        :type job: ~azure.agrifood.farming.models.ImageProcessingRasterizeJob
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling.
@@ -133,7 +133,7 @@ class ImageProcessingOperations(object):
         if cont_token is None:
             raw_result = self._create_rasterize_job_initial(
                 job_id=job_id,
-                body=body,
+                job=job,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -175,7 +175,7 @@ class ImageProcessingOperations(object):
         # type: (...) -> "_models.ImageProcessingRasterizeJob"
         """Get ImageProcessing Rasterize job's details.
 
-        :param job_id: Id of the job.
+        :param job_id: ID of the job.
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ImageProcessingRasterizeJob, or the result of cls(response)

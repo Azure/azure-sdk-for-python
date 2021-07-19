@@ -16,8 +16,8 @@ url = "rtsp://sample-url-from-camera"
 def build_pipeline_topology():
     pipeline_topology_properties = PipelineTopologyProperties()
     pipeline_topology_properties.description = "Continuous video recording to an Azure Media Services Asset"
-    user_name_param = ParameterDeclaration(name="rtspUserName",type="String",default="dummyusername")
-    password_param = ParameterDeclaration(name="rtspPassword",type="SecretString",default="dummypassword")
+    user_name_param = ParameterDeclaration(name="rtspUserName",type="String",default="testusername")
+    password_param = ParameterDeclaration(name="rtspPassword",type="SecretString",default="testpassword")
     url_param = ParameterDeclaration(name="rtspUrl",type="String",default="rtsp://www.sample.com")
     hub_param = ParameterDeclaration(name="hubSinkOutputName",type="String")
 

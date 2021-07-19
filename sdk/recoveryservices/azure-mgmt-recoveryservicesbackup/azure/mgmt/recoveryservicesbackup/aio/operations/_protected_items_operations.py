@@ -48,7 +48,7 @@ class ProtectedItemsOperations:
         container_name: str,
         protected_item_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProtectedItemResource":
         """Provides the details of the backed up item. This is an asynchronous operation. To know the
         status of the operation,
@@ -77,7 +77,7 @@ class ProtectedItemsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL
@@ -126,7 +126,7 @@ class ProtectedItemsOperations:
         container_name: str,
         protected_item_name: str,
         parameters: "_models.ProtectedItemResource",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ProtectedItemResource"]:
         """Enables backup of an item or to modifies the backup policy information of an already backed up
         item. This is an
@@ -156,7 +156,7 @@ class ProtectedItemsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-01-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -209,7 +209,7 @@ class ProtectedItemsOperations:
         fabric_name: str,
         container_name: str,
         protected_item_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Used to disable backup of an item within a container. This is an asynchronous operation. To
         know the status of the
@@ -236,7 +236,7 @@ class ProtectedItemsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL

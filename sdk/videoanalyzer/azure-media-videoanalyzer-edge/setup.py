@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 import sys
 import re
@@ -15,7 +15,7 @@ from setuptools import find_packages, setup
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-media-videoanalyzer-edge"
 NAMESPACE_NAME = "azure.media.videoanalyzeredge"
-PACKAGE_PPRINT_NAME = "Azure Media Video Analyzer Edge SDK"
+PACKAGE_PPRINT_NAME = "Azure Video Analyzer Edge SDK"
 
 # a-b-c => a/b/c
 package_folder_path = NAMESPACE_NAME.replace('.', '/')
@@ -51,13 +51,13 @@ with open('CHANGELOG.md', encoding='utf-8') as f:
 setup(
     name=PACKAGE_NAME,
     version=version,
-    description='Microsoft {} Library for Python'.format(PACKAGE_PPRINT_NAME),
+    description='{} Library for Python'.format(PACKAGE_PPRINT_NAME),
     long_description=readme + '\n\n' + changelog,
     long_description_content_type='text/markdown',
     license='MIT License',
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
-    url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/videoanalyzer/azure-media-videoanalyzer-edge',
+    url='https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/videoanalyzer/azure-media-videoanalyzer-edge',
     classifiers=[
         "Development Status :: 4 - Beta",
         'Programming Language :: Python',

@@ -45,7 +45,7 @@ class PolicyDefinitionsOperations:
         self,
         policy_definition_name: str,
         parameters: "_models.PolicyDefinition",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyDefinition":
         """Creates or updates a policy definition.
 
@@ -106,7 +106,7 @@ class PolicyDefinitionsOperations:
     async def delete(
         self,
         policy_definition_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a policy definition.
 
@@ -155,7 +155,7 @@ class PolicyDefinitionsOperations:
     async def get(
         self,
         policy_definition_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyDefinition":
         """Gets the policy definition.
 
@@ -209,7 +209,7 @@ class PolicyDefinitionsOperations:
     def list(
         self,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyDefinitionListResult"]:
         """Gets all the policy definitions for a subscription.
 

@@ -47,7 +47,7 @@ class ManagedDatabasesOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ManagedDatabaseListResult"]:
         """Gets a list of managed databases.
 
@@ -123,7 +123,7 @@ class ManagedDatabasesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagedDatabase":
         """Gets a managed database.
 
@@ -187,7 +187,7 @@ class ManagedDatabasesOperations:
         managed_instance_name: str,
         database_name: str,
         parameters: "_models.ManagedDatabase",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ManagedDatabase"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ManagedDatabase"]]
         error_map = {
@@ -247,7 +247,7 @@ class ManagedDatabasesOperations:
         managed_instance_name: str,
         database_name: str,
         parameters: "_models.ManagedDatabase",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ManagedDatabase"]:
         """Creates a new database or updates an existing database.
 
@@ -262,8 +262,8 @@ class ManagedDatabasesOperations:
         :type parameters: ~azure.mgmt.sql.models.ManagedDatabase
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ManagedDatabase or the result of cls(response)
@@ -323,7 +323,7 @@ class ManagedDatabasesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -367,7 +367,7 @@ class ManagedDatabasesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a managed database.
 
@@ -380,8 +380,8 @@ class ManagedDatabasesOperations:
         :type database_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -438,7 +438,7 @@ class ManagedDatabasesOperations:
         managed_instance_name: str,
         database_name: str,
         parameters: "_models.ManagedDatabaseUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ManagedDatabase"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ManagedDatabase"]]
         error_map = {
@@ -495,7 +495,7 @@ class ManagedDatabasesOperations:
         managed_instance_name: str,
         database_name: str,
         parameters: "_models.ManagedDatabaseUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ManagedDatabase"]:
         """Updates an existing database.
 
@@ -510,8 +510,8 @@ class ManagedDatabasesOperations:
         :type parameters: ~azure.mgmt.sql.models.ManagedDatabaseUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ManagedDatabase or the result of cls(response)
@@ -572,7 +572,7 @@ class ManagedDatabasesOperations:
         managed_instance_name: str,
         database_name: str,
         parameters: "_models.CompleteDatabaseRestoreDefinition",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -622,7 +622,7 @@ class ManagedDatabasesOperations:
         managed_instance_name: str,
         database_name: str,
         parameters: "_models.CompleteDatabaseRestoreDefinition",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Completes the restore operation on a managed database.
 
@@ -637,8 +637,8 @@ class ManagedDatabasesOperations:
         :type parameters: ~azure.mgmt.sql.models.CompleteDatabaseRestoreDefinition
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -694,7 +694,7 @@ class ManagedDatabasesOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ManagedDatabaseListResult"]:
         """Gets a list of inaccessible managed databases in a managed instance.
 

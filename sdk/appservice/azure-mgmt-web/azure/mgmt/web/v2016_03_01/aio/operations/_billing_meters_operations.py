@@ -44,7 +44,7 @@ class BillingMetersOperations:
     def list(
         self,
         billing_location: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BillingMeterCollection"]:
         """Gets a list of meters for a given location.
 

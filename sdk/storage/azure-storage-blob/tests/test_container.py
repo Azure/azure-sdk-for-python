@@ -14,6 +14,7 @@ import pytest
 import requests
 
 from _shared.testcase import StorageTestCase, LogCaptured, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer, StorageAccountPreparer
+from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError, ResourceModifiedError
 from azure.storage.blob import (
     BlobServiceClient,
@@ -26,6 +27,7 @@ from azure.storage.blob import (
     generate_container_sas,
     PartialBatchErrorException,
     generate_account_sas, ResourceTypes, AccountSasPermissions, ContainerClient, ContentSettings)
+from devtools_testutils.storage import StorageTestCase
 
 #------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
@@ -1086,6 +1088,41 @@ class StorageContainerTest(StorageTestCase):
         self.assertEqual(blobs[1].content_settings.content_disposition, 'inline')
 
     @GlobalStorageAccountPreparer()
+    def test_list_blobs_include_deletedwithversion(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        # pytest.skip("Waiting on metadata XML fix in msrest")
+        container = self._create_container(bsc)
+        data = b'hello world'
+        content_settings = ContentSettings(
+            content_language='spanish',
+            content_disposition='inline')
+        blob1 = container.get_blob_client('blob1')
+        resp = blob1.upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '1', 'name': 'bob'})
+        version_id_1 = resp['version_id']
+        blob1.upload_blob(b"abc", overwrite=True)
+        root_content = b"cde"
+        root_version_id = blob1.upload_blob(root_content, overwrite=True)['version_id']
+        blob1.delete_blob()
+
+        container.get_blob_client('blob2').upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '2', 'name': 'car'})
+        container.get_blob_client('blob3').upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '2', 'name': 'car'})
+
+        # Act
+        blobs =list(container.list_blobs(include=["deletedwithversions"]))
+        downloaded_root_content = blob1.download_blob(version_id=root_version_id).readall()
+        downloaded_original_content = blob1.download_blob(version_id=version_id_1).readall()
+
+        # Assert
+        self.assertEqual(blobs[0].name, 'blob1')
+        self.assertTrue(blobs[0].has_versions_only)
+        self.assertEqual(root_content, downloaded_root_content)
+        self.assertEqual(data, downloaded_original_content)
+        self.assertEqual(blobs[1].name, 'blob2')
+        self.assertFalse(blobs[1].has_versions_only)
+        self.assertEqual(blobs[2].name, 'blob3')
+        self.assertFalse(blobs[2].has_versions_only)
+
+    @GlobalStorageAccountPreparer()
     def test_list_blobs_with_include_uncommittedblobs(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
         container = self._create_container(bsc)
@@ -1865,7 +1902,28 @@ class StorageContainerTest(StorageTestCase):
         self.assertEqual(downloaded_data, data)
 
     @GlobalStorageAccountPreparer()
-    def test_download_blob_in_chunks_where_maxsinglegetsize_not_multiple_of_chunksize(self, resource_group, location, storage_account, storage_account_key):
+    def test_download_blob_modified(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key,
+                                max_single_get_size=38,
+                                max_chunk_get_size=38)
+        container = self._create_container(bsc, prefix="cont")
+        data = b'hello world python storage test chunks' * 5
+        blob_name = self.get_resource_name("testblob")
+        blob = container.get_blob_client(blob_name)
+        blob.upload_blob(data, overwrite=True)
+        resp = container.download_blob(blob_name, match_condition=MatchConditions.IfPresent)
+        chunks = resp.chunks()
+        i = 0
+        while i < 4:
+            data += next(chunks)
+            i += 1
+        blob.upload_blob(data=data, overwrite=True)
+        with self.assertRaises(ResourceModifiedError):
+            data += next(chunks)
+
+    @GlobalStorageAccountPreparer()
+    def test_download_blob_in_chunks_where_maxsinglegetsize_not_multiple_of_chunksize(
+            self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key,
                                 max_single_get_size=1024,
                                 max_chunk_get_size=666)

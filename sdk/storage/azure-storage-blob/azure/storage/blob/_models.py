@@ -12,7 +12,7 @@ from azure.core.paging import PageIterator
 from azure.core.exceptions import HttpResponseError
 from ._generated.models import ArrowField
 
-from ._shared import decode_base64_to_text
+from ._shared import decode_base64_to_bytes
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
 from ._shared.models import DictMixin, get_enum_value
 from ._generated.models import Logging as GeneratedLogging
@@ -65,6 +65,14 @@ class PremiumPageBlobTier(str, Enum):
     P40 = 'P40'  #: P40 Tier
     P50 = 'P50'  #: P50 Tier
     P60 = 'P60'  #: P60 Tier
+
+
+class QuickQueryDialect(str, Enum):
+    """Specifies the quick query input/output dialect."""
+
+    DelimitedTextDialect = 'DelimitedTextDialect'
+    DelimitedJsonDialect = 'DelimitedJsonDialect'
+    ParquetDialect = 'ParquetDialect'
 
 
 class SequenceNumberAction(str, Enum):
@@ -528,6 +536,10 @@ class BlobProperties(DictMixin):
         Key value pair of tags on this blob.
 
         .. versionadded:: 12.4.0
+    :ivar bool has_versions_only:
+        A true value indicates the root blob is deleted
+
+        .. versionadded:: 12.10.0
 
     :ivar ~datetime.datetime immutability_policy_expiry_time:
         Specifies the date time when the blobs immutability policy is set to expire.
@@ -592,7 +604,7 @@ class BlobProperties(DictMixin):
         self.immutability_policy_expiry_time = kwargs.get('x-ms-immutability-policy-until-date')
         self.immutability_policy_mode = kwargs.get('x-ms-immutability-policy-mode')
         self.legal_hold = kwargs.get('x-ms-legal-hold')
-
+        self.has_versions_only = None
 
 class FilteredBlob(DictMixin):
     """Blob info from a Filter Blobs API call.
@@ -772,7 +784,15 @@ class BlobBlock(DictMixin):
 
     @classmethod
     def _from_generated(cls, generated):
-        block = cls(decode_base64_to_text(generated.name))
+        try:
+            decoded_bytes = decode_base64_to_bytes(generated.name)
+            block_id = decoded_bytes.decode('utf-8')
+        # this is to fix a bug. When large blocks are uploaded through upload_blob the block id isn't base64 encoded
+        # while service expected block id is base64 encoded, so when we get block_id if we cannot base64 decode, it
+        # means we didn't base64 encode it when stage the block, we want to use the returned block_id directly.
+        except UnicodeDecodeError:
+            block_id = generated.name
+        block = cls(block_id)
         block.size = generated.size
         return block
 

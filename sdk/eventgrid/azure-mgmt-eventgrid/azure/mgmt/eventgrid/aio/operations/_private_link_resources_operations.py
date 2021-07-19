@@ -47,7 +47,7 @@ class PrivateLinkResourcesOperations:
         parent_type: str,
         parent_name: str,
         private_link_resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateLinkResource":
         """Get a private link resource.
 
@@ -73,7 +73,7 @@ class PrivateLinkResourcesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
         accept = "application/json"
 
         # Construct URL
@@ -118,7 +118,7 @@ class PrivateLinkResourcesOperations:
         parent_name: str,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PrivateLinkResourcesListResult"]:
         """List private link resources under specific topic or domain.
 
@@ -153,7 +153,7 @@ class PrivateLinkResourcesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):

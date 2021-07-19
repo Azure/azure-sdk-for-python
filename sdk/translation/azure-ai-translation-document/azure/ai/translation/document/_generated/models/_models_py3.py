@@ -54,125 +54,6 @@ class BatchRequest(msrest.serialization.Model):
         self.storage_type = storage_type
 
 
-class BatchStatusDetail(msrest.serialization.Model):
-    """Job status response.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param id: Required. Id of the operation.
-    :type id: str
-    :param created_date_time_utc: Required. Operation created date time.
-    :type created_date_time_utc: ~datetime.datetime
-    :param last_action_date_time_utc: Required. Date time in which the operation's status has been
-     updated.
-    :type last_action_date_time_utc: ~datetime.datetime
-    :param status: Required. List of possible statuses for job or document. Possible values
-     include: "NotStarted", "Running", "Succeeded", "Failed", "Cancelled", "Cancelling",
-     "ValidationFailed".
-    :type status: str or ~azure.ai.translation.document.models.Status
-    :param error: This contains an outer error with error code, message, details, target and an
-     inner error with more descriptive details.
-    :type error: ~azure.ai.translation.document.models.ErrorV2
-    :param summary: Required.
-    :type summary: ~azure.ai.translation.document.models.StatusSummary
-    """
-
-    _validation = {
-        'id': {'required': True},
-        'created_date_time_utc': {'required': True},
-        'last_action_date_time_utc': {'required': True},
-        'status': {'required': True},
-        'summary': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'created_date_time_utc': {'key': 'createdDateTimeUtc', 'type': 'iso-8601'},
-        'last_action_date_time_utc': {'key': 'lastActionDateTimeUtc', 'type': 'iso-8601'},
-        'status': {'key': 'status', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'ErrorV2'},
-        'summary': {'key': 'summary', 'type': 'StatusSummary'},
-    }
-
-    def __init__(
-        self,
-        *,
-        id: str,
-        created_date_time_utc: datetime.datetime,
-        last_action_date_time_utc: datetime.datetime,
-        status: Union[str, "Status"],
-        summary: "StatusSummary",
-        error: Optional["ErrorV2"] = None,
-        **kwargs
-    ):
-        super(BatchStatusDetail, self).__init__(**kwargs)
-        self.id = id
-        self.created_date_time_utc = created_date_time_utc
-        self.last_action_date_time_utc = last_action_date_time_utc
-        self.status = status
-        self.error = error
-        self.summary = summary
-
-
-class BatchStatusResponse(msrest.serialization.Model):
-    """Document Status Response.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param value: Required. The summary status of individual operation.
-    :type value: list[~azure.ai.translation.document.models.BatchStatusDetail]
-    :param next_link: Url for the next page.  Null if no more pages available.
-    :type next_link: str
-    """
-
-    _validation = {
-        'value': {'required': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[BatchStatusDetail]'},
-        'next_link': {'key': '@nextLink', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: List["BatchStatusDetail"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(BatchStatusResponse, self).__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class BatchSubmissionRequest(msrest.serialization.Model):
-    """Job submission batch request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param inputs: Required. The input list of documents or folders containing documents.
-    :type inputs: list[~azure.ai.translation.document.models.BatchRequest]
-    """
-
-    _validation = {
-        'inputs': {'required': True},
-    }
-
-    _attribute_map = {
-        'inputs': {'key': 'inputs', 'type': '[BatchRequest]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        inputs: List["BatchRequest"],
-        **kwargs
-    ):
-        super(BatchSubmissionRequest, self).__init__(**kwargs)
-        self.inputs = inputs
-
-
 class DocumentFilter(msrest.serialization.Model):
     """DocumentFilter.
 
@@ -204,8 +85,40 @@ class DocumentFilter(msrest.serialization.Model):
         self.suffix = suffix
 
 
-class DocumentStatusDetail(msrest.serialization.Model):
-    """DocumentStatusDetail.
+class DocumentsStatus(msrest.serialization.Model):
+    """Documents Status Response.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required. The detail status of individual documents.
+    :type value: list[~azure.ai.translation.document.models.DocumentStatus]
+    :param next_link: Url for the next page.  Null if no more pages available.
+    :type next_link: str
+    """
+
+    _validation = {
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[DocumentStatus]'},
+        'next_link': {'key': '@nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: List["DocumentStatus"],
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        super(DocumentsStatus, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class DocumentStatus(msrest.serialization.Model):
+    """Document Status Response.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -226,7 +139,7 @@ class DocumentStatusDetail(msrest.serialization.Model):
     :type to: str
     :param error: This contains an outer error with error code, message, details, target and an
      inner error with more descriptive details.
-    :type error: ~azure.ai.translation.document.models.ErrorV2
+    :type error: ~azure.ai.translation.document.models.TranslationError
     :param progress: Required. Progress of the translation if available.
     :type progress: float
     :param id: Required. Document Id.
@@ -252,7 +165,7 @@ class DocumentStatusDetail(msrest.serialization.Model):
         'last_action_date_time_utc': {'key': 'lastActionDateTimeUtc', 'type': 'iso-8601'},
         'status': {'key': 'status', 'type': 'str'},
         'to': {'key': 'to', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'ErrorV2'},
+        'error': {'key': 'error', 'type': 'TranslationError'},
         'progress': {'key': 'progress', 'type': 'float'},
         'id': {'key': 'id', 'type': 'str'},
         'character_charged': {'key': 'characterCharged', 'type': 'long'},
@@ -269,11 +182,11 @@ class DocumentStatusDetail(msrest.serialization.Model):
         progress: float,
         id: str,
         path: Optional[str] = None,
-        error: Optional["ErrorV2"] = None,
+        error: Optional["TranslationError"] = None,
         character_charged: Optional[int] = None,
         **kwargs
     ):
-        super(DocumentStatusDetail, self).__init__(**kwargs)
+        super(DocumentStatus, self).__init__(**kwargs)
         self.path = path
         self.source_path = source_path
         self.created_date_time_utc = created_date_time_utc
@@ -284,114 +197,6 @@ class DocumentStatusDetail(msrest.serialization.Model):
         self.progress = progress
         self.id = id
         self.character_charged = character_charged
-
-
-class DocumentStatusResponse(msrest.serialization.Model):
-    """Document Status Response.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param value: Required. The detail status of individual documents.
-    :type value: list[~azure.ai.translation.document.models.DocumentStatusDetail]
-    :param next_link: Url for the next page.  Null if no more pages available.
-    :type next_link: str
-    """
-
-    _validation = {
-        'value': {'required': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[DocumentStatusDetail]'},
-        'next_link': {'key': '@nextLink', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: List["DocumentStatusDetail"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(DocumentStatusResponse, self).__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class ErrorResponseV2(msrest.serialization.Model):
-    """Contains unified error information used for HTTP responses across any Cognitive Service. Instances
-can be created either through Microsoft.CloudAI.Containers.HttpStatusExceptionV2 or by returning it directly from
-a controller.
-
-    :param error: This contains an outer error with error code, message, details, target and an
-     inner error with more descriptive details.
-    :type error: ~azure.ai.translation.document.models.ErrorV2
-    """
-
-    _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorV2'},
-    }
-
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorV2"] = None,
-        **kwargs
-    ):
-        super(ErrorResponseV2, self).__init__(**kwargs)
-        self.error = error
-
-
-class ErrorV2(msrest.serialization.Model):
-    """This contains an outer error with error code, message, details, target and an inner error with more descriptive details.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param code: Required. Enums containing high level error codes. Possible values include:
-     "InvalidRequest", "InvalidArgument", "InternalServerError", "ServiceUnavailable",
-     "ResourceNotFound", "Unauthorized", "RequestRateTooHigh".
-    :type code: str or ~azure.ai.translation.document.models.ErrorCodeV2
-    :param message: Required. Gets high level error message.
-    :type message: str
-    :ivar target: Gets the source of the error.
-     For example it would be "documents" or "document id" in case of invalid document.
-    :vartype target: str
-    :param inner_error: New Inner Error format which conforms to Cognitive Services API Guidelines
-     which is available at
-     https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow.
-     This contains required properties ErrorCode, message and optional properties target,
-     details(key value pair), inner error(this can be nested).
-    :type inner_error: ~azure.ai.translation.document.models.InnerErrorV2
-    """
-
-    _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
-        'target': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'inner_error': {'key': 'innerError', 'type': 'InnerErrorV2'},
-    }
-
-    def __init__(
-        self,
-        *,
-        code: Union[str, "ErrorCodeV2"],
-        message: str,
-        inner_error: Optional["InnerErrorV2"] = None,
-        **kwargs
-    ):
-        super(ErrorV2, self).__init__(**kwargs)
-        self.code = code
-        self.message = message
-        self.target = None
-        self.inner_error = inner_error
 
 
 class FileFormat(msrest.serialization.Model):
@@ -443,33 +248,6 @@ class FileFormat(msrest.serialization.Model):
         self.versions = versions
 
 
-class FileFormatListResult(msrest.serialization.Model):
-    """Base type for List return in our api.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param value: Required. list of objects.
-    :type value: list[~azure.ai.translation.document.models.FileFormat]
-    """
-
-    _validation = {
-        'value': {'required': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[FileFormat]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: List["FileFormat"],
-        **kwargs
-    ):
-        super(FileFormatListResult, self).__init__(**kwargs)
-        self.value = value
-
-
 class Glossary(msrest.serialization.Model):
     """Glossary / translation memory for the request.
 
@@ -517,7 +295,7 @@ class Glossary(msrest.serialization.Model):
         self.storage_source = storage_source
 
 
-class InnerErrorV2(msrest.serialization.Model):
+class InnerTranslationError(msrest.serialization.Model):
     """New Inner Error format which conforms to Cognitive Services API Guidelines which is available at https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow.
 This contains required properties ErrorCode, message and optional properties target, details(key value pair), inner error(this can be nested).
 
@@ -537,7 +315,7 @@ This contains required properties ErrorCode, message and optional properties tar
      https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow.
      This contains required properties ErrorCode, message and optional properties target,
      details(key value pair), inner error(this can be nested).
-    :type inner_error: ~azure.ai.translation.document.models.InnerErrorV2
+    :type inner_error: ~azure.ai.translation.document.models.InnerTranslationError
     """
 
     _validation = {
@@ -550,7 +328,7 @@ This contains required properties ErrorCode, message and optional properties tar
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'target': {'key': 'target', 'type': 'str'},
-        'inner_error': {'key': 'innerError', 'type': 'InnerErrorV2'},
+        'inner_error': {'key': 'innerError', 'type': 'InnerTranslationError'},
     }
 
     def __init__(
@@ -558,10 +336,10 @@ This contains required properties ErrorCode, message and optional properties tar
         *,
         code: str,
         message: str,
-        inner_error: Optional["InnerErrorV2"] = None,
+        inner_error: Optional["InnerTranslationError"] = None,
         **kwargs
     ):
-        super(InnerErrorV2, self).__init__(**kwargs)
+        super(InnerTranslationError, self).__init__(**kwargs)
         self.code = code
         self.message = message
         self.target = None
@@ -610,6 +388,33 @@ class SourceInput(msrest.serialization.Model):
         self.filter = filter
         self.language = language
         self.storage_source = storage_source
+
+
+class StartTranslationDetails(msrest.serialization.Model):
+    """Translation job submission batch request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param inputs: Required. The input list of documents or folders containing documents.
+    :type inputs: list[~azure.ai.translation.document.models.BatchRequest]
+    """
+
+    _validation = {
+        'inputs': {'required': True},
+    }
+
+    _attribute_map = {
+        'inputs': {'key': 'inputs', 'type': '[BatchRequest]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        inputs: List["BatchRequest"],
+        **kwargs
+    ):
+        super(StartTranslationDetails, self).__init__(**kwargs)
+        self.inputs = inputs
 
 
 class StatusSummary(msrest.serialization.Model):
@@ -675,7 +480,34 @@ class StatusSummary(msrest.serialization.Model):
         self.total_character_charged = total_character_charged
 
 
-class StorageSourceListResult(msrest.serialization.Model):
+class SupportedFileFormats(msrest.serialization.Model):
+    """Base type for List return in our api.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required. list of objects.
+    :type value: list[~azure.ai.translation.document.models.FileFormat]
+    """
+
+    _validation = {
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[FileFormat]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: List["FileFormat"],
+        **kwargs
+    ):
+        super(SupportedFileFormats, self).__init__(**kwargs)
+        self.value = value
+
+
+class SupportedStorageSources(msrest.serialization.Model):
     """Base type for List return in our api.
 
     All required parameters must be populated in order to send to Azure.
@@ -698,7 +530,7 @@ class StorageSourceListResult(msrest.serialization.Model):
         value: List[Union[str, "StorageSource"]],
         **kwargs
     ):
-        super(StorageSourceListResult, self).__init__(**kwargs)
+        super(SupportedStorageSources, self).__init__(**kwargs)
         self.value = value
 
 
@@ -748,3 +580,171 @@ class TargetInput(msrest.serialization.Model):
         self.language = language
         self.glossaries = glossaries
         self.storage_source = storage_source
+
+
+class TranslationError(msrest.serialization.Model):
+    """This contains an outer error with error code, message, details, target and an inner error with more descriptive details.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param code: Required. Enums containing high level error codes. Possible values include:
+     "InvalidRequest", "InvalidArgument", "InternalServerError", "ServiceUnavailable",
+     "ResourceNotFound", "Unauthorized", "RequestRateTooHigh".
+    :type code: str or ~azure.ai.translation.document.models.TranslationErrorCode
+    :param message: Required. Gets high level error message.
+    :type message: str
+    :ivar target: Gets the source of the error.
+     For example it would be "documents" or "document id" in case of invalid document.
+    :vartype target: str
+    :param inner_error: New Inner Error format which conforms to Cognitive Services API Guidelines
+     which is available at
+     https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow.
+     This contains required properties ErrorCode, message and optional properties target,
+     details(key value pair), inner error(this can be nested).
+    :type inner_error: ~azure.ai.translation.document.models.InnerTranslationError
+    """
+
+    _validation = {
+        'code': {'required': True},
+        'message': {'required': True},
+        'target': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'inner_error': {'key': 'innerError', 'type': 'InnerTranslationError'},
+    }
+
+    def __init__(
+        self,
+        *,
+        code: Union[str, "TranslationErrorCode"],
+        message: str,
+        inner_error: Optional["InnerTranslationError"] = None,
+        **kwargs
+    ):
+        super(TranslationError, self).__init__(**kwargs)
+        self.code = code
+        self.message = message
+        self.target = None
+        self.inner_error = inner_error
+
+
+class TranslationErrorResponse(msrest.serialization.Model):
+    """Contains unified error information used for HTTP responses across any Cognitive Service. Instances
+can be created either through Microsoft.CloudAI.Containers.HttpStatusExceptionV2 or by returning it directly from
+a controller.
+
+    :param error: This contains an outer error with error code, message, details, target and an
+     inner error with more descriptive details.
+    :type error: ~azure.ai.translation.document.models.TranslationError
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'TranslationError'},
+    }
+
+    def __init__(
+        self,
+        *,
+        error: Optional["TranslationError"] = None,
+        **kwargs
+    ):
+        super(TranslationErrorResponse, self).__init__(**kwargs)
+        self.error = error
+
+
+class TranslationsStatus(msrest.serialization.Model):
+    """Translation job Status Response.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required. The summary status of individual operation.
+    :type value: list[~azure.ai.translation.document.models.TranslationStatus]
+    :param next_link: Url for the next page.  Null if no more pages available.
+    :type next_link: str
+    """
+
+    _validation = {
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[TranslationStatus]'},
+        'next_link': {'key': '@nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: List["TranslationStatus"],
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        super(TranslationsStatus, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class TranslationStatus(msrest.serialization.Model):
+    """Translation job status response.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. Id of the operation.
+    :type id: str
+    :param created_date_time_utc: Required. Operation created date time.
+    :type created_date_time_utc: ~datetime.datetime
+    :param last_action_date_time_utc: Required. Date time in which the operation's status has been
+     updated.
+    :type last_action_date_time_utc: ~datetime.datetime
+    :param status: Required. List of possible statuses for job or document. Possible values
+     include: "NotStarted", "Running", "Succeeded", "Failed", "Cancelled", "Cancelling",
+     "ValidationFailed".
+    :type status: str or ~azure.ai.translation.document.models.Status
+    :param error: This contains an outer error with error code, message, details, target and an
+     inner error with more descriptive details.
+    :type error: ~azure.ai.translation.document.models.TranslationError
+    :param summary: Required.
+    :type summary: ~azure.ai.translation.document.models.StatusSummary
+    """
+
+    _validation = {
+        'id': {'required': True},
+        'created_date_time_utc': {'required': True},
+        'last_action_date_time_utc': {'required': True},
+        'status': {'required': True},
+        'summary': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'created_date_time_utc': {'key': 'createdDateTimeUtc', 'type': 'iso-8601'},
+        'last_action_date_time_utc': {'key': 'lastActionDateTimeUtc', 'type': 'iso-8601'},
+        'status': {'key': 'status', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'TranslationError'},
+        'summary': {'key': 'summary', 'type': 'StatusSummary'},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: str,
+        created_date_time_utc: datetime.datetime,
+        last_action_date_time_utc: datetime.datetime,
+        status: Union[str, "Status"],
+        summary: "StatusSummary",
+        error: Optional["TranslationError"] = None,
+        **kwargs
+    ):
+        super(TranslationStatus, self).__init__(**kwargs)
+        self.id = id
+        self.created_date_time_utc = created_date_time_utc
+        self.last_action_date_time_utc = last_action_date_time_utc
+        self.status = status
+        self.error = error
+        self.summary = summary

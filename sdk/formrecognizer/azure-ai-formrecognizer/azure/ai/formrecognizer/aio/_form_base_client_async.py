@@ -31,9 +31,7 @@ class FormRecognizerClientBaseAsync(object):
     ) -> None:
         self._endpoint = endpoint
         self._credential = credential
-        self._api_version = kwargs.pop(
-            "api_version", FormRecognizerApiVersion.V2_1
-        )
+        self._api_version = kwargs.pop("api_version", FormRecognizerApiVersion.V2_1)
         if self._api_version.startswith("v"):  # v2.0 released with this option
             self._api_version = self._api_version[1:]
         validate_api_version(self._api_version)
@@ -55,7 +53,15 @@ class FormRecognizerClientBaseAsync(object):
             }
         )
         http_logging_policy.allowed_query_params.update(
-            {"includeTextDetails", "locale", "language", "includeKeys", "op", "pages", "readingOrder"}
+            {
+                "includeTextDetails",
+                "locale",
+                "language",
+                "includeKeys",
+                "op",
+                "pages",
+                "readingOrder",
+            }
         )
         self._client = FormRecognizer(
             endpoint=endpoint,

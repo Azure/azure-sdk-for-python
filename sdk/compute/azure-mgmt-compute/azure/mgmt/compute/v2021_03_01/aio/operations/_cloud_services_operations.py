@@ -48,7 +48,7 @@ class CloudServicesOperations:
         resource_group_name: str,
         cloud_service_name: str,
         parameters: Optional["_models.CloudService"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CloudService":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CloudService"]
         error_map = {
@@ -108,7 +108,7 @@ class CloudServicesOperations:
         resource_group_name: str,
         cloud_service_name: str,
         parameters: Optional["_models.CloudService"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.CloudService"]:
         """Create or update a cloud service. Please note some properties can be set only during cloud
         service creation.
@@ -121,8 +121,8 @@ class CloudServicesOperations:
         :type parameters: ~azure.mgmt.compute.v2021_03_01.models.CloudService
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either CloudService or the result of cls(response)
@@ -180,7 +180,7 @@ class CloudServicesOperations:
         resource_group_name: str,
         cloud_service_name: str,
         parameters: Optional["_models.CloudServiceUpdate"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CloudService":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CloudService"]
         error_map = {
@@ -236,7 +236,7 @@ class CloudServicesOperations:
         resource_group_name: str,
         cloud_service_name: str,
         parameters: Optional["_models.CloudServiceUpdate"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.CloudService"]:
         """Update a cloud service.
 
@@ -248,8 +248,8 @@ class CloudServicesOperations:
         :type parameters: ~azure.mgmt.compute.v2021_03_01.models.CloudServiceUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either CloudService or the result of cls(response)
@@ -306,7 +306,7 @@ class CloudServicesOperations:
         self,
         resource_group_name: str,
         cloud_service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -350,7 +350,7 @@ class CloudServicesOperations:
         self,
         resource_group_name: str,
         cloud_service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a cloud service.
 
@@ -360,8 +360,8 @@ class CloudServicesOperations:
         :type cloud_service_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -414,7 +414,7 @@ class CloudServicesOperations:
         self,
         resource_group_name: str,
         cloud_service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CloudService":
         """Display information about a cloud service.
 
@@ -472,7 +472,7 @@ class CloudServicesOperations:
         self,
         resource_group_name: str,
         cloud_service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CloudServiceInstanceView":
         """Gets the status of a cloud service.
 
@@ -528,7 +528,7 @@ class CloudServicesOperations:
 
     def list_all(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CloudServiceListResult"]:
         """Gets a list of all cloud services in the subscription, regardless of the associated resource
         group. Use nextLink property in the response to get the next page of Cloud Services. Do this
@@ -597,7 +597,7 @@ class CloudServicesOperations:
     def list(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CloudServiceListResult"]:
         """Gets a list of all cloud services under a resource group. Use nextLink property in the response
         to get the next page of Cloud Services. Do this till nextLink is null to fetch all the Cloud
@@ -670,7 +670,7 @@ class CloudServicesOperations:
         self,
         resource_group_name: str,
         cloud_service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -714,7 +714,7 @@ class CloudServicesOperations:
         self,
         resource_group_name: str,
         cloud_service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Starts the cloud service.
 
@@ -724,8 +724,8 @@ class CloudServicesOperations:
         :type cloud_service_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -778,7 +778,7 @@ class CloudServicesOperations:
         self,
         resource_group_name: str,
         cloud_service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -822,7 +822,7 @@ class CloudServicesOperations:
         self,
         resource_group_name: str,
         cloud_service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Power off the cloud service. Note that resources are still attached and you are getting charged
         for the resources.
@@ -833,8 +833,8 @@ class CloudServicesOperations:
         :type cloud_service_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -888,7 +888,7 @@ class CloudServicesOperations:
         resource_group_name: str,
         cloud_service_name: str,
         parameters: Optional["_models.RoleInstances"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -941,7 +941,7 @@ class CloudServicesOperations:
         resource_group_name: str,
         cloud_service_name: str,
         parameters: Optional["_models.RoleInstances"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Restarts one or more role instances in a cloud service.
 
@@ -953,8 +953,8 @@ class CloudServicesOperations:
         :type parameters: ~azure.mgmt.compute.v2021_03_01.models.RoleInstances
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -1009,7 +1009,7 @@ class CloudServicesOperations:
         resource_group_name: str,
         cloud_service_name: str,
         parameters: Optional["_models.RoleInstances"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -1062,7 +1062,7 @@ class CloudServicesOperations:
         resource_group_name: str,
         cloud_service_name: str,
         parameters: Optional["_models.RoleInstances"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Reimage asynchronous operation reinstalls the operating system on instances of web roles or
         worker roles.
@@ -1075,8 +1075,8 @@ class CloudServicesOperations:
         :type parameters: ~azure.mgmt.compute.v2021_03_01.models.RoleInstances
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -1131,7 +1131,7 @@ class CloudServicesOperations:
         resource_group_name: str,
         cloud_service_name: str,
         parameters: Optional["_models.RoleInstances"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -1184,7 +1184,7 @@ class CloudServicesOperations:
         resource_group_name: str,
         cloud_service_name: str,
         parameters: Optional["_models.RoleInstances"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Rebuild Role Instances reinstalls the operating system on instances of web roles or worker
         roles and initializes the storage resources that are used by them. If you do not want to
@@ -1198,8 +1198,8 @@ class CloudServicesOperations:
         :type parameters: ~azure.mgmt.compute.v2021_03_01.models.RoleInstances
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -1254,7 +1254,7 @@ class CloudServicesOperations:
         resource_group_name: str,
         cloud_service_name: str,
         parameters: Optional["_models.RoleInstances"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -1307,7 +1307,7 @@ class CloudServicesOperations:
         resource_group_name: str,
         cloud_service_name: str,
         parameters: Optional["_models.RoleInstances"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes role instances in a cloud service.
 
@@ -1319,8 +1319,8 @@ class CloudServicesOperations:
         :type parameters: ~azure.mgmt.compute.v2021_03_01.models.RoleInstances
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)

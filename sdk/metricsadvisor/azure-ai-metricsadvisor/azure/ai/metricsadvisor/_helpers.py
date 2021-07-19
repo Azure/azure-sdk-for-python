@@ -24,7 +24,11 @@ from .models import (
     ChangePointFeedback,
     CommentFeedback,
     PeriodFeedback,
-    DataFeedRollupType
+    DataFeedRollupType,
+    DatasourceSqlConnectionString,
+    DatasourceDataLakeGen2SharedKey,
+    DatasourceServicePrincipal,
+    DatasourceServicePrincipalInKeyVault
 )
 from ._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
 from ._metrics_advisor_key_credential_policy import MetricsAdvisorKeyCredentialPolicy
@@ -46,7 +50,7 @@ def construct_alert_config_dict(update_kwargs):
 def construct_detection_config_dict(update_kwargs):
 
     if "wholeMetricConfiguration" in update_kwargs:
-        update_kwargs["wholeMetricConfiguration"] = update_kwargs["wholeMetricConfiguration"]._to_generated() \
+        update_kwargs["wholeMetricConfiguration"] = update_kwargs["wholeMetricConfiguration"]._to_generated_patch() \
             if update_kwargs["wholeMetricConfiguration"] else None
     if "dimensionGroupOverrideConfigurations" in update_kwargs:
         update_kwargs["dimensionGroupOverrideConfigurations"] = [
@@ -91,6 +95,8 @@ def construct_data_feed_dict(update_kwargs):
         update_kwargs["dataStartFrom"] = Serializer.serialize_iso(update_kwargs["dataStartFrom"])
 
     if "dataSourceParameter" in update_kwargs:
+        update_kwargs["authenticationType"] = update_kwargs["dataSourceParameter"].authentication_type
+        update_kwargs["credentialId"] = update_kwargs["dataSourceParameter"].credential_id
         update_kwargs["dataSourceParameter"] = update_kwargs["dataSourceParameter"]._to_generated_patch()
     return update_kwargs
 
@@ -102,33 +108,50 @@ def convert_to_generated_data_feed_type(
         granularity,
         schema,
         ingestion_settings,
-        options
+        admins=None,
+        data_feed_description=None,
+        missing_data_point_fill_settings=None,
+        rollup_settings=None,
+        viewers=None,
+        access_mode=None,
+        action_link_template=None
 ):
     """Convert input to data feed generated model type
 
     :param generated_feed_type: generated model type of data feed
     :type generated_feed_type: Union[AzureApplicationInsightsDataFeed, AzureBlobDataFeed, AzureCosmosDBDataFeed,
-        AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, HttpRequestDataFeed,
+        AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, AzureLogAnalyticsDataFeed,
         InfluxDBDataFeed, MySqlDataFeed, PostgreSqlDataFeed, SQLServerDataFeed, MongoDBDataFeed,
-        ElasticsearchDataFeed]
+        AzureEventHubsDataFeed]
     :param str name: Name for the data feed.
     :param source: The exposed model source of the data feed
-    :type source: Union[AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource, AzureCosmosDBDataFeedSource,
+    :type source: Union[AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource, AzureCosmosDbDataFeedSource,
         AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource, AzureTableDataFeedSource,
-        HttpRequestDataFeedSource, InfluxDBDataFeedSource, MySqlDataFeedSource, PostgreSqlDataFeedSource,
-        SQLServerDataFeedSource, MongoDBDataFeedSource, ElasticsearchDataFeedSource]
+        AzureLogAnalyticsDataFeedSource, InfluxDbDataFeedSource, MySqlDataFeedSource, PostgreSqlDataFeedSource,
+        SqlServerDataFeedSource, MongoDbDataFeedSource, AzureEventHubsDataFeedSource]
     :param granularity: Granularity type and amount if using custom.
     :type granularity: ~azure.ai.metricsadvisor.models.DataFeedGranularity
     :param schema: Data feed schema
     :type schema: ~azure.ai.metricsadvisor.models.DataFeedSchema
     :param ingestion_settings: The data feed ingestions settings
     :type ingestion_settings: ~azure.ai.metricsadvisor.models.DataFeedIngestionSettings
-    :param options: Data feed options.
-    :type options: ~azure.ai.metricsadvisor.models.DataFeedOptions
+    :param list[str] admins: Data feed administrators.
+    :param str data_feed_description: Data feed description.
+    :param missing_data_point_fill_settings: The fill missing point type and value.
+    :type missing_data_point_fill_settings:
+        ~azure.ai.metricsadvisor.models.DataFeedMissingDataPointFillSettings
+    :param rollup_settings: The rollup settings.
+    :type rollup_settings:
+        ~azure.ai.metricsadvisor.models.DataFeedRollupSettings
+    :param list[str] viewers: Data feed viewers.
+    :param access_mode: Data feed access mode. Possible values include:
+        "Private", "Public". Default value: "Private".
+    :type access_mode: str or ~azure.ai.metricsadvisor.models.DataFeedAccessMode
+    :param str action_link_template: action link for alert.
     :rtype: Union[AzureApplicationInsightsDataFeed, AzureBlobDataFeed, AzureCosmosDBDataFeed,
-        AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, HttpRequestDataFeed,
+        AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, AzureLogAnalyticsDataFeed,
         InfluxDBDataFeed, MySqlDataFeed, PostgreSqlDataFeed, SQLServerDataFeed, MongoDBDataFeed,
-        ElasticsearchDataFeed]
+        AzureEventHubsDataFeed]
     :return: The generated model for the data source type
     """
 
@@ -148,7 +171,9 @@ def convert_to_generated_data_feed_type(
         )
 
     return generated_feed_type(
-        data_source_parameter=source.__dict__,
+        data_source_parameter=source._to_generated(),
+        authentication_type=source.authentication_type,
+        credential_id=source.credential_id,
         data_feed_name=name,
         granularity_name=granularity.granularity_type,
         granularity_amount=granularity.custom_granularity_value,
@@ -160,22 +185,22 @@ def convert_to_generated_data_feed_type(
         min_retry_interval_in_seconds=ingestion_settings.ingestion_retry_delay,
         start_offset_in_seconds=ingestion_settings.ingestion_start_offset,
         stop_retry_after_in_seconds=ingestion_settings.stop_retry_after,
-        data_feed_description=options.data_feed_description if options else None,
-        need_rollup=DataFeedRollupType._to_generated(options.rollup_settings.rollup_type)
-        if options and options.rollup_settings else None,
-        roll_up_method=options.rollup_settings.rollup_method if options and options.rollup_settings else None,
-        roll_up_columns=options.rollup_settings.auto_rollup_group_by_column_names
-        if options and options.rollup_settings else None,
-        all_up_identification=options.rollup_settings.rollup_identification_value
-        if options and options.rollup_settings else None,
-        fill_missing_point_type=options.missing_data_point_fill_settings.fill_type
-        if options and options.missing_data_point_fill_settings else None,
-        fill_missing_point_value=options.missing_data_point_fill_settings.custom_fill_value
-        if options and options.missing_data_point_fill_settings else None,
-        viewers=options.viewer_emails if options else None,
-        view_mode=options.access_mode if options else None,
-        admins=options.admin_emails if options else None,
-        action_link_template=options.action_link_template if options else None
+        data_feed_description=data_feed_description,
+        need_rollup=DataFeedRollupType._to_generated(rollup_settings.rollup_type)
+        if rollup_settings else None,
+        roll_up_method=rollup_settings.rollup_method if rollup_settings else None,
+        roll_up_columns=rollup_settings.auto_rollup_group_by_column_names
+        if rollup_settings else None,
+        all_up_identification=rollup_settings.rollup_identification_value
+        if rollup_settings else None,
+        fill_missing_point_type=missing_data_point_fill_settings.fill_type
+        if missing_data_point_fill_settings else None,
+        fill_missing_point_value=missing_data_point_fill_settings.custom_fill_value
+        if missing_data_point_fill_settings else None,
+        viewers=viewers,
+        view_mode=access_mode,
+        admins=admins,
+        action_link_template=action_link_template
     )
 
 def convert_to_sub_feedback(feedback):
@@ -217,3 +242,12 @@ def get_authentication_policy(credential):
         )
 
     return authentication_policy
+
+def convert_to_datasource_credential(datasource_credential):
+    if datasource_credential.data_source_credential_type == "AzureSQLConnectionString":
+        return DatasourceSqlConnectionString._from_generated(datasource_credential)
+    if datasource_credential.data_source_credential_type == "DataLakeGen2SharedKey":
+        return DatasourceDataLakeGen2SharedKey._from_generated(datasource_credential)
+    if datasource_credential.data_source_credential_type == "ServicePrincipal":
+        return DatasourceServicePrincipal._from_generated(datasource_credential)
+    return DatasourceServicePrincipalInKeyVault._from_generated(datasource_credential)

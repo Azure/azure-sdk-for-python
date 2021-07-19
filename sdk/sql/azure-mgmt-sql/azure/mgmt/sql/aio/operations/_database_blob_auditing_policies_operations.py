@@ -46,7 +46,7 @@ class DatabaseBlobAuditingPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DatabaseBlobAuditingPolicy":
         """Gets a database's blob auditing policy.
 
@@ -112,7 +112,7 @@ class DatabaseBlobAuditingPoliciesOperations:
         server_name: str,
         database_name: str,
         parameters: "_models.DatabaseBlobAuditingPolicy",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DatabaseBlobAuditingPolicy":
         """Creates or updates a database's blob auditing policy.
 
@@ -188,7 +188,7 @@ class DatabaseBlobAuditingPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DatabaseBlobAuditingPolicyListResult"]:
         """Lists auditing settings of a database.
 

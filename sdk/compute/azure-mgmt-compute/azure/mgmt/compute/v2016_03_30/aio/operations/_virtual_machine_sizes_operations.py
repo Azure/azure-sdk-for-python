@@ -44,7 +44,7 @@ class VirtualMachineSizesOperations:
     def list(
         self,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.VirtualMachineSizeListResult"]:
         """Lists all available virtual machine sizes for a subscription in a location.
 

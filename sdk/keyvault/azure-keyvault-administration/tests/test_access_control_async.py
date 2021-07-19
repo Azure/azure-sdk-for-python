@@ -76,33 +76,35 @@ class AccessControlTests(KeyVaultTestCase):
         # create custom role definition
         role_name = self.get_resource_name("role-name")
         definition_name = self.get_replayable_uuid("definition-name")
-        permissions = [KeyVaultPermission(allowed_data_actions=[KeyVaultDataAction.READ_HSM_KEY])]
+        permissions = [KeyVaultPermission(data_actions=[KeyVaultDataAction.READ_HSM_KEY])]
         created_definition = await client.set_role_definition(
-            role_scope=scope,
-            permissions=permissions,
+            scope=scope,
+            name=definition_name,
             role_name=role_name,
-            role_definition_name=definition_name,
-            description="test"
+            description="test",
+            permissions=permissions
         )
         assert "/" in created_definition.assignable_scopes
         assert created_definition.role_name == role_name
         assert created_definition.name == definition_name
         assert created_definition.description == "test"
         assert len(created_definition.permissions) == 1
-        assert created_definition.permissions[0].allowed_data_actions == [KeyVaultDataAction.READ_HSM_KEY]
+        assert created_definition.permissions[0].data_actions == [KeyVaultDataAction.READ_HSM_KEY]
+        assert created_definition.assignable_scopes == [KeyVaultRoleScope.GLOBAL]
 
         # update custom role definition
         permissions = [
-            KeyVaultPermission(allowed_data_actions=[], denied_data_actions=[KeyVaultDataAction.READ_HSM_KEY])
+            KeyVaultPermission(data_actions=[], not_data_actions=[KeyVaultDataAction.READ_HSM_KEY])
         ]
         updated_definition = await client.set_role_definition(
-            role_scope=scope, permissions=permissions, role_definition_name=definition_name
+            scope=scope, name=definition_name, permissions=permissions
         )
         assert updated_definition.role_name == ""
         assert updated_definition.description == ""
         assert len(updated_definition.permissions) == 1
-        assert len(updated_definition.permissions[0].allowed_data_actions) == 0
-        assert updated_definition.permissions[0].denied_data_actions == [KeyVaultDataAction.READ_HSM_KEY]
+        assert len(updated_definition.permissions[0].data_actions) == 0
+        assert updated_definition.permissions[0].not_data_actions == [KeyVaultDataAction.READ_HSM_KEY]
+        assert updated_definition.assignable_scopes == [KeyVaultRoleScope.GLOBAL]
 
         # assert that the created role definition isn't duplicated
         matching_definitions = []
@@ -112,15 +114,14 @@ class AccessControlTests(KeyVaultTestCase):
         assert len(matching_definitions) == 1
 
         # get custom role definition
-        definition = await client.get_role_definition(role_scope=scope, role_definition_name=definition_name)
+        definition = await client.get_role_definition(scope=scope, name=definition_name)
         assert_role_definitions_equal(definition, updated_definition)
 
         # delete custom role definition
-        deleted_definition = await client.delete_role_definition(scope, definition_name)
-        assert_role_definitions_equal(deleted_definition, definition)
+        await client.delete_role_definition(scope, definition_name)
 
-        async for definition in client.list_role_definitions(scope):
-            assert (definition.id != deleted_definition.id), "the role definition should have been deleted"
+        async for d in client.list_role_definitions(scope):
+            assert (d.id != definition.id), "the role definition should have been deleted"
 
     @AzureTestCase.await_prepared_test
     async def test_role_assignment(self):
@@ -136,18 +137,18 @@ class AccessControlTests(KeyVaultTestCase):
         principal_id = self.get_service_principal_id()
         name = self.get_replayable_uuid("some-uuid")
 
-        created = await client.create_role_assignment(scope, definition.id, principal_id, role_assignment_name=name)
+        created = await client.create_role_assignment(scope, definition.id, principal_id, name=name)
         assert created.name == name
-        assert created.principal_id == principal_id
-        assert created.role_definition_id == definition.id
-        assert created.scope == scope
+        assert created.properties.principal_id == principal_id
+        assert created.properties.role_definition_id == definition.id
+        assert created.properties.scope == scope
 
         # should be able to get the new assignment
         got = await client.get_role_assignment(scope, name)
         assert got.name == name
-        assert got.principal_id == principal_id
-        assert got.role_definition_id == definition.id
-        assert got.scope == scope
+        assert got.properties.principal_id == principal_id
+        assert got.properties.role_definition_id == definition.id
+        assert got.properties.scope == scope
 
         # new assignment should be in the list of all assignments
         matching_assignments = []
@@ -157,11 +158,7 @@ class AccessControlTests(KeyVaultTestCase):
         assert len(matching_assignments) == 1
 
         # delete the assignment
-        deleted = await client.delete_role_assignment(scope, created.name)
-        assert deleted.name == created.name
-        assert deleted.role_assignment_id == created.role_assignment_id
-        assert deleted.scope == scope
-        assert deleted.role_definition_id == created.role_definition_id
+        await client.delete_role_assignment(scope, created.name)
 
         async for assignment in client.list_role_assignments(scope):
             assert (

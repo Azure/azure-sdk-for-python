@@ -10,15 +10,15 @@ import functools
 
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
-from testcase import TextAnalyticsTest, GlobalTextAnalyticsAccountPreparer
+from testcase import TextAnalyticsTest, TextAnalyticsPreparer
 from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from azure.ai.textanalytics import (
     TextAnalyticsClient,
     TextDocumentInput,
     VERSION,
     TextAnalyticsApiVersion,
-    PiiEntityDomainType,
-    PiiEntityCategoryType
+    PiiEntityDomain,
+    PiiEntityCategory
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -27,13 +27,13 @@ TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, Te
 
 class TestRecognizePIIEntities(TextAnalyticsTest):
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_no_single_input(self, client):
         with self.assertRaises(TypeError):
             response = client.recognize_pii_entities("hello world")
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_all_successful_passing_dict(self, client):
 
@@ -58,7 +58,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
                 self.assertIsNotNone(entity.offset)
                 self.assertIsNotNone(entity.confidence_score)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_all_successful_passing_text_document_input(self, client):
         docs = [
@@ -84,7 +84,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
                 self.assertIsNotNone(entity.offset)
                 self.assertIsNotNone(entity.confidence_score)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_passing_only_string(self, client):
         docs = [
@@ -105,7 +105,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         # self.assertEqual(response[2].entities[0].category, "Brazil CPF Number")
         self.assertTrue(response[3].is_error)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_input_with_some_errors(self, client):
         docs = [{"id": "1", "language": "notalanguage", "text": "hola"},
@@ -117,7 +117,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         self.assertTrue(response[1].is_error)
         # self.assertFalse(response[2].is_error)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_input_with_all_errors(self, client):
         docs = [{"id": "1", "text": ""},
@@ -129,7 +129,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         self.assertTrue(response[1].is_error)
         self.assertTrue(response[2].is_error)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_too_many_documents(self, client):
         docs = ["One", "Two", "Three", "Four", "Five", "Six"]
@@ -140,7 +140,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         assert excinfo.value.error.code == "InvalidDocumentBatch"
         assert "Batch request contains too many records" in str(excinfo.value)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_output_same_order_as_input(self, client):
         docs = [
@@ -156,23 +156,23 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         for idx, doc in enumerate(response):
             self.assertEqual(str(idx + 1), doc.id)
 
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": ""})
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"textanalytics_test_api_key": ""})
     def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
             response = client.recognize_pii_entities(
                 ["This is written in English."]
             )
 
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": "xxxxxxxxxxxx"})
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"textanalytics_test_api_key": "xxxxxxxxxxxx"})
     def test_bad_credentials(self, client):
         with self.assertRaises(ClientAuthenticationError):
             response = client.recognize_pii_entities(
                 ["This is written in English."]
             )
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_bad_document_input(self, client):
         docs = "This is the wrong type"
@@ -180,7 +180,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         with self.assertRaises(TypeError):
             response = client.recognize_pii_entities(docs)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_mixing_inputs(self, client):
         docs = [
@@ -191,7 +191,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         with self.assertRaises(TypeError):
             response = client.recognize_pii_entities(docs)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_out_of_order_ids(self, client):
         docs = [{"id": "56", "text": ":)"},
@@ -205,7 +205,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         for idx, resp in enumerate(response):
             self.assertEqual(resp.id, in_order[idx])
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_show_stats_and_model_version(self, client):
         def callback(response):
@@ -230,14 +230,14 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
             raw_response_hook=callback
         )
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_batch_size_over_limit(self, client):
         docs = [u"hello world"] * 1050
         with self.assertRaises(HttpResponseError):
             response = client.recognize_pii_entities(docs)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_whole_batch_language_hint(self, client):
         def callback(resp):
@@ -253,7 +253,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
 
         response = client.recognize_pii_entities(docs, language="fr", raw_response_hook=callback)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_whole_batch_dont_use_language_hint(self, client):
         def callback(resp):
@@ -269,7 +269,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
 
         response = client.recognize_pii_entities(docs, language="", raw_response_hook=callback)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_per_item_dont_use_language_hint(self, client):
         def callback(resp):
@@ -287,7 +287,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
 
         response = client.recognize_pii_entities(docs, raw_response_hook=callback)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_whole_batch_language_hint_and_obj_input(self, client):
         def callback(resp):
@@ -303,7 +303,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
 
         response = client.recognize_pii_entities(docs, language="de", raw_response_hook=callback)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_whole_batch_language_hint_and_obj_per_item_hints(self, client):
         def callback(resp):
@@ -322,7 +322,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
 
         response = client.recognize_pii_entities(docs, language="en", raw_response_hook=callback)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_whole_batch_language_hint_and_dict_per_item_hints(self, client):
         def callback(resp):
@@ -340,7 +340,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
 
         response = client.recognize_pii_entities(docs, language="en", raw_response_hook=callback)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"default_language": "es"})
     def test_client_passed_default_language_hint(self, client):
         def callback(resp):
@@ -361,7 +361,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         response = client.recognize_pii_entities(docs, language="en", raw_response_hook=callback_2)
         response = client.recognize_pii_entities(docs, raw_response_hook=callback)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_invalid_language_hint_method(self, client):
         response = client.recognize_pii_entities(
@@ -369,7 +369,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         )
         self.assertEqual(response[0].error.code, 'UnsupportedLanguageCode')
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_invalid_language_hint_docs(self, client):
         response = client.recognize_pii_entities(
@@ -377,10 +377,10 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         )
         self.assertEqual(response[0].error.code, 'UnsupportedLanguageCode')
 
-    @GlobalTextAnalyticsAccountPreparer()
-    def test_rotate_subscription_key(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        credential = AzureKeyCredential(text_analytics_account_key)
-        client = TextAnalyticsClient(text_analytics_account, credential)
+    @TextAnalyticsPreparer()
+    def test_rotate_subscription_key(self, textanalytics_test_endpoint, textanalytics_test_api_key):
+        credential = AzureKeyCredential(textanalytics_test_api_key)
+        client = TextAnalyticsClient(textanalytics_test_endpoint, credential)
 
         docs = [{"id": "1", "text": "I will go to the park."},
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
@@ -393,11 +393,11 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         with self.assertRaises(ClientAuthenticationError):
             response = client.recognize_pii_entities(docs)
 
-        credential.update(text_analytics_account_key)  # Authenticate successfully again
+        credential.update(textanalytics_test_api_key)  # Authenticate successfully again
         response = client.recognize_pii_entities(docs)
         self.assertIsNotNone(response)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_user_agent(self, client):
         def callback(resp):
@@ -412,7 +412,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
 
         response = client.recognize_pii_entities(docs, raw_response_hook=callback)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_document_attribute_error_no_result_attribute(self, client):
         docs = [{"id": "1", "text": ""}]
@@ -434,7 +434,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
                 'InvalidDocument - Document text is empty.\n'
             )
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_document_attribute_error_nonexistent_attribute(self, client):
         docs = [{"id": "1", "text": ""}]
@@ -449,7 +449,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
                 '\'DocumentError\' object has no attribute \'attribute_not_on_result_or_error\''
             )
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_bad_model_version_error(self, client):
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
@@ -460,7 +460,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
             self.assertEqual(err.error.code, "ModelVersionIncorrect")
             self.assertIsNotNone(err.error.message)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_document_errors(self, client):
         text = ""
@@ -479,7 +479,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         self.assertEqual(doc_errors[2].error.code, "InvalidDocument")
         self.assertIsNotNone(doc_errors[2].error.message)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_document_warnings(self, client):
         # No warnings actually returned for recognize_pii_entities. Will update when they add
@@ -492,7 +492,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
             doc_warnings = doc.warnings
             self.assertEqual(len(doc_warnings), 0)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_not_passing_list_for_docs(self, client):
         docs = {"id": "1", "text": "hello world"}
@@ -500,7 +500,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
             client.recognize_pii_entities(docs)
         assert "Input documents cannot be a dict" in str(excinfo.value)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_missing_input_records_error(self, client):
         docs = []
@@ -508,14 +508,14 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
             client.recognize_pii_entities(docs)
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_passing_none_docs(self, client):
         with pytest.raises(ValueError) as excinfo:
             client.recognize_pii_entities(None)
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_duplicate_ids_error(self, client):
         # Duplicate Ids
@@ -527,7 +527,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
             self.assertEqual(err.error.code, "InvalidDocument")
             self.assertIsNotNone(err.error.message)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_batch_size_over_limit_error(self, client):
         # Batch size over limit
@@ -539,7 +539,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
             self.assertIsNotNone(err.error.message)
 
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_pass_cls(self, client):
         def callback(pipeline_response, deserialized, _):
@@ -550,7 +550,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         )
         assert res == "cls result"
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_language_kwarg_english(self, client):
         def callback(response):
@@ -567,29 +567,29 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
             raw_response_hook=callback
         )
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
     def test_recognize_pii_entities_v3(self, client):
         with pytest.raises(ValueError) as excinfo:
             client.recognize_pii_entities(["this should fail"])
 
-        assert "'recognize_pii_entities' endpoint is only available for API version V3_1_PREVIEW and up" in str(excinfo.value)
+        assert "'recognize_pii_entities' endpoint is only available for API version V3_1 and up" in str(excinfo.value)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_redacted_text(self, client):
         result = client.recognize_pii_entities(["My SSN is 859-98-0987."])
         self.assertEqual("My SSN is ***********.", result[0].redacted_text)
 
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_phi_domain_filter(self, client):
         # without the domain filter, this should return two entities: Microsoft as an org,
         # and the phone number. With the domain filter, it should only return one.
         result = client.recognize_pii_entities(
             ["I work at Microsoft and my phone number is 333-333-3333"],
-            domain_filter=PiiEntityDomainType.PROTECTED_HEALTH_INFORMATION
+            domain_filter=PiiEntityDomain.PROTECTED_HEALTH_INFORMATION
         )
         self.assertEqual(len(result[0].entities), 2)
         microsoft = list(filter(lambda x: x.text == "Microsoft", result[0].entities))[0]
@@ -597,7 +597,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         self.assertEqual(phone.category, "PhoneNumber")
         self.assertEqual(microsoft.category, "Organization")
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_categories_filter(self, client):
         result = client.recognize_pii_entities(
@@ -608,35 +608,35 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
 
         result = client.recognize_pii_entities(
             ["My name is Inigo Montoya, my SSN in 243-56-0987 and my phone number is 333-3333."],
-            categories_filter=[PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER]
+            categories_filter=[PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER]
         )
 
         self.assertEqual(len(result[0].entities), 1)
         entity = result[0].entities[0]
-        self.assertEqual(entity.category, PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER.value)
+        self.assertEqual(entity.category, PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER.value)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_categories_filter_with_domain_filter(self, client):
         # Currently there seems to be no effective difference with or without the PHI domain filter.
         result = client.recognize_pii_entities(
             ["My name is Inigo Montoya, my SSN in 243-56-0987 and my phone number is 333-3333."],
-            categories_filter=[PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER],
-            domain_filter=PiiEntityDomainType.PROTECTED_HEALTH_INFORMATION
+            categories_filter=[PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER],
+            domain_filter=PiiEntityDomain.PROTECTED_HEALTH_INFORMATION
         )
 
         self.assertEqual(len(result[0].entities), 1)
         entity = result[0].entities[0]
-        self.assertEqual(entity.category, PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER.value)
+        self.assertEqual(entity.category, PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER.value)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
     def test_string_index_type_explicit_fails_v3(self, client):
         with pytest.raises(ValueError) as excinfo:
             client.recognize_pii_entities(["this should fail"], string_index_type="UnicodeCodePoint")
-        assert "'string_index_type' is only available for API version V3_1_PREVIEW and up" in str(excinfo.value)
+        assert "'string_index_type' is only available for API version V3_1 and up" in str(excinfo.value)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_default_string_index_type_is_UnicodeCodePoint(self, client):
         def callback(response):
@@ -647,7 +647,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
             raw_response_hook=callback
         )
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_explicit_set_string_index_type(self, client):
         def callback(response):
@@ -659,7 +659,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
             raw_response_hook=callback
         )
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_disable_service_logs(self, client):
         def callback(resp):

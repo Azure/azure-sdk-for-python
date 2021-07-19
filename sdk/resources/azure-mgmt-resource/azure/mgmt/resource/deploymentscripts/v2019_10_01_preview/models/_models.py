@@ -162,7 +162,7 @@ class AzureCliScript(DeploymentScript):
     :ivar status: Contains the results of script execution.
     :vartype status: ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptStatus
     :ivar outputs: List of script outputs.
-    :vartype outputs: dict[str, str]
+    :vartype outputs: dict[str, any]
     :param primary_script_uri: Uri for the script. This is the entry point for the external script.
     :type primary_script_uri: str
     :param supporting_script_uris: Supporting files for the external script.
@@ -219,7 +219,7 @@ class AzureCliScript(DeploymentScript):
         'cleanup_preference': {'key': 'properties.cleanupPreference', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'ScriptStatus'},
-        'outputs': {'key': 'properties.outputs', 'type': '{str}'},
+        'outputs': {'key': 'properties.outputs', 'type': '{object}'},
         'primary_script_uri': {'key': 'properties.primaryScriptUri', 'type': 'str'},
         'supporting_script_uris': {'key': 'properties.supportingScriptUris', 'type': '[str]'},
         'script_content': {'key': 'properties.scriptContent', 'type': 'str'},
@@ -338,7 +338,7 @@ class DeploymentScriptPropertiesBase(msrest.serialization.Model):
     :ivar status: Contains the results of script execution.
     :vartype status: ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptStatus
     :ivar outputs: List of script outputs.
-    :vartype outputs: dict[str, str]
+    :vartype outputs: dict[str, any]
     """
 
     _validation = {
@@ -353,7 +353,7 @@ class DeploymentScriptPropertiesBase(msrest.serialization.Model):
         'cleanup_preference': {'key': 'cleanupPreference', 'type': 'str'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'status': {'key': 'status', 'type': 'ScriptStatus'},
-        'outputs': {'key': 'outputs', 'type': '{str}'},
+        'outputs': {'key': 'outputs', 'type': '{object}'},
     }
 
     def __init__(
@@ -417,7 +417,7 @@ class AzureCliScriptProperties(DeploymentScriptPropertiesBase, ScriptConfigurati
     :ivar status: Contains the results of script execution.
     :vartype status: ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptStatus
     :ivar outputs: List of script outputs.
-    :vartype outputs: dict[str, str]
+    :vartype outputs: dict[str, any]
     :param az_cli_version: Required. Azure CLI module version to be used.
     :type az_cli_version: str
     """
@@ -445,7 +445,7 @@ class AzureCliScriptProperties(DeploymentScriptPropertiesBase, ScriptConfigurati
         'cleanup_preference': {'key': 'cleanupPreference', 'type': 'str'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'status': {'key': 'status', 'type': 'ScriptStatus'},
-        'outputs': {'key': 'outputs', 'type': '{str}'},
+        'outputs': {'key': 'outputs', 'type': '{object}'},
         'az_cli_version': {'key': 'azCliVersion', 'type': 'str'},
     }
 
@@ -519,7 +519,7 @@ class AzurePowerShellScript(DeploymentScript):
     :ivar status: Contains the results of script execution.
     :vartype status: ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptStatus
     :ivar outputs: List of script outputs.
-    :vartype outputs: dict[str, str]
+    :vartype outputs: dict[str, any]
     :param primary_script_uri: Uri for the script. This is the entry point for the external script.
     :type primary_script_uri: str
     :param supporting_script_uris: Supporting files for the external script.
@@ -576,7 +576,7 @@ class AzurePowerShellScript(DeploymentScript):
         'cleanup_preference': {'key': 'properties.cleanupPreference', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'ScriptStatus'},
-        'outputs': {'key': 'properties.outputs', 'type': '{str}'},
+        'outputs': {'key': 'properties.outputs', 'type': '{object}'},
         'primary_script_uri': {'key': 'properties.primaryScriptUri', 'type': 'str'},
         'supporting_script_uris': {'key': 'properties.supportingScriptUris', 'type': '[str]'},
         'script_content': {'key': 'properties.scriptContent', 'type': 'str'},
@@ -659,7 +659,7 @@ class AzurePowerShellScriptProperties(DeploymentScriptPropertiesBase, ScriptConf
     :ivar status: Contains the results of script execution.
     :vartype status: ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptStatus
     :ivar outputs: List of script outputs.
-    :vartype outputs: dict[str, str]
+    :vartype outputs: dict[str, any]
     :param az_power_shell_version: Required. Azure PowerShell module version to be used.
     :type az_power_shell_version: str
     """
@@ -687,7 +687,7 @@ class AzurePowerShellScriptProperties(DeploymentScriptPropertiesBase, ScriptConf
         'cleanup_preference': {'key': 'cleanupPreference', 'type': 'str'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'status': {'key': 'status', 'type': 'ScriptStatus'},
-        'outputs': {'key': 'outputs', 'type': '{str}'},
+        'outputs': {'key': 'outputs', 'type': '{object}'},
         'az_power_shell_version': {'key': 'azPowerShellVersion', 'type': 'str'},
     }
 
@@ -873,7 +873,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: str
+    :vartype info: any
     """
 
     _validation = {
@@ -883,7 +883,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
     }
 
     def __init__(

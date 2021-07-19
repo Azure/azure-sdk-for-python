@@ -1,26 +1,31 @@
 # Release History
 
-## 11.2.0b4 (Unreleased)
+## 11.3.0b2 (Unreleased)
 
+### Features Added
 
-## 11.2.0b3 (2021-05-11)
+### Breaking Changes
 
-### New features
+### Bugs Fixed
+
+### Other Changes
+
+## 11.3.0b1 (2021-07-07)
+
+### Features Added
+
+- Added AAD support
+- Added support for semantic search
+- Added normalizer support
+
+## 11.2.0 (2021-06-08)
+
+This version will be the last version to officially support Python 3.5, future versions will require Python 2.7 or Python 3.6+.
+
+**New features**
 
 - Added support for knowledge store    #18461
-
-## 11.2.0b2 (2021-04-13)
-
-### New features
-
-- Added support for semantic search    #17638
-
-## 11.2.0b1 (2021-04-06)
-
-### New features
-
 - Added new data source type ADLS gen2  #16852
-- Added normalizer support  #17579
 
 ## 11.1.0 (2021-02-10)
 

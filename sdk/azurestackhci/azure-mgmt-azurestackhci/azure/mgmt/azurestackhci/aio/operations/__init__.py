@@ -6,10 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._operations import Operations
+from ._arc_settings_operations import ArcSettingsOperations
 from ._clusters_operations import ClustersOperations
+from ._extensions_operations import ExtensionsOperations
+from ._operations import Operations
 
 __all__ = [
-    'Operations',
+    'ArcSettingsOperations',
     'ClustersOperations',
+    'ExtensionsOperations',
+    'Operations',
 ]

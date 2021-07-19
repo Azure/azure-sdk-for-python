@@ -6,19 +6,20 @@
 # license information.
 # --------------------------------------------------------------------------
 import base64
+import os
 
 import pytest
 
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
+from _shared.testcase import GlobalStorageAccountPreparer
+from devtools_testutils.storage import StorageTestCase
 from azure.storage.blob import (
     BlobServiceClient,
     DelimitedTextDialect,
     DelimitedJsonDialect,
-    BlobQueryError
 )
 
 # ------------------------------------------------------------------------------
-from azure.storage.blob._models import ArrowDialect, ArrowType
+from azure.storage.blob._models import ArrowDialect, ArrowType, QuickQueryDialect
 
 CSV_DATA = b'Service,Package,Version,RepoPath,MissingDocs\r\nApp Configuration,' \
            b'azure-data-appconfiguration,1,appconfiguration,FALSE\r\nEvent Hubs' \
@@ -441,7 +442,7 @@ class StorageQuickQueryTest(StorageTestCase):
         data = []
         for record in resp.records():
             data.append(record)
-        
+
         self.assertEqual(len(errors), 1)
         self.assertEqual(resp._size, 43)
         self.assertEqual(data, [b''])
@@ -935,5 +936,45 @@ class StorageQuickQueryTest(StorageTestCase):
                 "SELECT * from BlobStorage",
                 on_error=on_error,
                 blob_format=input_format)
+
+    @GlobalStorageAccountPreparer()
+    def test_quick_query_input_in_parquet_format(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account, "blob"),
+            credential=storage_account_key)
+        self._setup(bsc)
+        expression = "select * from blobstorage where id < 1;"
+        expected_data = b"0,mdifjt55.ea3,mdifjt55.ea3\n"
+
+        blob_name = self._get_blob_reference()
+        blob_client = bsc.get_blob_client(self.container_name, blob_name)
+        parquet_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./resources/parquet.parquet"))
+        with open(parquet_path, "rb") as parquet_data:
+            blob_client.upload_blob(parquet_data, overwrite=True)
+
+        reader = blob_client.query_blob(expression, blob_format=QuickQueryDialect.ParquetDialect)
+        real_data = reader.readall()
+
+        self.assertEqual(real_data, expected_data)
+
+    @GlobalStorageAccountPreparer()
+    def test_quick_query_output_in_parquet_format(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account, "blob"),
+            credential=storage_account_key)
+        self._setup(bsc)
+        expression = "SELECT * from BlobStorage"
+
+        blob_name = self._get_blob_reference()
+        blob_client = bsc.get_blob_client(self.container_name, blob_name)
+        parquet_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./resources/parquet.parquet"))
+        with open(parquet_path, "rb") as parquet_data:
+            blob_client.upload_blob(parquet_data, overwrite=True)
+
+        with self.assertRaises(ValueError):
+            blob_client.query_blob(
+                expression, blob_format="ParquetDialect", output_format="ParquetDialect")
 
 # ------------------------------------------------------------------------------

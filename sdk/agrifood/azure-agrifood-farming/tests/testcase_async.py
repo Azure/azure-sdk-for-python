@@ -14,30 +14,30 @@ from azure.core.exceptions import HttpResponseError
 
 class FarmBeatsTestAsync(AzureTestCase):
 
-    def create_client(self, farmbeats_endpoint):
+    def create_client(self, agrifood_endpoint):
         credential = self.get_credential(FarmBeatsClient, is_async=True)
         return self.create_client_from_credential(
             FarmBeatsClient,
-            endpoint=farmbeats_endpoint,
+            endpoint=agrifood_endpoint,
             credential=credential,
         )
 
     def generate_random_name(self, name):
 
         if self.is_live:
-            created_name = "{}-{}".format(name, random.randint(0, 1000))
-            self.scrubber.register_name_pair(name, created_name)
+            created_name = "{}-{}".format(name, random.randint(0, 100000))
+            self.scrubber.register_name_pair(created_name, name)
             return created_name
         return name
 
-    async def create_boundary_if_not_exist(self, client, farmbeats_farmer_id, farmbeats_boundary_id):
+    async def create_boundary_if_not_exist(self, client, farmer_id, boundary_id):
         try:
-            return await client.boundaries.get(farmer_id=farmbeats_farmer_id, boundary_id=farmbeats_boundary_id)
+            return await client.boundaries.get(farmer_id=farmer_id, boundary_id=boundary_id)
         except HttpResponseError:
             return await client.boundaries.create_or_update(
-                farmer_id=farmbeats_farmer_id,
-                boundary_id=farmbeats_boundary_id,
-                body=Boundary(
+                farmer_id=farmer_id,
+                boundary_id=boundary_id,
+                boundary=Boundary(
                     description="Created by SDK",
                     geometry=Polygon(
                         coordinates=[
@@ -55,5 +55,5 @@ class FarmBeatsTestAsync(AzureTestCase):
                 )
             )
 
-    async def delete_boundary(self, client, farmbeats_farmer_id, farmbeats_boundary_id):
-        await client.boundaries.delete(farmer_id=farmbeats_farmer_id, boundary_id=farmbeats_boundary_id)
+    async def delete_boundary(self, client, farmer_id, boundary_id):
+        await client.boundaries.delete(farmer_id=farmer_id, boundary_id=boundary_id)

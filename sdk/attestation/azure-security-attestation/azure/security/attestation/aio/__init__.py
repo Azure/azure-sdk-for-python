@@ -5,18 +5,19 @@
 # --------------------------------------------------------------------------
 
 from ._client_async import AttestationClient
-#from .._administration_client import AttestationAdministrationClient
-from .._generated.models import AttestationType
+from ._administration_client_async import AttestationAdministrationClient
 from .._version import VERSION
 
 __version__ = VERSION
 __all__ = [
-    'AttestationClient', 
-#'AttestationAdministrationClient', 
-    'AttestationType']
+    "AttestationClient",
+    "AttestationAdministrationClient",
+]
+
 
 try:
     from ._patch import patch_sdk  # type: ignore
+
     patch_sdk()
 except ImportError:
     pass

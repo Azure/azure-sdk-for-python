@@ -19,7 +19,7 @@ from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 from _shared.testcase import GlobalStorageAccountPreparer
-from _shared.asynctestcase import AsyncStorageTestCase
+from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 # ------------------------------------------------------------------------------
 SERVICES = {
@@ -602,5 +602,5 @@ class StorageClientTestAsync(AsyncStorageTestCase):
             service = client(
                 self.account_url(storage_account, "blob"), credential=storage_account_key, container_name='foo', blob_name='bar')
             await service.close()
-                
+
 # ------------------------------------------------------------------------------

@@ -29,7 +29,8 @@ from azure.storage.blob import (
     BlobImmutabilityPolicyMode)
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
+from _shared.testcase import GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
+from devtools_testutils.storage import StorageTestCase
 
 #------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'

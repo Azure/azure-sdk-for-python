@@ -44,10 +44,10 @@ class VirtualMachineSizesOperations:
     def list(
         self,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.VirtualMachineSizeListResult"]:
-        """This API is deprecated. Use `Resources Skus <https://docs.microsoft.com/en-
-        us/rest/api/compute/resourceskus/list>`_.
+        """This API is deprecated. Use `Resources Skus
+        <https://docs.microsoft.com/en-us/rest/api/compute/resourceskus/list>`_.
 
         :param location: The location upon which virtual-machine-sizes is queried.
         :type location: str

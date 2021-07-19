@@ -10,7 +10,7 @@ from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 from .._generated.aio import ContainerRegistry
-from .._helpers import _parse_challenge
+from .._helpers import _parse_challenge, _parse_exp_time
 from .._user_agent import USER_AGENT
 
 if TYPE_CHECKING:
@@ -40,18 +40,17 @@ class ACRExchangeClient(object):
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
-        self._credential_scope = "https://management.core.windows.net/.default"
+        self.credential_scopes = kwargs.get("credential_scopes", ["https://management.core.windows.net/.default"])
         self._client = ContainerRegistry(
             credential=credential,
             url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=ExchangeClientAuthenticationPolicy(),
-            credential_scopes=kwargs.pop("credential_scopes", self._credential_scope),
             **kwargs
         )
         self._credential = credential
         self._refresh_token = None
-        self._last_refresh_time = None
+        self._expiration_time = 0
 
     async def get_acr_access_token(self, challenge: str, **kwargs: Dict[str, Any]) -> str:
         parsed_challenge = _parse_challenge(challenge)
@@ -61,13 +60,13 @@ class ACRExchangeClient(object):
         )
 
     async def get_refresh_token(self, service: str, **kwargs: Dict[str, Any]) -> str:
-        if not self._refresh_token or time.time() - self._last_refresh_time > 300:
+        if not self._refresh_token or self._expiration_time - time.time() > 300:
             self._refresh_token = await self.exchange_aad_token_for_refresh_token(service, **kwargs)
-            self._last_refresh_time = time.time()
+            self._expiration_time = _parse_exp_time(self._refresh_token)
         return self._refresh_token
 
     async def exchange_aad_token_for_refresh_token(self, service: str = None, **kwargs: Dict[str, Any]) -> str:
-        token = await self._credential.get_token(self._credential_scope)
+        token = await self._credential.get_token(*self.credential_scopes)
         refresh_token = await self._client.authentication.exchange_aad_access_token_for_acr_refresh_token(
             service, token.token, **kwargs
         )

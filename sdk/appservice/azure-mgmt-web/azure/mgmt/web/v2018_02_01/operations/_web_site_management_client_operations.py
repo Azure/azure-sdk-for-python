@@ -64,7 +64,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('User', pipeline_response)
@@ -122,7 +122,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('User', pipeline_response)
@@ -188,7 +188,7 @@ class WebSiteManagementClientOperationsMixin(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -245,7 +245,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SourceControl', pipeline_response)
@@ -310,7 +310,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SourceControl', pipeline_response)
@@ -390,7 +390,7 @@ class WebSiteManagementClientOperationsMixin(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -460,7 +460,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ResourceNameAvailability', pipeline_response)
@@ -514,7 +514,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DeploymentLocations', pipeline_response)
@@ -607,7 +607,7 @@ class WebSiteManagementClientOperationsMixin(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -688,7 +688,7 @@ class WebSiteManagementClientOperationsMixin(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -758,7 +758,7 @@ class WebSiteManagementClientOperationsMixin(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -812,7 +812,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SkuInfos', pipeline_response)
@@ -875,7 +875,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetValidationFailureDetails', pipeline_response)
@@ -1001,7 +1001,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ValidateResponse', pipeline_response)
@@ -1018,7 +1018,7 @@ class WebSiteManagementClientOperationsMixin(object):
         validate_container_settings_request,  # type: "_models.ValidateContainerSettingsRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> object
+        # type: (...) -> Any
         """Validate if the container settings are correct.
 
         Validate if the container settings are correct.
@@ -1028,11 +1028,11 @@ class WebSiteManagementClientOperationsMixin(object):
         :param validate_container_settings_request:
         :type validate_container_settings_request: ~azure.mgmt.web.v2018_02_01.models.ValidateContainerSettingsRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: object, or the result of cls(response)
-        :rtype: object
+        :return: any, or the result of cls(response)
+        :rtype: any
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[object]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1067,7 +1067,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('object', pipeline_response)

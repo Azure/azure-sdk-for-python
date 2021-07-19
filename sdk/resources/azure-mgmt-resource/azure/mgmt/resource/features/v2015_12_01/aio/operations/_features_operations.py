@@ -43,7 +43,7 @@ class FeaturesOperations:
 
     def list_all(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.FeatureOperationsListResult"]:
         """Gets all the preview features that are available through AFEC for the subscription.
 
@@ -110,7 +110,7 @@ class FeaturesOperations:
     def list(
         self,
         resource_provider_namespace: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.FeatureOperationsListResult"]:
         """Gets all the preview features in a provider namespace that are available through AFEC for the
         subscription.
@@ -183,7 +183,7 @@ class FeaturesOperations:
         self,
         resource_provider_namespace: str,
         feature_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FeatureResult":
         """Gets the preview feature with the specified name.
 
@@ -241,7 +241,7 @@ class FeaturesOperations:
         self,
         resource_provider_namespace: str,
         feature_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FeatureResult":
         """Registers the preview feature for the subscription.
 
@@ -299,7 +299,7 @@ class FeaturesOperations:
         self,
         resource_provider_namespace: str,
         feature_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FeatureResult":
         """Unregisters the preview feature for the subscription.
 

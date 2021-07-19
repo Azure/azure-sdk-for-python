@@ -46,7 +46,7 @@ class AvailabilitySetsOperations:
         resource_group_name: str,
         name: str,
         parameters: "_models.AvailabilitySet",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AvailabilitySet":
         """Create or update an availability set.
 
@@ -111,7 +111,7 @@ class AvailabilitySetsOperations:
         self,
         resource_group_name: str,
         availability_set_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.OperationStatusResponse"]:
         """Delete an availability set.
 
@@ -171,7 +171,7 @@ class AvailabilitySetsOperations:
         self,
         resource_group_name: str,
         availability_set_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AvailabilitySet":
         """Retrieves information about an availability set.
 
@@ -228,7 +228,7 @@ class AvailabilitySetsOperations:
     def list(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AvailabilitySetListResult"]:
         """Lists all availability sets in a resource group.
 
@@ -299,7 +299,7 @@ class AvailabilitySetsOperations:
         self,
         resource_group_name: str,
         availability_set_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.VirtualMachineSizeListResult"]:
         """Lists all available virtual machine sizes that can be used to create a new virtual machine in
         an existing availability set.

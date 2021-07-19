@@ -44,7 +44,7 @@ class VirtualMachineRunCommandsOperations:
     def list(
         self,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RunCommandListResult"]:
         """Lists all available run commands for a subscription in a location.
 
@@ -115,7 +115,7 @@ class VirtualMachineRunCommandsOperations:
         self,
         location: str,
         command_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RunCommandDocument":
         """Gets specific run command for a subscription in a location.
 

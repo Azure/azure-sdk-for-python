@@ -43,7 +43,7 @@ class AuthorizationOperationsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.OperationListResult"]:
         """Lists all of the available Microsoft.Authorization REST API operations.
 

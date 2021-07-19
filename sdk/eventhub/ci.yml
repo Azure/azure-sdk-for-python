@@ -3,7 +3,6 @@
 trigger:
   branches:
     include:
-    - master
     - main
     - hotfix/*
     - release/*
@@ -16,7 +15,6 @@ trigger:
 pr:
   branches:
     include:
-    - master
     - main
     - feature/*
     - hotfix/*
@@ -31,7 +29,6 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: eventhub
-    BuildTargetingString: azure-eventhub*
     # Override the base matrix due to https://github.com/Azure/azure-sdk-for-python/issues/17837
     MatrixConfigs:
       - Name: eventhub_ci_matrix
@@ -47,3 +44,5 @@ extends:
       safeName: azureeventhubcheckpointstoreblobaio
     - name: azure-eventhub-checkpointstoreblob
       safeName: azureeventhubcheckpointstoreblob
+    - name: azure-mgmt-eventhub
+      safeName: azuremgmteventhub

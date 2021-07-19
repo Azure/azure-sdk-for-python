@@ -46,7 +46,7 @@ class ManagedDatabaseRestoreDetailsOperations:
         managed_instance_name: str,
         database_name: str,
         restore_details_name: Union[str, "_models.RestoreDetailsName"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagedDatabaseRestoreDetailsResult":
         """Gets managed database restore details.
 

@@ -46,7 +46,7 @@ class ReservationOrderOperations:
     async def calculate(
         self,
         body: "_models.PurchaseRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CalculatePriceResponse":
         """Calculate price for a ``ReservationOrder``.
 
@@ -89,7 +89,7 @@ class ReservationOrderOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CalculatePriceResponse', pipeline_response)
@@ -102,7 +102,7 @@ class ReservationOrderOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ReservationOrderList"]:
         """Get all ``ReservationOrder``\ s.
 
@@ -154,7 +154,7 @@ class ReservationOrderOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.Error, response)
+                error = self._deserialize.failsafe_deserialize(_models.Error, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -169,7 +169,7 @@ class ReservationOrderOperations:
         self,
         reservation_order_id: str,
         body: "_models.PurchaseRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ReservationOrderResponse":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ReservationOrderResponse"]
         error_map = {
@@ -205,7 +205,7 @@ class ReservationOrderOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -224,7 +224,7 @@ class ReservationOrderOperations:
         self,
         reservation_order_id: str,
         body: "_models.PurchaseRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ReservationOrderResponse"]:
         """Purchase ``ReservationOrder``.
 
@@ -236,8 +236,8 @@ class ReservationOrderOperations:
         :type body: ~azure.mgmt.reservations.models.PurchaseRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ReservationOrderResponse or the result of cls(response)
@@ -291,7 +291,7 @@ class ReservationOrderOperations:
         self,
         reservation_order_id: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ReservationOrderResponse":
         """Get a specific ``ReservationOrder``.
 
@@ -337,7 +337,7 @@ class ReservationOrderOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ReservationOrderResponse', pipeline_response)
@@ -347,68 +347,3 @@ class ReservationOrderOperations:
 
         return deserialized
     get.metadata = {'url': '/providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}'}  # type: ignore
-
-    async def change_directory(
-        self,
-        reservation_order_id: str,
-        body: "_models.ChangeDirectoryRequest",
-        **kwargs
-    ) -> "_models.ChangeDirectoryResponse":
-        """Change directory of ``ReservationOrder``.
-
-        Change directory (tenant) of ``ReservationOrder`` and all ``Reservation`` under it to specified
-        tenant id.
-
-        :param reservation_order_id: Order Id of the reservation.
-        :type reservation_order_id: str
-        :param body: Information needed to change directory of reservation order.
-        :type body: ~azure.mgmt.reservations.models.ChangeDirectoryRequest
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ChangeDirectoryResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.reservations.models.ChangeDirectoryResponse
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ChangeDirectoryResponse"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-15-preview"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
-
-        # Construct URL
-        url = self.change_directory.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'reservationOrderId': self._serialize.url("reservation_order_id", reservation_order_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(body, 'ChangeDirectoryRequest')
-        body_content_kwargs['content'] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('ChangeDirectoryResponse', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    change_directory.metadata = {'url': '/providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/changeDirectory'}  # type: ignore

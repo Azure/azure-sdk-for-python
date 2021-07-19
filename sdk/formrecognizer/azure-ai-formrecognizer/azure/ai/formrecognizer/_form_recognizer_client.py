@@ -27,9 +27,10 @@ if TYPE_CHECKING:
 
 class FormRecognizerClient(FormRecognizerClientBase):
     """FormRecognizerClient extracts information from forms and images into structured data.
-    It is the interface to use for analyzing receipts, business cards, invoices, recognizing
-    content/layout from forms, and analyzing custom forms from trained models. It provides
-    different methods based on inputs from a URL and inputs from a stream.
+    It is the interface to use for analyzing with prebuilt models (receipts, business cards,
+    invoices, identity documents), recognizing content/layout from forms, and analyzing
+    custom forms from trained models. It provides different methods based on inputs from a
+    URL and inputs from a stream.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
@@ -401,7 +402,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
             raise e
 
     @distributed_trace
-    def begin_recognize_identity_documents_from_url(self, identity_document_url, **kwargs):
+    def begin_recognize_identity_documents_from_url(
+        self, identity_document_url, **kwargs
+    ):
         # type: (str, Any) -> LROPoller[List[RecognizedForm]]
         """Extract field text and semantic values from a given identity document.
         The input document must be the location (URL) of the identity document to be analyzed.

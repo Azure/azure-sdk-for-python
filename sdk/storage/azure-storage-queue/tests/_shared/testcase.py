@@ -5,10 +5,6 @@
 # license information.
 # --------------------------------------------------------------------------
 from __future__ import division
-from contextlib import contextmanager
-import copy
-import inspect
-import os
 import os.path
 import time
 from datetime import datetime, timedelta
@@ -38,9 +34,17 @@ try:
 except ImportError:
     from io import StringIO
 
+from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.core.credentials import AccessToken
 from azure.storage.queue import generate_account_sas, AccountSasPermissions, ResourceTypes
 from azure.mgmt.storage.models import StorageAccount, Endpoints
+try:
+    # Running locally - use configuration in settings_real.py
+    from .settings_real import *
+except ImportError:
+    # Running on the pipeline - use fake values in order to create rg, etc.
+    from .settings_fake import *
 
 try:
     from devtools_testutils import mgmt_settings_real as settings
@@ -49,8 +53,15 @@ except ImportError:
 
 import pytest
 
+from .service_versions import service_version_map
+
 
 LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
+os.environ['AZURE_STORAGE_ACCOUNT_NAME'] = STORAGE_ACCOUNT_NAME
+os.environ['AZURE_STORAGE_ACCOUNT_KEY'] = STORAGE_ACCOUNT_KEY
+os.environ['AZURE_TEST_RUN_LIVE'] = os.environ.get('AZURE_TEST_RUN_LIVE', None) or RUN_IN_LIVE
+os.environ['AZURE_SKIP_LIVE_RECORDING'] = os.environ.get('AZURE_SKIP_LIVE_RECORDING', None) or SKIP_LIVE_RECORDING
+
 
 class FakeTokenCredential(object):
     """Protocol for classes able to provide OAuth tokens.
@@ -58,8 +69,10 @@ class FakeTokenCredential(object):
     """
     def __init__(self):
         self.token = AccessToken("YOU SHALL NOT PASS", 0)
+        self.get_token_count = 0
 
     def get_token(self, *args):
+        self.get_token_count += 1
         return self.token
 
 
@@ -93,6 +106,10 @@ class GlobalStorageAccountPreparer(AzureMgmtPreparer):
                 storage_account.name,
                 "storagename"
             )
+            self.test_class_instance.scrubber.register_name_pair(
+                ":.{43}=\r",
+                ":fake_shared_key=\r"
+            )
         else:
             name = "storagename"
             storage_account.name = name
@@ -108,6 +125,7 @@ class GlobalStorageAccountPreparer(AzureMgmtPreparer):
             'storage_account_key': StorageTestCase._STORAGE_KEY,
             'storage_account_cs': StorageTestCase._STORAGE_CONNECTION_STRING,
         }
+
 
 class GlobalResourceGroupPreparer(AzureMgmtPreparer):
     def __init__(self):
@@ -140,6 +158,8 @@ class StorageTestCase(AzureMgmtTestCase):
     def __init__(self, *args, **kwargs):
         super(StorageTestCase, self).__init__(*args, **kwargs)
         self.replay_processors.append(XMSRequestIDBody())
+        self.logger = logging.getLogger('azure.storage')
+        self.configure_logging()
 
     def connection_string(self, account, key):
         return "DefaultEndpointsProtocol=https;AcCounTName=" + account.name + ";AccOuntKey=" + str(key) + ";EndpoIntSuffix=core.windows.net"
@@ -163,10 +183,7 @@ class StorageTestCase(AzureMgmtTestCase):
             return 'https://{}.{}.core.windows.net'.format(storage_account, storage_type)
 
     def configure_logging(self):
-        try:
-            enable_logging = self.get_settings_value("ENABLE_LOGGING")
-        except AzureTestError:
-            enable_logging = True  # That's the default value in fake settings
+        enable_logging = ENABLE_LOGGING
 
         self.enable_logging() if enable_logging else self.disable_logging()
 
@@ -174,7 +191,7 @@ class StorageTestCase(AzureMgmtTestCase):
         handler = logging.StreamHandler()
         handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
         self.logger.handlers = [handler]
-        self.logger.setLevel(logging.INFO)
+        self.logger.setLevel(logging.DEBUG)
         self.logger.propagate = True
         self.logger.disabled = False
 
@@ -296,11 +313,37 @@ class StorageTestCase(AzureMgmtTestCase):
     def generate_fake_token(self):
         return FakeTokenCredential()
 
+    def _get_service_version(self, **kwargs):
+        env_version = service_version_map.get(os.environ.get("AZURE_LIVE_TEST_SERVICE_VERSION","LATEST"))
+        return kwargs.pop("service_version", env_version)
+
+    def create_storage_client(self, client, *args, **kwargs):
+        kwargs["api_version"] = self._get_service_version(**kwargs)
+        kwargs["_additional_pipeline_policies"] = [ApiVersionAssertPolicy(kwargs["api_version"])]
+        return client(*args, **kwargs)
+
+    def create_storage_client_from_conn_str(self, client, *args, **kwargs):
+        kwargs["api_version"] = self._get_service_version(**kwargs)
+        kwargs["_additional_pipeline_policies"] = [ApiVersionAssertPolicy(kwargs["api_version"])]
+        return client.from_connection_string(*args, **kwargs)
+
 
 def not_for_emulator(test):
     def skip_test_if_targeting_emulator(self):
         test(self)
     return skip_test_if_targeting_emulator
+
+
+class ApiVersionAssertPolicy(SansIOHTTPPolicy):
+    """
+    Assert the ApiVersion is set properly on the response
+    """
+
+    def __init__(self, api_version):
+        self.api_version = api_version
+
+    def on_request(self, request):
+        assert request.http_request.headers['x-ms-version'] == self.api_version
 
 
 class RetryCounter(object):
@@ -411,11 +454,11 @@ def storage_account():
                     )
                     storage_account.name = storage_name
                     storage_account.id = storage_name
-                    storage_account.primary_endpoints=Endpoints()
-                    storage_account.primary_endpoints.blob = 'https://{}.{}.core.windows.net'.format(storage_name, 'blob')
-                    storage_account.primary_endpoints.queue = 'https://{}.{}.core.windows.net'.format(storage_name, 'queue')
-                    storage_account.primary_endpoints.table = 'https://{}.{}.core.windows.net'.format(storage_name, 'table')
-                    storage_account.primary_endpoints.file = 'https://{}.{}.core.windows.net'.format(storage_name, 'file')
+                    storage_account.primary_endpoints = Endpoints()
+                    storage_account.primary_endpoints.blob = '{}://{}.{}.{}'.format(PROTOCOL, storage_name, 'blob', ACCOUNT_URL_SUFFIX)
+                    storage_account.primary_endpoints.queue = '{}://{}.{}.{}'.format(PROTOCOL, storage_name, 'queue', ACCOUNT_URL_SUFFIX)
+                    storage_account.primary_endpoints.table = '{}://{}.{}.{}'.format(PROTOCOL, storage_name, 'table', ACCOUNT_URL_SUFFIX)
+                    storage_account.primary_endpoints.file = '{}://{}.{}.{}'.format(PROTOCOL, storage_name, 'file', ACCOUNT_URL_SUFFIX)
                     storage_key = existing_storage_key
 
                 if not storage_connection_string:
@@ -458,7 +501,15 @@ def storage_account():
                     storage_key = storage_connection_string_parts["AccountKey"]
 
             else:
-                storage_name, storage_kwargs = storage_preparer._prepare_create_resource(test_case, **rg_kwargs)
+                for i in range(5):
+                    try:
+                        time.sleep(i) if i == 0 else time.sleep(2 ** i)
+                        storage_name, storage_kwargs = storage_preparer._prepare_create_resource(
+                            test_case, **rg_kwargs)
+                        break
+                        # Some tests may be running on the storage account and a conflict may occur. Backoff & Retry.
+                    except HttpResponseError:
+                        continue
                 storage_account = storage_kwargs['storage_account']
                 storage_key = storage_kwargs['storage_account_key']
                 storage_connection_string = storage_kwargs['storage_account_cs']
@@ -475,5 +526,9 @@ def storage_account():
                 )
     finally:
         if i_need_to_create_rg:
-            rg_preparer.remove_resource(rg_name)
+            try:
+                rg_preparer.remove_resource(rg_name)
+            # This covers the case where another test had already removed the resource group
+            except ResourceNotFoundError:
+                pass
         StorageTestCase._RESOURCE_GROUP = None

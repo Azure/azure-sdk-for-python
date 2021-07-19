@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class BuildsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -56,7 +56,7 @@ class BuildsOperations(object):
         skip_token=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.BuildListResult"]
+        # type: (...) -> Iterable["_models.BuildListResult"]
         """Gets all the builds for a registry.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -77,7 +77,7 @@ class BuildsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BuildListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BuildListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -147,7 +147,7 @@ class BuildsOperations(object):
         build_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Build"
+        # type: (...) -> "_models.Build"
         """Gets the detailed information for a given build.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -162,7 +162,7 @@ class BuildsOperations(object):
         :rtype: ~azure.mgmt.containerregistry.v2018_02_01_preview.models.Build
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Build"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Build"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -209,11 +209,11 @@ class BuildsOperations(object):
         resource_group_name,  # type: str
         registry_name,  # type: str
         build_id,  # type: str
-        build_update_parameters,  # type: "models.BuildUpdateParameters"
+        build_update_parameters,  # type: "_models.BuildUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Build"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Build"]
+        # type: (...) -> "_models.Build"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Build"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -269,10 +269,10 @@ class BuildsOperations(object):
         resource_group_name,  # type: str
         registry_name,  # type: str
         build_id,  # type: str
-        build_update_parameters,  # type: "models.BuildUpdateParameters"
+        build_update_parameters,  # type: "_models.BuildUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.Build"]
+        # type: (...) -> LROPoller["_models.Build"]
         """Patch the build properties.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -286,8 +286,8 @@ class BuildsOperations(object):
         :type build_update_parameters: ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either Build or the result of cls(response)
@@ -295,7 +295,7 @@ class BuildsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Build"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Build"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -321,7 +321,14 @@ class BuildsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'buildId': self._serialize.url("build_id", build_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -342,7 +349,7 @@ class BuildsOperations(object):
         build_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.BuildGetLogResult"
+        # type: (...) -> "_models.BuildGetLogResult"
         """Gets a link to download the build logs.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -357,7 +364,7 @@ class BuildsOperations(object):
         :rtype: ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildGetLogResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BuildGetLogResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BuildGetLogResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -463,8 +470,8 @@ class BuildsOperations(object):
         :type build_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -494,7 +501,14 @@ class BuildsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'buildId': self._serialize.url("build_id", build_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:

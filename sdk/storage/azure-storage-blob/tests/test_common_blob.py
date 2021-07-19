@@ -47,7 +47,8 @@ from azure.storage.blob import (
     BlobImmutabilityPolicyMode)
 from azure.storage.blob._generated.models import RehydratePriority
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
+from _shared.testcase import GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
+from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'

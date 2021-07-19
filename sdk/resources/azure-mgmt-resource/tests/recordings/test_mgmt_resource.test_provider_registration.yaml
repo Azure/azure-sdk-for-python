@@ -11,8 +11,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/17.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+      - azsdk-python-azure-mgmt-resource/18.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Search/unregister?api-version=2021-04-01
   response:
@@ -40,7 +40,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 01:24:24 GMT
+      - Wed, 19 May 2021 05:56:38 GMT
       expires:
       - '-1'
       pragma:
@@ -68,8 +68,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/17.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+      - azsdk-python-azure-mgmt-resource/18.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Search?api-version=2021-04-01
   response:
@@ -97,7 +97,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 01:24:24 GMT
+      - Wed, 19 May 2021 05:56:38 GMT
       expires:
       - '-1'
       pragma:
@@ -125,8 +125,8 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/17.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+      - azsdk-python-azure-mgmt-resource/18.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Search/register?api-version=2021-04-01
   response:
@@ -154,7 +154,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 01:24:25 GMT
+      - Wed, 19 May 2021 05:56:39 GMT
       expires:
       - '-1'
       pragma:

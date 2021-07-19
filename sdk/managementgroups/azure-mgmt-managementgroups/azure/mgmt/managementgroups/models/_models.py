@@ -862,8 +862,6 @@ class ManagementGroup(msrest.serialization.Model):
     :type details: ~azure.mgmt.managementgroups.models.ManagementGroupDetails
     :param children: The list of children.
     :type children: list[~azure.mgmt.managementgroups.models.ManagementGroupChildInfo]
-    :param path: The path from the root to the current group.
-    :type path: list[~azure.mgmt.managementgroups.models.ManagementGroupPathElement]
     """
 
     _validation = {
@@ -880,7 +878,6 @@ class ManagementGroup(msrest.serialization.Model):
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'details': {'key': 'properties.details', 'type': 'ManagementGroupDetails'},
         'children': {'key': 'properties.children', 'type': '[ManagementGroupChildInfo]'},
-        'path': {'key': 'properties.path', 'type': '[ManagementGroupPathElement]'},
     }
 
     def __init__(
@@ -895,7 +892,6 @@ class ManagementGroup(msrest.serialization.Model):
         self.display_name = kwargs.get('display_name', None)
         self.details = kwargs.get('details', None)
         self.children = kwargs.get('children', None)
-        self.path = kwargs.get('path', None)
 
 
 class ManagementGroupChildInfo(msrest.serialization.Model):
@@ -948,6 +944,14 @@ class ManagementGroupDetails(msrest.serialization.Model):
     :type updated_by: str
     :param parent: (Optional) The ID of the parent management group.
     :type parent: ~azure.mgmt.managementgroups.models.ParentGroupInfo
+    :param path: The path from the root to the current group.
+    :type path: list[~azure.mgmt.managementgroups.models.ManagementGroupPathElement]
+    :param management_group_ancestors: The ancestors of the management group.
+    :type management_group_ancestors: list[str]
+    :param management_group_ancestors_chain: The ancestors of the management group displayed in
+     reversed order, from immediate parent to the root.
+    :type management_group_ancestors_chain:
+     list[~azure.mgmt.managementgroups.models.ManagementGroupPathElement]
     """
 
     _attribute_map = {
@@ -955,6 +959,9 @@ class ManagementGroupDetails(msrest.serialization.Model):
         'updated_time': {'key': 'updatedTime', 'type': 'iso-8601'},
         'updated_by': {'key': 'updatedBy', 'type': 'str'},
         'parent': {'key': 'parent', 'type': 'ParentGroupInfo'},
+        'path': {'key': 'path', 'type': '[ManagementGroupPathElement]'},
+        'management_group_ancestors': {'key': 'managementGroupAncestors', 'type': '[str]'},
+        'management_group_ancestors_chain': {'key': 'managementGroupAncestorsChain', 'type': '[ManagementGroupPathElement]'},
     }
 
     def __init__(
@@ -966,6 +973,9 @@ class ManagementGroupDetails(msrest.serialization.Model):
         self.updated_time = kwargs.get('updated_time', None)
         self.updated_by = kwargs.get('updated_by', None)
         self.parent = kwargs.get('parent', None)
+        self.path = kwargs.get('path', None)
+        self.management_group_ancestors = kwargs.get('management_group_ancestors', None)
+        self.management_group_ancestors_chain = kwargs.get('management_group_ancestors_chain', None)
 
 
 class ManagementGroupInfo(msrest.serialization.Model):

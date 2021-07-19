@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional, Union
+from typing import Any, List, Optional, Union
 
 import msrest.serialization
 
@@ -31,7 +31,7 @@ class PolicyAssignment(msrest.serialization.Model):
     :param scope: The scope for the policy assignment.
     :type scope: str
     :param parameters: Required if a parameter is used in policy rule.
-    :type parameters: str
+    :type parameters: any
     :param description: This message will be part of response in case of policy violation.
     :type description: str
     """
@@ -47,7 +47,7 @@ class PolicyAssignment(msrest.serialization.Model):
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'policy_definition_id': {'key': 'properties.policyDefinitionId', 'type': 'str'},
         'scope': {'key': 'properties.scope', 'type': 'str'},
-        'parameters': {'key': 'properties.parameters', 'type': 'str'},
+        'parameters': {'key': 'properties.parameters', 'type': 'object'},
         'description': {'key': 'properties.description', 'type': 'str'},
     }
 
@@ -59,7 +59,7 @@ class PolicyAssignment(msrest.serialization.Model):
         display_name: Optional[str] = None,
         policy_definition_id: Optional[str] = None,
         scope: Optional[str] = None,
-        parameters: Optional[str] = None,
+        parameters: Optional[Any] = None,
         description: Optional[str] = None,
         **kwargs
     ):
@@ -120,11 +120,11 @@ class PolicyDefinition(msrest.serialization.Model):
     :param description: The policy definition description.
     :type description: str
     :param policy_rule: The policy rule.
-    :type policy_rule: str
+    :type policy_rule: any
     :param metadata: The policy definition metadata.
-    :type metadata: str
+    :type metadata: any
     :param parameters: Required if a parameter is used in policy rule.
-    :type parameters: str
+    :type parameters: any
     """
 
     _validation = {
@@ -139,9 +139,9 @@ class PolicyDefinition(msrest.serialization.Model):
         'mode': {'key': 'properties.mode', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
-        'policy_rule': {'key': 'properties.policyRule', 'type': 'str'},
-        'metadata': {'key': 'properties.metadata', 'type': 'str'},
-        'parameters': {'key': 'properties.parameters', 'type': 'str'},
+        'policy_rule': {'key': 'properties.policyRule', 'type': 'object'},
+        'metadata': {'key': 'properties.metadata', 'type': 'object'},
+        'parameters': {'key': 'properties.parameters', 'type': 'object'},
     }
 
     def __init__(
@@ -151,9 +151,9 @@ class PolicyDefinition(msrest.serialization.Model):
         mode: Optional[Union[str, "PolicyMode"]] = None,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
-        policy_rule: Optional[str] = None,
-        metadata: Optional[str] = None,
-        parameters: Optional[str] = None,
+        policy_rule: Optional[Any] = None,
+        metadata: Optional[Any] = None,
+        parameters: Optional[Any] = None,
         **kwargs
     ):
         super(PolicyDefinition, self).__init__(**kwargs)

@@ -58,7 +58,7 @@ class SeasonsOperations:
         max_last_modified_date_time: Optional[datetime.datetime] = None,
         max_page_size: Optional[int] = 50,
         skip_token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SeasonListResponse"]:
         """Returns a paginated list of season resources.
 
@@ -192,11 +192,11 @@ class SeasonsOperations:
     async def get(
         self,
         season_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Season":
         """Gets a specified season resource.
 
-        :param season_id: Id of the season.
+        :param season_id: ID of the season.
         :type season_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Season, or the result of cls(response)
@@ -247,15 +247,15 @@ class SeasonsOperations:
     async def create_or_update(
         self,
         season_id: str,
-        body: Optional["_models.Season"] = None,
-        **kwargs
+        season: Optional["_models.Season"] = None,
+        **kwargs: Any
     ) -> "_models.Season":
         """Creates or updates a season resource.
 
-        :param season_id: Id of the season resource.
+        :param season_id: ID of the season resource.
         :type season_id: str
-        :param body: Season resource payload to create or update.
-        :type body: ~azure.agrifood.farming.models.Season
+        :param season: Season resource payload to create or update.
+        :type season: ~azure.agrifood.farming.models.Season
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Season, or the result of cls(response)
         :rtype: ~azure.agrifood.farming.models.Season
@@ -288,8 +288,8 @@ class SeasonsOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'Season')
+        if season is not None:
+            body_content = self._serialize.body(season, 'Season')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
@@ -317,11 +317,11 @@ class SeasonsOperations:
     async def delete(
         self,
         season_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a specified season resource.
 
-        :param season_id: Id of the season.
+        :param season_id: ID of the season.
         :type season_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)

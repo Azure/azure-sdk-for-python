@@ -15,7 +15,8 @@ from dateutil.tz import tzutc
 import requests
 from datetime import datetime, timedelta
 
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
+from azure.core import MatchConditions
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError, ResourceModifiedError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
@@ -36,7 +37,7 @@ from azure.storage.blob import (
     generate_account_sas, ResourceTypes, AccountSasPermissions)
 
 from _shared.testcase import LogCaptured, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
-from _shared.asynctestcase import AsyncStorageTestCase
+from devtools_testutils.storage.aio import AsyncStorageTestCase
 from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
@@ -197,6 +198,26 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
             await bsc._rename_container(name="badcontainer", new_name="container")
         props = await new_container.get_container_properties()
         self.assertEqual(new_name, props.name)
+
+    @GlobalStorageAccountPreparer()
+    async def test_download_blob_modified(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key,
+                                max_single_get_size=38,
+                                max_chunk_get_size=38)
+        container = await self._create_container(bsc, prefix="cont1")
+        data = b'hello world python storage test chunks' * 5
+        blob_name = self.get_resource_name("testblob")
+        blob = container.get_blob_client(blob_name)
+        await blob.upload_blob(data, overwrite=True)
+        resp = await container.download_blob(blob_name, match_condition=MatchConditions.IfPresent)
+        chunks = resp.chunks()
+        i = 0
+        while i < 4:
+            data += await chunks.__anext__()
+            i += 1
+        await blob.upload_blob(data=data, overwrite=True)
+        with self.assertRaises(ResourceModifiedError):
+            data += await chunks.__anext__()
 
     @pytest.mark.skip(reason="Feature not yet enabled. Make sure to record this test once enabled.")
     @GlobalStorageAccountPreparer()
@@ -1141,6 +1162,46 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertEqual(blobs[1].name, 'blob2')
         self.assertEqual(blobs[1].metadata['number'], '2')
         self.assertEqual(blobs[1].metadata['name'], 'car')
+
+    @GlobalStorageAccountPreparer()
+    async def test_list_blobs_include_deletedwithversion_async(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        # pytest.skip("Waiting on metadata XML fix in msrest")
+        container = await self._create_container(bsc)
+        data = b'hello world'
+        content_settings = ContentSettings(
+            content_language='spanish',
+            content_disposition='inline')
+        blob1 = container.get_blob_client('blob1')
+        resp = await blob1.upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '1', 'name': 'bob'})
+        version_id_1 = resp['version_id']
+        await blob1.upload_blob(b"abc", overwrite=True)
+        root_content = b"cde"
+        root_version_id = (await blob1.upload_blob(root_content, overwrite=True))['version_id']
+        # this will delete the root blob, while you can still access it through versioning
+        await blob1.delete_blob()
+
+        await container.get_blob_client('blob2').upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '2', 'name': 'car'})
+        await container.get_blob_client('blob3').upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '2', 'name': 'car'})
+
+        # Act
+        blobs = list()
+        
+        # include deletedwithversions will give you all alive root blobs and the the deleted root blobs when versioning is on.
+        async for blob in container.list_blobs(include=["deletedwithversions"]):
+            blobs.append(blob)
+        downloaded_root_content = await (await blob1.download_blob(version_id=root_version_id)).readall()
+        downloaded_original_content = await (await blob1.download_blob(version_id=version_id_1)).readall()
+
+        # Assert
+        self.assertEqual(blobs[0].name, 'blob1')
+        self.assertTrue(blobs[0].has_versions_only)
+        self.assertEqual(root_content, downloaded_root_content)
+        self.assertEqual(data, downloaded_original_content)
+        self.assertEqual(blobs[1].name, 'blob2')
+        self.assertFalse(blobs[1].has_versions_only)
+        self.assertEqual(blobs[2].name, 'blob3')
+        self.assertFalse(blobs[2].has_versions_only)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test

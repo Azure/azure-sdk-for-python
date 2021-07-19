@@ -7,7 +7,7 @@ import functools
 from typing import (
     Optional,
     Dict,
-    Any,
+    List,
     TYPE_CHECKING
 )
 
@@ -17,19 +17,18 @@ from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from .. import LocationMode
 from .._base_client import parse_connection_str
 from .._generated.models import TableServiceProperties
 from .._models import service_stats_deserialize, service_properties_deserialize
 from .._error import _process_table_error
-from .._models import TableItem
+from .._models import TableItem, LocationMode
 from .._serialize import _parameter_filter_substitution
 from ._table_client_async import TableClient
 from ._base_client_async import AsyncTablesBaseClient, AsyncTransportWrapper
 from ._models import TablePropertiesPaged
 
 if TYPE_CHECKING:
-    from .._models import CorsRule, Metrics, TableAnalyticsLogging
+    from .._models import TableCorsRule, TableMetrics, TableAnalyticsLogging
 
 
 class TableServiceClient(AsyncTablesBaseClient):
@@ -46,10 +45,14 @@ class TableServiceClient(AsyncTablesBaseClient):
         The URL to the table service endpoint. Any other entities included
         in the URL path (e.g. table) will be discarded. This URL can be optionally
         authenticated with a SAS token.
-    :param str credential:
+    :keyword credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, an account
-        shared access key.
+        account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
+        AzureSasCredential (azure-core), or TokenCredentials from azure-identity.
+    :paramtype credential:
+        :class:`~azure.core.credentials.AzureNamedKeyCredential` or
+        :class:`~azure.core.credentials.AzureSasCredential` or
+        :class:`~azure.core.credentials.TokenCredential`
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-02-02'.
         Setting to an older version may result in reduced feature compatibility.
@@ -101,12 +104,12 @@ class TableServiceClient(AsyncTablesBaseClient):
         return cls(endpoint, credential=credential, **kwargs)
 
     @distributed_trace_async
-    async def get_service_stats(self, **kwargs) -> Dict[str, Any]:
+    async def get_service_stats(self, **kwargs) -> Dict[str, object]:
         """Retrieves statistics related to replication for the Table service. It is only available on the secondary
         location endpoint when read-access geo-redundant replication is enabled for the account.
 
         :return: Dictionary of service stats
-        :rtype: :class:`~azure.data.tables.models.TableServiceStats`
+        :rtype: Dict[str, object]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         try:
@@ -114,9 +117,9 @@ class TableServiceClient(AsyncTablesBaseClient):
             stats = await self._client.service.get_statistics(  # type: ignore
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs
             )
-            return service_stats_deserialize(stats)
         except HttpResponseError as error:
             _process_table_error(error)
+        return service_stats_deserialize(stats)
 
     @distributed_trace_async
     async def get_service_properties(self, **kwargs) -> Dict[str, object]:
@@ -125,48 +128,51 @@ class TableServiceClient(AsyncTablesBaseClient):
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TableServiceProperties, or the result of cls(response)
-        :rtype: :class:`~azure.data.tables.models.TableServiceProperties`
+        :rtype: Dict[str, object]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         timeout = kwargs.pop("timeout", None)
         try:
             service_props = await self._client.service.get_properties(timeout=timeout, **kwargs)  # type: ignore
-            return service_properties_deserialize(service_props)
         except HttpResponseError as error:
             _process_table_error(error)
+        return service_properties_deserialize(service_props)
 
     @distributed_trace_async
     async def set_service_properties(
         self,
+        *,
         analytics_logging: Optional['TableAnalyticsLogging'] = None,
-        hour_metrics: Optional['Metrics'] = None,
-        minute_metrics: Optional['Metrics'] = None,
-        cors: Optional['CorsRule'] = None,
+        hour_metrics: Optional['TableMetrics'] = None,
+        minute_metrics: Optional['TableMetrics'] = None,
+        cors: Optional[List['TableCorsRule']] = None,
         **kwargs
     ) -> None:
         """Sets properties for an account's Table service endpoint,
          including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
-        :param analytics_logging: Properties for analytics
-        :type analytics_logging: ~azure.data.tables.TableAnalyticsLogging
-        :param hour_metrics: Hour level metrics
-        :type hour_metrics: ~azure.data.tables.Metrics
-        :param minute_metrics: Minute level metrics
-        :type minute_metrics: ~azure.data.tables.Metrics
-        :param cors: Cross-origin resource sharing rules
-        :type cors: ~azure.data.tables.CorsRule
+        :keyword analytics_logging: Properties for analytics
+        :paramtype analytics_logging: ~azure.data.tables.TableAnalyticsLogging
+        :keyword hour_metrics: Hour level metrics
+        :paramtype hour_metrics: ~azure.data.tables.TableMetrics
+        :keyword minute_metrics: Minute level metrics
+        :paramtype minute_metrics: ~azure.data.tables.TableMetrics
+        :keyword cors: Cross-origin resource sharing rules
+        :paramtype cors: List[~azure.data.tables.TableCorsRule]
         :return: None
         :rtype: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
+        if cors:
+            cors = [c._to_generated() for c in cors]  # pylint:disable=protected-access
         props = TableServiceProperties(
             logging=analytics_logging,
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
-            cors=cors,
+            cors=cors,  # type: ignore
         )
         try:
-            return await self._client.service.set_properties(props, **kwargs)  # type: ignore
+            await self._client.service.set_properties(props, **kwargs)  # type: ignore
         except HttpResponseError as error:
             _process_table_error(error)
 
@@ -313,14 +319,14 @@ class TableServiceClient(AsyncTablesBaseClient):
         :rtype: :class:`~azure.data.tables.aio.TableClient`
 
         """
-        pipeline = AsyncPipeline(
+        pipeline = AsyncPipeline(  # type: ignore
             transport=AsyncTransportWrapper(self._client._client._pipeline._transport), # pylint:disable=protected-access
             policies=self._policies,
         )
         return TableClient(
             self.url,
             table_name=table_name,
-            credential=self.credential,
+            credential=self.credential,  # type: ignore
             api_version=self.api_version,
             pipeline=pipeline,
             location_mode=self._location_mode,

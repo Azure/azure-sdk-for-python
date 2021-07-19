@@ -13,6 +13,7 @@ DESCRIPTION:
     This sample demonstrates the differences in output that arise when begin_recognize_custom_forms
     is called with custom models trained with labeled and unlabeled data. The models used in this
     sample can be created in sample_train_model_with_labels.py and sample_train_model_without_labels.py
+    using the training files found here: https://aka.ms/azsdk/formrecognizer/sampletrainingfiles
 
     For a more general example of recognizing custom forms, see sample_recognize_custom_forms.py
 
@@ -26,7 +27,13 @@ USAGE:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
     2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
     3) ID_OF_MODEL_TRAINED_WITH_LABELS - the ID of your custom model trained with labels
+        -OR-
+       CONTAINER_SAS_URL_WITH_LABELS - The shared access signature (SAS) Url of your Azure Blob Storage container
+       with your labeled data. A model will be trained and used to run the sample.
     4) ID_OF_MODEL_TRAINED_WITHOUT_LABELS - the ID of your custom model trained without labels
+        -OR-
+       CONTAINER_SAS_URL_WITHOUT_LABELS - The shared access signature (SAS) Url of your Azure Blob Storage container
+       with your forms. A model will be trained and used to run the sample.
 """
 
 import os
@@ -39,14 +46,14 @@ def format_bounding_box(bounding_box):
 
 class DifferentiateOutputModelsTrainedWithAndWithoutLabels(object):
 
-    def recognize_custom_forms(self):
+    def recognize_custom_forms(self, labeled_model_id, unlabeled_model_id):
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
 
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-        model_trained_with_labels_id = os.environ["ID_OF_MODEL_TRAINED_WITH_LABELS"]
-        model_trained_without_labels_id = os.environ["ID_OF_MODEL_TRAINED_WITHOUT_LABELS"]
+        model_trained_with_labels_id = os.getenv("ID_OF_MODEL_TRAINED_WITH_LABELS", labeled_model_id)
+        model_trained_without_labels_id = os.getenv("ID_OF_MODEL_TRAINED_WITHOUT_LABELS", unlabeled_model_id)
 
         form_recognizer_client = FormRecognizerClient(
             endpoint=endpoint, credential=AzureKeyCredential(key)
@@ -120,4 +127,30 @@ class DifferentiateOutputModelsTrainedWithAndWithoutLabels(object):
 
 if __name__ == '__main__':
     sample = DifferentiateOutputModelsTrainedWithAndWithoutLabels()
-    sample.recognize_custom_forms()
+    labeled_model_id = None
+    unlabeled_model_id = None
+    if os.getenv("CONTAINER_SAS_URL_WITH_LABELS") or os.getenv("CONTAINER_SAS_URL_WITHOUT_LABELS"):
+
+        from azure.core.credentials import AzureKeyCredential
+        from azure.ai.formrecognizer import FormTrainingClient
+
+        endpoint = os.getenv("AZURE_FORM_RECOGNIZER_ENDPOINT")
+        key = os.getenv("AZURE_FORM_RECOGNIZER_KEY")
+        labeled = os.getenv("CONTAINER_SAS_URL_WITH_LABELS")
+        unlabeled = os.getenv("CONTAINER_SAS_URL_WITHOUT_LABELS")
+
+        if not endpoint or not key:
+            raise ValueError("Please provide endpoint and API key to run the samples.")
+
+        form_training_client = FormTrainingClient(
+            endpoint=endpoint, credential=AzureKeyCredential(key)
+        )
+
+        if labeled:
+            model = form_training_client.begin_training(labeled, use_training_labels=True).result()
+            labeled_model_id = model.model_id
+        if unlabeled:
+            model = form_training_client.begin_training(unlabeled, use_training_labels=False).result()
+            unlabeled_model_id = model.model_id
+
+    sample.recognize_custom_forms(labeled_model_id, unlabeled_model_id)

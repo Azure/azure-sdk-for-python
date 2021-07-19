@@ -6,7 +6,8 @@ stages:
       ServiceDirectory: servicebus
       TestTimeoutInMinutes: 300
       DeployArmTemplate: true
-      TestSamples: true
+      MatrixReplace:
+        - TestSamples=.*/true
       BuildTargetingString: azure-servicebus*
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)

@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, IO, List, Optional, Union
+from typing import Any, Dict, IO, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -72,7 +72,7 @@ class ApplicationData(msrest.serialization.Model):
      and must not have a value greater than 150 characters.
      Note: A maximum of 25 key value pairs can be provided for a resource and only string and
      numeral values are supported.
-    :type properties: dict[str, object]
+    :type properties: dict[str, any]
     """
 
     _validation = {
@@ -127,7 +127,7 @@ class ApplicationData(msrest.serialization.Model):
         status: Optional[str] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
-        properties: Optional[Dict[str, object]] = None,
+        properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(ApplicationData, self).__init__(**kwargs)
@@ -343,9 +343,9 @@ class Boundary(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar farmer_id: Farmer Id.
+    :ivar farmer_id: Farmer ID.
     :vartype farmer_id: str
-    :param parent_id: Id of the parent(field or seasonalField) it belongs to.
+    :param parent_id: ID of the parent(field or seasonalField) it belongs to.
     :type parent_id: str
     :param geometry: GeoJSON abstract class.
     :type geometry: ~azure.agrifood.farming.models.GeoJsonObject
@@ -376,7 +376,7 @@ class Boundary(msrest.serialization.Model):
      and must not have a value greater than 150 characters.
      Note: A maximum of 25 key value pairs can be provided for a resource and only string and
      numeral values are supported.
-    :type properties: dict[str, object]
+    :type properties: dict[str, any]
     """
 
     _validation = {
@@ -418,7 +418,7 @@ class Boundary(msrest.serialization.Model):
         status: Optional[str] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
-        properties: Optional[Dict[str, object]] = None,
+        properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(Boundary, self).__init__(**kwargs)
@@ -508,7 +508,7 @@ class CascadeDeleteJob(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param farmer_id: Required. Farmer Id.
+    :param farmer_id: Required. Farmer ID.
     :type farmer_id: str
     :param resource_id: Required. The id of the resource.
     :type resource_id: str
@@ -520,7 +520,7 @@ class CascadeDeleteJob(msrest.serialization.Model):
      Possible values: 'Waiting', 'Running', 'Succeeded', 'Failed', 'Cancelled'.
     :vartype status: str
     :ivar duration_in_seconds: Duration of the job in seconds.
-    :vartype duration_in_seconds: str
+    :vartype duration_in_seconds: float
     :ivar message: Status message to capture more details of the job.
     :vartype message: str
     :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
@@ -541,7 +541,7 @@ class CascadeDeleteJob(msrest.serialization.Model):
      and must not have a value greater than 150 characters.
      Note: A maximum of 25 key value pairs can be provided for a resource and only string and
      numeral values are supported.
-    :type properties: dict[str, object]
+    :type properties: dict[str, any]
     """
 
     _validation = {
@@ -566,7 +566,7 @@ class CascadeDeleteJob(msrest.serialization.Model):
         'resource_type': {'key': 'resourceType', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
-        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
+        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'float'},
         'message': {'key': 'message', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
@@ -585,7 +585,7 @@ class CascadeDeleteJob(msrest.serialization.Model):
         resource_type: str,
         name: Optional[str] = None,
         description: Optional[str] = None,
-        properties: Optional[Dict[str, object]] = None,
+        properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(CascadeDeleteJob, self).__init__(**kwargs)
@@ -633,7 +633,7 @@ class Crop(msrest.serialization.Model):
      and must not have a value greater than 150 characters.
      Note: A maximum of 25 key value pairs can be provided for a resource and only string and
      numeral values are supported.
-    :type properties: dict[str, object]
+    :type properties: dict[str, any]
     """
 
     _validation = {
@@ -666,7 +666,7 @@ class Crop(msrest.serialization.Model):
         status: Optional[str] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
-        properties: Optional[Dict[str, object]] = None,
+        properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(Crop, self).__init__(**kwargs)
@@ -718,7 +718,7 @@ class CropVariety(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar crop_id: Id of the crop it belongs to.
+    :ivar crop_id: ID of the crop it belongs to.
     :vartype crop_id: str
     :param brand: CropVariety Brand.
     :type brand: str
@@ -745,7 +745,7 @@ class CropVariety(msrest.serialization.Model):
      and must not have a value greater than 150 characters.
      Note: A maximum of 25 key value pairs can be provided for a resource and only string and
      numeral values are supported.
-    :type properties: dict[str, object]
+    :type properties: dict[str, any]
     """
 
     _validation = {
@@ -783,7 +783,7 @@ class CropVariety(msrest.serialization.Model):
         status: Optional[str] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
-        properties: Optional[Dict[str, object]] = None,
+        properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(CropVariety, self).__init__(**kwargs)
@@ -884,7 +884,7 @@ class ErrorResponse(msrest.serialization.Model):
 
     :param error: An error from the Azure AgPlatform service.
     :type error: ~azure.agrifood.farming.models.Error
-    :param trace_id: Unique trace Id.
+    :param trace_id: Unique trace ID.
     :type trace_id: str
     """
 
@@ -910,7 +910,7 @@ class Farm(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar farmer_id: Farmer Id.
+    :ivar farmer_id: Farmer ID.
     :vartype farmer_id: str
     :ivar id: Unique resource ID.
     :vartype id: str
@@ -933,7 +933,7 @@ class Farm(msrest.serialization.Model):
      and must not have a value greater than 150 characters.
      Note: A maximum of 25 key value pairs can be provided for a resource and only string and
      numeral values are supported.
-    :type properties: dict[str, object]
+    :type properties: dict[str, any]
     """
 
     _validation = {
@@ -965,7 +965,7 @@ class Farm(msrest.serialization.Model):
         status: Optional[str] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
-        properties: Optional[Dict[str, object]] = None,
+        properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(Farm, self).__init__(**kwargs)
@@ -1006,7 +1006,7 @@ class Farmer(msrest.serialization.Model):
      and must not have a value greater than 150 characters.
      Note: A maximum of 25 key value pairs can be provided for a resource and only string and
      numeral values are supported.
-    :type properties: dict[str, object]
+    :type properties: dict[str, any]
     """
 
     _validation = {
@@ -1036,7 +1036,7 @@ class Farmer(msrest.serialization.Model):
         status: Optional[str] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
-        properties: Optional[Dict[str, object]] = None,
+        properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(Farmer, self).__init__(**kwargs)
@@ -1121,9 +1121,9 @@ class FarmOperationDataIngestionJob(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param farmer_id: Required. Farmer Id.
+    :param farmer_id: Required. Farmer ID.
     :type farmer_id: str
-    :param auth_provider_id: Required. Authentication provider Id.
+    :param auth_provider_id: Required. Authentication provider ID.
     :type auth_provider_id: str
     :param operations: List of operation types for which data needs to be downloaded. Available
      values: AllOperations, Application, Planting, Harvest, Tillage.
@@ -1136,7 +1136,7 @@ class FarmOperationDataIngestionJob(msrest.serialization.Model):
      Possible values: 'Waiting', 'Running', 'Succeeded', 'Failed', 'Cancelled'.
     :vartype status: str
     :ivar duration_in_seconds: Duration of the job in seconds.
-    :vartype duration_in_seconds: str
+    :vartype duration_in_seconds: float
     :ivar message: Status message to capture more details of the job.
     :vartype message: str
     :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
@@ -1157,7 +1157,7 @@ class FarmOperationDataIngestionJob(msrest.serialization.Model):
      and must not have a value greater than 150 characters.
      Note: A maximum of 25 key value pairs can be provided for a resource and only string and
      numeral values are supported.
-    :type properties: dict[str, object]
+    :type properties: dict[str, any]
     """
 
     _validation = {
@@ -1183,7 +1183,7 @@ class FarmOperationDataIngestionJob(msrest.serialization.Model):
         'start_year': {'key': 'startYear', 'type': 'int'},
         'id': {'key': 'id', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
-        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
+        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'float'},
         'message': {'key': 'message', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
@@ -1203,7 +1203,7 @@ class FarmOperationDataIngestionJob(msrest.serialization.Model):
         operations: Optional[List[str]] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
-        properties: Optional[Dict[str, object]] = None,
+        properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(FarmOperationDataIngestionJob, self).__init__(**kwargs)
@@ -1229,9 +1229,9 @@ class Field(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param farm_id: Id of the associated Farm.
+    :param farm_id: ID of the associated Farm.
     :type farm_id: str
-    :ivar farmer_id: Farmer Id.
+    :ivar farmer_id: Farmer ID.
     :vartype farmer_id: str
     :ivar primary_boundary_id: Primary boundary id.
     :vartype primary_boundary_id: str
@@ -1258,7 +1258,7 @@ class Field(msrest.serialization.Model):
      and must not have a value greater than 150 characters.
      Note: A maximum of 25 key value pairs can be provided for a resource and only string and
      numeral values are supported.
-    :type properties: dict[str, object]
+    :type properties: dict[str, any]
     """
 
     _validation = {
@@ -1296,7 +1296,7 @@ class Field(msrest.serialization.Model):
         status: Optional[str] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
-        properties: Optional[Dict[str, object]] = None,
+        properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(Field, self).__init__(**kwargs)
@@ -1443,7 +1443,7 @@ class HarvestData(msrest.serialization.Model):
      and must not have a value greater than 150 characters.
      Note: A maximum of 25 key value pairs can be provided for a resource and only string and
      numeral values are supported.
-    :type properties: dict[str, object]
+    :type properties: dict[str, any]
     """
 
     _validation = {
@@ -1506,7 +1506,7 @@ class HarvestData(msrest.serialization.Model):
         status: Optional[str] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
-        properties: Optional[Dict[str, object]] = None,
+        properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(HarvestData, self).__init__(**kwargs)
@@ -1673,9 +1673,9 @@ class ImageProcessingRasterizeJob(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param farmer_id: Required. Farmer Id.
+    :param farmer_id: Required. Farmer ID.
     :type farmer_id: str
-    :param shapefile_attachment_id: Required. Shapefile attachment Id.
+    :param shapefile_attachment_id: Required. Shapefile attachment ID.
     :type shapefile_attachment_id: str
     :param shapefile_column_names: Required. List of shapefile column names to create raster
      attachments.
@@ -1686,7 +1686,7 @@ class ImageProcessingRasterizeJob(msrest.serialization.Model):
      Possible values: 'Waiting', 'Running', 'Succeeded', 'Failed', 'Cancelled'.
     :vartype status: str
     :ivar duration_in_seconds: Duration of the job in seconds.
-    :vartype duration_in_seconds: str
+    :vartype duration_in_seconds: float
     :ivar message: Status message to capture more details of the job.
     :vartype message: str
     :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
@@ -1707,7 +1707,7 @@ class ImageProcessingRasterizeJob(msrest.serialization.Model):
      and must not have a value greater than 150 characters.
      Note: A maximum of 25 key value pairs can be provided for a resource and only string and
      numeral values are supported.
-    :type properties: dict[str, object]
+    :type properties: dict[str, any]
     """
 
     _validation = {
@@ -1732,7 +1732,7 @@ class ImageProcessingRasterizeJob(msrest.serialization.Model):
         'shapefile_column_names': {'key': 'shapefileColumnNames', 'type': '[str]'},
         'id': {'key': 'id', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
-        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
+        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'float'},
         'message': {'key': 'message', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
@@ -1751,7 +1751,7 @@ class ImageProcessingRasterizeJob(msrest.serialization.Model):
         shapefile_column_names: List[str],
         name: Optional[str] = None,
         description: Optional[str] = None,
-        properties: Optional[Dict[str, object]] = None,
+        properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(ImageProcessingRasterizeJob, self).__init__(**kwargs)
@@ -1778,7 +1778,7 @@ class InnerError(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param code: Specific error code than was provided by the
      containing error.
     :type code: str
@@ -1799,7 +1799,7 @@ class InnerError(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, object]] = None,
+        additional_properties: Optional[Dict[str, Any]] = None,
         code: Optional[str] = None,
         innererror: Optional["InnerError"] = None,
         **kwargs
@@ -1945,9 +1945,9 @@ class OAuthConnectRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param farmer_id: Required. Id of the farmer.
+    :param farmer_id: Required. ID of the farmer.
     :type farmer_id: str
-    :param o_auth_provider_id: Required. Id of the OAuthProvider.
+    :param o_auth_provider_id: Required. ID of the OAuthProvider.
     :type o_auth_provider_id: str
     :param user_redirect_link: Required. Link to redirect the user to, at the end of the oauth
      flow.
@@ -1992,7 +1992,7 @@ class OAuthProvider(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param app_id: OAuth App Id for given OAuth Provider.
+    :param app_id: OAuth App ID for given OAuth Provider.
     :type app_id: str
     :param app_secret: OAuth App secret for given Provider.
      Note: Won't be sent in response.
@@ -2023,7 +2023,7 @@ class OAuthProvider(msrest.serialization.Model):
      and must not have a value greater than 150 characters.
      Note: A maximum of 25 key value pairs can be provided for a resource and only string and
      numeral values are supported.
-    :type properties: dict[str, object]
+    :type properties: dict[str, any]
     """
 
     _validation = {
@@ -2061,7 +2061,7 @@ class OAuthProvider(msrest.serialization.Model):
         is_production_app: Optional[bool] = False,
         name: Optional[str] = None,
         description: Optional[str] = None,
-        properties: Optional[Dict[str, object]] = None,
+        properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(OAuthProvider, self).__init__(**kwargs)
@@ -2337,7 +2337,7 @@ class PlantingData(msrest.serialization.Model):
      and must not have a value greater than 150 characters.
      Note: A maximum of 25 key value pairs can be provided for a resource and only string and
      numeral values are supported.
-    :type properties: dict[str, object]
+    :type properties: dict[str, any]
     """
 
     _validation = {
@@ -2394,7 +2394,7 @@ class PlantingData(msrest.serialization.Model):
         status: Optional[str] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
-        properties: Optional[Dict[str, object]] = None,
+        properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(PlantingData, self).__init__(**kwargs)
@@ -2657,7 +2657,7 @@ class SatelliteDataIngestionJob(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param farmer_id: Required. Farmer Id.
+    :param farmer_id: Required. Farmer ID.
     :type farmer_id: str
     :param boundary_id: Required. The id of the boundary object for which satellite data is being
      fetched.
@@ -2678,7 +2678,7 @@ class SatelliteDataIngestionJob(msrest.serialization.Model):
      Possible values: 'Waiting', 'Running', 'Succeeded', 'Failed', 'Cancelled'.
     :vartype status: str
     :ivar duration_in_seconds: Duration of the job in seconds.
-    :vartype duration_in_seconds: str
+    :vartype duration_in_seconds: float
     :ivar message: Status message to capture more details of the job.
     :vartype message: str
     :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
@@ -2699,7 +2699,7 @@ class SatelliteDataIngestionJob(msrest.serialization.Model):
      and must not have a value greater than 150 characters.
      Note: A maximum of 25 key value pairs can be provided for a resource and only string and
      numeral values are supported.
-    :type properties: dict[str, object]
+    :type properties: dict[str, any]
     """
 
     _validation = {
@@ -2729,7 +2729,7 @@ class SatelliteDataIngestionJob(msrest.serialization.Model):
         'data': {'key': 'data', 'type': 'SatelliteData'},
         'id': {'key': 'id', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
-        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
+        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'float'},
         'message': {'key': 'message', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
@@ -2752,7 +2752,7 @@ class SatelliteDataIngestionJob(msrest.serialization.Model):
         data: Optional["SatelliteData"] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
-        properties: Optional[Dict[str, object]] = None,
+        properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(SatelliteDataIngestionJob, self).__init__(**kwargs)
@@ -3030,7 +3030,7 @@ class Season(msrest.serialization.Model):
      and must not have a value greater than 150 characters.
      Note: A maximum of 25 key value pairs can be provided for a resource and only string and
      numeral values are supported.
-    :type properties: dict[str, object]
+    :type properties: dict[str, any]
     """
 
     _validation = {
@@ -3066,7 +3066,7 @@ class Season(msrest.serialization.Model):
         status: Optional[str] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
-        properties: Optional[Dict[str, object]] = None,
+        properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(Season, self).__init__(**kwargs)
@@ -3088,21 +3088,21 @@ class SeasonalField(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar farmer_id: Farmer Id.
+    :ivar farmer_id: Farmer ID.
     :vartype farmer_id: str
     :ivar primary_boundary_id: Primary boundary id.
     :vartype primary_boundary_id: str
     :ivar boundary_ids: Boundary Ids.
     :vartype boundary_ids: list[str]
-    :param farm_id: Id of the associated Farm.
+    :param farm_id: ID of the associated Farm.
     :type farm_id: str
-    :param field_id: Id of the associated Field.
+    :param field_id: ID of the associated Field.
     :type field_id: str
-    :param season_id: Id of the season it belongs to.
+    :param season_id: ID of the season it belongs to.
     :type season_id: str
     :param crop_variety_ids: CropVariety ids.
     :type crop_variety_ids: list[str]
-    :param crop_id: Id of the crop it belongs to.
+    :param crop_id: ID of the crop it belongs to.
     :type crop_id: str
     :param avg_yield_value: Average yield value of the seasonal field.
     :type avg_yield_value: float
@@ -3135,7 +3135,7 @@ class SeasonalField(msrest.serialization.Model):
      and must not have a value greater than 150 characters.
      Note: A maximum of 25 key value pairs can be provided for a resource and only string and
      numeral values are supported.
-    :type properties: dict[str, object]
+    :type properties: dict[str, any]
     """
 
     _validation = {
@@ -3194,7 +3194,7 @@ class SeasonalField(msrest.serialization.Model):
         status: Optional[str] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
-        properties: Optional[Dict[str, object]] = None,
+        properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(SeasonalField, self).__init__(**kwargs)
@@ -3339,7 +3339,7 @@ class TillageData(msrest.serialization.Model):
      and must not have a value greater than 150 characters.
      Note: A maximum of 25 key value pairs can be provided for a resource and only string and
      numeral values are supported.
-    :type properties: dict[str, object]
+    :type properties: dict[str, any]
     """
 
     _validation = {
@@ -3392,7 +3392,7 @@ class TillageData(msrest.serialization.Model):
         status: Optional[str] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
-        properties: Optional[Dict[str, object]] = None,
+        properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(TillageData, self).__init__(**kwargs)
@@ -3519,7 +3519,7 @@ class WeatherData(msrest.serialization.Model):
      and must not have a value greater than 150 characters.
      Note: A maximum of 25 key value pairs can be provided for a resource and only string and
      numeral values are supported.
-    :type properties: dict[str, object]
+    :type properties: dict[str, any]
     """
 
     _validation = {
@@ -3596,7 +3596,7 @@ class WeatherData(msrest.serialization.Model):
         wind_gust: Optional["Measure"] = None,
         wind_speed: Optional["Measure"] = None,
         id: Optional[str] = None,
-        properties: Optional[Dict[str, object]] = None,
+        properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(WeatherData, self).__init__(**kwargs)
@@ -3638,7 +3638,7 @@ class WeatherDataDeleteJob(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param extension_id: Required. Id of the extension to be used for the providerInput. eg.
+    :param extension_id: Required. ID of the extension to be used for the providerInput. eg.
      DTN.ClearAg.
     :type extension_id: str
     :param farmer_id: Required. The id of the farmer object for which weather data is being
@@ -3664,7 +3664,7 @@ class WeatherDataDeleteJob(msrest.serialization.Model):
      Possible values: 'Waiting', 'Running', 'Succeeded', 'Failed', 'Cancelled'.
     :vartype status: str
     :ivar duration_in_seconds: Duration of the job in seconds.
-    :vartype duration_in_seconds: str
+    :vartype duration_in_seconds: float
     :ivar message: Status message to capture more details of the job.
     :vartype message: str
     :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
@@ -3685,7 +3685,7 @@ class WeatherDataDeleteJob(msrest.serialization.Model):
      and must not have a value greater than 150 characters.
      Note: A maximum of 25 key value pairs can be provided for a resource and only string and
      numeral values are supported.
-    :type properties: dict[str, object]
+    :type properties: dict[str, any]
     """
 
     _validation = {
@@ -3714,7 +3714,7 @@ class WeatherDataDeleteJob(msrest.serialization.Model):
         'end_date_time': {'key': 'endDateTime', 'type': 'iso-8601'},
         'id': {'key': 'id', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
-        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
+        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'float'},
         'message': {'key': 'message', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
@@ -3737,7 +3737,7 @@ class WeatherDataDeleteJob(msrest.serialization.Model):
         end_date_time: Optional[datetime.datetime] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
-        properties: Optional[Dict[str, object]] = None,
+        properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(WeatherDataDeleteJob, self).__init__(**kwargs)
@@ -3774,14 +3774,14 @@ class WeatherDataIngestionJob(msrest.serialization.Model):
     :param farmer_id: Required. The id of the farmer object for which weather data is being
      fetched.
     :type farmer_id: str
-    :param extension_id: Required. Id of the extension to be used for the providerInput. eg.
+    :param extension_id: Required. ID of the extension to be used for the providerInput. eg.
      DTN.ClearAg.
     :type extension_id: str
     :param extension_api_name: Required. Extension api name to which request is to be made.
     :type extension_api_name: str
     :param extension_api_input: Required. Extension api input dictionary which would be used to
      feed request query/body/parameter information.
-    :type extension_api_input: dict[str, object]
+    :type extension_api_input: dict[str, any]
     :param extension_data_provider_app_id: App id of the weather data provider.
     :type extension_data_provider_app_id: str
     :param extension_data_provider_api_key: Api key of the weather data provider.
@@ -3792,7 +3792,7 @@ class WeatherDataIngestionJob(msrest.serialization.Model):
      Possible values: 'Waiting', 'Running', 'Succeeded', 'Failed', 'Cancelled'.
     :vartype status: str
     :ivar duration_in_seconds: Duration of the job in seconds.
-    :vartype duration_in_seconds: str
+    :vartype duration_in_seconds: float
     :ivar message: Status message to capture more details of the job.
     :vartype message: str
     :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
@@ -3813,7 +3813,7 @@ class WeatherDataIngestionJob(msrest.serialization.Model):
      and must not have a value greater than 150 characters.
      Note: A maximum of 25 key value pairs can be provided for a resource and only string and
      numeral values are supported.
-    :type properties: dict[str, object]
+    :type properties: dict[str, any]
     """
 
     _validation = {
@@ -3846,7 +3846,7 @@ class WeatherDataIngestionJob(msrest.serialization.Model):
         'extension_data_provider_api_key': {'key': 'extensionDataProviderApiKey', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
-        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
+        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'float'},
         'message': {'key': 'message', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
@@ -3864,12 +3864,12 @@ class WeatherDataIngestionJob(msrest.serialization.Model):
         farmer_id: str,
         extension_id: str,
         extension_api_name: str,
-        extension_api_input: Dict[str, object],
+        extension_api_input: Dict[str, Any],
         extension_data_provider_app_id: Optional[str] = None,
         extension_data_provider_api_key: Optional[str] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
-        properties: Optional[Dict[str, object]] = None,
+        properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(WeatherDataIngestionJob, self).__init__(**kwargs)

@@ -1,8 +1,8 @@
-# Azure Video Analyzer Edge for IoT Edge client library for Python
+# Azure Video Analyzer Edge client library for Python
 
-Azure Video Analyzer on IoT Edge provides a platform to build intelligent video applications that span the edge and the cloud. The platform offers the capability to capture, record, and analyze live video along with publishing the results, video and video analytics, to Azure services in the cloud or the edge. It is designed to be an extensible platform, enabling you to connect different video analysis edge modules (such as Cognitive services containers, custom edge modules built by you with open-source machine learning models or custom models trained with your own data) to it and use them to analyze live video without worrying about the complexity of building and running a live video pipeline.
+Azure Video Analyzer provides a platform to build intelligent video applications that span the edge and the cloud. The platform offers the capability to capture, record, and analyze live video along with publishing the results, video and video analytics, to Azure services in the cloud or the edge. It is designed to be an extensible platform, enabling you to connect different video analysis edge modules (such as Cognitive services containers, custom edge modules built by you with open-source machine learning models or custom models trained with your own data) to it and use them to analyze live video without worrying about the complexity of building and running a live video pipeline.
 
-Use the client library for Video Analyzer on IoT Edge to:
+Use the client library for Video Analyzer Edge to:
 
 - Simplify interactions with the [Microsoft Azure IoT SDKs](https://github.com/azure/azure-iot-sdks)
 - Programmatically construct pipeline topologies and live pipelines
@@ -13,7 +13,7 @@ Use the client library for Video Analyzer on IoT Edge to:
 
 ### Install the package
 
-Install the Video Analyzer client library for Python with pip:
+Install the Video Analyzer Edge client library for Python with pip:
 
 ```bash
 pip install azure-media-videoanalyzer-edge
@@ -22,23 +22,23 @@ pip install azure-media-videoanalyzer-edge
 ### Prerequisites
 
 - Python 2.7, or 3.6 or later is required to use this package.
-- You need an active [Azure subscription][azure_sub], and a [IoT device connection string][iot_device_connection_string] to use this package.
+- You need an active [Azure subscription][azure_sub], and a IoT device connection string to use this package.
 - To interact with Azure IoT Hub you will need to run `pip install azure-iot-hub`
 - You will need to use the version of the SDK that corresponds to the version of the Video Analyzer Edge module you are using.
 
-    | SDK  | Video Analyzer Edge Module  |
+    | SDK  | Video Analyzer edge module  |
     |---|---|
-    | 1.0.0b1  | 2.0  |
+    | 1.0.0b1  | 1.0  |
 
-### Creating a pipline topology and making requests
+### Creating a pipeline topology and making requests
 
 Please visit the [Examples](#examples) for starter code.
 
 ## Key concepts
 
-### Pipeline Topology vs Live Pipeline Instance
+### Pipeline topology vs live pipeline
 
-A _pipeline topology_ is a blueprint or template for instantiating live pipelines. It defines the parameters of the pipeline using placeholders as values for them. A _live pipeline_ references a pipeline topology and specifies the parameters. This way you are able to have multiple live pipelines referencing the same topology but with different values for parameters. For more information please visit [pipeline topologies and live pipelines][doc_pipelines].
+A _pipeline topology_ is a blueprint or template for creating live pipelines. It defines the parameters of the pipeline using placeholders as values for them. A _live pipeline_ references a pipeline topology and specifies the parameters. This way you are able to have multiple live pipelines referencing the same topology but with different values for parameters. For more information please visit [pipeline topologies and live pipelines][doc_pipelines].
 
 ### CloudToDeviceMethod
 
@@ -52,12 +52,12 @@ The second parameter, `payload`, sends the entire serialization of the pipeline 
 
 ### Creating a pipeline topology
 
-To create a pipeline topology you need to define parameters, sources, and sinks.
+To create a pipeline topology you need to define sources and sinks.
 
 ```python
 #Parameters
-user_name_param = ParameterDeclaration(name="rtspUserName",type="String",default="dummyusername")
-password_param = ParameterDeclaration(name="rtspPassword",type="SecretString",default="dummypassword")
+user_name_param = ParameterDeclaration(name="rtspUserName",type="String",default="testusername")
+password_param = ParameterDeclaration(name="rtspPassword",type="SecretString",default="testpassword")
 url_param = ParameterDeclaration(name="rtspUrl",type="String",default="rtsp://www.sample.com")
 hub_param = ParameterDeclaration(name="hubSinkOutputName",type="String")
 
@@ -87,9 +87,9 @@ live_pipeline = LivePipeline(name=live_pipeline_name, properties=live_pipeline_p
 
 ```
 
-### Invoking a pipeline topology method request
+### Invoking a direct method
 
-To invoke a pipeline topology method on your device you need to first define the request using the Video Analyzer SDK, then send that method request using the IoT SDK's `CloudToDeviceMethod`.
+To invoke a direct method on your device you need to first define the request using the Video Analyzer Edge SDK, then send that method request using the IoT SDK's `CloudToDeviceMethod`.
 
 ```python
 set_method_request = PipelineTopologySetRequest(pipeline_topology=pipeline_topology)
@@ -139,17 +139,12 @@ additional questions or comments.
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [coc_contact]: mailto:opencode@microsoft.com
-
-[package]: TODO://link-to-published-package
-[source]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/videoanalyzer
+[doc_pipelines]: https://go.microsoft.com/fwlink/?linkid=2162396
+[package]: https://aka.ms/ava/sdk/client/python
+[source]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/videoanalyzer
 [samples]: https://github.com/Azure-Samples/live-video-analytics-iot-edge-python
-
-[doc_direct_methods]: TODO://link
-[doc_pipelines]: TODO://link
-[doc_product]: TODO://link
-
+[doc_product]: https://go.microsoft.com/fwlink/?linkid=2162396
+[doc_direct_methods]: https://go.microsoft.com/fwlink/?linkid=2162396
 [iot-device-sdk]: https://pypi.org/project/azure-iot-device/
 [iot-hub-sdk]: https://pypi.org/project/azure-iot-hub/
-[iot_device_connection_string]: TODO://link
-
 [github-page-issues]: https://github.com/Azure/azure-sdk-for-python/issues

@@ -156,6 +156,7 @@ def get_blob_properties_from_generated_code(generated):
     blob.immutability_policy_expiry_time = generated.properties.immutability_policy_expires_on
     blob.immutability_policy_mode = generated.properties.immutability_policy_mode
     blob.legal_hold = generated.properties.legal_hold
+    blob.has_versions_only = generated.has_versions_only
     return blob
 
 
