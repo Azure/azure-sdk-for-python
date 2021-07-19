@@ -3,6 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+from typing import (
+    Any,
+    Optional,
+)
 
 class DictMixin(object):
     def __setitem__(self, key, item):
