@@ -77,29 +77,6 @@ from msrest.serialization import (
 )
 
 
-def full_restapi_key_transformer(key, attr_desc, value):
-    """A key transformer that returns the full RestAPI key path.
-
-    :param str _: The attribute name
-    :param dict attr_desc: The attribute metadata
-    :param object value: The value
-    :returns: A list of keys using RestAPI syntax.
-    """
-    keys = _FLATTEN.split(attr_desc['key'])
-    return ([_decode_attribute_map_key(k) for k in keys], value)
-
-def last_restapi_key_transformer(key, attr_desc, value):
-    """A key transformer that returns the last RestAPI key.
-
-    :param str key: The attribute name
-    :param dict attr_desc: The attribute metadata
-    :param object value: The value
-    :returns: The last RestAPI key.
-    """
-    key, value = full_restapi_key_transformer(key, attr_desc, value)
-    return (key[-1], value)
-
-
 def _decode_attribute_map_key(key):
     """This decode a key in an _attribute_map to the actual key we want to look at
        inside the received data.
@@ -108,76 +85,6 @@ def _decode_attribute_map_key(key):
     """
     return key.replace('\\.', '.')
 
-
-def rest_key_extractor(attr, attr_desc, data):
-    key = attr_desc['key']
-    working_data = data
-
-    while '.' in key:
-        dict_keys = _FLATTEN.split(key)
-        if len(dict_keys) == 1:
-            key = _decode_attribute_map_key(dict_keys[0])
-            break
-        working_key = _decode_attribute_map_key(dict_keys[0])
-        working_data = working_data.get(working_key, data)
-        if working_data is None:
-            # If at any point while following flatten JSON path see None, it means
-            # that all properties under are None as well
-            # https://github.com/Azure/msrest-for-python/issues/197
-            return None
-        key = '.'.join(dict_keys[1:])
-
-    return working_data.get(key)
-
-def rest_key_case_insensitive_extractor(attr, attr_desc, data):
-    key = attr_desc['key']
-    working_data = data
-
-    while '.' in key:
-        dict_keys = _FLATTEN.split(key)
-        if len(dict_keys) == 1:
-            key = _decode_attribute_map_key(dict_keys[0])
-            break
-        working_key = _decode_attribute_map_key(dict_keys[0])
-        working_data = attribute_key_case_insensitive_extractor(working_key, None, working_data)
-        if working_data is None:
-            # If at any point while following flatten JSON path see None, it means
-            # that all properties under are None as well
-            # https://github.com/Azure/msrest-for-python/issues/197
-            return None
-        key = '.'.join(dict_keys[1:])
-
-    if working_data:
-        return attribute_key_case_insensitive_extractor(key, None, working_data)
-
-def last_rest_key_extractor(attr, attr_desc, data):
-    """Extract the attribute in "data" based on the last part of the JSON path key.
-    """
-    key = attr_desc['key']
-    dict_keys = _FLATTEN.split(key)
-    return attribute_key_extractor(dict_keys[-1], None, data)
-
-def last_rest_key_case_insensitive_extractor(attr, attr_desc, data):
-    """Extract the attribute in "data" based on the last part of the JSON path key.
-
-    This is the case insensitive version of "last_rest_key_extractor"
-    """
-    key = attr_desc['key']
-    dict_keys = _FLATTEN.split(key)
-    return attribute_key_case_insensitive_extractor(dict_keys[-1], None, data)
-
-def attribute_key_extractor(attr, _, data):
-    return data.get(attr)
-
-def attribute_key_case_insensitive_extractor(attr, _, data):
-    found_key = None
-    lower_attr = attr.lower()
-    for key in data:
-        if lower_attr == key.lower():
-            found_key = key
-            break
-
-    return data.get(found_key)
 
 def _extract_name_from_internal_type(internal_type):
     """Given an internal type XML description, extract correct XML name with namespace.
@@ -302,7 +209,7 @@ class Deserializer(object):
         }
         self.dependencies = dict(classes) if classes else {}
         self.key_extractors = [
-            rest_key_extractor,
+            # rest_key_extractor,
             xml_key_extractor
         ]
         # Additional properties only works if the "rest_key_extractor" is used to
@@ -437,11 +344,6 @@ class Deserializer(object):
                 target = self.dependencies[target]
             except KeyError:
                 return target, target
-
-        try:
-            target = target._classify(data, self.dependencies)
-        except AttributeError:
-            pass  # Target is not a Model, no classify
         return target, target.__class__.__name__
 
     def failsafe_deserialize(self, target_obj, data, content_type=None):
