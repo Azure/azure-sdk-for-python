@@ -13,8 +13,8 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/18.1.0 Python/3.8.10 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+      - azsdk-python-azure-mgmt-resource/19.0.0 Python/3.8.11 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/locks/pylockrg?api-version=2016-09-01
   response:
@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Jul 2021 01:46:31 GMT
+      - Mon, 19 Jul 2021 08:38:21 GMT
       expires:
       - '-1'
       pragma:
@@ -52,8 +52,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/18.1.0 Python/3.8.10 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+      - azsdk-python-azure-mgmt-resource/19.0.0 Python/3.8.11 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/locks/pylockrg?api-version=2016-09-01
   response:
@@ -67,7 +67,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Jul 2021 01:46:31 GMT
+      - Mon, 19 Jul 2021 08:38:21 GMT
       expires:
       - '-1'
       pragma:
@@ -93,8 +93,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/18.1.0 Python/3.8.10 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+      - azsdk-python-azure-mgmt-resource/19.0.0 Python/3.8.11 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/locks?api-version=2016-09-01
   response:
@@ -152,7 +152,7 @@ interactions:
         deletion of the storage account."},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/clitest.rgp6ikwpcsq7/providers/microsoft.storage/storageAccounts/clitestggvkyebv5o55dhakj/providers/Microsoft.Authorization/locks/AzureBackupProtectionLock","type":"Microsoft.Authorization/locks","name":"AzureBackupProtectionLock"},{"properties":{"level":"CanNotDelete","notes":"Auto-created
         by Azure Backup for storage accounts registered with a Recovery Services Vault.
         This lock is intended to guard against deletion of backups due to accidental
-        deletion of the storage account."},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/clitest.rgrc4sjsrzt4/providers/microsoft.storage/storageAccounts/clitest63b5vtkhuf7auho6z/providers/Microsoft.Authorization/locks/AzureBackupProtectionLock","type":"Microsoft.Authorization/locks","name":"AzureBackupProtectionLock"},{"properties":{"level":"CanNotDelete"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-cli-edge/providers/Microsoft.Authorization/locks/dl","type":"Microsoft.Authorization/locks","name":"dl"},{"properties":{"level":"CanNotDelete"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-cli-edge/providers/Microsoft.Storage/storageAccounts/azurecliedge/providers/Microsoft.Authorization/locks/azurecliedge-dl","type":"Microsoft.Authorization/locks","name":"azurecliedge-dl"},{"properties":{"level":"CanNotDelete"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fytest/providers/Microsoft.Storage/storageAccounts/sharedvmextension/providers/Microsoft.Authorization/locks/l1","type":"Microsoft.Authorization/locks","name":"l1"},{"properties":{"level":"CanNotDelete"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fytest/providers/Microsoft.Compute/images/img1/providers/Microsoft.Authorization/locks/l1","type":"Microsoft.Authorization/locks","name":"l1"},{"properties":{"level":"CanNotDelete"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fytest/providers/Microsoft.Compute/galleries/gallery1/images/image1/providers/Microsoft.Authorization/locks/l1","type":"Microsoft.Authorization/locks","name":"l1"},{"properties":{"level":"CanNotDelete","notes":"In
+        deletion of the storage account."},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/clitest.rgrc4sjsrzt4/providers/microsoft.storage/storageAccounts/clitest63b5vtkhuf7auho6z/providers/Microsoft.Authorization/locks/AzureBackupProtectionLock","type":"Microsoft.Authorization/locks","name":"AzureBackupProtectionLock"},{"properties":{"level":"CanNotDelete"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-cli-edge/providers/Microsoft.Authorization/locks/dl","type":"Microsoft.Authorization/locks","name":"dl"},{"properties":{"level":"CanNotDelete"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-cli-edge/providers/Microsoft.Storage/storageAccounts/azurecliedge/providers/Microsoft.Authorization/locks/azurecliedge-dl","type":"Microsoft.Authorization/locks","name":"azurecliedge-dl"},{"properties":{"level":"CanNotDelete"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/zhoxing-test/providers/Microsoft.Authorization/locks/zhoxing-test","type":"Microsoft.Authorization/locks","name":"zhoxing-test"},{"properties":{"level":"CanNotDelete"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fytest/providers/Microsoft.Storage/storageAccounts/sharedvmextension/providers/Microsoft.Authorization/locks/l1","type":"Microsoft.Authorization/locks","name":"l1"},{"properties":{"level":"CanNotDelete"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fytest/providers/Microsoft.Compute/images/img1/providers/Microsoft.Authorization/locks/l1","type":"Microsoft.Authorization/locks","name":"l1"},{"properties":{"level":"CanNotDelete"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fytest/providers/Microsoft.Compute/galleries/gallery1/images/image1/providers/Microsoft.Authorization/locks/l1","type":"Microsoft.Authorization/locks","name":"l1"},{"properties":{"level":"CanNotDelete","notes":"In
         case of deleting by incident"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/azuresdktest_reserved/providers/Microsoft.Authorization/locks/LockReservedResources","type":"Microsoft.Authorization/locks","name":"LockReservedResources"},{"properties":{"level":"CanNotDelete","notes":"Auto-created
         by Azure Backup for storage accounts registered with a Recovery Services Vault.
         This lock is intended to guard against deletion of backups due to accidental
@@ -174,11 +174,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '25477'
+      - '25718'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Jul 2021 01:46:31 GMT
+      - Mon, 19 Jul 2021 08:38:22 GMT
       expires:
       - '-1'
       pragma:
@@ -206,8 +206,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/18.1.0 Python/3.8.10 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+      - azsdk-python-azure-mgmt-resource/19.0.0 Python/3.8.11 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/locks/pylockrg?api-version=2016-09-01
   response:
@@ -219,7 +219,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 13 Jul 2021 01:46:32 GMT
+      - Mon, 19 Jul 2021 08:38:22 GMT
       expires:
       - '-1'
       pragma:
