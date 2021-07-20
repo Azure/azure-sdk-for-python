@@ -459,7 +459,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(download_resp.readall(), b'AAABBBCCC')
         self.assertEqual(download_resp.properties.etag, put_block_list_resp.get('etag'))
         self.assertEqual(download_resp.properties.last_modified, put_block_list_resp.get('last_modified'))
-        self.assertTrue(download_resp.properties['legal_hold'])
+        self.assertTrue(download_resp.properties['has_legal_hold'])
         self.assertIsNotNone(download_resp.properties['immutability_policy_expiry_time'])
         self.assertIsNotNone(download_resp.properties['immutability_policy_mode'])
 

@@ -1463,7 +1463,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         download_resp = await copyblob.download_blob()
         self.assertEqual(await download_resp.readall(), self.byte_data)
 
-        self.assertTrue(download_resp.properties['legal_hold'])
+        self.assertTrue(download_resp.properties['has_legal_hold'])
         self.assertIsNotNone(download_resp.properties['immutability_policy_expiry_time'])
         self.assertIsNotNone(download_resp.properties['immutability_policy_mode'])
         self.assertIsNotNone(copy)
@@ -2629,7 +2629,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         with self.assertRaises(HttpResponseError):
             await blob.delete_blob()
 
-        self.assertTrue(download_resp.properties['legal_hold'])
+        self.assertTrue(download_resp.properties['has_legal_hold'])
         self.assertIsNotNone(download_resp.properties['immutability_policy_expiry_time'])
         self.assertIsNotNone(download_resp.properties['immutability_policy_mode'])
 
@@ -2667,7 +2667,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         async for blob in container_client.list_blobs(include=['immutabilitypolicy', 'legalhold']):
             blob_list.append(blob)
 
-        self.assertTrue(blob_list[0]['legal_hold'])
+        self.assertTrue(blob_list[0]['has_legal_hold'])
         self.assertIsNotNone(blob_list[0]['immutability_policy_expiry_time'])
         self.assertIsNotNone(blob_list[0]['immutability_policy_mode'])
 
