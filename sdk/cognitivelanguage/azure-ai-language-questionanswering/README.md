@@ -70,18 +70,18 @@ The following examples show common scenarios using the `client` [created above](
 
 ### Ask a question
 
-The only input required to ask a question using a knowledgebase is just the question itself:
+The only input required to ask a question using a knowledge base is just the question itself:
 
 ```python
 from azure.ai.language.questionanswering import models as qna
 
-params = qna.KnowledgebaseQueryParameters(
+params = qna.KnowledgeBaseQueryOptions(
     question="How long should my Surface battery last?"
 )
 
 output = client.query_knowledgebase(
     project_name="FAQ",
-    knowledgebase_query_parameters=params
+    knowledge_base_query_options=params
 )
 for candidate in output.answers:
     print("({}) {}".format(candidate.confidence_score, candidate.answer))
@@ -89,16 +89,16 @@ for candidate in output.answers:
 
 ```
 
-You can set additional properties on `KnowledgebaseQueryParameters` to limit the number of answers, specify a minimum confidence score, and more.
+You can set additional properties on `KnowledgeBaseQueryOptions` to limit the number of answers, specify a minimum confidence score, and more.
 
 ### Ask a follow-up question
 
-If your knowledgebase is configured for [chit-chat][questionanswering_docs_chat], you can ask a follow-up question provided the previous question-answering ID and, optionally, the exact question the user asked:
+If your knowledge base is configured for [chit-chat][questionanswering_docs_chat], you can ask a follow-up question provided the previous question-answering ID and, optionally, the exact question the user asked:
 
 ```python
-params = qna.models.KnowledgebaseQueryParameters(
+params = qna.models.KnowledgeBaseQueryOptions(
     question="How long should charging take?"
-    context=qna.models.KnowledgebaseAnswerRequestContext(
+    context=qna.models.KnowledgeBaseAnswerRequestContext(
         previous_user_query="How long should my Surface battery last?",
         previous_qna_id=previous_answer.id
     )
@@ -106,7 +106,7 @@ params = qna.models.KnowledgebaseQueryParameters(
 
 output = client.query_knowledgebase(
     project_name="FAQ",
-    knowledgebase_query_parameters=params
+    knowledge_base_query_options=params
 )
 for candidate in output.answers:
     print("({}) {}".format(candidate.confidence_score, candidate.answer))
@@ -123,13 +123,13 @@ from azure.ai.language.questionanswering import models as qna
 
 client = QuestionAnsweringClient(endpoint, credential)
 
-params = qna.KnowledgebaseQueryParameters(
+params = qna.KnowledgeBaseQueryOptions(
     question="How long should my Surface battery last?"
 )
 
 output = await client.query_knowledgebase(
     project_name="FAQ",
-    knowledgebase_query_parameters=params
+    knowledge_base_query_options=params
 )
 ```
 
@@ -149,8 +149,8 @@ from azure.core.exceptions import HttpResponseError
 
 try:
     client.query_knowledgebase(
-        project_name="invalid-knowledgebase",
-        knowledgebase_query_parameters=params
+        project_name="invalid-knowledge-base",
+        knowledge_base_query_options=params
     )
 except HttpResponseError as error:
     print("Query failed: {}".format(error.message))
