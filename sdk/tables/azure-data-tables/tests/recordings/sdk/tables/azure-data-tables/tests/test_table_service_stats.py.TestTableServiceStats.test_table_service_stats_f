@@ -1,0 +1,35 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://mcpatinostorage-secondary.table.core.windows.net/?restype=service\u0026comp=stats",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Date": "Tue, 20 Jul 2021 21:38:24 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.0 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "cf83178a-e9a2-11eb-9ee0-c8348e51ab51",
+        "x-ms-date": "Tue, 20 Jul 2021 21:38:24 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/xml",
+        "Date": "Tue, 20 Jul 2021 21:38:23 GMT",
+        "Server": [
+          "Windows-Azure-Table/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "x-ms-client-request-id": "cf83178a-e9a2-11eb-9ee0-c8348e51ab51",
+        "x-ms-request-id": "56a3083e-1002-0069-5faf-7d8b05000000",
+        "x-ms-version": "2019-02-02"
+      },
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CStorageServiceStats\u003E\u003CGeoReplication\u003E\u003CStatus\u003Elive\u003C/Status\u003E\u003CLastSyncTime\u003ETue, 20 Jul 2021 21:34:44 GMT\u003C/LastSyncTime\u003E\u003C/GeoReplication\u003E\u003C/StorageServiceStats\u003E"
+    }
+  ],
+  "Variables": {}
+}

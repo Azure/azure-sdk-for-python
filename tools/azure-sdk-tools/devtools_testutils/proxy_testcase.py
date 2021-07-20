@@ -4,8 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import functools
-import pdb
 import os
 import requests
 
@@ -16,9 +14,7 @@ except:
     # py2
     import urlparse as url_parse
 
-from contextlib import contextmanager
 import subprocess
-
 
 # the functions we patch
 from azure.core.pipeline.transport import RequestsTransport
@@ -33,8 +29,8 @@ RECORDING_STOP_URL = "{}/record/stop".format(PROXY_URL)
 PLAYBACK_START_URL = "{}/playback/start".format(PROXY_URL)
 PLAYBACK_STOP_URL = "{}/playback/stop".format(PROXY_URL)
 
-# TODO, create a pytest scope="session" implementation that can be added to a fixture such that that can
-# unit tests can startup/shutdown the local test proxy
+# TODO, create a pytest scope="session" implementation that can be added to a fixture such that unit tests can
+# startup/shutdown the local test proxy
 # this should also fire the admin mapping updates, and start/end the session for commiting recording updates
 
 
@@ -83,9 +79,11 @@ def stop_record_or_playback(test_id, recording_id):
             verify=False,
         )
 
+
 def get_proxy_netloc():
     parsed_result = url_parse.urlparse(PROXY_URL)
-    return { "scheme": parsed_result.scheme, "netloc": parsed_result.netloc }
+    return {"scheme": parsed_result.scheme, "netloc": parsed_result.netloc}
+
 
 def transform_request(request, recording_id):
     upstream_url = request.url.replace("//text", "/text")
