@@ -1,5 +1,17 @@
 # Release History
 
+## 8.0.0 (2021-07-20)
+
+**Features**
+
+  - Model LogAnalytics has a new parameter workspace_resource_id
+  - Model ContainerHttpGet has a new parameter http_headers
+  - Added operation ContainersOperations.attach
+
+**Breaking changes**
+
+  - Operation ContainersOperations.list_logs has a new signature
+
 ## 7.0.0 (2020-11-25)
 
 ## 7.0.0b1 (2020-10-12)
