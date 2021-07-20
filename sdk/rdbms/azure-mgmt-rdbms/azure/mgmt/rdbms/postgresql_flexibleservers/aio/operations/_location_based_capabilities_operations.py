@@ -26,7 +26,7 @@ class LocationBasedCapabilitiesOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~postgre_sql_management_client.models
+    :type models: ~azure.mgmt.rdbms.postgresql_flexibleservers.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -52,7 +52,7 @@ class LocationBasedCapabilitiesOperations:
         :type location_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either CapabilitiesListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~postgre_sql_management_client.models.CapabilitiesListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.rdbms.postgresql_flexibleservers.models.CapabilitiesListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CapabilitiesListResult"]
@@ -109,4 +109,4 @@ class LocationBasedCapabilitiesOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    execute.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBForPostgreSql/locations/{locationName}/capabilities'}  # type: ignore
+    execute.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBforPostgreSQL/locations/{locationName}/capabilities'}  # type: ignore

@@ -10,6 +10,7 @@
 
 ### Fixed
 
+- Not override "x-ms-client-request-id" if it already exists in the header.    #17757
 
 ## 1.16.0 (2021-07-01)
 
