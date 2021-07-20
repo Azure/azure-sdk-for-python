@@ -12,7 +12,7 @@ from .._generated.aio._monitor_query_client import MonitorQueryClient
 
 from .._generated.models import BatchRequest, QueryBody as LogsQueryBody
 from .._helpers import process_error, construct_iso8601, order_results
-from .._models import LogsQueryResults, LogsQueryRequest, LogsBatchResults, LogsQueryResult
+from .._models import LogsQueryResults, LogsQueryRequest, LogsQueryResult
 from ._helpers_asyc import get_authentication_policy
 
 if TYPE_CHECKING:
