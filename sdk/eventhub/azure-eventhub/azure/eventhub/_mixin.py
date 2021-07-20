@@ -41,6 +41,9 @@ class DictMixin(object):
         """Compare objects by comparing all attributes."""
         return not self.__eq__(other)
 
+    def __contains__(self, key):
+        return key in self.__dict__
+
     def __str__(self):
         # type: () -> str
         return str({k: v for k, v in self.__dict__.items() if not k.startswith("_")})
