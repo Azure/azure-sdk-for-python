@@ -72,9 +72,6 @@ class QuestionAnsweringClientOperationsMixin:
     ) -> "_models.KnowledgeBaseAnswers":
         """Answers the specified question using your knowledge base.
 
-        :param knowledge_base_query_options: Post body of the request.
-        :type knowledge_base_query_options:
-         ~azure.ai.language.questionanswering.models.KnowledgeBaseQueryOptions
         :keyword project_name: The name of the project to use.
         :paramtype project_name: str
         :keyword deployment_name: The name of the specific deployment of the project to use.
