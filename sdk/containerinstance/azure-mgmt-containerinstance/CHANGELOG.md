@@ -14,6 +14,8 @@
 
 ## 7.0.0 (2020-11-25)
 
+  - GA release
+
 ## 7.0.0b1 (2020-10-12)
 
 This is beta preview version.
