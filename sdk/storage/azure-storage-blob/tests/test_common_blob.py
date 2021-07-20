@@ -1192,7 +1192,7 @@ class StorageCommonBlobTest(StorageTestCase):
         download_resp = copyblob.download_blob()
         self.assertEqual(download_resp.readall(), self.byte_data)
 
-        self.assertTrue(download_resp.properties['legal_hold'])
+        self.assertTrue(download_resp.properties['has_legal_hold'])
         self.assertIsNotNone(download_resp.properties['immutability_policy_expiry_time'])
         self.assertIsNotNone(download_resp.properties['immutability_policy_mode'])
         self.assertIsNotNone(copy)
@@ -2580,13 +2580,13 @@ class StorageCommonBlobTest(StorageTestCase):
             blob.delete_blob()
 
         self.assertTrue(resp['legal_hold'])
-        self.assertTrue(props['legal_hold'])
+        self.assertTrue(props['has_legal_hold'])
 
         resp2 = blob.set_legal_hold(False)
         props2 = blob.get_blob_properties()
 
         self.assertFalse(resp2['legal_hold'])
-        self.assertFalse(props2['legal_hold'])
+        self.assertFalse(props2['has_legal_hold'])
 
         if self.is_live:
             mgmt_client.blob_containers.delete("XClient", storage_account.name, self.container_name)
@@ -2618,7 +2618,7 @@ class StorageCommonBlobTest(StorageTestCase):
         with self.assertRaises(HttpResponseError):
             blob.delete_blob()
 
-        self.assertTrue(download_resp.properties['legal_hold'])
+        self.assertTrue(download_resp.properties['has_legal_hold'])
         self.assertIsNotNone(download_resp.properties['immutability_policy_expiry_time'])
         self.assertIsNotNone(download_resp.properties['immutability_policy_mode'])
 
@@ -2654,7 +2654,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
         blob_list = list(container_client.list_blobs(include=['immutabilitypolicy', 'legalhold']))
 
-        self.assertTrue(blob_list[0]['legal_hold'])
+        self.assertTrue(blob_list[0]['has_legal_hold'])
         self.assertIsNotNone(blob_list[0]['immutability_policy_expiry_time'])
         self.assertIsNotNone(blob_list[0]['immutability_policy_mode'])
 

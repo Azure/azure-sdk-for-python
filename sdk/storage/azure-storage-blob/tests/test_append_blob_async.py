@@ -1434,7 +1434,7 @@ class StorageAppendBlobAsyncTest(AsyncStorageTestCase):
         with self.assertRaises(HttpResponseError):
             await blob.delete_blob()
 
-        self.assertTrue(props['legal_hold'])
+        self.assertTrue(props['has_legal_hold'])
         self.assertIsNotNone(props['immutability_policy_expiry_time'])
         self.assertIsNotNone(props['immutability_policy_mode'])
 

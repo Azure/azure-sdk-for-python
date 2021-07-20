@@ -2591,13 +2591,13 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
             await blob.delete_blob()
 
         self.assertTrue(resp['legal_hold'])
-        self.assertTrue(props['legal_hold'])
+        self.assertTrue(props['has_legal_hold'])
 
         resp2 = await blob.set_legal_hold(False)
         props2 = await blob.get_blob_properties()
 
         self.assertFalse(resp2['legal_hold'])
-        self.assertFalse(props2['legal_hold'])
+        self.assertFalse(props2['has_legal_hold'])
 
         if self.is_live:
             await mgmt_client.blob_containers.delete("XClient", storage_account.name, self.container_name)
