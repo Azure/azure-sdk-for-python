@@ -79,6 +79,36 @@ from msrest.serialization import (
     _FLATTEN
 )
 
+
+def unpack_xml_content(response_data, content_type=None):
+    """Extract the correct structure for deserialization.
+
+    If raw_data is a PipelineResponse, try to extract the result of RawDeserializer.
+    if we can't, raise. Your Pipeline should have a RawDeserializer.
+
+    If not a pipeline response and raw_data is bytes or string, use content-type
+    to decode it. If no content-type, try JSON.
+
+    If raw_data is something else, bypass all logic and return it directly.
+
+    :param raw_data: Data to be processed.
+    :param content_type: How to parse if raw_data is a string/bytes.
+    :raises UnicodeDecodeError: If bytes is not UTF8
+    """
+    data_as_str = response_data.text()
+    try:
+        try:
+            if isinstance(raw_data, unicode):  # type: ignore
+                # If I'm Python 2.7 and unicode XML will scream if I try a "fromstring" on unicode string
+                data_as_str = cast(str, data_as_str.encode(encoding="utf-8"))
+        except NameError:
+            pass
+        return ET.fromstring(data_as_str)   # nosec
+    except ET.ParseError:
+        _LOGGER.critical("Response body invalid XML")
+        raise_with_traceback(DecodeError, message="XML is invalid", response=response_data)
+
+
 def deserialize_bytearray(attr, *args):
     """Deserialize string into bytearray.
 
@@ -508,13 +538,53 @@ class Deserializer(object):
         :return: Deserialized object.
         """
         if response_data is None:
+            # No data. Moving on.
             return None
         try:
+            # Data is a basic data type.
             return self.deserialize_type[target_obj](response_data, target_obj)
         except KeyError:
             pass
-        data = self._unpack_content(response_data, content_type)
-        return self._deserialize(target_obj, data)
+        try:
+            # Data is an XML model.
+            target_obj = self.dependencies[target_obj]
+            decoded_data = unpack_xml_content(response_data.http_response, content_type)
+            return self._deserialize(target_obj, decoded_data)
+        except KeyError:
+            pass
+        try:
+            # Data is in a dict/list.
+            structure = target_obj[0] + target_obj[-1]
+            inner_type = target_obj[1:-1]
+            try:
+                self.dependencies[inner_type]
+                response_data = unpack_xml_content(response_data.http_response, content_type)
+            except KeyError:
+                pass
+            return self.deserialize_type[structure](response_data, inner_type)
+        except (KeyError, IndexError):
+            pass
+        raise Exception("No idea what to do with {}, {}".format(target_obj, response_data))
+
+    def failsafe_deserialize(self, target_obj, data, content_type=None):
+        """Ignores any errors encountered in deserialization,
+        and falls back to not deserializing the object. Recommended
+        for use in error deserialization, as we want to return the
+        HttpResponseError to users, and not have them deal with
+        a deserialization error.
+
+        :param str target_obj: The target object type to deserialize to.
+        :param str/dict data: The response data to deseralize.
+        :param str content_type: Swagger "produces" if available.
+        """
+        try:
+            return self(target_obj, data, content_type=content_type)
+        except:
+            _LOGGER.warning(
+                "Ran into a deserialization error. Ignoring since this is failsafe deserialization",
+				exc_info=True
+            )
+            return None
 
     def _deserialize(self, target_obj, data):
         """Call the deserializer on a model.
@@ -631,50 +701,6 @@ class Deserializer(object):
             except KeyError:
                 return target, target
         return target, target.__class__.__name__
-
-    def failsafe_deserialize(self, target_obj, data, content_type=None):
-        """Ignores any errors encountered in deserialization,
-        and falls back to not deserializing the object. Recommended
-        for use in error deserialization, as we want to return the
-        HttpResponseError to users, and not have them deal with
-        a deserialization error.
-
-        :param str target_obj: The target object type to deserialize to.
-        :param str/dict data: The response data to deseralize.
-        :param str content_type: Swagger "produces" if available.
-        """
-        try:
-            return self(target_obj, data, content_type=content_type)
-        except:
-            _LOGGER.warning(
-                "Ran into a deserialization error. Ignoring since this is failsafe deserialization",
-				exc_info=True
-            )
-            return None
-
-    @staticmethod
-    def _unpack_content(raw_data, content_type=None):
-        """Extract the correct structure for deserialization.
-
-        If raw_data is a PipelineResponse, try to extract the result of RawDeserializer.
-        if we can't, raise. Your Pipeline should have a RawDeserializer.
-
-        If not a pipeline response and raw_data is bytes or string, use content-type
-        to decode it. If no content-type, try JSON.
-
-        If raw_data is something else, bypass all logic and return it directly.
-
-        :param raw_data: Data to be processed.
-        :param content_type: How to parse if raw_data is a string/bytes.
-        :raises JSONDecodeError: If JSON is requested and parsing is impossible.
-        :raises UnicodeDecodeError: If bytes is not UTF8
-        """
-        if isinstance(raw_data, (basestring, bytes)) or hasattr(raw_data, 'read'):
-            return deserialize_from_text(raw_data, content_type)
-        try:
-            return deserialize_from_http_generics(raw_data.http_response)
-        except AttributeError:
-            return raw_data
 
     def _instantiate_model(self, response, attrs, additional_properties=None):
         """Instantiate a response model passing in deserialized args.
@@ -833,97 +859,3 @@ class Deserializer(object):
         else:
             error = "Cannot deserialize generic object with type: "
             raise TypeError(error + str(obj_type))
-
-
-def deserialize_from_text(
-    data,  # type: Optional[Union[AnyStr, IO]]
-    mime_type=None,  # Optional[str]
-    response=None  # Optional[Union[HttpResponse, AsyncHttpResponse]]
-):
-    """Decode response data according to content-type.
-    Accept a stream of data as well, but will be load at once in memory for now.
-    If no content-type, will return the string version (not bytes, not stream)
-    :param response: The HTTP response.
-    :type response: ~azure.core.pipeline.transport.HttpResponse
-    :param str mime_type: The mime type. As mime type, charset is not expected.
-    :param response: If passed, exception will be annotated with that response
-    :raises ~azure.core.exceptions.DecodeError: If deserialization fails
-    :returns: A dict or XML tree, depending of the mime_type
-    """
-    if not data:
-        return None
-
-    if hasattr(data, 'read'):
-        # Assume a stream
-        data = cast(IO, data).read()
-
-    if isinstance(data, bytes):
-        data_as_str = data.decode(encoding='utf-8-sig')
-    else:
-        # Explain to mypy the correct type.
-        data_as_str = cast(str, data)
-
-    if mime_type is None:
-        return data_as_str
-
-    if "xml" in (mime_type or []):
-        try:
-            try:
-                if isinstance(data, unicode):  # type: ignore
-                    # If I'm Python 2.7 and unicode XML will scream if I try a "fromstring" on unicode string
-                    data_as_str = cast(str, data_as_str.encode(encoding="utf-8"))
-            except NameError:
-                pass
-            return ET.fromstring(data_as_str)   # nosec
-        except ET.ParseError:
-            # It might be because the server has an issue, and returned JSON with
-            # content-type XML....
-            # So let's try a JSON load, and if it's still broken
-            # let's flow the initial exception
-            def _json_attemp(data):
-                try:
-                    return True, json.loads(data)
-                except ValueError:
-                    return False, None # Don't care about this one
-            success, json_result = _json_attemp(data)
-            if success:
-                return json_result
-            # If i'm here, it's not JSON, it's not XML, let's scream
-            # and raise the last context in this block (the XML exception)
-            # The function hack is because Py2.7 messes up with exception
-            # context otherwise.
-            _LOGGER.critical("Wasn't XML not JSON, failing")
-            raise_with_traceback(DecodeError, message="XML is invalid", response=response)
-    elif mime_type.startswith("text/"):
-        return data_as_str
-    else:
-        try:
-            return json.loads(data_as_str)
-        except ValueError as err:
-            raise DecodeError(message="JSON is invalid: {}".format(err), response=response, error=err)
-    raise DecodeError("Cannot deserialize content-type: {}".format(mime_type))
-
-
-def deserialize_from_http_generics(
-    response,  # Union[HttpResponse, AsyncHttpResponse]
-    encoding=None,  # Optional[str]
-):
-    """Deserialize from HTTP response.
-    Headers will tested for "content-type"
-    :param response: The HTTP response
-    :param encoding: The encoding to use if known for this service (will disable auto-detection)
-    :raises ~azure.core.exceptions.DecodeError: If deserialization fails
-    :returns: A dict or XML tree, depending of the mime-type
-    """
-    # Try to use content-type from headers if available
-    if response.content_type:
-        mime_type = response.content_type.split(";")[0].strip().lower()
-    # Ouch, this server did not declare what it sent...
-    # Let's guess it's JSON...
-    # Also, since Autorest was considering that an empty body was a valid JSON,
-    # need that test as well....
-    else:
-        mime_type = "application/json"
-
-    # Rely on transport implementation to give me "text()" decoded correctly
-    return deserialize_from_text(response.text(encoding), mime_type, response=response)

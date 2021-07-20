@@ -7,19 +7,17 @@
 
 from azure.core.paging import PageIterator, ItemPaged
 from azure.core.exceptions import HttpResponseError
-#from azure.core.pipeline.policies import ContentDecodePolicy
 
 from ._deserialize import get_blob_properties_from_generated_code, parse_tags
 from ._generated.models import BlobItemInternal, BlobPrefix as GenBlobPrefix, FilterBlobItem
 from ._models import BlobProperties, FilteredBlob
 from ._shared.models import DictMixin
-from ._shared.xml_deserialization import deserialize_from_http_generics
+from ._shared.xml_deserialization import unpack_xml_content
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
 
 
 def deserialize_list_result(pipeline_response, _, headers):
-    #payload = pipeline_response.context[ContentDecodePolicy.CONTEXT_NAME]
-    payload = deserialize_from_http_generics(pipeline_response.http_response)
+    payload = unpack_xml_content(pipeline_response.http_response)
     location = pipeline_response.http_response.location_mode
     return location, payload
 
