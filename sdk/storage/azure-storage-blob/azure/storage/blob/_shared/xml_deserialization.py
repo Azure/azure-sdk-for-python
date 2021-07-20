@@ -61,6 +61,9 @@ except NameError:
     unicode_str = str  # type: ignore
 
 _LOGGER = logging.getLogger(__name__)
+_valid_date = re.compile(
+    r'\d{4}[-]\d{2}[-]\d{2}T\d{2}:\d{2}:\d{2}'
+    r'\.?\d*Z?[-+]?[\d{2}]?:?[\d{2}]?')
 
 try:
     _long_type = long   # type: ignore
@@ -75,6 +78,282 @@ from msrest.serialization import (
     _FixedOffset,
     _FLATTEN
 )
+
+def deserialize_bytearray(attr, *args):
+    """Deserialize string into bytearray.
+
+    :param str attr: response string to be deserialized.
+    :rtype: bytearray
+    :raises: TypeError if string format invalid.
+    """
+    if isinstance(attr, ET.Element):
+        attr = attr.text
+    return bytearray(b64decode(attr))
+
+
+def deserialize_base64(attr, *args):
+    """Deserialize base64 encoded string into string.
+
+    :param str attr: response string to be deserialized.
+    :rtype: bytearray
+    :raises: TypeError if string format invalid.
+    """
+    if isinstance(attr, ET.Element):
+        attr = attr.text
+    padding = '=' * (3 - (len(attr) + 3) % 4)
+    attr = attr + padding
+    encoded = attr.replace('-', '+').replace('_', '/')
+    return b64decode(encoded)
+
+
+def deserialize_decimal(attr, *args):
+    """Deserialize string into Decimal object.
+
+    :param str attr: response string to be deserialized.
+    :rtype: Decimal
+    :raises: DeserializationError if string format invalid.
+    """
+    if isinstance(attr, ET.Element):
+        attr = attr.text
+    try:
+        return decimal.Decimal(attr)
+    except decimal.DecimalException as err:
+        msg = "Invalid decimal {}".format(attr)
+        raise_with_traceback(DeserializationError, msg, err)
+
+
+def deserialize_long(attr, *args):
+    """Deserialize string into long (Py2) or int (Py3).
+
+    :param str attr: response string to be deserialized.
+    :rtype: long or int
+    :raises: ValueError if string format invalid.
+    """
+    if isinstance(attr, ET.Element):
+        attr = attr.text
+    return _long_type(attr)
+
+
+def deserialize_duration(attr, *args):
+    """Deserialize ISO-8601 formatted string into TimeDelta object.
+
+    :param str attr: response string to be deserialized.
+    :rtype: TimeDelta
+    :raises: DeserializationError if string format invalid.
+    """
+    if isinstance(attr, ET.Element):
+        attr = attr.text
+    try:
+        duration = isodate.parse_duration(attr)
+    except(ValueError, OverflowError, AttributeError) as err:
+        msg = "Cannot deserialize duration object."
+        raise_with_traceback(DeserializationError, msg, err)
+    else:
+        return duration
+
+
+def deserialize_date(attr, *args):
+    """Deserialize ISO-8601 formatted string into Date object.
+
+    :param str attr: response string to be deserialized.
+    :rtype: Date
+    :raises: DeserializationError if string format invalid.
+    """
+    if isinstance(attr, ET.Element):
+        attr = attr.text
+    if re.search(r"[^\W\d_]", attr, re.I + re.U):
+        raise DeserializationError("Date must have only digits and -. Received: %s" % attr)
+    # This must NOT use defaultmonth/defaultday. Using None ensure this raises an exception.
+    return isodate.parse_date(attr, defaultmonth=None, defaultday=None)
+
+
+def deserialize_time(attr, *args):
+    """Deserialize ISO-8601 formatted string into time object.
+
+    :param str attr: response string to be deserialized.
+    :rtype: datetime.time
+    :raises: DeserializationError if string format invalid.
+    """
+    if isinstance(attr, ET.Element):
+        attr = attr.text
+    if re.search(r"[^\W\d_]", attr, re.I + re.U):
+        raise DeserializationError("Date must have only digits and -. Received: %s" % attr)
+    return isodate.parse_time(attr)
+
+
+def deserialize_rfc(attr, *args):
+    """Deserialize RFC-1123 formatted string into Datetime object.
+
+    :param str attr: response string to be deserialized.
+    :rtype: Datetime
+    :raises: DeserializationError if string format invalid.
+    """
+    if isinstance(attr, ET.Element):
+        attr = attr.text
+    try:
+        parsed_date = email.utils.parsedate_tz(attr)
+        date_obj = datetime.datetime(
+            *parsed_date[:6],
+            tzinfo=_FixedOffset(datetime.timedelta(minutes=(parsed_date[9] or 0)/60))
+        )
+        if not date_obj.tzinfo:
+            date_obj = date_obj.astimezone(tz=TZ_UTC)
+    except ValueError as err:
+        msg = "Cannot deserialize to rfc datetime object."
+        raise_with_traceback(DeserializationError, msg, err)
+    else:
+        return date_obj
+
+
+def deserialize_iso(attr, *args):
+    """Deserialize ISO-8601 formatted string into Datetime object.
+
+    :param str attr: response string to be deserialized.
+    :rtype: Datetime
+    :raises: DeserializationError if string format invalid.
+    """
+    if isinstance(attr, ET.Element):
+        attr = attr.text
+    try:
+        attr = attr.upper()
+        match = _valid_date.match(attr)
+        if not match:
+            raise ValueError("Invalid datetime string: " + attr)
+
+        check_decimal = attr.split('.')
+        if len(check_decimal) > 1:
+            decimal_str = ""
+            for digit in check_decimal[1]:
+                if digit.isdigit():
+                    decimal_str += digit
+                else:
+                    break
+            if len(decimal_str) > 6:
+                attr = attr.replace(decimal_str, decimal_str[0:6])
+
+        date_obj = isodate.parse_datetime(attr)
+        test_utc = date_obj.utctimetuple()
+        if test_utc.tm_year > 9999 or test_utc.tm_year < 1:
+            raise OverflowError("Hit max or min date")
+    except(ValueError, OverflowError, AttributeError) as err:
+        msg = "Cannot deserialize datetime object."
+        raise_with_traceback(DeserializationError, msg, err)
+    else:
+        return date_obj
+
+
+def deserialize_unix(attr, *args):
+    """Serialize Datetime object into IntTime format.
+    This is represented as seconds.
+
+    :param int attr: Object to be serialized.
+    :rtype: Datetime
+    :raises: DeserializationError if format invalid
+    """
+    if isinstance(attr, ET.Element):
+        attr = int(attr.text)
+    try:
+        date_obj = datetime.datetime.fromtimestamp(attr, TZ_UTC)
+    except ValueError as err:
+        msg = "Cannot deserialize to unix datetime object."
+        raise_with_traceback(DeserializationError, msg, err)
+    else:
+        return date_obj
+
+
+def deserialize_unicode(data, *args):
+    """Preserve unicode objects in Python 2, otherwise return data
+    as a string.
+
+    :param str data: response string to be deserialized.
+    :rtype: str or unicode
+    """
+    # We might be here because we have an enum modeled as string,
+    # and we try to deserialize a partial dict with enum inside
+    if isinstance(data, Enum):
+        return data
+
+    # Consider this is real string
+    try:
+        if isinstance(data, unicode):
+            return data
+    except NameError:
+        return str(data)
+    else:
+        return str(data)
+
+
+def deserialize_enum(data, enum_obj):
+    """Deserialize string into enum object.
+
+    If the string is not a valid enum value it will be returned as-is
+    and a warning will be logged.
+
+    :param str data: Response string to be deserialized. If this value is
+        None or invalid it will be returned as-is.
+    :param Enum enum_obj: Enum object to deserialize to.
+    :rtype: Enum
+    """
+    if isinstance(data, enum_obj) or data is None:
+        return data
+    if isinstance(data, Enum):
+        data = data.value
+    if isinstance(data, int):
+        # Workaround. We might consider remove it in the future.
+        # https://github.com/Azure/azure-rest-api-specs/issues/141
+        try:
+            return list(enum_obj.__members__.values())[data]
+        except IndexError:
+            error = "{!r} is not a valid index for enum {!r}"
+            raise DeserializationError(error.format(data, enum_obj))
+    try:
+        return enum_obj(str(data))
+    except ValueError:
+        for enum_value in enum_obj:
+            if enum_value.value.lower() == str(data).lower():
+                return enum_value
+        # We don't fail anymore for unknown value, we deserialize as a string
+        _LOGGER.warning("Deserializer is not able to find %s as valid enum in %s", data, enum_obj)
+        return deserialize_unicode(data)
+
+
+def deserialize_basic(attr, data_type):
+    """Deserialize baisc builtin data type from string.
+    Will attempt to convert to str, int, float and bool.
+    This function will also accept '1', '0', 'true' and 'false' as
+    valid bool values.
+
+    :param str attr: response string to be deserialized.
+    :param str data_type: deserialization data type.
+    :rtype: str, int, float or bool
+    :raises: TypeError if string format is not valid.
+    """
+    # If we're here, data is supposed to be a basic type.
+    # If it's still an XML node, take the text
+    if isinstance(attr, ET.Element):
+        attr = attr.text
+        if not attr:
+            if data_type == "str":
+                # None or '', node <a/> is empty string.
+                return ''
+            else:
+                # None or '', node <a/> with a strong type is None.
+                # Don't try to model "empty bool" or "empty int"
+                return None
+
+    if data_type == 'bool':
+        if attr in [True, False, 1, 0]:
+            return bool(attr)
+        elif isinstance(attr, basestring):
+            if attr.lower() in ['true', '1']:
+                return True
+            elif attr.lower() in ['false', '0']:
+                return False
+        raise TypeError("Invalid boolean value: {}".format(attr))
+
+    if data_type == 'str':
+        return deserialize_unicode(attr)
+    return eval(data_type)(attr)
 
 
 def _decode_attribute_map_key(key):
@@ -183,22 +462,22 @@ class Deserializer(object):
 
     basic_types = {str: 'str', int: 'int', bool: 'bool', float: 'float'}
 
-    valid_date = re.compile(
-        r'\d{4}[-]\d{2}[-]\d{2}T\d{2}:\d{2}:\d{2}'
-        r'\.?\d*Z?[-+]?[\d{2}]?:?[\d{2}]?')
-
     def __init__(self, classes=None):
         self.deserialize_type = {
-            'iso-8601': Deserializer.deserialize_iso,
-            'rfc-1123': Deserializer.deserialize_rfc,
-            'unix-time': Deserializer.deserialize_unix,
-            'duration': Deserializer.deserialize_duration,
-            'date': Deserializer.deserialize_date,
-            'time': Deserializer.deserialize_time,
-            'decimal': Deserializer.deserialize_decimal,
-            'long': Deserializer.deserialize_long,
-            'bytearray': Deserializer.deserialize_bytearray,
-            'base64': Deserializer.deserialize_base64,
+            'str': deserialize_basic,
+            'int': deserialize_basic,
+            'bool': deserialize_basic,
+            'float': deserialize_basic,
+            'iso-8601': deserialize_iso,
+            'rfc-1123': deserialize_rfc,
+            'unix-time': deserialize_unix,
+            'duration': deserialize_duration,
+            'date': deserialize_date,
+            'time': deserialize_time,
+            'decimal': deserialize_decimal,
+            'long': deserialize_long,
+            'bytearray': deserialize_bytearray,
+            'base64': deserialize_base64,
             'object': self.deserialize_object,
             '[]': self.deserialize_iter,
             '{}': self.deserialize_dict
@@ -209,7 +488,6 @@ class Deserializer(object):
         }
         self.dependencies = dict(classes) if classes else {}
         self.key_extractors = [
-            # rest_key_extractor,
             xml_key_extractor
         ]
         # Additional properties only works if the "rest_key_extractor" is used to
@@ -229,6 +507,12 @@ class Deserializer(object):
         :raises: DeserializationError if deserialization fails.
         :return: Deserialized object.
         """
+        if response_data is None:
+            return None
+        try:
+            return self.deserialize_type[target_obj](response_data, target_obj)
+        except KeyError:
+            pass
         data = self._unpack_content(response_data, content_type)
         return self._deserialize(target_obj, data)
 
@@ -271,6 +555,7 @@ class Deserializer(object):
         if isinstance(response, basestring):
             return self.deserialize_data(data, response)
         elif isinstance(response, type) and issubclass(response, Enum):
+            raise Exception("BOOM additional enum")
             return self.deserialize_enum(data, response)
 
         if data is None:
@@ -293,6 +578,7 @@ class Deserializer(object):
                     found_value = key_extractor(attr, attr_desc, data)
                     if found_value is not None:
                         if raw_value is not None and raw_value != found_value:
+                            raise Exception("BOOM raw_value")
                             msg = ("Ignoring extracted value '%s' from %s for key '%s'"
                                    " (duplicate extraction, follow extractors order)" )
                             _LOGGER.warning(
@@ -440,9 +726,10 @@ class Deserializer(object):
             if not data_type:
                 return data
             if data_type in self.basic_types.values():
-                return self.deserialize_basic(data, data_type)
+                return deserialize_basic(data, data_type)
             if data_type in self.deserialize_type:
                 if isinstance(data, self.deserialize_expected_types.get(data_type, tuple())):
+                    raise Exception("BOOM expected types")
                     return data
 
                 is_a_text_parsing_type = lambda x: x not in ["object", "[]", r"{}"]
@@ -516,12 +803,12 @@ class Deserializer(object):
             # Do no recurse on XML, just return the tree as-is
             return attr
         if isinstance(attr, basestring):
-            return self.deserialize_basic(attr, 'str')
+            return deserialize_basic(attr, 'str')
         obj_type = type(attr)
         if obj_type in self.basic_types:
-            return self.deserialize_basic(attr, self.basic_types[obj_type])
+            return deserialize_basic(attr, self.basic_types[obj_type])
         if obj_type is _long_type:
-            return self.deserialize_long(attr)
+            return deserialize_long(attr)
 
         if obj_type == dict:
             deserialized = {}
@@ -546,283 +833,6 @@ class Deserializer(object):
         else:
             error = "Cannot deserialize generic object with type: "
             raise TypeError(error + str(obj_type))
-
-    def deserialize_basic(self, attr, data_type):
-        """Deserialize baisc builtin data type from string.
-        Will attempt to convert to str, int, float and bool.
-        This function will also accept '1', '0', 'true' and 'false' as
-        valid bool values.
-
-        :param str attr: response string to be deserialized.
-        :param str data_type: deserialization data type.
-        :rtype: str, int, float or bool
-        :raises: TypeError if string format is not valid.
-        """
-        # If we're here, data is supposed to be a basic type.
-        # If it's still an XML node, take the text
-        if isinstance(attr, ET.Element):
-            attr = attr.text
-            if not attr:
-                if data_type == "str":
-                    # None or '', node <a/> is empty string.
-                    return ''
-                else:
-                    # None or '', node <a/> with a strong type is None.
-                    # Don't try to model "empty bool" or "empty int"
-                    return None
-
-        if data_type == 'bool':
-            if attr in [True, False, 1, 0]:
-                return bool(attr)
-            elif isinstance(attr, basestring):
-                if attr.lower() in ['true', '1']:
-                    return True
-                elif attr.lower() in ['false', '0']:
-                    return False
-            raise TypeError("Invalid boolean value: {}".format(attr))
-
-        if data_type == 'str':
-            return self.deserialize_unicode(attr)
-        return eval(data_type)(attr)
-
-    @staticmethod
-    def deserialize_unicode(data):
-        """Preserve unicode objects in Python 2, otherwise return data
-        as a string.
-
-        :param str data: response string to be deserialized.
-        :rtype: str or unicode
-        """
-        # We might be here because we have an enum modeled as string,
-        # and we try to deserialize a partial dict with enum inside
-        if isinstance(data, Enum):
-            return data
-
-        # Consider this is real string
-        try:
-            if isinstance(data, unicode):
-                return data
-        except NameError:
-            return str(data)
-        else:
-            return str(data)
-
-    @staticmethod
-    def deserialize_enum(data, enum_obj):
-        """Deserialize string into enum object.
-
-        If the string is not a valid enum value it will be returned as-is
-        and a warning will be logged.
-
-        :param str data: Response string to be deserialized. If this value is
-         None or invalid it will be returned as-is.
-        :param Enum enum_obj: Enum object to deserialize to.
-        :rtype: Enum
-        """
-        if isinstance(data, enum_obj) or data is None:
-            return data
-        if isinstance(data, Enum):
-            data = data.value
-        if isinstance(data, int):
-            # Workaround. We might consider remove it in the future.
-            # https://github.com/Azure/azure-rest-api-specs/issues/141
-            try:
-                return list(enum_obj.__members__.values())[data]
-            except IndexError:
-                error = "{!r} is not a valid index for enum {!r}"
-                raise DeserializationError(error.format(data, enum_obj))
-        try:
-            return enum_obj(str(data))
-        except ValueError:
-            for enum_value in enum_obj:
-                if enum_value.value.lower() == str(data).lower():
-                    return enum_value
-            # We don't fail anymore for unknown value, we deserialize as a string
-            _LOGGER.warning("Deserializer is not able to find %s as valid enum in %s", data, enum_obj)
-            return Deserializer.deserialize_unicode(data)
-
-    @staticmethod
-    def deserialize_bytearray(attr):
-        """Deserialize string into bytearray.
-
-        :param str attr: response string to be deserialized.
-        :rtype: bytearray
-        :raises: TypeError if string format invalid.
-        """
-        if isinstance(attr, ET.Element):
-            attr = attr.text
-        return bytearray(b64decode(attr))
-
-    @staticmethod
-    def deserialize_base64(attr):
-        """Deserialize base64 encoded string into string.
-
-        :param str attr: response string to be deserialized.
-        :rtype: bytearray
-        :raises: TypeError if string format invalid.
-        """
-        if isinstance(attr, ET.Element):
-            attr = attr.text
-        padding = '=' * (3 - (len(attr) + 3) % 4)
-        attr = attr + padding
-        encoded = attr.replace('-', '+').replace('_', '/')
-        return b64decode(encoded)
-
-    @staticmethod
-    def deserialize_decimal(attr):
-        """Deserialize string into Decimal object.
-
-        :param str attr: response string to be deserialized.
-        :rtype: Decimal
-        :raises: DeserializationError if string format invalid.
-        """
-        if isinstance(attr, ET.Element):
-            attr = attr.text
-        try:
-            return decimal.Decimal(attr)
-        except decimal.DecimalException as err:
-            msg = "Invalid decimal {}".format(attr)
-            raise_with_traceback(DeserializationError, msg, err)
-
-    @staticmethod
-    def deserialize_long(attr):
-        """Deserialize string into long (Py2) or int (Py3).
-
-        :param str attr: response string to be deserialized.
-        :rtype: long or int
-        :raises: ValueError if string format invalid.
-        """
-        if isinstance(attr, ET.Element):
-            attr = attr.text
-        return _long_type(attr)
-
-    @staticmethod
-    def deserialize_duration(attr):
-        """Deserialize ISO-8601 formatted string into TimeDelta object.
-
-        :param str attr: response string to be deserialized.
-        :rtype: TimeDelta
-        :raises: DeserializationError if string format invalid.
-        """
-        if isinstance(attr, ET.Element):
-            attr = attr.text
-        try:
-            duration = isodate.parse_duration(attr)
-        except(ValueError, OverflowError, AttributeError) as err:
-            msg = "Cannot deserialize duration object."
-            raise_with_traceback(DeserializationError, msg, err)
-        else:
-            return duration
-
-    @staticmethod
-    def deserialize_date(attr):
-        """Deserialize ISO-8601 formatted string into Date object.
-
-        :param str attr: response string to be deserialized.
-        :rtype: Date
-        :raises: DeserializationError if string format invalid.
-        """
-        if isinstance(attr, ET.Element):
-            attr = attr.text
-        if re.search(r"[^\W\d_]", attr, re.I + re.U):
-            raise DeserializationError("Date must have only digits and -. Received: %s" % attr)
-        # This must NOT use defaultmonth/defaultday. Using None ensure this raises an exception.
-        return isodate.parse_date(attr, defaultmonth=None, defaultday=None)
-
-    @staticmethod
-    def deserialize_time(attr):
-        """Deserialize ISO-8601 formatted string into time object.
-
-        :param str attr: response string to be deserialized.
-        :rtype: datetime.time
-        :raises: DeserializationError if string format invalid.
-        """
-        if isinstance(attr, ET.Element):
-            attr = attr.text
-        if re.search(r"[^\W\d_]", attr, re.I + re.U):
-            raise DeserializationError("Date must have only digits and -. Received: %s" % attr)
-        return isodate.parse_time(attr)
-
-    @staticmethod
-    def deserialize_rfc(attr):
-        """Deserialize RFC-1123 formatted string into Datetime object.
-
-        :param str attr: response string to be deserialized.
-        :rtype: Datetime
-        :raises: DeserializationError if string format invalid.
-        """
-        if isinstance(attr, ET.Element):
-            attr = attr.text
-        try:
-            parsed_date = email.utils.parsedate_tz(attr)
-            date_obj = datetime.datetime(
-                *parsed_date[:6],
-                tzinfo=_FixedOffset(datetime.timedelta(minutes=(parsed_date[9] or 0)/60))
-            )
-            if not date_obj.tzinfo:
-                date_obj = date_obj.astimezone(tz=TZ_UTC)
-        except ValueError as err:
-            msg = "Cannot deserialize to rfc datetime object."
-            raise_with_traceback(DeserializationError, msg, err)
-        else:
-            return date_obj
-
-    @staticmethod
-    def deserialize_iso(attr):
-        """Deserialize ISO-8601 formatted string into Datetime object.
-
-        :param str attr: response string to be deserialized.
-        :rtype: Datetime
-        :raises: DeserializationError if string format invalid.
-        """
-        if isinstance(attr, ET.Element):
-            attr = attr.text
-        try:
-            attr = attr.upper()
-            match = Deserializer.valid_date.match(attr)
-            if not match:
-                raise ValueError("Invalid datetime string: " + attr)
-
-            check_decimal = attr.split('.')
-            if len(check_decimal) > 1:
-                decimal_str = ""
-                for digit in check_decimal[1]:
-                    if digit.isdigit():
-                        decimal_str += digit
-                    else:
-                        break
-                if len(decimal_str) > 6:
-                    attr = attr.replace(decimal_str, decimal_str[0:6])
-
-            date_obj = isodate.parse_datetime(attr)
-            test_utc = date_obj.utctimetuple()
-            if test_utc.tm_year > 9999 or test_utc.tm_year < 1:
-                raise OverflowError("Hit max or min date")
-        except(ValueError, OverflowError, AttributeError) as err:
-            msg = "Cannot deserialize datetime object."
-            raise_with_traceback(DeserializationError, msg, err)
-        else:
-            return date_obj
-
-    @staticmethod
-    def deserialize_unix(attr):
-        """Serialize Datetime object into IntTime format.
-        This is represented as seconds.
-
-        :param int attr: Object to be serialized.
-        :rtype: Datetime
-        :raises: DeserializationError if format invalid
-        """
-        if isinstance(attr, ET.Element):
-            attr = int(attr.text)
-        try:
-            date_obj = datetime.datetime.fromtimestamp(attr, TZ_UTC)
-        except ValueError as err:
-            msg = "Cannot deserialize to unix datetime object."
-            raise_with_traceback(DeserializationError, msg, err)
-        else:
-            return date_obj
-
 
 
 def deserialize_from_text(
