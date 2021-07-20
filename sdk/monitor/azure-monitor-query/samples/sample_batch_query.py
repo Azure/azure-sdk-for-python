@@ -27,14 +27,14 @@ requests = [
         workspace_id= os.environ['LOG_WORKSPACE_ID']
     ),
     LogsQueryRequest(
-        query= "AppRequests",
+        query= "AppRequests | take 5",
         workspace_id= os.environ['LOG_WORKSPACE_ID'],
         include_statistics=True
     ),
 ]
-response = client.batch_query(requests)
+responses = client.batch_query(requests)
 
-for response in response.responses:
+for response in responses:
     body = response.body
     print(response.id)
     if not body.tables:

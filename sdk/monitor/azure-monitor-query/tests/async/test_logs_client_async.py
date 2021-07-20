@@ -62,7 +62,7 @@ async def test_logs_batch_query():
     ]
     response = await client.batch_query(requests)
 
-    assert len(response.responses) == 3
+    assert len(response) == 3
 
 @pytest.mark.skip('https://github.com/Azure/azure-sdk-for-python/issues/19382')
 @pytest.mark.live_test_only
@@ -110,7 +110,7 @@ async def test_logs_batch_query_additional_workspaces():
     ]
     response = await client.batch_query(requests)
 
-    assert len(response.responses) == 3
+    assert len(response) == 3
 
-    for resp in response.responses:
+    for resp in response:
         assert len(resp.body.tables[0].rows) == 2

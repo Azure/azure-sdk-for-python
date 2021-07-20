@@ -234,29 +234,6 @@ class LogsQueryResult(object):
             body=LogsQueryResults._from_generated(generated.body) # pylint: disable=protected-access
         )
 
-class LogsBatchResults(object):
-    """Response to a batch.
-
-    :keyword responses: An array of responses corresponding to each individual request in a batch.
-    :paramtype responses: list[azure.monitor.query.LogsQueryResult]
-    :keyword error: Error response for a batch request.
-    :paramtype error: ~azure.monitor.query.LogsBatchResultError
-    """
-    def __init__(self, **kwargs):
-        # type: (Any) -> None
-        self.responses = kwargs.get("responses", None)
-        self.error = kwargs.get("error", None)
-
-    @classmethod
-    def _from_generated(cls, generated, request_order):
-        if not generated:
-            return cls()
-        return cls(
-            responses=order_results(request_order, [
-                LogsQueryResult._from_generated(rsp) for rsp in generated.responses # pylint: disable=protected-access
-                ])
-        )
-
 
 class LogsBatchResultError(object):
     """Error response for a batch request.

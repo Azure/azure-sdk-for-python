@@ -11,8 +11,8 @@ from azure.core.exceptions import HttpResponseError
 from ._generated._monitor_query_client import MonitorQueryClient
 
 from ._generated.models import BatchRequest, QueryBody as LogsQueryBody
-from ._helpers import get_authentication_policy, process_error, construct_iso8601
-from ._models import LogsQueryResults, LogsQueryRequest, LogsBatchResults
+from ._helpers import get_authentication_policy, process_error, construct_iso8601, order_results
+from ._models import LogsQueryResults, LogsQueryRequest, LogsBatchResults, LogsQueryResult
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -131,7 +131,7 @@ class LogsQueryClient(object):
             process_error(e)
 
     def batch_query(self, queries, **kwargs):
-        # type: (Union[Sequence[Dict], Sequence[LogsQueryRequest]], Any) -> LogsBatchResults
+        # type: (Union[Sequence[Dict], Sequence[LogsQueryRequest]], Any) -> Sequence[LogsQueryResult]
         """Execute a list of analytics queries. Each request can be either a LogQueryRequest
         object or an equivalent serialized model.
 
@@ -140,7 +140,7 @@ class LogsQueryClient(object):
         :param queries: The list of queries that should be processed
         :type queries: list[dict] or list[~azure.monitor.query.LogsQueryRequest]
         :return: BatchResponse, or the result of cls(response)
-        :rtype: ~azure.monitor.query.LogsBatchResults
+        :rtype: ~list[~azure.monitor.query.LogsQueryResult]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -162,9 +162,11 @@ class LogsQueryClient(object):
             request_order = [req['id'] for req in queries]
         batch = BatchRequest(requests=queries)
         generated = self._query_op.batch(batch, **kwargs)
-        return LogsBatchResults._from_generated( # pylint: disable=protected-access
-            generated, request_order
-            )
+        return order_results(
+            request_order,
+            [
+                LogsQueryResult._from_generated(rsp) for rsp in generated.responses # pylint: disable=protected-access
+            ])
 
     def close(self):
         # type: () -> None

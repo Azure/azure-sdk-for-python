@@ -172,8 +172,8 @@ requests = [
 ]
 response = client.batch_query(requests)
 
-for response in response.responses:
-    body = response.body
+for rsp in response:
+    body = rsp.body
     if not body.tables:
         print("Something is wrong")
     else:
