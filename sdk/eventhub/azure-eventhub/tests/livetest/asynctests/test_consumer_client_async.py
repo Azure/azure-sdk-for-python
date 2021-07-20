@@ -16,7 +16,7 @@ async def test_receive_no_partition_async(connstr_senders):
 
     async def on_event(partition_context, event):
         on_event.received += 1
-        await partition_context.update_checkpoint(event, fake_kwarg="arg")  # ignores fake_kwarg
+        await partition_context.update_checkpoint(event)
         on_event.namespace = partition_context.fully_qualified_namespace
         on_event.eventhub_name = partition_context.eventhub_name
         on_event.consumer_group = partition_context.consumer_group
