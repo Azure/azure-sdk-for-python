@@ -42,7 +42,7 @@ if __name__ == '__main__':
 
     package_name = args.package_name.replace('_', '-')
 
-    packages = get_packages(args, package_name)
+    packages = get_packages(args, package_name, additional_excludes = ["mgmt", "-nspkg"])
 
     package_map = { pkg[1][0]: pkg for pkg in packages }
 
