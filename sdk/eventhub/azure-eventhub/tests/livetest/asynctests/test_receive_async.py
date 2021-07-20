@@ -10,7 +10,7 @@ import time
 
 from azure.eventhub import EventData, TransportType
 from azure.eventhub.exceptions import EventHubError
-from azure.eventhub.aio import EventHubConsumerClient
+from azure.eventhub.aio import EventHubProducerClient, EventHubConsumerClient
 
 
 @pytest.mark.liveTest
@@ -30,16 +30,27 @@ async def test_receive_end_of_stream_async(connstr_senders):
 
     on_event.called = False
     connection_str, senders = connstr_senders
+    # test async producer client
+    producer_client = EventHubProducerClient.from_connection_string(connection_str)
+    partitions = await producer_client.get_partition_ids()
+    senders = []
+    for p in partitions:
+        sender = producer_client._create_producer(partition_id=p)
+        senders.append(sender)
+    
     client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
     async with client:
         task = asyncio.ensure_future(client.receive(on_event, partition_id="0", starting_position="@latest"))
         await asyncio.sleep(10)
         assert on_event.called is False
-        senders[0].send(EventData(b"Receiving only a single event"), partition_key='0')
+        await senders[0].send(EventData(b"Receiving only a single event"), partition_key='0')
         await asyncio.sleep(10)
         assert on_event.called is True
 
     await task
+    for s in senders:
+        await s.close()
+    await producer_client.close()
 
 
 @pytest.mark.parametrize("position, inclusive, expected_result",
