@@ -42,7 +42,7 @@ class DictMixin(object):
         return not self.__eq__(other)
 
     def __contains__(self, key):
-        # type: (Any) -> bool 
+        # type: (Any) -> bool
         return key in self.__dict__
 
     def __str__(self):
