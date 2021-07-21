@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added new skills: `SentimentSkillV3`, `EntityLinkingSkill`, `EntityRecognitionSkillV3`
+
 ### Breaking Changes
 
 ### Bugs Fixed

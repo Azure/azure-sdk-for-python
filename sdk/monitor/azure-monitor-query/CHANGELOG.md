@@ -1,5 +1,19 @@
 # Release History
 
+## 1.0.0b3 (Unreleased)
+
+### Features Added
+
+- Added enum `AggragationType` which can be used to specify aggregations in the query API.
+
+### Breaking Changes
+
+- `aggregation` param in the query API is renamed to `aggregations`
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.0.0b2 (2021-07-06)
 
 ### Breaking Changes

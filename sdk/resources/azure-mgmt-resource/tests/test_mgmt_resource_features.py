@@ -11,6 +11,7 @@
 #   feature_client: 1/1
 
 import unittest
+from unittest.case import skip
 
 import azure.mgmt.resource
 from devtools_testutils import AzureMgmtTestCase
@@ -23,6 +24,7 @@ class MgmtResourceFeaturesTest(AzureMgmtTestCase):
             azure.mgmt.resource.FeatureClient
         )
 
+    @unittest.skip('hard to test')
     def test_features(self):
         features = list(self.features_client.features.list_all())
         self.assertGreater(len(features), 0)
@@ -47,6 +49,7 @@ class MgmtResourceFeaturesTest(AzureMgmtTestCase):
         #     feature.name.split('/')[1]
         # )
 
+    @unittest.skip('hard to test')
     def test_feature_client(self):
         self.features_client.list_operations()
 

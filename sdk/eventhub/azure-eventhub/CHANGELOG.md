@@ -1,5 +1,11 @@
 # Release History
 
+## 5.6.1 (2021-07-07)
+
+### Fixed
+
+- Fixed a bug for checking that `azure.eventhub.amqp.AmqpMessageHeader` and `azure.eventhub.amqp.AmqpMessageProperties` contain specific properties using the `in` keyword.
+
 ## 5.6.0 (2021-07-07)
 
 ### Features Added

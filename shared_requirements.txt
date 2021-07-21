@@ -1,5 +1,6 @@
 azure-ai-nspkg
 azure-ai-translation-nspkg
+azure-ai-language-nspkg
 azure-iot-nspkg
 azure-monitor-nspkg
 azure-applicationinsights~=0.1.0
@@ -129,10 +130,12 @@ pyjwt>=1.7.1
 #override azure azure-keyvault~=1.0
 #override azure-mgmt-core azure-core<2.0.0,>=1.15.0
 #override azure-containerregistry azure-core>=1.4.0,<2.0.0
+#override azure-containerregistry msrest>=0.6.21
 #override azure-core-tracing-opencensus azure-core<2.0.0,>=1.13.0
 #override azure-core-tracing-opentelemetry azure-core<2.0.0,>=1.13.0
 #override azure-cosmos azure-core<2.0.0,>=1.0.0
 #override azure-data-tables azure-core<2.0.0,>=1.14.0
+#override azure-data-tables msrest>=0.6.21
 #override azure-eventhub azure-core<2.0.0,>=1.14.0
 #override azure-identity azure-core<2.0.0,>=1.11.0
 #override azure-keyvault-administration msrest>=0.6.21
@@ -145,6 +148,8 @@ pyjwt>=1.7.1
 #override azure-keyvault-secrets azure-core<2.0.0,>=1.7.0
 #override azure-ai-textanalytics msrest>=0.6.21
 #override azure-ai-textanalytics azure-core<2.0.0,>=1.14.0
+#override azure-ai-language-questionanswering azure-core<2.0.0,>=1.16.0
+#override azure-ai-language-questionanswering msrest>=0.6.21
 #override azure-search-documents azure-core<2.0.0,>=1.14.0
 #override azure-ai-formrecognizer msrest>=0.6.21
 #override azure-ai-formrecognizer azure-core<2.0.0,>=1.8.2
@@ -153,7 +158,7 @@ pyjwt>=1.7.1
 #override azure-storage-blob-changefeed azure-storage-blob>=12.5.0,<13.0.0
 #override azure-storage-queue azure-core<2.0.0,>=1.10.0
 #override azure-storage-queue msrest>=0.6.18
-#override azure-storage-file-share msrest>=0.6.18
+#override azure-storage-file-share msrest>=0.6.21
 #override azure-storage-file-share azure-core<2.0.0,>=1.10.0
 #override azure-storage-file-datalake azure-core<2.0.0,>=1.10.0
 #override azure-storage-file-datalake msrest>=0.6.21
@@ -186,7 +191,7 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-synapse-managedprivateendpoints azure-core>=1.6.0,<2.0.0
 #override azure-data-tables msrest>=0.6.10
 #override azure-ai-anomalydetector azure-core>=1.6.0,<2.0.0
-#override azure-eventgrid msrest>=0.6.19
+#override azure-eventgrid msrest>=0.6.21
 #override azure-eventgrid azure-core<2.0.0,>=1.12.0
 #override azure-monitor-query msrest>=0.6.19
 #override azure-monitor-query azure-core<2.0.0,>=1.12.0
@@ -197,6 +202,7 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-communication-sms azure-core<2.0.0,>=1.11.0
 #override azure-communication-phonenumbers azure-core<2.0.0,>=1.11.0
 #override azure-communication-identity azure-core<2.0.0,>=1.11.0
+#override azure-communication-network-traversal azure-core<2.0.0,>=1.11.0
 #override azure-mgmt-communication azure-core<2.0.0,>=1.9.0
 #override azure-ai-metricsadvisor azure-core<2.0.0,>=1.6.0
 #override azure-ai-metricsadvisor msrest>=0.6.21
@@ -315,3 +321,7 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-mgmt-testbase msrest>=0.6.21
 #override azure-mgmt-agrifood msrest>=0.6.21
 #override azure-mgmt-redis msrest>=0.6.21
+#override azure-mgmt-guestconfig msrest>=0.6.21
+#override azure-mgmt-recoveryservices msrest>=0.6.21
+#override azure-mgmt-avs msrest>=0.6.21
+#override azure-mgmt-containerinstance msrest>=0.6.21

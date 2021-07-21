@@ -30,7 +30,7 @@ from typing import TYPE_CHECKING, cast
 
 from azure.core.exceptions import HttpResponseError
 
-from .._utils import _case_insensitive_dict
+from ..utils._utils import _case_insensitive_dict
 from ._helpers import (
     FilesType,
     parse_lines_from_text,

@@ -26,6 +26,7 @@
 import os
 import pytest
 from azure.core import AsyncPipelineClient
+from azure.core.exceptions import DecodeError
 
 @pytest.mark.asyncio
 async def test_decompress_plain_no_header():
@@ -34,15 +35,16 @@ async def test_decompress_plain_no_header():
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test.txt".format(account_name)
     client = AsyncPipelineClient(account_url)
-    request = client.get(url)
-    pipeline_response = await client._pipeline.run(request, stream=True)
-    response = pipeline_response.http_response
-    data = response.stream_download(client._pipeline, decompress=True)
-    content = b""
-    async for d in data:
-        content += d
-    decoded = content.decode('utf-8')
-    assert decoded == "test"
+    async with client:
+        request = client.get(url)
+        pipeline_response = await client._pipeline.run(request, stream=True)
+        response = pipeline_response.http_response
+        data = response.stream_download(client._pipeline, decompress=True)
+        content = b""
+        async for d in data:
+            content += d
+        decoded = content.decode('utf-8')
+        assert decoded == "test"
 
 @pytest.mark.asyncio
 async def test_compress_plain_no_header():
@@ -51,15 +53,16 @@ async def test_compress_plain_no_header():
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test.txt".format(account_name)
     client = AsyncPipelineClient(account_url)
-    request = client.get(url)
-    pipeline_response = await client._pipeline.run(request, stream=True)
-    response = pipeline_response.http_response
-    data = response.stream_download(client._pipeline, decompress=False)
-    content = b""
-    async for d in data:
-        content += d
-    decoded = content.decode('utf-8')
-    assert decoded == "test"
+    async with client:
+        request = client.get(url)
+        pipeline_response = await client._pipeline.run(request, stream=True)
+        response = pipeline_response.http_response
+        data = response.stream_download(client._pipeline, decompress=False)
+        content = b""
+        async for d in data:
+            content += d
+        decoded = content.decode('utf-8')
+        assert decoded == "test"
 
 @pytest.mark.asyncio
 async def test_decompress_compressed_no_header():
@@ -68,18 +71,19 @@ async def test_decompress_compressed_no_header():
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test.tar.gz".format(account_name)
     client = AsyncPipelineClient(account_url)
-    request = client.get(url)
-    pipeline_response = await client._pipeline.run(request, stream=True)
-    response = pipeline_response.http_response
-    data = response.stream_download(client._pipeline, decompress=True)
-    content = b""
-    async for d in data:
-        content += d
-    try:
-        decoded = content.decode('utf-8')
-        assert False
-    except UnicodeDecodeError:
-        pass
+    async with client:
+        request = client.get(url)
+        pipeline_response = await client._pipeline.run(request, stream=True)
+        response = pipeline_response.http_response
+        data = response.stream_download(client._pipeline, decompress=True)
+        content = b""
+        async for d in data:
+            content += d
+        try:
+            decoded = content.decode('utf-8')
+            assert False
+        except UnicodeDecodeError:
+            pass
 
 @pytest.mark.asyncio
 async def test_compress_compressed_no_header():
@@ -88,18 +92,19 @@ async def test_compress_compressed_no_header():
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test.tar.gz".format(account_name)
     client = AsyncPipelineClient(account_url)
-    request = client.get(url)
-    pipeline_response = await client._pipeline.run(request, stream=True)
-    response = pipeline_response.http_response
-    data = response.stream_download(client._pipeline, decompress=False)
-    content = b""
-    async for d in data:
-        content += d
-    try:
-        decoded = content.decode('utf-8')
-        assert False
-    except UnicodeDecodeError:
-        pass
+    async with client:
+        request = client.get(url)
+        pipeline_response = await client._pipeline.run(request, stream=True)
+        response = pipeline_response.http_response
+        data = response.stream_download(client._pipeline, decompress=False)
+        content = b""
+        async for d in data:
+            content += d
+        try:
+            decoded = content.decode('utf-8')
+            assert False
+        except UnicodeDecodeError:
+            pass
 
 @pytest.mark.asyncio
 async def test_decompress_plain_header():
@@ -109,17 +114,18 @@ async def test_decompress_plain_header():
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test_with_header.txt".format(account_name)
     client = AsyncPipelineClient(account_url)
-    request = client.get(url)
-    pipeline_response = await client._pipeline.run(request, stream=True)
-    response = pipeline_response.http_response
-    data = response.stream_download(client._pipeline, decompress=True)
-    try:
-        content = b""
-        async for d in data:
-            content += d
-        assert False
-    except zlib.error:
-        pass
+    async with client:
+        request = client.get(url)
+        pipeline_response = await client._pipeline.run(request, stream=True)
+        response = pipeline_response.http_response
+        data = response.stream_download(client._pipeline, decompress=True)
+        try:
+            content = b""
+            async for d in data:
+                content += d
+            assert False
+        except (zlib.error, DecodeError):
+            pass
 
 @pytest.mark.asyncio
 async def test_compress_plain_header():
@@ -128,15 +134,16 @@ async def test_compress_plain_header():
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test_with_header.txt".format(account_name)
     client = AsyncPipelineClient(account_url)
-    request = client.get(url)
-    pipeline_response = await client._pipeline.run(request, stream=True)
-    response = pipeline_response.http_response
-    data = response.stream_download(client._pipeline, decompress=False)
-    content = b""
-    async for d in data:
-        content += d
-    decoded = content.decode('utf-8')
-    assert decoded == "test"
+    async with client:
+        request = client.get(url)
+        pipeline_response = await client._pipeline.run(request, stream=True)
+        response = pipeline_response.http_response
+        data = response.stream_download(client._pipeline, decompress=False)
+        content = b""
+        async for d in data:
+            content += d
+        decoded = content.decode('utf-8')
+        assert decoded == "test"
 
 @pytest.mark.asyncio
 async def test_decompress_compressed_header():
@@ -145,15 +152,16 @@ async def test_decompress_compressed_header():
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test_with_header.tar.gz".format(account_name)
     client = AsyncPipelineClient(account_url)
-    request = client.get(url)
-    pipeline_response = await client._pipeline.run(request, stream=True)
-    response = pipeline_response.http_response
-    data = response.stream_download(client._pipeline, decompress=True)
-    content = b""
-    async for d in data:
-        content += d
-    decoded = content.decode('utf-8')
-    assert decoded == "test"
+    async with client:
+        request = client.get(url)
+        pipeline_response = await client._pipeline.run(request, stream=True)
+        response = pipeline_response.http_response
+        data = response.stream_download(client._pipeline, decompress=True)
+        content = b""
+        async for d in data:
+            content += d
+        decoded = content.decode('utf-8')
+        assert decoded == "test"
 
 @pytest.mark.asyncio
 async def test_compress_compressed_header():
@@ -162,15 +170,16 @@ async def test_compress_compressed_header():
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test_with_header.tar.gz".format(account_name)
     client = AsyncPipelineClient(account_url)
-    request = client.get(url)
-    pipeline_response = await client._pipeline.run(request, stream=True)
-    response = pipeline_response.http_response
-    data = response.stream_download(client._pipeline, decompress=False)
-    content = b""
-    async for d in data:
-        content += d
-    try:
-        decoded = content.decode('utf-8')
-        assert False
-    except UnicodeDecodeError:
-        pass
+    async with client:
+        request = client.get(url)
+        pipeline_response = await client._pipeline.run(request, stream=True)
+        response = pipeline_response.http_response
+        data = response.stream_download(client._pipeline, decompress=False)
+        content = b""
+        async for d in data:
+            content += d
+        try:
+            decoded = content.decode('utf-8')
+            assert False
+        except UnicodeDecodeError:
+            pass

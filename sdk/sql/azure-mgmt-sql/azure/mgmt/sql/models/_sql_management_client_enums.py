@@ -444,6 +444,7 @@ class IdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NONE = "None"
     SYSTEM_ASSIGNED = "SystemAssigned"
     USER_ASSIGNED = "UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
 
 class ImplementationMethod(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Gets the method in which this recommended action can be manually implemented. e.g., TSql,
