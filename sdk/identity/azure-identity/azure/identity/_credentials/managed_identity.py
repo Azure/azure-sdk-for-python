@@ -65,6 +65,11 @@ class ManagedIdentityCredential(object):
                 from .azure_arc import AzureArcCredential
 
                 self._credential = AzureArcCredential(**kwargs)
+        elif all(os.environ.get(var) for var in EnvironmentVariables.TOKEN_EXCHANGE_VARS):
+            _LOGGER.info("%s will use token exchange", self.__class__.__name__)
+            from .token_exchange import TokenExchangeCredential
+
+            self._credential = TokenExchangeCredential(**kwargs)
         else:
             from .imds import ImdsCredential
 
