@@ -475,6 +475,31 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertEqual(blob_properties.get('last_modified'), source_with_special_chars_resp.get('last_modified'))
 
     @GlobalStorageAccountPreparer()
+    def test_upload_pages_from_url_with_oauth(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        account_url = self.account_url(storage_account, "blob")
+        if not isinstance(account_url, str):
+            account_url = account_url.encode('utf-8')
+            storage_account_key = storage_account_key.encode('utf-8')
+        bsc = BlobServiceClient(account_url, credential=storage_account_key,
+                                connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        self._setup(bsc)
+        token = "Bearer {}".format(self.generate_oauth_token().get_token("https://storage.azure.com/.default").token)
+        source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
+        source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
+        destination_blob_client = self._create_blob(bsc, length=SOURCE_BLOB_SIZE)
+
+        # Assert failure without providing token
+        with self.assertRaises(HttpResponseError):
+            destination_blob_client.upload_pages_from_url(
+                source_blob_client.url, offset=0, length=8 * 1024, source_offset=0)
+        # Assert it works with oauth token
+        destination_blob_client.upload_pages_from_url(
+            source_blob_client.url, offset=0, length=8 * 1024, source_offset=0, source_authorization=token)
+        destination_blob_data = destination_blob_client.download_blob().readall()
+        self.assertEqual(source_blob_data, destination_blob_data)
+
+    @GlobalStorageAccountPreparer()
     def test_upload_pages_from_url_and_validate_content_md5(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)

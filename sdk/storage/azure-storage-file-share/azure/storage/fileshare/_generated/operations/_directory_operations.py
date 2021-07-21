@@ -16,7 +16,7 @@ from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar
+    from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -477,6 +477,8 @@ class DirectoryOperations(object):
         marker=None,  # type: Optional[str]
         maxresults=None,  # type: Optional[int]
         timeout=None,  # type: Optional[int]
+        include=None,  # type: Optional[List[Union[str, "_models.ListFilesIncludeType"]]]
+        include_extended_info=None,  # type: Optional[bool]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.ListFilesAndDirectoriesSegmentResponse"
@@ -503,6 +505,11 @@ class DirectoryOperations(object):
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`.
         :type timeout: int
+        :param include: Include this parameter to specify one or more datasets to include in the
+         response.
+        :type include: list[str or ~azure.storage.fileshare.models.ListFilesIncludeType]
+        :param include_extended_info:
+        :type include_extended_info: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListFilesAndDirectoriesSegmentResponse, or the result of cls(response)
         :rtype: ~azure.storage.fileshare.models.ListFilesAndDirectoriesSegmentResponse
@@ -538,10 +545,14 @@ class DirectoryOperations(object):
             query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', minimum=1)
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        if include is not None:
+            query_parameters['include'] = self._serialize.query("include", include, '[str]', div=',')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        if include_extended_info is not None:
+            header_parameters['x-ms-file-extended-info'] = self._serialize.header("include_extended_info", include_extended_info, 'bool')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)

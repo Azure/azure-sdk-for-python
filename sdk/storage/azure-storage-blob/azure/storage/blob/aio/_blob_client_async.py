@@ -229,6 +229,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :keyword ~azure.storage.blob.StandardBlobTier standard_blob_tier:
             A standard blob tier value to set the blob to. For this version of the library,
             this is only applicable to block blobs on standard storage accounts.
+        :keyword str source_authorization:
+            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
+            the prefix of the source_authorization string.
         """
         options = self._upload_blob_from_url_options(
             source_url=self._encode_source_url(source_url),
@@ -1161,6 +1164,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
         :keyword bool requires_sync:
             Enforces that the service will not return a response until the copy is complete.
+        :keyword str source_authorization:
+            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
+            the prefix of the source_authorization string. This option is only available when `incremental_copy` is
+            set to False and `requires_sync` is set to True.
         :returns: A dictionary of copy properties (etag, last_modified, copy_id, copy_status).
         :rtype: dict[str, str or ~datetime.datetime]
 
@@ -1377,7 +1384,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
     @distributed_trace_async
     async def stage_block_from_url(
-            self, block_id,  # type: str
+            self, block_id,  # type: Union[str, int]
             source_url,  # type: str
             source_offset=None,  # type: Optional[int]
             source_length=None,  # type: Optional[int]
@@ -1418,6 +1425,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword str source_authorization:
+            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
+            the prefix of the source_authorization string.
         :rtype: None
         """
         options = self._stage_block_from_url_options(
@@ -2131,6 +2141,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword str source_authorization:
+            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
+            the prefix of the source_authorization string.
         """
 
         options = self._upload_pages_from_url_options(
@@ -2391,6 +2404,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword str source_authorization:
+            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
+            the prefix of the source_authorization string.
         """
         options = self._append_block_from_url_options(
             copy_source_url=self._encode_source_url(copy_source_url),

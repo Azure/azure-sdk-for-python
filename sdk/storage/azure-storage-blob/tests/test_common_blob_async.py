@@ -58,7 +58,7 @@ from devtools_testutils.storage.aio import AsyncStorageTestCase
 # ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
 TEST_BLOB_PREFIX = 'blob'
-
+LARGE_BLOB_SIZE = 64 * 1024 + 5
 
 # ------------------------------------------------------------------------------
 
@@ -79,13 +79,28 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
     async def _setup(self, storage_account, key):
         self.bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=key, transport=AiohttpTestTransport())
         self.container_name = self.get_resource_name('utcontainer')
+        self.source_container_name = self.get_resource_name('utcontainersource')
         self.byte_data = self.get_random_bytes(1024)
         if self.is_live:
-            container = self.bsc.get_container_client(self.container_name)
             try:
-                await container.create_container(timeout=5)
+                await self.bsc.create_container(self.container_name)
             except ResourceExistsError:
                 pass
+            try:
+                await self.bsc.create_container(self.source_container_name)
+            except ResourceExistsError:
+                pass
+
+    async def _create_source_blob(self, data):
+        blob_client = self.bsc.get_blob_client(self.source_container_name, self.get_resource_name(TEST_BLOB_PREFIX))
+        await blob_client.upload_blob(data, overwrite=True)
+        return blob_client
+
+    async def _create_blob(self, tags=None, data=b'', **kwargs):
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        await blob.upload_blob(data, tags=tags, overwrite=True, **kwargs)
+        return blob
 
     async def _setup_remote(self, storage_account, key):
         self.bsc2 = BlobServiceClient(self.account_url(storage_account, "blob"), credential=key)
@@ -167,6 +182,31 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertIsNone(blob.remaining_retention_days)
 
     # -- Common test cases for blobs ----------------------------------------------
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_start_copy_from_url_with_oauth(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        await self._setup(storage_account, storage_account_key)
+        # Create source blob
+        source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
+        source_blob_client = await self._create_source_blob(data=source_blob_data)
+        # Create destination blob
+        destination_blob_client = await self._create_blob()
+        access_token = await self.generate_oauth_token().get_token("https://storage.azure.com/.default")
+        token = "Bearer {}".format(access_token.token)
+
+        with self.assertRaises(HttpResponseError):
+            await destination_blob_client.start_copy_from_url(source_blob_client.url, requires_sync=True)
+        with self.assertRaises(ValueError):
+            await destination_blob_client.start_copy_from_url(
+                source_blob_client.url, source_authorization=token, requires_sync=False)
+
+        await destination_blob_client.start_copy_from_url(
+            source_blob_client.url, source_authorization=token, requires_sync=True)
+        destination_blob = await destination_blob_client.download_blob()
+        destination_blob_data = await destination_blob.readall()
+        self.assertEqual(source_blob_data, destination_blob_data)
+
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_blob_exists(self, resource_group, location, storage_account, storage_account_key):

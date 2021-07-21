@@ -34,6 +34,7 @@ TEST_BLOB_PREFIX = 'blob'
 LARGE_BLOB_SIZE = 64 * 1024 + 5
 #------------------------------------------------------------------------------
 
+
 class StorageBlockBlobTest(StorageTestCase):
 
     def _setup(self, storage_account, key, container_name='utcontainer'):
@@ -47,10 +48,15 @@ class StorageBlockBlobTest(StorageTestCase):
             max_block_size=4 * 1024)
         self.config = self.bsc._config
         self.container_name = self.get_resource_name(container_name)
+        self.source_container_name = self.get_resource_name('utcontainersource1')
 
         if self.is_live:
             try:
                 self.bsc.create_container(self.container_name)
+            except:
+                pass
+            try:
+                self.bsc.create_container(self.source_container_name)
             except:
                 pass
 
@@ -71,6 +77,11 @@ class StorageBlockBlobTest(StorageTestCase):
         blob.upload_blob(data, tags=tags, overwrite=True, **kwargs)
         return blob
 
+    def _create_source_blob(self, data):
+        blob_client = self.bsc.get_blob_client(self.source_container_name, self.get_resource_name(TEST_BLOB_PREFIX+"1"))
+        blob_client.upload_blob(data, overwrite=True)
+        return blob_client
+
     def assertBlobEqual(self, container_name, blob_name, expected_data):
         blob = self.bsc.get_blob_client(container_name, blob_name)
         actual_data = blob.download_blob()
@@ -87,6 +98,22 @@ class StorageBlockBlobTest(StorageTestCase):
             return self.wrapped_file.read(count)
 
     #--Test cases for block blobs --------------------------------------------
+    @GlobalStorageAccountPreparer()
+    def test_upload_blob_from_url_with_oauth(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        self._setup(storage_account, storage_account_key)
+        source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
+        source_blob_client = self._create_source_blob(data=source_blob_data)
+        destination_blob_client = self._create_blob()
+        token = "Bearer {}".format(self.generate_oauth_token().get_token("https://storage.azure.com/.default").token)
+
+        # Assert this operation fails without a credential
+        with self.assertRaises(HttpResponseError):
+            destination_blob_client.upload_blob_from_url(source_blob_client.url)
+        # Assert it passes after passing an oauth credential
+        destination_blob_client.upload_blob_from_url(source_blob_client.url, source_authorization=token, overwrite=True)
+        destination_blob_data = destination_blob_client.download_blob().readall()
+        self.assertEqual(source_blob_data, destination_blob_data)
 
     @GlobalStorageAccountPreparer()
     def test_upload_blob_with_and_without_overwrite(

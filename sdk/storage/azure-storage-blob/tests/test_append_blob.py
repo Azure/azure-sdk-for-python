@@ -227,6 +227,24 @@ class StorageAppendBlobTest(StorageTestCase):
 
         # Assert
 
+    @GlobalStorageAccountPreparer()
+    def test_append_block_from_url_with_oauth(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        self._setup(bsc)
+        source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
+        source_blob_client = self._create_source_blob(source_blob_data, bsc)
+        destination_blob_client = self._create_blob(bsc)
+        token = "Bearer {}".format(self.generate_oauth_token().get_token("https://storage.azure.com/.default").token)
+
+        # Assert this operation fails without a credential
+        with self.assertRaises(HttpResponseError):
+            destination_blob_client.append_block_from_url(source_blob_client.url)
+        # Assert it passes after passing an oauth credential
+        destination_blob_client.append_block_from_url(source_blob_client.url, source_authorization=token)
+        destination_blob_data = destination_blob_client.download_blob().readall()
+        self.assertEqual(source_blob_data, destination_blob_data)
+
     @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
     def test_append_block_from_url(self, resource_group, location, storage_account, storage_account_key):

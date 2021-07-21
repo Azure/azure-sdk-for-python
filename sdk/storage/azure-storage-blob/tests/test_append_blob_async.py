@@ -108,6 +108,25 @@ class StorageAppendBlobAsyncTest(AsyncStorageTestCase):
             return self.wrapped_file.read(count)
 
     # --Test cases for append blobs --------------------------------------------
+    @GlobalStorageAccountPreparer()
+    async def test_append_block_from_url_with_oauth(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        await self._setup(bsc)
+        source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
+        source_blob_client = await self._create_source_blob(source_blob_data, bsc)
+        destination_blob_client = await self._create_blob(bsc)
+        access_token = await self.generate_oauth_token().get_token("https://storage.azure.com/.default")
+        token = "Bearer {}".format(access_token.token)
+
+        # Assert this operation fails without a credential
+        with self.assertRaises(HttpResponseError):
+            await destination_blob_client.append_block_from_url(source_blob_client.url)
+        # Assert it passes after passing an oauth credential
+        await destination_blob_client.append_block_from_url(source_blob_client.url, source_authorization=token)
+        destination_blob = await destination_blob_client.download_blob()
+        destination_blob_data = await destination_blob.readall()
+        self.assertEqual(source_blob_data, destination_blob_data)
 
     @GlobalStorageAccountPreparer()
     async def test_create_blob_async(self, resource_group, location, storage_account, storage_account_key):
