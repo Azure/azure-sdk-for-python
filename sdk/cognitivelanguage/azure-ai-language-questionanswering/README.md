@@ -80,8 +80,8 @@ params = qna.KnowledgeBaseQueryOptions(
 )
 
 output = client.query_knowledgebase(
+    params,
     project_name="FAQ",
-    knowledge_base_query_options=params
 )
 for candidate in output.answers:
     print("({}) {}".format(candidate.confidence_score, candidate.answer))
@@ -105,8 +105,8 @@ params = qna.models.KnowledgeBaseQueryOptions(
 )
 
 output = client.query_knowledgebase(
-    project_name="FAQ",
-    knowledge_base_query_options=params
+    params,
+    project_name="FAQ"
 )
 for candidate in output.answers:
     print("({}) {}".format(candidate.confidence_score, candidate.answer))
@@ -128,8 +128,8 @@ params = qna.KnowledgeBaseQueryOptions(
 )
 
 output = await client.query_knowledgebase(
-    project_name="FAQ",
-    knowledge_base_query_options=params
+    params,
+    project_name="FAQ"
 )
 ```
 
@@ -149,8 +149,8 @@ from azure.core.exceptions import HttpResponseError
 
 try:
     client.query_knowledgebase(
-        project_name="invalid-knowledge-base",
-        knowledge_base_query_options=params
+        params,
+        project_name="invalid-knowledge-base"
     )
 except HttpResponseError as error:
     print("Query failed: {}".format(error.message))

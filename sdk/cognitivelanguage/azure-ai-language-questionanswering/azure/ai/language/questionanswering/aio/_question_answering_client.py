@@ -42,17 +42,7 @@ class QuestionAnsweringClient(QuestionAnsweringClientOperationsMixin):
     def send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
-        We have helper methods to create requests specific to this service in `azure.ai.language.questionanswering.rest`.
-        Use these helper methods to create the request you pass to this method. See our example below:
-
-        >>> from azure.ai.language.questionanswering.rest import build_query_knowledgebase_request
-        >>> request = build_query_knowledgebase_request(project_name=project_name, json=json, content=content, deployment_name=deployment_name, **kwargs)
-        <HttpRequest [POST], url: '/:query-knowledgebases'>
-        >>> response = await client.send_request(request)
-        <AsyncHttpResponse: 200 OK>
-
         For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
-
         For advanced cases, you can also create your own :class:`~azure.core.rest.HttpRequest`
         and pass it in.
 
