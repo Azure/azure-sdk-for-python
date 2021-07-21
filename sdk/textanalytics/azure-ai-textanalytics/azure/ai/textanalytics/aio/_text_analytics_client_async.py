@@ -12,6 +12,7 @@ from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
+from .._version import DEFAULT_API_VERSION
 from ._base_client_async import AsyncTextAnalyticsClientBase
 from .._base_client import TextAnalyticsApiVersion
 from .._request_handlers import (
@@ -111,7 +112,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         super(TextAnalyticsClient, self).__init__(
             endpoint=endpoint, credential=credential, **kwargs
         )
-        self._api_version = kwargs.get("api_version")
+        self._api_version = kwargs.get("api_version", DEFAULT_API_VERSION)
         self._default_language = kwargs.pop("default_language", "en")
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
         self._string_code_unit = (
@@ -824,7 +825,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         self, doc_id_order, task_order, raw_response, _, headers, show_stats=False
     ):
         analyze_result = self._client.models(
-            api_version="v3.1"
+            api_version=self._api_version
         ).AnalyzeJobState.deserialize(raw_response)
         return analyze_paged_result(
             doc_id_order,
@@ -925,7 +926,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         display_name = kwargs.pop("display_name", None)
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = self._client.models(api_version="v3.1").MultiLanguageBatchInput(
+        docs = self._client.models(api_version=self._api_version).MultiLanguageBatchInput(
             documents=_validate_input(documents, "language", language)
         )
         show_stats = kwargs.pop("show_stats", False)
@@ -938,9 +939,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             raise ValueError("Multiple of the same action is not currently supported.")
 
         try:
-            analyze_tasks = self._client.models(api_version="v3.1").JobManifestTasks(
+            analyze_tasks = self._client.models(api_version=self._api_version).JobManifestTasks(
                 entity_recognition_tasks=[
-                    t._to_generated()  # pylint: disable=protected-access
+                    t._to_generated(self._api_version)  # pylint: disable=protected-access
                     for t in [
                         a
                         for a in actions
@@ -949,7 +950,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     ]
                 ],
                 entity_recognition_pii_tasks=[
-                    t._to_generated()  # pylint: disable=protected-access
+                    t._to_generated(self._api_version)  # pylint: disable=protected-access
                     for t in [
                         a
                         for a in actions
@@ -958,7 +959,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     ]
                 ],
                 key_phrase_extraction_tasks=[
-                    t._to_generated()  # pylint: disable=protected-access
+                    t._to_generated(self._api_version)  # pylint: disable=protected-access
                     for t in [
                         a
                         for a in actions
@@ -967,7 +968,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     ]
                 ],
                 entity_linking_tasks=[
-                    t._to_generated()  # pylint: disable=protected-access
+                    t._to_generated(self._api_version)  # pylint: disable=protected-access
                     for t in [
                         a
                         for a in actions
@@ -976,7 +977,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     ]
                 ],
                 sentiment_analysis_tasks=[
-                    t._to_generated()  # pylint: disable=protected-access
+                    t._to_generated(self._api_version)  # pylint: disable=protected-access
                     for t in [
                         a
                         for a in actions
@@ -985,7 +986,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     ]
                 ],
             )
-            analyze_body = self._client.models(api_version="v3.1").AnalyzeBatchInput(
+            analyze_body = self._client.models(api_version=self._api_version).AnalyzeBatchInput(
                 display_name=display_name, tasks=analyze_tasks, analysis_input=docs
             )
             return await self._client.begin_analyze(
