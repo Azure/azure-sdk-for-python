@@ -74,7 +74,7 @@ Install the Azure Text Analytics client library for Python with [pip][pip]:
 pip install azure-ai-textanalytics --pre
 ```
 
-> Note: This version of the client library defaults to the v3.1 version of the service
+> Note: This version of the client library defaults to the v3.2-preview.1 version of the service
 
 This table shows the relationship between SDK versions and supported API versions of the service
 
@@ -377,7 +377,7 @@ The returned response is a heterogeneous list of result and error objects: list[
 
 Please refer to the service documentation for [supported PII entity types][pii_entity_categories].
 
-Note: The Recognize PII Entities service is available only in the v3.1 API version.
+Note: The Recognize PII Entities service is available in API version v3.1 and up.
 
 ### Extract key phrases
 
@@ -493,7 +493,7 @@ for idx, doc in enumerate(docs):
     print("------------------------------------------")
 ```
 
-Note: The Healthcare Entities Analysis service is available only in the v3.1 API version.
+Note: The Healthcare Entities Analysis service is available in API version v3.1 and up.
 
 ### Multiple Analysis
 
@@ -504,6 +504,7 @@ Note: The Healthcare Entities Analysis service is available only in the v3.1 API
 - Linked Entity Recognition
 - Key Phrase Extraction
 - Sentiment Analysis
+- Extractive Summarization
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -563,7 +564,7 @@ for doc, action_results in zip(documents, document_results):
 
 The returned response is an object encapsulating multiple iterables, each representing results of individual analyses.
 
-Note: Multiple analysis is available only in the v3.1 API version.
+Note: Multiple analysis is available in API version v3.1 and up.
 
 ## Optional Configuration
 

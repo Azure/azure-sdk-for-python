@@ -3,6 +3,7 @@
 ## 5.2.0b1 (Unreleased)
 
 ### Features Added
+- Added support for Extractive Summarization actions through the `ExtractSummaryAction` type.
 
 ### Breaking Changes
 
