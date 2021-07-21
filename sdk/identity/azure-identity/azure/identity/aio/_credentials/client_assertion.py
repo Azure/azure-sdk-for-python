@@ -25,9 +25,9 @@ class ClientAssertionCredential(AsyncContextManager, GetTokenMixin):
             acquires a new token.
         :paramtype assertion: Callable[[], str]
 
-        :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
-            the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
-            defines authorities for other clouds.
+        :keyword str authority: authority of an Azure Active Directory endpoint, for example
+            "login.microsoftonline.com", the authority for Azure Public Cloud (which is the default).
+            :class:`~azure.identity.AzureAuthorityHosts` defines authorities for other clouds.
         """
         self._get_assertion = get_assertion
         self._client = AadClient(tenant_id, client_id, **kwargs)
