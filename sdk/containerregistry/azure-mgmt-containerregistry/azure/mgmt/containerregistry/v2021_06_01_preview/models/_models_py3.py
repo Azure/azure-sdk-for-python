@@ -6,7 +6,68 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+import datetime
+from typing import Dict, List, Optional, Union
+
+from azure.core.exceptions import HttpResponseError
 import msrest.serialization
+
+from ._container_registry_management_client_enums import *
+
+
+class ActivationProperties(msrest.serialization.Model):
+    """The activation properties of the connected registry.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar status: The activation status of the connected registry. Possible values include:
+     "Active", "Inactive".
+    :vartype status: str or
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ActivationStatus
+    """
+
+    _validation = {
+        'status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ActivationProperties, self).__init__(**kwargs)
+        self.status = None
+
+
+class ActiveDirectoryObject(msrest.serialization.Model):
+    """The Active Directory Object that will be used for authenticating the token of a container registry.
+
+    :param object_id: The user/group/application object ID for Active Directory Object that will be
+     used for authenticating the token of a container registry.
+    :type object_id: str
+    :param tenant_id: The tenant ID of user/group/application object Active Directory Object that
+     will be used for authenticating the token of a container registry.
+    :type tenant_id: str
+    """
+
+    _attribute_map = {
+        'object_id': {'key': 'objectId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        object_id: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        **kwargs
+    ):
+        super(ActiveDirectoryObject, self).__init__(**kwargs)
+        self.object_id = object_id
+        self.tenant_id = tenant_id
 
 
 class Actor(msrest.serialization.Model):
@@ -23,10 +84,12 @@ class Actor(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        name: Optional[str] = None,
         **kwargs
     ):
         super(Actor, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = name
 
 
 class CallbackConfig(msrest.serialization.Model):
@@ -51,222 +114,14 @@ class CallbackConfig(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        service_uri: str,
+        custom_headers: Optional[Dict[str, str]] = None,
         **kwargs
     ):
         super(CallbackConfig, self).__init__(**kwargs)
-        self.service_uri = kwargs['service_uri']
-        self.custom_headers = kwargs.get('custom_headers', None)
-
-
-class EncryptionProperty(msrest.serialization.Model):
-    """EncryptionProperty.
-
-    :param status: Indicates whether or not the encryption is enabled for container registry.
-     Possible values include: "enabled", "disabled".
-    :type status: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.EncryptionStatus
-    :param key_vault_properties: Key vault properties.
-    :type key_vault_properties:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.KeyVaultProperties
-    """
-
-    _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'key_vault_properties': {'key': 'keyVaultProperties', 'type': 'KeyVaultProperties'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(EncryptionProperty, self).__init__(**kwargs)
-        self.status = kwargs.get('status', None)
-        self.key_vault_properties = kwargs.get('key_vault_properties', None)
-
-
-class EventInfo(msrest.serialization.Model):
-    """The basic information of an event.
-
-    :param id: The event ID.
-    :type id: str
-    """
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(EventInfo, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-
-
-class Event(EventInfo):
-    """The event for a webhook.
-
-    :param id: The event ID.
-    :type id: str
-    :param event_request_message: The event request message sent to the service URI.
-    :type event_request_message:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.EventRequestMessage
-    :param event_response_message: The event response message received from the service URI.
-    :type event_response_message:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.EventResponseMessage
-    """
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'event_request_message': {'key': 'eventRequestMessage', 'type': 'EventRequestMessage'},
-        'event_response_message': {'key': 'eventResponseMessage', 'type': 'EventResponseMessage'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Event, self).__init__(**kwargs)
-        self.event_request_message = kwargs.get('event_request_message', None)
-        self.event_response_message = kwargs.get('event_response_message', None)
-
-
-class EventContent(msrest.serialization.Model):
-    """The content of the event request message.
-
-    :param id: The event ID.
-    :type id: str
-    :param timestamp: The time at which the event occurred.
-    :type timestamp: ~datetime.datetime
-    :param action: The action that encompasses the provided event.
-    :type action: str
-    :param target: The target of the event.
-    :type target: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Target
-    :param request: The request that generated the event.
-    :type request: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Request
-    :param actor: The agent that initiated the event. For most situations, this could be from the
-     authorization context of the request.
-    :type actor: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Actor
-    :param source: The registry node that generated the event. Put differently, while the actor
-     initiates the event, the source generates it.
-    :type source: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Source
-    """
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
-        'action': {'key': 'action', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'Target'},
-        'request': {'key': 'request', 'type': 'Request'},
-        'actor': {'key': 'actor', 'type': 'Actor'},
-        'source': {'key': 'source', 'type': 'Source'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(EventContent, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.timestamp = kwargs.get('timestamp', None)
-        self.action = kwargs.get('action', None)
-        self.target = kwargs.get('target', None)
-        self.request = kwargs.get('request', None)
-        self.actor = kwargs.get('actor', None)
-        self.source = kwargs.get('source', None)
-
-
-class EventListResult(msrest.serialization.Model):
-    """The result of a request to list events for a webhook.
-
-    :param value: The list of events. Since this list may be incomplete, the nextLink field should
-     be used to request the next list of events.
-    :type value: list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.Event]
-    :param next_link: The URI that can be used to request the next list of events.
-    :type next_link: str
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[Event]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(EventListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
-
-
-class EventRequestMessage(msrest.serialization.Model):
-    """The event request message sent to the service URI.
-
-    :param content: The content of the event request message.
-    :type content: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.EventContent
-    :param headers: The headers of the event request message.
-    :type headers: dict[str, str]
-    :param method: The HTTP method used to send the event request message.
-    :type method: str
-    :param request_uri: The URI used to send the event request message.
-    :type request_uri: str
-    :param version: The HTTP message version.
-    :type version: str
-    """
-
-    _attribute_map = {
-        'content': {'key': 'content', 'type': 'EventContent'},
-        'headers': {'key': 'headers', 'type': '{str}'},
-        'method': {'key': 'method', 'type': 'str'},
-        'request_uri': {'key': 'requestUri', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(EventRequestMessage, self).__init__(**kwargs)
-        self.content = kwargs.get('content', None)
-        self.headers = kwargs.get('headers', None)
-        self.method = kwargs.get('method', None)
-        self.request_uri = kwargs.get('request_uri', None)
-        self.version = kwargs.get('version', None)
-
-
-class EventResponseMessage(msrest.serialization.Model):
-    """The event response message received from the service URI.
-
-    :param content: The content of the event response message.
-    :type content: str
-    :param headers: The headers of the event response message.
-    :type headers: dict[str, str]
-    :param reason_phrase: The reason phrase of the event response message.
-    :type reason_phrase: str
-    :param status_code: The status code of the event response message.
-    :type status_code: str
-    :param version: The HTTP message version.
-    :type version: str
-    """
-
-    _attribute_map = {
-        'content': {'key': 'content', 'type': 'str'},
-        'headers': {'key': 'headers', 'type': '{str}'},
-        'reason_phrase': {'key': 'reasonPhrase', 'type': 'str'},
-        'status_code': {'key': 'statusCode', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(EventResponseMessage, self).__init__(**kwargs)
-        self.content = kwargs.get('content', None)
-        self.headers = kwargs.get('headers', None)
-        self.reason_phrase = kwargs.get('reason_phrase', None)
-        self.status_code = kwargs.get('status_code', None)
-        self.version = kwargs.get('version', None)
+        self.service_uri = service_uri
+        self.custom_headers = custom_headers
 
 
 class ProxyResource(msrest.serialization.Model):
@@ -281,7 +136,7 @@ class ProxyResource(msrest.serialization.Model):
     :ivar type: The type of the resource.
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.SystemData
     """
 
     _validation = {
@@ -309,6 +164,476 @@ class ProxyResource(msrest.serialization.Model):
         self.system_data = None
 
 
+class ConnectedRegistry(ProxyResource):
+    """An object that represents a connected registry for a container registry.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The resource ID.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.SystemData
+    :ivar provisioning_state: Provisioning state of the resource. Possible values include:
+     "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ProvisioningState
+    :param mode: The mode of the connected registry resource that indicates the permissions of the
+     registry. Possible values include: "Registry", "Mirror".
+    :type mode: str or
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ConnectedRegistryMode
+    :ivar version: The current version of ACR runtime on the connected registry.
+    :vartype version: str
+    :ivar connection_state: The current connection state of the connected registry. Possible values
+     include: "Online", "Offline", "Syncing", "Unhealthy".
+    :vartype connection_state: str or
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ConnectionState
+    :ivar last_activity_time: The last activity time of the connected registry.
+    :vartype last_activity_time: ~datetime.datetime
+    :ivar activation: The activation properties of the connected registry.
+    :vartype activation:
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ActivationProperties
+    :param parent: The parent of the connected registry.
+    :type parent: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ParentProperties
+    :param client_token_ids: The list of the ACR token resource IDs used to authenticate clients to
+     the connected registry.
+    :type client_token_ids: list[str]
+    :param login_server: The login server properties of the connected registry.
+    :type login_server:
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.LoginServerProperties
+    :param logging: The logging properties of the connected registry.
+    :type logging: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.LoggingProperties
+    :ivar status_details: The list of current statuses of the connected registry.
+    :vartype status_details:
+     list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.StatusDetailProperties]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'version': {'readonly': True},
+        'connection_state': {'readonly': True},
+        'last_activity_time': {'readonly': True},
+        'activation': {'readonly': True},
+        'status_details': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'mode': {'key': 'properties.mode', 'type': 'str'},
+        'version': {'key': 'properties.version', 'type': 'str'},
+        'connection_state': {'key': 'properties.connectionState', 'type': 'str'},
+        'last_activity_time': {'key': 'properties.lastActivityTime', 'type': 'iso-8601'},
+        'activation': {'key': 'properties.activation', 'type': 'ActivationProperties'},
+        'parent': {'key': 'properties.parent', 'type': 'ParentProperties'},
+        'client_token_ids': {'key': 'properties.clientTokenIds', 'type': '[str]'},
+        'login_server': {'key': 'properties.loginServer', 'type': 'LoginServerProperties'},
+        'logging': {'key': 'properties.logging', 'type': 'LoggingProperties'},
+        'status_details': {'key': 'properties.statusDetails', 'type': '[StatusDetailProperties]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        mode: Optional[Union[str, "ConnectedRegistryMode"]] = None,
+        parent: Optional["ParentProperties"] = None,
+        client_token_ids: Optional[List[str]] = None,
+        login_server: Optional["LoginServerProperties"] = None,
+        logging: Optional["LoggingProperties"] = None,
+        **kwargs
+    ):
+        super(ConnectedRegistry, self).__init__(**kwargs)
+        self.provisioning_state = None
+        self.mode = mode
+        self.version = None
+        self.connection_state = None
+        self.last_activity_time = None
+        self.activation = None
+        self.parent = parent
+        self.client_token_ids = client_token_ids
+        self.login_server = login_server
+        self.logging = logging
+        self.status_details = None
+
+
+class ConnectedRegistryListResult(msrest.serialization.Model):
+    """The result of a request to list connected registries for a container registry.
+
+    :param value: The list of connected registries. Since this list may be incomplete, the nextLink
+     field should be used to request the next list of connected registries.
+    :type value: list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.ConnectedRegistry]
+    :param next_link: The URI that can be used to request the next list of connected registries.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ConnectedRegistry]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["ConnectedRegistry"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        super(ConnectedRegistryListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class ConnectedRegistryUpdateParameters(msrest.serialization.Model):
+    """The parameters for updating a connected registry.
+
+    :param sync_properties: The sync properties of the connected registry with its parent.
+    :type sync_properties:
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.SyncUpdateProperties
+    :param logging: The logging properties of the connected registry.
+    :type logging: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.LoggingProperties
+    :param client_token_ids: The list of the ACR token resource IDs used to authenticate clients to
+     the connected registry.
+    :type client_token_ids: list[str]
+    """
+
+    _attribute_map = {
+        'sync_properties': {'key': 'properties.syncProperties', 'type': 'SyncUpdateProperties'},
+        'logging': {'key': 'properties.logging', 'type': 'LoggingProperties'},
+        'client_token_ids': {'key': 'properties.clientTokenIds', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        sync_properties: Optional["SyncUpdateProperties"] = None,
+        logging: Optional["LoggingProperties"] = None,
+        client_token_ids: Optional[List[str]] = None,
+        **kwargs
+    ):
+        super(ConnectedRegistryUpdateParameters, self).__init__(**kwargs)
+        self.sync_properties = sync_properties
+        self.logging = logging
+        self.client_token_ids = client_token_ids
+
+
+class EncryptionProperty(msrest.serialization.Model):
+    """EncryptionProperty.
+
+    :param status: Indicates whether or not the encryption is enabled for container registry.
+     Possible values include: "enabled", "disabled".
+    :type status: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.EncryptionStatus
+    :param key_vault_properties: Key vault properties.
+    :type key_vault_properties:
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.KeyVaultProperties
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'key_vault_properties': {'key': 'keyVaultProperties', 'type': 'KeyVaultProperties'},
+    }
+
+    def __init__(
+        self,
+        *,
+        status: Optional[Union[str, "EncryptionStatus"]] = None,
+        key_vault_properties: Optional["KeyVaultProperties"] = None,
+        **kwargs
+    ):
+        super(EncryptionProperty, self).__init__(**kwargs)
+        self.status = status
+        self.key_vault_properties = key_vault_properties
+
+
+class ErrorResponse(msrest.serialization.Model):
+    """An error response from the Azure Container Registry service.
+
+    :param error: Azure container registry build API error body.
+    :type error: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ErrorResponseBody
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorResponseBody'},
+    }
+
+    def __init__(
+        self,
+        *,
+        error: Optional["ErrorResponseBody"] = None,
+        **kwargs
+    ):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.error = error
+
+
+class ErrorResponseBody(msrest.serialization.Model):
+    """An error response from the Azure Container Registry service.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param code: Required. error code.
+    :type code: str
+    :param message: Required. error message.
+    :type message: str
+    :param target: target of the particular error.
+    :type target: str
+    :param details: an array of additional nested error response info objects, as described by this
+     contract.
+    :type details: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.InnerErrorDescription
+    """
+
+    _validation = {
+        'code': {'required': True},
+        'message': {'required': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': 'InnerErrorDescription'},
+    }
+
+    def __init__(
+        self,
+        *,
+        code: str,
+        message: str,
+        target: Optional[str] = None,
+        details: Optional["InnerErrorDescription"] = None,
+        **kwargs
+    ):
+        super(ErrorResponseBody, self).__init__(**kwargs)
+        self.code = code
+        self.message = message
+        self.target = target
+        self.details = details
+
+
+class EventInfo(msrest.serialization.Model):
+    """The basic information of an event.
+
+    :param id: The event ID.
+    :type id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,
+        **kwargs
+    ):
+        super(EventInfo, self).__init__(**kwargs)
+        self.id = id
+
+
+class Event(EventInfo):
+    """The event for a webhook.
+
+    :param id: The event ID.
+    :type id: str
+    :param event_request_message: The event request message sent to the service URI.
+    :type event_request_message:
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.EventRequestMessage
+    :param event_response_message: The event response message received from the service URI.
+    :type event_response_message:
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.EventResponseMessage
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'event_request_message': {'key': 'eventRequestMessage', 'type': 'EventRequestMessage'},
+        'event_response_message': {'key': 'eventResponseMessage', 'type': 'EventResponseMessage'},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,
+        event_request_message: Optional["EventRequestMessage"] = None,
+        event_response_message: Optional["EventResponseMessage"] = None,
+        **kwargs
+    ):
+        super(Event, self).__init__(id=id, **kwargs)
+        self.event_request_message = event_request_message
+        self.event_response_message = event_response_message
+
+
+class EventContent(msrest.serialization.Model):
+    """The content of the event request message.
+
+    :param id: The event ID.
+    :type id: str
+    :param timestamp: The time at which the event occurred.
+    :type timestamp: ~datetime.datetime
+    :param action: The action that encompasses the provided event.
+    :type action: str
+    :param target: The target of the event.
+    :type target: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.Target
+    :param request: The request that generated the event.
+    :type request: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.Request
+    :param actor: The agent that initiated the event. For most situations, this could be from the
+     authorization context of the request.
+    :type actor: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.Actor
+    :param source: The registry node that generated the event. Put differently, while the actor
+     initiates the event, the source generates it.
+    :type source: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.Source
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
+        'action': {'key': 'action', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'Target'},
+        'request': {'key': 'request', 'type': 'Request'},
+        'actor': {'key': 'actor', 'type': 'Actor'},
+        'source': {'key': 'source', 'type': 'Source'},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,
+        timestamp: Optional[datetime.datetime] = None,
+        action: Optional[str] = None,
+        target: Optional["Target"] = None,
+        request: Optional["Request"] = None,
+        actor: Optional["Actor"] = None,
+        source: Optional["Source"] = None,
+        **kwargs
+    ):
+        super(EventContent, self).__init__(**kwargs)
+        self.id = id
+        self.timestamp = timestamp
+        self.action = action
+        self.target = target
+        self.request = request
+        self.actor = actor
+        self.source = source
+
+
+class EventListResult(msrest.serialization.Model):
+    """The result of a request to list events for a webhook.
+
+    :param value: The list of events. Since this list may be incomplete, the nextLink field should
+     be used to request the next list of events.
+    :type value: list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.Event]
+    :param next_link: The URI that can be used to request the next list of events.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Event]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["Event"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        super(EventListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class EventRequestMessage(msrest.serialization.Model):
+    """The event request message sent to the service URI.
+
+    :param content: The content of the event request message.
+    :type content: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.EventContent
+    :param headers: The headers of the event request message.
+    :type headers: dict[str, str]
+    :param method: The HTTP method used to send the event request message.
+    :type method: str
+    :param request_uri: The URI used to send the event request message.
+    :type request_uri: str
+    :param version: The HTTP message version.
+    :type version: str
+    """
+
+    _attribute_map = {
+        'content': {'key': 'content', 'type': 'EventContent'},
+        'headers': {'key': 'headers', 'type': '{str}'},
+        'method': {'key': 'method', 'type': 'str'},
+        'request_uri': {'key': 'requestUri', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        content: Optional["EventContent"] = None,
+        headers: Optional[Dict[str, str]] = None,
+        method: Optional[str] = None,
+        request_uri: Optional[str] = None,
+        version: Optional[str] = None,
+        **kwargs
+    ):
+        super(EventRequestMessage, self).__init__(**kwargs)
+        self.content = content
+        self.headers = headers
+        self.method = method
+        self.request_uri = request_uri
+        self.version = version
+
+
+class EventResponseMessage(msrest.serialization.Model):
+    """The event response message received from the service URI.
+
+    :param content: The content of the event response message.
+    :type content: str
+    :param headers: The headers of the event response message.
+    :type headers: dict[str, str]
+    :param reason_phrase: The reason phrase of the event response message.
+    :type reason_phrase: str
+    :param status_code: The status code of the event response message.
+    :type status_code: str
+    :param version: The HTTP message version.
+    :type version: str
+    """
+
+    _attribute_map = {
+        'content': {'key': 'content', 'type': 'str'},
+        'headers': {'key': 'headers', 'type': '{str}'},
+        'reason_phrase': {'key': 'reasonPhrase', 'type': 'str'},
+        'status_code': {'key': 'statusCode', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        content: Optional[str] = None,
+        headers: Optional[Dict[str, str]] = None,
+        reason_phrase: Optional[str] = None,
+        status_code: Optional[str] = None,
+        version: Optional[str] = None,
+        **kwargs
+    ):
+        super(EventResponseMessage, self).__init__(**kwargs)
+        self.content = content
+        self.headers = headers
+        self.reason_phrase = reason_phrase
+        self.status_code = status_code
+        self.version = version
+
+
 class ExportPipeline(ProxyResource):
     """An object that represents an export pipeline for a container registry.
 
@@ -321,22 +646,22 @@ class ExportPipeline(ProxyResource):
     :ivar type: The type of the resource.
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.SystemData
     :param location: The location of the export pipeline.
     :type location: str
     :param identity: The identity of the export pipeline.
-    :type identity: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.IdentityProperties
+    :type identity: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.IdentityProperties
     :param target: The target properties of the export pipeline.
     :type target:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ExportPipelineTargetProperties
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ExportPipelineTargetProperties
     :param options: The list of all options configured for the pipeline.
     :type options: list[str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PipelineOptions]
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PipelineOptions]
     :ivar provisioning_state: The provisioning state of the pipeline at the time the operation was
      called. Possible values include: "Creating", "Updating", "Deleting", "Succeeded", "Failed",
      "Canceled".
     :vartype provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ProvisioningState
     """
 
     _validation = {
@@ -361,13 +686,18 @@ class ExportPipeline(ProxyResource):
 
     def __init__(
         self,
+        *,
+        location: Optional[str] = None,
+        identity: Optional["IdentityProperties"] = None,
+        target: Optional["ExportPipelineTargetProperties"] = None,
+        options: Optional[List[Union[str, "PipelineOptions"]]] = None,
         **kwargs
     ):
         super(ExportPipeline, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.identity = kwargs.get('identity', None)
-        self.target = kwargs.get('target', None)
-        self.options = kwargs.get('options', None)
+        self.location = location
+        self.identity = identity
+        self.target = target
+        self.options = options
         self.provisioning_state = None
 
 
@@ -376,7 +706,7 @@ class ExportPipelineListResult(msrest.serialization.Model):
 
     :param value: The list of export pipelines. Since this list may be incomplete, the nextLink
      field should be used to request the next list of export pipelines.
-    :type value: list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.ExportPipeline]
+    :type value: list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.ExportPipeline]
     :param next_link: The URI that can be used to request the next list of pipeline runs.
     :type next_link: str
     """
@@ -388,11 +718,14 @@ class ExportPipelineListResult(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        value: Optional[List["ExportPipeline"]] = None,
+        next_link: Optional[str] = None,
         **kwargs
     ):
         super(ExportPipelineListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = value
+        self.next_link = next_link
 
 
 class ExportPipelineTargetProperties(msrest.serialization.Model):
@@ -423,12 +756,98 @@ class ExportPipelineTargetProperties(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        key_vault_uri: str,
+        type: Optional[str] = None,
+        uri: Optional[str] = None,
         **kwargs
     ):
         super(ExportPipelineTargetProperties, self).__init__(**kwargs)
-        self.type = kwargs.get('type', None)
-        self.uri = kwargs.get('uri', None)
-        self.key_vault_uri = kwargs['key_vault_uri']
+        self.type = type
+        self.uri = uri
+        self.key_vault_uri = key_vault_uri
+
+
+class ExportPolicy(msrest.serialization.Model):
+    """The export policy for a container registry.
+
+    :param status: The value that indicates whether the policy is enabled or not. Possible values
+     include: "enabled", "disabled". Default value: "enabled".
+    :type status: str or
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ExportPolicyStatus
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        status: Optional[Union[str, "ExportPolicyStatus"]] = "enabled",
+        **kwargs
+    ):
+        super(ExportPolicy, self).__init__(**kwargs)
+        self.status = status
+
+
+class GenerateCredentialsParameters(msrest.serialization.Model):
+    """The parameters used to generate credentials for a specified token or user of a container registry.
+
+    :param token_id: The resource ID of the token for which credentials have to be generated.
+    :type token_id: str
+    :param expiry: The expiry date of the generated credentials after which the credentials become
+     invalid.
+    :type expiry: ~datetime.datetime
+    :param name: Specifies name of the password which should be regenerated if any -- password1 or
+     password2. Possible values include: "password1", "password2".
+    :type name: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.TokenPasswordName
+    """
+
+    _attribute_map = {
+        'token_id': {'key': 'tokenId', 'type': 'str'},
+        'expiry': {'key': 'expiry', 'type': 'iso-8601'},
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        token_id: Optional[str] = None,
+        expiry: Optional[datetime.datetime] = None,
+        name: Optional[Union[str, "TokenPasswordName"]] = None,
+        **kwargs
+    ):
+        super(GenerateCredentialsParameters, self).__init__(**kwargs)
+        self.token_id = token_id
+        self.expiry = expiry
+        self.name = name
+
+
+class GenerateCredentialsResult(msrest.serialization.Model):
+    """The response from the GenerateCredentials operation.
+
+    :param username: The username for a container registry.
+    :type username: str
+    :param passwords: The list of passwords for a container registry.
+    :type passwords: list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.TokenPassword]
+    """
+
+    _attribute_map = {
+        'username': {'key': 'username', 'type': 'str'},
+        'passwords': {'key': 'passwords', 'type': '[TokenPassword]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        username: Optional[str] = None,
+        passwords: Optional[List["TokenPassword"]] = None,
+        **kwargs
+    ):
+        super(GenerateCredentialsResult, self).__init__(**kwargs)
+        self.username = username
+        self.passwords = passwords
 
 
 class IdentityProperties(msrest.serialization.Model):
@@ -441,14 +860,14 @@ class IdentityProperties(msrest.serialization.Model):
     :param type: The identity type. Possible values include: "SystemAssigned", "UserAssigned",
      "SystemAssigned, UserAssigned", "None".
     :type type: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ResourceIdentityType
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ResourceIdentityType
     :param user_assigned_identities: The list of user identities associated with the resource. The
      user identity
      dictionary key references will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/
          providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :type user_assigned_identities: dict[str,
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.UserIdentityProperties]
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.UserIdentityProperties]
     """
 
     _attribute_map = {
@@ -460,13 +879,18 @@ class IdentityProperties(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        principal_id: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        type: Optional[Union[str, "ResourceIdentityType"]] = None,
+        user_assigned_identities: Optional[Dict[str, "UserIdentityProperties"]] = None,
         **kwargs
     ):
         super(IdentityProperties, self).__init__(**kwargs)
-        self.principal_id = kwargs.get('principal_id', None)
-        self.tenant_id = kwargs.get('tenant_id', None)
-        self.type = kwargs.get('type', None)
-        self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
+        self.principal_id = principal_id
+        self.tenant_id = tenant_id
+        self.type = type
+        self.user_assigned_identities = user_assigned_identities
 
 
 class ImportImageParameters(msrest.serialization.Model):
@@ -475,7 +899,7 @@ class ImportImageParameters(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param source: Required. The source of the image.
-    :type source: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ImportSource
+    :type source: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ImportSource
     :param target_tags: List of strings of the form repo[:tag]. When tag is omitted the source will
      be used (or 'latest' if source tag is also omitted).
     :type target_tags: list[str]
@@ -485,7 +909,7 @@ class ImportImageParameters(msrest.serialization.Model):
     :param mode: When Force, any existing target tags will be overwritten. When NoForce, any
      existing target tags will fail the operation before any copying begins. Possible values
      include: "NoForce", "Force". Default value: "NoForce".
-    :type mode: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ImportMode
+    :type mode: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ImportMode
     """
 
     _validation = {
@@ -501,13 +925,18 @@ class ImportImageParameters(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        source: "ImportSource",
+        target_tags: Optional[List[str]] = None,
+        untagged_target_repositories: Optional[List[str]] = None,
+        mode: Optional[Union[str, "ImportMode"]] = "NoForce",
         **kwargs
     ):
         super(ImportImageParameters, self).__init__(**kwargs)
-        self.source = kwargs['source']
-        self.target_tags = kwargs.get('target_tags', None)
-        self.untagged_target_repositories = kwargs.get('untagged_target_repositories', None)
-        self.mode = kwargs.get('mode', "NoForce")
+        self.source = source
+        self.target_tags = target_tags
+        self.untagged_target_repositories = untagged_target_repositories
+        self.mode = mode
 
 
 class ImportPipeline(ProxyResource):
@@ -522,25 +951,25 @@ class ImportPipeline(ProxyResource):
     :ivar type: The type of the resource.
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.SystemData
     :param location: The location of the import pipeline.
     :type location: str
     :param identity: The identity of the import pipeline.
-    :type identity: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.IdentityProperties
+    :type identity: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.IdentityProperties
     :param source: The source properties of the import pipeline.
     :type source:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ImportPipelineSourceProperties
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ImportPipelineSourceProperties
     :param trigger: The properties that describe the trigger of the import pipeline.
     :type trigger:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PipelineTriggerProperties
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PipelineTriggerProperties
     :param options: The list of all options configured for the pipeline.
     :type options: list[str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PipelineOptions]
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PipelineOptions]
     :ivar provisioning_state: The provisioning state of the pipeline at the time the operation was
      called. Possible values include: "Creating", "Updating", "Deleting", "Succeeded", "Failed",
      "Canceled".
     :vartype provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ProvisioningState
     """
 
     _validation = {
@@ -566,14 +995,20 @@ class ImportPipeline(ProxyResource):
 
     def __init__(
         self,
+        *,
+        location: Optional[str] = None,
+        identity: Optional["IdentityProperties"] = None,
+        source: Optional["ImportPipelineSourceProperties"] = None,
+        trigger: Optional["PipelineTriggerProperties"] = None,
+        options: Optional[List[Union[str, "PipelineOptions"]]] = None,
         **kwargs
     ):
         super(ImportPipeline, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.identity = kwargs.get('identity', None)
-        self.source = kwargs.get('source', None)
-        self.trigger = kwargs.get('trigger', None)
-        self.options = kwargs.get('options', None)
+        self.location = location
+        self.identity = identity
+        self.source = source
+        self.trigger = trigger
+        self.options = options
         self.provisioning_state = None
 
 
@@ -582,7 +1017,7 @@ class ImportPipelineListResult(msrest.serialization.Model):
 
     :param value: The list of import pipelines. Since this list may be incomplete, the nextLink
      field should be used to request the next list of import pipelines.
-    :type value: list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.ImportPipeline]
+    :type value: list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.ImportPipeline]
     :param next_link: The URI that can be used to request the next list of pipeline runs.
     :type next_link: str
     """
@@ -594,11 +1029,14 @@ class ImportPipelineListResult(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        value: Optional[List["ImportPipeline"]] = None,
+        next_link: Optional[str] = None,
         **kwargs
     ):
         super(ImportPipelineListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = value
+        self.next_link = next_link
 
 
 class ImportPipelineSourceProperties(msrest.serialization.Model):
@@ -608,7 +1046,7 @@ class ImportPipelineSourceProperties(msrest.serialization.Model):
 
     :param type: The type of source for the import pipeline. Possible values include:
      "AzureStorageBlobContainer". Default value: "AzureStorageBlobContainer".
-    :type type: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PipelineSourceType
+    :type type: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PipelineSourceType
     :param uri: The source uri of the import pipeline.
      When 'AzureStorageBlob': "https://accountName.blob.core.windows.net/containerName/blobName"
      When 'AzureStorageBlobContainer': "https://accountName.blob.core.windows.net/containerName".
@@ -630,12 +1068,16 @@ class ImportPipelineSourceProperties(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        key_vault_uri: str,
+        type: Optional[Union[str, "PipelineSourceType"]] = "AzureStorageBlobContainer",
+        uri: Optional[str] = None,
         **kwargs
     ):
         super(ImportPipelineSourceProperties, self).__init__(**kwargs)
-        self.type = kwargs.get('type', "AzureStorageBlobContainer")
-        self.uri = kwargs.get('uri', None)
-        self.key_vault_uri = kwargs['key_vault_uri']
+        self.type = type
+        self.uri = uri
+        self.key_vault_uri = key_vault_uri
 
 
 class ImportSource(msrest.serialization.Model):
@@ -649,7 +1091,7 @@ class ImportSource(msrest.serialization.Model):
     :type registry_uri: str
     :param credentials: Credentials used when importing from a registry uri.
     :type credentials:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ImportSourceCredentials
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ImportSourceCredentials
     :param source_image: Required. Repository name of the source image.
      Specify an image by repository ('hello-world'). This will use the 'latest' tag.
      Specify an image by tag ('hello-world:latest').
@@ -670,13 +1112,18 @@ class ImportSource(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        source_image: str,
+        resource_id: Optional[str] = None,
+        registry_uri: Optional[str] = None,
+        credentials: Optional["ImportSourceCredentials"] = None,
         **kwargs
     ):
         super(ImportSource, self).__init__(**kwargs)
-        self.resource_id = kwargs.get('resource_id', None)
-        self.registry_uri = kwargs.get('registry_uri', None)
-        self.credentials = kwargs.get('credentials', None)
-        self.source_image = kwargs['source_image']
+        self.resource_id = resource_id
+        self.registry_uri = registry_uri
+        self.credentials = credentials
+        self.source_image = source_image
 
 
 class ImportSourceCredentials(msrest.serialization.Model):
@@ -701,11 +1148,52 @@ class ImportSourceCredentials(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        password: str,
+        username: Optional[str] = None,
         **kwargs
     ):
         super(ImportSourceCredentials, self).__init__(**kwargs)
-        self.username = kwargs.get('username', None)
-        self.password = kwargs['password']
+        self.username = username
+        self.password = password
+
+
+class InnerErrorDescription(msrest.serialization.Model):
+    """inner error.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param code: Required. error code.
+    :type code: str
+    :param message: Required. error message.
+    :type message: str
+    :param target: target of the particular error.
+    :type target: str
+    """
+
+    _validation = {
+        'code': {'required': True},
+        'message': {'required': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        code: str,
+        message: str,
+        target: Optional[str] = None,
+        **kwargs
+    ):
+        super(InnerErrorDescription, self).__init__(**kwargs)
+        self.code = code
+        self.message = message
+        self.target = target
 
 
 class IPRule(msrest.serialization.Model):
@@ -714,7 +1202,7 @@ class IPRule(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param action: The action of IP ACL rule. Possible values include: "Allow".
-    :type action: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Action
+    :type action: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.Action
     :param ip_address_or_range: Required. Specifies the IP or IP range in CIDR format. Only IPV4
      address is allowed.
     :type ip_address_or_range: str
@@ -731,11 +1219,14 @@ class IPRule(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        ip_address_or_range: str,
+        action: Optional[Union[str, "Action"]] = None,
         **kwargs
     ):
         super(IPRule, self).__init__(**kwargs)
-        self.action = kwargs.get('action', None)
-        self.ip_address_or_range = kwargs['ip_address_or_range']
+        self.action = action
+        self.ip_address_or_range = ip_address_or_range
 
 
 class KeyVaultProperties(msrest.serialization.Model):
@@ -772,14 +1263,76 @@ class KeyVaultProperties(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        key_identifier: Optional[str] = None,
+        identity: Optional[str] = None,
         **kwargs
     ):
         super(KeyVaultProperties, self).__init__(**kwargs)
-        self.key_identifier = kwargs.get('key_identifier', None)
+        self.key_identifier = key_identifier
         self.versioned_key_identifier = None
-        self.identity = kwargs.get('identity', None)
+        self.identity = identity
         self.key_rotation_enabled = None
         self.last_key_rotation_timestamp = None
+
+
+class LoggingProperties(msrest.serialization.Model):
+    """The logging properties of the connected registry.
+
+    :param log_level: The verbosity of logs persisted on the connected registry. Possible values
+     include: "Debug", "Information", "Warning", "Error", "None". Default value: "Information".
+    :type log_level: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.LogLevel
+    :param audit_log_status: Indicates whether audit logs are enabled on the connected registry.
+     Possible values include: "Enabled", "Disabled". Default value: "Disabled".
+    :type audit_log_status: str or
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.AuditLogStatus
+    """
+
+    _attribute_map = {
+        'log_level': {'key': 'logLevel', 'type': 'str'},
+        'audit_log_status': {'key': 'auditLogStatus', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        log_level: Optional[Union[str, "LogLevel"]] = "Information",
+        audit_log_status: Optional[Union[str, "AuditLogStatus"]] = "Disabled",
+        **kwargs
+    ):
+        super(LoggingProperties, self).__init__(**kwargs)
+        self.log_level = log_level
+        self.audit_log_status = audit_log_status
+
+
+class LoginServerProperties(msrest.serialization.Model):
+    """The login server properties of the connected registry.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar host: The host of the connected registry. Can be FQDN or IP.
+    :vartype host: str
+    :ivar tls: The TLS properties of the connected registry login server.
+    :vartype tls: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.TlsProperties
+    """
+
+    _validation = {
+        'host': {'readonly': True},
+        'tls': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'host': {'key': 'host', 'type': 'str'},
+        'tls': {'key': 'tls', 'type': 'TlsProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LoginServerProperties, self).__init__(**kwargs)
+        self.host = None
+        self.tls = None
 
 
 class NetworkRuleSet(msrest.serialization.Model):
@@ -790,12 +1343,12 @@ class NetworkRuleSet(msrest.serialization.Model):
     :param default_action: Required. The default action of allow or deny when no other rules match.
      Possible values include: "Allow", "Deny". Default value: "Allow".
     :type default_action: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.DefaultAction
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.DefaultAction
     :param virtual_network_rules: The virtual network rules.
     :type virtual_network_rules:
-     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.VirtualNetworkRule]
+     list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.VirtualNetworkRule]
     :param ip_rules: The IP ACL rules.
-    :type ip_rules: list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.IPRule]
+    :type ip_rules: list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.IPRule]
     """
 
     _validation = {
@@ -810,12 +1363,16 @@ class NetworkRuleSet(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        default_action: Union[str, "DefaultAction"] = "Allow",
+        virtual_network_rules: Optional[List["VirtualNetworkRule"]] = None,
+        ip_rules: Optional[List["IPRule"]] = None,
         **kwargs
     ):
         super(NetworkRuleSet, self).__init__(**kwargs)
-        self.default_action = kwargs.get('default_action', "Allow")
-        self.virtual_network_rules = kwargs.get('virtual_network_rules', None)
-        self.ip_rules = kwargs.get('ip_rules', None)
+        self.default_action = default_action
+        self.virtual_network_rules = virtual_network_rules
+        self.ip_rules = ip_rules
 
 
 class OperationDefinition(msrest.serialization.Model):
@@ -827,28 +1384,40 @@ class OperationDefinition(msrest.serialization.Model):
     :type name: str
     :param display: The display information for the container registry operation.
     :type display:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.OperationDisplayDefinition
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.OperationDisplayDefinition
+    :param is_data_action: This property indicates if the operation is an action or a data action
+     ref:
+     https://docs.microsoft.com/en-us/azure/role-based-access-control/role-definitions#management-and-data-operations.
+    :type is_data_action: bool
     :param service_specification: The definition of Azure Monitoring service.
     :type service_specification:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.OperationServiceSpecificationDefinition
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.OperationServiceSpecificationDefinition
     """
 
     _attribute_map = {
         'origin': {'key': 'origin', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationDisplayDefinition'},
+        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
         'service_specification': {'key': 'properties.serviceSpecification', 'type': 'OperationServiceSpecificationDefinition'},
     }
 
     def __init__(
         self,
+        *,
+        origin: Optional[str] = None,
+        name: Optional[str] = None,
+        display: Optional["OperationDisplayDefinition"] = None,
+        is_data_action: Optional[bool] = None,
+        service_specification: Optional["OperationServiceSpecificationDefinition"] = None,
         **kwargs
     ):
         super(OperationDefinition, self).__init__(**kwargs)
-        self.origin = kwargs.get('origin', None)
-        self.name = kwargs.get('name', None)
-        self.display = kwargs.get('display', None)
-        self.service_specification = kwargs.get('service_specification', None)
+        self.origin = origin
+        self.name = name
+        self.display = display
+        self.is_data_action = is_data_action
+        self.service_specification = service_specification
 
 
 class OperationDisplayDefinition(msrest.serialization.Model):
@@ -873,13 +1442,18 @@ class OperationDisplayDefinition(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        provider: Optional[str] = None,
+        resource: Optional[str] = None,
+        operation: Optional[str] = None,
+        description: Optional[str] = None,
         **kwargs
     ):
         super(OperationDisplayDefinition, self).__init__(**kwargs)
-        self.provider = kwargs.get('provider', None)
-        self.resource = kwargs.get('resource', None)
-        self.operation = kwargs.get('operation', None)
-        self.description = kwargs.get('description', None)
+        self.provider = provider
+        self.resource = resource
+        self.operation = operation
+        self.description = description
 
 
 class OperationListResult(msrest.serialization.Model):
@@ -887,7 +1461,7 @@ class OperationListResult(msrest.serialization.Model):
 
     :param value: The list of container registry operations. Since this list may be incomplete, the
      nextLink field should be used to request the next list of operations.
-    :type value: list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.OperationDefinition]
+    :type value: list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.OperationDefinition]
     :param next_link: The URI that can be used to request the next list of container registry
      operations.
     :type next_link: str
@@ -900,11 +1474,14 @@ class OperationListResult(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        value: Optional[List["OperationDefinition"]] = None,
+        next_link: Optional[str] = None,
         **kwargs
     ):
         super(OperationListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = value
+        self.next_link = next_link
 
 
 class OperationLogSpecificationDefinition(msrest.serialization.Model):
@@ -926,12 +1503,16 @@ class OperationLogSpecificationDefinition(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        name: Optional[str] = None,
+        display_name: Optional[str] = None,
+        blob_duration: Optional[str] = None,
         **kwargs
     ):
         super(OperationLogSpecificationDefinition, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.display_name = kwargs.get('display_name', None)
-        self.blob_duration = kwargs.get('blob_duration', None)
+        self.name = name
+        self.display_name = display_name
+        self.blob_duration = blob_duration
 
 
 class OperationMetricSpecificationDefinition(msrest.serialization.Model):
@@ -962,15 +1543,22 @@ class OperationMetricSpecificationDefinition(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        name: Optional[str] = None,
+        display_name: Optional[str] = None,
+        display_description: Optional[str] = None,
+        unit: Optional[str] = None,
+        aggregation_type: Optional[str] = None,
+        internal_metric_name: Optional[str] = None,
         **kwargs
     ):
         super(OperationMetricSpecificationDefinition, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.display_name = kwargs.get('display_name', None)
-        self.display_description = kwargs.get('display_description', None)
-        self.unit = kwargs.get('unit', None)
-        self.aggregation_type = kwargs.get('aggregation_type', None)
-        self.internal_metric_name = kwargs.get('internal_metric_name', None)
+        self.name = name
+        self.display_name = display_name
+        self.display_description = display_description
+        self.unit = unit
+        self.aggregation_type = aggregation_type
+        self.internal_metric_name = internal_metric_name
 
 
 class OperationServiceSpecificationDefinition(msrest.serialization.Model):
@@ -978,10 +1566,10 @@ class OperationServiceSpecificationDefinition(msrest.serialization.Model):
 
     :param metric_specifications: A list of Azure Monitoring metrics definition.
     :type metric_specifications:
-     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.OperationMetricSpecificationDefinition]
+     list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.OperationMetricSpecificationDefinition]
     :param log_specifications: A list of Azure Monitoring log definitions.
     :type log_specifications:
-     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.OperationLogSpecificationDefinition]
+     list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.OperationLogSpecificationDefinition]
     """
 
     _attribute_map = {
@@ -991,11 +1579,47 @@ class OperationServiceSpecificationDefinition(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        metric_specifications: Optional[List["OperationMetricSpecificationDefinition"]] = None,
+        log_specifications: Optional[List["OperationLogSpecificationDefinition"]] = None,
         **kwargs
     ):
         super(OperationServiceSpecificationDefinition, self).__init__(**kwargs)
-        self.metric_specifications = kwargs.get('metric_specifications', None)
-        self.log_specifications = kwargs.get('log_specifications', None)
+        self.metric_specifications = metric_specifications
+        self.log_specifications = log_specifications
+
+
+class ParentProperties(msrest.serialization.Model):
+    """The properties of the connected registry parent.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: The resource ID of the parent to which the connected registry will be associated.
+    :type id: str
+    :param sync_properties: Required. The sync properties of the connected registry with its
+     parent.
+    :type sync_properties: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.SyncProperties
+    """
+
+    _validation = {
+        'sync_properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'sync_properties': {'key': 'syncProperties', 'type': 'SyncProperties'},
+    }
+
+    def __init__(
+        self,
+        *,
+        sync_properties: "SyncProperties",
+        id: Optional[str] = None,
+        **kwargs
+    ):
+        super(ParentProperties, self).__init__(**kwargs)
+        self.id = id
+        self.sync_properties = sync_properties
 
 
 class PipelineRun(ProxyResource):
@@ -1010,15 +1634,15 @@ class PipelineRun(ProxyResource):
     :ivar type: The type of the resource.
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.SystemData
     :ivar provisioning_state: The provisioning state of a pipeline run. Possible values include:
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
     :vartype provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ProvisioningState
     :param request: The request parameters for a pipeline run.
-    :type request: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PipelineRunRequest
+    :type request: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PipelineRunRequest
     :ivar response: The response of a pipeline run.
-    :vartype response: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PipelineRunResponse
+    :vartype response: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PipelineRunResponse
     :param force_update_tag: How the pipeline run should be forced to recreate even if the pipeline
      run configuration has not changed.
     :type force_update_tag: str
@@ -1046,13 +1670,16 @@ class PipelineRun(ProxyResource):
 
     def __init__(
         self,
+        *,
+        request: Optional["PipelineRunRequest"] = None,
+        force_update_tag: Optional[str] = None,
         **kwargs
     ):
         super(PipelineRun, self).__init__(**kwargs)
         self.provisioning_state = None
-        self.request = kwargs.get('request', None)
+        self.request = request
         self.response = None
-        self.force_update_tag = kwargs.get('force_update_tag', None)
+        self.force_update_tag = force_update_tag
 
 
 class PipelineRunListResult(msrest.serialization.Model):
@@ -1060,7 +1687,7 @@ class PipelineRunListResult(msrest.serialization.Model):
 
     :param value: The list of pipeline runs. Since this list may be incomplete, the nextLink field
      should be used to request the next list of pipeline runs.
-    :type value: list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.PipelineRun]
+    :type value: list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.PipelineRun]
     :param next_link: The URI that can be used to request the next list of pipeline runs.
     :type next_link: str
     """
@@ -1072,11 +1699,14 @@ class PipelineRunListResult(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        value: Optional[List["PipelineRun"]] = None,
+        next_link: Optional[str] = None,
         **kwargs
     ):
         super(PipelineRunListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = value
+        self.next_link = next_link
 
 
 class PipelineRunRequest(msrest.serialization.Model):
@@ -1091,10 +1721,10 @@ class PipelineRunRequest(msrest.serialization.Model):
     :type artifacts: list[str]
     :param source: The source properties of the pipeline run.
     :type source:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PipelineRunSourceProperties
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PipelineRunSourceProperties
     :param target: The target properties of the pipeline run.
     :type target:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PipelineRunTargetProperties
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PipelineRunTargetProperties
     :param catalog_digest: The digest of the tar used to transfer the artifacts.
     :type catalog_digest: str
     """
@@ -1109,14 +1739,20 @@ class PipelineRunRequest(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        pipeline_resource_id: Optional[str] = None,
+        artifacts: Optional[List[str]] = None,
+        source: Optional["PipelineRunSourceProperties"] = None,
+        target: Optional["PipelineRunTargetProperties"] = None,
+        catalog_digest: Optional[str] = None,
         **kwargs
     ):
         super(PipelineRunRequest, self).__init__(**kwargs)
-        self.pipeline_resource_id = kwargs.get('pipeline_resource_id', None)
-        self.artifacts = kwargs.get('artifacts', None)
-        self.source = kwargs.get('source', None)
-        self.target = kwargs.get('target', None)
-        self.catalog_digest = kwargs.get('catalog_digest', None)
+        self.pipeline_resource_id = pipeline_resource_id
+        self.artifacts = artifacts
+        self.source = source
+        self.target = target
+        self.catalog_digest = catalog_digest
 
 
 class PipelineRunResponse(msrest.serialization.Model):
@@ -1127,22 +1763,22 @@ class PipelineRunResponse(msrest.serialization.Model):
     :param imported_artifacts: The artifacts imported in the pipeline run.
     :type imported_artifacts: list[str]
     :param progress: The current progress of the copy operation.
-    :type progress: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProgressProperties
+    :type progress: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ProgressProperties
     :param start_time: The time the pipeline run started.
     :type start_time: ~datetime.datetime
     :param finish_time: The time the pipeline run finished.
     :type finish_time: ~datetime.datetime
     :param source: The source of the pipeline run.
     :type source:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ImportPipelineSourceProperties
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ImportPipelineSourceProperties
     :param target: The target of the pipeline run.
     :type target:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ExportPipelineTargetProperties
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ExportPipelineTargetProperties
     :param catalog_digest: The digest of the tar used to transfer the artifacts.
     :type catalog_digest: str
     :param trigger: The trigger that caused the pipeline run.
     :type trigger:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PipelineTriggerDescriptor
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PipelineTriggerDescriptor
     :param pipeline_run_error_message: The detailed error message for the pipeline run in the case
      of failure.
     :type pipeline_run_error_message: str
@@ -1163,19 +1799,30 @@ class PipelineRunResponse(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        status: Optional[str] = None,
+        imported_artifacts: Optional[List[str]] = None,
+        progress: Optional["ProgressProperties"] = None,
+        start_time: Optional[datetime.datetime] = None,
+        finish_time: Optional[datetime.datetime] = None,
+        source: Optional["ImportPipelineSourceProperties"] = None,
+        target: Optional["ExportPipelineTargetProperties"] = None,
+        catalog_digest: Optional[str] = None,
+        trigger: Optional["PipelineTriggerDescriptor"] = None,
+        pipeline_run_error_message: Optional[str] = None,
         **kwargs
     ):
         super(PipelineRunResponse, self).__init__(**kwargs)
-        self.status = kwargs.get('status', None)
-        self.imported_artifacts = kwargs.get('imported_artifacts', None)
-        self.progress = kwargs.get('progress', None)
-        self.start_time = kwargs.get('start_time', None)
-        self.finish_time = kwargs.get('finish_time', None)
-        self.source = kwargs.get('source', None)
-        self.target = kwargs.get('target', None)
-        self.catalog_digest = kwargs.get('catalog_digest', None)
-        self.trigger = kwargs.get('trigger', None)
-        self.pipeline_run_error_message = kwargs.get('pipeline_run_error_message', None)
+        self.status = status
+        self.imported_artifacts = imported_artifacts
+        self.progress = progress
+        self.start_time = start_time
+        self.finish_time = finish_time
+        self.source = source
+        self.target = target
+        self.catalog_digest = catalog_digest
+        self.trigger = trigger
+        self.pipeline_run_error_message = pipeline_run_error_message
 
 
 class PipelineRunSourceProperties(msrest.serialization.Model):
@@ -1184,7 +1831,7 @@ class PipelineRunSourceProperties(msrest.serialization.Model):
     :param type: The type of the source. Possible values include: "AzureStorageBlob". Default
      value: "AzureStorageBlob".
     :type type: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PipelineRunSourceType
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PipelineRunSourceType
     :param name: The name of the source.
     :type name: str
     """
@@ -1196,11 +1843,14 @@ class PipelineRunSourceProperties(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        type: Optional[Union[str, "PipelineRunSourceType"]] = "AzureStorageBlob",
+        name: Optional[str] = None,
         **kwargs
     ):
         super(PipelineRunSourceProperties, self).__init__(**kwargs)
-        self.type = kwargs.get('type', "AzureStorageBlob")
-        self.name = kwargs.get('name', None)
+        self.type = type
+        self.name = name
 
 
 class PipelineRunTargetProperties(msrest.serialization.Model):
@@ -1209,7 +1859,7 @@ class PipelineRunTargetProperties(msrest.serialization.Model):
     :param type: The type of the target. Possible values include: "AzureStorageBlob". Default
      value: "AzureStorageBlob".
     :type type: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PipelineRunTargetType
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PipelineRunTargetType
     :param name: The name of the target.
     :type name: str
     """
@@ -1221,11 +1871,14 @@ class PipelineRunTargetProperties(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        type: Optional[Union[str, "PipelineRunTargetType"]] = "AzureStorageBlob",
+        name: Optional[str] = None,
         **kwargs
     ):
         super(PipelineRunTargetProperties, self).__init__(**kwargs)
-        self.type = kwargs.get('type', "AzureStorageBlob")
-        self.name = kwargs.get('name', None)
+        self.type = type
+        self.name = name
 
 
 class PipelineSourceTriggerDescriptor(msrest.serialization.Model):
@@ -1241,10 +1894,12 @@ class PipelineSourceTriggerDescriptor(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        timestamp: Optional[datetime.datetime] = None,
         **kwargs
     ):
         super(PipelineSourceTriggerDescriptor, self).__init__(**kwargs)
-        self.timestamp = kwargs.get('timestamp', None)
+        self.timestamp = timestamp
 
 
 class PipelineSourceTriggerProperties(msrest.serialization.Model):
@@ -1254,7 +1909,7 @@ class PipelineSourceTriggerProperties(msrest.serialization.Model):
 
     :param status: Required. The current status of the source trigger. Possible values include:
      "Enabled", "Disabled". Default value: "Enabled".
-    :type status: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TriggerStatus
+    :type status: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.TriggerStatus
     """
 
     _validation = {
@@ -1267,10 +1922,12 @@ class PipelineSourceTriggerProperties(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        status: Union[str, "TriggerStatus"] = "Enabled",
         **kwargs
     ):
         super(PipelineSourceTriggerProperties, self).__init__(**kwargs)
-        self.status = kwargs.get('status', "Enabled")
+        self.status = status
 
 
 class PipelineTriggerDescriptor(msrest.serialization.Model):
@@ -1278,7 +1935,7 @@ class PipelineTriggerDescriptor(msrest.serialization.Model):
 
     :param source_trigger: The source trigger that caused the pipeline run.
     :type source_trigger:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PipelineSourceTriggerDescriptor
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PipelineSourceTriggerDescriptor
     """
 
     _attribute_map = {
@@ -1287,10 +1944,12 @@ class PipelineTriggerDescriptor(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        source_trigger: Optional["PipelineSourceTriggerDescriptor"] = None,
         **kwargs
     ):
         super(PipelineTriggerDescriptor, self).__init__(**kwargs)
-        self.source_trigger = kwargs.get('source_trigger', None)
+        self.source_trigger = source_trigger
 
 
 class PipelineTriggerProperties(msrest.serialization.Model):
@@ -1298,7 +1957,7 @@ class PipelineTriggerProperties(msrest.serialization.Model):
 
     :param source_trigger: The source trigger properties of the pipeline.
     :type source_trigger:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PipelineSourceTriggerProperties
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PipelineSourceTriggerProperties
     """
 
     _attribute_map = {
@@ -1307,10 +1966,12 @@ class PipelineTriggerProperties(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        source_trigger: Optional["PipelineSourceTriggerProperties"] = None,
         **kwargs
     ):
         super(PipelineTriggerProperties, self).__init__(**kwargs)
-        self.source_trigger = kwargs.get('source_trigger', None)
+        self.source_trigger = source_trigger
 
 
 class Policies(msrest.serialization.Model):
@@ -1318,28 +1979,37 @@ class Policies(msrest.serialization.Model):
 
     :param quarantine_policy: The quarantine policy for a container registry.
     :type quarantine_policy:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.QuarantinePolicy
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.QuarantinePolicy
     :param trust_policy: The content trust policy for a container registry.
-    :type trust_policy: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TrustPolicy
+    :type trust_policy: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.TrustPolicy
     :param retention_policy: The retention policy for a container registry.
     :type retention_policy:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.RetentionPolicy
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.RetentionPolicy
+    :param export_policy: The export policy for a container registry.
+    :type export_policy: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ExportPolicy
     """
 
     _attribute_map = {
         'quarantine_policy': {'key': 'quarantinePolicy', 'type': 'QuarantinePolicy'},
         'trust_policy': {'key': 'trustPolicy', 'type': 'TrustPolicy'},
         'retention_policy': {'key': 'retentionPolicy', 'type': 'RetentionPolicy'},
+        'export_policy': {'key': 'exportPolicy', 'type': 'ExportPolicy'},
     }
 
     def __init__(
         self,
+        *,
+        quarantine_policy: Optional["QuarantinePolicy"] = None,
+        trust_policy: Optional["TrustPolicy"] = None,
+        retention_policy: Optional["RetentionPolicy"] = None,
+        export_policy: Optional["ExportPolicy"] = None,
         **kwargs
     ):
         super(Policies, self).__init__(**kwargs)
-        self.quarantine_policy = kwargs.get('quarantine_policy', None)
-        self.trust_policy = kwargs.get('trust_policy', None)
-        self.retention_policy = kwargs.get('retention_policy', None)
+        self.quarantine_policy = quarantine_policy
+        self.trust_policy = trust_policy
+        self.retention_policy = retention_policy
+        self.export_policy = export_policy
 
 
 class PrivateEndpoint(msrest.serialization.Model):
@@ -1355,10 +2025,12 @@ class PrivateEndpoint(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        id: Optional[str] = None,
         **kwargs
     ):
         super(PrivateEndpoint, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
+        self.id = id
 
 
 class PrivateEndpointConnection(ProxyResource):
@@ -1373,18 +2045,18 @@ class PrivateEndpointConnection(ProxyResource):
     :ivar type: The type of the resource.
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.SystemData
     :param private_endpoint: The resource of private endpoint.
     :type private_endpoint:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PrivateEndpoint
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PrivateEndpoint
     :param private_link_service_connection_state: A collection of information about the state of
      the connection between service consumer and provider.
     :type private_link_service_connection_state:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PrivateLinkServiceConnectionState
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PrivateLinkServiceConnectionState
     :ivar provisioning_state: The provisioning state of private endpoint connection resource.
      Possible values include: "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
     :vartype provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ProvisioningState
     """
 
     _validation = {
@@ -1407,11 +2079,14 @@ class PrivateEndpointConnection(ProxyResource):
 
     def __init__(
         self,
+        *,
+        private_endpoint: Optional["PrivateEndpoint"] = None,
+        private_link_service_connection_state: Optional["PrivateLinkServiceConnectionState"] = None,
         **kwargs
     ):
         super(PrivateEndpointConnection, self).__init__(**kwargs)
-        self.private_endpoint = kwargs.get('private_endpoint', None)
-        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
+        self.private_endpoint = private_endpoint
+        self.private_link_service_connection_state = private_link_service_connection_state
         self.provisioning_state = None
 
 
@@ -1421,7 +2096,7 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
     :param value: The list of private endpoint connections. Since this list may be incomplete, the
      nextLink field should be used to request the next list of private endpoint connections.
     :type value:
-     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.PrivateEndpointConnection]
+     list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.PrivateEndpointConnection]
     :param next_link: The URI that can be used to request the next list of private endpoint
      connections.
     :type next_link: str
@@ -1434,11 +2109,14 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        value: Optional[List["PrivateEndpointConnection"]] = None,
+        next_link: Optional[str] = None,
         **kwargs
     ):
         super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = value
+        self.next_link = next_link
 
 
 class PrivateLinkResource(msrest.serialization.Model):
@@ -1475,15 +2153,21 @@ class PrivateLinkResource(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        id: Optional[str] = None,
+        name: Optional[str] = None,
+        group_id: Optional[str] = None,
+        required_members: Optional[List[str]] = None,
+        required_zone_names: Optional[List[str]] = None,
         **kwargs
     ):
         super(PrivateLinkResource, self).__init__(**kwargs)
         self.type = None
-        self.id = kwargs.get('id', None)
-        self.name = kwargs.get('name', None)
-        self.group_id = kwargs.get('group_id', None)
-        self.required_members = kwargs.get('required_members', None)
-        self.required_zone_names = kwargs.get('required_zone_names', None)
+        self.id = id
+        self.name = name
+        self.group_id = group_id
+        self.required_members = required_members
+        self.required_zone_names = required_zone_names
 
 
 class PrivateLinkResourceListResult(msrest.serialization.Model):
@@ -1491,7 +2175,7 @@ class PrivateLinkResourceListResult(msrest.serialization.Model):
 
     :param value: The list of private link resources. Since this list may be incomplete, the
      nextLink field should be used to request the next list of private link resources.
-    :type value: list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.PrivateLinkResource]
+    :type value: list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.PrivateLinkResource]
     :param next_link: The URI that can be used to request the next list of private link resources.
     :type next_link: str
     """
@@ -1503,11 +2187,14 @@ class PrivateLinkResourceListResult(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        value: Optional[List["PrivateLinkResource"]] = None,
+        next_link: Optional[str] = None,
         **kwargs
     ):
         super(PrivateLinkResourceListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = value
+        self.next_link = next_link
 
 
 class PrivateLinkServiceConnectionState(msrest.serialization.Model):
@@ -1515,14 +2202,14 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
 
     :param status: The private link service connection status. Possible values include: "Approved",
      "Pending", "Rejected", "Disconnected".
-    :type status: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ConnectionStatus
+    :type status: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ConnectionStatus
     :param description: The description for connection status. For example if connection is
      rejected it can indicate reason for rejection.
     :type description: str
     :param actions_required: A message indicating if changes on the service provider require any
      updates on the consumer. Possible values include: "None", "Recreate".
     :type actions_required: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ActionsRequired
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ActionsRequired
     """
 
     _attribute_map = {
@@ -1533,12 +2220,16 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        status: Optional[Union[str, "ConnectionStatus"]] = None,
+        description: Optional[str] = None,
+        actions_required: Optional[Union[str, "ActionsRequired"]] = None,
         **kwargs
     ):
         super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
-        self.status = kwargs.get('status', None)
-        self.description = kwargs.get('description', None)
-        self.actions_required = kwargs.get('actions_required', None)
+        self.status = status
+        self.description = description
+        self.actions_required = actions_required
 
 
 class ProgressProperties(msrest.serialization.Model):
@@ -1554,10 +2245,12 @@ class ProgressProperties(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        percentage: Optional[str] = None,
         **kwargs
     ):
         super(ProgressProperties, self).__init__(**kwargs)
-        self.percentage = kwargs.get('percentage', None)
+        self.percentage = percentage
 
 
 class QuarantinePolicy(msrest.serialization.Model):
@@ -1565,7 +2258,7 @@ class QuarantinePolicy(msrest.serialization.Model):
 
     :param status: The value that indicates whether the policy is enabled or not. Possible values
      include: "enabled", "disabled".
-    :type status: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PolicyStatus
+    :type status: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PolicyStatus
     """
 
     _attribute_map = {
@@ -1574,10 +2267,12 @@ class QuarantinePolicy(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        status: Optional[Union[str, "PolicyStatus"]] = None,
         **kwargs
     ):
         super(QuarantinePolicy, self).__init__(**kwargs)
-        self.status = kwargs.get('status', None)
+        self.status = status
 
 
 class RegenerateCredentialParameters(msrest.serialization.Model):
@@ -1587,7 +2282,7 @@ class RegenerateCredentialParameters(msrest.serialization.Model):
 
     :param name: Required. Specifies name of the password which should be regenerated -- password
      or password2. Possible values include: "password", "password2".
-    :type name: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PasswordName
+    :type name: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PasswordName
     """
 
     _validation = {
@@ -1600,10 +2295,12 @@ class RegenerateCredentialParameters(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        name: Union[str, "PasswordName"],
         **kwargs
     ):
         super(RegenerateCredentialParameters, self).__init__(**kwargs)
-        self.name = kwargs['name']
+        self.name = name
 
 
 class Resource(msrest.serialization.Model):
@@ -1625,7 +2322,7 @@ class Resource(msrest.serialization.Model):
     :param tags: A set of tags. The tags of the resource.
     :type tags: dict[str, str]
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.SystemData
     """
 
     _validation = {
@@ -1647,14 +2344,17 @@ class Resource(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.location = kwargs['location']
-        self.tags = kwargs.get('tags', None)
+        self.location = location
+        self.tags = tags
         self.system_data = None
 
 
@@ -1677,11 +2377,11 @@ class Registry(Resource):
     :param tags: A set of tags. The tags of the resource.
     :type tags: dict[str, str]
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.SystemData
     :param sku: Required. The SKU of the container registry.
-    :type sku: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Sku
+    :type sku: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.Sku
     :param identity: The identity of the container registry.
-    :type identity: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.IdentityProperties
+    :type identity: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.IdentityProperties
     :ivar login_server: The URL that can be used to log into the container registry.
     :vartype login_server: str
     :ivar creation_date: The creation date of the container registry in ISO8601 format.
@@ -1690,17 +2390,17 @@ class Registry(Resource):
      operation was called. Possible values include: "Creating", "Updating", "Deleting", "Succeeded",
      "Failed", "Canceled".
     :vartype provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ProvisioningState
     :ivar status: The status of the container registry at the time the operation was called.
-    :vartype status: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Status
+    :vartype status: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.Status
     :param admin_user_enabled: The value that indicates whether the admin user is enabled.
     :type admin_user_enabled: bool
     :param network_rule_set: The network rule set for a container registry.
-    :type network_rule_set: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.NetworkRuleSet
+    :type network_rule_set: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.NetworkRuleSet
     :param policies: The policies for a container registry.
-    :type policies: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Policies
+    :type policies: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.Policies
     :param encryption: The encryption settings of container registry.
-    :type encryption: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.EncryptionProperty
+    :type encryption: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.EncryptionProperty
     :param data_endpoint_enabled: Enable a single data endpoint per region for serving data.
     :type data_endpoint_enabled: bool
     :ivar data_endpoint_host_names: List of host names that will serve data when
@@ -1709,15 +2409,21 @@ class Registry(Resource):
     :ivar private_endpoint_connections: List of private endpoint connections for a container
      registry.
     :vartype private_endpoint_connections:
-     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.PrivateEndpointConnection]
+     list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.PrivateEndpointConnection]
     :param public_network_access: Whether or not public network access is allowed for the container
      registry. Possible values include: "Enabled", "Disabled".
     :type public_network_access: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PublicNetworkAccess
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PublicNetworkAccess
     :param network_rule_bypass_options: Whether to allow trusted Azure services to access a network
      restricted registry. Possible values include: "AzureServices", "None".
     :type network_rule_bypass_options: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.NetworkRuleBypassOptions
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.NetworkRuleBypassOptions
+    :param zone_redundancy: Whether or not zone redundancy is enabled for this container registry.
+     Possible values include: "Enabled", "Disabled".
+    :type zone_redundancy: str or
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ZoneRedundancy
+    :param anonymous_pull_enabled: Enables registry-wide pull from unauthenticated clients.
+    :type anonymous_pull_enabled: bool
     """
 
     _validation = {
@@ -1757,28 +2463,46 @@ class Registry(Resource):
         'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'network_rule_bypass_options': {'key': 'properties.networkRuleBypassOptions', 'type': 'str'},
+        'zone_redundancy': {'key': 'properties.zoneRedundancy', 'type': 'str'},
+        'anonymous_pull_enabled': {'key': 'properties.anonymousPullEnabled', 'type': 'bool'},
     }
 
     def __init__(
         self,
+        *,
+        location: str,
+        sku: "Sku",
+        tags: Optional[Dict[str, str]] = None,
+        identity: Optional["IdentityProperties"] = None,
+        admin_user_enabled: Optional[bool] = False,
+        network_rule_set: Optional["NetworkRuleSet"] = None,
+        policies: Optional["Policies"] = None,
+        encryption: Optional["EncryptionProperty"] = None,
+        data_endpoint_enabled: Optional[bool] = None,
+        public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = None,
+        network_rule_bypass_options: Optional[Union[str, "NetworkRuleBypassOptions"]] = None,
+        zone_redundancy: Optional[Union[str, "ZoneRedundancy"]] = None,
+        anonymous_pull_enabled: Optional[bool] = False,
         **kwargs
     ):
-        super(Registry, self).__init__(**kwargs)
-        self.sku = kwargs['sku']
-        self.identity = kwargs.get('identity', None)
+        super(Registry, self).__init__(location=location, tags=tags, **kwargs)
+        self.sku = sku
+        self.identity = identity
         self.login_server = None
         self.creation_date = None
         self.provisioning_state = None
         self.status = None
-        self.admin_user_enabled = kwargs.get('admin_user_enabled', False)
-        self.network_rule_set = kwargs.get('network_rule_set', None)
-        self.policies = kwargs.get('policies', None)
-        self.encryption = kwargs.get('encryption', None)
-        self.data_endpoint_enabled = kwargs.get('data_endpoint_enabled', None)
+        self.admin_user_enabled = admin_user_enabled
+        self.network_rule_set = network_rule_set
+        self.policies = policies
+        self.encryption = encryption
+        self.data_endpoint_enabled = data_endpoint_enabled
         self.data_endpoint_host_names = None
         self.private_endpoint_connections = None
-        self.public_network_access = kwargs.get('public_network_access', None)
-        self.network_rule_bypass_options = kwargs.get('network_rule_bypass_options', None)
+        self.public_network_access = public_network_access
+        self.network_rule_bypass_options = network_rule_bypass_options
+        self.zone_redundancy = zone_redundancy
+        self.anonymous_pull_enabled = anonymous_pull_enabled
 
 
 class RegistryListCredentialsResult(msrest.serialization.Model):
@@ -1788,7 +2512,7 @@ class RegistryListCredentialsResult(msrest.serialization.Model):
     :type username: str
     :param passwords: The list of passwords for a container registry.
     :type passwords:
-     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.RegistryPassword]
+     list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.RegistryPassword]
     """
 
     _attribute_map = {
@@ -1798,11 +2522,14 @@ class RegistryListCredentialsResult(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        username: Optional[str] = None,
+        passwords: Optional[List["RegistryPassword"]] = None,
         **kwargs
     ):
         super(RegistryListCredentialsResult, self).__init__(**kwargs)
-        self.username = kwargs.get('username', None)
-        self.passwords = kwargs.get('passwords', None)
+        self.username = username
+        self.passwords = passwords
 
 
 class RegistryListResult(msrest.serialization.Model):
@@ -1810,7 +2537,7 @@ class RegistryListResult(msrest.serialization.Model):
 
     :param value: The list of container registries. Since this list may be incomplete, the nextLink
      field should be used to request the next list of container registries.
-    :type value: list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.Registry]
+    :type value: list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.Registry]
     :param next_link: The URI that can be used to request the next list of container registries.
     :type next_link: str
     """
@@ -1822,11 +2549,14 @@ class RegistryListResult(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        value: Optional[List["Registry"]] = None,
+        next_link: Optional[str] = None,
         **kwargs
     ):
         super(RegistryListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = value
+        self.next_link = next_link
 
 
 class RegistryNameCheckRequest(msrest.serialization.Model):
@@ -1858,10 +2588,12 @@ class RegistryNameCheckRequest(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        name: str,
         **kwargs
     ):
         super(RegistryNameCheckRequest, self).__init__(**kwargs)
-        self.name = kwargs['name']
+        self.name = name
 
 
 class RegistryNameStatus(msrest.serialization.Model):
@@ -1884,19 +2616,23 @@ class RegistryNameStatus(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        name_available: Optional[bool] = None,
+        reason: Optional[str] = None,
+        message: Optional[str] = None,
         **kwargs
     ):
         super(RegistryNameStatus, self).__init__(**kwargs)
-        self.name_available = kwargs.get('name_available', None)
-        self.reason = kwargs.get('reason', None)
-        self.message = kwargs.get('message', None)
+        self.name_available = name_available
+        self.reason = reason
+        self.message = message
 
 
 class RegistryPassword(msrest.serialization.Model):
     """The login password for the container registry.
 
     :param name: The password name. Possible values include: "password", "password2".
-    :type name: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PasswordName
+    :type name: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PasswordName
     :param value: The password value.
     :type value: str
     """
@@ -1908,40 +2644,45 @@ class RegistryPassword(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        name: Optional[Union[str, "PasswordName"]] = None,
+        value: Optional[str] = None,
         **kwargs
     ):
         super(RegistryPassword, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.value = kwargs.get('value', None)
+        self.name = name
+        self.value = value
 
 
 class RegistryUpdateParameters(msrest.serialization.Model):
     """The parameters for updating a container registry.
 
     :param identity: The identity of the container registry.
-    :type identity: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.IdentityProperties
+    :type identity: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.IdentityProperties
     :param tags: A set of tags. The tags for the container registry.
     :type tags: dict[str, str]
     :param sku: The SKU of the container registry.
-    :type sku: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Sku
+    :type sku: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.Sku
     :param admin_user_enabled: The value that indicates whether the admin user is enabled.
     :type admin_user_enabled: bool
     :param network_rule_set: The network rule set for a container registry.
-    :type network_rule_set: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.NetworkRuleSet
+    :type network_rule_set: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.NetworkRuleSet
     :param policies: The policies for a container registry.
-    :type policies: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Policies
+    :type policies: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.Policies
     :param encryption: The encryption settings of container registry.
-    :type encryption: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.EncryptionProperty
+    :type encryption: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.EncryptionProperty
     :param data_endpoint_enabled: Enable a single data endpoint per region for serving data.
     :type data_endpoint_enabled: bool
     :param public_network_access: Whether or not public network access is allowed for the container
      registry. Possible values include: "Enabled", "Disabled".
     :type public_network_access: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PublicNetworkAccess
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PublicNetworkAccess
     :param network_rule_bypass_options: Whether to allow trusted Azure services to access a network
      restricted registry. Possible values include: "AzureServices", "None".
     :type network_rule_bypass_options: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.NetworkRuleBypassOptions
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.NetworkRuleBypassOptions
+    :param anonymous_pull_enabled: Enables registry-wide pull from unauthenticated clients.
+    :type anonymous_pull_enabled: bool
     """
 
     _attribute_map = {
@@ -1955,23 +2696,37 @@ class RegistryUpdateParameters(msrest.serialization.Model):
         'data_endpoint_enabled': {'key': 'properties.dataEndpointEnabled', 'type': 'bool'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'network_rule_bypass_options': {'key': 'properties.networkRuleBypassOptions', 'type': 'str'},
+        'anonymous_pull_enabled': {'key': 'properties.anonymousPullEnabled', 'type': 'bool'},
     }
 
     def __init__(
         self,
+        *,
+        identity: Optional["IdentityProperties"] = None,
+        tags: Optional[Dict[str, str]] = None,
+        sku: Optional["Sku"] = None,
+        admin_user_enabled: Optional[bool] = None,
+        network_rule_set: Optional["NetworkRuleSet"] = None,
+        policies: Optional["Policies"] = None,
+        encryption: Optional["EncryptionProperty"] = None,
+        data_endpoint_enabled: Optional[bool] = None,
+        public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = None,
+        network_rule_bypass_options: Optional[Union[str, "NetworkRuleBypassOptions"]] = None,
+        anonymous_pull_enabled: Optional[bool] = None,
         **kwargs
     ):
         super(RegistryUpdateParameters, self).__init__(**kwargs)
-        self.identity = kwargs.get('identity', None)
-        self.tags = kwargs.get('tags', None)
-        self.sku = kwargs.get('sku', None)
-        self.admin_user_enabled = kwargs.get('admin_user_enabled', None)
-        self.network_rule_set = kwargs.get('network_rule_set', None)
-        self.policies = kwargs.get('policies', None)
-        self.encryption = kwargs.get('encryption', None)
-        self.data_endpoint_enabled = kwargs.get('data_endpoint_enabled', None)
-        self.public_network_access = kwargs.get('public_network_access', None)
-        self.network_rule_bypass_options = kwargs.get('network_rule_bypass_options', None)
+        self.identity = identity
+        self.tags = tags
+        self.sku = sku
+        self.admin_user_enabled = admin_user_enabled
+        self.network_rule_set = network_rule_set
+        self.policies = policies
+        self.encryption = encryption
+        self.data_endpoint_enabled = data_endpoint_enabled
+        self.public_network_access = public_network_access
+        self.network_rule_bypass_options = network_rule_bypass_options
+        self.anonymous_pull_enabled = anonymous_pull_enabled
 
 
 class RegistryUsage(msrest.serialization.Model):
@@ -1984,7 +2739,7 @@ class RegistryUsage(msrest.serialization.Model):
     :param current_value: The current value of the usage.
     :type current_value: long
     :param unit: The unit of measurement. Possible values include: "Count", "Bytes".
-    :type unit: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.RegistryUsageUnit
+    :type unit: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.RegistryUsageUnit
     """
 
     _attribute_map = {
@@ -1996,20 +2751,25 @@ class RegistryUsage(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        name: Optional[str] = None,
+        limit: Optional[int] = None,
+        current_value: Optional[int] = None,
+        unit: Optional[Union[str, "RegistryUsageUnit"]] = None,
         **kwargs
     ):
         super(RegistryUsage, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.limit = kwargs.get('limit', None)
-        self.current_value = kwargs.get('current_value', None)
-        self.unit = kwargs.get('unit', None)
+        self.name = name
+        self.limit = limit
+        self.current_value = current_value
+        self.unit = unit
 
 
 class RegistryUsageListResult(msrest.serialization.Model):
     """The result of a request to get container registry quota usages.
 
     :param value: The list of container registry quota usages.
-    :type value: list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.RegistryUsage]
+    :type value: list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.RegistryUsage]
     """
 
     _attribute_map = {
@@ -2018,10 +2778,12 @@ class RegistryUsageListResult(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        value: Optional[List["RegistryUsage"]] = None,
         **kwargs
     ):
         super(RegistryUsageListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = value
 
 
 class Replication(Resource):
@@ -2043,18 +2805,22 @@ class Replication(Resource):
     :param tags: A set of tags. The tags of the resource.
     :type tags: dict[str, str]
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.SystemData
     :ivar provisioning_state: The provisioning state of the replication at the time the operation
      was called. Possible values include: "Creating", "Updating", "Deleting", "Succeeded", "Failed",
      "Canceled".
     :vartype provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ProvisioningState
     :ivar status: The status of the replication at the time the operation was called.
-    :vartype status: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Status
+    :vartype status: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.Status
     :param region_endpoint_enabled: Specifies whether the replication's regional endpoint is
      enabled. Requests will not be routed to a replication whose regional endpoint is disabled,
      however its data will continue to be synced with other replications.
     :type region_endpoint_enabled: bool
+    :param zone_redundancy: Whether or not zone redundancy is enabled for this container registry
+     replication. Possible values include: "Enabled", "Disabled".
+    :type zone_redundancy: str or
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ZoneRedundancy
     """
 
     _validation = {
@@ -2077,16 +2843,23 @@ class Replication(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'Status'},
         'region_endpoint_enabled': {'key': 'properties.regionEndpointEnabled', 'type': 'bool'},
+        'zone_redundancy': {'key': 'properties.zoneRedundancy', 'type': 'str'},
     }
 
     def __init__(
         self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        region_endpoint_enabled: Optional[bool] = True,
+        zone_redundancy: Optional[Union[str, "ZoneRedundancy"]] = None,
         **kwargs
     ):
-        super(Replication, self).__init__(**kwargs)
+        super(Replication, self).__init__(location=location, tags=tags, **kwargs)
         self.provisioning_state = None
         self.status = None
-        self.region_endpoint_enabled = kwargs.get('region_endpoint_enabled', True)
+        self.region_endpoint_enabled = region_endpoint_enabled
+        self.zone_redundancy = zone_redundancy
 
 
 class ReplicationListResult(msrest.serialization.Model):
@@ -2094,7 +2867,7 @@ class ReplicationListResult(msrest.serialization.Model):
 
     :param value: The list of replications. Since this list may be incomplete, the nextLink field
      should be used to request the next list of replications.
-    :type value: list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.Replication]
+    :type value: list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.Replication]
     :param next_link: The URI that can be used to request the next list of replications.
     :type next_link: str
     """
@@ -2106,11 +2879,14 @@ class ReplicationListResult(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        value: Optional[List["Replication"]] = None,
+        next_link: Optional[str] = None,
         **kwargs
     ):
         super(ReplicationListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = value
+        self.next_link = next_link
 
 
 class ReplicationUpdateParameters(msrest.serialization.Model):
@@ -2131,11 +2907,14 @@ class ReplicationUpdateParameters(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        region_endpoint_enabled: Optional[bool] = None,
         **kwargs
     ):
         super(ReplicationUpdateParameters, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
-        self.region_endpoint_enabled = kwargs.get('region_endpoint_enabled', None)
+        self.tags = tags
+        self.region_endpoint_enabled = region_endpoint_enabled
 
 
 class Request(msrest.serialization.Model):
@@ -2165,14 +2944,20 @@ class Request(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        id: Optional[str] = None,
+        addr: Optional[str] = None,
+        host: Optional[str] = None,
+        method: Optional[str] = None,
+        useragent: Optional[str] = None,
         **kwargs
     ):
         super(Request, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.addr = kwargs.get('addr', None)
-        self.host = kwargs.get('host', None)
-        self.method = kwargs.get('method', None)
-        self.useragent = kwargs.get('useragent', None)
+        self.id = id
+        self.addr = addr
+        self.host = host
+        self.method = method
+        self.useragent = useragent
 
 
 class RetentionPolicy(msrest.serialization.Model):
@@ -2186,7 +2971,7 @@ class RetentionPolicy(msrest.serialization.Model):
     :vartype last_updated_time: ~datetime.datetime
     :param status: The value that indicates whether the policy is enabled or not. Possible values
      include: "enabled", "disabled".
-    :type status: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PolicyStatus
+    :type status: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PolicyStatus
     """
 
     _validation = {
@@ -2201,12 +2986,136 @@ class RetentionPolicy(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        days: Optional[int] = 7,
+        status: Optional[Union[str, "PolicyStatus"]] = None,
         **kwargs
     ):
         super(RetentionPolicy, self).__init__(**kwargs)
-        self.days = kwargs.get('days', 7)
+        self.days = days
         self.last_updated_time = None
-        self.status = kwargs.get('status', None)
+        self.status = status
+
+
+class ScopeMap(ProxyResource):
+    """An object that represents a scope map for a container registry.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The resource ID.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.SystemData
+    :param description: The user friendly description of the scope map.
+    :type description: str
+    :ivar type_properties_type: The type of the scope map. E.g. BuildIn scope map.
+    :vartype type_properties_type: str
+    :ivar creation_date: The creation date of scope map.
+    :vartype creation_date: ~datetime.datetime
+    :ivar provisioning_state: Provisioning state of the resource. Possible values include:
+     "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ProvisioningState
+    :param actions: The list of scoped permissions for registry artifacts.
+     E.g. repositories/repository-name/content/read,
+     repositories/repository-name/metadata/write.
+    :type actions: list[str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'type_properties_type': {'readonly': True},
+        'creation_date': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'type_properties_type': {'key': 'properties.type', 'type': 'str'},
+        'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'actions': {'key': 'properties.actions', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        actions: Optional[List[str]] = None,
+        **kwargs
+    ):
+        super(ScopeMap, self).__init__(**kwargs)
+        self.description = description
+        self.type_properties_type = None
+        self.creation_date = None
+        self.provisioning_state = None
+        self.actions = actions
+
+
+class ScopeMapListResult(msrest.serialization.Model):
+    """The result of a request to list scope maps for a container registry.
+
+    :param value: The list of scope maps. Since this list may be incomplete, the nextLink field
+     should be used to request the next list of scope maps.
+    :type value: list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.ScopeMap]
+    :param next_link: The URI that can be used to request the next list of scope maps.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ScopeMap]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["ScopeMap"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        super(ScopeMapListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class ScopeMapUpdateParameters(msrest.serialization.Model):
+    """The properties for updating the scope map.
+
+    :param description: The user friendly description of the scope map.
+    :type description: str
+    :param actions: The list of scope permissions for registry artifacts.
+     E.g. repositories/repository-name/pull,
+     repositories/repository-name/delete.
+    :type actions: list[str]
+    """
+
+    _attribute_map = {
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'actions': {'key': 'properties.actions', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        actions: Optional[List[str]] = None,
+        **kwargs
+    ):
+        super(ScopeMapUpdateParameters, self).__init__(**kwargs)
+        self.description = description
+        self.actions = actions
 
 
 class Sku(msrest.serialization.Model):
@@ -2218,10 +3127,10 @@ class Sku(msrest.serialization.Model):
 
     :param name: Required. The SKU name of the container registry. Required for registry creation.
      Possible values include: "Classic", "Basic", "Standard", "Premium".
-    :type name: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SkuName
+    :type name: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.SkuName
     :ivar tier: The SKU tier based on the SKU name. Possible values include: "Classic", "Basic",
      "Standard", "Premium".
-    :vartype tier: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SkuTier
+    :vartype tier: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.SkuTier
     """
 
     _validation = {
@@ -2236,10 +3145,12 @@ class Sku(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        name: Union[str, "SkuName"],
         **kwargs
     ):
         super(Sku, self).__init__(**kwargs)
-        self.name = kwargs['name']
+        self.name = name
         self.tier = None
 
 
@@ -2260,11 +3171,14 @@ class Source(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        addr: Optional[str] = None,
+        instance_id: Optional[str] = None,
         **kwargs
     ):
         super(Source, self).__init__(**kwargs)
-        self.addr = kwargs.get('addr', None)
-        self.instance_id = kwargs.get('instance_id', None)
+        self.addr = addr
+        self.instance_id = instance_id
 
 
 class Status(msrest.serialization.Model):
@@ -2302,6 +3216,147 @@ class Status(msrest.serialization.Model):
         self.timestamp = None
 
 
+class StatusDetailProperties(msrest.serialization.Model):
+    """The status detail properties of the connected registry.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The component of the connected registry corresponding to the status.
+    :vartype type: str
+    :ivar code: The code of the status.
+    :vartype code: str
+    :ivar description: The description of the status.
+    :vartype description: str
+    :ivar timestamp: The timestamp of the status.
+    :vartype timestamp: ~datetime.datetime
+    :ivar correlation_id: The correlation ID of the status.
+    :vartype correlation_id: str
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'code': {'readonly': True},
+        'description': {'readonly': True},
+        'timestamp': {'readonly': True},
+        'correlation_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'code': {'key': 'code', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
+        'correlation_id': {'key': 'correlationId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(StatusDetailProperties, self).__init__(**kwargs)
+        self.type = None
+        self.code = None
+        self.description = None
+        self.timestamp = None
+        self.correlation_id = None
+
+
+class SyncProperties(msrest.serialization.Model):
+    """The sync properties of the connected registry with its parent.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param token_id: Required. The resource ID of the ACR token used to authenticate the connected
+     registry to its parent during sync.
+    :type token_id: str
+    :param schedule: The cron expression indicating the schedule that the connected registry will
+     sync with its parent.
+    :type schedule: str
+    :param sync_window: The time window during which sync is enabled for each schedule occurrence.
+     Specify the duration using the format P[n]Y[n]M[n]DT[n]H[n]M[n]S as per ISO8601.
+    :type sync_window: ~datetime.timedelta
+    :param message_ttl: Required. The period of time for which a message is available to sync
+     before it is expired. Specify the duration using the format P[n]Y[n]M[n]DT[n]H[n]M[n]S as per
+     ISO8601.
+    :type message_ttl: ~datetime.timedelta
+    :ivar last_sync_time: The last time a sync occurred between the connected registry and its
+     parent.
+    :vartype last_sync_time: ~datetime.datetime
+    :ivar gateway_endpoint: The gateway endpoint used by the connected registry to communicate with
+     its parent.
+    :vartype gateway_endpoint: str
+    """
+
+    _validation = {
+        'token_id': {'required': True},
+        'message_ttl': {'required': True},
+        'last_sync_time': {'readonly': True},
+        'gateway_endpoint': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'token_id': {'key': 'tokenId', 'type': 'str'},
+        'schedule': {'key': 'schedule', 'type': 'str'},
+        'sync_window': {'key': 'syncWindow', 'type': 'duration'},
+        'message_ttl': {'key': 'messageTtl', 'type': 'duration'},
+        'last_sync_time': {'key': 'lastSyncTime', 'type': 'iso-8601'},
+        'gateway_endpoint': {'key': 'gatewayEndpoint', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        token_id: str,
+        message_ttl: datetime.timedelta,
+        schedule: Optional[str] = None,
+        sync_window: Optional[datetime.timedelta] = None,
+        **kwargs
+    ):
+        super(SyncProperties, self).__init__(**kwargs)
+        self.token_id = token_id
+        self.schedule = schedule
+        self.sync_window = sync_window
+        self.message_ttl = message_ttl
+        self.last_sync_time = None
+        self.gateway_endpoint = None
+
+
+class SyncUpdateProperties(msrest.serialization.Model):
+    """The parameters for updating the sync properties of the connected registry with its parent.
+
+    :param schedule: The cron expression indicating the schedule that the connected registry will
+     sync with its parent.
+    :type schedule: str
+    :param sync_window: The time window during which sync is enabled for each schedule occurrence.
+     Specify the duration using the format P[n]Y[n]M[n]DT[n]H[n]M[n]S as per ISO8601.
+    :type sync_window: ~datetime.timedelta
+    :param message_ttl: The period of time for which a message is available to sync before it is
+     expired. Specify the duration using the format P[n]Y[n]M[n]DT[n]H[n]M[n]S as per ISO8601.
+    :type message_ttl: ~datetime.timedelta
+    """
+
+    _attribute_map = {
+        'schedule': {'key': 'schedule', 'type': 'str'},
+        'sync_window': {'key': 'syncWindow', 'type': 'duration'},
+        'message_ttl': {'key': 'messageTtl', 'type': 'duration'},
+    }
+
+    def __init__(
+        self,
+        *,
+        schedule: Optional[str] = None,
+        sync_window: Optional[datetime.timedelta] = None,
+        message_ttl: Optional[datetime.timedelta] = None,
+        **kwargs
+    ):
+        super(SyncUpdateProperties, self).__init__(**kwargs)
+        self.schedule = schedule
+        self.sync_window = sync_window
+        self.message_ttl = message_ttl
+
+
 class SystemData(msrest.serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
@@ -2310,7 +3365,7 @@ class SystemData(msrest.serialization.Model):
     :param created_by_type: The type of identity that created the resource. Possible values
      include: "User", "Application", "ManagedIdentity", "Key".
     :type created_by_type: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.CreatedByType
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.CreatedByType
     :param created_at: The timestamp of resource creation (UTC).
     :type created_at: ~datetime.datetime
     :param last_modified_by: The identity that last modified the resource.
@@ -2318,7 +3373,7 @@ class SystemData(msrest.serialization.Model):
     :param last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
     :type last_modified_by_type: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.LastModifiedByType
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.LastModifiedByType
     :param last_modified_at: The timestamp of resource modification (UTC).
     :type last_modified_at: ~datetime.datetime
     """
@@ -2334,15 +3389,22 @@ class SystemData(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "LastModifiedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
         super(SystemData, self).__init__(**kwargs)
-        self.created_by = kwargs.get('created_by', None)
-        self.created_by_type = kwargs.get('created_by_type', None)
-        self.created_at = kwargs.get('created_at', None)
-        self.last_modified_by = kwargs.get('last_modified_by', None)
-        self.last_modified_by_type = kwargs.get('last_modified_by_type', None)
-        self.last_modified_at = kwargs.get('last_modified_at', None)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
 
 
 class Target(msrest.serialization.Model):
@@ -2382,18 +3444,325 @@ class Target(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        media_type: Optional[str] = None,
+        size: Optional[int] = None,
+        digest: Optional[str] = None,
+        length: Optional[int] = None,
+        repository: Optional[str] = None,
+        url: Optional[str] = None,
+        tag: Optional[str] = None,
+        name: Optional[str] = None,
+        version: Optional[str] = None,
         **kwargs
     ):
         super(Target, self).__init__(**kwargs)
-        self.media_type = kwargs.get('media_type', None)
-        self.size = kwargs.get('size', None)
-        self.digest = kwargs.get('digest', None)
-        self.length = kwargs.get('length', None)
-        self.repository = kwargs.get('repository', None)
-        self.url = kwargs.get('url', None)
-        self.tag = kwargs.get('tag', None)
-        self.name = kwargs.get('name', None)
-        self.version = kwargs.get('version', None)
+        self.media_type = media_type
+        self.size = size
+        self.digest = digest
+        self.length = length
+        self.repository = repository
+        self.url = url
+        self.tag = tag
+        self.name = name
+        self.version = version
+
+
+class TlsCertificateProperties(msrest.serialization.Model):
+    """The TLS certificate properties of the connected registry login server.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The type of certificate location. Possible values include: "LocalDirectory".
+    :vartype type: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.CertificateType
+    :ivar location: Indicates the location of the certificates.
+    :vartype location: str
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'location': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TlsCertificateProperties, self).__init__(**kwargs)
+        self.type = None
+        self.location = None
+
+
+class TlsProperties(msrest.serialization.Model):
+    """The TLS properties of the connected registry login server.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar status: Indicates whether HTTPS is enabled for the login server. Possible values include:
+     "Enabled", "Disabled".
+    :vartype status: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.TlsStatus
+    :ivar certificate: The certificate used to configure HTTPS for the login server.
+    :vartype certificate:
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.TlsCertificateProperties
+    """
+
+    _validation = {
+        'status': {'readonly': True},
+        'certificate': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'certificate': {'key': 'certificate', 'type': 'TlsCertificateProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TlsProperties, self).__init__(**kwargs)
+        self.status = None
+        self.certificate = None
+
+
+class Token(ProxyResource):
+    """An object that represents a token for a container registry.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The resource ID.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.SystemData
+    :ivar creation_date: The creation date of scope map.
+    :vartype creation_date: ~datetime.datetime
+    :ivar provisioning_state: Provisioning state of the resource. Possible values include:
+     "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ProvisioningState
+    :param scope_map_id: The resource ID of the scope map to which the token will be associated
+     with.
+    :type scope_map_id: str
+    :param credentials: The credentials that can be used for authenticating the token.
+    :type credentials:
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.TokenCredentialsProperties
+    :param status: The status of the token example enabled or disabled. Possible values include:
+     "enabled", "disabled".
+    :type status: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.TokenStatus
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'creation_date': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'scope_map_id': {'key': 'properties.scopeMapId', 'type': 'str'},
+        'credentials': {'key': 'properties.credentials', 'type': 'TokenCredentialsProperties'},
+        'status': {'key': 'properties.status', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        scope_map_id: Optional[str] = None,
+        credentials: Optional["TokenCredentialsProperties"] = None,
+        status: Optional[Union[str, "TokenStatus"]] = None,
+        **kwargs
+    ):
+        super(Token, self).__init__(**kwargs)
+        self.creation_date = None
+        self.provisioning_state = None
+        self.scope_map_id = scope_map_id
+        self.credentials = credentials
+        self.status = status
+
+
+class TokenCertificate(msrest.serialization.Model):
+    """The properties of a certificate used for authenticating a token.
+
+    :param name:  Possible values include: "certificate1", "certificate2".
+    :type name: str or
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.TokenCertificateName
+    :param expiry: The expiry datetime of the certificate.
+    :type expiry: ~datetime.datetime
+    :param thumbprint: The thumbprint of the certificate.
+    :type thumbprint: str
+    :param encoded_pem_certificate: Base 64 encoded string of the public certificate1 in PEM format
+     that will be used for authenticating the token.
+    :type encoded_pem_certificate: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'expiry': {'key': 'expiry', 'type': 'iso-8601'},
+        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
+        'encoded_pem_certificate': {'key': 'encodedPemCertificate', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[Union[str, "TokenCertificateName"]] = None,
+        expiry: Optional[datetime.datetime] = None,
+        thumbprint: Optional[str] = None,
+        encoded_pem_certificate: Optional[str] = None,
+        **kwargs
+    ):
+        super(TokenCertificate, self).__init__(**kwargs)
+        self.name = name
+        self.expiry = expiry
+        self.thumbprint = thumbprint
+        self.encoded_pem_certificate = encoded_pem_certificate
+
+
+class TokenCredentialsProperties(msrest.serialization.Model):
+    """The properties of the credentials that can be used for authenticating the token.
+
+    :param certificates:
+    :type certificates:
+     list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.TokenCertificate]
+    :param passwords:
+    :type passwords: list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.TokenPassword]
+    """
+
+    _attribute_map = {
+        'certificates': {'key': 'certificates', 'type': '[TokenCertificate]'},
+        'passwords': {'key': 'passwords', 'type': '[TokenPassword]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        certificates: Optional[List["TokenCertificate"]] = None,
+        passwords: Optional[List["TokenPassword"]] = None,
+        **kwargs
+    ):
+        super(TokenCredentialsProperties, self).__init__(**kwargs)
+        self.certificates = certificates
+        self.passwords = passwords
+
+
+class TokenListResult(msrest.serialization.Model):
+    """The result of a request to list tokens for a container registry.
+
+    :param value: The list of tokens. Since this list may be incomplete, the nextLink field should
+     be used to request the next list of tokens.
+    :type value: list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.Token]
+    :param next_link: The URI that can be used to request the next list of tokens.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Token]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["Token"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        super(TokenListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class TokenPassword(msrest.serialization.Model):
+    """The password that will be used for authenticating the token of a container registry.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param creation_time: The creation datetime of the password.
+    :type creation_time: ~datetime.datetime
+    :param expiry: The expiry datetime of the password.
+    :type expiry: ~datetime.datetime
+    :param name: The password name "password1" or "password2". Possible values include:
+     "password1", "password2".
+    :type name: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.TokenPasswordName
+    :ivar value: The password value.
+    :vartype value: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
+        'expiry': {'key': 'expiry', 'type': 'iso-8601'},
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        creation_time: Optional[datetime.datetime] = None,
+        expiry: Optional[datetime.datetime] = None,
+        name: Optional[Union[str, "TokenPasswordName"]] = None,
+        **kwargs
+    ):
+        super(TokenPassword, self).__init__(**kwargs)
+        self.creation_time = creation_time
+        self.expiry = expiry
+        self.name = name
+        self.value = None
+
+
+class TokenUpdateParameters(msrest.serialization.Model):
+    """The parameters for updating a token.
+
+    :param scope_map_id: The resource ID of the scope map to which the token will be associated
+     with.
+    :type scope_map_id: str
+    :param status: The status of the token example enabled or disabled. Possible values include:
+     "enabled", "disabled".
+    :type status: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.TokenStatus
+    :param credentials: The credentials that can be used for authenticating the token.
+    :type credentials:
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.TokenCredentialsProperties
+    """
+
+    _attribute_map = {
+        'scope_map_id': {'key': 'properties.scopeMapId', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'str'},
+        'credentials': {'key': 'properties.credentials', 'type': 'TokenCredentialsProperties'},
+    }
+
+    def __init__(
+        self,
+        *,
+        scope_map_id: Optional[str] = None,
+        status: Optional[Union[str, "TokenStatus"]] = None,
+        credentials: Optional["TokenCredentialsProperties"] = None,
+        **kwargs
+    ):
+        super(TokenUpdateParameters, self).__init__(**kwargs)
+        self.scope_map_id = scope_map_id
+        self.status = status
+        self.credentials = credentials
 
 
 class TrustPolicy(msrest.serialization.Model):
@@ -2401,10 +3770,10 @@ class TrustPolicy(msrest.serialization.Model):
 
     :param type: The type of trust policy. Possible values include: "Notary". Default value:
      "Notary".
-    :type type: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TrustPolicyType
+    :type type: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.TrustPolicyType
     :param status: The value that indicates whether the policy is enabled or not. Possible values
      include: "enabled", "disabled".
-    :type status: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PolicyStatus
+    :type status: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PolicyStatus
     """
 
     _attribute_map = {
@@ -2414,11 +3783,14 @@ class TrustPolicy(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        type: Optional[Union[str, "TrustPolicyType"]] = "Notary",
+        status: Optional[Union[str, "PolicyStatus"]] = None,
         **kwargs
     ):
         super(TrustPolicy, self).__init__(**kwargs)
-        self.type = kwargs.get('type', "Notary")
-        self.status = kwargs.get('status', None)
+        self.type = type
+        self.status = status
 
 
 class UserIdentityProperties(msrest.serialization.Model):
@@ -2437,11 +3809,14 @@ class UserIdentityProperties(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        principal_id: Optional[str] = None,
+        client_id: Optional[str] = None,
         **kwargs
     ):
         super(UserIdentityProperties, self).__init__(**kwargs)
-        self.principal_id = kwargs.get('principal_id', None)
-        self.client_id = kwargs.get('client_id', None)
+        self.principal_id = principal_id
+        self.client_id = client_id
 
 
 class VirtualNetworkRule(msrest.serialization.Model):
@@ -2450,7 +3825,7 @@ class VirtualNetworkRule(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param action: The action of virtual network rule. Possible values include: "Allow".
-    :type action: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Action
+    :type action: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.Action
     :param virtual_network_resource_id: Required. Resource ID of a subnet, for example:
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
     :type virtual_network_resource_id: str
@@ -2467,11 +3842,14 @@ class VirtualNetworkRule(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        virtual_network_resource_id: str,
+        action: Optional[Union[str, "Action"]] = None,
         **kwargs
     ):
         super(VirtualNetworkRule, self).__init__(**kwargs)
-        self.action = kwargs.get('action', None)
-        self.virtual_network_resource_id = kwargs['virtual_network_resource_id']
+        self.action = action
+        self.virtual_network_resource_id = virtual_network_resource_id
 
 
 class Webhook(Resource):
@@ -2493,22 +3871,22 @@ class Webhook(Resource):
     :param tags: A set of tags. The tags of the resource.
     :type tags: dict[str, str]
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.SystemData
     :param status: The status of the webhook at the time the operation was called. Possible values
      include: "enabled", "disabled".
-    :type status: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.WebhookStatus
+    :type status: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.WebhookStatus
     :param scope: The scope of repositories where the event can be triggered. For example, 'foo:*'
      means events for all tags under repository 'foo'. 'foo:bar' means events for 'foo:bar' only.
      'foo' is equivalent to 'foo:latest'. Empty means all events.
     :type scope: str
     :param actions: The list of actions that trigger the webhook to post notifications.
     :type actions: list[str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.WebhookAction]
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.WebhookAction]
     :ivar provisioning_state: The provisioning state of the webhook at the time the operation was
      called. Possible values include: "Creating", "Updating", "Deleting", "Succeeded", "Failed",
      "Canceled".
     :vartype provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ProvisioningState
     """
 
     _validation = {
@@ -2535,12 +3913,18 @@ class Webhook(Resource):
 
     def __init__(
         self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        status: Optional[Union[str, "WebhookStatus"]] = None,
+        scope: Optional[str] = None,
+        actions: Optional[List[Union[str, "WebhookAction"]]] = None,
         **kwargs
     ):
-        super(Webhook, self).__init__(**kwargs)
-        self.status = kwargs.get('status', None)
-        self.scope = kwargs.get('scope', None)
-        self.actions = kwargs.get('actions', None)
+        super(Webhook, self).__init__(location=location, tags=tags, **kwargs)
+        self.status = status
+        self.scope = scope
+        self.actions = actions
         self.provisioning_state = None
 
 
@@ -2560,14 +3944,14 @@ class WebhookCreateParameters(msrest.serialization.Model):
     :type custom_headers: dict[str, str]
     :param status: The status of the webhook at the time the operation was called. Possible values
      include: "enabled", "disabled".
-    :type status: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.WebhookStatus
+    :type status: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.WebhookStatus
     :param scope: The scope of repositories where the event can be triggered. For example, 'foo:*'
      means events for all tags under repository 'foo'. 'foo:bar' means events for 'foo:bar' only.
      'foo' is equivalent to 'foo:latest'. Empty means all events.
     :type scope: str
     :param actions: The list of actions that trigger the webhook to post notifications.
     :type actions: list[str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.WebhookAction]
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.WebhookAction]
     """
 
     _validation = {
@@ -2586,16 +3970,24 @@ class WebhookCreateParameters(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        service_uri: Optional[str] = None,
+        custom_headers: Optional[Dict[str, str]] = None,
+        status: Optional[Union[str, "WebhookStatus"]] = None,
+        scope: Optional[str] = None,
+        actions: Optional[List[Union[str, "WebhookAction"]]] = None,
         **kwargs
     ):
         super(WebhookCreateParameters, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
-        self.location = kwargs['location']
-        self.service_uri = kwargs.get('service_uri', None)
-        self.custom_headers = kwargs.get('custom_headers', None)
-        self.status = kwargs.get('status', None)
-        self.scope = kwargs.get('scope', None)
-        self.actions = kwargs.get('actions', None)
+        self.tags = tags
+        self.location = location
+        self.service_uri = service_uri
+        self.custom_headers = custom_headers
+        self.status = status
+        self.scope = scope
+        self.actions = actions
 
 
 class WebhookListResult(msrest.serialization.Model):
@@ -2603,7 +3995,7 @@ class WebhookListResult(msrest.serialization.Model):
 
     :param value: The list of webhooks. Since this list may be incomplete, the nextLink field
      should be used to request the next list of webhooks.
-    :type value: list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.Webhook]
+    :type value: list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.Webhook]
     :param next_link: The URI that can be used to request the next list of webhooks.
     :type next_link: str
     """
@@ -2615,11 +4007,14 @@ class WebhookListResult(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        value: Optional[List["Webhook"]] = None,
+        next_link: Optional[str] = None,
         **kwargs
     ):
         super(WebhookListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = value
+        self.next_link = next_link
 
 
 class WebhookUpdateParameters(msrest.serialization.Model):
@@ -2633,14 +4028,14 @@ class WebhookUpdateParameters(msrest.serialization.Model):
     :type custom_headers: dict[str, str]
     :param status: The status of the webhook at the time the operation was called. Possible values
      include: "enabled", "disabled".
-    :type status: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.WebhookStatus
+    :type status: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.WebhookStatus
     :param scope: The scope of repositories where the event can be triggered. For example, 'foo:*'
      means events for all tags under repository 'foo'. 'foo:bar' means events for 'foo:bar' only.
      'foo' is equivalent to 'foo:latest'. Empty means all events.
     :type scope: str
     :param actions: The list of actions that trigger the webhook to post notifications.
     :type actions: list[str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.WebhookAction]
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.WebhookAction]
     """
 
     _attribute_map = {
@@ -2654,12 +4049,19 @@ class WebhookUpdateParameters(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        service_uri: Optional[str] = None,
+        custom_headers: Optional[Dict[str, str]] = None,
+        status: Optional[Union[str, "WebhookStatus"]] = None,
+        scope: Optional[str] = None,
+        actions: Optional[List[Union[str, "WebhookAction"]]] = None,
         **kwargs
     ):
         super(WebhookUpdateParameters, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
-        self.service_uri = kwargs.get('service_uri', None)
-        self.custom_headers = kwargs.get('custom_headers', None)
-        self.status = kwargs.get('status', None)
-        self.scope = kwargs.get('scope', None)
-        self.actions = kwargs.get('actions', None)
+        self.tags = tags
+        self.service_uri = service_uri
+        self.custom_headers = custom_headers
+        self.status = status
+        self.scope = scope
+        self.actions = actions
