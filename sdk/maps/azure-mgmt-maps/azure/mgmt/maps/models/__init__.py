@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties
     from ._models_py3 import Creator
     from ._models_py3 import CreatorList
     from ._models_py3 import CreatorProperties
@@ -15,6 +16,8 @@ try:
     from ._models_py3 import ErrorAdditionalInfo
     from ._models_py3 import ErrorDetail
     from ._models_py3 import ErrorResponse
+    from ._models_py3 import LinkedResource
+    from ._models_py3 import ManagedServiceIdentity
     from ._models_py3 import MapsAccount
     from ._models_py3 import MapsAccountKeys
     from ._models_py3 import MapsAccountProperties
@@ -31,6 +34,7 @@ try:
     from ._models_py3 import SystemData
     from ._models_py3 import TrackedResource
 except (SyntaxError, ImportError):
+    from ._models import Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties  # type: ignore
     from ._models import Creator  # type: ignore
     from ._models import CreatorList  # type: ignore
     from ._models import CreatorProperties  # type: ignore
@@ -39,6 +43,8 @@ except (SyntaxError, ImportError):
     from ._models import ErrorAdditionalInfo  # type: ignore
     from ._models import ErrorDetail  # type: ignore
     from ._models import ErrorResponse  # type: ignore
+    from ._models import LinkedResource  # type: ignore
+    from ._models import ManagedServiceIdentity  # type: ignore
     from ._models import MapsAccount  # type: ignore
     from ._models import MapsAccountKeys  # type: ignore
     from ._models import MapsAccountProperties  # type: ignore
@@ -60,9 +66,11 @@ from ._azure_maps_management_client_enums import (
     KeyType,
     Kind,
     Name,
+    ResourceIdentityType,
 )
 
 __all__ = [
+    'Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties',
     'Creator',
     'CreatorList',
     'CreatorProperties',
@@ -71,6 +79,8 @@ __all__ = [
     'ErrorAdditionalInfo',
     'ErrorDetail',
     'ErrorResponse',
+    'LinkedResource',
+    'ManagedServiceIdentity',
     'MapsAccount',
     'MapsAccountKeys',
     'MapsAccountProperties',
@@ -90,4 +100,5 @@ __all__ = [
     'KeyType',
     'Kind',
     'Name',
+    'ResourceIdentityType',
 ]

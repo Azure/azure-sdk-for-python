@@ -15,6 +15,36 @@ import msrest.serialization
 from ._azure_maps_management_client_enums import *
 
 
+class Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties(msrest.serialization.Model):
+    """Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal id of user assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client id of user assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties, self).__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
+
+
 class Resource(msrest.serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
@@ -269,11 +299,23 @@ class Dimension(msrest.serialization.Model):
     :type name: str
     :param display_name: Display name of dimension.
     :type display_name: str
+    :param internal_name: Internal name of the dimension.
+    :type internal_name: str
+    :param internal_metric_name: Internal metric name of the dimension.
+    :type internal_metric_name: str
+    :param source_mdm_namespace: Source Mdm Namespace of the dimension.
+    :type source_mdm_namespace: str
+    :param to_be_exported_to_shoebox: Flag to indicate exporting to Azure Monitor.
+    :type to_be_exported_to_shoebox: bool
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
+        'internal_name': {'key': 'internalName', 'type': 'str'},
+        'internal_metric_name': {'key': 'internalMetricName', 'type': 'str'},
+        'source_mdm_namespace': {'key': 'sourceMdmNamespace', 'type': 'str'},
+        'to_be_exported_to_shoebox': {'key': 'toBeExportedToShoebox', 'type': 'bool'},
     }
 
     def __init__(
@@ -281,11 +323,19 @@ class Dimension(msrest.serialization.Model):
         *,
         name: Optional[str] = None,
         display_name: Optional[str] = None,
+        internal_name: Optional[str] = None,
+        internal_metric_name: Optional[str] = None,
+        source_mdm_namespace: Optional[str] = None,
+        to_be_exported_to_shoebox: Optional[bool] = None,
         **kwargs
     ):
         super(Dimension, self).__init__(**kwargs)
         self.name = name
         self.display_name = display_name
+        self.internal_name = internal_name
+        self.internal_metric_name = internal_metric_name
+        self.source_mdm_namespace = source_mdm_namespace
+        self.to_be_exported_to_shoebox = to_be_exported_to_shoebox
 
 
 class ErrorAdditionalInfo(msrest.serialization.Model):
@@ -296,7 +346,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: str
+    :vartype info: any
     """
 
     _validation = {
@@ -306,7 +356,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
     }
 
     def __init__(
@@ -384,6 +434,85 @@ class ErrorResponse(msrest.serialization.Model):
         self.error = error
 
 
+class LinkedResource(msrest.serialization.Model):
+    """Linked resource is reference to a resource deployed in an Azure subscription, add the linked resource ``uniqueName`` value as an optional parameter for operations on Azure Maps Geospatial REST APIs.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param unique_name: Required. A provided name which uniquely identifies the linked resource.
+    :type unique_name: str
+    :param id: Required. ARM resource id in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/accounts/{storageName}'.
+    :type id: str
+    """
+
+    _validation = {
+        'unique_name': {'required': True},
+        'id': {'required': True},
+    }
+
+    _attribute_map = {
+        'unique_name': {'key': 'uniqueName', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        unique_name: str,
+        id: str,
+        **kwargs
+    ):
+        super(LinkedResource, self).__init__(**kwargs)
+        self.unique_name = unique_name
+        self.id = id
+
+
+class ManagedServiceIdentity(msrest.serialization.Model):
+    """Identity for the resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal ID of resource identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of resource.
+    :vartype tenant_id: str
+    :param type: The identity type. Possible values include: "SystemAssigned", "UserAssigned",
+     "SystemAssigned, UserAssigned", "None".
+    :type type: str or ~azure.mgmt.maps.models.ResourceIdentityType
+    :param user_assigned_identities: The list of user identities associated with the resource. The
+     user identity dictionary key references will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+    :type user_assigned_identities: dict[str,
+     ~azure.mgmt.maps.models.Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties]
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "ResourceIdentityType"]] = None,
+        user_assigned_identities: Optional[Dict[str, "Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties"]] = None,
+        **kwargs
+    ):
+        super(ManagedServiceIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.tenant_id = None
+        self.type = type
+        self.user_assigned_identities = user_assigned_identities
+
+
 class MapsAccount(TrackedResource):
     """An Azure resource which represents access to a suite of Maps REST APIs.
 
@@ -410,6 +539,8 @@ class MapsAccount(TrackedResource):
     :type kind: str or ~azure.mgmt.maps.models.Kind
     :ivar system_data: The system meta data relating to this resource.
     :vartype system_data: ~azure.mgmt.maps.models.SystemData
+    :param identity: Sets the identity property for maps account.
+    :type identity: ~azure.mgmt.maps.models.ManagedServiceIdentity
     :param properties: The map account properties.
     :type properties: ~azure.mgmt.maps.models.MapsAccountProperties
     """
@@ -432,6 +563,7 @@ class MapsAccount(TrackedResource):
         'sku': {'key': 'sku', 'type': 'Sku'},
         'kind': {'key': 'kind', 'type': 'str'},
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
         'properties': {'key': 'properties', 'type': 'MapsAccountProperties'},
     }
 
@@ -442,6 +574,7 @@ class MapsAccount(TrackedResource):
         sku: "Sku",
         tags: Optional[Dict[str, str]] = None,
         kind: Optional[Union[str, "Kind"]] = "Gen1",
+        identity: Optional["ManagedServiceIdentity"] = None,
         properties: Optional["MapsAccountProperties"] = None,
         **kwargs
     ):
@@ -449,6 +582,7 @@ class MapsAccount(TrackedResource):
         self.sku = sku
         self.kind = kind
         self.system_data = None
+        self.identity = identity
         self.properties = properties
 
 
@@ -502,31 +636,38 @@ class MapsAccountProperties(msrest.serialization.Model):
     :param disable_local_auth: Allows toggle functionality on Azure Policy to disable Azure Maps
      local authentication support. This will disable Shared Keys authentication from any usage.
     :type disable_local_auth: bool
-    :ivar provisioning_state: the state of the provisioning.
+    :ivar provisioning_state: The provisioning state of the Map account resource.
     :vartype provisioning_state: str
+    :param linked_resources: Sets the resources to be used for Managed Identities based operations
+     for the Map account resource.
+    :type linked_resources: list[~azure.mgmt.maps.models.LinkedResource]
     """
 
     _validation = {
         'unique_id': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'linked_resources': {'max_items': 10, 'min_items': 0},
     }
 
     _attribute_map = {
         'unique_id': {'key': 'uniqueId', 'type': 'str'},
         'disable_local_auth': {'key': 'disableLocalAuth', 'type': 'bool'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'linked_resources': {'key': 'linkedResources', 'type': '[LinkedResource]'},
     }
 
     def __init__(
         self,
         *,
         disable_local_auth: Optional[bool] = False,
+        linked_resources: Optional[List["LinkedResource"]] = None,
         **kwargs
     ):
         super(MapsAccountProperties, self).__init__(**kwargs)
         self.unique_id = None
         self.disable_local_auth = disable_local_auth
         self.provisioning_state = None
+        self.linked_resources = linked_resources
 
 
 class MapsAccounts(msrest.serialization.Model):
@@ -576,27 +717,35 @@ class MapsAccountUpdateParameters(msrest.serialization.Model):
     :type kind: str or ~azure.mgmt.maps.models.Kind
     :param sku: The SKU of this account.
     :type sku: ~azure.mgmt.maps.models.Sku
+    :param identity: Sets the identity property for maps account.
+    :type identity: ~azure.mgmt.maps.models.ManagedServiceIdentity
     :ivar unique_id: A unique identifier for the maps account.
     :vartype unique_id: str
     :param disable_local_auth: Allows toggle functionality on Azure Policy to disable Azure Maps
      local authentication support. This will disable Shared Keys authentication from any usage.
     :type disable_local_auth: bool
-    :ivar provisioning_state: the state of the provisioning.
+    :ivar provisioning_state: The provisioning state of the Map account resource.
     :vartype provisioning_state: str
+    :param linked_resources: Sets the resources to be used for Managed Identities based operations
+     for the Map account resource.
+    :type linked_resources: list[~azure.mgmt.maps.models.LinkedResource]
     """
 
     _validation = {
         'unique_id': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'linked_resources': {'max_items': 10, 'min_items': 0},
     }
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'kind': {'key': 'kind', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
         'unique_id': {'key': 'properties.uniqueId', 'type': 'str'},
         'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'linked_resources': {'key': 'properties.linkedResources', 'type': '[LinkedResource]'},
     }
 
     def __init__(
@@ -605,16 +754,20 @@ class MapsAccountUpdateParameters(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         kind: Optional[Union[str, "Kind"]] = "Gen1",
         sku: Optional["Sku"] = None,
+        identity: Optional["ManagedServiceIdentity"] = None,
         disable_local_auth: Optional[bool] = False,
+        linked_resources: Optional[List["LinkedResource"]] = None,
         **kwargs
     ):
         super(MapsAccountUpdateParameters, self).__init__(**kwargs)
         self.tags = tags
         self.kind = kind
         self.sku = sku
+        self.identity = identity
         self.unique_id = None
         self.disable_local_auth = disable_local_auth
         self.provisioning_state = None
+        self.linked_resources = linked_resources
 
 
 class MapsKeySpecification(msrest.serialization.Model):

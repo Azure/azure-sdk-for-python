@@ -45,7 +45,7 @@ class CreatorsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CreatorList"]:
         """Get all Creator instances for an Azure Maps Account.
 
@@ -63,7 +63,7 @@ class CreatorsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-02-01"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -76,7 +76,7 @@ class CreatorsOperations:
                 url = self.list_by_account.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'accountName': self._serialize.url("account_name", account_name, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -122,7 +122,7 @@ class CreatorsOperations:
         account_name: str,
         creator_name: str,
         creator_resource: "_models.Creator",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Creator":
         """Create or update a Maps Creator resource. Creator resource will manage Azure resources required
         to populate a custom set of mapping data. It requires an account to exist before it can be
@@ -146,7 +146,7 @@ class CreatorsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-02-01"
+        api_version = "2021-07-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -154,7 +154,7 @@ class CreatorsOperations:
         url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
             'creatorName': self._serialize.url("creator_name", creator_name, 'str'),
         }
@@ -199,7 +199,7 @@ class CreatorsOperations:
         account_name: str,
         creator_name: str,
         creator_update_parameters: "_models.CreatorUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Creator":
         """Updates the Maps Creator resource. Only a subset of the parameters may be updated after
         creation, such as Tags.
@@ -222,7 +222,7 @@ class CreatorsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-02-01"
+        api_version = "2021-07-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -230,7 +230,7 @@ class CreatorsOperations:
         url = self.update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
             'creatorName': self._serialize.url("creator_name", creator_name, 'str'),
         }
@@ -270,7 +270,7 @@ class CreatorsOperations:
         resource_group_name: str,
         account_name: str,
         creator_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a Maps Creator resource.
 
@@ -290,14 +290,14 @@ class CreatorsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-02-01"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
             'creatorName': self._serialize.url("creator_name", creator_name, 'str'),
         }
@@ -330,7 +330,7 @@ class CreatorsOperations:
         resource_group_name: str,
         account_name: str,
         creator_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Creator":
         """Get a Maps Creator resource.
 
@@ -350,14 +350,14 @@ class CreatorsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-02-01"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
             'creatorName': self._serialize.url("creator_name", creator_name, 'str'),
         }

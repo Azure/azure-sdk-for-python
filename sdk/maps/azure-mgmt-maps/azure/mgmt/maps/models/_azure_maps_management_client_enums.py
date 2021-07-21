@@ -56,3 +56,12 @@ class Name(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     S0 = "S0"
     S1 = "S1"
     G2 = "G2"
+
+class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The identity type.
+    """
+
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
+    NONE = "None"

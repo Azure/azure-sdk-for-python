@@ -46,7 +46,7 @@ class AccountsOperations:
         resource_group_name: str,
         account_name: str,
         maps_account: "_models.MapsAccount",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MapsAccount":
         """Create or update a Maps Account. A Maps Account holds the keys which allow access to the Maps
         REST APIs.
@@ -67,7 +67,7 @@ class AccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-02-01"
+        api_version = "2021-07-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -75,7 +75,7 @@ class AccountsOperations:
         url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -118,7 +118,7 @@ class AccountsOperations:
         resource_group_name: str,
         account_name: str,
         maps_account_update_parameters: "_models.MapsAccountUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MapsAccount":
         """Updates a Maps Account. Only a subset of the parameters may be updated after creation, such as
         Sku, Tags, Properties.
@@ -139,7 +139,7 @@ class AccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-02-01"
+        api_version = "2021-07-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -147,7 +147,7 @@ class AccountsOperations:
         url = self.update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -185,7 +185,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a Maps Account.
 
@@ -203,14 +203,14 @@ class AccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-02-01"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -241,7 +241,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MapsAccount":
         """Get a Maps Account.
 
@@ -259,14 +259,14 @@ class AccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-02-01"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -299,7 +299,7 @@ class AccountsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.MapsAccounts"]:
         """Get all Maps Accounts in a Resource Group.
 
@@ -315,7 +315,7 @@ class AccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-02-01"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -328,7 +328,7 @@ class AccountsOperations:
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -369,7 +369,7 @@ class AccountsOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.MapsAccounts"]:
         """Get all Maps Accounts in a Subscription.
 
@@ -383,7 +383,7 @@ class AccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-02-01"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -438,7 +438,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MapsAccountKeys":
         """Get the keys to use with the Maps APIs. A key is used to authenticate and authorize access to
         the Maps REST APIs. Only one key is needed at a time; two are given to provide seamless key
@@ -458,14 +458,14 @@ class AccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-02-01"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.list_keys.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -500,7 +500,7 @@ class AccountsOperations:
         resource_group_name: str,
         account_name: str,
         key_specification: "_models.MapsKeySpecification",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MapsAccountKeys":
         """Regenerate either the primary or secondary key for use with the Maps APIs. The old key will
         stop working immediately.
@@ -521,7 +521,7 @@ class AccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-02-01"
+        api_version = "2021-07-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -529,7 +529,7 @@ class AccountsOperations:
         url = self.regenerate_keys.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)

@@ -43,7 +43,7 @@ class MapsOperations:
 
     def list_operations(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.MapsOperations"]:
         """List operations available for the Maps Resource Provider.
 
@@ -57,7 +57,7 @@ class MapsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-02-01"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
