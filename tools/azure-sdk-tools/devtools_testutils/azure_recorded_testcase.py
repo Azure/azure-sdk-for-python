@@ -27,7 +27,6 @@ except SyntaxError:
 
 
 load_dotenv(find_dotenv())
-print(os.environ["AZURE_RECORD_MODE"])
 
 class AzureRecordedTestCase(object):
 

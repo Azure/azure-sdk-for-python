@@ -86,6 +86,7 @@ def get_proxy_netloc():
 
 
 def transform_request(request, recording_id):
+    """Redirect the request to the test proxy, and store the original request URI in a header"""
     upstream_url = request.url.replace("//text", "/text")
     headers = request.headers
 
@@ -104,7 +105,6 @@ def RecordedByProxy(func):
     def record_wrap(*args, **kwargs):
         test_id = get_test_id()
         recording_id = start_record_or_playback(test_id)
-        print("\n\nRECORDING_ID: ", recording_id)
 
         def transform_args(*args, **kwargs):
             copied_positional_args = list(args)

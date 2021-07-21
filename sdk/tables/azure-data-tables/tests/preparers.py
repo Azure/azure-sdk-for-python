@@ -16,7 +16,7 @@ CosmosPreparer = functools.partial(
 TablesPreparer = functools.partial(
     PowerShellPreparer,
     "tables",
-    tables_storage_account_name="fake_table_account",
+    tables_storage_account_name="faketableaccount",
     tables_primary_storage_account_key="faketablesaccountkey",
 )
 
