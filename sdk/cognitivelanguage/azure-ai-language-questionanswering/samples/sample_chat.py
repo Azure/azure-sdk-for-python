@@ -46,8 +46,8 @@ def sample_chit_chat():
         )
 
         output = client.query_knowledgebase(
+            first_question,
             project_name=knowledgebase_project,
-            knowledge_base_query_options=first_question,
             deployment_name="test"
         )
         best_candidate = [a for a in output.answers if a.confidence_score > 0.9][0]
@@ -71,8 +71,8 @@ def sample_chit_chat():
         )
 
         output = client.query_knowledgebase(
+            followup_question,
             project_name=knowledgebase_project,
-            knowledge_base_query_options=followup_question,
             deployment_name="test"
         )
         print("Q: {}".format(followup_question.question))
