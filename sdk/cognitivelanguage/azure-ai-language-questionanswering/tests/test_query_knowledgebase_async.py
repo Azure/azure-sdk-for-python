@@ -21,7 +21,7 @@ from azure.ai.language.questionanswering.models import (
     AnswerSpanRequest,
 )
 from azure.ai.language.questionanswering.aio import QuestionAnsweringClient
-from azure.ai.language.questionanswering.rest import *
+from azure.ai.language.questionanswering._rest import *
 
 
 class QnAKnowledgeBaseTestsAsync(AsyncQuestionAnsweringTest):
