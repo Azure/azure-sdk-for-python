@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 from msrest.polling import LROPoller, NoPolling
 from msrestazure.polling.arm_polling import ARMPolling
 
@@ -27,7 +26,7 @@ class RedisOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2019-07-01".
+    :ivar api_version: Client Api Version. Constant value: "2020-12-01".
     """
 
     models = models
@@ -37,7 +36,7 @@ class RedisOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-07-01"
+        self.api_version = "2020-12-01"
 
         self.config = config
 
@@ -57,7 +56,8 @@ class RedisOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.redis.models.ErrorResponseException>`
         """
         parameters = models.CheckNameAvailabilityParameters(name=name, type=type)
 
@@ -90,9 +90,7 @@ class RedisOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -115,54 +113,64 @@ class RedisOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: NotificationListResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.redis.models.NotificationListResponse or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :return: An iterator like instance of UpgradeNotification
+        :rtype:
+         ~azure.mgmt.redis.models.UpgradeNotificationPaged[~azure.mgmt.redis.models.UpgradeNotification]
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.redis.models.ErrorResponseException>`
         """
-        # Construct URL
-        url = self.list_upgrade_notifications.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list_upgrade_notifications.metadata['url']
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'name': self._serialize.url("name", name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        query_parameters['history'] = self._serialize.query("history", history, 'float')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['history'] = self._serialize.query("history", history, 'float')
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            else:
+                url = next_link
+                query_parameters = {}
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            return request
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('NotificationListResponse', response)
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
 
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.ErrorResponseException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        header_dict = None
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
+            header_dict = {}
+        deserialized = models.UpgradeNotificationPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_upgrade_notifications.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{name}/listUpgradeNotifications'}
+    list_upgrade_notifications.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/{name}/listUpgradeNotifications'}
 
 
     def _create_initial(
@@ -199,9 +207,7 @@ class RedisOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -238,7 +244,8 @@ class RedisOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.redis.models.RedisResource]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.redis.models.RedisResource]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.redis.models.ErrorResponseException>`
         """
         raw_result = self._create_initial(
             resource_group_name=resource_group_name,
@@ -265,7 +272,7 @@ class RedisOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{name}'}
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/{name}'}
 
     def update(
             self, resource_group_name, name, parameters, custom_headers=None, raw=False, **operation_config):
@@ -285,7 +292,8 @@ class RedisOperations(object):
         :return: RedisResource or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.redis.models.RedisResource or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.redis.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.update.metadata['url']
@@ -319,9 +327,7 @@ class RedisOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -332,7 +338,7 @@ class RedisOperations(object):
             return client_raw_response
 
         return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{name}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/{name}'}
 
 
     def _delete_initial(
@@ -364,9 +370,7 @@ class RedisOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -389,7 +393,8 @@ class RedisOperations(object):
          ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.redis.models.ErrorResponseException>`
         """
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
@@ -411,7 +416,7 @@ class RedisOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{name}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/{name}'}
 
     def get(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
@@ -429,7 +434,8 @@ class RedisOperations(object):
         :return: RedisResource or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.redis.models.RedisResource or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.redis.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -459,9 +465,7 @@ class RedisOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -472,7 +476,7 @@ class RedisOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{name}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/{name}'}
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
@@ -488,7 +492,8 @@ class RedisOperations(object):
         :return: An iterator like instance of RedisResource
         :rtype:
          ~azure.mgmt.redis.models.RedisResourcePaged[~azure.mgmt.redis.models.RedisResource]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.redis.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -528,9 +533,7 @@ class RedisOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -541,9 +544,9 @@ class RedisOperations(object):
         deserialized = models.RedisResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis'}
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis'}
 
-    def list(
+    def list_by_subscription(
             self, custom_headers=None, raw=False, **operation_config):
         """Gets all Redis caches in the specified subscription.
 
@@ -555,12 +558,13 @@ class RedisOperations(object):
         :return: An iterator like instance of RedisResource
         :rtype:
          ~azure.mgmt.redis.models.RedisResourcePaged[~azure.mgmt.redis.models.RedisResource]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.redis.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']
+                url = self.list_by_subscription.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -594,9 +598,7 @@ class RedisOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -607,7 +609,7 @@ class RedisOperations(object):
         deserialized = models.RedisResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Cache/Redis'}
+    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Cache/redis'}
 
     def list_keys(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
@@ -626,7 +628,8 @@ class RedisOperations(object):
         :return: RedisAccessKeys or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.redis.models.RedisAccessKeys or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.redis.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.list_keys.metadata['url']
@@ -656,9 +659,7 @@ class RedisOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -669,7 +670,7 @@ class RedisOperations(object):
             return client_raw_response
 
         return deserialized
-    list_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{name}/listKeys'}
+    list_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/{name}/listKeys'}
 
     def regenerate_key(
             self, resource_group_name, name, key_type, custom_headers=None, raw=False, **operation_config):
@@ -691,7 +692,8 @@ class RedisOperations(object):
         :return: RedisAccessKeys or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.redis.models.RedisAccessKeys or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.redis.models.ErrorResponseException>`
         """
         parameters = models.RedisRegenerateKeyParameters(key_type=key_type)
 
@@ -727,9 +729,7 @@ class RedisOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -740,7 +740,7 @@ class RedisOperations(object):
             return client_raw_response
 
         return deserialized
-    regenerate_key.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{name}/regenerateKey'}
+    regenerate_key.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/{name}/regenerateKey'}
 
     def force_reboot(
             self, resource_group_name, name, parameters, custom_headers=None, raw=False, **operation_config):
@@ -761,7 +761,8 @@ class RedisOperations(object):
         :return: RedisForceRebootResponse or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.redis.models.RedisForceRebootResponse or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.redis.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.force_reboot.metadata['url']
@@ -795,9 +796,7 @@ class RedisOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -808,7 +807,7 @@ class RedisOperations(object):
             return client_raw_response
 
         return deserialized
-    force_reboot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{name}/forceReboot'}
+    force_reboot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/{name}/forceReboot'}
 
 
     def _import_data_initial(
@@ -846,9 +845,7 @@ class RedisOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -875,7 +872,8 @@ class RedisOperations(object):
          ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.redis.models.ErrorResponseException>`
         """
         raw_result = self._import_data_initial(
             resource_group_name=resource_group_name,
@@ -899,7 +897,7 @@ class RedisOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    import_data.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{name}/import'}
+    import_data.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/{name}/import'}
 
 
     def _export_data_initial(
@@ -935,9 +933,7 @@ class RedisOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -962,7 +958,8 @@ class RedisOperations(object):
          ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.redis.models.ErrorResponseException>`
         """
         raw_result = self._export_data_initial(
             resource_group_name=resource_group_name,
@@ -985,4 +982,4 @@ class RedisOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    export_data.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{name}/export'}
+    export_data.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/{name}/export'}

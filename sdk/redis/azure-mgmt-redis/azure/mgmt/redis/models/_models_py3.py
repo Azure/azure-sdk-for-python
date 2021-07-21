@@ -10,6 +10,85 @@
 # --------------------------------------------------------------------------
 
 from msrest.serialization import Model
+from msrest.exceptions import HttpOperationError
+
+
+class Resource(Model):
+    """Resource.
+
+    Common fields that are returned in the response for all Azure Resource
+    Manager resources.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+
+
+class AzureEntityResource(Resource):
+    """Entity Resource.
+
+    The resource model definition for an Azure Resource Manager resource with
+    an etag.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
+    :vartype type: str
+    :ivar etag: Resource Etag.
+    :vartype etag: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(AzureEntityResource, self).__init__(**kwargs)
+        self.etag = None
 
 
 class CheckNameAvailabilityParameters(Model):
@@ -47,6 +126,110 @@ class CloudError(Model):
 
     _attribute_map = {
     }
+
+
+class ErrorAdditionalInfo(Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: object
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+        self.type = None
+        self.info = None
+
+
+class ErrorDetail(Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.redis.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info:
+     list[~azure.mgmt.redis.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
+        'additional_info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ErrorDetail]'},
+        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ErrorDetail, self).__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
+
+
+class ErrorResponse(Model):
+    """Error response.
+
+    Common error response for all Azure Resource Manager APIs to return error
+    details for failed operations. (This also follows the OData error response
+    format.).
+
+    :param error: The error object.
+    :type error: ~azure.mgmt.redis.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorDetail'},
+    }
+
+    def __init__(self, *, error=None, **kwargs) -> None:
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.error = error
+
+
+class ErrorResponseException(HttpOperationError):
+    """Server responsed with exception of type: 'ErrorResponse'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)
 
 
 class ExportRDBParameters(Model):
@@ -106,33 +289,6 @@ class ImportRDBParameters(Model):
         self.files = files
 
 
-class NotificationListResponse(Model):
-    """The response of listUpgradeNotifications.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :param value: List of all notifications.
-    :type value: list[~azure.mgmt.redis.models.UpgradeNotification]
-    :ivar next_link: Link for next set of notifications.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        'next_link': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[UpgradeNotification]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-    }
-
-    def __init__(self, *, value=None, **kwargs) -> None:
-        super(NotificationListResponse, self).__init__(**kwargs)
-        self.value = value
-        self.next_link = None
-
-
 class Operation(Model):
     """REST API operation.
 
@@ -182,51 +338,174 @@ class OperationDisplay(Model):
         self.description = description
 
 
-class Resource(Model):
-    """The Resource definition.
+class PrivateEndpoint(Model):
+    """The Private Endpoint resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID.
+    :ivar id: The ARM identifier for Private Endpoint
     :vartype id: str
-    :ivar name: Resource name.
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(PrivateEndpoint, self).__init__(**kwargs)
+        self.id = None
+
+
+class PrivateEndpointConnection(Resource):
+    """The Private Endpoint Connection resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
+    :param private_endpoint: The resource of private end point.
+    :type private_endpoint: ~azure.mgmt.redis.models.PrivateEndpoint
+    :param private_link_service_connection_state: Required. A collection of
+     information about the state of the connection between service consumer and
+     provider.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.redis.models.PrivateLinkServiceConnectionState
+    :param provisioning_state: The provisioning state of the private endpoint
+     connection resource. Possible values include: 'Succeeded', 'Creating',
+     'Deleting', 'Failed'
+    :type provisioning_state: str or
+     ~azure.mgmt.redis.models.PrivateEndpointConnectionProvisioningState
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'private_link_service_connection_state': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+    def __init__(self, *, private_link_service_connection_state, private_endpoint=None, provisioning_state=None, **kwargs) -> None:
+        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self.private_endpoint = private_endpoint
+        self.private_link_service_connection_state = private_link_service_connection_state
+        self.provisioning_state = provisioning_state
 
 
-class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have
-    everything other than required location and tags.
+class PrivateLinkResource(Resource):
+    """A private link resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
+    :vartype type: str
+    :ivar group_id: The private link resource group id.
+    :vartype group_id: str
+    :ivar required_members: The private link resource required member names.
+    :vartype required_members: list[str]
+    :param required_zone_names: The private link resource Private link DNS
+     zone name.
+    :type required_zone_names: list[str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'group_id': {'readonly': True},
+        'required_members': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'group_id': {'key': 'properties.groupId', 'type': 'str'},
+        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
+        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
+    }
+
+    def __init__(self, *, required_zone_names=None, **kwargs) -> None:
+        super(PrivateLinkResource, self).__init__(**kwargs)
+        self.group_id = None
+        self.required_members = None
+        self.required_zone_names = required_zone_names
+
+
+class PrivateLinkServiceConnectionState(Model):
+    """A collection of information about the state of the connection between
+    service consumer and provider.
+
+    :param status: Indicates whether the connection has been
+     Approved/Rejected/Removed by the owner of the service. Possible values
+     include: 'Pending', 'Approved', 'Rejected'
+    :type status: str or
+     ~azure.mgmt.redis.models.PrivateEndpointServiceConnectionStatus
+    :param description: The reason for approval/rejection of the connection.
+    :type description: str
+    :param actions_required: A message indicating if changes on the service
+     provider require any updates on the consumer.
+    :type actions_required: str
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+    }
+
+    def __init__(self, *, status=None, description: str=None, actions_required: str=None, **kwargs) -> None:
+        super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
+        self.status = status
+        self.description = description
+        self.actions_required = actions_required
+
+
+class ProxyResource(Resource):
+    """Proxy Resource.
+
+    The resource model definition for a Azure Resource Manager proxy resource.
+    It will not have tags and a location.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     """
 
@@ -283,12 +562,18 @@ class RedisCommonProperties(Model):
      rdb-backup-enabled,rdb-storage-connection-string,rdb-backup-frequency,maxmemory-delta,maxmemory-policy,notify-keyspace-events,maxmemory-samples,slowlog-log-slower-than,slowlog-max-len,list-max-ziplist-entries,list-max-ziplist-value,hash-max-ziplist-entries,hash-max-ziplist-value,set-max-intset-entries,zset-max-ziplist-entries,zset-max-ziplist-value
      etc.
     :type redis_configuration: dict[str, str]
+    :param redis_version: Redis version. Only major version will be used in
+     PUT/PATCH request with current valid values: (4, 6)
+    :type redis_version: str
     :param enable_non_ssl_port: Specifies whether the non-ssl Redis server
      port (6379) is enabled.
     :type enable_non_ssl_port: bool
     :param replicas_per_master: The number of replicas to be created per
-     master.
+     primary.
     :type replicas_per_master: int
+    :param replicas_per_primary: The number of replicas to be created per
+     primary.
+    :type replicas_per_primary: int
     :param tenant_settings: A dictionary of tenant settings
     :type tenant_settings: dict[str, str]
     :param shard_count: The number of shards to be created on a Premium
@@ -298,25 +583,38 @@ class RedisCommonProperties(Model):
      TLS version (or higher) to connect (e,g, '1.0', '1.1', '1.2'). Possible
      values include: '1.0', '1.1', '1.2'
     :type minimum_tls_version: str or ~azure.mgmt.redis.models.TlsVersion
+    :param public_network_access: Whether or not public endpoint access is
+     allowed for this cache.  Value is optional but if passed in, must be
+     'Enabled' or 'Disabled'. If 'Disabled', private endpoints are the
+     exclusive access method. Default value is 'Enabled'. Possible values
+     include: 'Enabled', 'Disabled'
+    :type public_network_access: str or
+     ~azure.mgmt.redis.models.PublicNetworkAccess
     """
 
     _attribute_map = {
         'redis_configuration': {'key': 'redisConfiguration', 'type': '{str}'},
+        'redis_version': {'key': 'redisVersion', 'type': 'str'},
         'enable_non_ssl_port': {'key': 'enableNonSslPort', 'type': 'bool'},
         'replicas_per_master': {'key': 'replicasPerMaster', 'type': 'int'},
+        'replicas_per_primary': {'key': 'replicasPerPrimary', 'type': 'int'},
         'tenant_settings': {'key': 'tenantSettings', 'type': '{str}'},
         'shard_count': {'key': 'shardCount', 'type': 'int'},
         'minimum_tls_version': {'key': 'minimumTlsVersion', 'type': 'str'},
+        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
     }
 
-    def __init__(self, *, redis_configuration=None, enable_non_ssl_port: bool=None, replicas_per_master: int=None, tenant_settings=None, shard_count: int=None, minimum_tls_version=None, **kwargs) -> None:
+    def __init__(self, *, redis_configuration=None, redis_version: str=None, enable_non_ssl_port: bool=None, replicas_per_master: int=None, replicas_per_primary: int=None, tenant_settings=None, shard_count: int=None, minimum_tls_version=None, public_network_access=None, **kwargs) -> None:
         super(RedisCommonProperties, self).__init__(**kwargs)
         self.redis_configuration = redis_configuration
+        self.redis_version = redis_version
         self.enable_non_ssl_port = enable_non_ssl_port
         self.replicas_per_master = replicas_per_master
+        self.replicas_per_primary = replicas_per_primary
         self.tenant_settings = tenant_settings
         self.shard_count = shard_count
         self.minimum_tls_version = minimum_tls_version
+        self.public_network_access = public_network_access
 
 
 class RedisCreateParameters(Model):
@@ -328,12 +626,18 @@ class RedisCreateParameters(Model):
      rdb-backup-enabled,rdb-storage-connection-string,rdb-backup-frequency,maxmemory-delta,maxmemory-policy,notify-keyspace-events,maxmemory-samples,slowlog-log-slower-than,slowlog-max-len,list-max-ziplist-entries,list-max-ziplist-value,hash-max-ziplist-entries,hash-max-ziplist-value,set-max-intset-entries,zset-max-ziplist-entries,zset-max-ziplist-value
      etc.
     :type redis_configuration: dict[str, str]
+    :param redis_version: Redis version. Only major version will be used in
+     PUT/PATCH request with current valid values: (4, 6)
+    :type redis_version: str
     :param enable_non_ssl_port: Specifies whether the non-ssl Redis server
      port (6379) is enabled.
     :type enable_non_ssl_port: bool
     :param replicas_per_master: The number of replicas to be created per
-     master.
+     primary.
     :type replicas_per_master: int
+    :param replicas_per_primary: The number of replicas to be created per
+     primary.
+    :type replicas_per_primary: int
     :param tenant_settings: A dictionary of tenant settings
     :type tenant_settings: dict[str, str]
     :param shard_count: The number of shards to be created on a Premium
@@ -343,6 +647,13 @@ class RedisCreateParameters(Model):
      TLS version (or higher) to connect (e,g, '1.0', '1.1', '1.2'). Possible
      values include: '1.0', '1.1', '1.2'
     :type minimum_tls_version: str or ~azure.mgmt.redis.models.TlsVersion
+    :param public_network_access: Whether or not public endpoint access is
+     allowed for this cache.  Value is optional but if passed in, must be
+     'Enabled' or 'Disabled'. If 'Disabled', private endpoints are the
+     exclusive access method. Default value is 'Enabled'. Possible values
+     include: 'Enabled', 'Disabled'
+    :type public_network_access: str or
+     ~azure.mgmt.redis.models.PublicNetworkAccess
     :param sku: Required. The SKU of the Redis cache to deploy.
     :type sku: ~azure.mgmt.redis.models.Sku
     :param subnet_id: The full resource ID of a subnet in a virtual network to
@@ -370,11 +681,14 @@ class RedisCreateParameters(Model):
 
     _attribute_map = {
         'redis_configuration': {'key': 'properties.redisConfiguration', 'type': '{str}'},
+        'redis_version': {'key': 'properties.redisVersion', 'type': 'str'},
         'enable_non_ssl_port': {'key': 'properties.enableNonSslPort', 'type': 'bool'},
         'replicas_per_master': {'key': 'properties.replicasPerMaster', 'type': 'int'},
+        'replicas_per_primary': {'key': 'properties.replicasPerPrimary', 'type': 'int'},
         'tenant_settings': {'key': 'properties.tenantSettings', 'type': '{str}'},
         'shard_count': {'key': 'properties.shardCount', 'type': 'int'},
         'minimum_tls_version': {'key': 'properties.minimumTlsVersion', 'type': 'str'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'sku': {'key': 'properties.sku', 'type': 'Sku'},
         'subnet_id': {'key': 'properties.subnetId', 'type': 'str'},
         'static_ip': {'key': 'properties.staticIP', 'type': 'str'},
@@ -383,14 +697,17 @@ class RedisCreateParameters(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, sku, location: str, redis_configuration=None, enable_non_ssl_port: bool=None, replicas_per_master: int=None, tenant_settings=None, shard_count: int=None, minimum_tls_version=None, subnet_id: str=None, static_ip: str=None, zones=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, sku, location: str, redis_configuration=None, redis_version: str=None, enable_non_ssl_port: bool=None, replicas_per_master: int=None, replicas_per_primary: int=None, tenant_settings=None, shard_count: int=None, minimum_tls_version=None, public_network_access=None, subnet_id: str=None, static_ip: str=None, zones=None, tags=None, **kwargs) -> None:
         super(RedisCreateParameters, self).__init__(**kwargs)
         self.redis_configuration = redis_configuration
+        self.redis_version = redis_version
         self.enable_non_ssl_port = enable_non_ssl_port
         self.replicas_per_master = replicas_per_master
+        self.replicas_per_primary = replicas_per_primary
         self.tenant_settings = tenant_settings
         self.shard_count = shard_count
         self.minimum_tls_version = minimum_tls_version
+        self.public_network_access = public_network_access
         self.sku = sku
         self.subnet_id = subnet_id
         self.static_ip = static_ip
@@ -408,12 +725,18 @@ class RedisCreateProperties(RedisCommonProperties):
      rdb-backup-enabled,rdb-storage-connection-string,rdb-backup-frequency,maxmemory-delta,maxmemory-policy,notify-keyspace-events,maxmemory-samples,slowlog-log-slower-than,slowlog-max-len,list-max-ziplist-entries,list-max-ziplist-value,hash-max-ziplist-entries,hash-max-ziplist-value,set-max-intset-entries,zset-max-ziplist-entries,zset-max-ziplist-value
      etc.
     :type redis_configuration: dict[str, str]
+    :param redis_version: Redis version. Only major version will be used in
+     PUT/PATCH request with current valid values: (4, 6)
+    :type redis_version: str
     :param enable_non_ssl_port: Specifies whether the non-ssl Redis server
      port (6379) is enabled.
     :type enable_non_ssl_port: bool
     :param replicas_per_master: The number of replicas to be created per
-     master.
+     primary.
     :type replicas_per_master: int
+    :param replicas_per_primary: The number of replicas to be created per
+     primary.
+    :type replicas_per_primary: int
     :param tenant_settings: A dictionary of tenant settings
     :type tenant_settings: dict[str, str]
     :param shard_count: The number of shards to be created on a Premium
@@ -423,6 +746,13 @@ class RedisCreateProperties(RedisCommonProperties):
      TLS version (or higher) to connect (e,g, '1.0', '1.1', '1.2'). Possible
      values include: '1.0', '1.1', '1.2'
     :type minimum_tls_version: str or ~azure.mgmt.redis.models.TlsVersion
+    :param public_network_access: Whether or not public endpoint access is
+     allowed for this cache.  Value is optional but if passed in, must be
+     'Enabled' or 'Disabled'. If 'Disabled', private endpoints are the
+     exclusive access method. Default value is 'Enabled'. Possible values
+     include: 'Enabled', 'Disabled'
+    :type public_network_access: str or
+     ~azure.mgmt.redis.models.PublicNetworkAccess
     :param sku: Required. The SKU of the Redis cache to deploy.
     :type sku: ~azure.mgmt.redis.models.Sku
     :param subnet_id: The full resource ID of a subnet in a virtual network to
@@ -442,18 +772,21 @@ class RedisCreateProperties(RedisCommonProperties):
 
     _attribute_map = {
         'redis_configuration': {'key': 'redisConfiguration', 'type': '{str}'},
+        'redis_version': {'key': 'redisVersion', 'type': 'str'},
         'enable_non_ssl_port': {'key': 'enableNonSslPort', 'type': 'bool'},
         'replicas_per_master': {'key': 'replicasPerMaster', 'type': 'int'},
+        'replicas_per_primary': {'key': 'replicasPerPrimary', 'type': 'int'},
         'tenant_settings': {'key': 'tenantSettings', 'type': '{str}'},
         'shard_count': {'key': 'shardCount', 'type': 'int'},
         'minimum_tls_version': {'key': 'minimumTlsVersion', 'type': 'str'},
+        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'subnet_id': {'key': 'subnetId', 'type': 'str'},
         'static_ip': {'key': 'staticIP', 'type': 'str'},
     }
 
-    def __init__(self, *, sku, redis_configuration=None, enable_non_ssl_port: bool=None, replicas_per_master: int=None, tenant_settings=None, shard_count: int=None, minimum_tls_version=None, subnet_id: str=None, static_ip: str=None, **kwargs) -> None:
-        super(RedisCreateProperties, self).__init__(redis_configuration=redis_configuration, enable_non_ssl_port=enable_non_ssl_port, replicas_per_master=replicas_per_master, tenant_settings=tenant_settings, shard_count=shard_count, minimum_tls_version=minimum_tls_version, **kwargs)
+    def __init__(self, *, sku, redis_configuration=None, redis_version: str=None, enable_non_ssl_port: bool=None, replicas_per_master: int=None, replicas_per_primary: int=None, tenant_settings=None, shard_count: int=None, minimum_tls_version=None, public_network_access=None, subnet_id: str=None, static_ip: str=None, **kwargs) -> None:
+        super(RedisCreateProperties, self).__init__(redis_configuration=redis_configuration, redis_version=redis_version, enable_non_ssl_port=enable_non_ssl_port, replicas_per_master=replicas_per_master, replicas_per_primary=replicas_per_primary, tenant_settings=tenant_settings, shard_count=shard_count, minimum_tls_version=minimum_tls_version, public_network_access=public_network_access, **kwargs)
         self.sku = sku
         self.subnet_id = subnet_id
         self.static_ip = static_ip
@@ -468,11 +801,13 @@ class RedisFirewallRule(ProxyResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource ID.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param start_ip: Required. lowest IP address included in the range
     :type start_ip: str
@@ -502,11 +837,23 @@ class RedisFirewallRule(ProxyResource):
         self.end_ip = end_ip
 
 
-class RedisFirewallRuleCreateParameters(Model):
-    """Parameters required for creating a firewall rule on redis cache.
+class RedisFirewallRuleCreateParameters(RedisFirewallRule):
+    """Parameters required for creating a firewall rule on redis cache. (Note, you
+    can just use the FirewallRule type instead now.).
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
+    :vartype type: str
     :param start_ip: Required. lowest IP address included in the range
     :type start_ip: str
     :param end_ip: Required. highest IP address included in the range
@@ -514,19 +861,23 @@ class RedisFirewallRuleCreateParameters(Model):
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'start_ip': {'required': True},
         'end_ip': {'required': True},
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'start_ip': {'key': 'properties.startIP', 'type': 'str'},
         'end_ip': {'key': 'properties.endIP', 'type': 'str'},
     }
 
     def __init__(self, *, start_ip: str, end_ip: str, **kwargs) -> None:
-        super(RedisFirewallRuleCreateParameters, self).__init__(**kwargs)
-        self.start_ip = start_ip
-        self.end_ip = end_ip
+        super(RedisFirewallRuleCreateParameters, self).__init__(start_ip=start_ip, end_ip=end_ip, **kwargs)
 
 
 class RedisForceRebootResponse(Model):
@@ -568,8 +919,10 @@ class RedisInstanceDetails(Model):
     :vartype zone: str
     :ivar shard_id: If clustering is enabled, the Shard ID of Redis Instance
     :vartype shard_id: int
-    :ivar is_master: Specifies whether the instance is a master node.
+    :ivar is_master: Specifies whether the instance is a primary node.
     :vartype is_master: bool
+    :ivar is_primary: Specifies whether the instance is a primary node.
+    :vartype is_primary: bool
     """
 
     _validation = {
@@ -578,6 +931,7 @@ class RedisInstanceDetails(Model):
         'zone': {'readonly': True},
         'shard_id': {'readonly': True},
         'is_master': {'readonly': True},
+        'is_primary': {'readonly': True},
     }
 
     _attribute_map = {
@@ -586,6 +940,7 @@ class RedisInstanceDetails(Model):
         'zone': {'key': 'zone', 'type': 'str'},
         'shard_id': {'key': 'shardId', 'type': 'int'},
         'is_master': {'key': 'isMaster', 'type': 'bool'},
+        'is_primary': {'key': 'isPrimary', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs) -> None:
@@ -595,6 +950,7 @@ class RedisInstanceDetails(Model):
         self.zone = None
         self.shard_id = None
         self.is_master = None
+        self.is_primary = None
 
 
 class RedisLinkedServer(Model):
@@ -663,11 +1019,13 @@ class RedisLinkedServerWithProperties(ProxyResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource ID.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param linked_redis_cache_id: Required. Fully qualified resourceId of the
      linked redis cache.
@@ -719,11 +1077,13 @@ class RedisPatchSchedule(ProxyResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource ID.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param schedule_entries: Required. List of patch schedules for a Redis
      cache.
@@ -801,18 +1161,23 @@ class RedisRegenerateKeyParameters(Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for a ARM tracked top level resource.
+    """Tracked Resource.
+
+    The resource model definition for an Azure Resource Manager tracked top
+    level resource which has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource ID.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
@@ -849,11 +1214,13 @@ class RedisResource(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource ID.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
@@ -863,12 +1230,18 @@ class RedisResource(TrackedResource):
      rdb-backup-enabled,rdb-storage-connection-string,rdb-backup-frequency,maxmemory-delta,maxmemory-policy,notify-keyspace-events,maxmemory-samples,slowlog-log-slower-than,slowlog-max-len,list-max-ziplist-entries,list-max-ziplist-value,hash-max-ziplist-entries,hash-max-ziplist-value,set-max-intset-entries,zset-max-ziplist-entries,zset-max-ziplist-value
      etc.
     :type redis_configuration: dict[str, str]
+    :param redis_version: Redis version. Only major version will be used in
+     PUT/PATCH request with current valid values: (4, 6)
+    :type redis_version: str
     :param enable_non_ssl_port: Specifies whether the non-ssl Redis server
      port (6379) is enabled.
     :type enable_non_ssl_port: bool
     :param replicas_per_master: The number of replicas to be created per
-     master.
+     primary.
     :type replicas_per_master: int
+    :param replicas_per_primary: The number of replicas to be created per
+     primary.
+    :type replicas_per_primary: int
     :param tenant_settings: A dictionary of tenant settings
     :type tenant_settings: dict[str, str]
     :param shard_count: The number of shards to be created on a Premium
@@ -878,6 +1251,13 @@ class RedisResource(TrackedResource):
      TLS version (or higher) to connect (e,g, '1.0', '1.1', '1.2'). Possible
      values include: '1.0', '1.1', '1.2'
     :type minimum_tls_version: str or ~azure.mgmt.redis.models.TlsVersion
+    :param public_network_access: Whether or not public endpoint access is
+     allowed for this cache.  Value is optional but if passed in, must be
+     'Enabled' or 'Disabled'. If 'Disabled', private endpoints are the
+     exclusive access method. Default value is 'Enabled'. Possible values
+     include: 'Enabled', 'Disabled'
+    :type public_network_access: str or
+     ~azure.mgmt.redis.models.PublicNetworkAccess
     :param sku: Required. The SKU of the Redis cache to deploy.
     :type sku: ~azure.mgmt.redis.models.Sku
     :param subnet_id: The full resource ID of a subnet in a virtual network to
@@ -887,8 +1267,6 @@ class RedisResource(TrackedResource):
     :param static_ip: Static IP address. Required when deploying a Redis cache
      inside an existing Azure Virtual Network.
     :type static_ip: str
-    :ivar redis_version: Redis version.
-    :vartype redis_version: str
     :ivar provisioning_state: Redis instance provisioning status. Possible
      values include: 'Creating', 'Deleting', 'Disabled', 'Failed', 'Linking',
      'Provisioning', 'RecoveringScaleFailure', 'Scaling', 'Succeeded',
@@ -908,6 +1286,10 @@ class RedisResource(TrackedResource):
     :vartype linked_servers: list[~azure.mgmt.redis.models.RedisLinkedServer]
     :ivar instances: List of the Redis instances associated with the cache
     :vartype instances: list[~azure.mgmt.redis.models.RedisInstanceDetails]
+    :ivar private_endpoint_connections: List of private endpoint connection
+     associated with the specified redis cache
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.redis.models.PrivateEndpointConnection]
     :param zones: A list of availability zones denoting where the resource
      needs to come from.
     :type zones: list[str]
@@ -921,7 +1303,6 @@ class RedisResource(TrackedResource):
         'sku': {'required': True},
         'subnet_id': {'pattern': r'^/subscriptions/[^/]*/resourceGroups/[^/]*/providers/Microsoft.(ClassicNetwork|Network)/virtualNetworks/[^/]*/subnets/[^/]*$'},
         'static_ip': {'pattern': r'^\d+\.\d+\.\d+\.\d+$'},
-        'redis_version': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'host_name': {'readonly': True},
         'port': {'readonly': True},
@@ -929,6 +1310,7 @@ class RedisResource(TrackedResource):
         'access_keys': {'readonly': True},
         'linked_servers': {'readonly': True},
         'instances': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
@@ -938,15 +1320,17 @@ class RedisResource(TrackedResource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
         'redis_configuration': {'key': 'properties.redisConfiguration', 'type': '{str}'},
+        'redis_version': {'key': 'properties.redisVersion', 'type': 'str'},
         'enable_non_ssl_port': {'key': 'properties.enableNonSslPort', 'type': 'bool'},
         'replicas_per_master': {'key': 'properties.replicasPerMaster', 'type': 'int'},
+        'replicas_per_primary': {'key': 'properties.replicasPerPrimary', 'type': 'int'},
         'tenant_settings': {'key': 'properties.tenantSettings', 'type': '{str}'},
         'shard_count': {'key': 'properties.shardCount', 'type': 'int'},
         'minimum_tls_version': {'key': 'properties.minimumTlsVersion', 'type': 'str'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'sku': {'key': 'properties.sku', 'type': 'Sku'},
         'subnet_id': {'key': 'properties.subnetId', 'type': 'str'},
         'static_ip': {'key': 'properties.staticIP', 'type': 'str'},
-        'redis_version': {'key': 'properties.redisVersion', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
         'port': {'key': 'properties.port', 'type': 'int'},
@@ -954,21 +1338,24 @@ class RedisResource(TrackedResource):
         'access_keys': {'key': 'properties.accessKeys', 'type': 'RedisAccessKeys'},
         'linked_servers': {'key': 'properties.linkedServers', 'type': '[RedisLinkedServer]'},
         'instances': {'key': 'properties.instances', 'type': '[RedisInstanceDetails]'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
         'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, *, location: str, sku, tags=None, redis_configuration=None, enable_non_ssl_port: bool=None, replicas_per_master: int=None, tenant_settings=None, shard_count: int=None, minimum_tls_version=None, subnet_id: str=None, static_ip: str=None, zones=None, **kwargs) -> None:
+    def __init__(self, *, location: str, sku, tags=None, redis_configuration=None, redis_version: str=None, enable_non_ssl_port: bool=None, replicas_per_master: int=None, replicas_per_primary: int=None, tenant_settings=None, shard_count: int=None, minimum_tls_version=None, public_network_access=None, subnet_id: str=None, static_ip: str=None, zones=None, **kwargs) -> None:
         super(RedisResource, self).__init__(tags=tags, location=location, **kwargs)
         self.redis_configuration = redis_configuration
+        self.redis_version = redis_version
         self.enable_non_ssl_port = enable_non_ssl_port
         self.replicas_per_master = replicas_per_master
+        self.replicas_per_primary = replicas_per_primary
         self.tenant_settings = tenant_settings
         self.shard_count = shard_count
         self.minimum_tls_version = minimum_tls_version
+        self.public_network_access = public_network_access
         self.sku = sku
         self.subnet_id = subnet_id
         self.static_ip = static_ip
-        self.redis_version = None
         self.provisioning_state = None
         self.host_name = None
         self.port = None
@@ -976,6 +1363,7 @@ class RedisResource(TrackedResource):
         self.access_keys = None
         self.linked_servers = None
         self.instances = None
+        self.private_endpoint_connections = None
         self.zones = zones
 
 
@@ -986,12 +1374,18 @@ class RedisUpdateParameters(Model):
      rdb-backup-enabled,rdb-storage-connection-string,rdb-backup-frequency,maxmemory-delta,maxmemory-policy,notify-keyspace-events,maxmemory-samples,slowlog-log-slower-than,slowlog-max-len,list-max-ziplist-entries,list-max-ziplist-value,hash-max-ziplist-entries,hash-max-ziplist-value,set-max-intset-entries,zset-max-ziplist-entries,zset-max-ziplist-value
      etc.
     :type redis_configuration: dict[str, str]
+    :param redis_version: Redis version. Only major version will be used in
+     PUT/PATCH request with current valid values: (4, 6)
+    :type redis_version: str
     :param enable_non_ssl_port: Specifies whether the non-ssl Redis server
      port (6379) is enabled.
     :type enable_non_ssl_port: bool
     :param replicas_per_master: The number of replicas to be created per
-     master.
+     primary.
     :type replicas_per_master: int
+    :param replicas_per_primary: The number of replicas to be created per
+     primary.
+    :type replicas_per_primary: int
     :param tenant_settings: A dictionary of tenant settings
     :type tenant_settings: dict[str, str]
     :param shard_count: The number of shards to be created on a Premium
@@ -1001,6 +1395,13 @@ class RedisUpdateParameters(Model):
      TLS version (or higher) to connect (e,g, '1.0', '1.1', '1.2'). Possible
      values include: '1.0', '1.1', '1.2'
     :type minimum_tls_version: str or ~azure.mgmt.redis.models.TlsVersion
+    :param public_network_access: Whether or not public endpoint access is
+     allowed for this cache.  Value is optional but if passed in, must be
+     'Enabled' or 'Disabled'. If 'Disabled', private endpoints are the
+     exclusive access method. Default value is 'Enabled'. Possible values
+     include: 'Enabled', 'Disabled'
+    :type public_network_access: str or
+     ~azure.mgmt.redis.models.PublicNetworkAccess
     :param sku: The SKU of the Redis cache to deploy.
     :type sku: ~azure.mgmt.redis.models.Sku
     :param tags: Resource tags.
@@ -1009,23 +1410,29 @@ class RedisUpdateParameters(Model):
 
     _attribute_map = {
         'redis_configuration': {'key': 'properties.redisConfiguration', 'type': '{str}'},
+        'redis_version': {'key': 'properties.redisVersion', 'type': 'str'},
         'enable_non_ssl_port': {'key': 'properties.enableNonSslPort', 'type': 'bool'},
         'replicas_per_master': {'key': 'properties.replicasPerMaster', 'type': 'int'},
+        'replicas_per_primary': {'key': 'properties.replicasPerPrimary', 'type': 'int'},
         'tenant_settings': {'key': 'properties.tenantSettings', 'type': '{str}'},
         'shard_count': {'key': 'properties.shardCount', 'type': 'int'},
         'minimum_tls_version': {'key': 'properties.minimumTlsVersion', 'type': 'str'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'sku': {'key': 'properties.sku', 'type': 'Sku'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, redis_configuration=None, enable_non_ssl_port: bool=None, replicas_per_master: int=None, tenant_settings=None, shard_count: int=None, minimum_tls_version=None, sku=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, redis_configuration=None, redis_version: str=None, enable_non_ssl_port: bool=None, replicas_per_master: int=None, replicas_per_primary: int=None, tenant_settings=None, shard_count: int=None, minimum_tls_version=None, public_network_access=None, sku=None, tags=None, **kwargs) -> None:
         super(RedisUpdateParameters, self).__init__(**kwargs)
         self.redis_configuration = redis_configuration
+        self.redis_version = redis_version
         self.enable_non_ssl_port = enable_non_ssl_port
         self.replicas_per_master = replicas_per_master
+        self.replicas_per_primary = replicas_per_primary
         self.tenant_settings = tenant_settings
         self.shard_count = shard_count
         self.minimum_tls_version = minimum_tls_version
+        self.public_network_access = public_network_access
         self.sku = sku
         self.tags = tags
 
@@ -1079,7 +1486,7 @@ class Sku(Model):
     :type family: str or ~azure.mgmt.redis.models.SkuFamily
     :param capacity: Required. The size of the Redis cache to deploy. Valid
      values: for C (Basic/Standard) family (0, 1, 2, 3, 4, 5, 6), for P
-     (Premium) family (1, 2, 3, 4, 5).
+     (Premium) family (1, 2, 3, 4).
     :type capacity: int
     """
 

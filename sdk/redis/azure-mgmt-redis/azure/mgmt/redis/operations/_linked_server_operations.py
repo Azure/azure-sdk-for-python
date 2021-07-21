@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 from msrest.polling import LROPoller, NoPolling
 from msrestazure.polling.arm_polling import ARMPolling
 
@@ -27,7 +26,7 @@ class LinkedServerOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2019-07-01".
+    :ivar api_version: Client Api Version. Constant value: "2020-12-01".
     """
 
     models = models
@@ -37,7 +36,7 @@ class LinkedServerOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-07-01"
+        self.api_version = "2020-12-01"
 
         self.config = config
 
@@ -77,9 +76,7 @@ class LinkedServerOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -121,7 +118,8 @@ class LinkedServerOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.redis.models.RedisLinkedServerWithProperties]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.redis.models.RedisLinkedServerWithProperties]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.redis.models.ErrorResponseException>`
         """
         raw_result = self._create_initial(
             resource_group_name=resource_group_name,
@@ -149,7 +147,7 @@ class LinkedServerOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{name}/linkedServers/{linkedServerName}'}
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/{name}/linkedServers/{linkedServerName}'}
 
     def delete(
             self, resource_group_name, name, linked_server_name, custom_headers=None, raw=False, **operation_config):
@@ -169,7 +167,8 @@ class LinkedServerOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.redis.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -198,15 +197,13 @@ class LinkedServerOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+        if response.status_code not in [200, 204]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{name}/linkedServers/{linkedServerName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/{name}/linkedServers/{linkedServerName}'}
 
     def get(
             self, resource_group_name, name, linked_server_name, custom_headers=None, raw=False, **operation_config):
@@ -228,7 +225,8 @@ class LinkedServerOperations(object):
          raw=true
         :rtype: ~azure.mgmt.redis.models.RedisLinkedServerWithProperties or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.redis.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -259,9 +257,7 @@ class LinkedServerOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -272,7 +268,7 @@ class LinkedServerOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{name}/linkedServers/{linkedServerName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/{name}/linkedServers/{linkedServerName}'}
 
     def list(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
@@ -291,7 +287,8 @@ class LinkedServerOperations(object):
         :return: An iterator like instance of RedisLinkedServerWithProperties
         :rtype:
          ~azure.mgmt.redis.models.RedisLinkedServerWithPropertiesPaged[~azure.mgmt.redis.models.RedisLinkedServerWithProperties]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.redis.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -332,9 +329,7 @@ class LinkedServerOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -345,4 +340,4 @@ class LinkedServerOperations(object):
         deserialized = models.RedisLinkedServerWithPropertiesPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{name}/linkedServers'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/{name}/linkedServers'}

@@ -14,6 +14,8 @@ from ._redis_operations import RedisOperations
 from ._firewall_rules_operations import FirewallRulesOperations
 from ._patch_schedules_operations import PatchSchedulesOperations
 from ._linked_server_operations import LinkedServerOperations
+from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
+from ._private_link_resources_operations import PrivateLinkResourcesOperations
 
 __all__ = [
     'Operations',
@@ -21,4 +23,6 @@ __all__ = [
     'FirewallRulesOperations',
     'PatchSchedulesOperations',
     'LinkedServerOperations',
+    'PrivateEndpointConnectionsOperations',
+    'PrivateLinkResourcesOperations',
 ]
