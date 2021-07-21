@@ -483,7 +483,7 @@ class TimeSeriesElement(object):
 
     :keyword metadata_values: the metadata values returned if $filter was specified in the call.
     :paramtype metadata_values: list[~monitor_query_client.models.MetadataValue]
-    :keyword data: An array of data points representing the metric values.  This is only returned if
+    :keyword data: An array of data points representing the metric values. This is only returned if
      a result type of data is specified.
     :paramtype data: list[~monitor_query_client.models.MetricValue]
     """
