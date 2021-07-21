@@ -116,8 +116,6 @@ def deserialize_bytearray(attr, *args):
     :rtype: bytearray
     :raises: TypeError if string format invalid.
     """
-    if isinstance(attr, ET.Element):
-        attr = attr.text
     return bytearray(b64decode(attr))
 
 
@@ -128,8 +126,6 @@ def deserialize_base64(attr, *args):
     :rtype: bytearray
     :raises: TypeError if string format invalid.
     """
-    if isinstance(attr, ET.Element):
-        attr = attr.text
     padding = '=' * (3 - (len(attr) + 3) % 4)
     attr = attr + padding
     encoded = attr.replace('-', '+').replace('_', '/')
@@ -143,8 +139,6 @@ def deserialize_decimal(attr, *args):
     :rtype: Decimal
     :raises: DeserializationError if string format invalid.
     """
-    if isinstance(attr, ET.Element):
-        attr = attr.text
     try:
         return decimal.Decimal(attr)
     except decimal.DecimalException as err:
@@ -159,8 +153,6 @@ def deserialize_long(attr, *args):
     :rtype: long or int
     :raises: ValueError if string format invalid.
     """
-    if isinstance(attr, ET.Element):
-        attr = attr.text
     return _long_type(attr)
 
 
@@ -171,8 +163,6 @@ def deserialize_duration(attr, *args):
     :rtype: TimeDelta
     :raises: DeserializationError if string format invalid.
     """
-    if isinstance(attr, ET.Element):
-        attr = attr.text
     try:
         duration = isodate.parse_duration(attr)
     except(ValueError, OverflowError, AttributeError) as err:
@@ -189,8 +179,6 @@ def deserialize_date(attr, *args):
     :rtype: Date
     :raises: DeserializationError if string format invalid.
     """
-    if isinstance(attr, ET.Element):
-        attr = attr.text
     if re.search(r"[^\W\d_]", attr, re.I + re.U):
         raise DeserializationError("Date must have only digits and -. Received: %s" % attr)
     # This must NOT use defaultmonth/defaultday. Using None ensure this raises an exception.
@@ -204,8 +192,6 @@ def deserialize_time(attr, *args):
     :rtype: datetime.time
     :raises: DeserializationError if string format invalid.
     """
-    if isinstance(attr, ET.Element):
-        attr = attr.text
     if re.search(r"[^\W\d_]", attr, re.I + re.U):
         raise DeserializationError("Date must have only digits and -. Received: %s" % attr)
     return isodate.parse_time(attr)
@@ -218,8 +204,6 @@ def deserialize_rfc(attr, *args):
     :rtype: Datetime
     :raises: DeserializationError if string format invalid.
     """
-    if isinstance(attr, ET.Element):
-        attr = attr.text
     try:
         parsed_date = email.utils.parsedate_tz(attr)
         date_obj = datetime.datetime(
@@ -242,8 +226,6 @@ def deserialize_iso(attr, *args):
     :rtype: Datetime
     :raises: DeserializationError if string format invalid.
     """
-    if isinstance(attr, ET.Element):
-        attr = attr.text
     try:
         attr = attr.upper()
         match = _valid_date.match(attr)
@@ -280,10 +262,8 @@ def deserialize_unix(attr, *args):
     :rtype: Datetime
     :raises: DeserializationError if format invalid
     """
-    if isinstance(attr, ET.Element):
-        attr = int(attr.text)
     try:
-        date_obj = datetime.datetime.fromtimestamp(attr, TZ_UTC)
+        date_obj = datetime.datetime.fromtimestamp(int(attr), TZ_UTC)
     except ValueError as err:
         msg = "Cannot deserialize to unix datetime object."
         raise_with_traceback(DeserializationError, msg, err)
@@ -298,6 +278,8 @@ def deserialize_unicode(data, *args):
     :param str data: response string to be deserialized.
     :rtype: str or unicode
     """
+    if data is None:
+        return ""
     # We might be here because we have an enum modeled as string,
     # and we try to deserialize a partial dict with enum inside
     if isinstance(data, Enum):
@@ -358,19 +340,6 @@ def deserialize_basic(attr, data_type):
     :rtype: str, int, float or bool
     :raises: TypeError if string format is not valid.
     """
-    # If we're here, data is supposed to be a basic type.
-    # If it's still an XML node, take the text
-    if isinstance(attr, ET.Element):
-        attr = attr.text
-        if not attr:
-            if data_type == "str":
-                # None or '', node <a/> is empty string.
-                return ''
-            else:
-                # None or '', node <a/> with a strong type is None.
-                # Don't try to model "empty bool" or "empty int"
-                return None
-
     if data_type == 'bool':
         if attr in [True, False, 1, 0]:
             return bool(attr)
@@ -412,10 +381,6 @@ def _extract_name_from_internal_type(internal_type):
 
 def xml_key_extractor(attr, attr_desc, data):
     if isinstance(data, dict):
-        return None
-
-    # Test if this model is XML ready first
-    if not isinstance(data, ET.Element):
         return None
 
     xml_desc = attr_desc.get('xml', {})
@@ -658,25 +623,29 @@ class Deserializer(object):
         :raises: DeserializationError if deserialization fails.
         :return: Deserialized object.
         """
-        if data is None:
-            return data
+        if not data_type or data is None:
+            return None
+        try:
+            xml_data = data.text
+        except AttributeError:
+            xml_data = data
 
         try:
-            if not data_type:
-                return data
-            if data_type in self.basic_types.values():
-                return deserialize_basic(data, data_type)
-            if data_type in self.deserialize_type:
-                is_a_text_parsing_type = lambda x: x not in ["object", "[]", r"{}"]
-                if isinstance(data, ET.Element) and is_a_text_parsing_type(data_type) and not data.text:
-                    return None
-                data_val = self.deserialize_type[data_type](data)
-                return data_val
+            basic_deserialize = self.deserialize_type[data_type]
+            if not xml_data and data_type != 'str':
+                return None
+            return basic_deserialize(xml_data, data_type)
+        except KeyError:
+            pass
+        except (ValueError, TypeError, AttributeError) as err:
+            msg = "Unable to deserialize response data."
+            msg += " Data: {}, {}".format(data, data_type)
+            raise_with_traceback(DeserializationError, msg, err)
 
+        try:
             iter_type = data_type[0] + data_type[-1]
             if iter_type in self.deserialize_type:
                 return self.deserialize_type[iter_type](data, data_type[1:-1])
-
         except (ValueError, TypeError, AttributeError) as err:
             msg = "Unable to deserialize response data."
             msg += " Data: {}, {}".format(data, data_type)
@@ -691,8 +660,6 @@ class Deserializer(object):
         :param str iter_type: The type of object in the iterable.
         :rtype: list
         """
-        if attr is None:
-            return None
         return [self.deserialize_data(a, iter_type) for a in list(attr)]
 
     def deserialize_dict(self, attr, dict_type):
@@ -715,7 +682,5 @@ class Deserializer(object):
         :rtype: dict
         :raises: TypeError if non-builtin datatype encountered.
         """
-        if attr is None:
-            return None
         # Do no recurse on XML, just return the tree as-is
         return attr
