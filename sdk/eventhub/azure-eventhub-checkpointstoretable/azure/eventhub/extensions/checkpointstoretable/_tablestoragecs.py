@@ -80,7 +80,8 @@ class TableCheckpointStore:
             u'sequence_number' : checkpoint['sequence_number'],
         }
         my_new_entity['RowKey'] = my_new_entity['partition_id']
-        my_new_entity['PartitionKey'] = my_new_entity['eventhub_name'] + ' ' + my_new_entity['fully_qualified_namespace'] + ' ' + my_new_entity['consumer_group'] + ' ' + 'Checkpoint'
+        my_new_entity['PartitionKey'] = my_new_entity['eventhub_name'] + ' '
+        + my_new_entity['fully_qualified_namespace'] + ' ' + my_new_entity['consumer_group'] + ' ' + 'Checkpoint'
         new_entity = self.table_client.create_entity(entity=my_new_entity)
 
     def _create_entity_ownership(self, ownership, **kwargs):
@@ -94,7 +95,8 @@ class TableCheckpointStore:
             u'owner_id' : ownership['owner_id'],
         }
         my_new_entity['RowKey'] = my_new_entity['partition_id']
-        my_new_entity['PartitionKey'] = my_new_entity['eventhub_name'] + ' ' + my_new_entity['fully_qualified_namespace'] + ' ' + my_new_entity['consumer_group'] + ' ' + 'Ownership'
+        my_new_entity['PartitionKey'] = my_new_entity['eventhub_name'] + ' '
+        + my_new_entity['fully_qualified_namespace'] + ' ' + my_new_entity['consumer_group'] + ' ' + 'Ownership'
         new_entity = self.table_client.create_entity(entity=my_new_entity)
         return new_entity
 
@@ -112,7 +114,8 @@ class TableCheckpointStore:
             u'owner_id' : ownership['owner_id'],
         }
         my_new_entity['RowKey'] = my_new_entity['partition_id']
-        my_new_entity['PartitionKey'] = my_new_entity['eventhub_name'] + ' ' + my_new_entity['fully_qualified_namespace'] + ' ' + my_new_entity['consumer_group'] + ' ' + 'Ownership'
+        my_new_entity['PartitionKey'] = my_new_entity['eventhub_name'] + ' '
+        + my_new_entity['fully_qualified_namespace'] + ' ' + my_new_entity['consumer_group'] + ' ' + 'Ownership'
         return my_new_entity
 
     def _modify_entity_checkpoint(self, checkpoint, **kwargs):
@@ -130,7 +133,8 @@ class TableCheckpointStore:
             u'sequence_number' : checkpoint['sequence_number'],
         }
         my_new_entity['RowKey'] = my_new_entity['partition_id']
-        my_new_entity['PartitionKey'] = my_new_entity['eventhub_name'] + ' ' + my_new_entity['fully_qualified_namespace'] + ' ' + my_new_entity['consumer_group'] + ' ' + 'Checkpoint'
+        my_new_entity['PartitionKey'] = my_new_entity['eventhub_name'] + ' '
+        + my_new_entity['fully_qualified_namespace'] + ' ' + my_new_entity['consumer_group'] + ' ' + 'Checkpoint'
         return my_new_entity
 
     def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs):
@@ -226,7 +230,8 @@ class TableCheckpointStore:
     def _upload_ownership(self, ownership, metadata, **kwargs):
         try:
                 theentity = self._modify_entity_ownership(ownership)
-                entity = self.table_client.update_entity(mode=UpdateMode.REPLACE, entity=theentity,etag = ownership['etag'],match_condition = MatchConditions.IfNotModified)
+                entity = self.table_client.update_entity(mode=UpdateMode.REPLACE, entity=theentity,
+                etag = ownership['etag'],match_condition = MatchConditions.IfNotModified)
                 ownership['etag'] = entity['etag']
                 ownership['last_modified_time'] = entity['date']
         except (ResourceNotFoundError,ValueError):
