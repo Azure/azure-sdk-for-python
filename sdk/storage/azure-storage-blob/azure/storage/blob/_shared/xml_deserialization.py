@@ -537,34 +537,15 @@ class Deserializer(object):
         :raises: DeserializationError if deserialization fails.
         :return: Deserialized object.
         """
+        try:
+            # First, unpack the response if we have one.
+            response_data = unpack_xml_content(response_data.http_response, content_type)
+        except AttributeError:
+            pass
         if response_data is None:
             # No data. Moving on.
             return None
-        try:
-            # Data is a basic data type.
-            return self.deserialize_type[target_obj](response_data, target_obj)
-        except KeyError:
-            pass
-        try:
-            # Data is an XML model.
-            target_obj = self.dependencies[target_obj]
-            decoded_data = unpack_xml_content(response_data.http_response, content_type)
-            return self._deserialize(target_obj, decoded_data)
-        except KeyError:
-            pass
-        try:
-            # Data is in a dict/list.
-            structure = target_obj[0] + target_obj[-1]
-            inner_type = target_obj[1:-1]
-            try:
-                self.dependencies[inner_type]
-                response_data = unpack_xml_content(response_data.http_response, content_type)
-            except KeyError:
-                pass
-            return self.deserialize_type[structure](response_data, inner_type)
-        except (KeyError, IndexError):
-            pass
-        raise Exception("No idea what to do with {}, {}".format(target_obj, response_data))
+        return self._deserialize(target_obj, response_data)
 
     def failsafe_deserialize(self, target_obj, data, content_type=None):
         """Ignores any errors encountered in deserialization,
@@ -596,42 +577,17 @@ class Deserializer(object):
         :raises: DeserializationError if deserialization fails.
         :return: Deserialized object.
         """
-        # This is already a model, go recursive just in case
-        if hasattr(data, "_attribute_map"):
-            constants = [name for name, config in getattr(data, '_validation', {}).items()
-                         if config.get('constant')]
-            try:
-                for attr, mapconfig in data._attribute_map.items():
-                    if attr in constants:
-                        continue
-                    value = getattr(data, attr)
-                    if value is None:
-                        continue
-                    local_type = mapconfig['type']
-                    internal_data_type = local_type.strip('[]{}')
-                    if internal_data_type not in self.dependencies or isinstance(internal_data_type, Enum):
-                        continue
-                    setattr(
-                        data,
-                        attr,
-                        self._deserialize(local_type, value)
-                    )
-                return data
-            except AttributeError:
-                return
-
-        response, class_name = self._classify_target(target_obj, data)
-
-        if isinstance(response, basestring):
-            return self.deserialize_data(data, response)
-        elif isinstance(response, type) and issubclass(response, Enum):
-            raise Exception("BOOM additional enum")
-            return self.deserialize_enum(data, response)
+        try:
+            model_type = self.dependencies[target_obj]
+            if issubclass(model_type, Enum):
+                return deserialize_enum(data.text, model_type)
+        except KeyError:
+            return self.deserialize_data(data, target_obj)
 
         if data is None:
             return data
         try:
-            attributes = response._attribute_map
+            attributes = model_type._attribute_map
             d_attrs = {}
             for attr, attr_desc in attributes.items():
                 # Check empty string. If it's not empty, someone has a real "additionalProperties"...
@@ -647,27 +603,16 @@ class Deserializer(object):
                 for key_extractor in self.key_extractors:
                     found_value = key_extractor(attr, attr_desc, data)
                     if found_value is not None:
-                        if raw_value is not None and raw_value != found_value:
-                            raise Exception("BOOM raw_value")
-                            msg = ("Ignoring extracted value '%s' from %s for key '%s'"
-                                   " (duplicate extraction, follow extractors order)" )
-                            _LOGGER.warning(
-                                msg,
-                                found_value,
-                                key_extractor,
-                                attr
-                            )
-                            continue
                         raw_value = found_value
 
                 value = self.deserialize_data(raw_value, attr_desc['type'])
                 d_attrs[attr] = value
         except (AttributeError, TypeError, KeyError) as err:
-            msg = "Unable to deserialize to object: " + class_name
+            msg = "Unable to deserialize to object: " + str(target_obj)
             raise_with_traceback(DeserializationError, msg, err)
         else:
             additional_properties = self._build_additional_properties(attributes, data)
-            return self._instantiate_model(response, d_attrs, additional_properties)
+            return self._instantiate_model(model_type, d_attrs, additional_properties)
 
     def _build_additional_properties(self, attribute_map, data):
         if not self.additional_properties_detection:
@@ -684,58 +629,26 @@ class Deserializer(object):
         missing_keys = present_keys - known_keys
         return {key: data[key] for key in missing_keys}
 
-    def _classify_target(self, target, data):
-        """Check to see whether the deserialization target object can
-        be classified into a subclass.
-        Once classification has been determined, initialize object.
-
-        :param str target: The target object type to deserialize to.
-        :param str/dict data: The response data to deseralize.
-        """
-        if target is None:
-            return None, None
-
-        if isinstance(target, basestring):
-            try:
-                target = self.dependencies[target]
-            except KeyError:
-                return target, target
-        return target, target.__class__.__name__
-
     def _instantiate_model(self, response, attrs, additional_properties=None):
         """Instantiate a response model passing in deserialized args.
 
         :param response: The response model class.
         :param d_attrs: The deserialized response attributes.
         """
-        if callable(response):
-            subtype = getattr(response, '_subtype_map', {})
-            try:
-                readonly = [k for k, v in response._validation.items()
-                            if v.get('readonly')]
-                const = [k for k, v in response._validation.items()
-                         if v.get('constant')]
-                kwargs = {k: v for k, v in attrs.items()
-                          if k not in subtype and k not in readonly + const}
-                response_obj = response(**kwargs)
-                for attr in readonly:
-                    setattr(response_obj, attr, attrs.get(attr))
-                if additional_properties:
-                    response_obj.additional_properties = additional_properties
-                return response_obj
-            except TypeError as err:
-                msg = "Unable to deserialize {} into model {}. ".format(
-                    kwargs, response)
-                raise DeserializationError(msg + str(err))
-        else:
-            try:
-                for attr, value in attrs.items():
-                    setattr(response, attr, value)
-                return response
-            except Exception as exp:
-                msg = "Unable to populate response model. "
-                msg += "Type: {}, Error: {}".format(type(response), exp)
-                raise DeserializationError(msg)
+        try:
+            readonly = [k for k, v in response._validation.items() if v.get('readonly')]
+            const = [k for k, v in response._validation.items() if v.get('constant')]
+            kwargs = {k: v for k, v in attrs.items() if k not in readonly + const}
+            response_obj = response(**kwargs)
+            for attr in readonly:
+                setattr(response_obj, attr, attrs.get(attr))
+            if additional_properties:
+                response_obj.additional_properties = additional_properties
+            return response_obj
+        except Exception as err:
+            msg = "Unable to deserialize {} into model {}. ".format(
+                kwargs, response)
+            raise DeserializationError(msg + str(err))
 
     def deserialize_data(self, data, data_type):
         """Process data for deserialization according to data type.
@@ -754,10 +667,6 @@ class Deserializer(object):
             if data_type in self.basic_types.values():
                 return deserialize_basic(data, data_type)
             if data_type in self.deserialize_type:
-                if isinstance(data, self.deserialize_expected_types.get(data_type, tuple())):
-                    raise Exception("BOOM expected types")
-                    return data
-
                 is_a_text_parsing_type = lambda x: x not in ["object", "[]", r"{}"]
                 if isinstance(data, ET.Element) and is_a_text_parsing_type(data_type) and not data.text:
                     return None
@@ -768,18 +677,12 @@ class Deserializer(object):
             if iter_type in self.deserialize_type:
                 return self.deserialize_type[iter_type](data, data_type[1:-1])
 
-            obj_type = self.dependencies[data_type]
-            if issubclass(obj_type, Enum):
-                if isinstance(data, ET.Element):
-                    data = data.text
-                return self.deserialize_enum(data, obj_type)
-
         except (ValueError, TypeError, AttributeError) as err:
             msg = "Unable to deserialize response data."
             msg += " Data: {}, {}".format(data, data_type)
             raise_with_traceback(DeserializationError, msg, err)
         else:
-            return self._deserialize(obj_type, data)
+            return self._deserialize(data_type, data)
 
     def deserialize_iter(self, attr, iter_type):
         """Deserialize an iterable.
@@ -790,14 +693,7 @@ class Deserializer(object):
         """
         if attr is None:
             return None
-        if isinstance(attr, ET.Element): # If I receive an element here, get the children
-            attr = list(attr)
-        if not isinstance(attr, (list, set)):
-            raise DeserializationError("Cannot deserialize as [{}] an object of type {}".format(
-                iter_type,
-                type(attr)
-            ))
-        return [self.deserialize_data(a, iter_type) for a in attr]
+        return [self.deserialize_data(a, iter_type) for a in list(attr)]
 
     def deserialize_dict(self, attr, dict_type):
         """Deserialize a dictionary.
@@ -807,12 +703,8 @@ class Deserializer(object):
         :param str dict_type: The object type of the items in the dictionary.
         :rtype: dict
         """
-        if isinstance(attr, list):
-            return {x['key']: self.deserialize_data(x['value'], dict_type) for x in attr}
-
-        if isinstance(attr, ET.Element):
-            # Transform <Key>value</Key> into {"Key": "value"}
-            attr = {el.tag: el.text for el in attr}
+        # Transform <Key>value</Key> into {"Key": "value"}
+        attr = {el.tag: el.text for el in attr}
         return {k: self.deserialize_data(v, dict_type) for k, v in attr.items()}
 
     def deserialize_object(self, attr, **kwargs):
@@ -825,37 +717,5 @@ class Deserializer(object):
         """
         if attr is None:
             return None
-        if isinstance(attr, ET.Element):
-            # Do no recurse on XML, just return the tree as-is
-            return attr
-        if isinstance(attr, basestring):
-            return deserialize_basic(attr, 'str')
-        obj_type = type(attr)
-        if obj_type in self.basic_types:
-            return deserialize_basic(attr, self.basic_types[obj_type])
-        if obj_type is _long_type:
-            return deserialize_long(attr)
-
-        if obj_type == dict:
-            deserialized = {}
-            for key, value in attr.items():
-                try:
-                    deserialized[key] = self.deserialize_object(
-                        value, **kwargs)
-                except ValueError:
-                    deserialized[key] = None
-            return deserialized
-
-        if obj_type == list:
-            deserialized = []
-            for obj in attr:
-                try:
-                    deserialized.append(self.deserialize_object(
-                        obj, **kwargs))
-                except ValueError:
-                    pass
-            return deserialized
-
-        else:
-            error = "Cannot deserialize generic object with type: "
-            raise TypeError(error + str(obj_type))
+        # Do no recurse on XML, just return the tree as-is
+        return attr
