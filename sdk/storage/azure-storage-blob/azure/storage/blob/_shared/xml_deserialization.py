@@ -355,108 +355,11 @@ def deserialize_basic(attr, data_type):
     return eval(data_type)(attr)
 
 
-def _decode_attribute_map_key(key):
-    """This decode a key in an _attribute_map to the actual key we want to look at
-       inside the received data.
-
-       :param str key: A key string from the generated code
-    """
-    return key.replace('\\.', '.')
-
-
-def _extract_name_from_internal_type(internal_type):
-    """Given an internal type XML description, extract correct XML name with namespace.
-
-    :param dict internal_type: An model type
-    :rtype: tuple
-    :returns: A tuple XML name + namespace dict
-    """
-    internal_type_xml_map = getattr(internal_type, "_xml_map", {})
-    xml_name = internal_type_xml_map.get('name', internal_type.__name__)
-    xml_ns = internal_type_xml_map.get("ns", None)
-    if xml_ns:
-        xml_name = "{{{}}}{}".format(xml_ns, xml_name)
-    return xml_name
-
-
-def xml_key_extractor(attr, attr_desc, data):
-    if isinstance(data, dict):
-        return None
-
-    xml_desc = attr_desc.get('xml', {})
-    xml_name = xml_desc.get('name', attr_desc['key'])
-
-    # Look for a children
-    is_iter_type = attr_desc['type'].startswith("[")
-    is_wrapped = xml_desc.get("wrapped", False)
-    internal_type = attr_desc.get("internalType", None)
-    internal_type_xml_map = getattr(internal_type, "_xml_map", {})
-
-    # Integrate namespace if necessary
-    xml_ns = xml_desc.get('ns', internal_type_xml_map.get("ns", None))
-    if xml_ns:
-        xml_name = "{{{}}}{}".format(xml_ns, xml_name)
-
-    # If it's an attribute, that's simple
-    if xml_desc.get("attr", False):
-        return data.get(xml_name)
-
-    # If it's x-ms-text, that's simple too
-    if xml_desc.get("text", False):
-        return data.text
-
-    # Scenario where I take the local name:
-    # - Wrapped node
-    # - Internal type is an enum (considered basic types)
-    # - Internal type has no XML/Name node
-    if is_wrapped or (internal_type and (issubclass(internal_type, Enum) or 'name' not in internal_type_xml_map)):
-        children = data.findall(xml_name)
-    # If internal type has a local name and it's not a list, I use that name
-    elif not is_iter_type and internal_type and 'name' in internal_type_xml_map:
-        xml_name = _extract_name_from_internal_type(internal_type)
-        children = data.findall(xml_name)
-    # That's an array
-    else:
-        if internal_type: # Complex type, ignore itemsName and use the complex type name
-            items_name = _extract_name_from_internal_type(internal_type)
-        else:
-            items_name = xml_desc.get("itemsName", xml_name)
-        children = data.findall(items_name)
-
-    if len(children) == 0:
-        if is_iter_type:
-            if is_wrapped:
-                return None # is_wrapped no node, we want None
-            else:
-                return [] # not wrapped, assume empty list
-        return None  # Assume it's not there, maybe an optional node.
-
-    # If is_iter_type and not wrapped, return all found children
-    if is_iter_type:
-        if not is_wrapped:
-            return children
-        else: # Iter and wrapped, should have found one node only (the wrap one)
-            if len(children) != 1:
-                raise DeserializationError(
-                    "Tried to deserialize an array not wrapped, and found several nodes '{}'. Maybe you should declare this array as wrapped?".format(
-                        xml_name
-                    ))
-            return list(children[0])  # Might be empty list and that's ok.
-
-    # Here it's not a itertype, we should have found one element only or empty
-    if len(children) > 1:
-        raise DeserializationError("Find several XML '{}' where it was not expected".format(xml_name))
-    return children[0]
-
 class Deserializer(object):
     """Response object model deserializer.
 
     :param dict classes: Class type dictionary for deserializing complex types.
-    :ivar list key_extractors: Ordered list of extractors to be used by this deserializer.
     """
-
-    basic_types = {str: 'str', int: 'int', bool: 'bool', float: 'float'}
-
     def __init__(self, classes=None):
         self.deserialize_type = {
             'str': deserialize_basic,
@@ -477,21 +380,8 @@ class Deserializer(object):
             '[]': self.deserialize_iter,
             '{}': self.deserialize_dict
             }
-        self.deserialize_expected_types = {
-            'duration': (isodate.Duration, datetime.timedelta),
-            'iso-8601': (datetime.datetime)
-        }
+
         self.dependencies = dict(classes) if classes else {}
-        self.key_extractors = [
-            xml_key_extractor
-        ]
-        # Additional properties only works if the "rest_key_extractor" is used to
-        # extract the keys. Making it to work whatever the key extractor is too much
-        # complicated, with no real scenario for now.
-        # So adding a flag to disable additional properties detection. This flag should be
-        # used if your expect the deserialization to NOT come from a JSON REST syntax.
-        # Otherwise, result are unexpected
-        self.additional_properties_detection = True
 
     def __call__(self, target_obj, response_data, content_type=None):
         """Call the deserializer to process a REST response.
@@ -510,7 +400,8 @@ class Deserializer(object):
         if response_data is None:
             # No data. Moving on.
             return None
-        return self._deserialize(target_obj, response_data)
+        #return self._deserialize(target_obj, response_data)
+        return self.deserialize_data(response_data, target_obj)
 
     def failsafe_deserialize(self, target_obj, data, content_type=None):
         """Ignores any errors encountered in deserialization,
@@ -554,45 +445,31 @@ class Deserializer(object):
         try:
             attributes = model_type._attribute_map
             d_attrs = {}
+            include_extra_props = False
             for attr, attr_desc in attributes.items():
                 # Check empty string. If it's not empty, someone has a real "additionalProperties"...
                 if attr == "additional_properties" and attr_desc["key"] == '':
+                    include_extra_props = True
                     continue
-                raw_value = None
-                # Enhance attr_desc with some dynamic data
-                attr_desc = attr_desc.copy() # Do a copy, do not change the real one
-                internal_data_type = attr_desc["type"].strip('[]{}')
-                if internal_data_type in self.dependencies:
-                    attr_desc["internalType"] = self.dependencies[internal_data_type]
-
-                for key_extractor in self.key_extractors:
-                    found_value = key_extractor(attr, attr_desc, data)
-                    if found_value is not None:
-                        raw_value = found_value
-
-                value = self.deserialize_data(raw_value, attr_desc['type'])
+                attr_type = attr_desc["type"]
+                try:
+                    subtype = self.dependencies[attr_type.strip('[]{}')]
+                except KeyError:
+                    subtype = None
+                if attr_type[0] == '[':
+                    raw_value = self.multi_xml_key_extractor(attr_desc, data, subtype)
+                else:  
+                    raw_value = self.xml_key_extractor(attr_desc, data, subtype)
+                value = self.deserialize_data(raw_value, attr_type)
                 d_attrs[attr] = value
         except (AttributeError, TypeError, KeyError) as err:
             msg = "Unable to deserialize to object: " + str(target_obj)
             raise_with_traceback(DeserializationError, msg, err)
         else:
-            additional_properties = self._build_additional_properties(attributes, data)
-            return self._instantiate_model(model_type, d_attrs, additional_properties)
-
-    def _build_additional_properties(self, attribute_map, data):
-        if not self.additional_properties_detection:
-            return None
-        if "additional_properties" in attribute_map and attribute_map.get("additional_properties", {}).get("key") != '':
-            # Check empty string. If it's not empty, someone has a real "additionalProperties"
-            return None
-        if isinstance(data, ET.Element):
-            data = {el.tag: el.text for el in data}
-
-        known_keys = {_decode_attribute_map_key(_FLATTEN.split(desc['key'])[0])
-                      for desc in attribute_map.values() if desc['key'] != ''}
-        present_keys = set(data.keys())
-        missing_keys = present_keys - known_keys
-        return {key: data[key] for key in missing_keys}
+            if include_extra_props:
+                extra = {el.tag: el.text for el in data if el.tag not in d_attrs}
+                return self._instantiate_model(model_type, d_attrs, extra)
+            return self._instantiate_model(model_type, d_attrs)
 
     def _instantiate_model(self, response, attrs, additional_properties=None):
         """Instantiate a response model passing in deserialized args.
@@ -614,6 +491,40 @@ class Deserializer(object):
             msg = "Unable to deserialize {} into model {}. ".format(
                 kwargs, response)
             raise DeserializationError(msg + str(err))
+
+    def multi_xml_key_extractor(self, attr_desc, data, subtype):
+        xml_desc = attr_desc.get('xml', {})
+        xml_name = xml_desc.get('name', attr_desc['key'])
+        is_wrapped = xml_desc.get("wrapped", False)
+        subtype_xml_map = getattr(subtype, "_xml_map", {})
+        if is_wrapped:
+            items_name = xml_name
+        elif subtype:
+            items_name = subtype_xml_map.get('name', xml_name)
+        else:
+            items_name = xml_desc.get("itemsName", xml_name)
+        children = data.findall(items_name)
+        if is_wrapped:
+            if len(children) == 0:
+                return None
+            return list(children[0])
+        return children
+
+    def xml_key_extractor(self, attr_desc, data, subtype):
+        xml_desc = attr_desc.get('xml', {})
+        xml_name = xml_desc.get('name', attr_desc['key'])
+
+        # If it's an attribute, that's simple
+        if xml_desc.get("attr", False):
+            return data.get(xml_name)
+
+        # If it's x-ms-text, that's simple too
+        if xml_desc.get("text", False):
+            return data.text
+
+        subtype_xml_map = getattr(subtype, "_xml_map", {})
+        xml_name = subtype_xml_map.get('name', xml_name)
+        return data.find(xml_name)
 
     def deserialize_data(self, data, data_type):
         """Process data for deserialization according to data type.
