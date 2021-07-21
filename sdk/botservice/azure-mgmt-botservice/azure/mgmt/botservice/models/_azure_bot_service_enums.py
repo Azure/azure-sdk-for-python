@@ -59,6 +59,33 @@ class Kind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FUNCTION = "function"
     AZUREBOT = "azurebot"
 
+class OperationResultStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The status of the operation being performed.
+    """
+
+    CANCELED = "Canceled"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    REQUESTED = "Requested"
+    RUNNING = "Running"
+
+class PrivateEndpointConnectionProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The current provisioning state.
+    """
+
+    SUCCEEDED = "Succeeded"
+    CREATING = "Creating"
+    DELETING = "Deleting"
+    FAILED = "Failed"
+
+class PrivateEndpointServiceConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The private endpoint connection status.
+    """
+
+    PENDING = "Pending"
+    APPROVED = "Approved"
+    REJECTED = "Rejected"
+
 class RegenerateKeysChannelName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     WEB_CHAT_CHANNEL = "WebChatChannel"

@@ -12,6 +12,9 @@ from ._direct_line_operations import DirectLineOperations
 from ._operations import Operations
 from ._bot_connection_operations import BotConnectionOperations
 from ._host_settings_operations import HostSettingsOperations
+from ._operation_results_operations import OperationResultsOperations
+from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
+from ._private_link_resources_operations import PrivateLinkResourcesOperations
 
 __all__ = [
     'BotsOperations',
@@ -20,4 +23,7 @@ __all__ = [
     'Operations',
     'BotConnectionOperations',
     'HostSettingsOperations',
+    'OperationResultsOperations',
+    'PrivateEndpointConnectionsOperations',
+    'PrivateLinkResourcesOperations',
 ]
