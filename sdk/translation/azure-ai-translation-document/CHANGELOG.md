@@ -6,6 +6,11 @@
 
 ### Breaking Changes
 
+- Changed: renamed kwargs `translated_before` and `translated_after` to `created_before` and `created_after`, respectively,
+for `list_all_document_statuses`.
+- Changed: renamed `order_by` sorting query option `createdDateTimeUtc` to `created_on` for `list_all_translation_statuses` and
+`list_all_document_statuses`.
+
 ### Bugs Fixed
 
 ### Other Changes
