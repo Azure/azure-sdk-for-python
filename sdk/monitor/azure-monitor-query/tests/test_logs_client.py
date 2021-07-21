@@ -58,7 +58,7 @@ def test_logs_server_timeout():
             "range x from 1 to 10000000000 step 1 | count",
             server_timeout=1,
         )
-        assert e.message.contains('Gateway timeout')
+    assert e.value.message.contains('Gateway timeout')
 
 @pytest.mark.live_test_only
 def test_logs_batch_query():
