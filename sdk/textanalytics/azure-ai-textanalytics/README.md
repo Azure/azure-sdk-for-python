@@ -17,7 +17,7 @@ Text Analytics is a cloud-based service that provides advanced natural language 
 
 ### Prerequisites
 
-- Python 2.7, or 3.5 or later is required to use this package.
+- Python 2.7, or 3.6 or later is required to use this package.
 - You must have an [Azure subscription][azure_subscription] and a
   [Cognitive Services or Text Analytics resource][ta_or_cs_resource] to use this package.
 
@@ -622,7 +622,7 @@ result = text_analytics_client.analyze_sentiment(documents, logging_enable=True)
 
 These code samples show common scenario operations with the Azure Text Analytics client library.
 The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations
-with Text Analytics and require Python 3.5 or later.
+with Text Analytics and require Python 3.6 or later.
 
 Authenticate the client with a Cognitive Services/Text Analytics API key or a token credential from [azure-identity][azure_identity]:
 
