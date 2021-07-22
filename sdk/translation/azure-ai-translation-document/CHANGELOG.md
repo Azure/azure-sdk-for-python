@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- The single translation input version of `begin_translation(source, target, target_language_code)` now accepts keyword arguments
+`storage_type`, `glossaries`, `category_id`, `prefix`, `suffix`, and `source_language_code`.
+
 ### Breaking Changes
 
 - Changed: renamed kwargs `translated_before` and `translated_after` to `created_before` and `created_after`, respectively,

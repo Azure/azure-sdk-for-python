@@ -123,8 +123,8 @@ class DocumentTranslationClient(object):
     ):  # pylint: disable=client-method-missing-type-annotations
         """Begin translating the document(s) in your source container to your target container
         in the given language. To perform a single translation from source to target, pass the `source_url`,
-        `target_url`, and `target_language_code` parameters. To pass multiple inputs for translation, including
-        other translation options, pass the `inputs` parameter as a list of
+        `target_url`, and `target_language_code` parameters including any optional keyword arguments.
+        To pass multiple inputs for translation, pass the `inputs` parameter as a list of
         :class:`~azure.ai.translation.document.DocumentTranslationInput`.
 
         For supported languages and document formats, see the service documentation:
@@ -141,6 +141,19 @@ class DocumentTranslationClient(object):
             source URL to documents and can contain multiple TranslationTargets (one for each language)
             for the destination to write translated documents.
         :type inputs: List[~azure.ai.translation.document.DocumentTranslationInput]
+        :keyword str source_language_code: Language code for the source documents.
+            If none is specified, the source language will be auto-detected for each document.
+        :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for
+            translation. For example, when using a Azure storage blob Uri, use the prefix to restrict
+            sub folders for translation.
+        :keyword str suffix: A case-sensitive suffix string to filter documents in the source path for
+            translation. This is most often use for file extensions.
+        :keyword storage_type: Storage type of the input documents source string. Possible values
+            include: "Folder", "File".
+        :paramtype storage_type: str or ~azure.ai.translation.document.StorageInputType
+        :keyword str category_id: Category / custom model ID for using custom translation.
+        :keyword glossaries: Glossaries to apply to translation.
+        :paramtype glossaries: list[~azure.ai.translation.document.TranslationGlossary]
         :return: An instance of an AsyncDocumentTranslationLROPoller. Call `result()` on the poller
             object to return a pageable of DocumentStatus. A DocumentStatus will be
             returned for each translation on a document.
