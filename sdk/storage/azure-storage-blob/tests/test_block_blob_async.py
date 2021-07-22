@@ -21,7 +21,7 @@ from azure.storage.blob._shared.policies import StorageContentValidation
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError, ResourceNotFoundError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, BlobAccountPreparer
 from _shared.testcase import GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
 from devtools_testutils.storage.aio import AsyncStorageTestCase
 
@@ -528,7 +528,8 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         self.assertEqual(content.properties.etag, put_block_list_resp.get('etag'))
         self.assertEqual(content.properties.last_modified, put_block_list_resp.get('last_modified'))
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix='storagename', use_cache=True)
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", use_cache=True)
     async def test_put_block_with_immutability_policy(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
         container_name = self.get_resource_name('vlwcontainer')
@@ -540,7 +541,7 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
                 immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
-            await mgmt_client.blob_containers.create("XClient", storage_account.name, container_name, blob_container=property)
+            await mgmt_client.blob_containers.create(resource_group.name, storage_account.name, container_name, blob_container=property)
 
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(container_name, blob_name)
@@ -568,7 +569,7 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         self.assertIsNotNone(download_resp.properties['immutability_policy']['policy_mode'])
 
         if self.is_live:
-            await mgmt_client.blob_containers.delete("XClient", storage_account.name, self.container_name)
+            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test

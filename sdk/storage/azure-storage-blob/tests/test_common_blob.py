@@ -46,7 +46,7 @@ from azure.storage.blob import (
     StandardBlobTier,
     BlobImmutabilityPolicyMode, ImmutabilityPolicy)
 from azure.storage.blob._generated.models import RehydratePriority
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, BlobAccountPreparer
 from _shared.testcase import GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
 from devtools_testutils.storage import StorageTestCase
 
@@ -1164,7 +1164,8 @@ class StorageCommonBlobTest(StorageTestCase):
         copy_content = copyblob.download_blob().readall()
         self.assertEqual(copy_content, self.byte_data)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix='storagename', use_cache=True)
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", use_cache=True)
     def test_copy_blob_with_immutability_policy(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
 
@@ -1175,7 +1176,7 @@ class StorageCommonBlobTest(StorageTestCase):
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
                 immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
-            mgmt_client.blob_containers.create("XClient", storage_account.name, container_name, blob_container=property)
+            mgmt_client.blob_containers.create(resource_group.name, storage_account.name, container_name, blob_container=property)
 
         blob_name = self._create_block_blob()
         # Act
@@ -1200,7 +1201,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertFalse(isinstance(copy['copy_status'], Enum))
 
         if self.is_live:
-            mgmt_client.blob_containers.delete("XClient", storage_account.name, self.container_name)
+            mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
 
     @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
@@ -1765,7 +1766,8 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertTrue(container_response.ok)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix='storagename', use_cache=True)
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", use_cache=True)
     def test_set_immutability_policy_using_sas(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
 
@@ -1778,7 +1780,7 @@ class StorageCommonBlobTest(StorageTestCase):
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
                 immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
-            mgmt_client.blob_containers.create("XClient", storage_account.name, container_name, blob_container=property)
+            mgmt_client.blob_containers.create(resource_group.name, storage_account.name, container_name, blob_container=property)
 
         blob_name = self.get_resource_name('vlwblob')
         blob = self.bsc.get_blob_client(container_name, blob_name)
@@ -2519,7 +2521,8 @@ class StorageCommonBlobTest(StorageTestCase):
         # Assert that the token attempts to refresh 4 times (i.e, get_token called 4 times)
         self.assertEqual(token_credential.get_token_count, 4)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix='storagename', use_cache=True)
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", use_cache=True)
     def test_blob_immutability_policy(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
 
@@ -2530,7 +2533,7 @@ class StorageCommonBlobTest(StorageTestCase):
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
                 immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
-            mgmt_client.blob_containers.create("XClient", storage_account.name, container_name, blob_container=property)
+            mgmt_client.blob_containers.create(resource_group.name, storage_account.name, container_name, blob_container=property)
 
         # Act
         blob_name = self.get_resource_name('vlwblob')
@@ -2556,7 +2559,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertIsNone(props.immutability_policy_mode)
 
         if self.is_live:
-            mgmt_client.blob_containers.delete("XClient", storage_account.name, self.container_name)
+            mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
 
     @GlobalStorageAccountPreparer()
     def test_blob_legal_hold(self, resource_group, location, storage_account, storage_account_key):
@@ -2569,7 +2572,7 @@ class StorageCommonBlobTest(StorageTestCase):
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
                 immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
-            mgmt_client.blob_containers.create("XClient", storage_account.name, container_name, blob_container=property)
+            mgmt_client.blob_containers.create(resource_group.name, storage_account.name, container_name, blob_container=property)
 
         # Act
         blob_name = self.get_resource_name('vlwblob')
@@ -2591,9 +2594,10 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertFalse(props2['has_legal_hold'])
 
         if self.is_live:
-            mgmt_client.blob_containers.delete("XClient", storage_account.name, self.container_name)
+            mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix='storagename', use_cache=True)
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", use_cache=True)
     def test_download_blob_with_immutability_policy(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         container_name = self.get_resource_name('vlwcontainer')
@@ -2603,7 +2607,7 @@ class StorageCommonBlobTest(StorageTestCase):
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
                 immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
-            mgmt_client.blob_containers.create("XClient", storage_account.name, container_name, blob_container=property)
+            mgmt_client.blob_containers.create(resource_group.name, storage_account.name, container_name, blob_container=property)
 
         # Act
         blob_name = self.get_resource_name('vlwblob')
@@ -2631,9 +2635,10 @@ class StorageCommonBlobTest(StorageTestCase):
         blob.delete_immutability_policy()
 
         if self.is_live:
-            mgmt_client.blob_containers.delete("XClient", storage_account.name, self.container_name)
+            mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix='storagename', use_cache=True)
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", use_cache=True)
     def test_list_blobs_with_immutability_policy(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         container_name = self.get_resource_name('vlwcontainer')
@@ -2643,7 +2648,7 @@ class StorageCommonBlobTest(StorageTestCase):
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
                 immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
-            mgmt_client.blob_containers.create("XClient", storage_account.name, container_name, blob_container=property)
+            mgmt_client.blob_containers.create(resource_group.name, storage_account.name, container_name, blob_container=property)
 
         # Act
         blob_name = self.get_resource_name('vlwblob')
@@ -2664,6 +2669,6 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertIsNotNone(blob_list[0]['immutability_policy']['policy_mode'])
 
         if self.is_live:
-            mgmt_client.blob_containers.delete("XClient", storage_account.name, self.container_name)
+            mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
 
 # ------------------------------------------------------------------------------

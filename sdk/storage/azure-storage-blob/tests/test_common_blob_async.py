@@ -53,7 +53,8 @@ from azure.storage.blob import (
     AccountSasPermissions,
     StandardBlobTier, RehydratePriority, BlobImmutabilityPolicyMode, ImmutabilityPolicy)
 
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, BlobAccountPreparer, \
+    CachedResourceGroupPreparer
 from _shared.testcase import GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
 from devtools_testutils.storage.aio import AsyncStorageTestCase
 
@@ -1434,7 +1435,8 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         copy_content = await (await copyblob.download_blob()).readall()
         self.assertEqual(copy_content, self.byte_data)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix='storagename', use_cache=True)
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", use_cache=True)
     async def test_copy_blob_with_immutability_policy(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
 
@@ -1445,7 +1447,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
                 immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
-            await mgmt_client.blob_containers.create("XClient", storage_account.name, container_name, blob_container=property)
+            await mgmt_client.blob_containers.create(resource_group.name, storage_account.name, container_name, blob_container=property)
 
         blob_name = await self._create_block_blob()
         # Act
@@ -1472,7 +1474,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertFalse(isinstance(copy['copy_status'], Enum))
 
         if self.is_live:
-            await mgmt_client.blob_containers.delete("XClient", storage_account.name, self.container_name)
+            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
 
     # @GlobalStorageAccountPreparer()
     # @AsyncStorageTestCase.await_prepared_test
@@ -2529,7 +2531,8 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
             await bsc.get_service_properties()
             assert transport.session is not None
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix='storagename', use_cache=True)
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", use_cache=True)
     async def test_blob_immutability_policy(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
 
@@ -2540,7 +2543,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
                 immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
-            await mgmt_client.blob_containers.create("XClient", storage_account.name, container_name, blob_container=property)
+            await mgmt_client.blob_containers.create(resource_group.name, storage_account.name, container_name, blob_container=property)
 
         # Act
         blob_name = self.get_resource_name('vlwblob')
@@ -2568,7 +2571,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertIsNone(props['immutability_policy']['policy_mode'])
 
         if self.is_live:
-            await mgmt_client.blob_containers.delete("XClient", storage_account.name, self.container_name)
+            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
 
     @GlobalStorageAccountPreparer()
     async def test_blob_legal_hold(self, resource_group, location, storage_account, storage_account_key):
@@ -2581,7 +2584,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
                 immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
-            await mgmt_client.blob_containers.create("XClient", storage_account.name, container_name, blob_container=property)
+            await mgmt_client.blob_containers.create(resource_group.name, storage_account.name, container_name, blob_container=property)
 
         # Act
         blob_name = self.get_resource_name('vlwblob')
@@ -2603,9 +2606,10 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertFalse(props2['has_legal_hold'])
 
         if self.is_live:
-            await mgmt_client.blob_containers.delete("XClient", storage_account.name, self.container_name)
+            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix='storagename', use_cache=True)
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", use_cache=True)
     async def test_download_blob_with_immutability_policy(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
         container_name = self.get_resource_name('vlwcontainer')
@@ -2615,7 +2619,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
                 immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
-            await mgmt_client.blob_containers.create("XClient", storage_account.name, container_name, blob_container=property)
+            await mgmt_client.blob_containers.create(resource_group.name, storage_account.name, container_name, blob_container=property)
 
         # Act
         blob_name = self.get_resource_name('vlwblob')
@@ -2643,9 +2647,10 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         await blob.delete_immutability_policy()
 
         if self.is_live:
-            await mgmt_client.blob_containers.delete("XClient", storage_account.name, self.container_name)
+            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix='storagename', use_cache=True)
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", use_cache=True)
     async def test_list_blobs_with_immutability_policy(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
         container_name = self.get_resource_name('vlwcontainer')
@@ -2655,7 +2660,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
                 immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
-            await mgmt_client.blob_containers.create("XClient", storage_account.name, container_name, blob_container=property)
+            await mgmt_client.blob_containers.create(resource_group.name, storage_account.name, container_name, blob_container=property)
 
         # Act
         blob_name = self.get_resource_name('vlwblob')
@@ -2679,6 +2684,6 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertIsNotNone(blob_list[0]['immutability_policy']['policy_mode'])
 
         if self.is_live:
-            await mgmt_client.blob_containers.delete("XClient", storage_account.name, self.container_name)
+            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
 
 # ------------------------------------------------------------------------------

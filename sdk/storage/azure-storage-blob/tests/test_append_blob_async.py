@@ -18,7 +18,7 @@ import unittest
 import uuid
 
 from azure.mgmt.storage.aio import StorageManagementClient
-
+from devtools_testutils import BlobAccountPreparer
 
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceModifiedError
@@ -1407,8 +1407,8 @@ class StorageAppendBlobAsyncTest(AsyncStorageTestCase):
         self.assertIsNone(prop.is_append_blob_sealed)
         await copied_blob3.append_block("abc")
 
-    @GlobalStorageAccountPreparer()
-    @AsyncStorageTestCase.await_prepared_test
+    @ResourceGroupPreparer(name_prefix='storagename', use_cache=True)
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", use_cache=True)
     async def test_create_append_blob_with_immutability_policy_async(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         await self._setup(bsc)
@@ -1420,7 +1420,7 @@ class StorageAppendBlobAsyncTest(AsyncStorageTestCase):
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
                 immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
-            await mgmt_client.blob_containers.create("XClient", storage_account.name, container_name, blob_container=property)
+            await mgmt_client.blob_containers.create(resource_group.name, storage_account.name, container_name, blob_container=property)
 
         # Act
         blob_name = self.get_resource_name('vlwblob')
@@ -1441,6 +1441,6 @@ class StorageAppendBlobAsyncTest(AsyncStorageTestCase):
         self.assertIsNotNone(props['immutability_policy']['policy_mode'])
 
         if self.is_live:
-            await mgmt_client.blob_containers.delete("XClient", storage_account.name, self.container_name)
+            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
 
 # ------------------------------------------------------------------------------
