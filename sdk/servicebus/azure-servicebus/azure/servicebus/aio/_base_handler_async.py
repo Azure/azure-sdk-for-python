@@ -149,6 +149,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         self._auth_uri = None
         self._properties = create_properties(self._config.user_agent)
         self._shutdown = asyncio.Event()
+        self._service_bus_client = kwargs.pop("service_bus_client", None)
 
     @classmethod
     def _convert_connection_string_to_kwargs(cls, conn_str, **kwargs):
@@ -385,3 +386,9 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         """
         await self._close_handler()
         self._shutdown.set()
+        try:
+            self._service_bus_client._handlers.remove(self)  # pylint: disable=protected-access
+        except AttributeError:
+            pass  # the handler is not related to a client
+        except ValueError:
+            pass  # the handler has already been removed from the client._handlers

@@ -29,7 +29,9 @@ from servicebus_preparer import (
     ServiceBusQueuePreparer,
     ServiceBusNamespaceAuthorizationRulePreparer,
     ServiceBusQueueAuthorizationRulePreparer,
-    CachedServiceBusQueuePreparer
+    CachedServiceBusQueuePreparer,
+    CachedServiceBusTopicPreparer,
+    CachedServiceBusSubscriptionPreparer
 )
 
 class ServiceBusClientTests(AzureMgmtTestCase):
@@ -201,7 +203,9 @@ class ServiceBusClientTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer()
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_sb_client_close_spawned_handlers(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    @CachedServiceBusTopicPreparer(name_prefix='servicebustest')
+    @CachedServiceBusSubscriptionPreparer(name_prefix='servicebustest')
+    def test_sb_client_close_spawned_handlers(self, servicebus_namespace_connection_string, servicebus_queue, servicebus_topic, servicebus_subscription, **kwargs):
         client = ServiceBusClient.from_connection_string(servicebus_namespace_connection_string)
 
         client.close()
@@ -236,6 +240,45 @@ class ServiceBusClientTests(AzureMgmtTestCase):
 
         assert not sender._handler and not sender._running
         assert not receiver._handler and not receiver._running
+        assert len(client._handlers) == 0
+
+        sender = client.get_queue_sender(servicebus_queue.name)
+        receiver = client.get_queue_receiver(servicebus_queue.name)
+        assert len(client._handlers) == 2
+        with sender, receiver:
+            pass
+        assert len(client._handlers) == 0
+
+        queue_sender = client.get_queue_sender(servicebus_queue.name)
+        queue_receiver = client.get_queue_receiver(servicebus_queue.name)
+        assert len(client._handlers) == 2
+        with queue_sender, queue_receiver:
+            pass
+        assert len(client._handlers) == 0
+
+        queue_sender = client.get_queue_sender(servicebus_queue.name)
+        queue_receiver = client.get_queue_receiver(servicebus_queue.name)
+        assert len(client._handlers) == 2
+        queue_sender.close()
+        queue_sender.close()
+        queue_receiver.close()
+        queue_receiver.close()
+        assert len(client._handlers) == 0
+
+        topic_sender = client.get_topic_sender(servicebus_topic.name)
+        subscription_receiver = client.get_subscription_receiver(servicebus_topic.name, servicebus_subscription.name)
+        assert len(client._handlers) == 2
+        with topic_sender, subscription_receiver:
+            pass
+        assert len(client._handlers) == 0
+
+        topic_sender = client.get_topic_sender(servicebus_topic.name)
+        subscription_receiver = client.get_subscription_receiver(servicebus_topic.name, servicebus_subscription.name)
+        assert len(client._handlers) == 2
+        topic_sender.close()
+        topic_sender.close()
+        subscription_receiver.close()
+        subscription_receiver.close()
         assert len(client._handlers) == 0
 
     @pytest.mark.liveTest

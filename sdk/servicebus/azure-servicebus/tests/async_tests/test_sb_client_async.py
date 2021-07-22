@@ -25,7 +25,9 @@ from servicebus_preparer import (
     ServiceBusQueuePreparer,
     ServiceBusNamespaceAuthorizationRulePreparer,
     ServiceBusQueueAuthorizationRulePreparer,
-    CachedServiceBusQueuePreparer
+    CachedServiceBusQueuePreparer,
+    CachedServiceBusTopicPreparer,
+    CachedServiceBusSubscriptionPreparer
 )
 from utilities import get_logger
 
@@ -137,7 +139,9 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer()
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    async def test_async_sb_client_close_spawned_handlers(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    @CachedServiceBusTopicPreparer(name_prefix='servicebustest')
+    @CachedServiceBusSubscriptionPreparer(name_prefix='servicebustest')
+    async def test_async_sb_client_close_spawned_handlers(self, servicebus_namespace_connection_string, servicebus_queue, servicebus_topic, servicebus_subscription, **kwargs):
         client = ServiceBusClient.from_connection_string(servicebus_namespace_connection_string)
 
         await client.close()
@@ -172,6 +176,38 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
 
         assert not sender._handler and not sender._running
         assert not receiver._handler and not receiver._running
+        assert len(client._handlers) == 0
+
+        queue_sender = client.get_queue_sender(servicebus_queue.name)
+        queue_receiver = client.get_queue_receiver(servicebus_queue.name)
+        assert len(client._handlers) == 2
+        async with queue_sender, queue_receiver:
+            pass
+        assert len(client._handlers) == 0
+
+        queue_sender = client.get_queue_sender(servicebus_queue.name)
+        queue_receiver = client.get_queue_receiver(servicebus_queue.name)
+        assert len(client._handlers) == 2
+        await queue_sender.close()
+        await queue_sender.close()
+        await queue_receiver.close()
+        await queue_receiver.close()
+        assert len(client._handlers) == 0
+
+        topic_sender = client.get_topic_sender(servicebus_topic.name)
+        subscription_receiver = client.get_subscription_receiver(servicebus_topic.name, servicebus_subscription.name)
+        assert len(client._handlers) == 2
+        async with topic_sender, subscription_receiver:
+            pass
+        assert len(client._handlers) == 0
+
+        topic_sender = client.get_topic_sender(servicebus_topic.name)
+        subscription_receiver = client.get_subscription_receiver(servicebus_topic.name, servicebus_subscription.name)
+        assert len(client._handlers) == 2
+        await topic_sender.close()
+        await topic_sender.close()
+        await subscription_receiver.close()
+        await subscription_receiver.close()
         assert len(client._handlers) == 0
 
     @pytest.mark.liveTest

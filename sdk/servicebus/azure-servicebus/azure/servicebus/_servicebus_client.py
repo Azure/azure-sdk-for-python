@@ -115,7 +115,7 @@ class ServiceBusClient(object):
 
         :return: None
         """
-        for handler in self._handlers:
+        for handler in set(self._handlers):
             try:
                 handler.close()
             except Exception as exception:  # pylint: disable=broad-except
@@ -214,6 +214,7 @@ class ServiceBusClient(object):
             retry_total=self._config.retry_total,
             retry_backoff_factor=self._config.retry_backoff_factor,
             retry_backoff_max=self._config.retry_backoff_max,
+            service_bus_client=self,
             **kwargs
         )
         self._handlers.append(handler)
@@ -305,6 +306,7 @@ class ServiceBusClient(object):
             retry_total=self._config.retry_total,
             retry_backoff_factor=self._config.retry_backoff_factor,
             retry_backoff_max=self._config.retry_backoff_max,
+            service_bus_client=self,
             **kwargs
         )
         self._handlers.append(handler)
@@ -346,6 +348,7 @@ class ServiceBusClient(object):
             retry_total=self._config.retry_total,
             retry_backoff_factor=self._config.retry_backoff_factor,
             retry_backoff_max=self._config.retry_backoff_max,
+            service_bus_client=self,
             **kwargs
         )
         self._handlers.append(handler)
@@ -435,6 +438,7 @@ class ServiceBusClient(object):
                 retry_total=self._config.retry_total,
                 retry_backoff_factor=self._config.retry_backoff_factor,
                 retry_backoff_max=self._config.retry_backoff_max,
+                service_bus_client=self,
                 **kwargs
             )
         except ValueError:
@@ -455,6 +459,7 @@ class ServiceBusClient(object):
                 retry_total=self._config.retry_total,
                 retry_backoff_factor=self._config.retry_backoff_factor,
                 retry_backoff_max=self._config.retry_backoff_max,
+                service_bus_client=self,
                 **kwargs
             )
         self._handlers.append(handler)
