@@ -16,7 +16,6 @@ import uuid
 from datetime import datetime, timedelta
 
 from azure.mgmt.storage import StorageManagementClient
-from azure.mgmt.storage.v2018_02_01.models import ImmutabilityPolicy
 from devtools_testutils import BlobAccountPreparer, ResourceGroupPreparer
 
 from azure.core import MatchConditions
@@ -27,7 +26,7 @@ from azure.storage.blob import (
     ContainerClient,
     BlobClient,
     BlobType,
-    BlobSasPermissions, BlobImmutabilityPolicyMode)
+    BlobSasPermissions, BlobImmutabilityPolicyMode, ImmutabilityPolicy)
 from azure.storage.blob._shared.policies import StorageContentValidation
 
 from _shared.testcase import GlobalStorageAccountPreparer, StorageAccountPreparer, GlobalResourceGroupPreparer
