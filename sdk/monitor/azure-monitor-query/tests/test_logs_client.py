@@ -55,7 +55,7 @@ def test_logs_server_timeout():
     with pytest.raises(HttpResponseError) as e:
         response = client.query(
             os.environ['LOG_WORKSPACE_ID'],
-            "range x from 1 to 10000000000 step 1 | count",
+            "range x from 1 to 1000000000000000 step 1 | count",
             server_timeout=1,
         )
     assert 'Gateway timeout' in e.value.message
