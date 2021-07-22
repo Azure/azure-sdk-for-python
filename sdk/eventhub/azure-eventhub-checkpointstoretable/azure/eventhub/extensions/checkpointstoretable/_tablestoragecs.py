@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from collections import defaultdict
-from azure.data.tables import TableClient, TableServiceClient, UpdateMode
+from azure.data.tables import TableClient, UpdateMode
 from azure.core import MatchConditions
 from azure.data.tables._base_client import parse_connection_str
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError, ResourceNotFoundError
@@ -80,7 +80,8 @@ class TableCheckpointStore:
             u'sequence_number' : checkpoint['sequence_number'],
         }
         my_new_entity['RowKey'] = my_new_entity['partition_id']
-        my_new_entity['PartitionKey'] = my_new_entity['eventhub_name'] + ' ' + my_new_entity['fully_qualified_namespace'] + ' ' + my_new_entity['consumer_group'] + ' ' + 'Checkpoint'
+        my_new_entity['PartitionKey'] = my_new_entity['eventhub_name'] + ' ' + \
+        my_new_entity['fully_qualified_namespace'] + ' ' + my_new_entity['consumer_group'] + ' ' + 'Checkpoint'
         self.table_client.create_entity(entity=my_new_entity)
 
     def _create_entity_ownership(self, ownership):
@@ -94,7 +95,8 @@ class TableCheckpointStore:
             u'owner_id' : ownership['owner_id'],
         }
         my_new_entity['RowKey'] = my_new_entity['partition_id']
-        my_new_entity['PartitionKey'] = my_new_entity['eventhub_name'] + ' ' + my_new_entity['fully_qualified_namespace'] + ' ' + my_new_entity['consumer_group'] + ' ' + 'Ownership'
+        my_new_entity['PartitionKey'] = my_new_entity['eventhub_name'] + ' ' \
+        + my_new_entity['fully_qualified_namespace'] + ' ' + my_new_entity['consumer_group'] + ' ' + 'Ownership'
         new_entity = self.table_client.create_entity(entity=my_new_entity)
         return new_entity
 
@@ -112,7 +114,8 @@ class TableCheckpointStore:
             u'owner_id' : ownership['owner_id'],
         }
         my_new_entity['RowKey'] = my_new_entity['partition_id']
-        my_new_entity['PartitionKey'] = my_new_entity['eventhub_name'] + ' ' + my_new_entity['fully_qualified_namespace'] + ' ' + my_new_entity['consumer_group'] + ' ' + 'Ownership'
+        my_new_entity['PartitionKey'] = my_new_entity['eventhub_name'] + ' ' \
+        + my_new_entity['fully_qualified_namespace'] + ' ' + my_new_entity['consumer_group'] + ' ' + 'Ownership'
         return my_new_entity
 
     def _modify_entity_checkpoint(self, checkpoint):
@@ -127,10 +130,9 @@ class TableCheckpointStore:
             u'eventhub_name': checkpoint['eventhub_name'],
             u'partition_id': checkpoint['partition_id'],
             u'offset' : checkpoint['offset'],
-            u'sequence_number' : checkpoint['sequence_number'],
-        }
+            u'sequence_number' : checkpoint['sequence_number'],}
         my_new_entity['RowKey'] = my_new_entity['partition_id']
-        my_new_entity['PartitionKey'] = my_new_entity['eventhub_name'] + ' '
+        my_new_entity['PartitionKey'] = my_new_entity['eventhub_name'] + ' ' \
         + my_new_entity['fully_qualified_namespace'] + ' ' + my_new_entity['consumer_group'] + ' ' + 'Checkpoint'
         return my_new_entity
 
@@ -200,7 +202,7 @@ class TableCheckpointStore:
             checkpointslist.append(dic)
         return checkpointslist
 
-    def update_checkpoint(self, checkpoint, **kwargs):
+    def update_checkpoint(self, checkpoint):
         """Updates the checkpoint using the given information for the offset, associated partition and
         consumer group in the storage table.
         Note: If you plan to implement a custom checkpoint store with the intention of running between
@@ -264,7 +266,7 @@ class TableCheckpointStore:
                 - `etag` (str): The Etag value for the last time this ownership was modified. Optional depending
                   on storage implementation.
         """
-        set = []
+        newlist = []
         for x in ownershiplist:
-            set.append(self._claim_one_partition(x))
-        return set
+            newlist.append(self._claim_one_partition(x))
+        return newlist
