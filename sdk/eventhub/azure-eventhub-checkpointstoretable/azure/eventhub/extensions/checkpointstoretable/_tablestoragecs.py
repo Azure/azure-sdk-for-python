@@ -68,7 +68,7 @@ class TableCheckpointStore:
         )
         return cls(endpoint, table_name=table_name, credential=credential, **kwargs)
 
-    def _create_entity_checkpoint(self, checkpoint, **kwargs):
+    def _create_entity_checkpoint(self, checkpoint):
         my_new_entity = {
             u'PartitionKey': u'',
             u'RowKey': u'',
@@ -80,11 +80,10 @@ class TableCheckpointStore:
             u'sequence_number' : checkpoint['sequence_number'],
         }
         my_new_entity['RowKey'] = my_new_entity['partition_id']
-        my_new_entity['PartitionKey'] = my_new_entity['eventhub_name'] + ' '
-        + my_new_entity['fully_qualified_namespace'] + ' ' + my_new_entity['consumer_group'] + ' ' + 'Checkpoint'
-        new_entity = self.table_client.create_entity(entity=my_new_entity)
+        my_new_entity['PartitionKey'] = my_new_entity['eventhub_name'] + ' ' + my_new_entity['fully_qualified_namespace'] + ' ' + my_new_entity['consumer_group'] + ' ' + 'Checkpoint'
+        self.table_client.create_entity(entity=my_new_entity)
 
-    def _create_entity_ownership(self, ownership, **kwargs):
+    def _create_entity_ownership(self, ownership):
         my_new_entity = {
             u'PartitionKey': u'',
             u'RowKey': u'',
@@ -95,12 +94,11 @@ class TableCheckpointStore:
             u'owner_id' : ownership['owner_id'],
         }
         my_new_entity['RowKey'] = my_new_entity['partition_id']
-        my_new_entity['PartitionKey'] = my_new_entity['eventhub_name'] + ' '
-        + my_new_entity['fully_qualified_namespace'] + ' ' + my_new_entity['consumer_group'] + ' ' + 'Ownership'
+        my_new_entity['PartitionKey'] = my_new_entity['eventhub_name'] + ' ' + my_new_entity['fully_qualified_namespace'] + ' ' + my_new_entity['consumer_group'] + ' ' + 'Ownership'
         new_entity = self.table_client.create_entity(entity=my_new_entity)
         return new_entity
 
-    def _modify_entity_ownership(self, ownership, **kwargs):
+    def _modify_entity_ownership(self, ownership):
         """
         create a dictionary with the new ownership attributes so that it can be updated in tables
         """
@@ -114,11 +112,10 @@ class TableCheckpointStore:
             u'owner_id' : ownership['owner_id'],
         }
         my_new_entity['RowKey'] = my_new_entity['partition_id']
-        my_new_entity['PartitionKey'] = my_new_entity['eventhub_name'] + ' '
-        + my_new_entity['fully_qualified_namespace'] + ' ' + my_new_entity['consumer_group'] + ' ' + 'Ownership'
+        my_new_entity['PartitionKey'] = my_new_entity['eventhub_name'] + ' ' + my_new_entity['fully_qualified_namespace'] + ' ' + my_new_entity['consumer_group'] + ' ' + 'Ownership'
         return my_new_entity
 
-    def _modify_entity_checkpoint(self, checkpoint, **kwargs):
+    def _modify_entity_checkpoint(self, checkpoint):
         """
         create a dictionary with the new checkpoint attributes so that it can be updated in tables
         """
@@ -137,7 +134,7 @@ class TableCheckpointStore:
         + my_new_entity['fully_qualified_namespace'] + ' ' + my_new_entity['consumer_group'] + ' ' + 'Checkpoint'
         return my_new_entity
 
-    def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs):
+    def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group):
         """Retrieves a complete ownership list from the storage table.
         :param str fully_qualified_namespace: The fully qualified namespace that the Event Hub belongs to.
          The format is like "<namespace>.servicebus.windows.net".
@@ -161,17 +158,17 @@ class TableCheckpointStore:
         entities = self.table_client.query_entities(my_filter)
         ownershiplist = []
         for entity in entities:
-                dic = {}
-                dic[u'fully_qualified_namespace'] = entity[u'fully_qualified_namespace']
-                dic[u'eventhub_name'] = entity[u'eventhub_name']
-                dic[u'consumer_group'] = entity[u'consumer_group']
-                dic[u'partition_id'] = entity[u'partition_id']
-                dic[u'owner_id'] = entity[u'owner_id']
-                dic[u'etag'] = entity.metadata.get('etag')
-                ownershiplist.append(dic)
+            dic = {}
+            dic[u'fully_qualified_namespace'] = entity[u'fully_qualified_namespace']
+            dic[u'eventhub_name'] = entity[u'eventhub_name']
+            dic[u'consumer_group'] = entity[u'consumer_group']
+            dic[u'partition_id'] = entity[u'partition_id']
+            dic[u'owner_id'] = entity[u'owner_id']
+            dic[u'etag'] = entity.metadata.get('etag')
+            ownershiplist.append(dic)
         return ownershiplist
 
-    def list_checkpoints(self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs):
+    def list_checkpoints(self, fully_qualified_namespace, eventhub_name, consumer_group):
         """List the updated checkpoints from the storage blob.
         :param str fully_qualified_namespace: The fully qualified namespace that the Event Hub belongs to.
          The format is like "<namespace>.servicebus.windows.net".
@@ -193,14 +190,14 @@ class TableCheckpointStore:
         entities = self.table_client.query_entities(my_filter)
         checkpointslist = []
         for entity in entities:
-                dic = {}
-                dic[u'fully_qualified_namespace'] = entity[u'fully_qualified_namespace']
-                dic[u'eventhub_name'] = entity[u'eventhub_name']
-                dic[u'consumer_group'] = entity[u'consumer_group']
-                dic[u'partition_id'] = entity[u'partition_id']
-                dic[u'sequence_number'] = entity[u'sequence_number']
-                dic[u'offset'] = entity[u'offset']
-                checkpointslist.append(dic)
+            dic = {}
+            dic[u'fully_qualified_namespace'] = entity[u'fully_qualified_namespace']
+            dic[u'eventhub_name'] = entity[u'eventhub_name']
+            dic[u'consumer_group'] = entity[u'consumer_group']
+            dic[u'partition_id'] = entity[u'partition_id']
+            dic[u'sequence_number'] = entity[u'sequence_number']
+            dic[u'offset'] = entity[u'offset']
+            checkpointslist.append(dic)
         return checkpointslist
 
     def update_checkpoint(self, checkpoint, **kwargs):
@@ -227,35 +224,31 @@ class TableCheckpointStore:
         except ResourceNotFoundError:
             self._create_entity_checkpoint(checkpoint)
 
-    def _upload_ownership(self, ownership, metadata, **kwargs):
+    def _upload_ownership(self, ownership):
         try:
-                theentity = self._modify_entity_ownership(ownership)
-                entity = self.table_client.update_entity(mode=UpdateMode.REPLACE, entity=theentity,
-                etag = ownership['etag'],match_condition = MatchConditions.IfNotModified)
-                ownership['etag'] = entity['etag']
-                ownership['last_modified_time'] = entity['date']
-        except (ResourceNotFoundError,ValueError):
+            theentity = self._modify_entity_ownership(ownership)
+            entity = self.table_client.update_entity(mode=UpdateMode.REPLACE, entity=theentity,
+            etag=ownership['etag'], match_condition=MatchConditions.IfNotModified)
+            ownership['etag'] = entity['etag']
+            ownership['last_modified_time'] = entity['date']
+        except (ResourceNotFoundError, ValueError):
             try:
                 entity = self._create_entity_ownership(ownership)
                 ownership['etag'] = entity['etag']
                 ownership['last_modified_time'] = entity['date']
-            except (ResourceExistsError):
-                raise('your etag does not match the last time this ownership was modified.')
-        except (ResourceModifiedError) :
-                raise('your etag does not match the last time this ownership was modified.')
+            except ResourceExistsError:
+                raise'your etag does not match the last time this ownership was modified.'
+        except ResourceModifiedError:
+            raise'your etag does not match the last time this ownership was modified.'
 
 
-    def _claim_one_partition(self,ownership, **kwargs):
-            partition_id = ownership["partition_id"]
-            namespace = ownership["fully_qualified_namespace"]
-            eventhub_name = ownership["eventhub_name"]
-            consumer_group = ownership["consumer_group"]
-            owner_id = ownership["owner_id"]
-            metadata = {"owner_id": owner_id}
-            self.upload_ownership(ownership,metadata)
-            return ownership
+    def _claim_one_partition(self, ownership):
+        owner_id = ownership["owner_id"]
+        metadata = {"owner_id": owner_id}
+        self._upload_ownership(ownership, metadata)
+        return ownership
 
-    def claim_ownership(self, ownershiplist, **kwargs):
+    def claim_ownership(self, ownershiplist):
         # type: (Iterable[Dict[str, Any]], Any) -> Iterable[Dict[str, Any]]
         """Tries to claim ownership for a list of specified partitions.
         :param Iterable[Dict[str,Any]] ownership_list: Iterable of dictionaries containing all the ownerships to claim.
@@ -273,5 +266,5 @@ class TableCheckpointStore:
         """
         set = []
         for x in ownershiplist:
-            set.append(self.claim_one_partition(x))
+            set.append(self._claim_one_partition(x))
         return set
