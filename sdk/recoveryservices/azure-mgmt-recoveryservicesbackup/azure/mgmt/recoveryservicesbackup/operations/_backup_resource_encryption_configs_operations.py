@@ -24,7 +24,7 @@ class BackupResourceEncryptionConfigsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2021-01-01".
+    :ivar api_version: Client Api Version. Constant value: "2021-04-01".
     """
 
     models = models
@@ -34,7 +34,7 @@ class BackupResourceEncryptionConfigsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2021-01-01"
+        self.api_version = "2021-04-01"
 
         self.config = config
 
@@ -52,10 +52,10 @@ class BackupResourceEncryptionConfigsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: BackupResourceEncryptionConfigResource or ClientRawResponse
-         if raw=true
+        :return: BackupResourceEncryptionConfigExtendedResource or
+         ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.recoveryservicesbackup.models.BackupResourceEncryptionConfigResource
+         ~azure.mgmt.recoveryservicesbackup.models.BackupResourceEncryptionConfigExtendedResource
          or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`NewErrorResponseException<azure.mgmt.recoveryservicesbackup.models.NewErrorResponseException>`
@@ -92,7 +92,7 @@ class BackupResourceEncryptionConfigsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('BackupResourceEncryptionConfigResource', response)
+            deserialized = self._deserialize('BackupResourceEncryptionConfigExtendedResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

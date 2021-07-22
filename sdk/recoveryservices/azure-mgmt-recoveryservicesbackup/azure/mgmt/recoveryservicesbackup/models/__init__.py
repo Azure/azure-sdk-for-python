@@ -109,6 +109,8 @@ try:
     from ._models_py3 import BackupResourceConfig
     from ._models_py3 import BackupResourceConfigResource
     from ._models_py3 import BackupResourceEncryptionConfig
+    from ._models_py3 import BackupResourceEncryptionConfigExtended
+    from ._models_py3 import BackupResourceEncryptionConfigExtendedResource
     from ._models_py3 import BackupResourceEncryptionConfigResource
     from ._models_py3 import BackupResourceVaultConfig
     from ._models_py3 import BackupResourceVaultConfigResource
@@ -172,6 +174,7 @@ try:
     from ._models_py3 import IaasVMRecoveryPoint
     from ._models_py3 import IaasVMRestoreRequest
     from ._models_py3 import IaasVMRestoreWithRehydrationRequest
+    from ._models_py3 import IdentityInfo
     from ._models_py3 import ILRRequest
     from ._models_py3 import ILRRequestResource
     from ._models_py3 import InquiryInfo
@@ -380,6 +383,8 @@ except (SyntaxError, ImportError):
     from ._models import BackupResourceConfig
     from ._models import BackupResourceConfigResource
     from ._models import BackupResourceEncryptionConfig
+    from ._models import BackupResourceEncryptionConfigExtended
+    from ._models import BackupResourceEncryptionConfigExtendedResource
     from ._models import BackupResourceEncryptionConfigResource
     from ._models import BackupResourceVaultConfig
     from ._models import BackupResourceVaultConfigResource
@@ -443,6 +448,7 @@ except (SyntaxError, ImportError):
     from ._models import IaasVMRecoveryPoint
     from ._models import IaasVMRestoreRequest
     from ._models import IaasVMRestoreWithRehydrationRequest
+    from ._models import IdentityInfo
     from ._models import ILRRequest
     from ._models import ILRRequestResource
     from ._models import InquiryInfo
@@ -589,6 +595,8 @@ from ._recovery_services_backup_client_enums import (
     SQLDataDirectoryType,
     RestorePointQueryType,
     RetentionDurationType,
+    StorageType,
+    StorageTypeState,
     BackupManagementType,
     JobStatus,
     JobOperationType,
@@ -603,26 +611,24 @@ from ._recovery_services_backup_client_enums import (
     CreateMode,
     HealthState,
     ScheduleRunType,
-    StorageType,
-    StorageTypeState,
     EnhancedSecurityState,
     SoftDeleteFeatureState,
     AzureFileShareType,
     InquiryStatus,
     BackupType,
+    SupportStatus,
+    WorkloadItemType,
+    UsagesUnit,
+    ProtectionStatus,
+    FabricName,
+    Type,
+    ValidationStatus,
+    IntentItemType,
     OperationType,
     ContainerType,
-    WorkloadItemType,
-    ProtectionStatus,
     BackupItemType,
     OperationStatusValues,
     RehydrationPriority,
-    UsagesUnit,
-    Type,
-    SupportStatus,
-    FabricName,
-    ValidationStatus,
-    IntentItemType,
 )
 
 __all__ = [
@@ -725,6 +731,8 @@ __all__ = [
     'BackupResourceConfig',
     'BackupResourceConfigResource',
     'BackupResourceEncryptionConfig',
+    'BackupResourceEncryptionConfigExtended',
+    'BackupResourceEncryptionConfigExtendedResource',
     'BackupResourceEncryptionConfigResource',
     'BackupResourceVaultConfig',
     'BackupResourceVaultConfigResource',
@@ -788,6 +796,7 @@ __all__ = [
     'IaasVMRecoveryPoint',
     'IaasVMRestoreRequest',
     'IaasVMRestoreWithRehydrationRequest',
+    'IdentityInfo',
     'ILRRequest',
     'ILRRequestResource',
     'InquiryInfo',
@@ -896,6 +905,9 @@ __all__ = [
     'WorkloadProtectableItem',
     'WorkloadProtectableItemResource',
     'YearlyRetentionSchedule',
+    'ProtectionIntentResourcePaged',
+    'BackupManagementUsagePaged',
+    'ClientDiscoveryValueForSingleApiPaged',
     'RecoveryPointResourcePaged',
     'ProtectionPolicyResourcePaged',
     'JobResourcePaged',
@@ -905,9 +917,6 @@ __all__ = [
     'WorkloadItemResourcePaged',
     'WorkloadProtectableItemResourcePaged',
     'ProtectionContainerResourcePaged',
-    'BackupManagementUsagePaged',
-    'ProtectionIntentResourcePaged',
-    'ClientDiscoveryValueForSingleApiPaged',
     'EncryptionAtRestType',
     'LastUpdateStatus',
     'InfrastructureEncryptionState',
@@ -933,6 +942,8 @@ __all__ = [
     'SQLDataDirectoryType',
     'RestorePointQueryType',
     'RetentionDurationType',
+    'StorageType',
+    'StorageTypeState',
     'BackupManagementType',
     'JobStatus',
     'JobOperationType',
@@ -947,24 +958,22 @@ __all__ = [
     'CreateMode',
     'HealthState',
     'ScheduleRunType',
-    'StorageType',
-    'StorageTypeState',
     'EnhancedSecurityState',
     'SoftDeleteFeatureState',
     'AzureFileShareType',
     'InquiryStatus',
     'BackupType',
+    'SupportStatus',
+    'WorkloadItemType',
+    'UsagesUnit',
+    'ProtectionStatus',
+    'FabricName',
+    'Type',
+    'ValidationStatus',
+    'IntentItemType',
     'OperationType',
     'ContainerType',
-    'WorkloadItemType',
-    'ProtectionStatus',
     'BackupItemType',
     'OperationStatusValues',
     'RehydrationPriority',
-    'UsagesUnit',
-    'Type',
-    'SupportStatus',
-    'FabricName',
-    'ValidationStatus',
-    'IntentItemType',
 ]
