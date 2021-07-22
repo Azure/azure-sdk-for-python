@@ -100,7 +100,7 @@ class TableCheckpointStore:
         new_entity = self.table_client.create_entity(entity=my_new_entity)
         return new_entity
 
-    def _modify_entity_ownership(self, ownership):
+    def _modify_entity_ownership(ownership):
         """
         create a dictionary with the new ownership attributes so that it can be updated in tables
         """
@@ -118,7 +118,7 @@ class TableCheckpointStore:
         + my_new_entity['fully_qualified_namespace'] + ' ' + my_new_entity['consumer_group'] + ' ' + 'Ownership'
         return my_new_entity
 
-    def _modify_entity_checkpoint(self, checkpoint):
+    def _modify_entity_checkpoint(checkpoint):
         """
         create a dictionary with the new checkpoint attributes so that it can be updated in tables
         """
@@ -247,7 +247,7 @@ class TableCheckpointStore:
     def _claim_one_partition(self, ownership):
         owner_id = ownership["owner_id"]
         metadata = {"owner_id": owner_id}
-        self._upload_ownership(ownership, metadata)
+        self._upload_ownership(ownership)
         return ownership
 
     def claim_ownership(self, ownershiplist):
