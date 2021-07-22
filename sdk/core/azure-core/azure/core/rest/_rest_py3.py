@@ -226,6 +226,7 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
     ):
         self.request = request
         self._internal_response = kwargs.pop("internal_response")
+        self._pipeline_response = kwargs.pop("pipeline_response", None)
         self.status_code = None
         self.headers = {}  # type: HeadersType
         self.reason = None

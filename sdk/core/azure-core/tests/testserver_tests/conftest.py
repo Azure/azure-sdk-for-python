@@ -30,7 +30,7 @@ import os
 import subprocess
 import random
 from six.moves import urllib
-from rest_client import TestRestClient
+from rest_client import TestRestClient, TestHttpXRestClient
 import sys
 
 # Ignore collection of async tests for Python 2
@@ -90,3 +90,7 @@ def testserver():
 @pytest.fixture
 def client(port):
     return TestRestClient(port)
+
+@pytest.fixture
+def httpx_client(port):
+    return TestHttpXRestClient(port)

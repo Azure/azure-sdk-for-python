@@ -7,6 +7,7 @@ from copy import deepcopy
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
 from azure.core.configuration import Configuration
+from azure.core.pipeline.transport.httpx import AsyncHttpXTransport
 
 class TestRestClientConfiguration(Configuration):
     def __init__(
@@ -37,6 +38,46 @@ class AsyncTestRestClient(object):
         self._client = AsyncPipelineClient(
             base_url="http://localhost:{}".format(port),
             config=self._config,
+            **kwargs
+        )
+
+    def send_request(self, request, **kwargs):
+        """Runs the network request through the client's chained policies.
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "http://localhost:3000/helloWorld")
+        <HttpRequest [GET], url: 'http://localhost:3000/helloWorld'>
+        >>> response = await client.send_request(request)
+        <AsyncHttpResponse: 200 OK>
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.AsyncHttpResponse
+        """
+        request_copy = deepcopy(request)
+        request_copy.url = self._client.format_url(request_copy.url)
+        return self._client.send_request(request_copy, **kwargs)
+
+    async def close(self) -> None:
+        await self._client.close()
+
+    async def __aenter__(self):
+        await self._client.__aenter__()
+        return self
+
+    async def __aexit__(self, *exc_details) -> None:
+        await self._client.__aexit__(*exc_details)
+
+class AsyncHttpxTestRestClient(object):
+
+    def __init__(self, port, **kwargs):
+        transport = AsyncHttpXTransport(**kwargs)
+        self._config = TestRestClientConfiguration(**kwargs)
+        self._client = AsyncPipelineClient(
+            base_url="http://localhost:{}".format(port),
+            config=self._config,
+            transport=transport,
             **kwargs
         )
 

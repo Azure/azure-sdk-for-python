@@ -31,7 +31,7 @@ import subprocess
 import sys
 import random
 from six.moves import urllib
-from rest_client_async import AsyncTestRestClient
+from rest_client_async import AsyncTestRestClient, AsyncHttpxTestRestClient
 
 def is_port_available(port_num):
     req = urllib.request.Request("http://localhost:{}/health".format(port_num))
@@ -91,6 +91,10 @@ if sys.version_info < (3, 5):
 @pytest.fixture
 def client(port):
     return AsyncTestRestClient(port)
+
+@pytest.fixture
+def httpx_client(port):
+    return AsyncHttpxTestRestClient(port)
 
 import sys
 

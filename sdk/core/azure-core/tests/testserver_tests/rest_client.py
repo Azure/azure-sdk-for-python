@@ -26,6 +26,7 @@
 # --------------------------------------------------------------------------
 from azure.core.pipeline import policies
 from azure.core.configuration import Configuration
+from azure.core.pipeline.transport.httpx import HttpXTransport
 from azure.core import PipelineClient
 from copy import deepcopy
 
@@ -63,6 +64,43 @@ class TestRestClient(object):
             config=self._config,
             **kwargs
         )
+
+    def send_request(self, request, **kwargs):
+        """Runs the network request through the client's chained policies.
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "http://localhost:3000/helloWorld")
+        <HttpRequest [GET], url: 'http://localhost:3000/helloWorld'>
+        >>> response = client.send_request(request)
+        <HttpResponse: 200 OK>
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.HttpResponse
+        """
+        request_copy = deepcopy(request)
+        request_copy.url = self._client.format_url(request_copy.url)
+        return self._client.send_request(request_copy, **kwargs)
+
+class TestHttpXRestClient(object):
+
+    def __init__(self, port, **kwargs):
+        transport = HttpXTransport(**kwargs)
+        self._config = TestRestClientConfiguration(**kwargs)
+        self._client = PipelineClient(
+            base_url="http://localhost:{}/".format(port),
+            config=self._config,
+            transport=transport,
+            **kwargs
+        )
+
+    def __enter__(self):
+        self._client.__enter__()
+        return self
+
+    def __exit__(self, *exc_details):
+        self._client.__exit__(*exc_details)
 
     def send_request(self, request, **kwargs):
         """Runs the network request through the client's chained policies.

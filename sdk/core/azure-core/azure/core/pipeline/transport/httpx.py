@@ -29,9 +29,10 @@ from collections.abc import AsyncIterator
 import httpx
 import urllib3
 from ._base import HttpResponse, HttpTransport, HttpRequest, _HttpResponseBase
-from ._base_async import AsyncHttpResponse, AsyncHttpTransport
+from ._base_async import AsyncHttpResponse as _AsyncHttpResponse, AsyncHttpTransport as _AsyncHttpTransport
 from ...exceptions import DecodeError, ServiceRequestError, ServiceResponseError
 from ...configuration import ConnectionConfiguration
+from .._tools import get_internal_response as _get_internal_response
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -101,10 +102,11 @@ class HttpxStreamDownloadGenerator(object):
         decompress = kwargs.pop("decompress", True)
         if len(kwargs) > 0:
             raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
+        internal_response = _get_internal_response(response)
         if decompress:
-            self.iter_bytes_func = self.response.internal_response.iter_bytes()
+            self.iter_bytes_func = internal_response.iter_bytes()
         else:
-            self.iter_bytes_func = self.response.internal_response.iter_raw()
+            self.iter_bytes_func = internal_response.iter_raw()
 
     def __iter__(self):
         return self
@@ -227,7 +229,7 @@ class HttpXTransport(HttpTransport):
         )
 
 
-class AsyncHttpXTransportResponse(AsyncHttpResponse, _HttpXTransportResponseBase):
+class AsyncHttpXTransportResponse(_AsyncHttpResponse, _HttpXTransportResponseBase):
     def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:
         return AsyncHttpxStreamDownloadGenerator(pipeline, self, **kwargs)
 
@@ -245,10 +247,11 @@ class AsyncHttpxStreamDownloadGenerator(AsyncIterator):
         decompress = kwargs.pop("decompress", True)
         if len(kwargs) > 0:
             raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
+        internal_response = _get_internal_response(response)
         if decompress:
-            self.iter_bytes_func = self.response.internal_response.aiter_bytes()
+            self.iter_bytes_func = internal_response.aiter_bytes()
         else:
-            self.iter_bytes_func = self.response.internal_response.aiter_raw()
+            self.iter_bytes_func = internal_response.aiter_raw()
 
     async def __anext__(self):
         try:
@@ -261,7 +264,7 @@ class AsyncHttpxStreamDownloadGenerator(AsyncIterator):
                 raise DecodeError(ex.args[0])
             raise DecodeError("Fail to decode.")
 
-class AsyncHttpXTransport(AsyncHttpTransport):
+class AsyncHttpXTransport(_AsyncHttpTransport):
     """Implements a HTTPX sender.
     :keyword httpx.Client client: Request client to use instead of the default one.
     :keyword bool client_owner: Decide if the client provided by user is owned by this transport. Default to True.
