@@ -59,7 +59,8 @@ from ._models import (
     ArrowDialect,
     ArrowType,
     ObjectReplicationPolicy,
-    ObjectReplicationRule
+    ObjectReplicationRule,
+    ImmutabilityPolicy
 )
 from ._list_blobs_helper import BlobPrefix
 
@@ -197,6 +198,7 @@ __all__ = [
     'PremiumPageBlobTier',
     'SequenceNumberAction',
     'BlobImmutabilityPolicyMode',
+    'ImmutabilityPolicy',
     'PublicAccess',
     'BlobAnalyticsLogging',
     'Metrics',

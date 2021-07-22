@@ -435,6 +435,32 @@ class ContainerPropertiesPaged(PageIterator):
         return ContainerProperties._from_generated(item)  # pylint: disable=protected-access
 
 
+class ImmutabilityPolicy(DictMixin):
+    """Optional parameters for setting the immutability policy of a blob, blob snapshot or blob version.
+
+    .. versionadded:: 12.10.0
+        This was introduced in API version '2020-10-02'.
+
+    :param ~datetime.datetime expiry_time:
+        Specifies the date time when the blobs immutability policy is set to expire.
+    :param str or ~azure.storage.blob.BlobImmutabilityPolicyMode policy_mode:
+        Specifies the immutability policy mode to set on the blob.
+        Possible values to set include: "Locked", "Unlocked".
+        "Mutable" can only be returned by service, don't set to "Mutable".
+    """
+
+    def __init__(self, expiry_time=None, policy_mode=None):
+        self.expiry_time = expiry_time
+        self.policy_mode = policy_mode
+
+    @classmethod
+    def _from_generated(cls, generated):
+        immutability_policy = cls()
+        immutability_policy.expiry_time = generated.properties.immutability_policy_expires_on
+        immutability_policy.policy_mode = generated.properties.immutability_policy_mode
+        return immutability_policy
+
+
 class BlobProperties(DictMixin):
     """
     Blob Properties.
@@ -541,16 +567,8 @@ class BlobProperties(DictMixin):
 
         .. versionadded:: 12.10.0
 
-    :ivar ~datetime.datetime immutability_policy_expiry_time:
-        Specifies the date time when the blobs immutability policy is set to expire.
-        Currently this parameter of upload_blob() API is for BlockBlob only.
-
-        .. versionadded:: 12.10.0
-            This was introduced in API version '2020-10-02'.
-
-    :ivar str immutability_policy_mode:
-        Specifies the immutability policy mode to set on the blob.
-        Currently this parameter of upload_blob() API is for BlockBlob only.
+    :ivar ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
+        Specifies the immutability policy of a blob, blob snapshot or blob version.
 
         .. versionadded:: 12.10.0
             This was introduced in API version '2020-10-02'.
@@ -601,10 +619,11 @@ class BlobProperties(DictMixin):
         self.last_accessed_on = kwargs.get('x-ms-last-access-time')
         self.tag_count = kwargs.get('x-ms-tag-count')
         self.tags = None
-        self.immutability_policy_expiry_time = kwargs.get('x-ms-immutability-policy-until-date')
-        self.immutability_policy_mode = kwargs.get('x-ms-immutability-policy-mode')
+        self.immutability_policy = ImmutabilityPolicy(expiry_time=kwargs.get('x-ms-immutability-policy-until-date'),
+                                                      policy_mode=kwargs.get('x-ms-immutability-policy-mode'))
         self.has_legal_hold = kwargs.get('x-ms-legal-hold')
         self.has_versions_only = None
+
 
 class FilteredBlob(DictMixin):
     """Blob info from a Filter Blobs API call.

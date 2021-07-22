@@ -79,8 +79,10 @@ def upload_block_blob(  # pylint: disable=too-many-locals
         blob_headers = kwargs.pop('blob_headers', None)
         tier = kwargs.pop('standard_blob_tier', None)
         blob_tags_string = kwargs.pop('blob_tags_string', None)
-        immutability_policy_expiry = kwargs.pop('immutability_policy_expiry_time', None)
-        immutability_policy_mode = kwargs.pop('immutability_policy_mode', None)
+
+        immutability_policy = kwargs.pop('immutability_policy', None)
+        immutability_policy_expiry = None if immutability_policy is None else immutability_policy.expiry_time
+        immutability_policy_mode = None if immutability_policy is None else immutability_policy.policy_mode
         legal_hold = kwargs.pop('legal_hold', None)
 
         # Do single put if the size is smaller than or equal config.max_single_put_size

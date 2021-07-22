@@ -16,7 +16,7 @@ import uuid
 from datetime import datetime, timedelta
 
 from azure.mgmt.storage import StorageManagementClient
-
+from azure.mgmt.storage.v2018_02_01.models import ImmutabilityPolicy
 
 from azure.core import MatchConditions
 from azure.core.exceptions import ResourceNotFoundError, ResourceModifiedError, HttpResponseError
@@ -1342,8 +1342,10 @@ class StorageAppendBlobTest(StorageTestCase):
         # Act
         blob_name = self.get_resource_name('vlwblob')
         blob = bsc.get_blob_client(container_name, blob_name)
-        blob.create_append_blob(immutability_policy_expiry_time=datetime.utcnow() + timedelta(seconds=5),
-                                immutability_policy_mode=BlobImmutabilityPolicyMode.UNLOCKED,
+
+        immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
+                                                 policy_mode=BlobImmutabilityPolicyMode.UNLOCKED)
+        blob.create_append_blob(immutability_policy=immutability_policy,
                                 legal_hold=True)
 
         props = blob.get_blob_properties()
@@ -1352,8 +1354,8 @@ class StorageAppendBlobTest(StorageTestCase):
             blob.delete_blob()
 
         self.assertTrue(props['has_legal_hold'])
-        self.assertIsNotNone(props['immutability_policy_expiry_time'])
-        self.assertIsNotNone(props['immutability_policy_mode'])
+        self.assertIsNotNone(props['immutability_policy']['expiry_time'])
+        self.assertIsNotNone(props['immutability_policy']['policy_mode'])
 
         if self.is_live:
             mgmt_client.blob_containers.delete("XClient", storage_account.name, self.container_name)

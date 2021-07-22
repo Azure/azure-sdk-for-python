@@ -29,7 +29,7 @@ from azure.storage.blob import (
     PremiumPageBlobTier,
     SequenceNumberAction,
     StorageErrorCode,
-    generate_blob_sas, BlobImmutabilityPolicyMode)
+    generate_blob_sas, BlobImmutabilityPolicyMode, ImmutabilityPolicy)
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.blob._shared.policies import StorageContentValidation
 from _shared.testcase import GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
@@ -162,8 +162,9 @@ class StoragePageBlobTest(StorageTestCase):
         blob = bsc.get_blob_client(container_name, blob_name)
 
         # Act
-        resp = blob.create_page_blob(1024, immutability_policy_expiry_time=datetime.utcnow() + timedelta(seconds=5),
-                                     immutability_policy_mode=BlobImmutabilityPolicyMode.UNLOCKED,
+        immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
+                                                 policy_mode=BlobImmutabilityPolicyMode.UNLOCKED)
+        resp = blob.create_page_blob(1024, immutability_policy=immutability_policy,
                                      legal_hold=True)
         props = blob.get_blob_properties()
 
@@ -171,8 +172,8 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
         self.assertTrue(props['has_legal_hold'])
-        self.assertIsNotNone(props['immutability_policy_expiry_time'])
-        self.assertIsNotNone(props['immutability_policy_mode'])
+        self.assertIsNotNone(props['immutability_policy']['expiry_time'])
+        self.assertIsNotNone(props['immutability_policy']['policy_mode'])
 
         if self.is_live:
             mgmt_client.blob_containers.delete("XClient", storage_account.name, self.container_name)

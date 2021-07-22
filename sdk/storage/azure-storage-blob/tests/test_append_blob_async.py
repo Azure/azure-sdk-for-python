@@ -25,7 +25,7 @@ from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, Reso
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
-from azure.storage.blob import BlobSasPermissions, generate_blob_sas, BlobImmutabilityPolicyMode
+from azure.storage.blob import BlobSasPermissions, generate_blob_sas, BlobImmutabilityPolicyMode, ImmutabilityPolicy
 from azure.storage.blob._shared.policies import StorageContentValidation
 from azure.storage.blob import BlobType
 from azure.storage.blob.aio import (
@@ -1425,8 +1425,10 @@ class StorageAppendBlobAsyncTest(AsyncStorageTestCase):
         # Act
         blob_name = self.get_resource_name('vlwblob')
         blob = bsc.get_blob_client(container_name, blob_name)
-        await blob.create_append_blob(immutability_policy_expiry_time=datetime.utcnow() + timedelta(seconds=5),
-                                      immutability_policy_mode=BlobImmutabilityPolicyMode.UNLOCKED,
+
+        immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
+                                                 policy_mode=BlobImmutabilityPolicyMode.UNLOCKED)
+        await blob.create_append_blob(immutability_policy=immutability_policy,
                                       legal_hold=True)
 
         props = await blob.get_blob_properties()
@@ -1435,8 +1437,8 @@ class StorageAppendBlobAsyncTest(AsyncStorageTestCase):
             await blob.delete_blob()
 
         self.assertTrue(props['has_legal_hold'])
-        self.assertIsNotNone(props['immutability_policy_expiry_time'])
-        self.assertIsNotNone(props['immutability_policy_mode'])
+        self.assertIsNotNone(props['immutability_policy']['expiry_time'])
+        self.assertIsNotNone(props['immutability_policy']['policy_mode'])
 
         if self.is_live:
             await mgmt_client.blob_containers.delete("XClient", storage_account.name, self.container_name)

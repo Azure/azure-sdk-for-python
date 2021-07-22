@@ -9,7 +9,7 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 
-from ._models import BlobType, CopyProperties, ContentSettings, LeaseProperties, BlobProperties
+from ._models import BlobType, CopyProperties, ContentSettings, LeaseProperties, BlobProperties, ImmutabilityPolicy
 from ._shared.models import get_enum_value
 
 from ._shared.response_handlers import deserialize_metadata
@@ -153,8 +153,7 @@ def get_blob_properties_from_generated_code(generated):
     blob.tags = parse_tags(generated.blob_tags)  # pylint: disable=protected-access
     blob.object_replication_source_properties = deserialize_ors_policies(generated.object_replication_metadata)
     blob.last_accessed_on = generated.properties.last_accessed_on
-    blob.immutability_policy_expiry_time = generated.properties.immutability_policy_expires_on
-    blob.immutability_policy_mode = generated.properties.immutability_policy_mode
+    blob.immutability_policy = ImmutabilityPolicy._from_generated(generated)  # pylint: disable=protected-access
     blob.has_legal_hold = generated.properties.legal_hold
     blob.has_versions_only = generated.has_versions_only
     return blob

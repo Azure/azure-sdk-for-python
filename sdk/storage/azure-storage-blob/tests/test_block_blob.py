@@ -26,7 +26,7 @@ from azure.storage.blob import (
     ContentSettings,
     BlobBlock,
     StandardBlobTier, generate_blob_sas, BlobSasPermissions, CustomerProvidedEncryptionKey,
-    BlobImmutabilityPolicyMode)
+    BlobImmutabilityPolicyMode, ImmutabilityPolicy)
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
 from _shared.testcase import GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
@@ -447,10 +447,10 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # Act
         block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
+        immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
+                                                 policy_mode=BlobImmutabilityPolicyMode.UNLOCKED)
         put_block_list_resp = blob.commit_block_list(block_list,
-                                                     immutability_policy_expiry_time=datetime.utcnow() + timedelta(
-                                                         seconds=5),
-                                                     immutability_policy_mode=BlobImmutabilityPolicyMode.UNLOCKED,
+                                                     immutability_policy=immutability_policy,
                                                      legal_hold=True,
                                                      )
 
@@ -460,8 +460,8 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(download_resp.properties.etag, put_block_list_resp.get('etag'))
         self.assertEqual(download_resp.properties.last_modified, put_block_list_resp.get('last_modified'))
         self.assertTrue(download_resp.properties['has_legal_hold'])
-        self.assertIsNotNone(download_resp.properties['immutability_policy_expiry_time'])
-        self.assertIsNotNone(download_resp.properties['immutability_policy_mode'])
+        self.assertIsNotNone(download_resp.properties['immutability_policy']['expiry_time'])
+        self.assertIsNotNone(download_resp.properties['immutability_policy']['policy_mode'])
 
         if self.is_live:
             mgmt_client.blob_containers.delete("XClient", storage_account.name, self.container_name)
