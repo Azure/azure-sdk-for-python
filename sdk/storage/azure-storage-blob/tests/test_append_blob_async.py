@@ -18,7 +18,7 @@ import unittest
 import uuid
 
 from azure.mgmt.storage.aio import StorageManagementClient
-from devtools_testutils import BlobAccountPreparer
+from devtools_testutils import BlobAccountPreparer, ResourceGroupPreparer
 
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceModifiedError
