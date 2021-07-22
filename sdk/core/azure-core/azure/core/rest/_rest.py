@@ -306,6 +306,7 @@ class HttpResponse(_HttpResponseBase):  # pylint: disable=too-many-instance-attr
     :ivar request: The request that resulted in this response.
     :vartype request: ~azure.core.rest.HttpRequest
     :ivar internal_response: The object returned from the HTTP library.
+    :keyword pipeline_response: The pipeline response object.
     :ivar str content_type: The content type of the response
     :ivar bool is_closed: Whether the network connection has been closed yet
     :ivar bool is_stream_consumed: When getting a stream response, checks

@@ -42,13 +42,6 @@ def _get_response_type(pipeline_transport_response):
     except ImportError:
         pass
     try:
-        from .transport.httpx import AsyncHttpXTransportResponse
-        from ..rest._httpx import RestAsyncHttpXTransportResponse
-        if isinstance(pipeline_transport_response, AsyncHttpXTransportResponse):
-            return RestAsyncHttpXTransportResponse
-    except ImportError:
-        pass
-    try:
         from .transport import AsyncioRequestsTransportResponse
         from ..rest._requests_asyncio import RestAsyncioRequestsTransportResponse
         if isinstance(pipeline_transport_response, AsyncioRequestsTransportResponse):
@@ -66,12 +59,11 @@ def _get_response_type(pipeline_transport_response):
     return AsyncHttpResponse
 
 def to_rest_response(pipeline_transport_response):
-    response_type = _get_response_type(pipeline_transport_response)
     try:
         from .transport.httpx import AsyncHttpXTransportResponse
         from ..rest._httpx import RestAsyncHttpXTransportResponse
         if isinstance(pipeline_transport_response, AsyncHttpXTransportResponse):
-            response = response_type(
+            response = RestAsyncHttpXTransportResponse(
                 request=to_rest_request(pipeline_transport_response.request),
                 internal_response=pipeline_transport_response.internal_response,
                 pipeline_response=pipeline_transport_response
@@ -80,6 +72,7 @@ def to_rest_response(pipeline_transport_response):
             return response
     except ImportError:
         pass
+    response_type = _get_response_type(pipeline_transport_response)
     response = response_type(
         request=to_rest_request(pipeline_transport_response.request),
         internal_response=pipeline_transport_response.internal_response,
