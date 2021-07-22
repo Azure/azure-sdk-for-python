@@ -259,6 +259,7 @@ def filter_track2_versions(package_name, versions):
         'azure-mgmt-storageimportexport': '1.0.0b1',
         'azure-mgmt-trafficmanager': '1.0.0b1',
         'azure-mgmt-vmwarecloudsimple': '1.0.0b1'
+        'azure-mgmt-recoveryservicesbackup': '1.0.0b1'
     }
     upbound = track2_versions.get(package_name)
     if not upbound:
