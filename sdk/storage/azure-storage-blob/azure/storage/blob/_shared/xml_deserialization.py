@@ -24,33 +24,32 @@
 #
 # --------------------------------------------------------------------------
 
-from base64 import b64decode, b64encode
-import calendar
+from base64 import b64decode
+from typing import cast
 import datetime
 import decimal
 import email
 from enum import Enum
-import json
 import logging
 import re
-import sys
 import os
-try:
-    from urllib import quote  # type: ignore
-except ImportError:
-    from urllib.parse import quote  # type: ignore
+import ast
 
 if os.environ.get("AZURE_STORAGE_LXML"):
     try:
         from lxml import etree as ET
-    except:
+    except:  # pylint: disable=bare-except
         import xml.etree.ElementTree as ET
 else:
     import xml.etree.ElementTree as ET
 
 import isodate
-
-from typing import Dict, Any, cast, IO
+from azure.core.exceptions import DecodeError
+from msrest.exceptions import DeserializationError, raise_with_traceback
+from msrest.serialization import (
+    TZ_UTC,
+    _FixedOffset
+)
 
 
 try:
@@ -69,15 +68,6 @@ try:
     _long_type = long   # type: ignore
 except NameError:
     _long_type = int
-
-
-from azure.core.exceptions import DecodeError
-from msrest.exceptions import DeserializationError, raise_with_traceback
-from msrest.serialization import (
-    TZ_UTC,
-    _FixedOffset,
-    _FLATTEN
-)
 
 
 def unpack_xml_content(response_data, content_type=None):
@@ -109,7 +99,7 @@ def unpack_xml_content(response_data, content_type=None):
         raise_with_traceback(DecodeError, message="XML is invalid", response=response_data)
 
 
-def deserialize_bytearray(attr, *args):
+def deserialize_bytearray(attr, *_):
     """Deserialize string into bytearray.
 
     :param str attr: response string to be deserialized.
@@ -119,7 +109,7 @@ def deserialize_bytearray(attr, *args):
     return bytearray(b64decode(attr))
 
 
-def deserialize_base64(attr, *args):
+def deserialize_base64(attr, *_):
     """Deserialize base64 encoded string into string.
 
     :param str attr: response string to be deserialized.
@@ -132,7 +122,7 @@ def deserialize_base64(attr, *args):
     return b64decode(encoded)
 
 
-def deserialize_decimal(attr, *args):
+def deserialize_decimal(attr, *_):
     """Deserialize string into Decimal object.
 
     :param str attr: response string to be deserialized.
@@ -146,7 +136,7 @@ def deserialize_decimal(attr, *args):
         raise_with_traceback(DeserializationError, msg, err)
 
 
-def deserialize_long(attr, *args):
+def deserialize_long(attr, *_):
     """Deserialize string into long (Py2) or int (Py3).
 
     :param str attr: response string to be deserialized.
@@ -156,7 +146,7 @@ def deserialize_long(attr, *args):
     return _long_type(attr)
 
 
-def deserialize_duration(attr, *args):
+def deserialize_duration(attr, *_):
     """Deserialize ISO-8601 formatted string into TimeDelta object.
 
     :param str attr: response string to be deserialized.
@@ -172,7 +162,7 @@ def deserialize_duration(attr, *args):
         return duration
 
 
-def deserialize_date(attr, *args):
+def deserialize_date(attr, *_):
     """Deserialize ISO-8601 formatted string into Date object.
 
     :param str attr: response string to be deserialized.
@@ -185,7 +175,7 @@ def deserialize_date(attr, *args):
     return isodate.parse_date(attr, defaultmonth=None, defaultday=None)
 
 
-def deserialize_time(attr, *args):
+def deserialize_time(attr, *_):
     """Deserialize ISO-8601 formatted string into time object.
 
     :param str attr: response string to be deserialized.
@@ -197,7 +187,7 @@ def deserialize_time(attr, *args):
     return isodate.parse_time(attr)
 
 
-def deserialize_rfc(attr, *args):
+def deserialize_rfc(attr, *_):
     """Deserialize RFC-1123 formatted string into Datetime object.
 
     :param str attr: response string to be deserialized.
@@ -219,7 +209,7 @@ def deserialize_rfc(attr, *args):
         return date_obj
 
 
-def deserialize_iso(attr, *args):
+def deserialize_iso(attr, *_):
     """Deserialize ISO-8601 formatted string into Datetime object.
 
     :param str attr: response string to be deserialized.
@@ -254,7 +244,7 @@ def deserialize_iso(attr, *args):
         return date_obj
 
 
-def deserialize_unix(attr, *args):
+def deserialize_unix(attr, *_):
     """Serialize Datetime object into IntTime format.
     This is represented as seconds.
 
@@ -271,7 +261,7 @@ def deserialize_unix(attr, *args):
         return date_obj
 
 
-def deserialize_unicode(data, *args):
+def deserialize_unicode(data, *_):
     """Preserve unicode objects in Python 2, otherwise return data
     as a string.
 
@@ -340,19 +330,20 @@ def deserialize_basic(attr, data_type):
     :rtype: str, int, float or bool
     :raises: TypeError if string format is not valid.
     """
+    if data_type == 'str':
+        return deserialize_unicode(attr)
     if data_type == 'bool':
         if attr in [True, False, 1, 0]:
             return bool(attr)
-        elif isinstance(attr, basestring):
+        if isinstance(attr, basestring):
             if attr.lower() in ['true', '1']:
                 return True
             elif attr.lower() in ['false', '0']:
                 return False
         raise TypeError("Invalid boolean value: {}".format(attr))
-
-    if data_type == 'str':
-        return deserialize_unicode(attr)
-    return eval(data_type)(attr)
+    if data_type == 'int':
+        return int(attr)
+    return float(attr)
 
 
 class Deserializer(object):
@@ -458,7 +449,7 @@ class Deserializer(object):
                     subtype = None
                 if attr_type[0] == '[':
                     raw_value = self.multi_xml_key_extractor(attr_desc, data, subtype)
-                else:  
+                else:
                     raw_value = self.xml_key_extractor(attr_desc, data, subtype)
                 value = self.deserialize_data(raw_value, attr_type)
                 d_attrs[attr] = value

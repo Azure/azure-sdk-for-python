@@ -25,6 +25,7 @@ class _ServiceTest(PerfStressTest):
         self._client_kwargs['max_single_put_size'] = self.args.max_put_size
         self._client_kwargs['max_block_size'] = self.args.max_block_size
         self._client_kwargs['min_large_block_upload_threshold'] = self.args.buffer_threshold
+        self._client_kwargs['msrest_xml'] = self.args.msrest_xml
         # self._client_kwargs['api_version'] = '2019-02-02'  # Used only for comparison with T1 legacy tests
 
         if not _ServiceTest.service_client or self.args.no_client_share:
@@ -46,6 +47,7 @@ class _ServiceTest(PerfStressTest):
         parser.add_argument('--max-concurrency', nargs='?', type=int, help='Maximum number of concurrent threads used for data transfer. Defaults to 1', default=1)
         parser.add_argument('-s', '--size', nargs='?', type=int, help='Size of data to transfer.  Default is 10240.', default=10240)
         parser.add_argument('--no-client-share', action='store_true', help='Create one ServiceClient per test instance.  Default is to share a single ServiceClient.', default=False)
+        parser.add_argument('--msrest-xml', action='store_true', help='Use the msrest XML derialization pipeline. Defaults to True', default=True)
 
 
 class _ContainerTest(_ServiceTest):

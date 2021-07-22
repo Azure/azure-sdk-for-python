@@ -157,7 +157,8 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(ContainerClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
-        self._custom_xml_deserializer(generated_models)
+        if not self._msrest_xml:
+            self._custom_xml_deserializer(generated_models)
         default_api_version = self._client._config.version  # pylint: disable=protected-access
         self._client._config.version = get_api_version(kwargs, default_api_version) # pylint: disable=protected-access
 
@@ -772,8 +773,12 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
             timeout=timeout,
             **kwargs)
         return ItemPaged(
-            command, prefix=name_starts_with, results_per_page=results_per_page, select=select,
-            deserializer=self._client._deserialize, page_iterator_class=BlobPropertiesPaged)
+            command,
+            prefix=name_starts_with,
+            results_per_page=results_per_page,
+            select=select,
+            deserializer=self._client._deserialize,  # pylint: disable=protected-access
+            page_iterator_class=BlobPropertiesPaged)
 
     @distributed_trace
     def walk_blobs(
@@ -820,7 +825,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
             prefix=name_starts_with,
             results_per_page=results_per_page,
             select=None,
-            deserializer=self._client._deserialize,
+            deserializer=self._client._deserialize,  # pylint: disable=protected-access
             delimiter=delimiter)
 
     @distributed_trace
@@ -1553,4 +1558,4 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
             credential=self.credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            key_resolver_function=self.key_resolver_function, msrest_xml=self._msrest_xml)

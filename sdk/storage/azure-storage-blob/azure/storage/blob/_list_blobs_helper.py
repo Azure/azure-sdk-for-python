@@ -9,17 +9,18 @@ from azure.core.paging import PageIterator, ItemPaged
 from azure.core.exceptions import HttpResponseError
 
 from ._deserialize import get_blob_properties_from_generated_code, parse_tags
-from ._generated.models import BlobItemInternal, BlobPrefix as GenBlobPrefix, FilterBlobItem
+from ._generated.models import FilterBlobItem
 from ._models import BlobProperties, FilteredBlob
 from ._shared.models import DictMixin
 from ._shared.xml_deserialization import unpack_xml_content
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
 
 
-def deserialize_list_result(pipeline_response, _, headers):
+def deserialize_list_result(pipeline_response, *args):
     payload = unpack_xml_content(pipeline_response.http_response)
     location = pipeline_response.http_response.location_mode
     return location, payload
+
 
 def load_xml_string(element, name):
     node = element.find(name)
@@ -27,11 +28,13 @@ def load_xml_string(element, name):
         return None
     return node.text
 
+
 def load_xml_int(element, name):
     node = element.find(name)
     if node is None or not node.text:
         return None
     return int(node.text)
+
 
 def load_xml_bool(element, name):
     node = load_xml_string(element, name)
@@ -58,7 +61,7 @@ def blob_properties_from_xml(element, select, deserializer):
     if 'name' in select:
         blob.name = load_xml_string(element, 'Name')
     if 'deleted' in select:
-        blob.deleted =  load_xml_bool(element, 'Deleted')
+        blob.deleted = load_xml_bool(element, 'Deleted')
     if 'snapshot' in select:
         blob.snapshot = load_xml_string(element, 'Snapshot')
     if 'version' in select:
@@ -67,7 +70,7 @@ def blob_properties_from_xml(element, select, deserializer):
     return blob
 
 
-class BlobPropertiesPaged(PageIterator):
+class BlobPropertiesPaged(PageIterator):  # pylint: disable=too-many-instance-attributes
     """An Iterable of Blob properties.
 
     :ivar str service_endpoint: The service URL.

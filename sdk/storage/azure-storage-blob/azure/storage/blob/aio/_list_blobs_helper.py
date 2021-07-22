@@ -7,11 +7,8 @@
 
 from azure.core.async_paging import AsyncPageIterator, AsyncItemPaged
 from azure.core.exceptions import HttpResponseError
-from .._deserialize import get_blob_properties_from_generated_code
-from .._models import BlobProperties
-from .._generated.models import BlobItemInternal, BlobPrefix as GenBlobPrefix
 from .._shared.models import DictMixin
-from .._shared.response_handlers import return_context_and_deserialized, process_storage_error
+from .._shared.response_handlers import process_storage_error
 from .._list_blobs_helper import (
     deserialize_list_result,
     load_many_nodes,
@@ -21,7 +18,7 @@ from .._list_blobs_helper import (
 )
 
 
-class BlobPropertiesPaged(AsyncPageIterator):
+class BlobPropertiesPaged(AsyncPageIterator):  # pylint: disable=too-many-instance-attributes
     """An Iterable of Blob properties.
 
     :ivar str service_endpoint: The service URL.

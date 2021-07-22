@@ -20,6 +20,7 @@ from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
     HttpLoggingPolicy,
     AzureSasCredentialPolicy,
+    ContentDecodePolicy
 )
 from azure.core.pipeline.transport import AsyncHttpTransport
 
@@ -104,6 +105,8 @@ class AsyncStorageAccountHostsMixin(object):
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
         ]
+        if self._msrest_xml:
+            policies.insert(5, ContentDecodePolicy(response_encoding="utf-8"))
         if kwargs.get("_additional_pipeline_policies"):
             policies = policies + kwargs.get("_additional_pipeline_policies")
         return config, AsyncPipeline(config.transport, policies=policies)

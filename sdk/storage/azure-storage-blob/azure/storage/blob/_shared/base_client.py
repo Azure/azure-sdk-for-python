@@ -26,6 +26,7 @@ from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport, HttpTransport
 from azure.core.pipeline.policies import (
     RedirectPolicy,
+    ContentDecodePolicy,
     BearerTokenCredentialPolicy,
     ProxyPolicy,
     DistributedTracingPolicy,
@@ -74,6 +75,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         # type: (...) -> None
         self._location_mode = kwargs.get("_location_mode", LocationMode.PRIMARY)
         self._hosts = kwargs.get("_hosts")
+        self._msrest_xml = kwargs.get('msrest_xml', True)
         self.scheme = parsed_url.scheme
 
         if service not in ["blob", "queue", "file-share", "dfs"]:
@@ -250,13 +252,13 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             config.transport = RequestsTransport(**kwargs)
         policies = [
             QueueMessagePolicy(),
+            config.headers_policy,
             config.proxy_policy,
             config.user_agent_policy,
             StorageContentValidation(),
             RedirectPolicy(**kwargs),
             StorageHosts(hosts=self._hosts, **kwargs),
             config.retry_policy,
-            config.headers_policy,
             StorageRequestHook(**kwargs),
             self._credential_policy,
             config.logging_policy,
@@ -264,6 +266,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs)
         ]
+        if self._msrest_xml:
+            policies.insert(5, ContentDecodePolicy(response_encoding="utf-8"))
         if kwargs.get("_additional_pipeline_policies"):
             policies = policies + kwargs.get("_additional_pipeline_policies")
         return config, Pipeline(config.transport, policies=policies)

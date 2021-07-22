@@ -118,7 +118,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             credential=credential,
             **kwargs)
         self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline)
-        self._custom_xml_deserializer(generated_models)
+        if not self._msrest_xml:
+            self._custom_xml_deserializer(generated_models)
         default_api_version = self._client._config.version  # pylint: disable=protected-access
         self._client._config.version = get_api_version(kwargs, default_api_version)  # pylint: disable=protected-access
 
@@ -637,7 +638,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             prefix=name_starts_with,
             results_per_page=results_per_page,
             select=select,
-            deserializer=self._client._deserialize,
+            deserializer=self._client._deserialize,  # pylint: disable=protected-access
             page_iterator_class=BlobPropertiesPaged
         )
 
@@ -686,7 +687,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             prefix=name_starts_with,
             results_per_page=results_per_page,
             select=None,
-            deserializer=self._client._deserialize,
+            deserializer=self._client._deserialize,  # pylint: disable=protected-access
             delimiter=delimiter)
 
     @distributed_trace_async
@@ -1213,4 +1214,4 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             credential=self.credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            key_resolver_function=self.key_resolver_function, msrest_xml=self._msrest_xml)
