@@ -5,10 +5,13 @@
 # license information.
 # --------------------------------------------------------------------------
 import base64
-import datetime
 from json import JSONEncoder
+from typing import TYPE_CHECKING
 
 from .utils._utils import _FixedOffset
+
+if TYPE_CHECKING:
+    from datetime import timedelta
 
 __all__ = ["NULL"]
 
@@ -30,7 +33,7 @@ with no data. This gets serialized to `null` on the wire.
 
 
 def timedelta_as_isostr(value):
-    # type: (datetime.timedelta) -> str
+    # type: (timedelta) -> str
     """Converts a datetime.timedelta object into an ISO 8601 formatted string, e.g. 'P4DT12H30M05S'
 
     Function adapted from the Tin Can Python project: https://github.com/RusticiSoftware/TinCanPython
@@ -66,16 +69,16 @@ def timedelta_as_isostr(value):
     # Seconds
     try:
         if seconds.is_integer():
-            seconds = "{:02}".format(int(seconds))
+            seconds_string = "{:02}".format(int(seconds))
         else:
             # 9 chars long w/ leading 0, 6 digits after decimal
-            seconds = "%09.6f" % seconds
+            seconds_string = "%09.6f" % seconds
             # Remove trailing zeros
-            seconds = seconds.rstrip("0")
+            seconds_string = seconds_string.rstrip("0")
     except AttributeError:  # int.is_integer() raises on Python 2.7
-        seconds = "{:02}".format(seconds)
+        seconds_string = "{:02}".format(seconds)
 
-    time += "{}S".format(seconds)
+    time += "{}S".format(seconds_string)
 
     return "P" + date + time
 
@@ -104,8 +107,7 @@ class ComplexEncoder(JSONEncoder):
                         return o.replace(tzinfo=TZ_UTC).isoformat()
                     return o.astimezone(TZ_UTC).isoformat()
                 # Next try datetime.date or datetime.time
-                else:
-                    return o.isoformat()
+                return o.isoformat()
             except AttributeError:
                 pass
             # Last, try datetime.timedelta
