@@ -2555,8 +2555,8 @@ class StorageCommonBlobTest(StorageTestCase):
         # check immutability policy after delete_immutability_policy()
         blob.delete_immutability_policy()
         props = blob.get_blob_properties()
-        self.assertIsNone(props.immutability_policy_mode)
-        self.assertIsNone(props.immutability_policy_mode)
+        self.assertIsNone(props['immutability_policy']['policy_mode'])
+        self.assertIsNone(props['immutability_policy']['policy_mode'])
 
         if self.is_live:
             mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)

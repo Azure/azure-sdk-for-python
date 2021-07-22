@@ -2562,7 +2562,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertIsNotNone(resp['immutability_policy_mode'])
         self.assertIsNotNone(props['immutability_policy']['expiry_time'])
         self.assertIsNotNone(props['immutability_policy']['policy_mode'])
-        self.assertEqual(props.immutability_policy_mode, "unlocked")
+        self.assertEqual(props['immutability_policy']['policy_mode'], "unlocked")
 
         # check immutability policy after delete_immutability_policy()
         await blob.delete_immutability_policy()
