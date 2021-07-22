@@ -13,6 +13,7 @@ from time import sleep
 
 import pytest
 import requests
+from devtools_testutils import ResourceGroupPreparer, BlobAccountPreparer
 
 from _shared.testcase import StorageTestCase, LogCaptured, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer, StorageAccountPreparer
 from azure.core import MatchConditions
@@ -227,6 +228,7 @@ class StorageContainerTest(StorageTestCase):
         self.assertNamedItemInContainer(containers, container.container_name)
         self.assertIsNotNone(containers[0].has_immutability_policy)
         self.assertIsNotNone(containers[0].has_legal_hold)
+        self.assertIsNotNone(containers[0].is_immutable_storage_with_versioning_enabled)
 
     @GlobalStorageAccountPreparer()
     def test_list_containers_with_prefix(self, resource_group, location, storage_account, storage_account_key):
@@ -399,6 +401,7 @@ class StorageContainerTest(StorageTestCase):
         # Assert
         self.assertIsNotNone(props)
         self.assertDictEqual(props.metadata, metadata)
+        self.assertIsNotNone(props.is_immutable_storage_with_versioning_enabled)
         # self.assertEqual(props.lease.duration, 'infinite')
         # self.assertEqual(props.lease.state, 'leased')
         # self.assertEqual(props.lease.status, 'locked')
@@ -1054,7 +1057,8 @@ class StorageContainerTest(StorageTestCase):
         self.assertEqual(blobs[1].content_settings.content_language, 'spanish')
         self.assertEqual(blobs[1].content_settings.content_disposition, 'inline')
 
-    @GlobalStorageAccountPreparer()
+    @ResourceGroupPreparer(name_prefix='storagename', use_cache=True)
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", use_cache=True)
     def test_list_blobs_include_deletedwithversion(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
         # pytest.skip("Waiting on metadata XML fix in msrest")

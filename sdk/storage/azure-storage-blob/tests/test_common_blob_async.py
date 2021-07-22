@@ -16,6 +16,8 @@ import os
 import uuid
 from datetime import datetime, timedelta
 
+from azure.mgmt.storage.aio import StorageManagementClient
+
 from azure.core import MatchConditions
 from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import (
@@ -49,9 +51,10 @@ from azure.storage.blob import (
     AccessPolicy,
     ResourceTypes,
     AccountSasPermissions,
-    StandardBlobTier, RehydratePriority)
+    StandardBlobTier, RehydratePriority, BlobImmutabilityPolicyMode, ImmutabilityPolicy)
 
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, BlobAccountPreparer, \
+    CachedResourceGroupPreparer
 from _shared.testcase import GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
 from devtools_testutils.storage.aio import AsyncStorageTestCase
 
@@ -1472,6 +1475,46 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         copy_content = await (await copyblob.download_blob()).readall()
         self.assertEqual(copy_content, self.byte_data)
 
+    @ResourceGroupPreparer(name_prefix='storagename', use_cache=True)
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", use_cache=True)
+    async def test_copy_blob_with_immutability_policy(self, resource_group, location, storage_account, storage_account_key):
+        await self._setup(storage_account, storage_account_key)
+
+        container_name = self.get_resource_name('vlwcontainer')
+        if self.is_live:
+            token_credential = self.generate_oauth_token()
+            subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
+            mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
+            property = mgmt_client.models().BlobContainer(
+                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
+            await mgmt_client.blob_containers.create(resource_group.name, storage_account.name, container_name, blob_container=property)
+
+        blob_name = await self._create_block_blob()
+        # Act
+        sourceblob = '{0}/{1}/{2}'.format(
+            self.account_url(storage_account, "blob"), self.container_name, blob_name)
+
+        copyblob = self.bsc.get_blob_client(container_name, 'blob1copy')
+
+        immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
+                                                 policy_mode=BlobImmutabilityPolicyMode.UNLOCKED)
+
+        copy = await copyblob.start_copy_from_url(sourceblob, immutability_policy=immutability_policy,
+                                                  legal_hold=True,
+                                                  )
+
+        download_resp = await copyblob.download_blob()
+        self.assertEqual(await download_resp.readall(), self.byte_data)
+
+        self.assertTrue(download_resp.properties['has_legal_hold'])
+        self.assertIsNotNone(download_resp.properties['immutability_policy']['expiry_time'])
+        self.assertIsNotNone(download_resp.properties['immutability_policy']['policy_mode'])
+        self.assertIsNotNone(copy)
+        self.assertEqual(copy['copy_status'], 'success')
+        self.assertFalse(isinstance(copy['copy_status'], Enum))
+
+        if self.is_live:
+            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
 
     # @GlobalStorageAccountPreparer()
     # @AsyncStorageTestCase.await_prepared_test
@@ -2527,5 +2570,160 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
                 assert transport.session is not None
             await bsc.get_service_properties()
             assert transport.session is not None
+
+    @ResourceGroupPreparer(name_prefix='storagename', use_cache=True)
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", use_cache=True)
+    async def test_blob_immutability_policy(self, resource_group, location, storage_account, storage_account_key):
+        await self._setup(storage_account, storage_account_key)
+
+        container_name = self.get_resource_name('vlwcontainer')
+        if self.is_live:
+            token_credential = self.generate_oauth_token()
+            subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
+            mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
+            property = mgmt_client.models().BlobContainer(
+                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
+            await mgmt_client.blob_containers.create(resource_group.name, storage_account.name, container_name, blob_container=property)
+
+        # Act
+        blob_name = self.get_resource_name('vlwblob')
+        blob = self.bsc.get_blob_client(container_name, blob_name)
+        await blob.upload_blob(b"abc", overwrite=True)
+
+        immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
+                                                 policy_mode=BlobImmutabilityPolicyMode.UNLOCKED)
+        resp = await blob.set_immutability_policy(
+            immutability_policy=immutability_policy)
+
+        # Assert
+        # check immutability policy after set_immutability_policy()
+        props = await blob.get_blob_properties()
+        self.assertIsNotNone(resp['immutability_policy_until_date'])
+        self.assertIsNotNone(resp['immutability_policy_mode'])
+        self.assertIsNotNone(props['immutability_policy']['expiry_time'])
+        self.assertIsNotNone(props['immutability_policy']['policy_mode'])
+        self.assertEqual(props['immutability_policy']['policy_mode'], "unlocked")
+
+        # check immutability policy after delete_immutability_policy()
+        await blob.delete_immutability_policy()
+        props = await blob.get_blob_properties()
+        self.assertIsNone(props['immutability_policy']['policy_mode'])
+        self.assertIsNone(props['immutability_policy']['policy_mode'])
+
+        if self.is_live:
+            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
+
+    @GlobalStorageAccountPreparer()
+    async def test_blob_legal_hold(self, resource_group, location, storage_account, storage_account_key):
+        await self._setup(storage_account, storage_account_key)
+
+        container_name = self.get_resource_name('vlwcontainer')
+        if self.is_live:
+            token_credential = self.generate_oauth_token()
+            subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
+            mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
+            property = mgmt_client.models().BlobContainer(
+                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
+            await mgmt_client.blob_containers.create(resource_group.name, storage_account.name, container_name, blob_container=property)
+
+        # Act
+        blob_name = self.get_resource_name('vlwblob')
+        blob = self.bsc.get_blob_client(container_name, blob_name)
+        await blob.upload_blob(b"abc", overwrite=True)
+        resp = await blob.set_legal_hold(True)
+        props = await blob.get_blob_properties()
+
+        with self.assertRaises(HttpResponseError):
+            await blob.delete_blob()
+
+        self.assertTrue(resp['legal_hold'])
+        self.assertTrue(props['has_legal_hold'])
+
+        resp2 = await blob.set_legal_hold(False)
+        props2 = await blob.get_blob_properties()
+
+        self.assertFalse(resp2['legal_hold'])
+        self.assertFalse(props2['has_legal_hold'])
+
+        if self.is_live:
+            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
+
+    @ResourceGroupPreparer(name_prefix='storagename', use_cache=True)
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", use_cache=True)
+    async def test_download_blob_with_immutability_policy(self, resource_group, location, storage_account, storage_account_key):
+        await self._setup(storage_account, storage_account_key)
+        container_name = self.get_resource_name('vlwcontainer')
+        if self.is_live:
+            token_credential = self.generate_oauth_token()
+            subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
+            mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
+            property = mgmt_client.models().BlobContainer(
+                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
+            await mgmt_client.blob_containers.create(resource_group.name, storage_account.name, container_name, blob_container=property)
+
+        # Act
+        blob_name = self.get_resource_name('vlwblob')
+        blob = self.bsc.get_blob_client(container_name, blob_name)
+        content = b"abcedfg"
+
+        immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
+                                                 policy_mode=BlobImmutabilityPolicyMode.UNLOCKED)
+        await blob.upload_blob(content,
+                               immutability_policy=immutability_policy,
+                               legal_hold=True,
+                               overwrite=True)
+
+        download_resp = await blob.download_blob()
+
+        with self.assertRaises(HttpResponseError):
+            await blob.delete_blob()
+
+        self.assertTrue(download_resp.properties['has_legal_hold'])
+        self.assertIsNotNone(download_resp.properties['immutability_policy']['expiry_time'])
+        self.assertIsNotNone(download_resp.properties['immutability_policy']['policy_mode'])
+
+        # Cleanup
+        await blob.set_legal_hold(False)
+        await blob.delete_immutability_policy()
+
+        if self.is_live:
+            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
+
+    @ResourceGroupPreparer(name_prefix='storagename', use_cache=True)
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", use_cache=True)
+    async def test_list_blobs_with_immutability_policy(self, resource_group, location, storage_account, storage_account_key):
+        await self._setup(storage_account, storage_account_key)
+        container_name = self.get_resource_name('vlwcontainer')
+        if self.is_live:
+            token_credential = self.generate_oauth_token()
+            subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
+            mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
+            property = mgmt_client.models().BlobContainer(
+                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
+            await mgmt_client.blob_containers.create(resource_group.name, storage_account.name, container_name, blob_container=property)
+
+        # Act
+        blob_name = self.get_resource_name('vlwblob')
+        container_client = self.bsc.get_container_client(container_name)
+        blob = self.bsc.get_blob_client(container_name, blob_name)
+        content = b"abcedfg"
+
+        immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
+                                                 policy_mode=BlobImmutabilityPolicyMode.UNLOCKED)
+        await blob.upload_blob(content,
+                               immutability_policy=immutability_policy,
+                               legal_hold=True,
+                               overwrite=True)
+
+        blob_list = list()
+        async for blob in container_client.list_blobs(include=['immutabilitypolicy', 'legalhold']):
+            blob_list.append(blob)
+
+        self.assertTrue(blob_list[0]['has_legal_hold'])
+        self.assertIsNotNone(blob_list[0]['immutability_policy']['expiry_time'])
+        self.assertIsNotNone(blob_list[0]['immutability_policy']['policy_mode'])
+
+        if self.is_live:
+            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
 
 # ------------------------------------------------------------------------------

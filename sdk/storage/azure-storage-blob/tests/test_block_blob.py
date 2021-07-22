@@ -12,6 +12,9 @@ from datetime import datetime, timedelta
 import pytest
 import uuid
 
+from azure.mgmt.storage import StorageManagementClient
+
+
 from azure.storage.blob._shared.policies import StorageContentValidation
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError, ResourceNotFoundError
@@ -22,9 +25,9 @@ from azure.storage.blob import (
     BlobType,
     ContentSettings,
     BlobBlock,
-    StandardBlobTier, generate_blob_sas, BlobSasPermissions, CustomerProvidedEncryptionKey
-)
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+    StandardBlobTier, generate_blob_sas, BlobSasPermissions, CustomerProvidedEncryptionKey,
+    BlobImmutabilityPolicyMode, ImmutabilityPolicy)
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, BlobAccountPreparer
 
 from _shared.testcase import GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
 from devtools_testutils.storage import StorageTestCase
@@ -448,6 +451,48 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(content.readall(), b'AAABBBCCC')
         self.assertEqual(content.properties.etag, put_block_list_resp.get('etag'))
         self.assertEqual(content.properties.last_modified, put_block_list_resp.get('last_modified'))
+
+    @ResourceGroupPreparer(name_prefix='storagename', use_cache=True)
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", use_cache=True)
+    def test_put_block_with_immutability_policy(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        container_name = self.get_resource_name('vlwcontainer')
+
+        if self.is_live:
+            token_credential = self.generate_oauth_token()
+            subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
+
+            mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
+            property = mgmt_client.models().BlobContainer(
+                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
+            mgmt_client.blob_containers.create(resource_group.name, storage_account.name, container_name, blob_container=property)
+
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(container_name, blob_name)
+        blob.stage_block('1', b'AAA')
+        blob.stage_block('2', b'BBB')
+        blob.stage_block('3', b'CCC')
+
+        # Act
+        block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
+        immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
+                                                 policy_mode=BlobImmutabilityPolicyMode.UNLOCKED)
+        put_block_list_resp = blob.commit_block_list(block_list,
+                                                     immutability_policy=immutability_policy,
+                                                     legal_hold=True,
+                                                     )
+
+        # Assert
+        download_resp = blob.download_blob()
+        self.assertEqual(download_resp.readall(), b'AAABBBCCC')
+        self.assertEqual(download_resp.properties.etag, put_block_list_resp.get('etag'))
+        self.assertEqual(download_resp.properties.last_modified, put_block_list_resp.get('last_modified'))
+        self.assertTrue(download_resp.properties['has_legal_hold'])
+        self.assertIsNotNone(download_resp.properties['immutability_policy']['expiry_time'])
+        self.assertIsNotNone(download_resp.properties['immutability_policy']['policy_mode'])
+
+        if self.is_live:
+            mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
 
     @GlobalStorageAccountPreparer()
     def test_put_block_list_invalid_block_id(self, resource_group, location, storage_account, storage_account_key):
