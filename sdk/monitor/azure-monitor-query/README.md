@@ -147,7 +147,7 @@ Note that a primary `workspace_id` must still be provided when querying addition
 
 ```Python
  client.query(
-    os.environ['LOG_WORKSPACE_ID'],
+    <primary_workspace_id>,
     query,
     additional_workspaces=['<workspace 1>', '<workspace 2>']
     )
