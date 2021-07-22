@@ -33,15 +33,6 @@ from enum import Enum
 import logging
 import re
 import os
-import ast
-
-if os.environ.get("AZURE_STORAGE_LXML"):
-    try:
-        from lxml import etree as ET
-    except:  # pylint: disable=bare-except
-        import xml.etree.ElementTree as ET
-else:
-    import xml.etree.ElementTree as ET
 
 import isodate
 from azure.core.exceptions import DecodeError
@@ -51,9 +42,16 @@ from msrest.serialization import (
     _FixedOffset
 )
 
+if os.environ.get("AZURE_STORAGE_LXML"):
+    try:
+        from lxml import etree as ET
+    except:  # pylint: disable=bare-except
+        import xml.etree.ElementTree as ET
+else:
+    import xml.etree.ElementTree as ET
 
 try:
-    basestring  # type: ignore
+    basestring  # pylint: disable=pointless-statement
     unicode_str = unicode  # type: ignore
 except NameError:
     basestring = str  # type: ignore
@@ -70,7 +68,7 @@ except NameError:
     _long_type = int
 
 
-def unpack_xml_content(response_data, content_type=None):
+def unpack_xml_content(response_data, **kwargs):
     """Extract the correct structure for deserialization.
 
     If raw_data is a PipelineResponse, try to extract the result of RawDeserializer.
@@ -96,7 +94,7 @@ def unpack_xml_content(response_data, content_type=None):
         return ET.fromstring(data_as_str)   # nosec
     except ET.ParseError:
         _LOGGER.critical("Response body invalid XML")
-        raise_with_traceback(DecodeError, message="XML is invalid", response=response_data)
+        raise_with_traceback(DecodeError, message="XML is invalid", response=response_data, **kwargs)
 
 
 def deserialize_bytearray(attr, *_):
@@ -134,6 +132,43 @@ def deserialize_decimal(attr, *_):
     except decimal.DecimalException as err:
         msg = "Invalid decimal {}".format(attr)
         raise_with_traceback(DeserializationError, msg, err)
+
+
+def deserialize_bool(attr, *args):
+    """Deserialize string into bool.
+
+    :param str attr: response string to be deserialized.
+    :rtype: bool
+    :raises: TypeError if string format is not valid.
+    """
+    if attr in [True, False, 1, 0]:
+        return bool(attr)
+    if isinstance(attr, basestring):
+        if attr.lower() in ['true', '1']:
+            return True
+        if attr.lower() in ['false', '0']:
+            return False
+    raise TypeError("Invalid boolean value: {}".format(attr))
+
+
+def deserialize_int(attr, *_):
+    """Deserialize string into int.
+
+    :param str attr: response string to be deserialized.
+    :rtype: int
+    :raises: ValueError or TypeError if string format invalid.
+    """
+    return int(attr)
+
+
+def deserialize_float(attr, *_):
+    """Deserialize string into float.
+
+    :param str attr: response string to be deserialized.
+    :rtype: float
+    :raises: ValueError if string format invalid.
+    """
+    return float(attr)
 
 
 def deserialize_long(attr, *_):
@@ -244,6 +279,19 @@ def deserialize_iso(attr, *_):
         return date_obj
 
 
+def deserialize_object(attr, *_):
+    """Deserialize a generic object.
+    This will be handled as a dictionary.
+
+    :param dict attr: Dictionary to be deserialized.
+    :rtype: dict
+    :raises: TypeError if non-builtin datatype encountered.
+    """
+    # Do no recurse on XML, just return the tree as-is
+    # TODO: This probably needs work
+    return attr
+
+
 def deserialize_unix(attr, *_):
     """Serialize Datetime object into IntTime format.
     This is represented as seconds.
@@ -319,31 +367,61 @@ def deserialize_enum(data, enum_obj):
         return deserialize_unicode(data)
 
 
-def deserialize_basic(attr, data_type):
-    """Deserialize baisc builtin data type from string.
-    Will attempt to convert to str, int, float and bool.
-    This function will also accept '1', '0', 'true' and 'false' as
-    valid bool values.
+def instantiate_model(response, attrs, additional_properties=None):
+    """Instantiate a response model passing in deserialized args.
 
-    :param str attr: response string to be deserialized.
-    :param str data_type: deserialization data type.
-    :rtype: str, int, float or bool
-    :raises: TypeError if string format is not valid.
+    :param response: The response model class.
+    :param d_attrs: The deserialized response attributes.
     """
-    if data_type == 'str':
-        return deserialize_unicode(attr)
-    if data_type == 'bool':
-        if attr in [True, False, 1, 0]:
-            return bool(attr)
-        if isinstance(attr, basestring):
-            if attr.lower() in ['true', '1']:
-                return True
-            elif attr.lower() in ['false', '0']:
-                return False
-        raise TypeError("Invalid boolean value: {}".format(attr))
-    if data_type == 'int':
-        return int(attr)
-    return float(attr)
+    try:
+        readonly = [k for k, v in response._validation.items() if v.get('readonly')]  # pylint:disable=protected-access
+        const = [k for k, v in response._validation.items() if v.get('constant')]  # pylint:disable=protected-access
+        kwargs = {k: v for k, v in attrs.items() if k not in readonly + const}
+        response_obj = response(**kwargs)
+        for attr in readonly:
+            setattr(response_obj, attr, attrs.get(attr))
+        if additional_properties:
+            response_obj.additional_properties = additional_properties
+        return response_obj
+    except Exception as err:
+        msg = "Unable to deserialize {} into model {}. ".format(
+            kwargs, response)
+        raise DeserializationError(msg + str(err))
+
+
+def multi_xml_key_extractor(attr_desc, data, subtype):
+    xml_desc = attr_desc.get('xml', {})
+    xml_name = xml_desc.get('name', attr_desc['key'])
+    is_wrapped = xml_desc.get("wrapped", False)
+    subtype_xml_map = getattr(subtype, "_xml_map", {})
+    if is_wrapped:
+        items_name = xml_name
+    elif subtype:
+        items_name = subtype_xml_map.get('name', xml_name)
+    else:
+        items_name = xml_desc.get("itemsName", xml_name)
+    children = data.findall(items_name)
+    if is_wrapped:
+        if len(children) == 0:
+            return None
+        return list(children[0])
+    return children
+
+def xml_key_extractor(attr_desc, data, subtype):
+    xml_desc = attr_desc.get('xml', {})
+    xml_name = xml_desc.get('name', attr_desc['key'])
+
+    # If it's an attribute, that's simple
+    if xml_desc.get("attr", False):
+        return data.get(xml_name)
+
+    # If it's x-ms-text, that's simple too
+    if xml_desc.get("text", False):
+        return data.text
+
+    subtype_xml_map = getattr(subtype, "_xml_map", {})
+    xml_name = subtype_xml_map.get('name', xml_name)
+    return data.find(xml_name)
 
 
 class Deserializer(object):
@@ -353,10 +431,10 @@ class Deserializer(object):
     """
     def __init__(self, classes=None):
         self.deserialize_type = {
-            'str': deserialize_basic,
-            'int': deserialize_basic,
-            'bool': deserialize_basic,
-            'float': deserialize_basic,
+            'str': deserialize_unicode,
+            'int': deserialize_int,
+            'bool': deserialize_bool,
+            'float': deserialize_float,
             'iso-8601': deserialize_iso,
             'rfc-1123': deserialize_rfc,
             'unix-time': deserialize_unix,
@@ -367,14 +445,14 @@ class Deserializer(object):
             'long': deserialize_long,
             'bytearray': deserialize_bytearray,
             'base64': deserialize_base64,
-            'object': self.deserialize_object,
+            'object': deserialize_object,
             '[]': self.deserialize_iter,
             '{}': self.deserialize_dict
             }
 
         self.dependencies = dict(classes) if classes else {}
 
-    def __call__(self, target_obj, response_data, content_type=None):
+    def __call__(self, target_obj, response_data, **kwargs):
         """Call the deserializer to process a REST response.
 
         :param str target_obj: Target data type to deserialize to.
@@ -385,7 +463,7 @@ class Deserializer(object):
         """
         try:
             # First, unpack the response if we have one.
-            response_data = unpack_xml_content(response_data.http_response, content_type)
+            response_data = unpack_xml_content(response_data.http_response, **kwargs)
         except AttributeError:
             pass
         if response_data is None:
@@ -407,7 +485,7 @@ class Deserializer(object):
         """
         try:
             return self(target_obj, data, content_type=content_type)
-        except:
+        except:  # pylint: disable=bare-except
             _LOGGER.warning(
                 "Ran into a deserialization error. Ignoring since this is failsafe deserialization",
 				exc_info=True
@@ -434,7 +512,7 @@ class Deserializer(object):
         if data is None:
             return data
         try:
-            attributes = model_type._attribute_map
+            attributes = model_type._attribute_map  # pylint:disable=protected-access
             d_attrs = {}
             include_extra_props = False
             for attr, attr_desc in attributes.items():
@@ -444,13 +522,14 @@ class Deserializer(object):
                     continue
                 attr_type = attr_desc["type"]
                 try:
+                    # TODO: Validate this subtype logic
                     subtype = self.dependencies[attr_type.strip('[]{}')]
                 except KeyError:
                     subtype = None
                 if attr_type[0] == '[':
-                    raw_value = self.multi_xml_key_extractor(attr_desc, data, subtype)
+                    raw_value = multi_xml_key_extractor(attr_desc, data, subtype)
                 else:
-                    raw_value = self.xml_key_extractor(attr_desc, data, subtype)
+                    raw_value = xml_key_extractor(attr_desc, data, subtype)
                 value = self.deserialize_data(raw_value, attr_type)
                 d_attrs[attr] = value
         except (AttributeError, TypeError, KeyError) as err:
@@ -459,63 +538,8 @@ class Deserializer(object):
         else:
             if include_extra_props:
                 extra = {el.tag: el.text for el in data if el.tag not in d_attrs}
-                return self._instantiate_model(model_type, d_attrs, extra)
-            return self._instantiate_model(model_type, d_attrs)
-
-    def _instantiate_model(self, response, attrs, additional_properties=None):
-        """Instantiate a response model passing in deserialized args.
-
-        :param response: The response model class.
-        :param d_attrs: The deserialized response attributes.
-        """
-        try:
-            readonly = [k for k, v in response._validation.items() if v.get('readonly')]
-            const = [k for k, v in response._validation.items() if v.get('constant')]
-            kwargs = {k: v for k, v in attrs.items() if k not in readonly + const}
-            response_obj = response(**kwargs)
-            for attr in readonly:
-                setattr(response_obj, attr, attrs.get(attr))
-            if additional_properties:
-                response_obj.additional_properties = additional_properties
-            return response_obj
-        except Exception as err:
-            msg = "Unable to deserialize {} into model {}. ".format(
-                kwargs, response)
-            raise DeserializationError(msg + str(err))
-
-    def multi_xml_key_extractor(self, attr_desc, data, subtype):
-        xml_desc = attr_desc.get('xml', {})
-        xml_name = xml_desc.get('name', attr_desc['key'])
-        is_wrapped = xml_desc.get("wrapped", False)
-        subtype_xml_map = getattr(subtype, "_xml_map", {})
-        if is_wrapped:
-            items_name = xml_name
-        elif subtype:
-            items_name = subtype_xml_map.get('name', xml_name)
-        else:
-            items_name = xml_desc.get("itemsName", xml_name)
-        children = data.findall(items_name)
-        if is_wrapped:
-            if len(children) == 0:
-                return None
-            return list(children[0])
-        return children
-
-    def xml_key_extractor(self, attr_desc, data, subtype):
-        xml_desc = attr_desc.get('xml', {})
-        xml_name = xml_desc.get('name', attr_desc['key'])
-
-        # If it's an attribute, that's simple
-        if xml_desc.get("attr", False):
-            return data.get(xml_name)
-
-        # If it's x-ms-text, that's simple too
-        if xml_desc.get("text", False):
-            return data.text
-
-        subtype_xml_map = getattr(subtype, "_xml_map", {})
-        xml_name = subtype_xml_map.get('name', xml_name)
-        return data.find(xml_name)
+                return instantiate_model(model_type, d_attrs, extra)
+            return instantiate_model(model_type, d_attrs)
 
     def deserialize_data(self, data, data_type):
         """Process data for deserialization according to data type.
@@ -575,14 +599,3 @@ class Deserializer(object):
         # Transform <Key>value</Key> into {"Key": "value"}
         attr = {el.tag: el.text for el in attr}
         return {k: self.deserialize_data(v, dict_type) for k, v in attr.items()}
-
-    def deserialize_object(self, attr, **kwargs):
-        """Deserialize a generic object.
-        This will be handled as a dictionary.
-
-        :param dict attr: Dictionary to be deserialized.
-        :rtype: dict
-        :raises: TypeError if non-builtin datatype encountered.
-        """
-        # Do no recurse on XML, just return the tree as-is
-        return attr

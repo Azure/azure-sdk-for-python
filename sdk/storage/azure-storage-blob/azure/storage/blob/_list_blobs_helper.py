@@ -16,7 +16,7 @@ from ._shared.xml_deserialization import unpack_xml_content
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
 
 
-def deserialize_list_result(pipeline_response, *args):
+def deserialize_list_result(pipeline_response, *_):
     payload = unpack_xml_content(pipeline_response.http_response)
     location = pipeline_response.http_response.location_mode
     return location, payload

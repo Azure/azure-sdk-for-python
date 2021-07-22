@@ -75,7 +75,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         # type: (...) -> None
         self._location_mode = kwargs.get("_location_mode", LocationMode.PRIMARY)
         self._hosts = kwargs.get("_hosts")
-        self._msrest_xml = kwargs.get('msrest_xml', True)
+        self._msrest_xml = kwargs.get('msrest_xml', False)
         self.scheme = parsed_url.scheme
 
         if service not in ["blob", "queue", "file-share", "dfs"]:
@@ -200,9 +200,10 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         :type: str
         """
         return self._client._config.version  # pylint: disable=protected-access
-    
+
     def _custom_xml_deserializer(self, generated_models):
         """Reset the deserializer on the generated client to be Storage implementation"""
+        # pylint: disable=protected-access
         client_models = {k: v for k, v in generated_models.__dict__.items() if isinstance(v, type)}
         custom_deserialize = Deserializer(client_models)
         self._client._deserialize = custom_deserialize
