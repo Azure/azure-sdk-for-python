@@ -919,7 +919,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         .. versionadded:: v3.1
             The *begin_analyze_actions* client method.
         .. versionadded:: v3.2-preview
-            The *ExtractSummaryAction* input option
+            The *ExtractSummaryAction* input option and *ExtractSummaryResult* result object
 
         .. admonition:: Example:
 

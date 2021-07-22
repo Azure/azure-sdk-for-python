@@ -2079,7 +2079,8 @@ class RecognizeLinkedEntitiesAction(DictMixin):
 
 
 class ExtractSummaryAction(DictMixin):
-    """ExtractSummaryAction.
+    """ExtractSummaryAction encapsulates the parameters for starting a long-running Extractive
+     Text Summarization operation.
 
     :keyword str model_version: The model version to use for the analysis.
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
@@ -2123,7 +2124,7 @@ class ExtractSummaryAction(DictMixin):
     def __repr__(self, **kwargs):
         return (
             "ExtractSummaryAction(model_version={}, string_index_type={}, disable_service_logs={}, "
-            "sentence_count={}, order_by={})".format(
+            "max_sentence_count={}, order_by={})".format(
                 self.model_version,
                 self.string_index_type,
                 self.disable_service_logs,
@@ -2145,15 +2146,16 @@ class ExtractSummaryAction(DictMixin):
 
 
 class ExtractSummaryResult(DictMixin):
-    """ExtractSummaryResult.
+    """ExtractSummaryResult is a result object which contains
+    the extractive text summarization from a particular document.
 
-    :ivar str id: Required. Unique, non-empty document identifier.
-    :ivar sentences: Required. A ranked list of sentences representing the extracted summary.
+    :ivar str id: Unique, non-empty document identifier.
+    :ivar sentences: A ranked list of sentences representing the extracted summary.
     :vartype sentences: list[~azure.ai.textanalytics.SummarySentence]
-    :ivar warnings: Required. Warnings encountered while processing document.
+    :ivar warnings: Warnings encountered while processing document.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: if showStats=true was specified in the request this field will contain
-     information about the document payload.
+    :ivar statistics: If `show_stats=True` was specified in the request this
+        field will contain information about the document payload.
     :vartype statistics: ~azure.ai.textanalytics.TextDocumentStatistics
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of an ExtractSummaryResult.
@@ -2163,9 +2165,9 @@ class ExtractSummaryResult(DictMixin):
         self,
         **kwargs
     ):
-        self.id = kwargs['id']
-        self.sentences = kwargs['sentences']
-        self.warnings = kwargs['warnings']
+        self.id = kwargs.get('id', None)
+        self.sentences = kwargs.get('sentences', None)
+        self.warnings = kwargs.get('warnings', None)
         self.statistics = kwargs.get('statistics', None)
         self.is_error = False
 
@@ -2185,24 +2187,27 @@ class ExtractSummaryResult(DictMixin):
 
 
 class SummarySentence(DictMixin):
-    """SummarySentence.
+    """Represents a single sentence from the extractive text summarization.
 
-    :ivar str text: Required. The extracted sentence text.
-    :ivar float rank_score: Required. A double value representing the relevance of the sentence within
-     the summary. Higher values indicate higher importance.
-    :ivar int offset: Required. The sentence offset from the start of the document, based on the value
-     of the parameter StringIndexType.
-    :ivar int length: Required. The length of the sentence.
+    :ivar str text: The extracted sentence text.
+    :ivar float rank_score: A float value representing the relevance of the sentence within
+        the summary. Higher values indicate higher importance.
+    :ivar int offset: The sentence offset from the start of the document.
+        The value depends on the value of the `string_index_type` parameter
+        set in the original request, which is UnicodeCodePoint by default.
+    :ivar int length: The length of the sentence. This value depends on the value of the
+        `string_index_type` parameter set in the original request, which is UnicodeCodePoint
+        by default.
     """
 
     def __init__(
         self,
         **kwargs
     ):
-        self.text = kwargs['text']
-        self.rank_score = kwargs['rank_score']
-        self.offset = kwargs['offset']
-        self.length = kwargs['length']
+        self.text = kwargs.get('text', None)
+        self.rank_score = kwargs.get('rank_score', None)
+        self.offset = kwargs.get('offset', None)
+        self.length = kwargs.get('length', None)
 
     @classmethod
     def _from_generated(cls, sentence):
