@@ -14,6 +14,13 @@ from msrest import Serializer, Deserializer
 
 from ._configuration import RecoveryServicesBackupClientConfiguration
 from .operations import RecoveryServicesBackupClientOperationsMixin
+from .operations import BackupResourceStorageConfigsNonCRROperations
+from .operations import ProtectionIntentOperations
+from .operations import BackupStatusOperations
+from .operations import FeatureSupportOperations
+from .operations import BackupProtectionIntentOperations
+from .operations import BackupUsageSummariesOperations
+from .operations import Operations
 from .operations import BackupResourceVaultConfigsOperations
 from .operations import BackupResourceEncryptionConfigsOperations
 from .operations import PrivateEndpointConnectionOperations
@@ -60,12 +67,6 @@ from .operations import CrrOperationStatusOperations
 from .operations import BackupResourceStorageConfigsOperations
 from .operations import RecoveryPointsCrrOperations
 from .operations import BackupProtectedItemsCrrOperations
-from .operations import ProtectionIntentOperations
-from .operations import BackupStatusOperations
-from .operations import FeatureSupportOperations
-from .operations import BackupProtectionIntentOperations
-from .operations import BackupUsageSummariesOperations
-from .operations import Operations
 from . import models
 
 
@@ -75,6 +76,20 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin, 
     :ivar config: Configuration for client.
     :vartype config: RecoveryServicesBackupClientConfiguration
 
+    :ivar backup_resource_storage_configs_non_crr: BackupResourceStorageConfigsNonCRR operations
+    :vartype backup_resource_storage_configs_non_crr: azure.mgmt.recoveryservicesbackup.operations.BackupResourceStorageConfigsNonCRROperations
+    :ivar protection_intent: ProtectionIntent operations
+    :vartype protection_intent: azure.mgmt.recoveryservicesbackup.operations.ProtectionIntentOperations
+    :ivar backup_status: BackupStatus operations
+    :vartype backup_status: azure.mgmt.recoveryservicesbackup.operations.BackupStatusOperations
+    :ivar feature_support: FeatureSupport operations
+    :vartype feature_support: azure.mgmt.recoveryservicesbackup.operations.FeatureSupportOperations
+    :ivar backup_protection_intent: BackupProtectionIntent operations
+    :vartype backup_protection_intent: azure.mgmt.recoveryservicesbackup.operations.BackupProtectionIntentOperations
+    :ivar backup_usage_summaries: BackupUsageSummaries operations
+    :vartype backup_usage_summaries: azure.mgmt.recoveryservicesbackup.operations.BackupUsageSummariesOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.recoveryservicesbackup.operations.Operations
     :ivar backup_resource_vault_configs: BackupResourceVaultConfigs operations
     :vartype backup_resource_vault_configs: azure.mgmt.recoveryservicesbackup.operations.BackupResourceVaultConfigsOperations
     :ivar backup_resource_encryption_configs: BackupResourceEncryptionConfigs operations
@@ -167,18 +182,6 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin, 
     :vartype recovery_points_crr: azure.mgmt.recoveryservicesbackup.operations.RecoveryPointsCrrOperations
     :ivar backup_protected_items_crr: BackupProtectedItemsCrr operations
     :vartype backup_protected_items_crr: azure.mgmt.recoveryservicesbackup.operations.BackupProtectedItemsCrrOperations
-    :ivar protection_intent: ProtectionIntent operations
-    :vartype protection_intent: azure.mgmt.recoveryservicesbackup.operations.ProtectionIntentOperations
-    :ivar backup_status: BackupStatus operations
-    :vartype backup_status: azure.mgmt.recoveryservicesbackup.operations.BackupStatusOperations
-    :ivar feature_support: FeatureSupport operations
-    :vartype feature_support: azure.mgmt.recoveryservicesbackup.operations.FeatureSupportOperations
-    :ivar backup_protection_intent: BackupProtectionIntent operations
-    :vartype backup_protection_intent: azure.mgmt.recoveryservicesbackup.operations.BackupProtectionIntentOperations
-    :ivar backup_usage_summaries: BackupUsageSummaries operations
-    :vartype backup_usage_summaries: azure.mgmt.recoveryservicesbackup.operations.BackupUsageSummariesOperations
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.recoveryservicesbackup.operations.Operations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -198,6 +201,20 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin, 
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.backup_resource_storage_configs_non_crr = BackupResourceStorageConfigsNonCRROperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.protection_intent = ProtectionIntentOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.backup_status = BackupStatusOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.feature_support = FeatureSupportOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.backup_protection_intent = BackupProtectionIntentOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.backup_usage_summaries = BackupUsageSummariesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.backup_resource_vault_configs = BackupResourceVaultConfigsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_resource_encryption_configs = BackupResourceEncryptionConfigsOperations(
@@ -289,16 +306,4 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin, 
         self.recovery_points_crr = RecoveryPointsCrrOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_protected_items_crr = BackupProtectedItemsCrrOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.protection_intent = ProtectionIntentOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.backup_status = BackupStatusOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.feature_support = FeatureSupportOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.backup_protection_intent = BackupProtectionIntentOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.backup_usage_summaries = BackupUsageSummariesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)

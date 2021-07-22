@@ -1,5 +1,115 @@
 # Release History
 
+## 0.13.0 (2021-07-22)
+
+**Features**
+
+  - Model AzureWorkloadRestoreRequest has a new parameter target_virtual_machine_id
+  - Model AzureWorkloadPointInTimeRestoreRequest has a new parameter target_virtual_machine_id
+  - Model AzureFileshareProtectedItem has a new parameter health_status
+  - Model AzureWorkloadSAPHanaRestoreWithRehydrateRequest has a new parameter target_virtual_machine_id
+  - Model AzureWorkloadSQLRestoreRequest has a new parameter target_virtual_machine_id
+  - Model AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest has a new parameter target_virtual_machine_id
+  - Model IaasVMRestoreRequest has a new parameter identity_info
+  - Model AzureWorkloadSQLPointInTimeRestoreRequest has a new parameter target_virtual_machine_id
+  - Model AzureWorkloadSAPHanaRestoreRequest has a new parameter target_virtual_machine_id
+  - Model AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest has a new parameter target_virtual_machine_id
+  - Model AzureWorkloadSAPHanaPointInTimeRestoreRequest has a new parameter target_virtual_machine_id
+  - Model IaasVMRestoreWithRehydrationRequest has a new parameter identity_info
+  - Model AzureWorkloadSQLRestoreWithRehydrateRequest has a new parameter target_virtual_machine_id
+  - Model Day has a new parameter date_property
+  - Added operation PrivateEndpointConnectionOperations.delete
+  - Added operation PrivateEndpointConnectionOperations.put
+  - Added operation ProtectionPoliciesOperations.delete
+  - Added operation CrossRegionRestoreOperations.trigger
+  - Added operation RecoveryServicesBackupClientOperationsMixin.bms_trigger_data_move
+  - Added operation RecoveryServicesBackupClientOperationsMixin.bms_prepare_data_move
+  - Added operation RecoveryServicesBackupClientOperationsMixin.move_recovery_point
+  - Added operation RestoresOperations.trigger
+  - Added operation group BackupResourceStorageConfigsNonCRROperations
+
+**Breaking changes**
+
+  - Operation RecoveryPointsRecommendedForMoveOperations.list has a new signature
+  - Operation RecoveryPointsRecommendedForMoveOperations.list has a new signature
+  - Operation SecurityPINsOperations.get has a new signature
+  - Operation RecoveryPointsOperations.list has a new signature
+  - Operation RecoveryPointsOperations.get_access_token has a new signature
+  - Operation RecoveryPointsOperations.get has a new signature
+  - Operation RecoveryPointsCrrOperations.list has a new signature
+  - Operation ProtectionPolicyOperationStatusesOperations.get has a new signature
+  - Operation ProtectionPolicyOperationResultsOperations.get has a new signature
+  - Operation ProtectionPoliciesOperations.get has a new signature
+  - Operation ProtectionPoliciesOperations.create_or_update has a new signature
+  - Operation ProtectionIntentOperations.validate has a new signature
+  - Operation ProtectionIntentOperations.get has a new signature
+  - Operation ProtectionIntentOperations.delete has a new signature
+  - Operation ProtectionIntentOperations.create_or_update has a new signature
+  - Operation ProtectionContainersOperations.unregister has a new signature
+  - Operation ProtectionContainersOperations.register has a new signature
+  - Operation ProtectionContainersOperations.refresh has a new signature
+  - Operation ProtectionContainersOperations.inquire has a new signature
+  - Operation ProtectionContainersOperations.get has a new signature
+  - Operation ProtectionContainerRefreshOperationResultsOperations.get has a new signature
+  - Operation ProtectionContainerOperationResultsOperations.get has a new signature
+  - Operation ProtectedItemsOperations.get has a new signature
+  - Operation ProtectedItemsOperations.delete has a new signature
+  - Operation ProtectedItemsOperations.create_or_update has a new signature
+  - Operation ProtectedItemOperationStatusesOperations.get has a new signature
+  - Operation ProtectedItemOperationResultsOperations.get has a new signature
+  - Operation ProtectableContainersOperations.list has a new signature
+  - Operation PrivateEndpointOperations.get_operation_status has a new signature
+  - Operation PrivateEndpointConnectionOperations.get has a new signature
+  - Operation OperationOperations.validate has a new signature
+  - Operation JobsOperations.export has a new signature
+  - Operation JobOperationResultsOperations.get has a new signature
+  - Operation JobDetailsOperations.get has a new signature
+  - Operation JobCancellationsOperations.trigger has a new signature
+  - Operation ItemLevelRecoveryConnectionsOperations.revoke has a new signature
+  - Operation ItemLevelRecoveryConnectionsOperations.provision has a new signature
+  - Operation FeatureSupportOperations.validate has a new signature
+  - Operation ExportJobsOperationResultsOperations.get has a new signature
+  - Operation CrrOperationStatusOperations.get has a new signature
+  - Operation CrrOperationResultsOperations.get has a new signature
+  - Operation BackupsOperations.trigger has a new signature
+  - Operation BackupWorkloadItemsOperations.list has a new signature
+  - Operation BackupUsageSummariesOperations.list has a new signature
+  - Operation BackupUsageSummariesCRROperations.list has a new signature
+  - Operation BackupStatusOperations.get has a new signature
+  - Operation BackupResourceVaultConfigsOperations.update has a new signature
+  - Operation BackupResourceVaultConfigsOperations.put has a new signature
+  - Operation BackupResourceVaultConfigsOperations.get has a new signature
+  - Operation BackupResourceStorageConfigsOperations.update has a new signature
+  - Operation BackupResourceStorageConfigsOperations.patch has a new signature
+  - Operation BackupResourceStorageConfigsOperations.get has a new signature
+  - Operation BackupResourceEncryptionConfigsOperations.update has a new signature
+  - Operation BackupResourceEncryptionConfigsOperations.get has a new signature
+  - Operation BackupProtectionIntentOperations.list has a new signature
+  - Operation BackupProtectionContainersOperations.list has a new signature
+  - Operation BackupProtectedItemsOperations.list has a new signature
+  - Operation BackupProtectedItemsCrrOperations.list has a new signature
+  - Operation BackupProtectableItemsOperations.list has a new signature
+  - Operation BackupPoliciesOperations.list has a new signature
+  - Operation BackupOperationStatusesOperations.get has a new signature
+  - Operation BackupOperationResultsOperations.get has a new signature
+  - Operation BackupJobsOperations.list has a new signature
+  - Operation BackupEnginesOperations.list has a new signature
+  - Operation BackupEnginesOperations.get has a new signature
+  - Operation BMSPrepareDataMoveOperationResultOperations.get has a new signature
+  - Operation AadPropertiesOperations.get has a new signature
+  - Model Day no longer has parameter date
+  - Operation BackupCrrJobsOperations.list has a new signature
+  - Operation BackupCrrJobDetailsOperations.get has a new signature
+  - Operation Operations.list has a new signature
+  - Removed operation PrivateEndpointConnectionOperations.begin_delete
+  - Removed operation PrivateEndpointConnectionOperations.begin_put
+  - Removed operation ProtectionPoliciesOperations.begin_delete
+  - Removed operation CrossRegionRestoreOperations.begin_trigger
+  - Removed operation RecoveryServicesBackupClientOperationsMixin.begin_bms_prepare_data_move
+  - Removed operation RecoveryServicesBackupClientOperationsMixin.begin_bms_trigger_data_move
+  - Removed operation RecoveryServicesBackupClientOperationsMixin.begin_move_recovery_point
+  - Removed operation RestoresOperations.begin_trigger
+
 ## 0.12.0 (2021-05-26)
 
 **Features**

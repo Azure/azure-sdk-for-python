@@ -6531,7 +6531,7 @@ class BackupResourceEncryptionConfig(Model):
     :type subscription_id: str
     :param last_update_status: Possible values include: 'Invalid',
      'NotEnabled', 'PartiallySucceeded', 'PartiallyFailed', 'Failed',
-     'Succeeded'
+     'Succeeded', 'Initialized', 'FirstInitialization'
     :type last_update_status: str or
      ~azure.mgmt.recoveryservicesbackup.models.LastUpdateStatus
     :param infrastructure_encryption_state: Possible values include:
@@ -6555,6 +6555,95 @@ class BackupResourceEncryptionConfig(Model):
         self.subscription_id = subscription_id
         self.last_update_status = last_update_status
         self.infrastructure_encryption_state = infrastructure_encryption_state
+
+
+class BackupResourceEncryptionConfigExtended(BackupResourceEncryptionConfig):
+    """BackupResourceEncryptionConfigExtended.
+
+    :param encryption_at_rest_type: Encryption At Rest Type. Possible values
+     include: 'Invalid', 'MicrosoftManaged', 'CustomerManaged'
+    :type encryption_at_rest_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.EncryptionAtRestType
+    :param key_uri: Key Vault Key URI
+    :type key_uri: str
+    :param subscription_id: Key Vault Subscription Id
+    :type subscription_id: str
+    :param last_update_status: Possible values include: 'Invalid',
+     'NotEnabled', 'PartiallySucceeded', 'PartiallyFailed', 'Failed',
+     'Succeeded', 'Initialized', 'FirstInitialization'
+    :type last_update_status: str or
+     ~azure.mgmt.recoveryservicesbackup.models.LastUpdateStatus
+    :param infrastructure_encryption_state: Possible values include:
+     'Invalid', 'Disabled', 'Enabled'
+    :type infrastructure_encryption_state: str or
+     ~azure.mgmt.recoveryservicesbackup.models.InfrastructureEncryptionState
+    :param user_assigned_identity: User Assigned Identity Id
+    :type user_assigned_identity: str
+    :param use_system_assigned_identity: bool to indicate whether to use
+     system Assigned Identity or not
+    :type use_system_assigned_identity: bool
+    """
+
+    _attribute_map = {
+        'encryption_at_rest_type': {'key': 'encryptionAtRestType', 'type': 'str'},
+        'key_uri': {'key': 'keyUri', 'type': 'str'},
+        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
+        'last_update_status': {'key': 'lastUpdateStatus', 'type': 'str'},
+        'infrastructure_encryption_state': {'key': 'infrastructureEncryptionState', 'type': 'str'},
+        'user_assigned_identity': {'key': 'userAssignedIdentity', 'type': 'str'},
+        'use_system_assigned_identity': {'key': 'useSystemAssignedIdentity', 'type': 'bool'},
+    }
+
+    def __init__(self, *, encryption_at_rest_type=None, key_uri: str=None, subscription_id: str=None, last_update_status=None, infrastructure_encryption_state=None, user_assigned_identity: str=None, use_system_assigned_identity: bool=None, **kwargs) -> None:
+        super(BackupResourceEncryptionConfigExtended, self).__init__(encryption_at_rest_type=encryption_at_rest_type, key_uri=key_uri, subscription_id=subscription_id, last_update_status=last_update_status, infrastructure_encryption_state=infrastructure_encryption_state, **kwargs)
+        self.user_assigned_identity = user_assigned_identity
+        self.use_system_assigned_identity = use_system_assigned_identity
+
+
+class BackupResourceEncryptionConfigExtendedResource(Resource):
+    """BackupResourceEncryptionConfigExtendedResource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id represents the complete path to the resource.
+    :vartype id: str
+    :ivar name: Resource name associated with the resource.
+    :vartype name: str
+    :ivar type: Resource type represents the complete path of the form
+     Namespace/ResourceType/ResourceType/...
+    :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param e_tag: Optional ETag.
+    :type e_tag: str
+    :param properties: BackupResourceEncryptionConfigExtendedResource
+     properties
+    :type properties:
+     ~azure.mgmt.recoveryservicesbackup.models.BackupResourceEncryptionConfigExtended
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'BackupResourceEncryptionConfigExtended'},
+    }
+
+    def __init__(self, *, location: str=None, tags=None, e_tag: str=None, properties=None, **kwargs) -> None:
+        super(BackupResourceEncryptionConfigExtendedResource, self).__init__(location=location, tags=tags, e_tag=e_tag, **kwargs)
+        self.properties = properties
 
 
 class BackupResourceEncryptionConfigResource(Resource):
@@ -8917,6 +9006,10 @@ class IaasVMRestoreRequest(RestoreRequest):
     :type disk_encryption_set_id: str
     :param zones: Target zone where the VM and its disks should be restored.
     :type zones: list[str]
+    :param identity_info: Managed Identity information required to access
+     customer storage account.
+    :type identity_info:
+     ~azure.mgmt.recoveryservicesbackup.models.IdentityInfo
     """
 
     _validation = {
@@ -8943,13 +9036,14 @@ class IaasVMRestoreRequest(RestoreRequest):
         'restore_with_managed_disks': {'key': 'restoreWithManagedDisks', 'type': 'bool'},
         'disk_encryption_set_id': {'key': 'diskEncryptionSetId', 'type': 'str'},
         'zones': {'key': 'zones', 'type': '[str]'},
+        'identity_info': {'key': 'identityInfo', 'type': 'IdentityInfo'},
     }
 
     _subtype_map = {
         'object_type': {'IaasVMRestoreWithRehydrationRequest': 'IaasVMRestoreWithRehydrationRequest'}
     }
 
-    def __init__(self, *, recovery_point_id: str=None, recovery_type=None, source_resource_id: str=None, target_virtual_machine_id: str=None, target_resource_group_id: str=None, storage_account_id: str=None, virtual_network_id: str=None, subnet_id: str=None, target_domain_name_id: str=None, region: str=None, affinity_group: str=None, create_new_cloud_service: bool=None, original_storage_account_option: bool=None, encryption_details=None, restore_disk_lun_list=None, restore_with_managed_disks: bool=None, disk_encryption_set_id: str=None, zones=None, **kwargs) -> None:
+    def __init__(self, *, recovery_point_id: str=None, recovery_type=None, source_resource_id: str=None, target_virtual_machine_id: str=None, target_resource_group_id: str=None, storage_account_id: str=None, virtual_network_id: str=None, subnet_id: str=None, target_domain_name_id: str=None, region: str=None, affinity_group: str=None, create_new_cloud_service: bool=None, original_storage_account_option: bool=None, encryption_details=None, restore_disk_lun_list=None, restore_with_managed_disks: bool=None, disk_encryption_set_id: str=None, zones=None, identity_info=None, **kwargs) -> None:
         super(IaasVMRestoreRequest, self).__init__(**kwargs)
         self.recovery_point_id = recovery_point_id
         self.recovery_type = recovery_type
@@ -8969,6 +9063,7 @@ class IaasVMRestoreRequest(RestoreRequest):
         self.restore_with_managed_disks = restore_with_managed_disks
         self.disk_encryption_set_id = disk_encryption_set_id
         self.zones = zones
+        self.identity_info = identity_info
         self.object_type = 'IaasVMRestoreRequest'
 
 
@@ -9041,6 +9136,10 @@ class IaasVMRestoreWithRehydrationRequest(IaasVMRestoreRequest):
     :type disk_encryption_set_id: str
     :param zones: Target zone where the VM and its disks should be restored.
     :type zones: list[str]
+    :param identity_info: Managed Identity information required to access
+     customer storage account.
+    :type identity_info:
+     ~azure.mgmt.recoveryservicesbackup.models.IdentityInfo
     :param recovery_point_rehydration_info: RP Rehydration Info
     :type recovery_point_rehydration_info:
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointRehydrationInfo
@@ -9070,13 +9169,37 @@ class IaasVMRestoreWithRehydrationRequest(IaasVMRestoreRequest):
         'restore_with_managed_disks': {'key': 'restoreWithManagedDisks', 'type': 'bool'},
         'disk_encryption_set_id': {'key': 'diskEncryptionSetId', 'type': 'str'},
         'zones': {'key': 'zones', 'type': '[str]'},
+        'identity_info': {'key': 'identityInfo', 'type': 'IdentityInfo'},
         'recovery_point_rehydration_info': {'key': 'recoveryPointRehydrationInfo', 'type': 'RecoveryPointRehydrationInfo'},
     }
 
-    def __init__(self, *, recovery_point_id: str=None, recovery_type=None, source_resource_id: str=None, target_virtual_machine_id: str=None, target_resource_group_id: str=None, storage_account_id: str=None, virtual_network_id: str=None, subnet_id: str=None, target_domain_name_id: str=None, region: str=None, affinity_group: str=None, create_new_cloud_service: bool=None, original_storage_account_option: bool=None, encryption_details=None, restore_disk_lun_list=None, restore_with_managed_disks: bool=None, disk_encryption_set_id: str=None, zones=None, recovery_point_rehydration_info=None, **kwargs) -> None:
-        super(IaasVMRestoreWithRehydrationRequest, self).__init__(recovery_point_id=recovery_point_id, recovery_type=recovery_type, source_resource_id=source_resource_id, target_virtual_machine_id=target_virtual_machine_id, target_resource_group_id=target_resource_group_id, storage_account_id=storage_account_id, virtual_network_id=virtual_network_id, subnet_id=subnet_id, target_domain_name_id=target_domain_name_id, region=region, affinity_group=affinity_group, create_new_cloud_service=create_new_cloud_service, original_storage_account_option=original_storage_account_option, encryption_details=encryption_details, restore_disk_lun_list=restore_disk_lun_list, restore_with_managed_disks=restore_with_managed_disks, disk_encryption_set_id=disk_encryption_set_id, zones=zones, **kwargs)
+    def __init__(self, *, recovery_point_id: str=None, recovery_type=None, source_resource_id: str=None, target_virtual_machine_id: str=None, target_resource_group_id: str=None, storage_account_id: str=None, virtual_network_id: str=None, subnet_id: str=None, target_domain_name_id: str=None, region: str=None, affinity_group: str=None, create_new_cloud_service: bool=None, original_storage_account_option: bool=None, encryption_details=None, restore_disk_lun_list=None, restore_with_managed_disks: bool=None, disk_encryption_set_id: str=None, zones=None, identity_info=None, recovery_point_rehydration_info=None, **kwargs) -> None:
+        super(IaasVMRestoreWithRehydrationRequest, self).__init__(recovery_point_id=recovery_point_id, recovery_type=recovery_type, source_resource_id=source_resource_id, target_virtual_machine_id=target_virtual_machine_id, target_resource_group_id=target_resource_group_id, storage_account_id=storage_account_id, virtual_network_id=virtual_network_id, subnet_id=subnet_id, target_domain_name_id=target_domain_name_id, region=region, affinity_group=affinity_group, create_new_cloud_service=create_new_cloud_service, original_storage_account_option=original_storage_account_option, encryption_details=encryption_details, restore_disk_lun_list=restore_disk_lun_list, restore_with_managed_disks=restore_with_managed_disks, disk_encryption_set_id=disk_encryption_set_id, zones=zones, identity_info=identity_info, **kwargs)
         self.recovery_point_rehydration_info = recovery_point_rehydration_info
         self.object_type = 'IaasVMRestoreWithRehydrationRequest'
+
+
+class IdentityInfo(Model):
+    """Encapsulates Managed Identity related information.
+
+    :param is_system_assigned_identity: To differentiate if the managed
+     identity is system assigned or user assigned
+    :type is_system_assigned_identity: bool
+    :param managed_identity_resource_id: Managed Identity Resource Id
+     Optional: Might not be required in the case of system assigned managed
+     identity
+    :type managed_identity_resource_id: str
+    """
+
+    _attribute_map = {
+        'is_system_assigned_identity': {'key': 'isSystemAssignedIdentity', 'type': 'bool'},
+        'managed_identity_resource_id': {'key': 'managedIdentityResourceId', 'type': 'str'},
+    }
+
+    def __init__(self, *, is_system_assigned_identity: bool=None, managed_identity_resource_id: str=None, **kwargs) -> None:
+        super(IdentityInfo, self).__init__(**kwargs)
+        self.is_system_assigned_identity = is_system_assigned_identity
+        self.managed_identity_resource_id = managed_identity_resource_id
 
 
 class ILRRequestResource(Resource):

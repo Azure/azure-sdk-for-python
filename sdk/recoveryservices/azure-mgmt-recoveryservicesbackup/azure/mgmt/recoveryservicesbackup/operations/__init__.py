@@ -9,6 +9,13 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from ._backup_resource_storage_configs_non_crr_operations import BackupResourceStorageConfigsNonCRROperations
+from ._protection_intent_operations import ProtectionIntentOperations
+from ._backup_status_operations import BackupStatusOperations
+from ._feature_support_operations import FeatureSupportOperations
+from ._backup_protection_intent_operations import BackupProtectionIntentOperations
+from ._backup_usage_summaries_operations import BackupUsageSummariesOperations
+from ._operations import Operations
 from ._backup_resource_vault_configs_operations import BackupResourceVaultConfigsOperations
 from ._backup_resource_encryption_configs_operations import BackupResourceEncryptionConfigsOperations
 from ._private_endpoint_connection_operations import PrivateEndpointConnectionOperations
@@ -55,15 +62,16 @@ from ._crr_operation_status_operations import CrrOperationStatusOperations
 from ._backup_resource_storage_configs_operations import BackupResourceStorageConfigsOperations
 from ._recovery_points_crr_operations import RecoveryPointsCrrOperations
 from ._backup_protected_items_crr_operations import BackupProtectedItemsCrrOperations
-from ._protection_intent_operations import ProtectionIntentOperations
-from ._backup_status_operations import BackupStatusOperations
-from ._feature_support_operations import FeatureSupportOperations
-from ._backup_protection_intent_operations import BackupProtectionIntentOperations
-from ._backup_usage_summaries_operations import BackupUsageSummariesOperations
-from ._operations import Operations
 from ._recovery_services_backup_client_operations import RecoveryServicesBackupClientOperationsMixin
 
 __all__ = [
+    'BackupResourceStorageConfigsNonCRROperations',
+    'ProtectionIntentOperations',
+    'BackupStatusOperations',
+    'FeatureSupportOperations',
+    'BackupProtectionIntentOperations',
+    'BackupUsageSummariesOperations',
+    'Operations',
     'BackupResourceVaultConfigsOperations',
     'BackupResourceEncryptionConfigsOperations',
     'PrivateEndpointConnectionOperations',
@@ -110,11 +118,5 @@ __all__ = [
     'BackupResourceStorageConfigsOperations',
     'RecoveryPointsCrrOperations',
     'BackupProtectedItemsCrrOperations',
-    'ProtectionIntentOperations',
-    'BackupStatusOperations',
-    'FeatureSupportOperations',
-    'BackupProtectionIntentOperations',
-    'BackupUsageSummariesOperations',
-    'Operations',
     'RecoveryServicesBackupClientOperationsMixin',
 ]

@@ -9,13 +9,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0 msrest_azure/0.6.4
-        azure-mgmt-recoveryservicesbackup/1.0.0b2 Azure-SDK-For-Python
+      - python/3.8.11 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0 msrest_azure/0.6.4
+        azure-mgmt-recoveryservicesbackup/2.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/providers/Microsoft.RecoveryServices/operations?api-version=2016-08-10
+    uri: https://management.azure.com/providers/Microsoft.RecoveryServices/operations?api-version=2021-04-01
   response:
     body:
       string: '{"value":[{"name":"microsoft.recoveryservices/Locations/backupAadProperties/read","display":{"provider":"microsoft.recoveryservices","resource":"Recovery
@@ -376,7 +376,8 @@ interactions:
         ","description":"Read any "},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationVaultSettings/write","display":{"provider":"Microsoft.RecoveryServices","operation":"Create
         or Update ","description":"Create or Update any "},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationSupportedRegionMappings/read","display":{"provider":"Microsoft.RecoveryServices","operation":"Read
         ","description":"Read any "},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationFabrics/moveWebApp/action","display":{"provider":"Microsoft.RecoveryServices","resource":"Fabrics","operation":"Move
-        WebApp","description":"Move WebApp"},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/Vaults/vaultTokens/read","display":{"provider":"Microsoft.RecoveryServices","resource":"Vaults","operation":"Vault
+        WebApp","description":"Move WebApp"},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationFabrics/replicationProtectionContainers/replicationProtectedItems/updateAppliance/action","display":{"provider":"Microsoft.RecoveryServices","resource":"Protected
+        Items"},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/Vaults/vaultTokens/read","display":{"provider":"Microsoft.RecoveryServices","resource":"Vaults","operation":"Vault
         Token","description":"The Vault Token operation can be used to get Vault Token
         for vault level backend operations."},"origin":"user"},{"name":"Microsoft.RecoveryServices/Vaults/registeredIdentities/write","display":{"provider":"Microsoft.RecoveryServices","resource":"Vaults","operation":"Register
         Service Container","description":"The Register Service Container operation
@@ -440,11 +441,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '67545'
+      - '67794'
       content-type:
       - application/json
       date:
-      - Wed, 26 May 2021 08:02:40 GMT
+      - Thu, 22 Jul 2021 03:14:55 GMT
       expires:
       - '-1'
       pragma:

@@ -24,7 +24,7 @@ class BackupResourceVaultConfigsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2021-01-01".
+    :ivar api_version: Client Api Version. Constant value: "2021-04-01".
     """
 
     models = models
@@ -34,7 +34,7 @@ class BackupResourceVaultConfigsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2021-01-01"
+        self.api_version = "2021-04-01"
 
         self.config = config
 
@@ -173,7 +173,7 @@ class BackupResourceVaultConfigsOperations(object):
 
     def put(
             self, vault_name, resource_group_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Updates vault security config.
+        """Updates vault security config. .
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str
