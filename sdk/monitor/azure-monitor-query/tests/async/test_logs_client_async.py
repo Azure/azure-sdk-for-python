@@ -1,6 +1,5 @@
 import pytest
 import os
-import time
 from azure.identity.aio import ClientSecretCredential
 from azure.core.exceptions import HttpResponseError
 from azure.monitor.query import LogsQueryRequest
@@ -28,10 +27,10 @@ async def test_logs_auth():
     assert response is not None
     assert response.tables is not None
 
+@pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/19917")
 @pytest.mark.live_test_only
 async def test_logs_server_timeout():
     client = LogsQueryClient(_credential())
-    time.sleep(10)
     with pytest.raises(HttpResponseError) as e:
         response = await client.query(
             os.environ['LOG_WORKSPACE_ID'],

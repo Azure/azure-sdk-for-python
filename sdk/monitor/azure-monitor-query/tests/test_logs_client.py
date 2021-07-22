@@ -48,6 +48,7 @@ def test_logs_single_query_with_partial_success():
 
     assert response is not None
 
+@pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/19917")
 @pytest.mark.live_test_only
 def test_logs_server_timeout():
     client = LogsQueryClient(_credential())
