@@ -15,14 +15,14 @@ from _shared.testcase import GlobalResourceGroupPreparer
 
 from devtools_testutils.storage.aio import AsyncStorageTestCase
 
-SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
-                                '>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication' \
-                                '></StorageServiceStats> '
+SERVICE_UNAVAILABLE_RESP_BODY = b'<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
+                                b'>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication' \
+                                b'></StorageServiceStats> '
 
 
-SERVICE_LIVE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
-                                '>live</Status><LastSyncTime>Wed, 19 Jan 2021 22:28:43 GMT</LastSyncTime></GeoReplication' \
-                                '></StorageServiceStats> '
+SERVICE_LIVE_RESP_BODY = b'<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
+                         b'>live</Status><LastSyncTime>Wed, 19 Jan 2021 22:28:43 GMT</LastSyncTime></GeoReplication' \
+                         b'></StorageServiceStats> '
 
 
 class AiohttpTestTransport(AioHttpTransport):
@@ -55,11 +55,11 @@ class ServiceStatsTestAsync(AsyncStorageTestCase):
 
     @staticmethod
     def override_response_body_with_live_status(response):
-        response.http_response.text = lambda encoding=None: SERVICE_LIVE_RESP_BODY
+        response.http_response.body = lambda: SERVICE_LIVE_RESP_BODY
 
     @staticmethod
     def override_response_body_with_unavailable_status(response):
-        response.http_response.text = lambda encoding=None: SERVICE_UNAVAILABLE_RESP_BODY
+        response.http_response.body = lambda: SERVICE_UNAVAILABLE_RESP_BODY
 
     # --Test cases per service ---------------------------------------
     @GlobalResourceGroupPreparer()

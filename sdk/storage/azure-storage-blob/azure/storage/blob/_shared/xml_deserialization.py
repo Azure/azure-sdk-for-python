@@ -25,14 +25,12 @@
 # --------------------------------------------------------------------------
 
 from base64 import b64decode
-from typing import cast
 import datetime
 import decimal
 import email
 from enum import Enum
 import logging
 import re
-import os
 import xml.etree.ElementTree as ET
 
 import isodate
