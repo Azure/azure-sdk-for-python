@@ -101,7 +101,7 @@ class TableCheckpointStore:
         return new_entity
 
     @classmethod
-    def _modify_entity_ownership(self, ownership):
+    def _modify_entity_ownership(cls, ownership):
         """
         create a dictionary with the new ownership attributes so that it can be updated in tables
         """
@@ -120,7 +120,7 @@ class TableCheckpointStore:
         return my_new_entity
 
     @classmethod
-    def _modify_entity_checkpoint(self, checkpoint):
+    def _modify_entity_checkpoint(cls, checkpoint):
         """
         create a dictionary with the new checkpoint attributes so that it can be updated in tables
         """
