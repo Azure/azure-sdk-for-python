@@ -51,10 +51,8 @@ def get_translation_input(args, kwargs, continuation_token):
             prefix = kwargs.pop("prefix", None)
             suffix = kwargs.pop("suffix", None)
             storage_type = kwargs.pop("storage_type", None)
-            source_storage_source = kwargs.pop("source_storage_source", None)
             category_id = kwargs.pop("category_id", None)
             glossaries = kwargs.pop("glossaries", None)
-            target_storage_source = kwargs.pop("target_storage_source", None)
 
             request = [
                 _BatchRequest(
@@ -65,7 +63,6 @@ def get_translation_input(args, kwargs, continuation_token):
                             suffix=suffix
                         ),
                         language=source_language_code,
-                        storage_source=source_storage_source
                     ),
                     targets=[
                         _TargetInput(
@@ -74,7 +71,6 @@ def get_translation_input(args, kwargs, continuation_token):
                             glossaries=[g._to_generated() for g in glossaries]  # pylint: disable=protected-access
                             if glossaries else None,
                             category=category_id,
-                            storage_source=target_storage_source
                         )
                     ],
                     storage_type=storage_type

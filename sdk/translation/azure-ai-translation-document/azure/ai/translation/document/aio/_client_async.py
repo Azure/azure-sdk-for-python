@@ -153,10 +153,6 @@ class DocumentTranslationClient(object):
         :keyword str category_id: Category / custom model ID for using custom translation.
         :keyword glossaries: Glossaries to apply to translation.
         :paramtype glossaries: list[~azure.ai.translation.document.TranslationGlossary]
-        :keyword str source_storage_source: Source storage source. Default value: "AzureBlob".
-            Currently only "AzureBlob" is supported.
-        :keyword str target_storage_source: Target storage source. Default value: "AzureBlob".
-            Currently only "AzureBlob" is supported.
         :return: An instance of an AsyncDocumentTranslationLROPoller. Call `result()` on the poller
             object to return a pageable of DocumentStatus. A DocumentStatus will be
             returned for each translation on a document.

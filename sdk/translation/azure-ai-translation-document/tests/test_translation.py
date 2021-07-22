@@ -460,7 +460,6 @@ class TestTranslation(DocumentTranslationTest):
             input = req.inputs[0]
             assert input.source.source_url == source_container_sas_url
             assert input.source.language == "en"
-            assert input.source.storage_source == "AzureBlob"
             assert input.source.filter.prefix == ""
             assert input.source.filter.suffix == ".txt"
             assert input.storage_type == "File"
@@ -468,7 +467,6 @@ class TestTranslation(DocumentTranslationTest):
             assert input.targets[0].glossaries[0].format == "txt"
             assert input.targets[0].glossaries[0].glossary_url == "https://glossaryfile.txt"
             assert input.targets[0].language == "es"
-            assert input.targets[0].storage_source == "AzureBlob"
             assert input.targets[0].target_url == target_container_sas_url
 
         try:
@@ -480,8 +478,6 @@ class TestTranslation(DocumentTranslationTest):
                 source_language_code="en",
                 prefix="",
                 suffix=".txt",
-                source_storage_source="AzureBlob",
-                target_storage_source="AzureBlob",
                 category_id="fake",
                 glossaries=[TranslationGlossary(
                     glossary_url="https://glossaryfile.txt",
