@@ -33,22 +33,17 @@ from enum import Enum
 import logging
 import re
 import os
+import xml.etree.ElementTree as ET
 
 import isodate
-from azure.core.exceptions import DecodeError
 from msrest.exceptions import DeserializationError, raise_with_traceback
 from msrest.serialization import (
     TZ_UTC,
     _FixedOffset
 )
 
-if os.environ.get("AZURE_STORAGE_LXML"):
-    try:
-        from lxml import etree as ET
-    except:  # pylint: disable=bare-except
-        import xml.etree.ElementTree as ET
-else:
-    import xml.etree.ElementTree as ET
+from azure.core.exceptions import DecodeError
+
 
 try:
     basestring  # pylint: disable=pointless-statement
@@ -83,15 +78,8 @@ def unpack_xml_content(response_data, **kwargs):
     :param content_type: How to parse if raw_data is a string/bytes.
     :raises UnicodeDecodeError: If bytes is not UTF8
     """
-    data_as_str = response_data.text()
     try:
-        try:
-            if isinstance(raw_data, unicode):  # type: ignore
-                # If I'm Python 2.7 and unicode XML will scream if I try a "fromstring" on unicode string
-                data_as_str = cast(str, data_as_str.encode(encoding="utf-8"))
-        except NameError:
-            pass
-        return ET.fromstring(data_as_str)   # nosec
+        return ET.fromstring(response_data.body())   # nosec
     except ET.ParseError:
         _LOGGER.critical("Response body invalid XML")
         raise_with_traceback(DecodeError, message="XML is invalid", response=response_data, **kwargs)
@@ -134,7 +122,7 @@ def deserialize_decimal(attr, *_):
         raise_with_traceback(DeserializationError, msg, err)
 
 
-def deserialize_bool(attr, *args):
+def deserialize_bool(attr, *_):
     """Deserialize string into bool.
 
     :param str attr: response string to be deserialized.
