@@ -4,12 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 
-STORAGE_ACCOUNT_NAME = "emilydevtest"
-STORAGE_ACCOUNT_KEY = "Mi/oSz4a1Pi5lbeXPWcdIUfHe54tSLOPvYzGpjba8UM3uO790Z1yqkQ6kDDod57GMWomYIhglZczn312/VaNBA=="
+STORAGE_ACCOUNT_NAME = ""
+STORAGE_ACCOUNT_KEY = ""
 
 ACCOUNT_URL_SUFFIX = 'core.windows.net'
-RUN_IN_LIVE = "True"
-SKIP_LIVE_RECORDING = "False"
+RUN_IN_LIVE = "False"
+SKIP_LIVE_RECORDING = "True"
 
 PROTOCOL = "https"
 
