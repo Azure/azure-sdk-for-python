@@ -39,34 +39,42 @@ try:
         'RequestsTransport',
         'RequestsTransportResponse',
     ])
-except (ImportError, SyntaxError):
-    pass  # requests library is not installed
-
-# pylint: disable=unused-import, redefined-outer-name
-try:
-    from ._base_async import AsyncHttpTransport, AsyncHttpResponse
-    __all__.extend([
-        'AsyncHttpTransport',
-        'AsyncHttpResponse',
-    ])
-
+    # pylint: disable=unused-import, redefined-outer-name
     try:
+        from ._base_async import AsyncHttpTransport, AsyncHttpResponse
         from ._requests_asyncio import AsyncioRequestsTransport, AsyncioRequestsTransportResponse
 
         __all__.extend([
+            'AsyncHttpTransport',
+            'AsyncHttpResponse',
             'AsyncioRequestsTransport',
             'AsyncioRequestsTransportResponse'
         ])
+
         if sys.version_info >= (3, 7):
             __all__.extend([
                 'TrioRequestsTransport',
                 'TrioRequestsTransportResponse',
+                'AioHttpTransport',
+                'AioHttpTransportResponse',
             ])
 
             def __dir__():
                 return __all__
 
             def __getattr__(name):
+                if name == 'AioHttpTransport':
+                    try:
+                        from ._aiohttp import AioHttpTransport
+                        return AioHttpTransport
+                    except ImportError:
+                        raise ImportError("aiohttp package is not installed")
+                if name == 'AioHttpTransportResponse':
+                    try:
+                        from ._aiohttp import AioHttpTransportResponse
+                        return AioHttpTransportResponse
+                    except ImportError:
+                        raise ImportError("aiohttp package is not installed")
                 if name == 'TrioRequestsTransport':
                     try:
                         from ._requests_trio import TrioRequestsTransport
@@ -91,41 +99,59 @@ try:
                 ])
             except ImportError:
                 pass  # Trio not installed
-    except (ImportError, SyntaxError):
-        pass  # requests library is not installed
 
-    if sys.version_info >= (3, 7):
+            try:
+                from ._aiohttp import AioHttpTransport, AioHttpTransportResponse
+
+                __all__.extend([
+                    'AioHttpTransport',
+                    'AioHttpTransportResponse',
+                ])
+            except ImportError:
+                pass  # Aiohttp not installed
+    except (ImportError, SyntaxError):
+        pass
+except (ImportError, SyntaxError):
+    # pylint: disable=unused-import, redefined-outer-name
+    try:
+        from ._base_async import AsyncHttpTransport, AsyncHttpResponse
         __all__.extend([
-            'AioHttpTransport',
-            'AioHttpTransportResponse',
+            'AsyncHttpTransport',
+            'AsyncHttpResponse',
         ])
 
-        def __dir__():
-            return __all__
-
-        def __getattr__(name):
-            if name == 'AioHttpTransport':
-                try:
-                    from ._aiohttp import AioHttpTransport
-                    return AioHttpTransport
-                except ImportError:
-                    raise ImportError("aiohttp package is not installed")
-            if name == 'AioHttpTransportResponse':
-                try:
-                    from ._aiohttp import AioHttpTransportResponse
-                    return AioHttpTransportResponse
-                except ImportError:
-                    raise ImportError("aiohttp package is not installed")
-            return name
-
-    else:
-        try:
-            from ._aiohttp import AioHttpTransport, AioHttpTransportResponse
+        if sys.version_info >= (3, 7):
             __all__.extend([
                 'AioHttpTransport',
                 'AioHttpTransportResponse',
             ])
-        except ImportError:
-            pass  # Aiohttp not installed
-except (ImportError, SyntaxError):
-    pass  # Asynchronous pipelines not supported.
+
+            def __dir__():
+                return __all__
+
+            def __getattr__(name):
+                if name == 'AioHttpTransport':
+                    try:
+                        from ._aiohttp import AioHttpTransport
+                        return AioHttpTransport
+                    except ImportError:
+                        raise ImportError("aiohttp package is not installed")
+                if name == 'AioHttpTransportResponse':
+                    try:
+                        from ._aiohttp import AioHttpTransportResponse
+                        return AioHttpTransportResponse
+                    except ImportError:
+                        raise ImportError("aiohttp package is not installed")
+                return name
+
+        else:
+            try:
+                from ._aiohttp import AioHttpTransport, AioHttpTransportResponse
+                __all__.extend([
+                    'AioHttpTransport',
+                    'AioHttpTransportResponse',
+                ])
+            except ImportError:
+                pass  # Aiohttp not installed
+    except (ImportError, SyntaxError):
+        pass  # Asynchronous pipelines not supported.
