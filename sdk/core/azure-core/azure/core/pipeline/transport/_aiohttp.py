@@ -74,7 +74,7 @@ class AioHttpTransport(AsyncHttpTransport):
     """
     def __init__(self, *, session: Optional[aiohttp.ClientSession] = None, loop=None, session_owner=True, **kwargs):
         if loop and sys.version_info >= (3, 10):
-            raise ValueError("Starting Python 3.10, asyncio doesn’t support loop as a parameter anymore")
+            raise ValueError("Starting with Python 3.10, asyncio doesn’t support loop as a parameter anymore")
         self._loop = loop
         self._session_owner = session_owner
         self.session = session
