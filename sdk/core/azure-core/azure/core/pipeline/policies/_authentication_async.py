@@ -31,6 +31,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
         # pylint:disable=unused-argument
         super().__init__()
         self._credential = credential
+        self._credential_supports_caching = getattr(self._credential, "supports_caching", lambda: False)()
         self._lock = asyncio.Lock()
         self._scopes = scopes
         self._token = None  # type: Optional[AccessToken]
@@ -129,4 +130,5 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
         return False
 
     def _need_new_token(self) -> bool:
-        return not self._token or self._token.expires_on - time.time() < 300
+        return self._credential_supports_caching or (not self._token or self._token.expires_on - time.time() < 300)
+

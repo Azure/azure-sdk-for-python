@@ -35,7 +35,7 @@ def test_bearer_policy_adds_header():
         assert request.http_request.headers["Authorization"] == "Bearer {}".format(expected_token.token)
         return Mock()
 
-    fake_credential = Mock(get_token=Mock(return_value=expected_token))
+    fake_credential = Mock(get_token=Mock(return_value=expected_token), supports_caching=lambda: False)
     policies = [BearerTokenCredentialPolicy(fake_credential, "scope"), Mock(send=verify_authorization_header)]
 
     pipeline = Pipeline(transport=Mock(), policies=policies)
@@ -67,7 +67,7 @@ def test_bearer_policy_send():
 
 def test_bearer_policy_token_caching():
     good_for_one_hour = AccessToken("token", time.time() + 3600)
-    credential = Mock(get_token=Mock(return_value=good_for_one_hour))
+    credential = Mock(get_token=Mock(return_value=good_for_one_hour), supports_caching=lambda: False)
     pipeline = Pipeline(transport=Mock(), policies=[BearerTokenCredentialPolicy(credential, "scope")])
 
     pipeline.run(HttpRequest("GET", "https://spam.eggs"))
@@ -86,6 +86,19 @@ def test_bearer_policy_token_caching():
 
     pipeline.run(HttpRequest("GET", "https://spam.eggs"))
     assert credential.get_token.call_count == 2  # token expired -> policy should call get_token
+
+
+def test_bearer_policy_credential_supports_caching():
+    """BearerTokenCredentialPolicy should not cache tokens when its credential claims to do so"""
+
+    token = AccessToken("token", int(time.time()) + 3600)
+    credential = Mock(get_token=Mock(return_value=token), supports_caching=lambda: True)
+    pipeline = Pipeline(transport=Mock(), policies=[BearerTokenCredentialPolicy(credential, "scope")])
+
+    request_count = 6
+    for _ in range(request_count):
+        pipeline.run(HttpRequest("GET", "https://localhost"))
+    assert credential.get_token.call_count == request_count
 
 
 def test_bearer_policy_optionally_enforces_https():
@@ -258,7 +271,7 @@ def test_key_vault_regression():
 
     from azure.core.pipeline.policies._authentication import _BearerTokenCredentialPolicyBase
 
-    credential = Mock()
+    credential = Mock(supports_caching=lambda: False)
     policy = _BearerTokenCredentialPolicyBase(credential)
     assert policy._credential is credential
 

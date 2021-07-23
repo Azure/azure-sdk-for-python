@@ -35,6 +35,7 @@ class _BearerTokenCredentialPolicyBase(object):
         super(_BearerTokenCredentialPolicyBase, self).__init__()
         self._scopes = scopes
         self._credential = credential
+        self._credential_supports_caching = getattr(self._credential, "supports_caching", lambda: False)()
         self._token = None  # type: Optional[AccessToken]
 
     @staticmethod
@@ -68,7 +69,7 @@ class _BearerTokenCredentialPolicyBase(object):
     @property
     def _need_new_token(self):
         # type: () -> bool
-        return not self._token or self._token.expires_on - time.time() < 300
+        return self._credential_supports_caching or (not self._token or self._token.expires_on - time.time() < 300)
 
 
 class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):

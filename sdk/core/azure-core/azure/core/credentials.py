@@ -24,6 +24,13 @@ if TYPE_CHECKING:
             # type: (*str, **Any) -> AccessToken
             pass
 
+        def supports_caching(self):
+            # type: () -> bool
+            """Whether this TokenCredential maintains its own token cache.
+
+            An authentication policy may call this before deciding whether to establish its own cache.
+            """
+
 
 else:
     AccessToken = namedtuple("AccessToken", ["token", "expires_on"])

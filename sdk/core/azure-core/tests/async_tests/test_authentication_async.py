@@ -33,7 +33,7 @@ async def test_bearer_policy_adds_header():
         get_token_calls += 1
         return expected_token
 
-    fake_credential = Mock(get_token=get_token)
+    fake_credential = Mock(get_token=get_token, supports_caching=lambda: False)
     policies = [AsyncBearerTokenCredentialPolicy(fake_credential, "scope"), Mock(send=verify_authorization_header)]
     pipeline = AsyncPipeline(transport=Mock(), policies=policies)
 
@@ -71,7 +71,7 @@ async def test_bearer_policy_token_caching():
         get_token_calls += 1
         return expected_token
 
-    credential = Mock(get_token=get_token)
+    credential = Mock(get_token=get_token, supports_caching=lambda: False)
     policies = [
         AsyncBearerTokenCredentialPolicy(credential, "scope"),
         Mock(send=Mock(return_value=get_completed_future(Mock()))),
@@ -98,6 +98,22 @@ async def test_bearer_policy_token_caching():
 
     await pipeline.run(HttpRequest("GET", "https://spam.eggs"))
     assert get_token_calls == 2  # token expired -> policy should call get_token
+
+
+async def test_bearer_policy_credential_supports_caching():
+    """BearerTokenCredentialPolicy should not cache tokens when its credential claims to do so"""
+
+    token = AccessToken("token", int(time.time()) + 3600)
+    credential = Mock(get_token=Mock(return_value=get_completed_future(token)), supports_caching=lambda: True)
+    pipeline = AsyncPipeline(
+        transport=Mock(send=lambda _: get_completed_future(Mock())),
+        policies=[AsyncBearerTokenCredentialPolicy(credential, "scope")],
+    )
+
+    request_count = 6
+    for _ in range(request_count):
+        await pipeline.run(HttpRequest("GET", "https://localhost"))
+    assert credential.get_token.call_count == request_count
 
 
 async def test_bearer_policy_optionally_enforces_https():
@@ -202,6 +218,7 @@ async def test_bearer_policy_calls_sansio_methods():
             fake_send.calls = 1
             return Mock(status_code=401, headers={"WWW-Authenticate": 'Basic realm="localhost"'})
         raise TestException()
+
     fake_send.calls = 0
 
     policy = TestPolicy(credential, "scope")
