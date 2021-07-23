@@ -847,9 +847,11 @@ class TestAnalyze(TextAnalyticsTest):
                 assert isinstance(result, ExtractSummaryResult)
                 assert result.statistics
                 assert len(result.sentences) == 5
+                previous_score = 1.0
                 for sentence in result.sentences:
+                    assert sentence.rank_score <= previous_score
+                    previous_score = sentence.rank_score
                     assert sentence.text
-                    assert sentence.rank_score is not None
                     assert sentence.offset is not None
                     assert sentence.length is not None
                 assert result.id is not None
