@@ -99,6 +99,8 @@ def _case_insensitive_dict(*args, **kwargs):
         # multidict is installed by aiohttp
         from multidict import CIMultiDict
 
+        if len(kwargs) == 0 and len(args) == 1 and (not args[0]):
+            return CIMultiDict()
         return CIMultiDict(*args, **kwargs)
     except ImportError:
         raise ValueError(
