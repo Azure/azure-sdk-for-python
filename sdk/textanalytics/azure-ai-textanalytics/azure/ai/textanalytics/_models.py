@@ -2121,7 +2121,7 @@ class ExtractSummaryAction(DictMixin):
         self.max_sentence_count = kwargs.get('max_sentence_count', 3)
         self.order_by = kwargs.get('order_by', "Offset")
 
-    def __repr__(self, **kwargs):
+    def __repr__(self):
         return (
             "ExtractSummaryAction(model_version={}, string_index_type={}, disable_service_logs={}, "
             "max_sentence_count={}, order_by={})".format(
@@ -2171,6 +2171,17 @@ class ExtractSummaryResult(DictMixin):
         self.statistics = kwargs.get('statistics', None)
         self.is_error = False
 
+    def __repr__(self):
+        return (
+            "ExtractSummaryResult(id={}, sentences={}, warnings={}, statistics={}, is_error={})".format(
+                self.id,
+                repr(self.sentences),
+                repr(self.warnings),
+                repr(self.statistics),
+                self.is_error
+            )[:1024]
+        )
+
     @classmethod
     def _from_generated(cls, summary):
         return cls(
@@ -2208,6 +2219,16 @@ class SummarySentence(DictMixin):
         self.rank_score = kwargs.get('rank_score', None)
         self.offset = kwargs.get('offset', None)
         self.length = kwargs.get('length', None)
+
+    def __repr__(self):
+        return (
+            "SummarySentence(text={}, rank_score={}, offset={}, length={})".format(
+                self.text,
+                self.rank_score,
+                self.offset,
+                self.length,
+            )[:1024]
+        )
 
     @classmethod
     def _from_generated(cls, sentence):
