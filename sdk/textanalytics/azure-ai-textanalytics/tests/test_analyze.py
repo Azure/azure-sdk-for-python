@@ -855,3 +855,22 @@ class TestAnalyze(TextAnalyticsTest):
                     assert sentence.offset is not None
                     assert sentence.length is not None
                 assert result.id is not None
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_extract_summary_partial_results(self, client):
+        docs = [{"id": "1", "language": "en", "text": ""}, {"id": "2", "language": "en", "text": "hello world"}]
+
+        response = client.begin_analyze_actions(
+            docs,
+            actions=[ExtractSummaryAction()],
+            show_stats=True,
+            polling_interval=self._interval(),
+        ).result()
+
+        document_results = list(response)
+        assert document_results[0][0].is_error
+        assert document_results[0][0].error.code == "InvalidDocument"
+
+        assert not document_results[1][0].is_error
+        assert isinstance(document_results[1][0], ExtractSummaryResult)
