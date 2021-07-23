@@ -3,16 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 # pylint:disable=protected-access
+from _typeshed import Self
 from typing import Any
 import datetime as dt
 import uuid
+from azure.core.messaging import _EventMixin
 from msrest.serialization import UTC
 from ._generated.models import (
     EventGridEvent as InternalEventGridEvent,
 )
 
 
-class EventGridEvent(InternalEventGridEvent):
+class EventGridEvent(InternalEventGridEvent, _EventMixin):
     """Properties of an event published to an Event Grid topic using the EventGrid Schema.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -96,3 +98,8 @@ class EventGridEvent(InternalEventGridEvent):
         return "EventGridEvent(subject={}, event_type={}, id={}, event_time={})".format(
             self.subject, self.event_type, self.id, self.event_time
         )[:1024]
+    
+    @classmethod
+    def from_dict(cls, event):
+        event = _EventMixin._get_bytes(event)
+        super(EventGridEvent).from_dict(event)

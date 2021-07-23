@@ -5,6 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import uuid
+import json
 from base64 import b64decode
 from datetime import datetime
 from .utils._utils import _convert_to_isoformat, TZ_UTC
@@ -21,8 +22,28 @@ if TYPE_CHECKING:
 
 __all__ = ["CloudEvent"]
 
+class _EventMixin(object):
+    """Event mixin to have methods that are common to different Event types
+    like CloudEvent, EventGridEvent etc.
+    """
+    @staticmethod
+    def _get_bytes(obj):
+        # type: (Any) -> Dict
+        try:
+            # storage queue
+            return json.loads(obj.content)
+        except AttributeError:
+            # eventhubs
+            try:
+                return json.loads(next(obj.body))[0]
+            except KeyError:
+                # servicebus
+                return json.loads(next(obj.body))
+            except:
+                return obj
 
-class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
+
+class CloudEvent(_EventMixin):  # pylint:disable=too-many-instance-attributes
     """Properties of the CloudEvent 1.0 Schema.
     All required parameters must be populated in order to send to Azure.
 
@@ -122,6 +143,7 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
         :type event: dict
         :rtype: CloudEvent
         """
+        event = CloudEvent._get_bytes(event)
         kwargs = {}  # type: Dict[Any, Any]
         reserved_attr = [
             "data",
