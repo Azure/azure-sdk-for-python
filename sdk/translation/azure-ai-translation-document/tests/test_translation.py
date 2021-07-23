@@ -22,7 +22,7 @@ from azure.ai.translation.document import (
 )
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
 
-GLOSSARY_FILE_NAME = "glossaries-valid.csv"
+GLOSSARY_FILE_NAME = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./glossaries-valid.csv"))
 
 
 class TestTranslation(DocumentTranslationTest):
