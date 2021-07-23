@@ -28,7 +28,7 @@ from typing import cast, Iterator, Optional, AsyncIterator
 
 from ..exceptions import ResponseNotReadError, StreamConsumedError, StreamClosedError
 from ._rest import _HttpResponseBase, HttpResponse
-from . import AsyncHttpResponse, HttpRequest
+from . import AsyncHttpResponse
 from ..pipeline.transport.httpx import HttpxStreamDownloadGenerator, AsyncHttpxStreamDownloadGenerator
 
 def _has_content(response):
