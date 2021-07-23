@@ -1747,7 +1747,6 @@ class Table(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'retention_in_days': {'maximum': 730, 'minimum': 30},
     }
 
     _attribute_map = {
