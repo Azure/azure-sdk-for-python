@@ -36,7 +36,6 @@ import asyncio
 import codecs
 import aiohttp
 from multidict import CIMultiDict
-from requests.exceptions import StreamConsumedError
 
 from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
@@ -249,8 +248,6 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         except _ResponseStopIteration:
             internal_response.close()
             raise StopAsyncIteration()
-        except StreamConsumedError:
-            raise
         except Exception as err:
             _LOGGER.warning("Unable to stream download: %s", err)
             internal_response.close()
