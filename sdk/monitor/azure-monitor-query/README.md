@@ -257,7 +257,7 @@ for metric in response.metrics:
 
 The metrics query API returns a `MetricsResult` object. This `MetricsResult` object has multiple properties, including: a list of `Metric` type objects, `interval`, `namespace`, and `timespan`.
 
-This cab ne fetched using the `metrics` param.
+This can be fetched using the `metrics` param.
 
 Each of the item in this list is a `Metric` object that contains a list of `TimeSeriesElement` objects. Each `TimeSeriesElement` contains `data` and `metadata_values` params.
 
