@@ -21,7 +21,7 @@ def remove_live_storage_table_client(storage_connection_str, table_name):
         table_service_client = TableServiceClient.from_connection_string(storage_connection_str)
         table_service_client.delete_table(table_name)
     except:
-        warnings.warn(UserWarning("storage container teardown failed"))
+        warnings.warn(UserWarning("storage table teardown failed"))
 
 def _claim_and_list_ownership(storage_connection_str, table_name):
     fully_qualified_namespace = 'test_namespace'

@@ -27,7 +27,7 @@ class TableCheckpointStore:
         The hostname of the secondary endpoint.
     """
 
-    def __init__(self, table_account_url, table_name, *, credential=None, **kwargs):
+    def __init__(self, table_account_url, table_name, credential=None, **kwargs):
         # type(str, str, Optional[Any], Any) -> None
         self.table_client = kwargs.pop("table_client", None)
         if not self.table_client:
@@ -44,7 +44,7 @@ class TableCheckpointStore:
         self._cached_table_clients = defaultdict()  # type: Dict[str, TableClient]
 
     @classmethod
-    def from_connection_string(cls, conn_str, table_name, *, credential=None, **kwargs):
+    def from_connection_string(cls, conn_str, table_name, credential=None, **kwargs):
         """Create TableCheckpointStore from a storage connection string.
         :param str conn_str:
             A connection string to an Azure Storage account.
