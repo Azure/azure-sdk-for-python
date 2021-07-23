@@ -259,7 +259,7 @@ The metrics query API returns a `MetricsResult` object. This `MetricsResult` obj
 
 This can be fetched using the `metrics` param.
 
-Each of the item in this list is a `Metric` object that contains a list of `TimeSeriesElement` objects. Each `TimeSeriesElement` contains `data` and `metadata_values` params.
+Each of the items in this list is a `Metric` object that contains a list of `TimeSeriesElement` objects. Each `TimeSeriesElement` contains `data` and `metadata_values` properties.
 
 
 #### Object heirarchy of the response
