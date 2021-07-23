@@ -8,6 +8,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- `RecognizePiiEntitiesAction` option `disable_service_logs` now correctly defaults to `True`.
 
 ### Other Changes
 
