@@ -20,7 +20,7 @@ Install the Azure Monitor Query client library for Python with [pip][pip]:
 pip install azure-monitor-query --pre
 ```
 
-### Authenticate the client
+### Create and Authenticate the client
 A **token credential** is necessary to instantiate both the LogsQueryClient and the MetricsQueryClient object.
 
 ```Python
@@ -102,6 +102,11 @@ time-stamped data. Each set of metric values is a time series with the following
 
 This sample shows getting a log query. to handle the response and view it in a tabular form, the [pandas](https://pypi.org/project/pandas/) library is used. Please look at the samples if you don't want to use the pandas library.
 
+#### Specifying a duration
+
+The `duration` parameter can be used to specify the time duration for which to query the data. This can also be accompanied with either `start_time` or `end_time`. If either `start_time` or `end_time` are not provided, the current time is taken as the end time.
+Alternatively, the `start_time` and `end_time` keyword arguments can be provided together instead of `duration` parameter like shown in the example below.
+
 ```Python
 import os
 import pandas as pd
@@ -117,7 +122,6 @@ client = LogsQueryClient(credential)
 # Response time trend
 # request duration over the last 12 hours.
 query = """AppRequests |
-where TimeGenerated > ago(12h) |
 summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
 
 # returns LogsQueryResults
@@ -134,6 +138,19 @@ if not response.tables:
 for table in response.tables:
     df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
     print(df)
+```
+
+#### Single query on multiple workspaces.
+
+`additional_workspaces` param can be used to pass a list of workspaces that are included in the query when querying a single query over multiple workspaces. These can be qualified workspace names, workspace IDs or Azure resource IDs.
+Note that a primary `workspace_id` must still be provided when querying additional workspaces like in the snippet below.
+
+```Python
+ client.query(
+    <primary_workspace_id>,
+    query,
+    additional_workspaces=['<workspace 1>', '<workspace 2>']
+    )
 ```
 
 ### Get Logs for multiple queries
@@ -208,6 +225,8 @@ response = client.query(
 
 This example shows getting the metrics for an EventGrid subscription. The resource URI is that of an eventgrid topic.
 
+**Note** The resource URI must be that of the resource for which metrics are being queried. It's normally of the format, `/subscriptions/<id>/resourceGroups/<rg-name>/providers/<source>/topics/<resource-name>`.
+
 ```Python
 import os
 from datetime import timedelta
@@ -232,6 +251,67 @@ for metric in response.metrics:
     for time_series_element in metric.timeseries:
         for metric_value in time_series_element.data:
             print(metric_value.time_stamp)
+```
+
+### Handling the response for metrics
+
+The metrics query API returns a `MetricsResult` object. This `MetricsResult` object has multiple properties, including: a list of `Metric` type objects, `interval`, `namespace`, and `timespan`.
+
+This can be fetched using the `metrics` param.
+
+Each of the items in this list is a `Metric` object that contains a list of `TimeSeriesElement` objects. Each `TimeSeriesElement` contains `data` and `metadata_values` properties.
+
+
+#### Object heirarchy of the response
+
+```
+MetricsResult
+|---interval
+|---timespan
+|---cost
+|---namespace
+|---resourceregion
+|---metrics (list of `Metric` objects)
+    |---id
+    |---type
+    |---name
+    |---unit
+    |---timeseries (list of `TimeSeriesElement` objects)
+        |---metadata_values
+        |---data (list of data points represented by `MetricValue` objects)
+```
+
+#### Sample usage of the API to handle response.
+
+```Python
+import os
+from datetime import datetime, timedelta
+from azure.monitor.query import MetricsQueryClient, AggregationType
+from azure.identity import DefaultAzureCredential
+
+credential  = DefaultAzureCredential()
+client = MetricsQueryClient(credential)
+
+metrics_uri = os.environ['METRICS_RESOURCE_URI']
+response = client.query(
+    metrics_uri,
+    metric_names=["MatchedEventCount"],
+    start_time=datetime(2021, 6, 21),
+    duration=timedelta(days=1),
+    aggregations=[AggregationType.COUNT]
+    )
+
+for metric in response.metrics:
+    print(metric.name)
+    for time_series_element in metric.timeseries:
+        for metric_value in time_series_element.data:
+            if metric_value.count != 0:
+                print(
+                    "There are {} matched events at {}".format(
+                        metric_value.count,
+                        metric_value.time_stamp
+                    )
+                )
 ```
 
 ## Troubleshooting
