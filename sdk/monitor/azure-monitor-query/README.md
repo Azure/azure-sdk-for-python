@@ -142,7 +142,7 @@ for table in response.tables:
 
 #### Single query on multiple workspaces.
 
-`additional_workspaces` param can be used to pass a list of workspaces that are included in the query when querying a single query over multiple workspaces. These can be qualified workspace names, workspsce Ids or Azure resource Ids.
+`additional_workspaces` param can be used to pass a list of workspaces that are included in the query when querying a single query over multiple workspaces. These can be qualified workspace names, workspace IDs or Azure resource IDs.
 Note that a primary `workspace_id` must still be provided when querying additional workspaces like in the snippet below.
 
 ```Python
