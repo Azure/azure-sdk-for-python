@@ -227,6 +227,12 @@ This example shows getting the metrics for an EventGrid subscription. The resour
 
 **Note** The resource URI must be that of the resource for which metrics are being queried. It's normally of the format, `/subscriptions/<id>/resourceGroups/<rg-name>/providers/<source>/topics/<resource-name>`.
 
+To find the resource URI:
+
+1. Navigate to your resource's page in the Azure portal.
+2. From the **Overview** blade, select the **JSON View** link.
+3. In the resulting JSON, copy the value of the `id` property.
+
 ```Python
 import os
 from datetime import timedelta
