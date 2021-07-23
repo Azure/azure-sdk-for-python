@@ -255,11 +255,11 @@ for metric in response.metrics:
 
 ### Handling the response for metrics
 
-The metrics query API returns a `MetricsResult` object. This object has a list of `Metric` type along with other params like `interval`, `namespace` and `timespan`.
+The metrics query API returns a `MetricsResult` object. This `MetricsResult` object has multiple properties, including: a list of `Metric` type objects, `interval`, `namespace`, and `timespan`.
 
 This cab ne fetched using the `metrics` param.
 
-Each of the item in this list is a `Metric` object that contains a list of `TimeSeriesElement`. Each of the timeseries elements contain `data` and `metadata_values` params.
+Each of the item in this list is a `Metric` object that contains a list of `TimeSeriesElement` objects. Each `TimeSeriesElement` contains `data` and `metadata_values` params.
 
 
 #### Object heirarchy of the response
