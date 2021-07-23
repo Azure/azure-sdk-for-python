@@ -7,10 +7,12 @@
 import functools
 import pytest
 import json
+import os
 from azure.core.exceptions import HttpResponseError
 from testcase import DocumentTranslationTest, Document
 from preparer import DocumentTranslationPreparer, \
     DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
+from azure.storage.blob import ContainerClient
 from azure.ai.translation.document._generated.models import StartTranslationDetails as _StartTranslationDetails
 from azure.ai.translation.document import (
     DocumentTranslationClient,
@@ -19,6 +21,8 @@ from azure.ai.translation.document import (
     TranslationGlossary,
 )
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
+
+GLOSSARY_FILE_NAME = "glossaries-valid.csv"
 
 
 class TestTranslation(DocumentTranslationTest):
@@ -507,3 +511,42 @@ class TestTranslation(DocumentTranslationTest):
         self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
         for doc in result:
             self._validate_doc_status(doc, target_language="fr")
+
+    @pytest.mark.live_test_only
+    @DocumentTranslationPreparer()
+    @DocumentTranslationClientPreparer()
+    def test_translation_with_glossary(self, client):
+        doc = Document(data=b'testing')
+        source_container_sas_url = self.create_source_container(data=[doc])
+        target_container_sas_url = self.create_target_container()
+
+        container_client = ContainerClient(self.storage_endpoint, self.source_container_name,
+                                           self.storage_key)
+        with open(GLOSSARY_FILE_NAME, "rb") as fd:
+            container_client.upload_blob(name=GLOSSARY_FILE_NAME, data=fd.read())
+
+        prefix, suffix = source_container_sas_url.split("?")
+        glossary_file_sas_url = prefix + "/" + GLOSSARY_FILE_NAME + "?" + suffix
+
+        poller = client.begin_translation(
+            source_container_sas_url,
+            target_container_sas_url,
+            "es",
+            glossaries=[TranslationGlossary(glossary_url=glossary_file_sas_url, file_format="csv")]
+        )
+        result = poller.result()
+
+        container_client = ContainerClient(self.storage_endpoint, self.target_container_name,
+                                           self.storage_key)
+
+        # download translated file and assert that translation reflects glossary changes
+        document = doc.name + doc.suffix
+        with open(document, "wb") as my_blob:
+            download_stream = container_client.download_blob(document)
+            my_blob.write(download_stream.readall())
+
+        with open(document, "rb") as fd:
+            translated = fd.readline()
+
+        assert b'essai' in translated  # glossary worked
+        os.remove(document)
