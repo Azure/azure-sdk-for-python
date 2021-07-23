@@ -21,11 +21,13 @@ from ._credentials import (
     EnvironmentCredential,
     InteractiveBrowserCredential,
     ManagedIdentityCredential,
+    OnBehalfOfCredential,
     SharedTokenCacheCredential,
     UsernamePasswordCredential,
     VisualStudioCodeCredential,
 )
 from ._persistent_cache import TokenCachePersistenceOptions
+from ._user_assertion import UserAssertion
 
 
 __all__ = [
@@ -45,10 +47,12 @@ __all__ = [
     "EnvironmentCredential",
     "InteractiveBrowserCredential",
     "KnownAuthorities",
+    "OnBehalfOfCredential",
     "RegionalAuthority",
     "ManagedIdentityCredential",
     "SharedTokenCacheCredential",
     "TokenCachePersistenceOptions",
+    "UserAssertion",
     "UsernamePasswordCredential",
     "VisualStudioCodeCredential",
 ]
