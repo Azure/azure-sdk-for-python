@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 # pylint:disable=protected-access
-from _typeshed import Self
 from typing import Any
 import datetime as dt
 import uuid
