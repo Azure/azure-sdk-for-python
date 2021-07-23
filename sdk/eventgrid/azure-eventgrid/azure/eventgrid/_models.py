@@ -101,4 +101,4 @@ class EventGridEvent(InternalEventGridEvent, _EventMixin):
     @classmethod
     def from_dict(cls, event):
         event = EventGridEvent._get_bytes(event)
-        super(EventGridEvent).from_dict(event)
+        super(EventGridEvent, cls).from_dict(event)
