@@ -1933,7 +1933,7 @@ class RecognizePiiEntitiesAction(DictMixin):
         self.domain_filter = kwargs.get("domain_filter", None)
         self.categories_filter = kwargs.get("categories_filter", None)
         self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
-        self.disable_service_logs = kwargs.get("disable_service_logs", False)
+        self.disable_service_logs = kwargs.get("disable_service_logs", True)
 
     def __repr__(self, **kwargs):
         return (
