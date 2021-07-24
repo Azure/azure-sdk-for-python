@@ -13,136 +13,35 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/15.1.0 Python/3.8.11 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/checkNameAvailability?api-version=2021-01-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/checkNameAvailability?api-version=2021-06-01
   response:
     body:
-      string: '{"nameAvailable":false,"reason":"Invalid","message":"Account name must
-        be at least 3 characters and at most 24 characters."}'
+      string: '{"error":{"code":"InvalidResourceType","message":"The resource type
+        ''locations/checkNameAvailability'' could not be found in the namespace ''Microsoft.Batch''
+        for api version ''2021-06-01''. The supported api-versions are ''2017-05-01,2017-09-01,2018-12-01,2019-04-01,2019-08-01,2020-03-01,2020-03-01-preview,2020-05-01,2020-09-01,2021-01-01''."}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '124'
+      - '340'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 28 Jan 2021 07:50:53 GMT
+      - Sat, 24 Jul 2021 01:17:02 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
       strict-transport-security:
       - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
       x-content-type-options:
       - nosniff
-      x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      x-ms-failure-cause:
+      - gateway
     status:
-      code: 200
-      message: OK
-- request:
-    body: '{"name": "sdktest2", "type": "Microsoft.Batch/batchAccounts"}'
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '61'
-      Content-Type:
-      - application/json
-      User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/checkNameAvailability?api-version=2021-01-01
-  response:
-    body:
-      string: '{"nameAvailable":false,"reason":"AlreadyExists","message":"An account
-        named ''sdktest2'' is already in use."}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '107'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 28 Jan 2021 07:50:53 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: '{"name": "batch938911e5", "type": "Microsoft.Batch/batchAccounts"}'
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '66'
-      Content-Type:
-      - application/json
-      User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/checkNameAvailability?api-version=2021-01-01
-  response:
-    body:
-      string: '{"nameAvailable":true}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '22'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 28 Jan 2021 07:50:53 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
-    status:
-      code: 200
-      message: OK
+      code: 404
+      message: Not Found
 version: 1

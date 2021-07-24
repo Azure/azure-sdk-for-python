@@ -14,37 +14,44 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/15.1.0 Python/3.8.11 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_byos_account94171201/providers/Microsoft.Batch/batchAccounts/batch94171201?api-version=2021-01-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_byos_account94171201/providers/Microsoft.Batch/batchAccounts/batch94171201?api-version=2021-06-01
   response:
     body:
-      string: '{"error":{"code":"InvalidRequestBody","message":"The specified Request
-        Body is not syntactically valid.\nRequestId:eee69012-9a70-45b4-bad1-7513bb045eb1\nTime:2021-01-28T07:51:09.9732141Z","target":"BatchAccount","details":[{"code":"Reason","message":"keyVaultReference
-        must be set if poolAllocationMode is specified as ''UserSubscription'' on
-        a PUT request"}]}}'
+      string: '{"error":{"code":"NoRegisteredProviderFound","message":"No registered
+        resource provider found for location ''westcentralus'' and API version ''2021-06-01''
+        for type ''batchAccounts''. The supported api-versions are ''2014-05-01-privatepreview,
+        2015-07-01, 2015-09-01, 2015-12-01, 2017-01-01, 2017-05-01, 2017-09-01, 2018-12-01,
+        2019-04-01, 2019-08-01, 2020-03-01, 2020-03-01-preview, 2020-05-01, 2020-09-01,
+        2021-01-01''. The supported locations are ''westeurope, eastus, eastus2, westus,
+        northcentralus, brazilsouth, northeurope, centralus, eastasia, japaneast,
+        australiasoutheast, japanwest, koreasouth, koreacentral, southeastasia, southcentralus,
+        australiaeast, jioindiawest, southindia, centralindia, westindia, canadacentral,
+        canadaeast, uksouth, ukwest, westcentralus, westus2, francecentral, southafricanorth,
+        uaenorth, australiacentral, germanywestcentral, switzerlandnorth, norwayeast,
+        brazilsoutheast, westus3, swedencentral, eastus2euap, centraluseuap''."}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '359'
+      - '959'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 28 Jan 2021 07:51:10 GMT
+      - Sat, 24 Jul 2021 01:17:31 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
       - nosniff
-      x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      x-ms-failure-cause:
+      - gateway
     status:
       code: 400
-      message: The specified Request Body is not syntactically valid.
+      message: Bad Request
 version: 1
