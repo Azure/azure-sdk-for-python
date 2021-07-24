@@ -33,13 +33,13 @@ __all__ = [
     'HttpResponse',
 ]
 
+# pylint: disable=unused-import, redefined-outer-name
 try:
     from ._requests_basic import RequestsTransport, RequestsTransportResponse
     __all__.extend([
         'RequestsTransport',
         'RequestsTransportResponse',
     ])
-    # pylint: disable=unused-import, redefined-outer-name
     try:
         from ._base_async import AsyncHttpTransport, AsyncHttpResponse
         from ._requests_asyncio import AsyncioRequestsTransport, AsyncioRequestsTransportResponse
@@ -112,7 +112,6 @@ try:
     except (ImportError, SyntaxError):
         pass
 except (ImportError, SyntaxError):
-    # pylint: disable=unused-import, redefined-outer-name
     try:
         from ._base_async import AsyncHttpTransport, AsyncHttpResponse
         __all__.extend([
