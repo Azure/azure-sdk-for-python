@@ -76,7 +76,7 @@ class AsyncDocumentTranslationLROPollingMethod(AsyncLROBasePolling):
         return _TranslationStatus.deserialize(self._pipeline_response)
 
     def _get_id_from_headers(self) -> str:
-        return self._pipeline_response.http_response.headers[
+        return self._initial_response.http_response.headers[
             "Operation-Location"
         ].split("/batches/")[1]
 

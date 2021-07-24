@@ -5,6 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from enum import Enum
 import uuid
 from typing import Any, Optional, List
 
@@ -482,7 +483,7 @@ class TimeSeriesElement(object):
 
     :keyword metadata_values: the metadata values returned if $filter was specified in the call.
     :paramtype metadata_values: list[~monitor_query_client.models.MetadataValue]
-    :keyword data: An array of data points representing the metric values.  This is only returned if
+    :keyword data: An array of data points representing the metric values. This is only returned if
      a result type of data is specified.
     :paramtype data: list[~monitor_query_client.models.MetricValue]
     """
@@ -566,3 +567,15 @@ class MetricAvailability(object):
             time_grain=generated.time_grain,
             retention=generated.retention
         )
+
+
+class AggregationType(str, Enum):
+    """the aggregation type of the metric.
+    """
+
+    NONE = "None"
+    AVERAGE = "Average"
+    COUNT = "Count"
+    MINIMUM = "Minimum"
+    MAXIMUM = "Maximum"
+    TOTAL = "Total"

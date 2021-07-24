@@ -46,7 +46,7 @@ class CertificatesOperations:
         resource_group_name: str,
         service_name: str,
         certificate_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CertificateResource":
         """Get the certificate resource.
 
@@ -110,7 +110,7 @@ class CertificatesOperations:
         service_name: str,
         certificate_name: str,
         certificate_resource: "_models.CertificateResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CertificateResource":
         """Create or update certificate resource.
 
@@ -180,7 +180,7 @@ class CertificatesOperations:
         resource_group_name: str,
         service_name: str,
         certificate_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete the certificate resource.
 
@@ -239,7 +239,7 @@ class CertificatesOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CertificateResourceCollection"]:
         """List all the certificates of one user.
 

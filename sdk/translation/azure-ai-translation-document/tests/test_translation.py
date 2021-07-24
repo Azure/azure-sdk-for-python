@@ -6,11 +6,18 @@
 
 import functools
 import pytest
+import json
 from azure.core.exceptions import HttpResponseError
 from testcase import DocumentTranslationTest, Document
 from preparer import DocumentTranslationPreparer, \
     DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
-from azure.ai.translation.document import DocumentTranslationClient, DocumentTranslationInput, TranslationTarget
+from azure.ai.translation.document._generated.models import StartTranslationDetails as _StartTranslationDetails
+from azure.ai.translation.document import (
+    DocumentTranslationClient,
+    DocumentTranslationInput,
+    TranslationTarget,
+    TranslationGlossary,
+)
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
 
 
@@ -440,3 +447,63 @@ class TestTranslation(DocumentTranslationTest):
         for doc in result:
             self._validate_doc_status(doc, target_language="es")
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+
+    @DocumentTranslationPreparer()
+    @DocumentTranslationClientPreparer()
+    def test_single_input_with_kwargs(self, client):
+        # prepare containers and test data
+        source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'))
+        target_container_sas_url = self.create_target_container()
+
+        def callback(request):
+            req = _StartTranslationDetails.deserialize(json.loads(request.http_request.body))
+            input = req.inputs[0]
+            assert input.source.source_url == source_container_sas_url
+            assert input.source.language == "en"
+            assert input.source.filter.prefix == ""
+            assert input.source.filter.suffix == ".txt"
+            assert input.storage_type == "File"
+            assert input.targets[0].category == "fake"
+            assert input.targets[0].glossaries[0].format == "txt"
+            assert input.targets[0].glossaries[0].glossary_url == "https://glossaryfile.txt"
+            assert input.targets[0].language == "es"
+            assert input.targets[0].target_url == target_container_sas_url
+
+        try:
+            poller = client.begin_translation(
+                source_container_sas_url,
+                target_container_sas_url,
+                "es",
+                storage_type="File",
+                source_language_code="en",
+                prefix="",
+                suffix=".txt",
+                category_id="fake",
+                glossaries=[TranslationGlossary(
+                    glossary_url="https://glossaryfile.txt",
+                    file_format="txt"
+                )],
+                raw_response_hook=callback
+            )
+            poller.result()
+        except HttpResponseError as e:
+            pass
+
+    @DocumentTranslationPreparer()
+    @DocumentTranslationClientPreparer()
+    def test_single_input_with_kwarg_successful(self, client):
+        # prepare containers and test data
+        source_container_sas_url = self.create_source_container(data=[Document(data=b'hello world', prefix="kwargs"),
+                                                                      Document(data=b'hello world')])
+        target_container_sas_url = self.create_target_container()
+
+        poller = client.begin_translation(
+            source_container_sas_url,
+            target_container_sas_url,
+            "fr",
+            prefix="kwargs"
+        )
+        result = poller.result()
+        self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
+        for doc in result:
+            self._validate_doc_status(doc, target_language="fr")

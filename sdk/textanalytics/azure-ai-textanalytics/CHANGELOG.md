@@ -1,6 +1,16 @@
 # Release History
 
-## 5.1.0 (Unreleased)
+## 5.1.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 5.1.0 (2021-07-07)
 
 This version of the SDK defaults to the latest supported API version, which currently is `v3.1`.
 Includes all changes from `5.1.0b1` to `5.1.0b7`.
@@ -11,6 +21,7 @@ Note: this version will be the last to officially support Python 3.5, future ver
 
 - Added `catagories_filter` to `RecognizePiiEntitiesAction`
 - Added `HealthcareEntityCategory`
+- Added AAD support for the `begin_analyze_healthcare_entities` methods.
 
 ### Breaking Changes
 

@@ -45,7 +45,7 @@ class TablesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TablesListResult"]:
         """Gets all the tables for the specified Log Analytics workspace.
 
@@ -76,7 +76,7 @@ class TablesOperations:
                 url = self.list_by_workspace.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=63, min_length=4, pattern=r'^[A-Za-z0-9][A-Za-z0-9-]+[A-Za-z0-9]$'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -122,7 +122,7 @@ class TablesOperations:
         workspace_name: str,
         table_name: str,
         parameters: "_models.Table",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Table":
         """Updates a Log Analytics workspace table properties.
 
@@ -152,7 +152,7 @@ class TablesOperations:
         url = self.update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=63, min_length=4, pattern=r'^[A-Za-z0-9][A-Za-z0-9-]+[A-Za-z0-9]$'),
             'tableName': self._serialize.url("table_name", table_name, 'str'),
         }
@@ -192,7 +192,7 @@ class TablesOperations:
         resource_group_name: str,
         workspace_name: str,
         table_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Table":
         """Gets a Log Analytics workspace table.
 
@@ -219,7 +219,7 @@ class TablesOperations:
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=63, min_length=4, pattern=r'^[A-Za-z0-9][A-Za-z0-9-]+[A-Za-z0-9]$'),
             'tableName': self._serialize.url("table_name", table_name, 'str'),
         }

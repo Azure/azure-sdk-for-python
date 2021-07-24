@@ -86,6 +86,7 @@ class AmqpAnnotatedMessage(object):
     access to low-level AMQP message sections. There should be one and only one of either data_body, sequence_body
     or value_body being set as the body of the AmqpAnnotatedMessage; if more than one body is set, `ValueError` will
     be raised.
+
     Please refer to the AMQP spec:
     http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#section-message-format
     for more information on the message format.
@@ -301,9 +302,13 @@ class AmqpAnnotatedMessage(object):
     def body(self):
         # type: () -> Any
         """The body of the Message. The format may vary depending on the body type:
-        For ~azure.servicebus.AmqpMessageBodyType.DATA, the body could be bytes or Iterable[bytes]
-        For ~azure.servicebus.AmqpMessageBodyType.SEQUENCE, the body could be List or Iterable[List]
-        For ~azure.servicebus.AmqpMessageBodyType.VALUE, the body could be any type.
+        For :class:`azure.servicebus.amqp.AmqpMessageBodyType.DATA<azure.servicebus.amqp.AmqpMessageBodyType.DATA>`,
+        the body could be bytes or Iterable[bytes].
+        For
+        :class:`azure.servicebus.amqp.AmqpMessageBodyType.SEQUENCE<azure.servicebus.amqp.AmqpMessageBodyType.SEQUENCE>`,
+        the body could be List or Iterable[List].
+        For :class:`azure.servicebus.amqp.AmqpMessageBodyType.VALUE<azure.servicebus.amqp.AmqpMessageBodyType.VALUE>`,
+        the body could be any type.
 
         :rtype: Any
         """
@@ -314,7 +319,7 @@ class AmqpAnnotatedMessage(object):
         # type: () -> AmqpMessageBodyType
         """The body type of the underlying AMQP message.
 
-        rtype: ~azure.servicebus.amqp.AmqpMessageBodyType
+        :rtype: ~azure.servicebus.amqp.AmqpMessageBodyType
         """
         return AMQP_MESSAGE_BODY_TYPE_MAP.get(
             self._message._body.type, AmqpMessageBodyType.VALUE  # pylint: disable=protected-access
@@ -410,7 +415,6 @@ class AmqpAnnotatedMessage(object):
     def footer(self, value):
         # type: (dict) -> None
         self._footer = value
-        # self._message.footer = value
 
 
 class AmqpMessageHeader(DictMixin):

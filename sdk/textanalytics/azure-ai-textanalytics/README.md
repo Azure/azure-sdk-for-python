@@ -700,7 +700,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [extract_key_phrases]: https://aka.ms/azsdk-python-textanalytics-extractkeyphrases
 [detect_language]: https://aka.ms/azsdk-python-textanalytics-detectlanguage
 [language_detection]: https://docs.microsoft.com/azure/cognitive-services/Text-Analytics/how-tos/text-analytics-how-to-language-detection
-[language_and_regional_support]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/language-support
+[language_and_regional_support]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/language-support?tabs=language-detection
 [sentiment_analysis]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-sentiment-analysis
 [key_phrase_extraction]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-keyword-extraction
 [linked_entities_categories]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/named-entity-types?tabs=general
