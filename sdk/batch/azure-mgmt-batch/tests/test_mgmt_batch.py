@@ -27,7 +27,7 @@ from devtools_testutils import (
 AZURE_LOCATION = 'westcentralus'
 EXISTING_BATCH_ACCOUNT = {'name': 'sdktest2', 'location': 'westcentralus'}
 
-
+@unittest.skip('update test structure in the future')
 class MgmtBatchTest(AzureMgmtTestCase):
 
     def setUp(self):
