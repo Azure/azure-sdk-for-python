@@ -47,6 +47,7 @@ To run the samples, you need to install the following dependencies:
 ```bash
 pip install azure-agrifood-farming azure-identity aiohttp python-dotenv
 ```
+_Note: You can use your preferred async http client to use the async FarmBeats client, instead of using aiohttp._
 
 ### Set up the credentials for authentication
 
