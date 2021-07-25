@@ -56,17 +56,12 @@ async def download_image(client, file_link, out_path, semaphore):
 async def sample_satellite_download_async():
 
     farmbeats_endpoint = os.environ['FARMBEATS_ENDPOINT']
-    auth_authority = os.environ.get('AZURE_AUTHORITY')
-    auth_scope = os.environ.get('FARMBEATS_SCOPE')
 
-    credential = DefaultAzureCredential(
-        authority=auth_authority
-    )
+    credential = DefaultAzureCredential()
 
     client = FarmBeatsClient(
         endpoint=farmbeats_endpoint,
-        credential=credential,
-        credential_scopes=[auth_scope]
+        credential=credential
     )
 
     farmer_id = "contoso-farmer"

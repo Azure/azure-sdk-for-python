@@ -32,17 +32,12 @@ from dotenv import load_dotenv
 async def sample_cascade_delete_async():
 
     farmbeats_endpoint = os.environ['FARMBEATS_ENDPOINT']
-    auth_authority = os.environ.get('AZURE_AUTHORITY')
-    auth_scope = os.environ.get('FARMBEATS_SCOPE')
 
-    credential = DefaultAzureCredential(
-        authority=auth_authority
-    )
+    credential = DefaultAzureCredential()
 
     client = FarmBeatsClient(
         endpoint=farmbeats_endpoint,
-        credential=credential,
-        credential_scopes=[auth_scope]
+        credential=credential
     )
 
     job_id_prefix = "cascade-delete-job"
