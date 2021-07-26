@@ -1,5 +1,11 @@
 # Release History
 
+## 0.14.0 (2021-07-26)
+
+**Breaking changes**
+
+  - Removed operation group BackupResourceStorageConfigsNonCRROperations
+
 ## 0.13.0 (2021-07-22)
 
 **Features**
