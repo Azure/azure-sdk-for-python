@@ -1168,10 +1168,13 @@ class ExtractiveSummarizationTask(msrest.serialization.Model):
     :param parameters:
     :type parameters:
      ~azure.ai.textanalytics.v3_2_preview_1.models.ExtractiveSummarizationTaskParameters
+    :param task_name:
+    :type task_name: str
     """
 
     _attribute_map = {
         'parameters': {'key': 'parameters', 'type': 'ExtractiveSummarizationTaskParameters'},
+        'task_name': {'key': 'taskName', 'type': 'str'},
     }
 
     def __init__(
@@ -1180,6 +1183,7 @@ class ExtractiveSummarizationTask(msrest.serialization.Model):
     ):
         super(ExtractiveSummarizationTask, self).__init__(**kwargs)
         self.parameters = kwargs.get('parameters', None)
+        self.task_name = kwargs.get('task_name', None)
 
 
 class ExtractiveSummarizationTaskParameters(msrest.serialization.Model):
@@ -1213,7 +1217,7 @@ class ExtractiveSummarizationTaskParameters(msrest.serialization.Model):
     ):
         super(ExtractiveSummarizationTaskParameters, self).__init__(**kwargs)
         self.model_version = kwargs.get('model_version', "latest")
-        self.logging_opt_out = kwargs.get('logging_opt_out', True)
+        self.logging_opt_out = kwargs.get('logging_opt_out', False)
         self.string_index_type = kwargs.get('string_index_type', None)
         self.sentence_count = kwargs.get('sentence_count', 3)
         self.sort_by = kwargs.get('sort_by', "Offset")
