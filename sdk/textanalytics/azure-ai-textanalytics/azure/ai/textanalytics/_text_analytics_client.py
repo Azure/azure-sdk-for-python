@@ -62,6 +62,8 @@ if TYPE_CHECKING:
         ExtractKeyPhrasesAction,
         AnalyzeSentimentAction,
         AnalyzeHealthcareEntitiesResult,
+        ExtractSummaryAction,
+        ExtractSummaryResult
     )
     from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller
 
@@ -852,9 +854,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def begin_analyze_actions(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        actions,  # type: List[Union[RecognizeEntitiesAction, RecognizeLinkedEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction, AnalyzeSentimentAction]] # pylint: disable=line-too-long
+        actions,  # type: List[Union[RecognizeEntitiesAction, RecognizeLinkedEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction, AnalyzeSentimentAction, ExtractSummaryAction]] # pylint: disable=line-too-long
         **kwargs  # type: Any
-    ):  # type: (...) -> AnalyzeActionsLROPoller[ItemPaged[List[Union[RecognizeEntitiesResult, RecognizeLinkedEntitiesResult, RecognizePiiEntitiesResult, ExtractKeyPhrasesResult, AnalyzeSentimentResult, DocumentError]]]]  # pylint: disable=line-too-long
+    ):  # type: (...) -> AnalyzeActionsLROPoller[ItemPaged[List[Union[RecognizeEntitiesResult, RecognizeLinkedEntitiesResult, RecognizePiiEntitiesResult, ExtractKeyPhrasesResult, AnalyzeSentimentResult, ExtractSummaryResult, DocumentError]]]]  # pylint: disable=line-too-long
         """Start a long-running operation to perform a variety of text analysis actions over a batch of documents.
 
         We recommend you use this function if you're looking to analyze larger documents, and / or
@@ -875,7 +877,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             Duplicate actions in list not supported.
         :type actions:
             list[RecognizeEntitiesAction or RecognizePiiEntitiesAction or ExtractKeyPhrasesAction or
-            RecognizeLinkedEntitiesAction or AnalyzeSentimentAction]
+            RecognizeLinkedEntitiesAction or AnalyzeSentimentAction or ExtractSummaryAction]
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -899,11 +901,13 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :rtype:
             ~azure.ai.textanalytics.AnalyzeActionsLROPoller[~azure.core.paging.ItemPaged[
             list[Union[RecognizeEntitiesResult, RecognizeLinkedEntitiesResult, RecognizePiiEntitiesResult,
-            ExtractKeyPhrasesResult, AnalyzeSentimentResult, DocumentError]]]]
+            ExtractKeyPhrasesResult, AnalyzeSentimentResult, ExtractSummaryAction, DocumentError]]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. versionadded:: v3.1
             The *begin_analyze_actions* client method.
+        .. versionadded:: v3.2-preview
+            The *ExtractSummaryAction* input option and *ExtractSummaryResult* result object
 
         .. admonition:: Example:
 
@@ -978,6 +982,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                         == _AnalyzeActionsType.ANALYZE_SENTIMENT
                     ]
                 ],
+                extractive_summarization_tasks=[
+                    t._to_generated()  # pylint: disable=protected-access
+                    for t in [
+                        a
+                        for a in actions
+                        if _determine_action_type(a) == _AnalyzeActionsType.EXTRACT_SUMMARY
+                    ]
+                ]
             )
             analyze_body = self._client.models(api_version=self._api_version).AnalyzeBatchInput(
                 display_name=display_name, tasks=analyze_tasks, analysis_input=docs
