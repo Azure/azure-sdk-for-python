@@ -3,13 +3,14 @@ from azure.eventhub.extensions.checkpointstoretable import TableCheckpointStore
 from azure.data.tables import TableServiceClient
 import uuid
 import warnings
+import random
 
 STORAGE_CONN_STR = ["Azure storage connection str"]
 
 def get_live_storage_table_client(storage_connection_str):
     try:
         storage_connection_str
-        table_name = 'a' +str(uuid.uuid4().hex)
+        table_name = chr(random.randint(ord('a'), ord('z'))) +(uuid.uuid4().hex)
         table_service_client = TableServiceClient.from_connection_string(storage_connection_str)
         table_service_client.create_table_if_not_exists(table_name)
         return storage_connection_str, table_name
