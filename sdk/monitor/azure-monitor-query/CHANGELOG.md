@@ -9,6 +9,8 @@
 ### Breaking Changes
 
 - `aggregation` param in the query API is renamed to `aggregations`
+- `batch_query` API now returns a list of responses.
+- `LogsBatchResults` model is now removed.
 
 ### Bugs Fixed
 

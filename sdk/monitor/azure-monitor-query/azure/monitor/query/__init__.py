@@ -15,7 +15,6 @@ from ._models import (
     MetricsResult,
     LogsBatchResultError,
     LogsQueryRequest,
-    LogsBatchResults,
     MetricNamespace,
     MetricDefinition,
     MetricsMetadataValue,
@@ -30,7 +29,6 @@ from ._version import VERSION
 __all__ = [
     "AggregationType",
     "LogsQueryClient",
-    "LogsBatchResults",
     "LogsBatchResultError",
     "LogsQueryResults",
     "LogsQueryResultColumn",
