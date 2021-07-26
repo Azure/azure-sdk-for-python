@@ -9,7 +9,6 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._backup_resource_storage_configs_non_crr_operations import BackupResourceStorageConfigsNonCRROperations
 from ._protection_intent_operations import ProtectionIntentOperations
 from ._backup_status_operations import BackupStatusOperations
 from ._feature_support_operations import FeatureSupportOperations
@@ -65,7 +64,6 @@ from ._backup_protected_items_crr_operations import BackupProtectedItemsCrrOpera
 from ._recovery_services_backup_client_operations import RecoveryServicesBackupClientOperationsMixin
 
 __all__ = [
-    'BackupResourceStorageConfigsNonCRROperations',
     'ProtectionIntentOperations',
     'BackupStatusOperations',
     'FeatureSupportOperations',

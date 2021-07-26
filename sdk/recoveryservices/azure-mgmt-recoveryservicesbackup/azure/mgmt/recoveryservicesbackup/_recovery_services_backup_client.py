@@ -14,7 +14,6 @@ from msrest import Serializer, Deserializer
 
 from ._configuration import RecoveryServicesBackupClientConfiguration
 from .operations import RecoveryServicesBackupClientOperationsMixin
-from .operations import BackupResourceStorageConfigsNonCRROperations
 from .operations import ProtectionIntentOperations
 from .operations import BackupStatusOperations
 from .operations import FeatureSupportOperations
@@ -76,8 +75,6 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin, 
     :ivar config: Configuration for client.
     :vartype config: RecoveryServicesBackupClientConfiguration
 
-    :ivar backup_resource_storage_configs_non_crr: BackupResourceStorageConfigsNonCRR operations
-    :vartype backup_resource_storage_configs_non_crr: azure.mgmt.recoveryservicesbackup.operations.BackupResourceStorageConfigsNonCRROperations
     :ivar protection_intent: ProtectionIntent operations
     :vartype protection_intent: azure.mgmt.recoveryservicesbackup.operations.ProtectionIntentOperations
     :ivar backup_status: BackupStatus operations
@@ -201,8 +198,6 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin, 
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.backup_resource_storage_configs_non_crr = BackupResourceStorageConfigsNonCRROperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.protection_intent = ProtectionIntentOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_status = BackupStatusOperations(
