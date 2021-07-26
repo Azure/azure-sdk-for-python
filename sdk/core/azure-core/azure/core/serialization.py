@@ -32,7 +32,7 @@ with no data. This gets serialized to `null` on the wire.
 """
 
 
-def timedelta_as_isostr(value):
+def _timedelta_as_isostr(value):
     # type: (timedelta) -> str
     """Converts a datetime.timedelta object into an ISO 8601 formatted string, e.g. 'P4DT12H30M05S'
 
@@ -75,7 +75,7 @@ def timedelta_as_isostr(value):
             seconds_string = "%09.6f" % seconds
             # Remove trailing zeros
             seconds_string = seconds_string.rstrip("0")
-    except AttributeError:  # int.is_integer() raises on Python 2.7
+    except AttributeError:  # int.is_integer() raises
         seconds_string = "{:02}".format(seconds)
 
     time += "{}S".format(seconds_string)
@@ -112,7 +112,7 @@ class ComplexEncoder(JSONEncoder):
                 pass
             # Last, try datetime.timedelta
             try:
-                return timedelta_as_isostr(o)
+                return _timedelta_as_isostr(o)
             except AttributeError:
                 # This will be raised when it hits value.total_seconds in the method above
                 pass
