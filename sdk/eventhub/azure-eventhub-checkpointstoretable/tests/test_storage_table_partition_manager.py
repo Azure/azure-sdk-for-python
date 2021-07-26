@@ -33,9 +33,9 @@ def _claim_and_list_ownership(storage_connection_str, table_name):
     checkpoint_store = TableCheckpointStore.from_connection_string(
         storage_connection_str, table_name)
     ownership_list = checkpoint_store.list_ownership(
-            fully_qualified_namespace=fully_qualified_namespace,
-            eventhub_name=eventhub_name,
-            consumer_group=consumer_group)
+            fully_qualified_namespace,
+            eventhub_name,
+            consumer_group)
     assert len(ownership_list) == 0
 
     ownership_list = []
@@ -51,7 +51,7 @@ def _claim_and_list_ownership(storage_connection_str, table_name):
             ownership_list.append(ownership)
     checkpoint_store.claim_ownership(ownership_list)
 
-    ownership_list = checkpoint_store.list_ownership(fully_qualified_namespace=fully_qualified_namespace,eventhub_name=eventhub_name,consumer_group=consumer_group)
+    ownership_list = checkpoint_store.list_ownership(fully_qualified_namespace,eventhub_name,consumer_group)
     assert len(ownership_list) == ownership_cnt
 
 def _update_and_list_checkpoint(storage_connection_str, table_name):
