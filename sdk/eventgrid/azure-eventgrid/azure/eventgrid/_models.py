@@ -6,14 +6,14 @@
 from typing import Any
 import datetime as dt
 import uuid
-from azure.core.messaging import _EventMixin
+import json
 from msrest.serialization import UTC
 from ._generated.models import (
     EventGridEvent as InternalEventGridEvent,
 )
 
 
-class EventGridEvent(InternalEventGridEvent, _EventMixin):
+class EventGridEvent(InternalEventGridEvent):
     """Properties of an event published to an Event Grid topic using the EventGrid Schema.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -102,3 +102,22 @@ class EventGridEvent(InternalEventGridEvent, _EventMixin):
     def from_dict(cls, event):
         event = EventGridEvent._get_bytes(event)
         super(EventGridEvent, cls).from_dict(event)
+
+    @staticmethod
+    def _get_bytes(obj):
+        """Event mixin to have methods that are common to different Event types
+        like EventGridEvent etc.
+        """
+        # type: (Any) -> Dict
+        try:
+            # storage queue
+            return json.loads(obj.content)
+        except AttributeError:
+            # eventhubs
+            try:
+                return json.loads(next(obj.body))[0]
+            except KeyError:
+                # servicebus
+                return json.loads(next(obj.body))
+            except:
+                return obj
