@@ -30,6 +30,7 @@ from .performatives import (
     TransferFrame,
     DispositionFrame
 )
+from ._encode import encode_frame
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -214,13 +215,62 @@ class Session(object):
         if self.remote_incoming_window <= 0:
             delivery.transfer_state = SessionTransferState.Busy
         else:
+            payload = delivery.frame['payload']
+            payload_size = len(payload)
+
             delivery.frame['delivery_id'] = self.next_outgoing_id
-            self._connection._process_outgoing_frame(self.channel, TransferFrame(**delivery.frame))
+            # calculate the transfer frame encoding size excluding the payload
+            delivery.frame['payload'] = b""
+            # TODO: encoding a frame would be expensive, we might want to improve depending on the perf test results
+            encoded_frame = encode_frame(TransferFrame(**delivery.frame))[1]
+            transfer_overhead_size = len(encoded_frame)
+
+            # available size for payload per frame is calculated as following:
+            # remote max frame size - transfer overhead (calculated) - header (8 bytes)
+            available_frame_size = self._connection._remote_max_frame_size - transfer_overhead_size - 8
+
+            start_idx = 0
+            remaining_payload_cnt = payload_size
+            # encode n-1 frames if payload_size > available_frame_size
+            while remaining_payload_cnt > available_frame_size:
+                tmp_delivery_frame = {
+                    'handle': delivery.frame['handle'],
+                    'delivery_tag': delivery.frame['delivery_tag'],
+                    'message_format': delivery.frame['message_format'],
+                    'settled': delivery.frame['settled'],
+                    'more': True,
+                    'rcv_settle_mode': delivery.frame['rcv_settle_mode'],
+                    'state': delivery.frame['state'],
+                    'resume': delivery.frame['resume'],
+                    'aborted': delivery.frame['aborted'],
+                    'batchable': delivery.frame['batchable'],
+                    'payload': payload[start_idx:start_idx+available_frame_size],
+                    'delivery_id': self.next_outgoing_id
+                }
+                self._connection._process_outgoing_frame(self.channel, TransferFrame(**tmp_delivery_frame))
+                start_idx += available_frame_size
+                remaining_payload_cnt -= available_frame_size
+
+            # encode the last frame
+            tmp_delivery_frame = {
+                'handle': delivery.frame['handle'],
+                'delivery_tag': delivery.frame['delivery_tag'],
+                'message_format': delivery.frame['message_format'],
+                'settled': delivery.frame['settled'],
+                'more': False,
+                'rcv_settle_mode': delivery.frame['rcv_settle_mode'],
+                'state': delivery.frame['state'],
+                'resume': delivery.frame['resume'],
+                'aborted': delivery.frame['aborted'],
+                'batchable': delivery.frame['batchable'],
+                'payload': payload[start_idx:],
+                'delivery_id': self.next_outgoing_id
+            }
+            self._connection._process_outgoing_frame(self.channel, TransferFrame(**tmp_delivery_frame))
             self.next_outgoing_id += 1
             self.remote_incoming_window -= 1
             self.outgoing_window -= 1
             delivery.transfer_state = SessionTransferState.Okay
-            # TODO validate max frame size and break into multipl deliveries
 
     def _incoming_transfer(self, frame):
         self.next_incoming_id += 1
