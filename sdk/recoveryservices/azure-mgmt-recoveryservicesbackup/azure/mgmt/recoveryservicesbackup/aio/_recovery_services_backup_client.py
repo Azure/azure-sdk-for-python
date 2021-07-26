@@ -17,7 +17,6 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 from ._configuration import RecoveryServicesBackupClientConfiguration
-from .operations import BackupResourceStorageConfigsNonCRROperations
 from .operations import ProtectionIntentOperations
 from .operations import BackupStatusOperations
 from .operations import FeatureSupportOperations
@@ -77,8 +76,6 @@ from .. import models
 class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin):
     """Open API 2.0 Specs for Azure RecoveryServices Backup service.
 
-    :ivar backup_resource_storage_configs_non_crr: BackupResourceStorageConfigsNonCRROperations operations
-    :vartype backup_resource_storage_configs_non_crr: azure.mgmt.recoveryservicesbackup.aio.operations.BackupResourceStorageConfigsNonCRROperations
     :ivar protection_intent: ProtectionIntentOperations operations
     :vartype protection_intent: azure.mgmt.recoveryservicesbackup.aio.operations.ProtectionIntentOperations
     :ivar backup_status: BackupStatusOperations operations
@@ -208,8 +205,6 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin):
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
-        self.backup_resource_storage_configs_non_crr = BackupResourceStorageConfigsNonCRROperations(
-            self._client, self._config, self._serialize, self._deserialize)
         self.protection_intent = ProtectionIntentOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.backup_status = BackupStatusOperations(

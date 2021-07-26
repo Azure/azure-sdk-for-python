@@ -1,5 +1,16 @@
 # Release History
 
+## 2.0.0 (2021-07-26)
+
+**Features**
+
+  - Model IaasVMRestoreRequest has a new parameter identity_info
+  - Model IaasVMRestoreWithRehydrationRequest has a new parameter identity_info
+
+**Breaking changes**
+
+  - Removed operation group BackupResourceStorageConfigsNonCRROperations
+
 ## 1.1.0 (2021-07-22)
 
 **Features**
