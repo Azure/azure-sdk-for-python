@@ -4,8 +4,9 @@ from azure.data.tables import TableServiceClient
 import uuid
 import warnings
 import random
+import os
 
-STORAGE_CONN_STR = ["DefaultEndpointsProtocol=https;AccountName=josuegstorageaccount;AccountKey=Z45DSjr8acVt2UmRK/rU+XxbRzNLXG3YXZKq6OQh3vpV0Ze+yPCutV8jxjvs4hsgAY2cwHyTd+ceiZNlBmlUsw==;EndpointSuffix=core.windows.net"]
+STORAGE_CONN_STR = os.environ['Azure-storage-conn']
 
 def get_live_storage_table_client(storage_connection_str):
     try:
