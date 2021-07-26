@@ -5,7 +5,7 @@ import uuid
 import warnings
 import random
 
-STORAGE_CONN_STR = ["Azure storage connection str"]
+STORAGE_CONN_STR = ["DefaultEndpointsProtocol=https;AccountName=josuegstorageaccount;AccountKey=Z45DSjr8acVt2UmRK/rU+XxbRzNLXG3YXZKq6OQh3vpV0Ze+yPCutV8jxjvs4hsgAY2cwHyTd+ceiZNlBmlUsw==;EndpointSuffix=core.windows.net"]
 
 def get_live_storage_table_client(storage_connection_str):
     try:
@@ -32,9 +32,9 @@ def _claim_and_list_ownership(storage_connection_str, table_name):
     checkpoint_store = TableCheckpointStore.from_connection_string(
         storage_connection_str, table_name)
     ownership_list = checkpoint_store.list_ownership(
-            namespace=fully_qualified_namespace,
-            eventhub=eventhub_name,
-            consumergroup=consumer_group)
+            fully_qualified_namespace=fully_qualified_namespace,
+            eventhub_name=eventhub_name,
+            consumer_group=consumer_group)
     assert len(ownership_list) == 0
 
     ownership_list = []
@@ -50,7 +50,7 @@ def _claim_and_list_ownership(storage_connection_str, table_name):
             ownership_list.append(ownership)
     checkpoint_store.claim_ownership(ownership_list)
 
-    ownership_list = checkpoint_store.list_ownership(namespace=fully_qualified_namespace,eventhub=eventhub_name,consumergroup=consumer_group)
+    ownership_list = checkpoint_store.list_ownership(fully_qualified_namespace=fully_qualified_namespace,eventhub_name=eventhub_name,consumer_group=consumer_group)
     assert len(ownership_list) == ownership_cnt
 
 def _update_and_list_checkpoint(storage_connection_str, table_name):
