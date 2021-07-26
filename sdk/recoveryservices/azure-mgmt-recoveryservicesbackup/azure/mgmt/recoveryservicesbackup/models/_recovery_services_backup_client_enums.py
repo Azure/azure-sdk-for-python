@@ -237,22 +237,6 @@ class RetentionDurationType(str, Enum):
     years = "Years"
 
 
-class StorageType(str, Enum):
-
-    invalid = "Invalid"
-    geo_redundant = "GeoRedundant"
-    locally_redundant = "LocallyRedundant"
-    zone_redundant = "ZoneRedundant"
-    read_access_geo_zone_redundant = "ReadAccessGeoZoneRedundant"
-
-
-class StorageTypeState(str, Enum):
-
-    invalid = "Invalid"
-    locked = "Locked"
-    unlocked = "Unlocked"
-
-
 class BackupManagementType(str, Enum):
 
     invalid = "Invalid"
@@ -453,6 +437,22 @@ class ScheduleRunType(str, Enum):
     invalid = "Invalid"
     daily = "Daily"
     weekly = "Weekly"
+
+
+class StorageType(str, Enum):
+
+    invalid = "Invalid"
+    geo_redundant = "GeoRedundant"
+    locally_redundant = "LocallyRedundant"
+    zone_redundant = "ZoneRedundant"
+    read_access_geo_zone_redundant = "ReadAccessGeoZoneRedundant"
+
+
+class StorageTypeState(str, Enum):
+
+    invalid = "Invalid"
+    locked = "Locked"
+    unlocked = "Unlocked"
 
 
 class EnhancedSecurityState(str, Enum):
