@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added `azure.core.utils.case_insensitive_dict`
+
 ### Breaking Changes
 
 ### Key Bugs Fixed
