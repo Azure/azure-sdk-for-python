@@ -3,9 +3,8 @@ from azure.eventhub.extensions.checkpointstoretable import TableCheckpointStore
 from azure.data.tables import TableServiceClient
 import uuid
 import warnings
-import os
 
-STORAGE_CONN_STR = os.environ["AZURE_STORAGE_CONN_STR"]
+STORAGE_CONN_STR = ["Azure storage connection str"]
 
 def get_live_storage_table_client(storage_connection_str):
     try:
