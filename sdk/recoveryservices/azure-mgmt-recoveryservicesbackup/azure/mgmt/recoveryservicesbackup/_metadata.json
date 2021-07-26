@@ -1,6 +1,6 @@
 {
     "chosen_version": "",
-    "total_api_version_list": ["2018-12-20", "2021-04-01"],
+    "total_api_version_list": ["2018-12-20", "2021-06-01"],
     "client": {
         "name": "RecoveryServicesBackupClient",
         "filename": "_recovery_services_backup_client",
@@ -98,7 +98,6 @@
         "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "operation_groups": {
-        "backup_resource_storage_configs_non_crr": "BackupResourceStorageConfigsNonCRROperations",
         "protection_intent": "ProtectionIntentOperations",
         "backup_status": "BackupStatusOperations",
         "feature_support": "FeatureSupportOperations",

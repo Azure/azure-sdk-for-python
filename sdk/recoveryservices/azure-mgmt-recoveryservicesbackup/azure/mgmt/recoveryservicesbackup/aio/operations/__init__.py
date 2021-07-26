@@ -6,7 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._backup_resource_storage_configs_non_crr_operations import BackupResourceStorageConfigsNonCRROperations
 from ._protection_intent_operations import ProtectionIntentOperations
 from ._backup_status_operations import BackupStatusOperations
 from ._feature_support_operations import FeatureSupportOperations
@@ -62,7 +61,6 @@ from ._recovery_points_crr_operations import RecoveryPointsCrrOperations
 from ._backup_protected_items_crr_operations import BackupProtectedItemsCrrOperations
 
 __all__ = [
-    'BackupResourceStorageConfigsNonCRROperations',
     'ProtectionIntentOperations',
     'BackupStatusOperations',
     'FeatureSupportOperations',
