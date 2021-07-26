@@ -6,7 +6,7 @@ import warnings
 import random
 import os
 
-STORAGE_CONN_STR = [os.environ.get("AZURE_STORAGE_CONN_STR", "<some_fake_value")]
+STORAGE_CONN_STR = [os.environ.get("AZURE_STORAGE_CONN_STR", "Azure Storage Connection String")]
 
 def get_live_storage_table_client(storage_connection_str):
     try:
