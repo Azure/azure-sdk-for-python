@@ -27,14 +27,20 @@ class ListBlobsTest(_ContainerTest):
                 break
 
     def run_sync(self):
-        select = ['name'] if self.args.name_only else None
-        for _ in self.container_client.list_blobs(select=select):
-            pass
+        if self.args.name_only:
+            for _ in self.container_client.list_blob_names():
+                pass
+        else:
+            for _ in self.container_client.list_blobs():
+                pass
 
     async def run_async(self):
-        select = ['name'] if self.args.name_only else None
-        async for _ in self.async_container_client.list_blobs(select=select):
-            pass
+        if self.args.name_only:
+            async for _ in self.async_container_client.list_blob_names():
+                pass
+        else:
+            async for _ in self.async_container_client.list_blobs():
+                pass
 
     @staticmethod
     def add_arguments(parser):
