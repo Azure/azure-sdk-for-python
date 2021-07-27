@@ -20,7 +20,7 @@ def test_logs_single_query():
     where TimeGenerated > ago(12h) | 
     summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
 
-    # returns LogsBatchQueryResults 
+    # returns LogsQueryResults 
     response = client.query(os.environ['LOG_WORKSPACE_ID'], query)
 
     assert response is not None
@@ -92,7 +92,7 @@ def test_logs_single_query_with_statistics():
     client = LogsQueryClient(credential)
     query = """AppRequests"""
 
-    # returns LogsBatchQueryResults 
+    # returns LogsQueryResults 
     response = client.query(os.environ['LOG_WORKSPACE_ID'], query, include_statistics=True)
 
     assert response.statistics is not None
@@ -133,7 +133,7 @@ def test_logs_single_query_additional_workspaces():
     client = LogsQueryClient(credential)
     query = "union * | where TimeGenerated > ago(100d) | project TenantId | summarize count() by TenantId"
 
-    # returns LogsBatchQueryResults 
+    # returns LogsQueryResults 
     response = client.query(
         os.environ['LOG_WORKSPACE_ID'],
         query,

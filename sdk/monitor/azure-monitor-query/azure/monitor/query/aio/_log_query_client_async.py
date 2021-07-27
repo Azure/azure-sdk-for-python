@@ -12,7 +12,7 @@ from .._generated.aio._monitor_query_client import MonitorQueryClient
 
 from .._generated.models import BatchRequest, QueryBody as LogsQueryBody
 from .._helpers import process_error, construct_iso8601, order_results
-from .._models import LogsBatchQueryResults, LogsBatchQueryRequest, LogsQueryResult
+from .._models import LogsQueryResults, LogsBatchQueryRequest, LogsQueryResult
 from ._helpers_asyc import get_authentication_policy
 
 if TYPE_CHECKING:
@@ -43,7 +43,7 @@ class LogsQueryClient(object):
         workspace_id: str,
         query: str,
         duration: Optional[timedelta] = None,
-        **kwargs: Any) -> LogsBatchQueryResults:
+        **kwargs: Any) -> LogsQueryResults:
         """Execute an Analytics query.
 
         Executes an Analytics query for data.
@@ -74,7 +74,7 @@ class LogsQueryClient(object):
          These can be qualified workspace names, workspsce Ids or Azure resource Ids.
         :paramtype additional_workspaces: list[str]
         :return: QueryResults, or the result of cls(response)
-        :rtype: ~azure.monitor.query.LogsBatchQueryResults
+        :rtype: ~azure.monitor.query.LogsQueryResults
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         start = kwargs.pop('start_time', None)
@@ -105,7 +105,7 @@ class LogsQueryClient(object):
         )
 
         try:
-            return LogsBatchQueryResults._from_generated(await self._query_op.execute( # pylint: disable=protected-access
+            return LogsQueryResults._from_generated(await self._query_op.execute( # pylint: disable=protected-access
                 workspace_id=workspace_id,
                 body=body,
                 prefer=prefer,

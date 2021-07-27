@@ -22,7 +22,7 @@ async def logs_query():
     where TimeGenerated > ago(12h) | 
     summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
 
-    # returns LogsBatchQueryResults
+    # returns LogsQueryResults
     async with client:
         response = await client.query(os.environ['LOG_WORKSPACE_ID'], query)
 
