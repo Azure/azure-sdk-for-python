@@ -115,7 +115,7 @@ class ServiceBusClient(object):
 
         :return: None
         """
-        for handler in set(self._handlers):
+        for handler in self._handlers:
             try:
                 handler.close()
             except Exception as exception:  # pylint: disable=broad-except
