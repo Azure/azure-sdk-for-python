@@ -211,6 +211,34 @@ class KeyProperties(object):
         return self._managed
 
 
+class KeyReleasePolicy(object):
+    """The policy rules under which a key can be exported.
+
+    :param data: Blob encoding the policy rules under which the key can be released.
+    :type data: bytes
+
+    :keyword content_type: Content type and version of the release policy. Defaults to "application/json; charset=utf-8"
+        if omitted.
+    :paramtype content_type: str
+    """
+
+    def __init__(self, data, **kwargs):
+        # type: (bytes, **Any) -> None
+        self.data = data
+        self.content_type = kwargs.get("content_type", None)
+
+
+class KeyReleaseResult(object):
+    """The result of a key release operation.
+
+    :ivar str value: A signed token containing the released key.
+    """
+
+    def __init__(self, value):
+        # type: (str) -> None
+        self.value = value
+
+
 class KeyVaultKey(object):
     """A key's attributes and cryptographic material.
 
@@ -246,6 +274,7 @@ class KeyVaultKey(object):
     def __init__(self, key_id, jwk=None, **kwargs):
         # type: (str, Optional[dict], **Any) -> None
         self._properties = kwargs.pop("properties", None) or KeyProperties(key_id, **kwargs)
+        self._release_policy = kwargs.pop("release_policy", None)
         if isinstance(jwk, dict):
             if any(field in kwargs for field in JsonWebKey._FIELDS):  # pylint:disable=protected-access
                 raise ValueError(
@@ -263,11 +292,18 @@ class KeyVaultKey(object):
     def _from_key_bundle(cls, key_bundle):
         # type: (_models.KeyBundle) -> KeyVaultKey
         """Construct a KeyVaultKey from an autorest-generated KeyBundle"""
+        release_policy = None
+        if hasattr(key_bundle, "release_policy") and key_bundle.release_policy is not None:
+            release_policy = KeyReleasePolicy(
+                data=key_bundle.release_policy.data, content_type=key_bundle.release_policy.content_type
+            )
+
         # pylint:disable=protected-access
         return cls(
             key_id=key_bundle.key.kid,
             jwk={field: getattr(key_bundle.key, field, None) for field in JsonWebKey._FIELDS},
             properties=KeyProperties._from_key_bundle(key_bundle),
+            release_policy=release_policy,
         )
 
     @property
@@ -296,6 +332,15 @@ class KeyVaultKey(object):
         :rtype: ~azure.keyvault.keys.KeyProperties
         """
         return self._properties
+
+    @property
+    def release_policy(self):
+        # type: () -> KeyReleasePolicy
+        """The :class:`~azure.keyvault.keys.KeyReleasePolicy` specifying the rules under which the key can be exported.
+
+        :rtype: ~azure.keyvault.keys.KeyReleasePolicy
+        """
+        return self._release_policy
 
     @property
     def key(self):
