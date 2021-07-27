@@ -33,14 +33,14 @@ class LogsBatchPerfTest(PerfStressTest):
             LogsQueryRequest(
                 query="AzureActivity | summarize count()",
                 start_time=datetime(2021, 7, 25, 0, 0, 0, tzinfo=timezone.utc),
-                end_time=datetime.now(),
+                end_time=datetime(2021, 7, 26, 0, 0, 0, tzinfo=timezone.utc),
                 workspace_id= self.workspace_id
             ),
             LogsQueryRequest(
                 query= """AppRequests | take 10  |
                     summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId""",
                 start_time=datetime(2021, 7, 25, 0, 0, 0, tzinfo=timezone.utc),
-                end_time=datetime.now(),
+                end_time=datetime(2021, 7, 26, 0, 0, 0, tzinfo=timezone.utc),
                 workspace_id= self.workspace_id
             ),
             LogsQueryRequest(

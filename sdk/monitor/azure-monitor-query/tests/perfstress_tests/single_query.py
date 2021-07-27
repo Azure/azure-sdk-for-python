@@ -50,7 +50,7 @@ class LogsPerfTest(PerfStressTest):
             self.workspace_id,
             self.query,
             start_time=datetime(2021, 7, 25, 0, 0, 0, tzinfo=timezone.utc),
-            end_time=datetime.now()
+            end_time=datetime(2021, 7, 26, 0, 0, 0, tzinfo=timezone.utc),
             )
 
     async def run_async(self):
@@ -64,5 +64,5 @@ class LogsPerfTest(PerfStressTest):
             self.workspace_id,
             self.query,
             start_time=datetime(2021, 7, 25, 0, 0, 0, tzinfo=timezone.utc),
-            end_time=datetime.now(tz=timezone.utc)
+            end_time=datetime(2021, 7, 26, 0, 0, 0, tzinfo=timezone.utc),
             )

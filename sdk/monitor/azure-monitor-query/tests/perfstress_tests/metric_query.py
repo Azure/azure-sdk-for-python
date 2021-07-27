@@ -50,7 +50,7 @@ class MetricsPerfTest(PerfStressTest):
             self.metrics_uri,
             self.names,
             start_time=datetime(2021, 7, 25, 0, 0, 0, tzinfo=timezone.utc),
-            end_time=datetime.now(tz=timezone.utc),
+            end_time=datetime(2021, 7, 26, 0, 0, 0, tzinfo=timezone.utc),
             aggregations=self.aggregations
             )
 
@@ -65,6 +65,6 @@ class MetricsPerfTest(PerfStressTest):
             self.metrics_uri,
             self.names,
             start_time=datetime(2021, 7, 25, 0, 0, 0, tzinfo=timezone.utc),
-            end_time=datetime.now(tz=timezone.utc),
+            end_time=datetime(2021, 7, 26, 0, 0, 0, tzinfo=timezone.utc),
             aggregations=self.aggregations
             )
