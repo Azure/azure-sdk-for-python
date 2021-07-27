@@ -8,6 +8,8 @@
 
 ### Key Bugs Fixed
 
+- Added `chardet` dependency, because `requests` [removed this dependency](https://docs.python-requests.org/en/latest/community/updates/#id1), and our code relies on it.
+
 ### Fixed
 
 - Not override "x-ms-client-request-id" if it already exists in the header.    #17757
