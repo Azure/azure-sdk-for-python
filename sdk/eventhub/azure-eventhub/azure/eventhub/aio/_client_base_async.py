@@ -380,14 +380,14 @@ if TYPE_CHECKING:
             """
 
         @property
-        def _loop(self):
-            # type: () -> asyncio.AbstractEventLoop
-            """The event loop that users pass in to call wrap sync calls to async API.
+        def _internal_kwargs(self):
+            # type: () -> dict
+            """The dict with an event loop that users may pass in to wrap sync calls to async API.
             It's furthur passed to uamqp APIs
             """
 
-        @_loop.setter
-        def _loop(self, value):
+        @_internal_kwargs.setter
+        def _internal_kwargs(self, value):
             pass
 
         @property
