@@ -1,8 +1,10 @@
 # Release History
 
-## 1.16.1 (Unreleased)
+## 1.17.0 (Unreleased)
 
 ### Features Added
+
+- `CloudEvent`'s `from_dict` method now accepts objects from servicebus, eventhubs and storage directly.
 
 ### Breaking Changes
 

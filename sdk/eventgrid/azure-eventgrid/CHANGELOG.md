@@ -1,5 +1,11 @@
 # Release History
 
+## 4.5.0 (Unreleased)
+
+### Features Added
+
+- `EventGridEvent`'s `from_dict` method now accepts objects from servicebus, eventhubs and storage directly.
+
 ## 4.4.0 (2021-07-19)
 
 - Bumped `msrest` dependency to `0.6.21` to align with mgmt package.
