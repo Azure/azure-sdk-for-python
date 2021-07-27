@@ -4,6 +4,8 @@
 # license information.
 # -------------------------------------------------------------------------
 
+import sys
+
 import asyncio
 import logging
 import functools
@@ -65,3 +67,12 @@ async def create_authentication(client):
         http_proxy=client._config.http_proxy,
         transport_type=client._config.transport_type,
     )
+
+
+def get_dict_with_loop_if_needed(loop):
+    if sys.version_info >= (3, 10):
+        if loop:
+            raise ValueError("Starting Python 3.10, asyncio no longer supports loop as a parameter.")
+    elif loop:
+        return {'loop': loop}
+    return {}
