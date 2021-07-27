@@ -61,7 +61,7 @@ setup(
         # This means any folder structure that only consists of a __init__.py. 
         # For example, for storage, this would mean adding 'azure.storage' 
         # in addition to the default 'azure' that is seen here.
-        'azure'
+        'azure',
         'azure.ai',
         'azure.ai.language',
     ]),
