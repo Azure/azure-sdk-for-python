@@ -1,15 +1,22 @@
 # Release History
 
-## 4.4.1 (Unreleased)
+## 4.5.0b2 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
-### Key Bugs Fixed
+### Bugs Fixed
 
-### Fixed
+### Other Changes
 
+## 4.5.0b1 (2021-07-08)
+Beginning with this release, this library requires Python 2.7 or 3.6+.
+
+### Features Added
+- Key Vault API version 7.3-preview is now the default
+- `KeyClient` has a `get_random_bytes` method for getting a requested number of random
+  bytes from a managed HSM
 
 ## 4.4.0 (2021-06-22)
 This is the last version to support Python 3.5. The next version will require Python 2.7 or 3.6+.

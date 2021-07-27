@@ -51,8 +51,8 @@ class ImdsCredential(GetTokenMixin):
         self._error_message = None  # type: Optional[str]
         self._user_assigned_identity = "client_id" in kwargs or "identity_config" in kwargs
 
-    def _acquire_token_silently(self, *scopes):
-        # type: (*str) -> Optional[AccessToken]
+    def _acquire_token_silently(self, *scopes, **kwargs):
+        # type: (*str, **Any) -> Optional[AccessToken]
         return self._client.get_cached_token(*scopes)
 
     def _request_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument

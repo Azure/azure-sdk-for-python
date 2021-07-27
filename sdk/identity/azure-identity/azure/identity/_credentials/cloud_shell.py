@@ -41,8 +41,8 @@ class CloudShellCredential(GetTokenMixin):
             )
         return super(CloudShellCredential, self).get_token(*scopes, **kwargs)
 
-    def _acquire_token_silently(self, *scopes):
-        # type: (*str) -> Optional[AccessToken]
+    def _acquire_token_silently(self, *scopes, **kwargs):
+        # type: (*str, **Any) -> Optional[AccessToken]
         return self._client.get_cached_token(*scopes)
 
     def _request_token(self, *scopes, **kwargs):

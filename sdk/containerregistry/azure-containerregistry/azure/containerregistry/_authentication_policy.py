@@ -25,7 +25,7 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
         super(ContainerRegistryChallengePolicy, self).__init__()
         self._credential = credential
         if self._credential is None:
-            self._exchange_client = AnonymousACRExchangeClient(endpoint)
+            self._exchange_client = AnonymousACRExchangeClient(endpoint, **kwargs)
         else:
             self._exchange_client = ACRExchangeClient(endpoint, self._credential, **kwargs)
 

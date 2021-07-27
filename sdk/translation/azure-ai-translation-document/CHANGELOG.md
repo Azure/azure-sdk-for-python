@@ -1,8 +1,26 @@
 # Release History
 
-## 1.0.0b3 (Unreleased)
+## 1.0.0b4 (Unreleased)
 
-**Breaking changes**
+### Features Added
+
+- The single translation input version of `begin_translation(source, target, target_language_code)` now accepts keyword arguments
+`storage_type`, `glossaries`, `category_id`, `prefix`, `suffix`, and `source_language_code`.
+
+### Breaking Changes
+
+- Changed: renamed kwargs `translated_before` and `translated_after` to `created_before` and `created_after`, respectively,
+for `list_all_document_statuses`.
+- Changed: renamed `order_by` sorting query option `createdDateTimeUtc` to `created_on` for `list_all_translation_statuses` and
+`list_all_document_statuses`.
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b3 (2021-07-07)
+
+### Breaking changes
 
 - `TranslationStatusResult` was renamed to `TranslationStatus`.
 - `DocumentStatusResult` was renamed to `DocumentStatus`.

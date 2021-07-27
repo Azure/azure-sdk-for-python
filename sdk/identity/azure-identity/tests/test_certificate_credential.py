@@ -5,6 +5,7 @@
 import json
 import os
 
+from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
 from azure.identity import CertificateCredential, RegionalAuthority, TokenCachePersistenceOptions
 from azure.identity._constants import EnvironmentVariables
@@ -343,3 +344,83 @@ def test_certificate_arguments():
         CertificateCredential("tenant-id", "client-id", certificate_path="...", certificate_data="...")
     message = str(ex.value)
     assert "certificate_data" in message and "certificate_path" in message
+
+
+@pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
+def test_allow_multitenant_authentication(cert_path, cert_password):
+    """When allow_multitenant_authentication is True, the credential should respect get_token(tenant_id=...)"""
+
+    first_tenant = "first-tenant"
+    first_token = "***"
+    second_tenant = "second-tenant"
+    second_token = first_token * 2
+
+    def send(request, **_):
+        parsed = urlparse(request.url)
+        tenant = parsed.path.split("/")[1]
+        assert tenant in (first_tenant, second_tenant, "common"), 'unexpected tenant "{}"'.format(tenant)
+        if "/oauth2/v2.0/token" not in parsed.path:
+            return get_discovery_response("https://{}/{}".format(parsed.netloc, tenant))
+
+        token = first_token if tenant == first_tenant else second_token
+        return mock_response(json_payload=build_aad_response(access_token=token))
+
+    credential = CertificateCredential(
+        first_tenant,
+        "client-id",
+        cert_path,
+        password=cert_password,
+        allow_multitenant_authentication=True,
+        transport=Mock(send=send),
+    )
+    token = credential.get_token("scope")
+    assert token.token == first_token
+
+    token = credential.get_token("scope", tenant_id=first_tenant)
+    assert token.token == first_token
+
+    token = credential.get_token("scope", tenant_id=second_tenant)
+    assert token.token == second_token
+
+    # should still default to the first tenant
+    token = credential.get_token("scope")
+    assert token.token == first_token
+
+
+@pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
+def test_multitenant_authentication_backcompat(cert_path, cert_password):
+    """When allow_multitenant_authentication is True, the credential should respect get_token(tenant_id=...)"""
+
+    expected_tenant = "expected-tenant"
+    expected_token = "***"
+
+    def send(request, **_):
+        parsed = urlparse(request.url)
+        if "/oauth2/v2.0/token" not in parsed.path:
+            return get_discovery_response("https://{}/{}".format(parsed.netloc, expected_tenant))
+
+        tenant = parsed.path.split("/")[1]
+        token = expected_token if tenant == expected_tenant else expected_token * 2
+        return mock_response(json_payload=build_aad_response(access_token=token))
+
+    credential = CertificateCredential(
+        expected_tenant, "client-id", cert_path, password=cert_password, transport=Mock(send=send)
+    )
+
+    token = credential.get_token("scope")
+    assert token.token == expected_token
+
+    # explicitly specifying the configured tenant is okay
+    token = credential.get_token("scope", tenant_id=expected_tenant)
+    assert token.token == expected_token
+
+    # but any other tenant should get an error
+    with pytest.raises(ClientAuthenticationError, match="allow_multitenant_authentication"):
+        credential.get_token("scope", tenant_id="un" + expected_tenant)
+
+    # ...unless the compat switch is enabled
+    with patch.dict(
+        os.environ, {EnvironmentVariables.AZURE_IDENTITY_ENABLE_LEGACY_TENANT_SELECTION: "true"}, clear=True
+    ):
+        token = credential.get_token("scope", tenant_id="un" + expected_tenant)
+    assert token.token == expected_token, "credential should ignore tenant_id kwarg when the compat switch is enabled"

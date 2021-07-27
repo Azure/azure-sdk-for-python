@@ -8,6 +8,7 @@
 
 from typing import Any, Optional, TYPE_CHECKING
 
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Deserializer, Serializer
 
@@ -18,13 +19,14 @@ if TYPE_CHECKING:
 from ._configuration import MySQLManagementClientConfiguration
 from .operations import ServersOperations
 from .operations import ReplicasOperations
-from .operations import ServerKeysOperations
+from .operations import BackupsOperations
 from .operations import FirewallRulesOperations
 from .operations import DatabasesOperations
 from .operations import ConfigurationsOperations
 from .operations import LocationBasedCapabilitiesOperations
 from .operations import CheckVirtualNetworkSubnetUsageOperations
 from .operations import CheckNameAvailabilityOperations
+from .operations import GetPrivateDnsZoneSuffixOperations
 from .operations import Operations
 from .. import models
 
@@ -36,8 +38,8 @@ class MySQLManagementClient(object):
     :vartype servers: azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.ServersOperations
     :ivar replicas: ReplicasOperations operations
     :vartype replicas: azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.ReplicasOperations
-    :ivar server_keys: ServerKeysOperations operations
-    :vartype server_keys: azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.ServerKeysOperations
+    :ivar backups: BackupsOperations operations
+    :vartype backups: azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.BackupsOperations
     :ivar firewall_rules: FirewallRulesOperations operations
     :vartype firewall_rules: azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.FirewallRulesOperations
     :ivar databases: DatabasesOperations operations
@@ -50,6 +52,8 @@ class MySQLManagementClient(object):
     :vartype check_virtual_network_subnet_usage: azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.CheckVirtualNetworkSubnetUsageOperations
     :ivar check_name_availability: CheckNameAvailabilityOperations operations
     :vartype check_name_availability: azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.CheckNameAvailabilityOperations
+    :ivar get_private_dns_zone_suffix: GetPrivateDnsZoneSuffixOperations operations
+    :vartype get_private_dns_zone_suffix: azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.GetPrivateDnsZoneSuffixOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.Operations
     :param credential: Credential needed for the client to connect to Azure.
@@ -81,7 +85,7 @@ class MySQLManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.replicas = ReplicasOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.server_keys = ServerKeysOperations(
+        self.backups = BackupsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.firewall_rules = FirewallRulesOperations(
             self._client, self._config, self._serialize, self._deserialize)
@@ -95,8 +99,27 @@ class MySQLManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.check_name_availability = CheckNameAvailabilityOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.get_private_dns_zone_suffix = GetPrivateDnsZoneSuffixOperations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self._config, self._serialize, self._deserialize)
+
+    async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
+        """Runs the network request through the client's chained policies.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+        """
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+        }
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = await self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
 
     async def close(self) -> None:
         await self._client.close()

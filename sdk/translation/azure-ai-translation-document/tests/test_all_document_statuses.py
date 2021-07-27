@@ -130,7 +130,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         poller = self._begin_and_validate_translation_with_multiple_docs(client, docs_count, language_code=target_language, wait=True)
 
         # check doc statuses
-        doc_statuses = list(client.list_all_document_statuses(poller.id, order_by=["createdDateTimeUtc asc"])) # convert from generic iterator to list
+        doc_statuses = list(client.list_all_document_statuses(poller.id, order_by=["created_on asc"])) # convert from generic iterator to list
         self.assertEqual(len(doc_statuses), docs_count)
 
         curr = datetime.min
@@ -149,7 +149,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         poller = self._begin_and_validate_translation_with_multiple_docs(client, docs_count, language_code=target_language, wait=True)
 
         # check doc statuses
-        doc_statuses = list(client.list_all_document_statuses(poller.id, order_by=["createdDateTimeUtc desc"])) # convert from generic iterator to list
+        doc_statuses = list(client.list_all_document_statuses(poller.id, order_by=["created_on desc"])) # convert from generic iterator to list
         self.assertEqual(len(doc_statuses), docs_count)
 
         curr = datetime.max
@@ -157,14 +157,12 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
             assert(document.created_on.replace(tzinfo=None) <= curr.replace(tzinfo=None))
             curr = document.created_on
 
-
-    @pytest.mark.skip(reason="not working! - list returned is empty")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_document_statuses_mixed_filters(self, client):
-        docs_count = 25
+        docs_count = 10
         target_language = "es"
-        skip = 3
+        skip = 1
         results_per_page = 2
         statuses = ["Succeeded"]
 
@@ -183,7 +181,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
             document_ids=ids,
             statuses=statuses,
             # ordering
-            order_by=["createdDateTimeUtc asc"],
+            order_by=["created_on asc"],
             # paging
             skip=skip,
             results_per_page=results_per_page

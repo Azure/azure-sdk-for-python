@@ -782,7 +782,7 @@ class HealthcareEntity(DictMixin):
 
     :ivar str text: Entity text as appears in the document.
     :ivar str normalized_text: Optional. Normalized version of the raw `text` we extract
-        from the document. Not all `text`s have a normalized version.
+        from the document. Not all `text` will have a normalized version.
     :ivar str category: Entity category, see the :class:`~azure.ai.textanalytics.HealthcareEntityCategory`
         type for possible healthcare entity categories.
     :ivar str subcategory: Entity subcategory.
@@ -1786,7 +1786,7 @@ class RecognizeEntitiesAction(DictMixin):
             :1024
         ]
 
-    def to_generated(self):
+    def _to_generated(self):
         return _v3_1_models.EntitiesTask(
             parameters=_v3_1_models.EntitiesTaskParameters(
                 model_version=self.model_version,
@@ -1859,7 +1859,7 @@ class AnalyzeSentimentAction(DictMixin):
             )[:1024]
         )
 
-    def to_generated(self):
+    def _to_generated(self):
         return _v3_1_models.SentimentAnalysisTask(
             parameters=_v3_1_models.SentimentAnalysisTaskParameters(
                 model_version=self.model_version,
@@ -1937,7 +1937,7 @@ class RecognizePiiEntitiesAction(DictMixin):
             )[:1024]
         )
 
-    def to_generated(self):
+    def _to_generated(self):
         return _v3_1_models.PiiTask(
             parameters=_v3_1_models.PiiTaskParameters(
                 model_version=self.model_version,
@@ -1988,7 +1988,7 @@ class ExtractKeyPhrasesAction(DictMixin):
             )[:1024]
         )
 
-    def to_generated(self):
+    def _to_generated(self):
         return _v3_1_models.KeyPhrasesTask(
             parameters=_v3_1_models.KeyPhrasesTaskParameters(
                 model_version=self.model_version,
@@ -2046,7 +2046,7 @@ class RecognizeLinkedEntitiesAction(DictMixin):
             )[:1024]
         )
 
-    def to_generated(self):
+    def _to_generated(self):
         return _v3_1_models.EntityLinkingTask(
             parameters=_v3_1_models.EntityLinkingTaskParameters(
                 model_version=self.model_version,

@@ -58,7 +58,7 @@ class DeleteOperations(object):
 
 async def main():
     sample = DeleteOperations()
-    sample.delete_old_tags()
+    await sample.delete_old_tags()
 
 
 if __name__ == "__main__":

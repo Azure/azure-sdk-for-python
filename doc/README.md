@@ -1,4 +1,6 @@
-This folder contains some documentations for this repository:
+# Documentation
+
+This folder contains documentation for the Azure SDK for Python repository:
 
 The folder structure is the following
 - [sphinx](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/sphinx) : contains the documentation source code for https://azure.github.io/azure-sdk-for-python/
