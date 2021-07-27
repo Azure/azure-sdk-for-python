@@ -22,7 +22,7 @@ summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _Resour
 
 end_time = datetime.now(UTC())
 
-# returns LogsQueryResults 
+# returns LogsBatchQueryResults 
 response = client.query(os.environ['LOG_WORKSPACE_ID'], query, duration=timedelta(days=1), end_time=end_time)
 
 if not response.tables:

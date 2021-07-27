@@ -21,7 +21,7 @@ async def test_logs_auth():
     where TimeGenerated > ago(12h) | 
     summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
 
-    # returns LogsQueryResults 
+    # returns LogsBatchQueryResults 
     response = await client.query(os.environ['LOG_WORKSPACE_ID'], query)
 
     assert response is not None
@@ -72,7 +72,7 @@ async def test_logs_single_query_additional_workspaces_async():
     client = LogsQueryClient(credential)
     query = "union * | where TimeGenerated > ago(100d) | project TenantId | summarize count() by TenantId"
 
-    # returns LogsQueryResults 
+    # returns LogsBatchQueryResults 
     response = await client.query(
         os.environ['LOG_WORKSPACE_ID'],
         query,
