@@ -25,7 +25,7 @@ from .._utils import (
 )
 from .._constants import TIMEOUT_SYMBOL
 from ._client_base_async import ConsumerProducerMixin
-from ._shared.utils import get_dict_with_loop_if_needed
+from ._async_utils import get_dict_with_loop_if_needed
 
 if TYPE_CHECKING:
     from uamqp.authentication import JWTTokenAsync  # pylint: disable=ungrouped-imports

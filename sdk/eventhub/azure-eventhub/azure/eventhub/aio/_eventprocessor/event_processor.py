@@ -20,7 +20,7 @@ import asyncio
 import logging
 from functools import partial
 
-from azure.eventhub import EventData
+from ..._common import EventData
 from ..._eventprocessor.common import CloseReason, LoadBalancingStrategy
 from ..._eventprocessor._eventprocessor_mixin import EventProcessorMixin
 from ..._utils import get_event_links
@@ -29,7 +29,7 @@ from .in_memory_checkpoint_store import InMemoryCheckpointStore
 from .checkpoint_store import CheckpointStore
 from ._ownership_manager import OwnershipManager
 from .utils import get_running_loop
-from .._shared.utils import get_dict_with_loop_if_needed
+from .._async_utils import get_dict_with_loop_if_needed
 
 if TYPE_CHECKING:
     from datetime import datetime

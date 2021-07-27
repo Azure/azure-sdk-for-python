@@ -14,7 +14,7 @@ from uamqp import errors, types, utils
 from uamqp import ReceiveClientAsync, Source
 
 from ._client_base_async import ConsumerProducerMixin
-from ._shared.utils import get_dict_with_loop_if_needed
+from ._async_utils import get_dict_with_loop_if_needed
 from .._common import EventData
 from ..exceptions import _error_handler
 from .._utils import create_properties, event_position_selector
