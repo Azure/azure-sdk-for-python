@@ -48,7 +48,7 @@ class WorkbooksOperations:
         source_id: str,
         tags: Optional[List[str]] = None,
         can_fetch_content: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.WorkbooksListResult"]:
         """Get all Workbooks defined within a specified resource group and category.
 
@@ -86,7 +86,7 @@ class WorkbooksOperations:
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -120,7 +120,7 @@ class WorkbooksOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.WorkbookError, response)
+                error = self._deserialize.failsafe_deserialize(_models.WorkbookError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -135,7 +135,7 @@ class WorkbooksOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Workbook":
         """Get a single workbook by its resourceName.
 
@@ -160,7 +160,7 @@ class WorkbooksOperations:
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -179,7 +179,7 @@ class WorkbooksOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.WorkbookError, response)
+            error = self._deserialize.failsafe_deserialize(_models.WorkbookError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Workbook', pipeline_response)
@@ -194,7 +194,7 @@ class WorkbooksOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a workbook.
 
@@ -219,7 +219,7 @@ class WorkbooksOperations:
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -238,7 +238,7 @@ class WorkbooksOperations:
 
         if response.status_code not in [201, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.WorkbookError, response)
+            error = self._deserialize.failsafe_deserialize(_models.WorkbookError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -252,7 +252,7 @@ class WorkbooksOperations:
         resource_name: str,
         source_id: str,
         workbook_properties: "_models.Workbook",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Workbook":
         """Create a new workbook.
 
@@ -282,7 +282,7 @@ class WorkbooksOperations:
         url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -306,7 +306,7 @@ class WorkbooksOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.WorkbookError, response)
+            error = self._deserialize.failsafe_deserialize(_models.WorkbookError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -327,7 +327,7 @@ class WorkbooksOperations:
         resource_name: str,
         source_id: str,
         workbook_update_parameters: Optional["_models.WorkbookUpdateParameters"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Workbook":
         """Updates a workbook that has already been added.
 
@@ -358,7 +358,7 @@ class WorkbooksOperations:
         url = self.update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -385,7 +385,7 @@ class WorkbooksOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.WorkbookError, response)
+            error = self._deserialize.failsafe_deserialize(_models.WorkbookError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Workbook', pipeline_response)

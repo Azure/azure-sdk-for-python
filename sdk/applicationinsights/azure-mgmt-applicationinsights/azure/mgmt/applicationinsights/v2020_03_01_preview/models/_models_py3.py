@@ -49,7 +49,41 @@ class Resource(msrest.serialization.Model):
         self.type = None
 
 
-class ComponentLinkedStorageAccounts(Resource):
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ProxyResource, self).__init__(**kwargs)
+
+
+class ComponentLinkedStorageAccounts(ProxyResource):
     """An Application Insights component linked storage accounts.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -110,14 +144,44 @@ class ComponentLinkedStorageAccountsPatch(msrest.serialization.Model):
         self.linked_storage_account = linked_storage_account
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponseLinkedStorage(msrest.serialization.Model):
+    """ErrorResponseLinkedStorage.
+
+    :param error: Error response indicates Insights service is not able to process the incoming
+     request. The reason is provided in the error message.
+    :type error:
+     ~azure.mgmt.applicationinsights.v2020_03_01_preview.models.ErrorResponseLinkedStorageError
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorResponseLinkedStorageError'},
+    }
+
+    def __init__(
+        self,
+        *,
+        error: Optional["ErrorResponseLinkedStorageError"] = None,
+        **kwargs
+    ):
+        super(ErrorResponseLinkedStorage, self).__init__(**kwargs)
+        self.error = error
+
+
+class ErrorResponseLinkedStorageError(msrest.serialization.Model):
     """Error response indicates Insights service is not able to process the incoming request. The reason is provided in the error message.
 
-    :param code: Error code.
-    :type code: str
-    :param message: Error message indicating why the operation failed.
-    :type message: str
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message indicating why the operation failed.
+    :vartype message: str
     """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+    }
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
@@ -126,45 +190,8 @@ class ErrorResponse(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
         **kwargs
     ):
-        super(ErrorResponse, self).__init__(**kwargs)
-        self.code = code
-        self.message = message
-
-
-class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)
+        super(ErrorResponseLinkedStorageError, self).__init__(**kwargs)
+        self.code = None
+        self.message = None

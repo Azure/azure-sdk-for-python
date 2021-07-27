@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -148,7 +148,7 @@ class WorkbookTemplate(WorkbookTemplateResource):
     :param author: Information about the author of the workbook template.
     :type author: str
     :param template_data: Valid JSON object containing workbook template payload.
-    :type template_data: object
+    :type template_data: any
     :param galleries: Workbook galleries supported by the template.
     :type galleries:
      list[~azure.mgmt.applicationinsights.v2019_10_17_preview.models.WorkbookTemplateGallery]
@@ -185,7 +185,7 @@ class WorkbookTemplate(WorkbookTemplateResource):
         tags: Optional[Dict[str, str]] = None,
         priority: Optional[int] = None,
         author: Optional[str] = None,
-        template_data: Optional[object] = None,
+        template_data: Optional[Any] = None,
         galleries: Optional[List["WorkbookTemplateGallery"]] = None,
         localized: Optional[Dict[str, List["WorkbookTemplateLocalizedGallery"]]] = None,
         **kwargs
@@ -243,7 +243,7 @@ class WorkbookTemplateLocalizedGallery(msrest.serialization.Model):
     """Localized template data and gallery information.
 
     :param template_data: Valid JSON object containing workbook template payload.
-    :type template_data: object
+    :type template_data: any
     :param galleries: Workbook galleries supported by the template.
     :type galleries:
      list[~azure.mgmt.applicationinsights.v2019_10_17_preview.models.WorkbookTemplateGallery]
@@ -257,7 +257,7 @@ class WorkbookTemplateLocalizedGallery(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        template_data: Optional[object] = None,
+        template_data: Optional[Any] = None,
         galleries: Optional[List["WorkbookTemplateGallery"]] = None,
         **kwargs
     ):
@@ -298,7 +298,7 @@ class WorkbookTemplateUpdateParameters(msrest.serialization.Model):
     :param author: Information about the author of the workbook template.
     :type author: str
     :param template_data: Valid JSON object containing workbook template payload.
-    :type template_data: object
+    :type template_data: any
     :param galleries: Workbook galleries supported by the template.
     :type galleries:
      list[~azure.mgmt.applicationinsights.v2019_10_17_preview.models.WorkbookTemplateGallery]
@@ -323,7 +323,7 @@ class WorkbookTemplateUpdateParameters(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         priority: Optional[int] = None,
         author: Optional[str] = None,
-        template_data: Optional[object] = None,
+        template_data: Optional[Any] = None,
         galleries: Optional[List["WorkbookTemplateGallery"]] = None,
         localized: Optional[Dict[str, List["WorkbookTemplateLocalizedGallery"]]] = None,
         **kwargs

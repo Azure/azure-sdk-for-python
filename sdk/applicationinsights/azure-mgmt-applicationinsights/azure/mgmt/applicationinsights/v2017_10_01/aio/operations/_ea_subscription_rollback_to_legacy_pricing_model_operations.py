@@ -42,7 +42,7 @@ class EASubscriptionRollbackToLegacyPricingModelOperations:
 
     async def post(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Enterprise Agreement Customer roll back to use legacy pricing model.
 
