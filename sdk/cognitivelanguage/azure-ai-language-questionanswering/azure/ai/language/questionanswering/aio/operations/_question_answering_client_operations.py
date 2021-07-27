@@ -113,7 +113,8 @@ class QuestionAnsweringClientOperationsMixin:
     ) -> "_models.KnowledgeBaseAnswers":
         """Answers the specified question using your knowledge base.
 
-        :param knowledge_base_query_options: Post body of the request.
+        :param knowledge_base_query_options: Post body of the request. Provide either `knowledge_base_query_options`, OR
+         individual keyword arguments. If both are provided, only the options object will be used.
         :type knowledge_base_query_options:
          ~azure.ai.language.questionanswering.models.KnowledgeBaseQueryOptions
         :keyword project_name: The name of the project to use.
@@ -122,7 +123,8 @@ class QuestionAnsweringClientOperationsMixin:
         :paramtype deployment_name: str
         :keyword qna_id: Exact QnA ID to fetch from the knowledge base, this field takes priority over question.
         :paramtype qna_id: int
-        :keyword question: User question to query against the knowledge base.
+        :keyword question: User question to query against the knowledge base. Provide either `knowledge_base_query_options`, OR
+         individual keyword arguments. If both are provided, only the options object will be used.
         :paramtype question: str
         :keyword top: Max number of answers to be returned for the question.
         :paramtype top: int
@@ -253,11 +255,14 @@ class QuestionAnsweringClientOperationsMixin:
     ) -> "_models.TextAnswers":
         """Answers the specified question using the provided text in the body.
 
-        :param text_query_options: Post body of the request.
+        :param text_query_options: Post body of the request. Provide either `text_query_options`, OR
+         individual keyword arguments. If both are provided, only the options object will be used.
         :type text_query_options: ~azure.ai.language.questionanswering.models.TextQueryOptions
-        :keyword question: Required. User question to query against the given text records.
+        :keyword question: User question to query against the given text records. Provide either `text_query_options`, OR
+         individual keyword arguments. If both are provided, only the options object will be used.
         :paramtype question: str
-        :keyword records: Required. Text records to be searched for given question.
+        :keyword records: Text records to be searched for given question. Provide either `text_query_options`, OR
+         individual keyword arguments. If both are provided, only the options object will be used.
         :paramtype records: list[~azure.ai.language.questionanswering.models.TextRecord]
         :keyword language: Language of the text records. This is BCP-47 representation of a language. For
          example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as default.
