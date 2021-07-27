@@ -23,6 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import sys
 from typing import Any, Optional, AsyncIterator as AsyncIteratorType
 from collections.abc import AsyncIterator
 try:
@@ -35,7 +36,6 @@ import asyncio
 import codecs
 import aiohttp
 from multidict import CIMultiDict
-from requests.exceptions import StreamConsumedError
 
 from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
@@ -58,7 +58,6 @@ class AioHttpTransport(AsyncHttpTransport):
     Fully asynchronous implementation using the aiohttp library.
 
     :param session: The client session.
-    :param loop: The event loop.
     :param bool session_owner: Session owner. Defaults True.
 
     :keyword bool use_env_settings: Uses proxy settings from environment. Defaults to True.
@@ -73,6 +72,8 @@ class AioHttpTransport(AsyncHttpTransport):
             :caption: Asynchronous transport with aiohttp.
     """
     def __init__(self, *, session: Optional[aiohttp.ClientSession] = None, loop=None, session_owner=True, **kwargs):
+        if loop and sys.version_info >= (3, 10):
+            raise ValueError("Starting with Python 3.10, asyncio doesn’t support loop as a parameter anymore")
         self._loop = loop
         self._session_owner = session_owner
         self.session = session
@@ -247,8 +248,6 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         except _ResponseStopIteration:
             internal_response.close()
             raise StopAsyncIteration()
-        except StreamConsumedError:
-            raise
         except Exception as err:
             _LOGGER.warning("Unable to stream download: %s", err)
             internal_response.close()

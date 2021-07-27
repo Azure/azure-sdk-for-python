@@ -44,7 +44,7 @@ class VaultExtendedInfoOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VaultExtendedInfoResource":
         """Get the vault extended info.
 
@@ -63,7 +63,7 @@ class VaultExtendedInfoOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2016-06-01"
+        api_version = "2021-03-01"
         accept = "application/json"
 
         # Construct URL
@@ -104,7 +104,7 @@ class VaultExtendedInfoOperations:
         resource_group_name: str,
         vault_name: str,
         resource_extended_info_details: "_models.VaultExtendedInfoResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VaultExtendedInfoResource":
         """Create vault extended info.
 
@@ -125,7 +125,7 @@ class VaultExtendedInfoOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2016-06-01"
+        api_version = "2021-03-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -171,7 +171,7 @@ class VaultExtendedInfoOperations:
         resource_group_name: str,
         vault_name: str,
         resource_extended_info_details: "_models.VaultExtendedInfoResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VaultExtendedInfoResource":
         """Update vault extended info.
 
@@ -192,7 +192,7 @@ class VaultExtendedInfoOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2016-06-01"
+        api_version = "2021-03-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

@@ -8,13 +8,13 @@ from ._log_query_client import LogsQueryClient
 from ._metrics_query_client import MetricsQueryClient
 
 from ._models import (
+    AggregationType,
     LogsQueryResults,
     LogsQueryResultTable,
     LogsQueryResultColumn,
     MetricsResult,
     LogsBatchResultError,
     LogsQueryRequest,
-    LogsBatchResults,
     MetricNamespace,
     MetricDefinition,
     MetricsMetadataValue,
@@ -27,8 +27,8 @@ from ._models import (
 from ._version import VERSION
 
 __all__ = [
+    "AggregationType",
     "LogsQueryClient",
-    "LogsBatchResults",
     "LogsBatchResultError",
     "LogsQueryResults",
     "LogsQueryResultColumn",

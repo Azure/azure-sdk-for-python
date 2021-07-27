@@ -1,6 +1,6 @@
 {
     "chosen_version": "",
-    "total_api_version_list": ["2016-08-10", "2017-07-01", "2018-12-20", "2021-01-01"],
+    "total_api_version_list": ["2018-12-20", "2021-06-01"],
     "client": {
         "name": "RecoveryServicesBackupClient",
         "filename": "_recovery_services_backup_client",
@@ -98,6 +98,12 @@
         "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "operation_groups": {
+        "protection_intent": "ProtectionIntentOperations",
+        "backup_status": "BackupStatusOperations",
+        "feature_support": "FeatureSupportOperations",
+        "backup_protection_intent": "BackupProtectionIntentOperations",
+        "backup_usage_summaries": "BackupUsageSummariesOperations",
+        "operations": "Operations",
         "backup_resource_vault_configs": "BackupResourceVaultConfigsOperations",
         "backup_resource_encryption_configs": "BackupResourceEncryptionConfigsOperations",
         "private_endpoint_connection": "PrivateEndpointConnectionOperations",
@@ -143,13 +149,7 @@
         "crr_operation_status": "CrrOperationStatusOperations",
         "backup_resource_storage_configs": "BackupResourceStorageConfigsOperations",
         "recovery_points_crr": "RecoveryPointsCrrOperations",
-        "backup_protected_items_crr": "BackupProtectedItemsCrrOperations",
-        "protection_intent": "ProtectionIntentOperations",
-        "backup_status": "BackupStatusOperations",
-        "feature_support": "FeatureSupportOperations",
-        "backup_protection_intent": "BackupProtectionIntentOperations",
-        "backup_usage_summaries": "BackupUsageSummariesOperations",
-        "operations": "Operations"
+        "backup_protected_items_crr": "BackupProtectedItemsCrrOperations"
     },
     "operation_mixins": {
         "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"ClientAuthenticationError\", \"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.mgmt.core.exceptions\": [\"ARMErrorFormat\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"], \"azure.core.polling\": [\"LROPoller\", \"NoPolling\", \"PollingMethod\"], \"azure.mgmt.core.polling.arm_polling\": [\"ARMPolling\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"Optional\", \"TypeVar\", \"Union\"]}}}",

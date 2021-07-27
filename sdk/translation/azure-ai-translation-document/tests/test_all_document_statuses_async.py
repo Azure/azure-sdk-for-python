@@ -153,7 +153,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
         poller = await self._begin_and_validate_translation_with_multiple_docs_async(client, docs_count, language_code=target_language, wait=True)
 
         # check doc statuses
-        doc_statuses = client.list_all_document_statuses(poller.id, order_by=["createdDateTimeUtc asc"])
+        doc_statuses = client.list_all_document_statuses(poller.id, order_by=["created_on asc"])
 
         curr = datetime.min
         docs = []
@@ -175,7 +175,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
         poller = await self._begin_and_validate_translation_with_multiple_docs_async(client, docs_count, language_code=target_language, wait=True)
 
         # check doc statuses
-        doc_statuses = client.list_all_document_statuses(poller.id, order_by=["createdDateTimeUtc desc"])
+        doc_statuses = client.list_all_document_statuses(poller.id, order_by=["created_on desc"])
 
         curr = datetime.max
         docs = []
@@ -186,8 +186,6 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
 
         self.assertEqual(len(docs), docs_count)
 
-
-    @pytest.mark.skip(reason="not working! - list returned is empty")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_list_document_statuses_mixed_filters(self, client):
@@ -212,7 +210,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
             document_ids=ids,
             statuses=statuses,
             # ordering
-            order_by=["createdDateTimeUtc asc"],
+            order_by=["created_on asc"],
             # paging
             skip=skip,
             results_per_page=results_per_page
