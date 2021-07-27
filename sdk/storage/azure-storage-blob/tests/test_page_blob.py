@@ -30,7 +30,8 @@ from azure.storage.blob import (
     SequenceNumberAction,
     StorageErrorCode,
     generate_blob_sas, BlobImmutabilityPolicyMode, ImmutabilityPolicy)
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, BlobAccountPreparer
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, BlobAccountPreparer, \
+    CachedResourceGroupPreparer
 from azure.storage.blob._shared.policies import StorageContentValidation
 from _shared.testcase import GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
 from devtools_testutils.storage import StorageTestCase
@@ -144,8 +145,8 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertIsNotNone(resp.get('last_modified'))
         self.assertTrue(blob.get_blob_properties())
 
-    @ResourceGroupPreparer(name_prefix='storagename', use_cache=True)
-    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", use_cache=True)
+    @GlobalResourceGroupPreparer()
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", random_name_enabled=True)
     def test_create_blob_with_immutability_policy(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
@@ -177,6 +178,9 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertIsNotNone(props['immutability_policy']['policy_mode'])
 
         if self.is_live:
+            blob.delete_immutability_policy()
+            blob.set_legal_hold(False)
+            blob.delete_blob()
             mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
 
     @pytest.mark.playback_test_only

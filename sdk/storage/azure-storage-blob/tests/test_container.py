@@ -13,7 +13,7 @@ from time import sleep
 
 import pytest
 import requests
-from devtools_testutils import ResourceGroupPreparer, BlobAccountPreparer
+from devtools_testutils import ResourceGroupPreparer, BlobAccountPreparer, CachedResourceGroupPreparer
 
 from _shared.testcase import StorageTestCase, LogCaptured, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer, StorageAccountPreparer
 from azure.core import MatchConditions
@@ -1057,8 +1057,8 @@ class StorageContainerTest(StorageTestCase):
         self.assertEqual(blobs[1].content_settings.content_language, 'spanish')
         self.assertEqual(blobs[1].content_settings.content_disposition, 'inline')
 
-    @ResourceGroupPreparer(name_prefix='storagename', use_cache=True)
-    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", use_cache=True)
+    @GlobalResourceGroupPreparer()
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", random_name_enabled=True)
     def test_list_blobs_include_deletedwithversion(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
         # pytest.skip("Waiting on metadata XML fix in msrest")

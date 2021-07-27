@@ -9,8 +9,9 @@ import base64
 import os
 
 import pytest
+from devtools_testutils import StorageAccountPreparer
 
-from _shared.testcase import GlobalStorageAccountPreparer
+from _shared.testcase import GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
 from devtools_testutils.storage import StorageTestCase
 from azure.storage.blob import (
     BlobServiceClient,
@@ -937,7 +938,8 @@ class StorageQuickQueryTest(StorageTestCase):
                 on_error=on_error,
                 blob_format=input_format)
 
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='pytagstorage')
     def test_quick_query_input_in_parquet_format(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(

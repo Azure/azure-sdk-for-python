@@ -18,7 +18,7 @@ import unittest
 import uuid
 
 from azure.mgmt.storage.aio import StorageManagementClient
-from devtools_testutils import BlobAccountPreparer, ResourceGroupPreparer
+from devtools_testutils import BlobAccountPreparer, ResourceGroupPreparer, CachedResourceGroupPreparer
 
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceModifiedError
@@ -1426,8 +1426,8 @@ class StorageAppendBlobAsyncTest(AsyncStorageTestCase):
         self.assertIsNone(prop.is_append_blob_sealed)
         await copied_blob3.append_block("abc")
 
-    @ResourceGroupPreparer(name_prefix='storagename', use_cache=True)
-    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", use_cache=True)
+    @GlobalResourceGroupPreparer()
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", random_name_enabled=True)
     async def test_create_append_blob_with_immutability_policy_async(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         await self._setup(bsc)
@@ -1460,6 +1460,9 @@ class StorageAppendBlobAsyncTest(AsyncStorageTestCase):
         self.assertIsNotNone(props['immutability_policy']['policy_mode'])
 
         if self.is_live:
+            await blob.delete_immutability_policy()
+            await blob.set_legal_hold(False)
+            await blob.delete_blob()
             await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
 
 # ------------------------------------------------------------------------------

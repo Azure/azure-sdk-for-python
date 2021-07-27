@@ -7,26 +7,25 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.9.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 04 Jun 2021 00:22:45 GMT
+      - Tue, 27 Jul 2021 23:35:19 GMT
       x-ms-version:
       - '2020-10-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/acontainere4ee1c92?restype=container
+    uri: https://storagenamestorname.blob.core.windows.net/acontainere4ee1c92?restype=container
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
-        specified container already exists.\nRequestId:7bc8288b-b01e-0031-13d7-583bd1000000\nTime:2021-06-04T00:22:45.4807498Z</Message></Error>"
+      string: ''
     headers:
-      content-length: '230'
-      content-type: application/xml
-      date: Fri, 04 Jun 2021 00:22:44 GMT
+      content-length: '0'
+      date: Tue, 27 Jul 2021 23:35:19 GMT
+      etag: '"0x8D9515732CF01CB"'
+      last-modified: Tue, 27 Jul 2021 23:35:20 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code: ContainerAlreadyExists
       x-ms-version: '2020-10-02'
     status:
-      code: 409
-      message: The specified container already exists.
-    url: https://seanmcccanary3.blob.core.windows.net/acontainere4ee1c92?restype=container
+      code: 201
+      message: Created
+    url: https://storagename2k6wqjq54arr5.blob.core.windows.net/acontainere4ee1c92?restype=container
 - request:
     body: hello world
     headers:
@@ -45,7 +44,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Fri, 04 Jun 2021 00:22:45 GMT
+      - Tue, 27 Jul 2021 23:35:20 GMT
       x-ms-meta-name:
       - bob
       x-ms-meta-number:
@@ -53,25 +52,25 @@ interactions:
       x-ms-version:
       - '2020-10-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/acontainere4ee1c92/blob1
+    uri: https://storagenamestorname.blob.core.windows.net/acontainere4ee1c92/blob1
   response:
     body:
       string: ''
     headers:
       content-length: '0'
       content-md5: XrY7u+Ae7tCTyyK7j1rNww==
-      date: Fri, 04 Jun 2021 00:22:44 GMT
-      etag: '"0x8D926EEE0381268"'
-      last-modified: Fri, 04 Jun 2021 00:22:45 GMT
+      date: Tue, 27 Jul 2021 23:35:19 GMT
+      etag: '"0x8D9515732DC0F94"'
+      last-modified: Tue, 27 Jul 2021 23:35:20 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64: vo7q9sPVKY0=
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2020-10-02'
-      x-ms-version-id: '2021-06-04T00:22:45.5478888Z'
+      x-ms-version-id: '2021-07-27T23:35:20.6923156Z'
     status:
       code: 201
       message: Created
-    url: https://seanmcccanary3.blob.core.windows.net/acontainere4ee1c92/blob1
+    url: https://storagename2k6wqjq54arr5.blob.core.windows.net/acontainere4ee1c92/blob1
 - request:
     body: abc
     headers:
@@ -86,29 +85,29 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Fri, 04 Jun 2021 00:22:45 GMT
+      - Tue, 27 Jul 2021 23:35:20 GMT
       x-ms-version:
       - '2020-10-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/acontainere4ee1c92/blob1
+    uri: https://storagenamestorname.blob.core.windows.net/acontainere4ee1c92/blob1
   response:
     body:
       string: ''
     headers:
       content-length: '0'
       content-md5: kAFQmDzST7DWlj99KOF/cg==
-      date: Fri, 04 Jun 2021 00:22:44 GMT
-      etag: '"0x8D926EEE04162EA"'
-      last-modified: Fri, 04 Jun 2021 00:22:45 GMT
+      date: Tue, 27 Jul 2021 23:35:19 GMT
+      etag: '"0x8D9515732E70E0B"'
+      last-modified: Tue, 27 Jul 2021 23:35:20 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64: 6/rBP7vK5QU=
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2020-10-02'
-      x-ms-version-id: '2021-06-04T00:22:45.6099322Z'
+      x-ms-version-id: '2021-07-27T23:35:20.7653659Z'
     status:
       code: 201
       message: Created
-    url: https://seanmcccanary3.blob.core.windows.net/acontainere4ee1c92/blob1
+    url: https://storagename2k6wqjq54arr5.blob.core.windows.net/acontainere4ee1c92/blob1
 - request:
     body: cde
     headers:
@@ -123,29 +122,29 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Fri, 04 Jun 2021 00:22:45 GMT
+      - Tue, 27 Jul 2021 23:35:20 GMT
       x-ms-version:
       - '2020-10-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/acontainere4ee1c92/blob1
+    uri: https://storagenamestorname.blob.core.windows.net/acontainere4ee1c92/blob1
   response:
     body:
       string: ''
     headers:
       content-length: '0'
       content-md5: olbmszav3DjFZHicOZtRbA==
-      date: Fri, 04 Jun 2021 00:22:44 GMT
-      etag: '"0x8D926EEE04B019A"'
-      last-modified: Fri, 04 Jun 2021 00:22:45 GMT
+      date: Tue, 27 Jul 2021 23:35:19 GMT
+      etag: '"0x8D9515732F20C87"'
+      last-modified: Tue, 27 Jul 2021 23:35:20 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64: SsrIw8/pA7Y=
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2020-10-02'
-      x-ms-version-id: '2021-06-04T00:22:45.6729770Z'
+      x-ms-version-id: '2021-07-27T23:35:20.8374167Z'
     status:
       code: 201
       message: Created
-    url: https://seanmcccanary3.blob.core.windows.net/acontainere4ee1c92/blob1
+    url: https://storagename2k6wqjq54arr5.blob.core.windows.net/acontainere4ee1c92/blob1
 - request:
     body: null
     headers:
@@ -154,24 +153,24 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.9.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 04 Jun 2021 00:22:45 GMT
+      - Tue, 27 Jul 2021 23:35:20 GMT
       x-ms-version:
       - '2020-10-02'
     method: DELETE
-    uri: https://storagename.blob.core.windows.net/acontainere4ee1c92/blob1
+    uri: https://storagenamestorname.blob.core.windows.net/acontainere4ee1c92/blob1
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 04 Jun 2021 00:22:44 GMT
+      date: Tue, 27 Jul 2021 23:35:20 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-delete-type-permanent: 'false'
       x-ms-version: '2020-10-02'
     status:
       code: 202
       message: Accepted
-    url: https://seanmcccanary3.blob.core.windows.net/acontainere4ee1c92/blob1
+    url: https://storagename2k6wqjq54arr5.blob.core.windows.net/acontainere4ee1c92/blob1
 - request:
     body: hello world
     headers:
@@ -190,7 +189,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Fri, 04 Jun 2021 00:22:45 GMT
+      - Tue, 27 Jul 2021 23:35:20 GMT
       x-ms-meta-name:
       - car
       x-ms-meta-number:
@@ -198,25 +197,25 @@ interactions:
       x-ms-version:
       - '2020-10-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/acontainere4ee1c92/blob2
+    uri: https://storagenamestorname.blob.core.windows.net/acontainere4ee1c92/blob2
   response:
     body:
       string: ''
     headers:
       content-length: '0'
       content-md5: XrY7u+Ae7tCTyyK7j1rNww==
-      date: Fri, 04 Jun 2021 00:22:45 GMT
-      etag: '"0x8D926EEE0625E6F"'
-      last-modified: Fri, 04 Jun 2021 00:22:45 GMT
+      date: Tue, 27 Jul 2021 23:35:20 GMT
+      etag: '"0x8D95157330B656B"'
+      last-modified: Tue, 27 Jul 2021 23:35:21 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64: vo7q9sPVKY0=
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2020-10-02'
-      x-ms-version-id: '2021-06-04T00:22:45.8260863Z'
+      x-ms-version-id: '2021-07-27T23:35:21.0025323Z'
     status:
       code: 201
       message: Created
-    url: https://seanmcccanary3.blob.core.windows.net/acontainere4ee1c92/blob2
+    url: https://storagename2k6wqjq54arr5.blob.core.windows.net/acontainere4ee1c92/blob2
 - request:
     body: hello world
     headers:
@@ -235,7 +234,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Fri, 04 Jun 2021 00:22:45 GMT
+      - Tue, 27 Jul 2021 23:35:21 GMT
       x-ms-meta-name:
       - car
       x-ms-meta-number:
@@ -243,25 +242,25 @@ interactions:
       x-ms-version:
       - '2020-10-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/acontainere4ee1c92/blob3
+    uri: https://storagenamestorname.blob.core.windows.net/acontainere4ee1c92/blob3
   response:
     body:
       string: ''
     headers:
       content-length: '0'
       content-md5: XrY7u+Ae7tCTyyK7j1rNww==
-      date: Fri, 04 Jun 2021 00:22:45 GMT
-      etag: '"0x8D926EEE06B128C"'
-      last-modified: Fri, 04 Jun 2021 00:22:45 GMT
+      date: Tue, 27 Jul 2021 23:35:20 GMT
+      etag: '"0x8D9515733188724"'
+      last-modified: Tue, 27 Jul 2021 23:35:21 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64: vo7q9sPVKY0=
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2020-10-02'
-      x-ms-version-id: '2021-06-04T00:22:45.8841272Z'
+      x-ms-version-id: '2021-07-27T23:35:21.0885924Z'
     status:
       code: 201
       message: Created
-    url: https://seanmcccanary3.blob.core.windows.net/acontainere4ee1c92/blob3
+    url: https://storagename2k6wqjq54arr5.blob.core.windows.net/acontainere4ee1c92/blob3
 - request:
     body: null
     headers:
@@ -270,42 +269,40 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.9.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 04 Jun 2021 00:22:45 GMT
+      - Tue, 27 Jul 2021 23:35:21 GMT
       x-ms-version:
       - '2020-10-02'
     method: GET
-    uri: https://storagename.blob.core.windows.net/acontainere4ee1c92?restype=container&comp=list&include=deletedwithversions
+    uri: https://storagenamestorname.blob.core.windows.net/acontainere4ee1c92?restype=container&comp=list&include=deletedwithversions
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"acontainere4ee1c92\"><Blobs><Blob><Name>blob1</Name><HasVersionsOnly>true</HasVersionsOnly><Properties><Creation-Time>Fri,
-        04 Jun 2021 00:22:45 GMT</Creation-Time><Last-Modified>Fri, 04 Jun 2021 00:22:45
-        GMT</Last-Modified><Etag>0x8D926EEE04B019A</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        ServiceEndpoint=\"https://storagenamestorname.blob.core.windows.net/\" ContainerName=\"acontainere4ee1c92\"><Blobs><Blob><Name>blob1</Name><HasVersionsOnly>true</HasVersionsOnly><Properties><Creation-Time>Tue,
+        27 Jul 2021 23:35:20 GMT</Creation-Time><Last-Modified>Tue, 27 Jul 2021 23:35:20
+        GMT</Last-Modified><Etag>0x8D9515732F20C87</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>olbmszav3DjFZHicOZtRbA==</Content-MD5><Cache-Control
-        /><Content-Disposition /><LastAccessTime>Fri, 04 Jun 2021 00:22:45 GMT</LastAccessTime><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties><OrMetadata
-        /></Blob><Blob><Name>blob2</Name><VersionId>2021-06-04T00:22:45.8260863Z</VersionId><IsCurrentVersion>true</IsCurrentVersion><Properties><Creation-Time>Fri,
-        04 Jun 2021 00:22:45 GMT</Creation-Time><Last-Modified>Fri, 04 Jun 2021 00:22:45
-        GMT</Last-Modified><Etag>0x8D926EEE0625E6F</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties><OrMetadata
+        /></Blob><Blob><Name>blob2</Name><VersionId>2021-07-27T23:35:21.0025323Z</VersionId><IsCurrentVersion>true</IsCurrentVersion><Properties><Creation-Time>Tue,
+        27 Jul 2021 23:35:21 GMT</Creation-Time><Last-Modified>Tue, 27 Jul 2021 23:35:21
+        GMT</Last-Modified><Etag>0x8D95157330B656B</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language>spanish</Content-Language><Content-CRC64 /><Content-MD5>XrY7u+Ae7tCTyyK7j1rNww==</Content-MD5><Cache-Control
-        /><Content-Disposition>inline</Content-Disposition><LastAccessTime>Fri, 04
-        Jun 2021 00:22:45 GMT</LastAccessTime><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties><OrMetadata
-        /></Blob><Blob><Name>blob3</Name><VersionId>2021-06-04T00:22:45.8841272Z</VersionId><IsCurrentVersion>true</IsCurrentVersion><Properties><Creation-Time>Fri,
-        04 Jun 2021 00:22:45 GMT</Creation-Time><Last-Modified>Fri, 04 Jun 2021 00:22:45
-        GMT</Last-Modified><Etag>0x8D926EEE06B128C</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Disposition>inline</Content-Disposition><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties><OrMetadata
+        /></Blob><Blob><Name>blob3</Name><VersionId>2021-07-27T23:35:21.0885924Z</VersionId><IsCurrentVersion>true</IsCurrentVersion><Properties><Creation-Time>Tue,
+        27 Jul 2021 23:35:21 GMT</Creation-Time><Last-Modified>Tue, 27 Jul 2021 23:35:21
+        GMT</Last-Modified><Etag>0x8D9515733188724</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language>spanish</Content-Language><Content-CRC64 /><Content-MD5>XrY7u+Ae7tCTyyK7j1rNww==</Content-MD5><Cache-Control
-        /><Content-Disposition>inline</Content-Disposition><LastAccessTime>Fri, 04
-        Jun 2021 00:22:45 GMT</LastAccessTime><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties><OrMetadata
+        /><Content-Disposition>inline</Content-Disposition><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties><OrMetadata
         /></Blob></Blobs><NextMarker /></EnumerationResults>"
     headers:
       content-type: application/xml
-      date: Fri, 04 Jun 2021 00:22:45 GMT
+      date: Tue, 27 Jul 2021 23:35:20 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2020-10-02'
     status:
       code: 200
       message: OK
-    url: https://seanmcccanary3.blob.core.windows.net/acontainere4ee1c92?restype=container&comp=list&include=deletedwithversions
+    url: https://storagename2k6wqjq54arr5.blob.core.windows.net/acontainere4ee1c92?restype=container&comp=list&include=deletedwithversions
 - request:
     body: null
     headers:
@@ -314,13 +311,13 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.9.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 04 Jun 2021 00:22:46 GMT
+      - Tue, 27 Jul 2021 23:35:21 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
       - '2020-10-02'
     method: GET
-    uri: https://storagename.blob.core.windows.net/acontainere4ee1c92/blob1?versionid=2021-06-04T00:22:45.6729770Z
+    uri: https://storagenamestorname.blob.core.windows.net/acontainere4ee1c92/blob1?versionid=2021-07-27T23:35:20.8374167Z
   response:
     body:
       string: cde
@@ -329,20 +326,20 @@ interactions:
       content-length: '3'
       content-range: bytes 0-2/3
       content-type: application/octet-stream
-      date: Fri, 04 Jun 2021 00:22:45 GMT
-      etag: '"0x8D926EEE04B019A"'
-      last-modified: Fri, 04 Jun 2021 00:22:45 GMT
+      date: Tue, 27 Jul 2021 23:35:20 GMT
+      etag: '"0x8D9515732F20C87"'
+      last-modified: Tue, 27 Jul 2021 23:35:20 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-content-md5: olbmszav3DjFZHicOZtRbA==
       x-ms-blob-type: BlockBlob
-      x-ms-creation-time: Fri, 04 Jun 2021 00:22:45 GMT
+      x-ms-creation-time: Tue, 27 Jul 2021 23:35:20 GMT
       x-ms-server-encrypted: 'true'
       x-ms-version: '2020-10-02'
-      x-ms-version-id: '2021-06-04T00:22:45.6729770Z'
+      x-ms-version-id: '2021-07-27T23:35:20.8374167Z'
     status:
       code: 206
       message: Partial Content
-    url: https://seanmcccanary3.blob.core.windows.net/acontainere4ee1c92/blob1?versionid=2021-06-04T00:22:45.6729770Z
+    url: https://storagename2k6wqjq54arr5.blob.core.windows.net/acontainere4ee1c92/blob1?versionid=2021-07-27T23:35:20.8374167Z
 - request:
     body: null
     headers:
@@ -351,13 +348,13 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.9.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 04 Jun 2021 00:22:46 GMT
+      - Tue, 27 Jul 2021 23:35:21 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
       - '2020-10-02'
     method: GET
-    uri: https://storagename.blob.core.windows.net/acontainere4ee1c92/blob1?versionid=2021-06-04T00:22:45.5478888Z
+    uri: https://storagenamestorname.blob.core.windows.net/acontainere4ee1c92/blob1?versionid=2021-07-27T23:35:20.6923156Z
   response:
     body:
       string: hello world
@@ -368,20 +365,20 @@ interactions:
       content-length: '11'
       content-range: bytes 0-10/11
       content-type: application/octet-stream
-      date: Fri, 04 Jun 2021 00:22:45 GMT
-      etag: '"0x8D926EEE0381268"'
-      last-modified: Fri, 04 Jun 2021 00:22:45 GMT
+      date: Tue, 27 Jul 2021 23:35:20 GMT
+      etag: '"0x8D9515732DC0F94"'
+      last-modified: Tue, 27 Jul 2021 23:35:20 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-content-md5: XrY7u+Ae7tCTyyK7j1rNww==
       x-ms-blob-type: BlockBlob
-      x-ms-creation-time: Fri, 04 Jun 2021 00:22:45 GMT
+      x-ms-creation-time: Tue, 27 Jul 2021 23:35:20 GMT
       x-ms-meta-name: bob
       x-ms-meta-number: '1'
       x-ms-server-encrypted: 'true'
       x-ms-version: '2020-10-02'
-      x-ms-version-id: '2021-06-04T00:22:45.5478888Z'
+      x-ms-version-id: '2021-07-27T23:35:20.6923156Z'
     status:
       code: 206
       message: Partial Content
-    url: https://seanmcccanary3.blob.core.windows.net/acontainere4ee1c92/blob1?versionid=2021-06-04T00:22:45.5478888Z
+    url: https://storagename2k6wqjq54arr5.blob.core.windows.net/acontainere4ee1c92/blob1?versionid=2021-07-27T23:35:20.6923156Z
 version: 1

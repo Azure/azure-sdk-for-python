@@ -1475,8 +1475,8 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         copy_content = await (await copyblob.download_blob()).readall()
         self.assertEqual(copy_content, self.byte_data)
 
-    @ResourceGroupPreparer(name_prefix='storagename', use_cache=True)
-    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", use_cache=True)
+    @GlobalResourceGroupPreparer()
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", random_name_enabled=True)
     async def test_copy_blob_with_immutability_policy(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
 
@@ -1514,6 +1514,9 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertFalse(isinstance(copy['copy_status'], Enum))
 
         if self.is_live:
+            await copyblob.delete_immutability_policy()
+            await copyblob.set_legal_hold(False)
+            await copyblob.delete_blob()
             await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
 
     # @GlobalStorageAccountPreparer()
@@ -2571,8 +2574,8 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
             await bsc.get_service_properties()
             assert transport.session is not None
 
-    @ResourceGroupPreparer(name_prefix='storagename', use_cache=True)
-    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", use_cache=True)
+    @GlobalResourceGroupPreparer()
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", random_name_enabled=True)
     async def test_blob_immutability_policy(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
 
@@ -2611,9 +2614,13 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertIsNone(props['immutability_policy']['policy_mode'])
 
         if self.is_live:
+            await blob.delete_immutability_policy()
+            await blob.set_legal_hold(False)
+            await blob.delete_blob()
             await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
 
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", random_name_enabled=True)
     async def test_blob_legal_hold(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
 
@@ -2646,10 +2653,13 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertFalse(props2['has_legal_hold'])
 
         if self.is_live:
+            await blob.delete_immutability_policy()
+            await blob.set_legal_hold(False)
+            await blob.delete_blob()
             await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
 
-    @ResourceGroupPreparer(name_prefix='storagename', use_cache=True)
-    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", use_cache=True)
+    @GlobalResourceGroupPreparer()
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", random_name_enabled=True)
     async def test_download_blob_with_immutability_policy(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
         container_name = self.get_resource_name('vlwcontainer')
@@ -2687,10 +2697,13 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         await blob.delete_immutability_policy()
 
         if self.is_live:
+            await blob.delete_immutability_policy()
+            await blob.set_legal_hold(False)
+            await blob.delete_blob()
             await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
 
-    @ResourceGroupPreparer(name_prefix='storagename', use_cache=True)
-    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", use_cache=True)
+    @GlobalResourceGroupPreparer()
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", random_name_enabled=True)
     async def test_list_blobs_with_immutability_policy(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
         container_name = self.get_resource_name('vlwcontainer')
@@ -2716,14 +2729,17 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
                                overwrite=True)
 
         blob_list = list()
-        async for blob in container_client.list_blobs(include=['immutabilitypolicy', 'legalhold']):
-            blob_list.append(blob)
+        async for blob_prop in container_client.list_blobs(include=['immutabilitypolicy', 'legalhold']):
+            blob_list.append(blob_prop)
 
         self.assertTrue(blob_list[0]['has_legal_hold'])
         self.assertIsNotNone(blob_list[0]['immutability_policy']['expiry_time'])
         self.assertIsNotNone(blob_list[0]['immutability_policy']['policy_mode'])
 
         if self.is_live:
+            await blob.delete_immutability_policy()
+            await blob.set_legal_hold(False)
+            await blob.delete_blob()
             await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
 
 # ------------------------------------------------------------------------------
