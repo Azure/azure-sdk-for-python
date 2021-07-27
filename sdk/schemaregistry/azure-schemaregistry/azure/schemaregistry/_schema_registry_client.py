@@ -29,6 +29,7 @@ from ._common._constants import SerializationType
 from ._common._schema import Schema, SchemaProperties
 from ._common._response_handlers import _parse_response_schema, _parse_response_schema_id
 from ._generated._azure_schema_registry import AzureSchemaRegistry
+from azure.schemaregistry._generated.rest import schema
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -108,14 +109,14 @@ class SchemaRegistryClient(object):
         except AttributeError:
             pass
 
-        return self._generated_client.schema.register(
+        request = schema.build_register_request(
             group_name=schema_group,
             schema_name=schema_name,
-            schema_content=schema_content,
-            x_schema_type=serialization_type,
-            cls=_parse_response_schema_id,
+            content=schema_content,
+            serialization_type=serialization_type,
             **kwargs
         )
+        return self._generated_client.send_request(request)
 
     def get_schema(self, schema_id, **kwargs):
         # type: (str, Any) -> Schema
@@ -136,11 +137,8 @@ class SchemaRegistryClient(object):
                 :caption: Get schema by id.
 
         """
-        return self._generated_client.schema.get_by_id(
-            schema_id,
-            cls=_parse_response_schema,
-            **kwargs
-        )
+        request = schema.build_get_by_id_request(schema_id=schema_id)
+        return self._generated_client.send_request(request, **kwargs)
 
     def get_schema_id(self, schema_group, schema_name, serialization_type, schema_content, **kwargs):
         # type: (str, str, Union[str, SerializationType], str, Any) -> SchemaProperties
@@ -171,11 +169,12 @@ class SchemaRegistryClient(object):
         except AttributeError:
             pass
 
-        return self._generated_client.schema.query_id_by_content(
+        request = schema.build_query_id_by_content_request(
             group_name=schema_group,
             schema_name=schema_name,
-            schema_content=schema_content,
-            x_schema_type=serialization_type,
-            cls=_parse_response_schema_id,
+            content=schema_content,
+            serialization_type=serialization_type,
             **kwargs
         )
+
+        return self._generated_client.send_request(request, **kwargs)

@@ -27,7 +27,7 @@ from typing import Any, Dict
 
 from azure.core.pipeline import PipelineResponse
 
-from .._generated.models import SchemaId as InternalSchemaId
+#from .._generated.models import SchemaId as InternalSchemaId
 from ._schema import SchemaProperties, Schema
 
 
