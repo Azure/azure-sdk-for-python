@@ -1,5 +1,6 @@
 # Release History
 
+
 ## 1.0.0b3 (Unreleased)
 
 ### Features Added
@@ -11,6 +12,7 @@
 - `aggregation` param in the query API is renamed to `aggregations`
 - `batch_query` API now returns a list of responses.
 - `LogsBatchResults` model is now removed.
+- `LogsQueryRequest` is renamed to `LogsBatchQueryRequest`
 
 ### Bugs Fixed
 

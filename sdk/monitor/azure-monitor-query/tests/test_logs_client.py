@@ -2,7 +2,7 @@ import pytest
 import os
 from azure.identity import ClientSecretCredential
 from azure.core.exceptions import HttpResponseError
-from azure.monitor.query import LogsQueryClient, LogsQueryRequest
+from azure.monitor.query import LogsQueryClient, LogsBatchQueryRequest
 
 def _credential():
     credential  = ClientSecretCredential(
@@ -66,18 +66,18 @@ def test_logs_batch_query():
     client = LogsQueryClient(_credential())
 
     requests = [
-        LogsQueryRequest(
+        LogsBatchQueryRequest(
             query="AzureActivity | summarize count()",
             timespan="PT1H",
             workspace_id= os.environ['LOG_WORKSPACE_ID']
         ),
-        LogsQueryRequest(
+        LogsBatchQueryRequest(
             query= """AppRequests | take 10  |
                 summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId""",
             timespan="PT1H",
             workspace_id= os.environ['LOG_WORKSPACE_ID']
         ),
-        LogsQueryRequest(
+        LogsBatchQueryRequest(
             query= "AppRequests | take 2",
             workspace_id= os.environ['LOG_WORKSPACE_ID']
         ),
@@ -102,19 +102,19 @@ def test_logs_batch_query_with_statistics_in_some():
     client = LogsQueryClient(_credential())
 
     requests = [
-        LogsQueryRequest(
+        LogsBatchQueryRequest(
             query="AzureActivity | summarize count()",
             timespan="PT1H",
             workspace_id= os.environ['LOG_WORKSPACE_ID']
         ),
-        LogsQueryRequest(
+        LogsBatchQueryRequest(
             query= """AppRequests|
                 summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId""",
             timespan="PT1H",
             workspace_id= os.environ['LOG_WORKSPACE_ID'],
             include_statistics=True
         ),
-        LogsQueryRequest(
+        LogsBatchQueryRequest(
             query= "AppRequests",
             workspace_id= os.environ['LOG_WORKSPACE_ID'],
             include_statistics=True
@@ -150,19 +150,19 @@ def test_logs_batch_query_additional_workspaces():
     query = "union * | where TimeGenerated > ago(100d) | project TenantId | summarize count() by TenantId"
 
     requests = [
-        LogsQueryRequest(
+        LogsBatchQueryRequest(
             query,
             timespan="PT1H",
             workspace_id= os.environ['LOG_WORKSPACE_ID'],
             additional_workspaces=[os.environ['SECONDARY_WORKSPACE_ID']]
         ),
-        LogsQueryRequest(
+        LogsBatchQueryRequest(
             query,
             timespan="PT1H",
             workspace_id= os.environ['LOG_WORKSPACE_ID'],
             additional_workspaces=[os.environ['SECONDARY_WORKSPACE_ID']]
         ),
-        LogsQueryRequest(
+        LogsBatchQueryRequest(
             query,
             workspace_id= os.environ['LOG_WORKSPACE_ID'],
             additional_workspaces=[os.environ['SECONDARY_WORKSPACE_ID']]
