@@ -186,7 +186,6 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
 
     @staticmethod
     def _get_bytes(obj):
-        # type: (Any) -> Dict
         """Event mixin to have methods that are common to different Event types
         like CloudEvent, EventGridEvent etc.
         """

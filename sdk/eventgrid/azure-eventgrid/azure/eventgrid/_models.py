@@ -105,7 +105,6 @@ class EventGridEvent(InternalEventGridEvent):
 
     @staticmethod
     def _get_bytes(obj):
-        # type: (Any) -> Dict
         """Event mixin to have methods that are common to different Event types
         like EventGridEvent etc.
         """
