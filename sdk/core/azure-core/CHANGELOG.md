@@ -8,7 +8,7 @@
 
 ### Key Bugs Fixed
 
-- Added `chardet` dependency, because `requests` [removed this dependency](https://docs.python-requests.org/en/latest/community/updates/#id1), and our code relies on it.
+- Removed `chardet` dependency in `azure.core.rest`.
 
 ### Fixed
 

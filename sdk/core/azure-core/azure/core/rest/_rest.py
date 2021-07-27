@@ -42,6 +42,7 @@ from ._helpers import (
     to_pipeline_transport_request_helper,
     from_pipeline_transport_request_helper,
     get_charset_encoding,
+    decode_to_text,
 )
 from ..exceptions import ResponseNotReadError
 if TYPE_CHECKING:
@@ -205,6 +206,7 @@ class _HttpResponseBase(object):  # pylint: disable=too-many-instance-attributes
         self._json = None  # this is filled in ContentDecodePolicy, when we deserialize
         self._connection_data_block_size = None  # type: Optional[int]
         self._content = None  # type: Optional[bytes]
+        self._text = None  # type: Optional[str]
 
     @property
     def url(self):
@@ -221,7 +223,8 @@ class _HttpResponseBase(object):  # pylint: disable=too-many-instance-attributes
         try:
             return self._encoding
         except AttributeError:
-            return get_charset_encoding(self)
+            self._encoding = get_charset_encoding(self)  # type: Optional[str]
+            return self._encoding
 
     @encoding.setter
     def encoding(self, value):
@@ -233,10 +236,13 @@ class _HttpResponseBase(object):  # pylint: disable=too-many-instance-attributes
     def text(self):
         # type: (...) -> str
         """Returns the response body as a string"""
-        encoding = self.encoding
-        if encoding == "utf-8" or encoding is None:
-            encoding = "utf-8-sig"
-        return self.content.decode(encoding)
+        if self._text is None:
+            content = self.content
+            if not content:
+                self._text = ""
+            else:
+                self._text = decode_to_text(self.encoding, self.content)
+        return self._text
 
     def json(self):
         # type: (...) -> Any
