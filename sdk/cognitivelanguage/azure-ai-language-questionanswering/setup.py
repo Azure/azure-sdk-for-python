@@ -67,7 +67,8 @@ setup(
     ]),
     install_requires=[
         'azure-core<2.0.0,>=1.16.0',
-        "msrest>=0.6.21"
+        'msrest>=0.6.21',
+        'chardet>=3.0.2,<5'
     ],
     extras_require={
         ":python_version<'3.0'": ['futures', 'azure-ai-language-nspkg'],
