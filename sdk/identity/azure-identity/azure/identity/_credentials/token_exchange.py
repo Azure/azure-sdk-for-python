@@ -7,7 +7,6 @@ import time
 from typing import TYPE_CHECKING
 
 from .client_assertion import ClientAssertionCredential
-from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
 
 if TYPE_CHECKING:
@@ -38,31 +37,24 @@ class TokenExchangeCredential(TokenFileMixin):
     def __init__(self, **kwargs):
         # type: (**Any) -> None
         super(TokenExchangeCredential, self).__init__()
-        self._available = all(os.environ.get(var) for var in EnvironmentVariables.TOKEN_EXCHANGE_VARS)
-        if self._available:
-            self._credential = ClientAssertionCredential(
-                os.environ[EnvironmentVariables.AZURE_TENANT_ID],
-                os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
-                self.get_service_account_token,
-                **kwargs
-            )
+        self._credential = ClientAssertionCredential(
+            os.environ[EnvironmentVariables.AZURE_TENANT_ID],
+            os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
+            self.get_service_account_token,
+            **kwargs
+        )
 
     def __enter__(self):
-        if self._credential:
-            self._credential.__enter__()
+        self._credential.__enter__()
         return self
 
     def __exit__(self, *args):
-        if self._credential:
-            self._credential.__exit__(*args)
+        self._credential.__exit__(*args)
 
     def close(self):
         # type: () -> None
-        """Close the credential's transport session."""
         self.__exit__()
 
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
-        if not self._available:
-            raise CredentialUnavailableError(message="Token exchange configuration not found in environment")
         return self._credential.get_token(*scopes, **kwargs)
