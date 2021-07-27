@@ -297,14 +297,4 @@ def decode_to_text(encoding, content):
         encoding = "utf-8-sig"
     if encoding:
         return content.decode(encoding)
-    # 1. We try utf-8-sig
-    decoder = codecs.getincrementaldecoder("utf-8-sig")(errors="strict")
-    try:
-        decoder.decode(content)
-    except UnicodeDecodeError:
-        # Could not decode as UTF-8. Use Windows 1252.
-        decoder = codecs.getincrementaldecoder("cp1252")(errors="replace")
-    else:
-        # Can decode as UTF-8. Use UTF-8 with lenient error settings.
-        decoder = codecs.getincrementaldecoder("utf-8")(errors="replace")
-    return decoder.decode(content)
+    return codecs.getincrementaldecoder("utf-8-sig")(errors="replace").decode(content)
