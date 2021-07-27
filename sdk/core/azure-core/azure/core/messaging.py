@@ -192,6 +192,11 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
         try:
             # storage queue
             return json.loads(obj.content)
+        except ValueError:
+            raise ValueError(
+                "Failed to retrieve content from the object. Make sure the "
+                 + "content follows the CloudEvent schema."
+                )
         except AttributeError:
             # eventhubs
             try:
@@ -199,5 +204,10 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
             except KeyError:
                 # servicebus
                 return json.loads(next(obj.body))
+            except ValueError:
+                raise ValueError(
+                    "Failed to retrieve body from the object. Make sure the "
+                    + "body follows the CloudEvent schema."
+                    )           
             except: # pylint: disable=bare-except
                 return obj
