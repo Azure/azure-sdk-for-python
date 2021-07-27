@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 # pylint:disable=protected-access
-from typing import Any
+from typing import Any, Dict
 import datetime as dt
 import uuid
 import json
@@ -97,18 +97,18 @@ class EventGridEvent(InternalEventGridEvent):
         return "EventGridEvent(subject={}, event_type={}, id={}, event_time={})".format(
             self.subject, self.event_type, self.id, self.event_time
         )[:1024]
-    
+
     @classmethod
-    def from_dict(cls, event):
-        event = EventGridEvent._get_bytes(event)
-        super(EventGridEvent, cls).from_dict(event)
+    def from_dict(cls, data, key_extractors=None, content_type=None):
+        event = EventGridEvent._get_bytes(data)
+        super(EventGridEvent, cls).from_dict(event, key_extractors, content_type)
 
     @staticmethod
     def _get_bytes(obj):
+        # type: (Any) -> Dict
         """Event mixin to have methods that are common to different Event types
         like EventGridEvent etc.
         """
-        # type: (Any) -> Dict
         try:
             # storage queue
             return json.loads(obj.content)
@@ -119,5 +119,5 @@ class EventGridEvent(InternalEventGridEvent):
             except KeyError:
                 # servicebus
                 return json.loads(next(obj.body))
-            except:
+            except: # pylint: disable=bare-except
                 return obj

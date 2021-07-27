@@ -186,10 +186,10 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
 
     @staticmethod
     def _get_bytes(obj):
+        # type: (Any) -> Dict
         """Event mixin to have methods that are common to different Event types
         like CloudEvent, EventGridEvent etc.
         """
-        # type: (Any) -> Dict
         try:
             # storage queue
             return json.loads(obj.content)
@@ -200,5 +200,5 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
             except KeyError:
                 # servicebus
                 return json.loads(next(obj.body))
-            except:
+            except: # pylint: disable=bare-except
                 return obj
