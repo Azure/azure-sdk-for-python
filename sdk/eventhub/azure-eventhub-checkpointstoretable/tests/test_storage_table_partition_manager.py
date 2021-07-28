@@ -42,11 +42,11 @@ def _claim_and_list_ownership(storage_connection_str, table_name):
 
     for i in range(ownership_cnt):
             ownership = {}
-            ownership['fully_qualified_namespace'] = fully_qualified_namespace
-            ownership['eventhub_name'] = eventhub_name
-            ownership['consumer_group'] = consumer_group
-            ownership['owner_id'] = 'ownerid'
-            ownership['partition_id'] = str(i)
+            ownership['fullyqualifiednamespace'] = fully_qualified_namespace
+            ownership['eventhubname'] = eventhub_name
+            ownership['consumergroup'] = consumer_group
+            ownership['ownerid'] = 'ownerid'
+            ownership['partitionid'] = str(i)
             ownership['etag'] = None
             ownership_list.append(ownership)
     checkpoint_store.claim_ownership(ownership_list)
@@ -64,12 +64,12 @@ def _update_and_list_checkpoint(storage_connection_str, table_name):
         storage_connection_str, table_name)
     for i in range(partition_cnt):
             checkpoint = {
-                'fully_qualified_namespace': fully_qualified_namespace,
-                'eventhub_name': eventhub_name,
-                'consumer_group': consumer_group,
-                'partition_id': str(i),
+                'fullyqualifiednamespace': fully_qualified_namespace,
+                'eventhubname': eventhub_name,
+                'consumergroup': consumer_group,
+                'partitionid': str(i),
                 'offset': '2',
-                'sequence_number': "20"
+                'sequencenumber': 20
             }
             checkpoint_store.update_checkpoint(checkpoint)
 
@@ -80,16 +80,16 @@ def _update_and_list_checkpoint(storage_connection_str, table_name):
     assert len(checkpoint_list) == partition_cnt
     for checkpoint in checkpoint_list:
             assert checkpoint['offset'] == '2'
-            assert checkpoint['sequence_number'] == "20"
+            assert checkpoint['sequencenumber'] == 20
 
     for i in range(partition_cnt):
             checkpoint = {
-                'fully_qualified_namespace': fully_qualified_namespace,
-                'eventhub_name': eventhub_name,
-                'consumer_group': consumer_group,
-                'partition_id': str(i),
+                'fullyqualifiednamespace': fully_qualified_namespace,
+                'eventhubname': eventhub_name,
+                'consumergroup': consumer_group,
+                'partitionid': str(i),
                 'offset': '29',
-                'sequence_number': "42"
+                'sequencenumber': 42
             }
             checkpoint_store.update_checkpoint(checkpoint)
 
@@ -100,7 +100,7 @@ def _update_and_list_checkpoint(storage_connection_str, table_name):
     assert len(checkpoint_list) == partition_cnt
     for checkpoint in checkpoint_list:
             assert checkpoint['offset'] == '29'
-            assert checkpoint['sequence_number'] == "42"
+            assert checkpoint['sequencenumber'] == 42
 
 @pytest.mark.parametrize("storage_connection_str", STORAGE_CONN_STR)
 def test_claim_and_list_ownership(storage_connection_str):
