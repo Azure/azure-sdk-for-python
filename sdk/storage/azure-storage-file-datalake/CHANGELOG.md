@@ -1,5 +1,15 @@
 # Release History
 
+## 12.5.0b1 (2021-7-27)
+**New features**
+- Added support for quick query parquet
+
+**Fixes**
+- Fixed PathProperties class init issue (#18490)
+
+**Notes**
+- Deprecated new_name in for undelete filesystem operation
+
 ## 12.4.0 (2021-06-09)
 **New features**
 - Added support `set_service_properties()`,`get_service_properties()` on `DataLakeServiceClient`
