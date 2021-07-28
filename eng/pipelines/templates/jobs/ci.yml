@@ -55,6 +55,9 @@ parameters:
   - name: ValidateFormatting
     type: boolean
     default: false
+  - name: UnsupportedToxEnvironments
+    type: string
+    default: ''
 
 jobs:
   - job: 'Build'
@@ -137,6 +140,7 @@ jobs:
         TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: ${{ parameters.InjectedPackages }}
+        UnsupportedToxEnvironments: ${{ parameters.UnsupportedToxEnvironments }}
 
   - ${{ if gt(length(parameters.CondaArtifacts), 0) }}:
     - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
