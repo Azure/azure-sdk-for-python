@@ -67,7 +67,7 @@ class TableCheckpointStore:
         )
         return cls(endpoint, table_name=table_name, credential=credential, **kwargs)
 
-    def _checkpoint_entity (self, checkpoint):
+    def _checkpoint_entity(self, checkpoint):
         my_new_entity = {
             u'PartitionKey': "{} {} {} Checkpoint".format(checkpoint["fullyqualifiednamespace"],
         checkpoint["eventhubname"], checkpoint['consumergroup']),
