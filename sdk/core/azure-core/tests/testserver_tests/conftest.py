@@ -37,6 +37,9 @@ import sys
 collect_ignore = []
 if sys.version_info < (3, 5):
     collect_ignore.append("async_tests")
+    collect_ignore.append("test_rest_httpx_response.py")
+    collect_ignore.append("test_rest_httpx_context_manager.py")
+    collect_ignore.append("test_rest_httpx_stream_responses.py")
 
 def is_port_available(port_num):
     req = urllib.request.Request("http://localhost:{}/health".format(port_num))
