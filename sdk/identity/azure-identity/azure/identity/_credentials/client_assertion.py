@@ -22,9 +22,9 @@ class ClientAssertionCredential(GetTokenMixin):
 
         :param str tenant_id: ID of the principal's tenant. Also called its "directory" ID.
         :param str client_id: the principal's client ID
-        :param assertion: a callable that returns a string assertion. The credential will call this every time it
+        :param get_assertion: a callable that returns a string assertion. The credential will call this every time it
             acquires a new token.
-        :paramtype assertion: Callable[[], str]
+        :paramtype get_assertion: Callable[[], str]
 
         :keyword str authority: authority of an Azure Active Directory endpoint, for example
             "login.microsoftonline.com", the authority for Azure Public Cloud (which is the default).
