@@ -6,7 +6,6 @@
 # --------------------------------------------------------------------------------------------
 
 import argparse
-import pdb
 
 FULL_BUILD_SET = ["whl", "sdist", "depends", "latestdependency", "mindependency", "whl_no_aio"]
 PR_BUILD_SET = ["whl", "sdist", "mindependency"]
