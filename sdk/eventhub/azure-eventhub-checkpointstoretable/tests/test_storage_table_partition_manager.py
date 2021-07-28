@@ -80,7 +80,7 @@ def _update_and_list_checkpoint(storage_connection_str, table_name):
     assert len(checkpoint_list) == partition_cnt
     for checkpoint in checkpoint_list:
             assert checkpoint['offset'] == '2'
-            assert checkpoint['sequencenumber'] == 20
+            assert checkpoint['sequence_number'] == 20
 
     for i in range(partition_cnt):
             checkpoint = {
@@ -100,7 +100,7 @@ def _update_and_list_checkpoint(storage_connection_str, table_name):
     assert len(checkpoint_list) == partition_cnt
     for checkpoint in checkpoint_list:
             assert checkpoint['offset'] == '29'
-            assert checkpoint['sequencenumber'] == 42
+            assert checkpoint['sequence_number'] == 42
 
 @pytest.mark.parametrize("storage_connection_str", STORAGE_CONN_STR)
 def test_claim_and_list_ownership(storage_connection_str):
@@ -117,3 +117,4 @@ def test_update_checkpoint(storage_connection_str):
         _update_and_list_checkpoint(storage_connection_str, table_name)
     finally:
         remove_live_storage_table_client(storage_connection_str, table_name)
+
