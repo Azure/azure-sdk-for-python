@@ -91,6 +91,7 @@ class TestHttpXRestClient(object):
         self._client = PipelineClient(
             base_url="http://localhost:{}/".format(port),
             config=self._config,
+            policies=[],
             transport=transport,
             **kwargs
         )

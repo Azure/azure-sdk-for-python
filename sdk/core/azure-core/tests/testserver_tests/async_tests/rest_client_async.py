@@ -77,6 +77,7 @@ class AsyncHttpxTestRestClient(object):
         self._client = AsyncPipelineClient(
             base_url="http://localhost:{}".format(port),
             config=self._config,
+            policies=[],
             transport=transport,
             **kwargs
         )
