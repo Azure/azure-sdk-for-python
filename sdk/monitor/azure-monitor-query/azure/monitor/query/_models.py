@@ -106,11 +106,11 @@ class MetricsResult(object):
     :keyword cost: The integer value representing the cost of the query, for data case.
     :paramtype cost: int
     :keyword timespan: Required. The timespan for which the data was retrieved. Its value consists of
-     two datetimes concatenated, separated by '/'.  This may be adjusted in the future and returned
+     two datetimes concatenated, separated by '/'. This may be adjusted in the future and returned
      back from what was originally requested.
     :paramtype timespan: str
-    :keyword interval: The interval (window size) for which the metric data was returned in.  This
-     may be adjusted in the future and returned back from what was originally requested.  This is
+    :keyword interval: The interval (window size) for which the metric data was returned in. This
+     may be adjusted in the future and returned back from what was originally requested. This is
      not present if a metadata request was made.
     :paramtype interval: ~datetime.timedelta
     :keyword namespace: The namespace of the metrics been queried.
@@ -160,7 +160,7 @@ class LogsQueryRequest(InternalLogQueryRequest):
     :keyword datetime end_time: The end time till which to query the data. This should be accompanied
      with either start_time or duration.
     :keyword additional_workspaces: A list of workspaces that are included in the query.
-     These can be qualified workspace names, workspsce Ids or Azure resource Ids.
+     These can be qualified workspace names, workspace Ids, or Azure resource Ids.
     :paramtype additional_workspaces: list[str]
     :keyword request_id: The error details.
     :paramtype request_id: str
@@ -524,7 +524,7 @@ class MetricAvailability(object):
     :keyword time_grain: the time grain specifies the aggregation interval for the metric. Expressed
      as a duration 'PT1M', 'P1D', etc.
     :paramtype time_grain: ~datetime.timedelta
-    :keyword retention: the retention period for the metric at the specified timegrain.  Expressed as
+    :keyword retention: the retention period for the metric at the specified timegrain. Expressed as
      a duration 'PT1M', 'P1D', etc.
     :paramtype retention: ~datetime.timedelta
     """
