@@ -52,7 +52,7 @@ class AadClient(AadClientBase):
         **kwargs: "Any"
     ) -> "AccessToken":
         request = self._get_auth_code_request(
-            scopes=scopes, code=code, redirect_uri=redirect_uri, client_secret=client_secret
+            scopes=scopes, code=code, redirect_uri=redirect_uri, client_secret=client_secret, **kwargs
         )
         now = int(time.time())
         response = await self._pipeline.run(request, retry_on_methods=self._POST, **kwargs)
@@ -60,7 +60,7 @@ class AadClient(AadClientBase):
 
     async def obtain_token_by_client_certificate(self, scopes, certificate, **kwargs):
         # type: (Iterable[str], AadClientCertificate, **Any) -> AccessToken
-        request = self._get_client_certificate_request(scopes, certificate)
+        request = self._get_client_certificate_request(scopes, certificate, **kwargs)
         now = int(time.time())
         response = await self._pipeline.run(request, stream=False, retry_on_methods=self._POST, **kwargs)
         return self._process_response(response, now)
@@ -68,7 +68,7 @@ class AadClient(AadClientBase):
     async def obtain_token_by_client_secret(
         self, scopes: "Iterable[str]", secret: str, **kwargs: "Any"
     ) -> "AccessToken":
-        request = self._get_client_secret_request(scopes, secret)
+        request = self._get_client_secret_request(scopes, secret, **kwargs)
         now = int(time.time())
         response = await self._pipeline.run(request, retry_on_methods=self._POST, **kwargs)
         return self._process_response(response, now)
@@ -76,7 +76,7 @@ class AadClient(AadClientBase):
     async def obtain_token_by_refresh_token(
         self, scopes: "Iterable[str]", refresh_token: str, **kwargs: "Any"
     ) -> "AccessToken":
-        request = self._get_refresh_token_request(scopes, refresh_token)
+        request = self._get_refresh_token_request(scopes, refresh_token, **kwargs)
         now = int(time.time())
         response = await self._pipeline.run(request, retry_on_methods=self._POST, **kwargs)
         return self._process_response(response, now)

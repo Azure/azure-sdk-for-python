@@ -9,44 +9,34 @@ import argparse
 import os
 import logging
 import sys
-
-from common_tasks import run_check_call
+import subprocess
 
 logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 sdk_dir = os.path.join(root_dir, "sdk")
 
-SWAGGER_FOLDER = "swagger"
-
-
 def run_black(service_dir):
     logging.info("Running black for {}".format(service_dir))
 
-    command = [sys.executable, "-m", "black", "-l", "120", "sdk/{}".format(service_dir)]
+    out = subprocess.Popen([sys.executable, "-m", "black", "-l", "120", "sdk/{}".format(service_dir)],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        cwd = root_dir
+    )
 
-    run_check_call(command, root_dir)
+    stdout,stderr = out.communicate()
 
+    if stderr:
+        raise RuntimeError("black ran into some trouble during its invocation: " + stderr)
 
-def check_diff(folder):
-    # We don't care about changes to txt files (dev_requirements change)
-    run_check_call(["git", "status"], sdk_dir, always_exit=False)
+    if stdout:
+        if "reformatted" in stdout.decode('utf-8'):
+            return False
 
-    dir_changed = folder.split("/")[:-2]
-    command = [
-        "git",
-        "diff",
-        "--exit-code",
-        "{}".format("/".join(dir_changed)),
-    ]
-    result = run_check_call(command, sdk_dir, always_exit=False)
-    if result:
-        command = ["git", "status"]
-        run_check_call(command, root_dir)
-        raise ValueError(
-            "Found difference between formatted code and current commit. Please re-generate with the latest autorest."
-        )
+    return True
 
+    
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Run black to verify formatted code."
@@ -60,9 +50,9 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-
-    if bool(args.validate):
-        run_black(args.service_directory)
-        check_diff("sdk/{}".format(args.service_directory))
+    if args.validate != "False":
+        if not run_black(args.service_directory):
+            raise ValueError("Found difference between formatted code and current commit. Please re-generate with the latest autorest.")
+        
     else:
         print("Skipping formatting validation")

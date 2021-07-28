@@ -17,7 +17,8 @@ from azure.storage.blob import (
     ContainerEncryptionScope,
     generate_blob_sas
 )
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
+from _shared.testcase import GlobalStorageAccountPreparer
+from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------
 # The encryption scope are pre-created using management plane tool ArmClient.

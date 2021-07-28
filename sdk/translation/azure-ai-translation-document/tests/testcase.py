@@ -106,13 +106,13 @@ class DocumentTranslationTest(AzureTestCase):
             return "dummy_string"
 
         # for actual live tests
-        container_name = "src" + str(uuid.uuid4()) 
-        container_client = ContainerClient(self.storage_endpoint, container_name,
+        self.source_container_name = "src" + str(uuid.uuid4())
+        container_client = ContainerClient(self.storage_endpoint, self.source_container_name,
                                            self.storage_key)
         container_client.create_container()
 
         self.upload_documents(data, container_client)
-        return self.generate_sas_url(container_name, "rl")
+        return self.generate_sas_url(self.source_container_name, "rl")
 
     def create_target_container(self, data=None):
         # for offline tests
@@ -120,14 +120,14 @@ class DocumentTranslationTest(AzureTestCase):
             return "dummy_string"
 
         # for actual live tests
-        container_name = "target" + str(uuid.uuid4())
-        container_client = ContainerClient(self.storage_endpoint, container_name,
+        self.target_container_name = "target" + str(uuid.uuid4())
+        container_client = ContainerClient(self.storage_endpoint, self.target_container_name,
                                            self.storage_key)
         container_client.create_container()
         if data:
             self.upload_documents(data, container_client)
 
-        return self.generate_sas_url(container_name, "rw")
+        return self.generate_sas_url(self.target_container_name, "rw")
 
     def generate_sas_url(self, container_name, permission):
 

@@ -47,7 +47,7 @@ class ServerKeysOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ServerKeyListResult"]:
         """Gets a list of  Server keys.
 
@@ -78,7 +78,7 @@ class ServerKeysOperations:
                 url = self.list.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'serverName': self._serialize.url("server_name", server_name, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -122,7 +122,7 @@ class ServerKeysOperations:
         resource_group_name: str,
         server_name: str,
         key_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ServerKey":
         """Gets a PostgreSQL Server key.
 
@@ -148,7 +148,7 @@ class ServerKeysOperations:
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
             'keyName': self._serialize.url("key_name", key_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
@@ -185,7 +185,7 @@ class ServerKeysOperations:
         key_name: str,
         resource_group_name: str,
         parameters: "_models.ServerKey",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ServerKey":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServerKey"]
         error_map = {
@@ -202,7 +202,7 @@ class ServerKeysOperations:
             'serverName': self._serialize.url("server_name", server_name, 'str'),
             'keyName': self._serialize.url("key_name", key_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -244,7 +244,7 @@ class ServerKeysOperations:
         key_name: str,
         resource_group_name: str,
         parameters: "_models.ServerKey",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ServerKey"]:
         """Creates or updates a PostgreSQL Server key.
 
@@ -258,8 +258,8 @@ class ServerKeysOperations:
         :type parameters: ~azure.mgmt.rdbms.postgresql.models.ServerKey
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ServerKey or the result of cls(response)
@@ -297,7 +297,7 @@ class ServerKeysOperations:
             'serverName': self._serialize.url("server_name", server_name, 'str'),
             'keyName': self._serialize.url("key_name", key_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         }
 
         if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
@@ -319,7 +319,7 @@ class ServerKeysOperations:
         server_name: str,
         key_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -335,7 +335,7 @@ class ServerKeysOperations:
             'serverName': self._serialize.url("server_name", server_name, 'str'),
             'keyName': self._serialize.url("key_name", key_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -365,7 +365,7 @@ class ServerKeysOperations:
         server_name: str,
         key_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the PostgreSQL Server key with the given name.
 
@@ -377,8 +377,8 @@ class ServerKeysOperations:
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -412,7 +412,7 @@ class ServerKeysOperations:
             'serverName': self._serialize.url("server_name", server_name, 'str'),
             'keyName': self._serialize.url("key_name", key_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         }
 
         if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)

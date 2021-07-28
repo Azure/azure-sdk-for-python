@@ -1,6 +1,16 @@
 # Release History
 
-## 5.1.0 (Unreleased)
+## 5.1.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 5.1.0 (2021-07-07)
 
 This version of the SDK defaults to the latest supported API version, which currently is `v3.1`.
 Includes all changes from `5.1.0b1` to `5.1.0b7`.
@@ -11,10 +21,12 @@ Note: this version will be the last to officially support Python 3.5, future ver
 
 - Added `catagories_filter` to `RecognizePiiEntitiesAction`
 - Added `HealthcareEntityCategory`
+- Added AAD support for the `begin_analyze_healthcare_entities` methods.
 
 ### Breaking Changes
 
 - Changed: the response structure of `being_analyze_actions`. Now, we return a list of results, where each result is a list of the action results for the document, in the order the documents and actions were passed.
+- Changed: `begin_analyze_actions` now accepts a single action per type. A `ValueError` is raised if duplicate actions are passed.
 - Removed: `AnalyzeActionsType`
 - Removed: `AnalyzeActionsResult`
 - Removed: `AnalyzeActionsError`

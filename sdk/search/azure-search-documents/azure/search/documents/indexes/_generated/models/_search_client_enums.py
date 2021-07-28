@@ -577,6 +577,20 @@ class LexicalTokenizerName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/core/WhitespaceTokenizer.html.
     WHITESPACE = "whitespace"
 
+class LineEnding(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Defines the sequence of characters to use between the lines of text recognized by the OCR
+    skill. The default value is "space".
+    """
+
+    #: Lines are separated by a single space character.
+    SPACE = "space"
+    #: Lines are separated by a carriage return ('\r') character.
+    CARRIAGE_RETURN = "carriageReturn"
+    #: Lines are separated by a single line feed ('\n') character.
+    LINE_FEED = "lineFeed"
+    #: Lines are separated by a carriage return and a line feed ('\r\n') character.
+    CARRIAGE_RETURN_LINE_FEED = "carriageReturnLineFeed"
+
 class MicrosoftStemmingTokenizerLanguage(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Lists the languages supported by the Microsoft language stemming tokenizer.
     """
@@ -844,6 +858,18 @@ class PhoneticEncoder(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     HAASE_PHONETIK = "haasePhonetik"
     #: Encodes a token into a Beider-Morse value.
     BEIDER_MORSE = "beiderMorse"
+
+class PIIDetectionSkillMaskingMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """A string indicating what maskingMode to use to mask the personal information detected in the
+    input text.
+    """
+
+    #: No masking occurs and the maskedText output will not be returned.
+    NONE = "none"
+    #: Replaces the detected entities with the character given in the maskingCharacter parameter. The
+    #: character will be repeated to the length of the detected entity so that the offsets will
+    #: correctly correspond to both the input text as well as the output maskedText.
+    REPLACE = "replace"
 
 class RegexFlags(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Defines flags that can be combined to control how regular expressions are used in the pattern
@@ -1308,6 +1334,10 @@ class TextTranslationSkillLanguage(with_metaclass(_CaseInsensitiveEnumMeta, str,
     SW = "sw"
     #: Klingon.
     TLH = "tlh"
+    #: Klingon (Latin script).
+    TLH_LATN = "tlh-Latn"
+    #: Klingon (Klingon script).
+    TLH_PIQD = "tlh-Piqd"
     #: Korean.
     KO = "ko"
     #: Latvian.
@@ -1328,6 +1358,10 @@ class TextTranslationSkillLanguage(with_metaclass(_CaseInsensitiveEnumMeta, str,
     PL = "pl"
     #: Portuguese.
     PT = "pt"
+    #: Portuguese (Brazil).
+    PT_BR = "pt-br"
+    #: Portuguese (Portugal).
+    PT_PT = "pt-PT"
     #: Queretaro Otomi.
     OTQ = "otq"
     #: Romanian.
@@ -1370,6 +1404,16 @@ class TextTranslationSkillLanguage(with_metaclass(_CaseInsensitiveEnumMeta, str,
     CY = "cy"
     #: Yucatec Maya.
     YUA = "yua"
+    #: Irish.
+    GA = "ga"
+    #: Kannada.
+    KN = "kn"
+    #: Maori.
+    MI = "mi"
+    #: Malayalam.
+    ML = "ml"
+    #: Punjabi.
+    PA = "pa"
 
 class TokenCharacterKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Represents classes of characters on which a token filter can operate.

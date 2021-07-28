@@ -45,7 +45,7 @@ class ContainerGroupsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ContainerGroupListResult"]:
         """Get a list of container groups in the specified subscription.
 
@@ -63,7 +63,7 @@ class ContainerGroupsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-12-01"
+        api_version = "2021-03-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -116,7 +116,7 @@ class ContainerGroupsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ContainerGroupListResult"]:
         """Get a list of container groups in the specified subscription and resource group.
 
@@ -136,7 +136,7 @@ class ContainerGroupsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-12-01"
+        api_version = "2021-03-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -191,7 +191,7 @@ class ContainerGroupsOperations:
         self,
         resource_group_name: str,
         container_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ContainerGroup":
         """Get the properties of the specified container group.
 
@@ -213,7 +213,7 @@ class ContainerGroupsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-12-01"
+        api_version = "2021-03-01"
         accept = "application/json"
 
         # Construct URL
@@ -254,14 +254,14 @@ class ContainerGroupsOperations:
         resource_group_name: str,
         container_group_name: str,
         container_group: "_models.ContainerGroup",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ContainerGroup":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ContainerGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-12-01"
+        api_version = "2021-03-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -311,7 +311,7 @@ class ContainerGroupsOperations:
         resource_group_name: str,
         container_group_name: str,
         container_group: "_models.ContainerGroup",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ContainerGroup"]:
         """Create or update container groups.
 
@@ -325,8 +325,8 @@ class ContainerGroupsOperations:
         :type container_group: ~azure.mgmt.containerinstance.models.ContainerGroup
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ContainerGroup or the result of cls(response)
@@ -384,7 +384,7 @@ class ContainerGroupsOperations:
         resource_group_name: str,
         container_group_name: str,
         resource: "_models.Resource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ContainerGroup":
         """Update container groups.
 
@@ -406,7 +406,7 @@ class ContainerGroupsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-12-01"
+        api_version = "2021-03-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -451,14 +451,14 @@ class ContainerGroupsOperations:
         self,
         resource_group_name: str,
         container_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ContainerGroup"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ContainerGroup"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-12-01"
+        api_version = "2021-03-01"
         accept = "application/json"
 
         # Construct URL
@@ -500,7 +500,7 @@ class ContainerGroupsOperations:
         self,
         resource_group_name: str,
         container_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ContainerGroup"]:
         """Delete the specified container group.
 
@@ -513,8 +513,8 @@ class ContainerGroupsOperations:
         :type container_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ContainerGroup or the result of cls(response)
@@ -570,14 +570,14 @@ class ContainerGroupsOperations:
         self,
         resource_group_name: str,
         container_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-12-01"
+        api_version = "2021-03-01"
         accept = "application/json"
 
         # Construct URL
@@ -614,7 +614,7 @@ class ContainerGroupsOperations:
         self,
         resource_group_name: str,
         container_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Restarts all containers in a container group.
 
@@ -627,8 +627,8 @@ class ContainerGroupsOperations:
         :type container_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -681,7 +681,7 @@ class ContainerGroupsOperations:
         self,
         resource_group_name: str,
         container_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Stops all containers in a container group.
 
@@ -702,7 +702,7 @@ class ContainerGroupsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-12-01"
+        api_version = "2021-03-01"
         accept = "application/json"
 
         # Construct URL
@@ -739,14 +739,14 @@ class ContainerGroupsOperations:
         self,
         resource_group_name: str,
         container_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-12-01"
+        api_version = "2021-03-01"
         accept = "application/json"
 
         # Construct URL
@@ -770,7 +770,7 @@ class ContainerGroupsOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
@@ -783,7 +783,7 @@ class ContainerGroupsOperations:
         self,
         resource_group_name: str,
         container_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Starts all containers in a container group.
 
@@ -796,8 +796,8 @@ class ContainerGroupsOperations:
         :type container_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)

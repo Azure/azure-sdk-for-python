@@ -44,7 +44,7 @@ from encryption_test_helper import (
     RSAKeyWrapper,
 )
 from _shared.testcase import GlobalStorageAccountPreparer
-from _shared.asynctestcase import AsyncStorageTestCase
+from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 # ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'encryption_container'

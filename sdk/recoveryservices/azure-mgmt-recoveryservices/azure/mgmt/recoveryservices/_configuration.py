@@ -48,7 +48,7 @@ class RecoveryServicesClientConfiguration(Configuration):
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.api_version = "2016-06-01"
+        self.api_version = "2021-03-01"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-recoveryservices/{}'.format(VERSION))
         self._configure(**kwargs)
