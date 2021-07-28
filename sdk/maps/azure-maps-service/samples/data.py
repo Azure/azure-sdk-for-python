@@ -14,13 +14,18 @@ from azure.core.exceptions import HttpResponseError
 
 from azure.maps.creator.models import UploadDataFormat
 from azure.maps.creator import CreatorClient
+from azure.identity import DefaultAzureCredential
+from azure.core.pipeline.policies import HeadersPolicy
 
 parser = argparse.ArgumentParser(
     description='Data Samples Program. Set SUBSCRIPTION_KEY env variable.')
 parser.parse_args()
 
-client = CreatorClient('None', x_ms_client_id=os.environ.get("CLIENT_ID", None), authentication_policy=AzureKeyInQueryCredentialPolicy(
-    AzureKeyCredential(os.environ.get("SUBSCRIPTION_KEY")), "subscription-key"))
+# client = CreatorClient('None', x_ms_client_id=os.environ.get("CLIENT_ID", None), authentication_policy=AzureKeyInQueryCredentialPolicy(
+#     AzureKeyCredential(os.environ.get("SUBSCRIPTION_KEY")), "subscription-key"))
+
+client = CreatorClient(DefaultAzureCredential(), x_ms_client_id=os.environ.get("CLIENT_ID", None), headers_policy=HeadersPolicy(
+    {'x-ms-client-id': os.environ.get("CLIENT_ID", None)}))
 
 print("Uploading zip file")
 with open("resources/data_sample_upload.zip", "rb") as file:
