@@ -102,8 +102,8 @@ Each set of metric values is a time series with the following characteristics:
 - [Single logs query](#single-logs-query)
   - [Specify duration](#specify-duration)
   - [Query multiple workspaces](#query-multiple-workspaces)
+  - [Set logs query timeout](#set-logs-query-timeout)
 - [Batch logs query](#batch-logs-query)
-- [Set logs query timeout](#set-logs-query-timeout)
 - [Query metrics](#query-metrics)
 - [Handle metrics response](#handle-metrics-response)
   - [Example of handling response](#example-of-handling-response)
@@ -159,6 +159,26 @@ The `additional_workspaces` parameter can be used to pass a list of workspaces t
     )
 ```
 
+#### Set logs query timeout
+
+The following example shows setting a server timeout in seconds. A gateway timeout is raised if the query takes more time than the mentioned timeout. The default is 180 seconds and can be set up to 10 minutes (600 seconds).
+
+```python
+import os
+import pandas as pd
+from azure.monitor.query import LogsQueryClient
+from azure.identity import DefaultAzureCredential
+
+credential = DefaultAzureCredential()
+client = LogsQueryClient(credential)
+
+response = client.query(
+    os.environ['LOG_WORKSPACE_ID'],
+    "range x from 1 to 10000000000 step 1 | count",
+    server_timeout=1,
+    )
+```
+
 ### Batch logs query
 
 The following example demonstrates sending multiple queries at the same time using batch query API. The queries can either be represented as a list of `LogQueryRequest` objects or a dictionary. This example uses the former approach.
@@ -201,26 +221,6 @@ for rsp in response:
         for table in body.tables:
             df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
             print(df)
-```
-
-### Set logs query timeout
-
-The following example shows setting a server timeout in seconds. A gateway timeout is raised if the query takes more time than the mentioned timeout. The default is 180 seconds and can be set up to 10 minutes (600 seconds).
-
-```python
-import os
-import pandas as pd
-from azure.monitor.query import LogsQueryClient
-from azure.identity import DefaultAzureCredential
-
-credential = DefaultAzureCredential()
-client = LogsQueryClient(credential)
-
-response = client.query(
-    os.environ['LOG_WORKSPACE_ID'],
-    "range x from 1 to 10000000000 step 1 | count",
-    server_timeout=1,
-    )
 ```
 
 ### Query metrics
