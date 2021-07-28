@@ -1,6 +1,6 @@
 # Release History
 
-## 12.5.0b1 (2021-7-27)
+## 12.5.0b1 (2021-07-27)
 **New features**
 - Added support for quick query parquet
 
