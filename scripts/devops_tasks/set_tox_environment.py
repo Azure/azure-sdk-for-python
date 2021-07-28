@@ -7,8 +7,16 @@
 
 import argparse
 
-FULL_BUILD_SET = ["whl", "sdist", "depends", "latestdependency", "mindependency", "whl_no_aio"]
+FULL_BUILD_SET = [
+    "whl",
+    "sdist",
+    "depends",
+    "latestdependency",
+    "mindependency",
+    "whl_no_aio",
+]
 PR_BUILD_SET = ["whl", "sdist", "mindependency"]
+
 
 def resolve_devops_variable(var_value):
     if var_value.startswith("$("):
@@ -16,28 +24,27 @@ def resolve_devops_variable(var_value):
     else:
         return [tox_env.strip() for tox_env in var_value.split(",") if tox_env.strip()]
 
+
 def set_devops_value(resolved_set):
     string_value = ",".join(resolved_set)
 
-    print("Setting environment variable toxenv with value \"{}\"".format(string_value))
+    print('Setting environment variable toxenv with value "{}"'.format(string_value))
     print("##vso[task.setvariable variable=toxenv]{}".format(string_value))
+
 
 def remove_unsupported_values(selected_set, unsupported_values):
     for unsupported_tox_env in unsupported_values:
         if unsupported_tox_env in selected_set:
             selected_set.remove(unsupported_tox_env)
-    
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="This script is used to resolve a set of arguments (that correspond to devops runtime variables) and determine which tox environments should be run for the current job."
     )
 
     parser.add_argument(
-        "-t",
-        "--team-project",
-        dest="team_project",
-        help="",
-        required=True
+        "-t", "--team-project", dest="team_project", help="", required=True
     )
 
     parser.add_argument(
@@ -46,7 +53,7 @@ if __name__ == "__main__":
         dest="override_set",
         help="",
     )
-    
+
     parser.add_argument(
         "-u",
         "--unsupported",
@@ -65,7 +72,7 @@ if __name__ == "__main__":
 
     # however if we are internal, use the full set
     if "internal" in team_project:
-        selected_set = FULL_BUILD_SET 
+        selected_set = FULL_BUILD_SET
 
     # if there is an override present, that will win ALWAYS
     if override_set:
