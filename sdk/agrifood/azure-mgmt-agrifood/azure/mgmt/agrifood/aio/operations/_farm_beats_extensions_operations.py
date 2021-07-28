@@ -155,7 +155,7 @@ class FarmBeatsExtensionsOperations:
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'farmBeatsExtensionId': self._serialize.url("farm_beats_extension_id", farm_beats_extension_id, 'str', pattern=r'^[A-za-z]{3,50}[.][A-za-z]{3,100}$'),
+            'farmBeatsExtensionId': self._serialize.url("farm_beats_extension_id", farm_beats_extension_id, 'str', pattern=r'^[a-zA-Z]{3,50}[.][a-zA-Z]{3,100}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
