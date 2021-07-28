@@ -22,7 +22,7 @@ class AadClient(AadClientBase):
         return self
 
     def __exit__(self, *args):
-        self._pipeline.__exit__()
+        self._pipeline.__exit__(*args)
 
     def close(self):
         # type: () -> None
