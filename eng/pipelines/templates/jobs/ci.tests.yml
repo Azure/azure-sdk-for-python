@@ -87,7 +87,7 @@ jobs:
       inputs:
         scriptPath: 'scripts/devops_tasks/set_tox_environment.py'
         arguments: >-
-          --unsupported="${{ parameters.UnsupportedToxEnvironments }}"
+          --unsupported="$(UnsupportedToxEnvironments)"
           --override="$(Run.ToxCustomEnvs)"
           --team-project="$(System.TeamProject)"
 
