@@ -164,7 +164,7 @@ jobs:
   - job: 'RunRegression'
     condition: and(succeededOrFailed(), or(eq(variables['Run.Regression'], 'true'), and(eq(variables['Build.Reason'], 'Schedule'), eq(variables['System.TeamProject'],'internal'))))
     displayName: 'Run Regression'
-    timeoutInMinutes: 120
+    timeoutInMinutes: 180
     variables:
     - template: ../variables/globals.yml
 
