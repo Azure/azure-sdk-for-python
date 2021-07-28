@@ -13,12 +13,12 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
 from ._configuration import AzureMediaServicesConfiguration
-from .operations import AccountFiltersOperations
 from .operations import Operations
 from .operations import MediaservicesOperations
 from .operations import PrivateLinkResourcesOperations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import LocationsOperations
+from .operations import AccountFiltersOperations
 from .operations import AssetsOperations
 from .operations import AssetFiltersOperations
 from .operations import ContentKeyPoliciesOperations
@@ -38,8 +38,6 @@ class AzureMediaServices(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: AzureMediaServicesConfiguration
 
-    :ivar account_filters: AccountFilters operations
-    :vartype account_filters: azure.mgmt.media.operations.AccountFiltersOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.media.operations.Operations
     :ivar mediaservices: Mediaservices operations
@@ -50,6 +48,8 @@ class AzureMediaServices(SDKClient):
     :vartype private_endpoint_connections: azure.mgmt.media.operations.PrivateEndpointConnectionsOperations
     :ivar locations: Locations operations
     :vartype locations: azure.mgmt.media.operations.LocationsOperations
+    :ivar account_filters: AccountFilters operations
+    :vartype account_filters: azure.mgmt.media.operations.AccountFiltersOperations
     :ivar assets: Assets operations
     :vartype assets: azure.mgmt.media.operations.AssetsOperations
     :ivar asset_filters: AssetFilters operations
@@ -87,11 +87,10 @@ class AzureMediaServices(SDKClient):
         super(AzureMediaServices, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self.api_version = '2021-06-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.account_filters = AccountFiltersOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.mediaservices = MediaservicesOperations(
@@ -101,6 +100,8 @@ class AzureMediaServices(SDKClient):
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.locations = LocationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.account_filters = AccountFiltersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.assets = AssetsOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -12,32 +12,6 @@
 from msrest.paging import Paged
 
 
-class AccountFilterPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`AccountFilter <azure.mgmt.media.models.AccountFilter>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': '@odata\\.nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[AccountFilter]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(AccountFilterPaged, self).__init__(*args, **kwargs)
-class OperationPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`Operation <azure.mgmt.media.models.Operation>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': '@odata\\.nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Operation]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(OperationPaged, self).__init__(*args, **kwargs)
 class MediaServicePaged(Paged):
     """
     A paging container for iterating over a list of :class:`MediaService <azure.mgmt.media.models.MediaService>` object
@@ -51,6 +25,19 @@ class MediaServicePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(MediaServicePaged, self).__init__(*args, **kwargs)
+class AccountFilterPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`AccountFilter <azure.mgmt.media.models.AccountFilter>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': '@odata\\.nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[AccountFilter]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(AccountFilterPaged, self).__init__(*args, **kwargs)
 class AssetPaged(Paged):
     """
     A paging container for iterating over a list of :class:`Asset <azure.mgmt.media.models.Asset>` object

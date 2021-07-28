@@ -221,6 +221,9 @@ class AccessControl(Model):
 class AccountEncryption(Model):
     """AccountEncryption.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :param type: Required. The type of key used to encrypt the Account Key.
@@ -229,21 +232,30 @@ class AccountEncryption(Model):
     :param key_vault_properties: The properties of the key used to encrypt the
      account.
     :type key_vault_properties: ~azure.mgmt.media.models.KeyVaultProperties
+    :param identity: The Key Vault identity.
+    :type identity: ~azure.mgmt.media.models.ResourceIdentity
+    :ivar status: The current status of the Key Vault mapping.
+    :vartype status: str
     """
 
     _validation = {
         'type': {'required': True},
+        'status': {'readonly': True},
     }
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
         'key_vault_properties': {'key': 'keyVaultProperties', 'type': 'KeyVaultProperties'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
+        'status': {'key': 'status', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(AccountEncryption, self).__init__(**kwargs)
         self.type = kwargs.get('type', None)
         self.key_vault_properties = kwargs.get('key_vault_properties', None)
+        self.identity = kwargs.get('identity', None)
+        self.status = None
 
 
 class Resource(Model):
@@ -409,34 +421,6 @@ class AkamaiSignatureHeaderAuthenticationKey(Model):
         self.identifier = kwargs.get('identifier', None)
         self.base64_key = kwargs.get('base64_key', None)
         self.expiration = kwargs.get('expiration', None)
-
-
-class ApiError(Model):
-    """The API error.
-
-    :param error: The error properties.
-    :type error: ~azure.mgmt.media.models.ODataError
-    """
-
-    _attribute_map = {
-        'error': {'key': 'error', 'type': 'ODataError'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ApiError, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
-
-
-class ApiErrorException(HttpOperationError):
-    """Server responsed with exception of type: 'ApiError'.
-
-    :param deserialize: A deserializer
-    :param response: Server response to be deserialized.
-    """
-
-    def __init__(self, deserialize, response, *args):
-
-        super(ApiErrorException, self).__init__(deserialize, response, 'ApiError', *args)
 
 
 class Asset(ProxyResource):
@@ -1008,6 +992,10 @@ class BuiltInStandardEncoderPreset(Preset):
 
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
+    :param configurations: PresetConfigurations are only supported for the
+     ContentAwareEncoding and H265ContentAwareEncoding built-in presets. These
+     settings will not affect other built-in or custom defined presets.
+    :type configurations: ~azure.mgmt.media.models.PresetConfigurations
     :param preset_name: Required. The built-in preset to be used for encoding
      videos. Possible values include: 'H264SingleBitrateSD',
      'H264SingleBitrate720p', 'H264SingleBitrate1080p', 'AdaptiveStreaming',
@@ -1027,11 +1015,13 @@ class BuiltInStandardEncoderPreset(Preset):
 
     _attribute_map = {
         'odatatype': {'key': '@odata\\.type', 'type': 'str'},
+        'configurations': {'key': 'configurations', 'type': 'PresetConfigurations'},
         'preset_name': {'key': 'presetName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(BuiltInStandardEncoderPreset, self).__init__(**kwargs)
+        self.configurations = kwargs.get('configurations', None)
         self.preset_name = kwargs.get('preset_name', None)
         self.odatatype = '#Microsoft.Media.BuiltInStandardEncoderPreset'
 
@@ -2393,6 +2383,110 @@ class EnvelopeEncryption(Model):
         self.custom_key_acquisition_url_template = kwargs.get('custom_key_acquisition_url_template', None)
 
 
+class ErrorAdditionalInfo(Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: object
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+        self.type = None
+        self.info = None
+
+
+class ErrorDetail(Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.media.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info:
+     list[~azure.mgmt.media.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
+        'additional_info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ErrorDetail]'},
+        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ErrorDetail, self).__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
+
+
+class ErrorResponse(Model):
+    """Error response.
+
+    Common error response for all Azure Resource Manager APIs to return error
+    details for failed operations. (This also follows the OData error response
+    format.).
+
+    :param error: The error object.
+    :type error: ~azure.mgmt.media.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorDetail'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
+
+
+class ErrorResponseException(HttpOperationError):
+    """Server responsed with exception of type: 'ErrorResponse'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)
+
+
 class FaceDetectorPreset(Preset):
     """Describes all the settings to be used when analyzing a video in order to
     detect (and optionally redact) all the faces present.
@@ -3744,7 +3838,8 @@ class JobInputClip(JobInput):
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
     :param files: List of files. Required for JobInputHttp. Maximum of 4000
-     characters each.
+     characters each. Query strings will not be returned in service responses
+     to prevent sensitive data exposure.
     :type files: list[str]
     :param start: Defines a point on the timeline of the input media at which
      processing will start. Defaults to the beginning of the input media.
@@ -3800,7 +3895,8 @@ class JobInputAsset(JobInputClip):
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
     :param files: List of files. Required for JobInputHttp. Maximum of 4000
-     characters each.
+     characters each. Query strings will not be returned in service responses
+     to prevent sensitive data exposure.
     :type files: list[str]
     :param start: Defines a point on the timeline of the input media at which
      processing will start. Defaults to the beginning of the input media.
@@ -3852,7 +3948,8 @@ class JobInputHttp(JobInputClip):
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
     :param files: List of files. Required for JobInputHttp. Maximum of 4000
-     characters each.
+     characters each. Query strings will not be returned in service responses
+     to prevent sensitive data exposure.
     :type files: list[str]
     :param start: Defines a point on the timeline of the input media at which
      processing will start. Defaults to the beginning of the input media.
@@ -3874,7 +3971,8 @@ class JobInputHttp(JobInputClip):
     :param base_uri: Base URI for HTTPS job input. It will be concatenated
      with provided file names. If no base uri is given, then the provided file
      list is assumed to be fully qualified uris. Maximum length of 4000
-     characters.
+     characters. The query strings will not be returned in service responses to
+     prevent sensitive data exposure.
     :type base_uri: str
     """
 
@@ -3965,6 +4063,9 @@ class JobOutput(Model):
     :ivar error: If the JobOutput is in the Error state, it contains the
      details of the error.
     :vartype error: ~azure.mgmt.media.models.JobError
+    :param preset_override: A preset used to override the preset in the
+     corresponding transform output.
+    :type preset_override: ~azure.mgmt.media.models.Preset
     :ivar state: Describes the state of the JobOutput. Possible values
      include: 'Canceled', 'Canceling', 'Error', 'Finished', 'Processing',
      'Queued', 'Scheduled'
@@ -4008,6 +4109,7 @@ class JobOutput(Model):
 
     _attribute_map = {
         'error': {'key': 'error', 'type': 'JobError'},
+        'preset_override': {'key': 'presetOverride', 'type': 'Preset'},
         'state': {'key': 'state', 'type': 'str'},
         'progress': {'key': 'progress', 'type': 'int'},
         'label': {'key': 'label', 'type': 'str'},
@@ -4023,6 +4125,7 @@ class JobOutput(Model):
     def __init__(self, **kwargs):
         super(JobOutput, self).__init__(**kwargs)
         self.error = None
+        self.preset_override = kwargs.get('preset_override', None)
         self.state = None
         self.progress = None
         self.label = kwargs.get('label', None)
@@ -4042,6 +4145,9 @@ class JobOutputAsset(JobOutput):
     :ivar error: If the JobOutput is in the Error state, it contains the
      details of the error.
     :vartype error: ~azure.mgmt.media.models.JobError
+    :param preset_override: A preset used to override the preset in the
+     corresponding transform output.
+    :type preset_override: ~azure.mgmt.media.models.Preset
     :ivar state: Describes the state of the JobOutput. Possible values
      include: 'Canceled', 'Canceling', 'Error', 'Finished', 'Processing',
      'Queued', 'Scheduled'
@@ -4088,6 +4194,7 @@ class JobOutputAsset(JobOutput):
 
     _attribute_map = {
         'error': {'key': 'error', 'type': 'JobError'},
+        'preset_override': {'key': 'presetOverride', 'type': 'Preset'},
         'state': {'key': 'state', 'type': 'str'},
         'progress': {'key': 'progress', 'type': 'int'},
         'label': {'key': 'label', 'type': 'str'},
@@ -4626,7 +4733,8 @@ class LiveEventEncoding(Model):
      encoder transcodes the incoming stream into multiple bitrates or layers.
      See https://go.microsoft.com/fwlink/?linkid=2095101 for more information.
      This property cannot be modified after the live event is created. Possible
-     values include: 'None', 'Standard', 'Premium1080p'
+     values include: 'None', 'Standard', 'Premium1080p', 'PassthroughBasic',
+     'PassthroughStandard'
     :type encoding_type: str or ~azure.mgmt.media.models.LiveEventEncodingType
     :param preset_name: The optional encoding preset name, used when
      encodingType is not None. This value is specified at creation time and
@@ -4941,6 +5049,8 @@ class LiveOutput(ProxyResource):
      values include: 'Creating', 'Running', 'Deleting'
     :vartype resource_state: str or
      ~azure.mgmt.media.models.LiveOutputResourceState
+    :ivar system_data: The system metadata relating to this resource.
+    :vartype system_data: ~azure.mgmt.media.models.SystemData
     """
 
     _validation = {
@@ -4953,6 +5063,7 @@ class LiveOutput(ProxyResource):
         'last_modified': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'resource_state': {'readonly': True},
+        'system_data': {'readonly': True},
     }
 
     _attribute_map = {
@@ -4969,6 +5080,7 @@ class LiveOutput(ProxyResource):
         'last_modified': {'key': 'properties.lastModified', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
     def __init__(self, **kwargs):
@@ -4983,28 +5095,7 @@ class LiveOutput(ProxyResource):
         self.last_modified = None
         self.provisioning_state = None
         self.resource_state = None
-
-
-class Location(Model):
-    """Location.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param name: Required.
-    :type name: str
-    """
-
-    _validation = {
-        'name': {'required': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(Location, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.system_data = None
 
 
 class LogSpecification(Model):
@@ -5073,6 +5164,11 @@ class MediaService(TrackedResource):
     :param key_delivery: The Key Delivery properties for Media Services
      account.
     :type key_delivery: ~azure.mgmt.media.models.KeyDelivery
+    :param public_network_access: Whether or not public network access is
+     allowed for resources under the Media Services account. Possible values
+     include: 'Enabled', 'Disabled'
+    :type public_network_access: str or
+     ~azure.mgmt.media.models.PublicNetworkAccess
     :param identity: The Managed Identity for the Media Services account.
     :type identity: ~azure.mgmt.media.models.MediaServiceIdentity
     :ivar system_data: The system metadata relating to this resource.
@@ -5099,6 +5195,7 @@ class MediaService(TrackedResource):
         'storage_authentication': {'key': 'properties.storageAuthentication', 'type': 'str'},
         'encryption': {'key': 'properties.encryption', 'type': 'AccountEncryption'},
         'key_delivery': {'key': 'properties.keyDelivery', 'type': 'KeyDelivery'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'identity': {'key': 'identity', 'type': 'MediaServiceIdentity'},
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
@@ -5110,6 +5207,7 @@ class MediaService(TrackedResource):
         self.storage_authentication = kwargs.get('storage_authentication', None)
         self.encryption = kwargs.get('encryption', None)
         self.key_delivery = kwargs.get('key_delivery', None)
+        self.public_network_access = kwargs.get('public_network_access', None)
         self.identity = kwargs.get('identity', None)
         self.system_data = None
 
@@ -5122,13 +5220,15 @@ class MediaServiceIdentity(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The identity type. Possible values include:
-     'SystemAssigned', 'None'
-    :type type: str or ~azure.mgmt.media.models.ManagedIdentityType
+    :param type: Required. The identity type.
+    :type type: str
     :ivar principal_id: The Principal ID of the identity.
     :vartype principal_id: str
     :ivar tenant_id: The Tenant ID of the identity.
     :vartype tenant_id: str
+    :param user_assigned_identities: The user assigned managed identities.
+    :type user_assigned_identities: dict[str,
+     ~azure.mgmt.media.models.UserAssignedManagedIdentity]
     """
 
     _validation = {
@@ -5141,6 +5241,7 @@ class MediaServiceIdentity(Model):
         'type': {'key': 'type', 'type': 'str'},
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedManagedIdentity}'},
     }
 
     def __init__(self, **kwargs):
@@ -5148,6 +5249,7 @@ class MediaServiceIdentity(Model):
         self.type = kwargs.get('type', None)
         self.principal_id = None
         self.tenant_id = None
+        self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
 
 
 class MediaServiceUpdate(Model):
@@ -5171,6 +5273,11 @@ class MediaServiceUpdate(Model):
     :param key_delivery: The Key Delivery properties for Media Services
      account.
     :type key_delivery: ~azure.mgmt.media.models.KeyDelivery
+    :param public_network_access: Whether or not public network access is
+     allowed for resources under the Media Services account. Possible values
+     include: 'Enabled', 'Disabled'
+    :type public_network_access: str or
+     ~azure.mgmt.media.models.PublicNetworkAccess
     :param identity: The Managed Identity for the Media Services account.
     :type identity: ~azure.mgmt.media.models.MediaServiceIdentity
     """
@@ -5186,6 +5293,7 @@ class MediaServiceUpdate(Model):
         'storage_authentication': {'key': 'properties.storageAuthentication', 'type': 'str'},
         'encryption': {'key': 'properties.encryption', 'type': 'AccountEncryption'},
         'key_delivery': {'key': 'properties.keyDelivery', 'type': 'KeyDelivery'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'identity': {'key': 'identity', 'type': 'MediaServiceIdentity'},
     }
 
@@ -5197,6 +5305,7 @@ class MediaServiceUpdate(Model):
         self.storage_authentication = kwargs.get('storage_authentication', None)
         self.encryption = kwargs.get('encryption', None)
         self.key_delivery = kwargs.get('key_delivery', None)
+        self.public_network_access = kwargs.get('public_network_access', None)
         self.identity = kwargs.get('identity', None)
 
 
@@ -5428,35 +5537,6 @@ class NoEncryption(Model):
         self.enabled_protocols = kwargs.get('enabled_protocols', None)
 
 
-class ODataError(Model):
-    """Information about an error.
-
-    :param code: A language-independent error name.
-    :type code: str
-    :param message: The error message.
-    :type message: str
-    :param target: The target of the error (for example, the name of the
-     property in error).
-    :type target: str
-    :param details: The error details.
-    :type details: list[~azure.mgmt.media.models.ODataError]
-    """
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ODataError]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ODataError, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
-        self.target = kwargs.get('target', None)
-        self.details = kwargs.get('details', None)
-
-
 class Operation(Model):
     """An operation.
 
@@ -5498,6 +5578,22 @@ class Operation(Model):
         self.properties = kwargs.get('properties', None)
         self.is_data_action = kwargs.get('is_data_action', None)
         self.action_type = kwargs.get('action_type', None)
+
+
+class OperationCollection(Model):
+    """A collection of Operation items.
+
+    :param value: A collection of Operation items.
+    :type value: list[~azure.mgmt.media.models.Operation]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Operation]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(OperationCollection, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
 
 
 class OperationDisplay(Model):
@@ -5754,6 +5850,68 @@ class PresentationTimeRange(Model):
         self.force_end_timestamp = kwargs.get('force_end_timestamp', None)
 
 
+class PresetConfigurations(Model):
+    """An object of optional configuration settings for encoder.
+
+    :param complexity: Allows you to configure the encoder settings to control
+     the balance between speed and quality. Example: set Complexity as Speed
+     for faster encoding but less compression efficiency. Possible values
+     include: 'Speed', 'Balanced', 'Quality'
+    :type complexity: str or ~azure.mgmt.media.models.Complexity
+    :param interleave_output: Sets the interleave mode of the output to
+     control how audio and video are stored in the container format. Example:
+     set InterleavedOutput as NonInterleavedOutput to produce audio-only and
+     video-only outputs in separate MP4 files. Possible values include:
+     'NonInterleavedOutput', 'InterleavedOutput'
+    :type interleave_output: str or ~azure.mgmt.media.models.InterleaveOutput
+    :param key_frame_interval_in_seconds: The key frame interval in seconds.
+     Example: set KeyFrameIntervalInSeconds as 2 to reduce the playback
+     buffering for some players.
+    :type key_frame_interval_in_seconds: float
+    :param max_bitrate_bps: The maximum bitrate in bits per second (threshold
+     for the top video layer). Example: set MaxBitrateBps as 6000000 to avoid
+     producing very high bitrate outputs for contents with high complexity.
+    :type max_bitrate_bps: int
+    :param max_height: The maximum height of output video layers. Example: set
+     MaxHeight as 720 to produce output layers up to 720P even if the input is
+     4K.
+    :type max_height: int
+    :param max_layers: The maximum number of output video layers. Example: set
+     MaxLayers as 4 to make sure at most 4 output layers are produced to
+     control the overall cost of the encoding job.
+    :type max_layers: int
+    :param min_bitrate_bps: The minimum bitrate in bits per second (threshold
+     for the bottom video layer). Example: set MinBitrateBps as 200000 to have
+     a bottom layer that covers users with low network bandwidth.
+    :type min_bitrate_bps: int
+    :param min_height: The minimum height of output video layers. Example: set
+     MinHeight as 360 to avoid output layers of smaller resolutions like 180P.
+    :type min_height: int
+    """
+
+    _attribute_map = {
+        'complexity': {'key': 'complexity', 'type': 'str'},
+        'interleave_output': {'key': 'interleaveOutput', 'type': 'str'},
+        'key_frame_interval_in_seconds': {'key': 'keyFrameIntervalInSeconds', 'type': 'float'},
+        'max_bitrate_bps': {'key': 'maxBitrateBps', 'type': 'int'},
+        'max_height': {'key': 'maxHeight', 'type': 'int'},
+        'max_layers': {'key': 'maxLayers', 'type': 'int'},
+        'min_bitrate_bps': {'key': 'minBitrateBps', 'type': 'int'},
+        'min_height': {'key': 'minHeight', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PresetConfigurations, self).__init__(**kwargs)
+        self.complexity = kwargs.get('complexity', None)
+        self.interleave_output = kwargs.get('interleave_output', None)
+        self.key_frame_interval_in_seconds = kwargs.get('key_frame_interval_in_seconds', None)
+        self.max_bitrate_bps = kwargs.get('max_bitrate_bps', None)
+        self.max_height = kwargs.get('max_height', None)
+        self.max_layers = kwargs.get('max_layers', None)
+        self.min_bitrate_bps = kwargs.get('min_bitrate_bps', None)
+        self.min_height = kwargs.get('min_height', None)
+
+
 class PrivateEndpoint(Model):
     """The Private Endpoint resource.
 
@@ -5963,28 +6121,6 @@ class Properties(Model):
         self.service_specification = None
 
 
-class Provider(Model):
-    """A resource provider.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param provider_name: Required. The provider name.
-    :type provider_name: str
-    """
-
-    _validation = {
-        'provider_name': {'required': True},
-    }
-
-    _attribute_map = {
-        'provider_name': {'key': 'providerName', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(Provider, self).__init__(**kwargs)
-        self.provider_name = kwargs.get('provider_name', None)
-
-
 class Rectangle(Model):
     """Describes the properties of a rectangular window applied to the input media
     before processing it.
@@ -6020,6 +6156,35 @@ class Rectangle(Model):
         self.top = kwargs.get('top', None)
         self.width = kwargs.get('width', None)
         self.height = kwargs.get('height', None)
+
+
+class ResourceIdentity(Model):
+    """ResourceIdentity.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param user_assigned_identity: The user assigned managed identity's ARM ID
+     to use when accessing a resource.
+    :type user_assigned_identity: str
+    :param use_system_assigned_identity: Required. Indicates whether to use
+     System Assigned Managed Identity. Mutual exclusive with User Assigned
+     Managed Identity.
+    :type use_system_assigned_identity: bool
+    """
+
+    _validation = {
+        'use_system_assigned_identity': {'required': True},
+    }
+
+    _attribute_map = {
+        'user_assigned_identity': {'key': 'userAssignedIdentity', 'type': 'str'},
+        'use_system_assigned_identity': {'key': 'useSystemAssignedIdentity', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ResourceIdentity, self).__init__(**kwargs)
+        self.user_assigned_identity = kwargs.get('user_assigned_identity', None)
+        self.use_system_assigned_identity = kwargs.get('use_system_assigned_identity', None)
 
 
 class SelectAudioTrackByAttribute(AudioTrackDescriptor):
@@ -6277,6 +6442,9 @@ class StandardEncoderPreset(Preset):
 class StorageAccount(Model):
     """The storage account details.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :param id: The ID of the storage account resource. Media Services relies
@@ -6288,21 +6456,30 @@ class StorageAccount(Model):
     :param type: Required. The type of the storage account. Possible values
      include: 'Primary', 'Secondary'
     :type type: str or ~azure.mgmt.media.models.StorageAccountType
+    :param identity: The storage account identity.
+    :type identity: ~azure.mgmt.media.models.ResourceIdentity
+    :ivar status: The current status of the storage account mapping.
+    :vartype status: str
     """
 
     _validation = {
         'type': {'required': True},
+        'status': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
+        'status': {'key': 'status', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(StorageAccount, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
         self.type = kwargs.get('type', None)
+        self.identity = kwargs.get('identity', None)
+        self.status = None
 
 
 class StorageEncryptedAssetDecryptionData(Model):
@@ -7118,6 +7295,34 @@ class TransportStreamFormat(MultiBitrateFormat):
     def __init__(self, **kwargs):
         super(TransportStreamFormat, self).__init__(**kwargs)
         self.odatatype = '#Microsoft.Media.TransportStreamFormat'
+
+
+class UserAssignedManagedIdentity(Model):
+    """UserAssignedManagedIdentity.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar client_id: The client ID.
+    :vartype client_id: str
+    :ivar principal_id: The principal ID.
+    :vartype principal_id: str
+    """
+
+    _validation = {
+        'client_id': {'readonly': True},
+        'principal_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'client_id': {'key': 'clientId', 'type': 'str'},
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(UserAssignedManagedIdentity, self).__init__(**kwargs)
+        self.client_id = None
+        self.principal_id = None
 
 
 class UtcClipTime(ClipTime):

@@ -12,30 +12,6 @@
 from enum import Enum
 
 
-class FilterTrackPropertyType(str, Enum):
-
-    unknown = "Unknown"  #: The unknown track property type.
-    type = "Type"  #: The type.
-    name = "Name"  #: The name.
-    language = "Language"  #: The language.
-    four_cc = "FourCC"  #: The fourCC.
-    bitrate = "Bitrate"  #: The bitrate.
-
-
-class FilterTrackPropertyCompareOperation(str, Enum):
-
-    equal = "Equal"  #: The equal operation.
-    not_equal = "NotEqual"  #: The not equal operation.
-
-
-class CreatedByType(str, Enum):
-
-    user = "User"
-    application = "Application"
-    managed_identity = "ManagedIdentity"
-    key = "Key"
-
-
 class MetricUnit(str, Enum):
 
     bytes = "Bytes"  #: The number of bytes.
@@ -79,10 +55,18 @@ class DefaultAction(str, Enum):
     deny = "Deny"  #: Public IP addresses are blocked.
 
 
-class ManagedIdentityType(str, Enum):
+class PublicNetworkAccess(str, Enum):
 
-    system_assigned = "SystemAssigned"  #: A system-assigned managed identity.
-    none = "None"  #: No managed identity.
+    enabled = "Enabled"  #: Public network access is enabled.
+    disabled = "Disabled"  #: Public network access is disabled.
+
+
+class CreatedByType(str, Enum):
+
+    user = "User"
+    application = "Application"
+    managed_identity = "ManagedIdentity"
+    key = "Key"
 
 
 class PrivateEndpointConnectionProvisioningState(str, Enum):
@@ -98,6 +82,22 @@ class PrivateEndpointServiceConnectionStatus(str, Enum):
     pending = "Pending"
     approved = "Approved"
     rejected = "Rejected"
+
+
+class FilterTrackPropertyType(str, Enum):
+
+    unknown = "Unknown"  #: The unknown track property type.
+    type = "Type"  #: The type.
+    name = "Name"  #: The name.
+    language = "Language"  #: The language.
+    four_cc = "FourCC"  #: The fourCC.
+    bitrate = "Bitrate"  #: The bitrate.
+
+
+class FilterTrackPropertyCompareOperation(str, Enum):
+
+    equal = "Equal"  #: The equal operation.
+    not_equal = "NotEqual"  #: The not equal operation.
 
 
 class AssetStorageEncryptionFormat(str, Enum):
@@ -287,6 +287,19 @@ class H264Complexity(str, Enum):
     quality = "Quality"  #: Tells the encoder to use settings that are optimized to produce higher quality output at the expense of slower overall encode time.
 
 
+class Complexity(str, Enum):
+
+    speed = "Speed"  #: Configures the encoder to use settings optimized for faster encoding. Quality is sacrificed to decrease encoding time.
+    balanced = "Balanced"  #: Configures the encoder to use settings that achieve a balance between speed and quality.
+    quality = "Quality"  #: Configures the encoder to use settings optimized to produce higher quality output at the expense of slower overall encode time.
+
+
+class InterleaveOutput(str, Enum):
+
+    non_interleaved_output = "NonInterleavedOutput"  #: The output is video-only or audio-only.
+    interleaved_output = "InterleavedOutput"  #: The output includes both audio and video.
+
+
 class EncoderNamedPreset(str, Enum):
 
     h264_single_bitrate_sd = "H264SingleBitrateSD"  #: Produces an MP4 file where the video is encoded with H.264 codec at 2200 kbps and a picture height of 480 pixels, and the stereo audio is encoded with AAC-LC codec at 128 kbps.
@@ -419,6 +432,8 @@ class LiveEventEncodingType(str, Enum):
     none = "None"  #: A contribution live encoder sends a multiple bitrate stream. The ingested stream passes through the live event without any further processing. It is also called the pass-through mode.
     standard = "Standard"  #: A contribution live encoder sends a single bitrate stream to the live event and Media Services creates multiple bitrate streams. The output cannot exceed 720p in resolution.
     premium1080p = "Premium1080p"  #: A contribution live encoder sends a single bitrate stream to the live event and Media Services creates multiple bitrate streams. The output cannot exceed 1080p in resolution.
+    passthrough_basic = "PassthroughBasic"  #: Pending update...
+    passthrough_standard = "PassthroughStandard"  #: Pending update...
 
 
 class LiveEventResourceState(str, Enum):

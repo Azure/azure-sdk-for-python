@@ -26,7 +26,7 @@ class LiveEventsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The version of the API to be used with the client request. Constant value: "2020-05-01".
+    :ivar api_version: The version of the API to be used with the client request. Constant value: "2021-06-01".
     """
 
     models = models
@@ -36,7 +36,7 @@ class LiveEventsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-05-01"
+        self.api_version = "2021-06-01"
 
         self.config = config
 
@@ -60,7 +60,7 @@ class LiveEventsOperations(object):
         :rtype:
          ~azure.mgmt.media.models.LiveEventPaged[~azure.mgmt.media.models.LiveEvent]
         :raises:
-         :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
+         :class:`ErrorResponseException<azure.mgmt.media.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -101,7 +101,7 @@ class LiveEventsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ApiErrorException(self._deserialize, response)
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -137,7 +137,7 @@ class LiveEventsOperations(object):
         :rtype: ~azure.mgmt.media.models.LiveEvent or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
+         :class:`ErrorResponseException<azure.mgmt.media.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -167,8 +167,8 @@ class LiveEventsOperations(object):
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 404]:
-            raise models.ApiErrorException(self._deserialize, response)
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -219,7 +219,7 @@ class LiveEventsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
-            raise models.ApiErrorException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -265,7 +265,7 @@ class LiveEventsOperations(object):
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.media.models.LiveEvent]]
         :raises:
-         :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
+         :class:`ErrorResponseException<azure.mgmt.media.models.ErrorResponseException>`
         """
         raw_result = self._create_initial(
             resource_group_name=resource_group_name,
@@ -332,7 +332,7 @@ class LiveEventsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            raise models.ApiErrorException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -373,7 +373,7 @@ class LiveEventsOperations(object):
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.media.models.LiveEvent]]
         :raises:
-         :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
+         :class:`ErrorResponseException<azure.mgmt.media.models.ErrorResponseException>`
         """
         raw_result = self._update_initial(
             resource_group_name=resource_group_name,
@@ -434,7 +434,7 @@ class LiveEventsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202, 204]:
-            raise models.ApiErrorException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -464,7 +464,7 @@ class LiveEventsOperations(object):
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises:
-         :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
+         :class:`ErrorResponseException<azure.mgmt.media.models.ErrorResponseException>`
         """
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
@@ -520,7 +520,7 @@ class LiveEventsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            raise models.ApiErrorException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -551,7 +551,7 @@ class LiveEventsOperations(object):
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises:
-         :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
+         :class:`ErrorResponseException<azure.mgmt.media.models.ErrorResponseException>`
         """
         raw_result = self._allocate_initial(
             resource_group_name=resource_group_name,
@@ -607,7 +607,7 @@ class LiveEventsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            raise models.ApiErrorException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -638,7 +638,7 @@ class LiveEventsOperations(object):
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises:
-         :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
+         :class:`ErrorResponseException<azure.mgmt.media.models.ErrorResponseException>`
         """
         raw_result = self._start_initial(
             resource_group_name=resource_group_name,
@@ -700,7 +700,7 @@ class LiveEventsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            raise models.ApiErrorException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -734,7 +734,7 @@ class LiveEventsOperations(object):
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises:
-         :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
+         :class:`ErrorResponseException<azure.mgmt.media.models.ErrorResponseException>`
         """
         raw_result = self._stop_initial(
             resource_group_name=resource_group_name,
@@ -791,7 +791,7 @@ class LiveEventsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            raise models.ApiErrorException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -824,7 +824,7 @@ class LiveEventsOperations(object):
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises:
-         :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
+         :class:`ErrorResponseException<azure.mgmt.media.models.ErrorResponseException>`
         """
         raw_result = self._reset_initial(
             resource_group_name=resource_group_name,

@@ -1,5 +1,21 @@
 # Release History
 
+## 4.1.0 (2021-07-15)
+
+**Features**
+
+  - Model MediaServiceIdentity has a new parameter user_assigned_identities
+  - Model MediaServiceUpdate has a new parameter public_network_access
+  - Model BuiltInStandardEncoderPreset has a new parameter configurations
+  - Model AccountEncryption has a new parameter identity
+  - Model AccountEncryption has a new parameter status
+  - Model JobOutput has a new parameter preset_override
+  - Model JobOutputAsset has a new parameter preset_override
+  - Model LiveOutput has a new parameter system_data
+  - Model StorageAccount has a new parameter identity
+  - Model StorageAccount has a new parameter status
+  - Model MediaService has a new parameter public_network_access
+
 ## 4.0.0 (2021-06-03)
 
 **Features**

@@ -24,7 +24,7 @@ class PrivateLinkResourcesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The version of the API to be used with the client request. Constant value: "2021-05-01".
+    :ivar api_version: The version of the API to be used with the client request. Constant value: "2021-06-01".
     """
 
     models = models
@@ -34,7 +34,7 @@ class PrivateLinkResourcesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2021-05-01"
+        self.api_version = "2021-06-01"
 
         self.config = config
 
@@ -59,7 +59,7 @@ class PrivateLinkResourcesOperations(object):
         :rtype: ~azure.mgmt.media.models.PrivateLinkResourceListResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
+         :class:`ErrorResponseException<azure.mgmt.media.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.list.metadata['url']
@@ -89,7 +89,7 @@ class PrivateLinkResourcesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ApiErrorException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -124,7 +124,7 @@ class PrivateLinkResourcesOperations(object):
         :rtype: ~azure.mgmt.media.models.PrivateLinkResource or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
+         :class:`ErrorResponseException<azure.mgmt.media.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -155,7 +155,7 @@ class PrivateLinkResourcesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ApiErrorException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:

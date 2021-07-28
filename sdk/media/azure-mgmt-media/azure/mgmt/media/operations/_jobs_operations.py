@@ -24,7 +24,7 @@ class JobsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The version of the API to be used with the client request. Constant value: "2020-05-01".
+    :ivar api_version: The version of the API to be used with the client request. Constant value: "2021-06-01".
     """
 
     models = models
@@ -34,7 +34,7 @@ class JobsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-05-01"
+        self.api_version = "2021-06-01"
 
         self.config = config
 
@@ -65,7 +65,7 @@ class JobsOperations(object):
         :rtype:
          ~azure.mgmt.media.models.JobPaged[~azure.mgmt.media.models.Job]
         :raises:
-         :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
+         :class:`ErrorResponseException<azure.mgmt.media.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -111,7 +111,7 @@ class JobsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ApiErrorException(self._deserialize, response)
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -148,7 +148,7 @@ class JobsOperations(object):
         :rtype: ~azure.mgmt.media.models.Job or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
+         :class:`ErrorResponseException<azure.mgmt.media.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -179,8 +179,8 @@ class JobsOperations(object):
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 404]:
-            raise models.ApiErrorException(self._deserialize, response)
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -219,7 +219,7 @@ class JobsOperations(object):
         :rtype: ~azure.mgmt.media.models.Job or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
+         :class:`ErrorResponseException<azure.mgmt.media.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.create.metadata['url']
@@ -255,7 +255,7 @@ class JobsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [201]:
-            raise models.ApiErrorException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 201:
@@ -291,7 +291,7 @@ class JobsOperations(object):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
+         :class:`ErrorResponseException<azure.mgmt.media.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -322,7 +322,7 @@ class JobsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            raise models.ApiErrorException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -357,7 +357,7 @@ class JobsOperations(object):
         :rtype: ~azure.mgmt.media.models.Job or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
+         :class:`ErrorResponseException<azure.mgmt.media.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.update.metadata['url']
@@ -393,7 +393,7 @@ class JobsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ApiErrorException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -429,7 +429,7 @@ class JobsOperations(object):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
+         :class:`ErrorResponseException<azure.mgmt.media.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.cancel_job.metadata['url']
@@ -460,7 +460,7 @@ class JobsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ApiErrorException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
