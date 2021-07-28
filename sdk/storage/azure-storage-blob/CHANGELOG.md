@@ -1,6 +1,6 @@
 # Release History
 
-## 12.9.0b1 (2021-7-27)
+## 12.9.0b1 (2021-07-27)
 **New Features**
 - Added support for object level immutability policy with versioning (Version Level WORM).
 - Added support for listing deleted root blobs that have versions.
