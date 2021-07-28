@@ -1,5 +1,12 @@
 # Release History
 
+## 12.6.0b1 (2021-07-27)
+**New features**
+- Added OAuth support for file copy source.
+
+**Fixes**
+- Ensured that download fails if file modified mid download
+
 ## 12.5.0 (2021-06-09)
 **New features**
 - Added support for lease operation on a share, eg. acquire_lease
