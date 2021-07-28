@@ -117,4 +117,3 @@ def test_update_checkpoint(storage_connection_str):
         _update_and_list_checkpoint(storage_connection_str, table_name)
     finally:
         remove_live_storage_table_client(storage_connection_str, table_name)
-
