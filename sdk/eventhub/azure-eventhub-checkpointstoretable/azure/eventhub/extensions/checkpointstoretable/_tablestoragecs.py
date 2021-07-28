@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from collections import defaultdict
 from azure.data.tables import TableClient, UpdateMode
 from azure.core import MatchConditions
 from azure.data.tables._base_client import parse_connection_str
@@ -200,7 +199,7 @@ class TableCheckpointStore:
 
     def _update_ownership(self, ownership):
         try:
-            if ownership['etag'] == None:
+            if ownership['etag'] is None:
                 raise ResourceNotFoundError
             ownership_entity = self._create_ownership_entity(ownership)
             metadata = self.table_client.update_entity(mode=UpdateMode.REPLACE, entity=ownership_entity,
