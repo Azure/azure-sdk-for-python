@@ -17,12 +17,15 @@ from ._data_flow_debug_session_operations import DataFlowDebugSessionOperations
 from ._sql_script_operations import SqlScriptOperations
 from ._spark_job_definition_operations import SparkJobDefinitionOperations
 from ._notebook_operations import NotebookOperations
-from ._workspace_operations import WorkspaceOperations
-from ._sql_pools_operations import SqlPoolsOperations
+from ._notebook_operation_result_operations import NotebookOperationResultOperations
 from ._big_data_pools_operations import BigDataPoolsOperations
+from ._workspace_git_repo_management_operations import WorkspaceGitRepoManagementOperations
 from ._integration_runtimes_operations import IntegrationRuntimesOperations
 from ._library_operations import LibraryOperations
-from ._workspace_git_repo_management_operations import WorkspaceGitRepoManagementOperations
+from ._operation_result_operations import OperationResultOperations
+from ._operation_status_operations import OperationStatusOperations
+from ._sql_pools_operations import SqlPoolsOperations
+from ._workspace_operations import WorkspaceOperations
 
 __all__ = [
     'LinkedServiceOperations',
@@ -36,10 +39,13 @@ __all__ = [
     'SqlScriptOperations',
     'SparkJobDefinitionOperations',
     'NotebookOperations',
-    'WorkspaceOperations',
-    'SqlPoolsOperations',
+    'NotebookOperationResultOperations',
     'BigDataPoolsOperations',
+    'WorkspaceGitRepoManagementOperations',
     'IntegrationRuntimesOperations',
     'LibraryOperations',
-    'WorkspaceGitRepoManagementOperations',
+    'OperationResultOperations',
+    'OperationStatusOperations',
+    'SqlPoolsOperations',
+    'WorkspaceOperations',
 ]

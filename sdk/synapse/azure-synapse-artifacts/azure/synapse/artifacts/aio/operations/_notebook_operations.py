@@ -44,7 +44,7 @@ class NotebookOperations:
 
     def get_notebooks_by_workspace(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.NotebookListResponse"]:
         """Lists Notebooks.
 
@@ -58,7 +58,7 @@ class NotebookOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -115,7 +115,7 @@ class NotebookOperations:
 
     def get_notebook_summary_by_work_space(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.NotebookListResponse"]:
         """Lists a summary of Notebooks.
 
@@ -129,7 +129,7 @@ class NotebookOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -182,21 +182,21 @@ class NotebookOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    get_notebook_summary_by_work_space.metadata = {'url': '/notebooks/summary'}  # type: ignore
+    get_notebook_summary_by_work_space.metadata = {'url': '/notebooksSummary'}  # type: ignore
 
     async def _create_or_update_notebook_initial(
         self,
         notebook_name: str,
         notebook: "_models.NotebookResource",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.NotebookResource"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.NotebookResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -246,7 +246,7 @@ class NotebookOperations:
         notebook_name: str,
         notebook: "_models.NotebookResource",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.NotebookResource"]:
         """Creates or updates a Note Book.
 
@@ -316,7 +316,7 @@ class NotebookOperations:
         self,
         notebook_name: str,
         if_none_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.NotebookResource"]:
         """Gets a Note Book.
 
@@ -335,7 +335,7 @@ class NotebookOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -378,14 +378,14 @@ class NotebookOperations:
     async def _delete_notebook_initial(
         self,
         notebook_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -421,7 +421,7 @@ class NotebookOperations:
     async def begin_delete_notebook(
         self,
         notebook_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a Note book.
 
@@ -481,7 +481,7 @@ class NotebookOperations:
         self,
         notebook_name: str,
         new_name: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -490,7 +490,7 @@ class NotebookOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         _request = _models.ArtifactRenameRequest(new_name=new_name)
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -532,7 +532,7 @@ class NotebookOperations:
         self,
         notebook_name: str,
         new_name: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Renames a notebook.
 

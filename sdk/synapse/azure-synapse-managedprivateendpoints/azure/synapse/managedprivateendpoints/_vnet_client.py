@@ -18,40 +18,31 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from ._configuration import SparkClientConfiguration
-from .operations import SparkBatchOperations
-from .operations import SparkSessionOperations
+from ._configuration import VnetClientConfiguration
+from .operations import ManagedPrivateEndpointsOperations
 from . import models
 
 
-class SparkClient(object):
-    """SparkClient.
+class VnetClient(object):
+    """VnetClient.
 
-    :ivar spark_batch: SparkBatchOperations operations
-    :vartype spark_batch: azure.synapse.spark.operations.SparkBatchOperations
-    :ivar spark_session: SparkSessionOperations operations
-    :vartype spark_session: azure.synapse.spark.operations.SparkSessionOperations
+    :ivar managed_private_endpoints: ManagedPrivateEndpointsOperations operations
+    :vartype managed_private_endpoints: azure.synapse.managedprivateendpoints.operations.ManagedPrivateEndpointsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param endpoint: The workspace development endpoint, for example https://myworkspace.dev.azuresynapse.net.
     :type endpoint: str
-    :param spark_pool_name: Name of the spark pool.
-    :type spark_pool_name: str
-    :param livy_api_version: Valid api-version for the request.
-    :type livy_api_version: str
     """
 
     def __init__(
         self,
         credential,  # type: "TokenCredential"
         endpoint,  # type: str
-        spark_pool_name,  # type: str
-        livy_api_version="2019-11-01-preview",  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         base_url = '{endpoint}'
-        self._config = SparkClientConfiguration(credential, endpoint, spark_pool_name, livy_api_version, **kwargs)
+        self._config = VnetClientConfiguration(credential, endpoint, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -59,9 +50,7 @@ class SparkClient(object):
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
-        self.spark_batch = SparkBatchOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.spark_session = SparkSessionOperations(
+        self.managed_private_endpoints = ManagedPrivateEndpointsOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, http_request, **kwargs):
@@ -76,8 +65,6 @@ class SparkClient(object):
         """
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'livyApiVersion': self._serialize.url("self._config.livy_api_version", self._config.livy_api_version, 'str', skip_quote=True),
-            'sparkPoolName': self._serialize.url("self._config.spark_pool_name", self._config.spark_pool_name, 'str', skip_quote=True),
         }
         http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
         stream = kwargs.pop("stream", True)
@@ -89,7 +76,7 @@ class SparkClient(object):
         self._client.close()
 
     def __enter__(self):
-        # type: () -> SparkClient
+        # type: () -> VnetClient
         self._client.__enter__()
         return self
 

@@ -17,8 +17,8 @@ from ... import models as _models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class WorkspaceGitRepoManagementOperations:
-    """WorkspaceGitRepoManagementOperations async operations.
+class NotebookOperationResultOperations:
+    """NotebookOperationResultOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -39,37 +39,33 @@ class WorkspaceGitRepoManagementOperations:
         self._deserialize = deserializer
         self._config = config
 
-    async def get_git_hub_access_token(
+    async def get(
         self,
-        git_hub_access_token_request: "_models.GitHubAccessTokenRequest",
-        client_request_id: Optional[str] = None,
+        operation_id: str,
         **kwargs: Any
-    ) -> "_models.GitHubAccessTokenResponse":
-        """Get the GitHub access token.
+    ) -> None:
+        """Get notebook operation result.
 
-        :param git_hub_access_token_request:
-        :type git_hub_access_token_request: ~azure.synapse.artifacts.models.GitHubAccessTokenRequest
-        :param client_request_id: Can provide a guid, which is helpful for debugging and to provide
-         better customer support.
-        :type client_request_id: str
+        :param operation_id: Operation ID.
+        :type operation_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: GitHubAccessTokenResponse, or the result of cls(response)
-        :rtype: ~azure.synapse.artifacts.models.GitHubAccessTokenResponse
+        :return: None, or the result of cls(response)
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GitHubAccessTokenResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-12-01"
-        content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
-        url = self.get_git_hub_access_token.metadata['url']  # type: ignore
+        url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'operationId': self._serialize.url("operation_id", operation_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -79,26 +75,18 @@ class WorkspaceGitRepoManagementOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if client_request_id is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("client_request_id", client_request_id, 'str')
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(git_hub_access_token_request, 'GitHubAccessTokenRequest')
-        body_content_kwargs['content'] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = self._deserialize('GitHubAccessTokenResponse', pipeline_response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorContract, response)
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, None, {})
 
-        return deserialized
-    get_git_hub_access_token.metadata = {'url': '/getGitHubAccessToken'}  # type: ignore
+    get.metadata = {'url': '/notebookOperationResults/{operationId}'}  # type: ignore
