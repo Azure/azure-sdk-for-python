@@ -118,6 +118,8 @@ class ManagedPrivateEndpointProperties(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    :param name: The name of managed private endpoint.
+    :type name: str
     :param private_link_resource_id: The ARM resource ID of the resource to which the managed
      private endpoint is created.
     :type private_link_resource_id: str
@@ -130,6 +132,10 @@ class ManagedPrivateEndpointProperties(msrest.serialization.Model):
      ~azure.synapse.managedprivateendpoints.models.ManagedPrivateEndpointConnectionState
     :ivar is_reserved: Denotes whether the managed private endpoint is reserved.
     :vartype is_reserved: bool
+    :param fqdns: List of fully qualified domain names.
+    :type fqdns: list[str]
+    :param is_compliant: Denotes whether the managed private endpoint is compliant.
+    :type is_compliant: bool
     """
 
     _validation = {
@@ -138,11 +144,14 @@ class ManagedPrivateEndpointProperties(msrest.serialization.Model):
     }
 
     _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
         'private_link_resource_id': {'key': 'privateLinkResourceId', 'type': 'str'},
         'group_id': {'key': 'groupId', 'type': 'str'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'connection_state': {'key': 'connectionState', 'type': 'ManagedPrivateEndpointConnectionState'},
         'is_reserved': {'key': 'isReserved', 'type': 'bool'},
+        'fqdns': {'key': 'fqdns', 'type': '[str]'},
+        'is_compliant': {'key': 'isCompliant', 'type': 'bool'},
     }
 
     def __init__(
@@ -150,8 +159,11 @@ class ManagedPrivateEndpointProperties(msrest.serialization.Model):
         **kwargs
     ):
         super(ManagedPrivateEndpointProperties, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
         self.private_link_resource_id = kwargs.get('private_link_resource_id', None)
         self.group_id = kwargs.get('group_id', None)
         self.provisioning_state = None
         self.connection_state = kwargs.get('connection_state', None)
         self.is_reserved = None
+        self.fqdns = kwargs.get('fqdns', None)
+        self.is_compliant = kwargs.get('is_compliant', None)

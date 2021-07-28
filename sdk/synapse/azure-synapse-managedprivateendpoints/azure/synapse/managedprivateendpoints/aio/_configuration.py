@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ManagedPrivateEndpointsClientConfiguration(Configuration):
-    """Configuration for ManagedPrivateEndpointsClient.
+class VnetClientConfiguration(Configuration):
+    """Configuration for VnetClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -40,11 +40,11 @@ class ManagedPrivateEndpointsClientConfiguration(Configuration):
             raise ValueError("Parameter 'credential' must not be None.")
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
-        super(ManagedPrivateEndpointsClientConfiguration, self).__init__(**kwargs)
+        super(VnetClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.endpoint = endpoint
-        self.api_version = "2019-06-01-preview"
+        self.api_version = "2020-12-01"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://dev.azuresynapse.net/.default'])
         kwargs.setdefault('sdk_moniker', 'synapse-managedprivateendpoints/{}'.format(VERSION))
         self._configure(**kwargs)

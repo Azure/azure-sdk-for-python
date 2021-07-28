@@ -474,7 +474,7 @@ class SparkSession(msrest.serialization.Model):
     :type scheduler: ~azure.synapse.spark.models.SparkScheduler
     :param plugin:
     :type plugin: ~azure.synapse.spark.models.SparkServicePlugin
-    :param errors: The error information.
+    :param errors:
     :type errors: list[~azure.synapse.spark.models.SparkServiceError]
     :param tags: A set of tags. Dictionary of :code:`<string>`.
     :type tags: dict[str, str]
@@ -672,7 +672,7 @@ class SparkSessionState(msrest.serialization.Model):
     :type dead_at: ~datetime.datetime
     :param shutting_down_at:
     :type shutting_down_at: ~datetime.datetime
-    :param terminated_at: the time that at which "killed" livy state was first seen.
+    :param terminated_at:
     :type terminated_at: ~datetime.datetime
     :param recovering_at:
     :type recovering_at: ~datetime.datetime
@@ -836,7 +836,7 @@ class SparkStatementOutput(msrest.serialization.Model):
     :param execution_count: Required.
     :type execution_count: int
     :param data: Any object.
-    :type data: object
+    :type data: any
     :param error_name:
     :type error_name: str
     :param error_value:
