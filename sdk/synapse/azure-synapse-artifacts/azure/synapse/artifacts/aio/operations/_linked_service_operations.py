@@ -44,7 +44,7 @@ class LinkedServiceOperations:
 
     def get_linked_services_by_workspace(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.LinkedServiceListResponse"]:
         """Lists linked services.
 
@@ -58,7 +58,7 @@ class LinkedServiceOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -118,7 +118,7 @@ class LinkedServiceOperations:
         linked_service_name: str,
         properties: "_models.LinkedService",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.LinkedServiceResource"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.LinkedServiceResource"]]
         error_map = {
@@ -127,7 +127,7 @@ class LinkedServiceOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         _linked_service = _models.LinkedServiceResource(properties=properties)
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -177,7 +177,7 @@ class LinkedServiceOperations:
         linked_service_name: str,
         properties: "_models.LinkedService",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.LinkedServiceResource"]:
         """Creates or updates a linked service.
 
@@ -247,7 +247,7 @@ class LinkedServiceOperations:
         self,
         linked_service_name: str,
         if_none_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.LinkedServiceResource"]:
         """Gets a linked service.
 
@@ -267,7 +267,7 @@ class LinkedServiceOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -310,14 +310,14 @@ class LinkedServiceOperations:
     async def _delete_linked_service_initial(
         self,
         linked_service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -353,7 +353,7 @@ class LinkedServiceOperations:
     async def begin_delete_linked_service(
         self,
         linked_service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a linked service.
 
@@ -413,7 +413,7 @@ class LinkedServiceOperations:
         self,
         linked_service_name: str,
         new_name: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -422,7 +422,7 @@ class LinkedServiceOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         _request = _models.ArtifactRenameRequest(new_name=new_name)
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -464,7 +464,7 @@ class LinkedServiceOperations:
         self,
         linked_service_name: str,
         new_name: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Renames a linked service.
 

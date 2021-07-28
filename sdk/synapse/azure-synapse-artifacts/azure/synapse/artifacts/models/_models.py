@@ -20,7 +20,7 @@ class Activity(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -71,7 +71,7 @@ class ActivityDependency(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param activity: Required. Activity name.
     :type activity: str
     :param dependency_conditions: Required. Match-Condition for the dependency.
@@ -104,14 +104,14 @@ class ActivityPolicy(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param timeout: Specifies the timeout for the activity to run. The default timeout is 7 days.
      Type: string (or Expression with resultType string), pattern:
      ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type timeout: object
+    :type timeout: any
     :param retry: Maximum ordinary retry attempts. Default is 0. Type: integer (or Expression with
      resultType integer), minimum: 0.
-    :type retry: object
+    :type retry: any
     :param retry_interval_in_seconds: Interval between each retry attempt (in seconds). The default
      is 30 sec.
     :type retry_interval_in_seconds: int
@@ -156,7 +156,7 @@ class ActivityRun(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :ivar pipeline_name: The name of the pipeline.
     :vartype pipeline_name: str
     :ivar pipeline_run_id: The id of the pipeline run.
@@ -178,11 +178,11 @@ class ActivityRun(msrest.serialization.Model):
     :ivar duration_in_ms: The duration of the activity run.
     :vartype duration_in_ms: int
     :ivar input: The input for the activity.
-    :vartype input: object
+    :vartype input: any
     :ivar output: The output for the activity.
-    :vartype output: object
+    :vartype output: any
     :ivar error: The error if any from the activity run.
-    :vartype error: object
+    :vartype error: any
     """
 
     _validation = {
@@ -292,9 +292,9 @@ class AdditionalColumns(msrest.serialization.Model):
     """Specify the column name and value of additional columns.
 
     :param name: Additional column name. Type: string (or Expression with resultType string).
-    :type name: object
+    :type name: any
     :param value: Additional column value. Type: string (or Expression with resultType string).
-    :type value: object
+    :type value: any
     """
 
     _attribute_map = {
@@ -321,7 +321,7 @@ class LinkedService(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -331,7 +331,7 @@ class LinkedService(msrest.serialization.Model):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     """
 
     _validation = {
@@ -371,7 +371,7 @@ class AmazonMWSLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -381,36 +381,36 @@ class AmazonMWSLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param endpoint: Required. The endpoint of the Amazon MWS server, (i.e.
      mws.amazonservices.com).
-    :type endpoint: object
+    :type endpoint: any
     :param marketplace_id: Required. The Amazon Marketplace ID you want to retrieve data from. To
      retrieve data from multiple Marketplace IDs, separate them with a comma (,). (i.e.
      A2EUQ1WTGCTBG2).
-    :type marketplace_id: object
+    :type marketplace_id: any
     :param seller_id: Required. The Amazon seller ID.
-    :type seller_id: object
+    :type seller_id: any
     :param mws_auth_token: The Amazon MWS authentication token.
     :type mws_auth_token: ~azure.synapse.artifacts.models.SecretBase
     :param access_key_id: Required. The access key id used to access data.
-    :type access_key_id: object
+    :type access_key_id: any
     :param secret_key: The secret key used to access data.
     :type secret_key: ~azure.synapse.artifacts.models.SecretBase
     :param use_encrypted_endpoints: Specifies whether the data source endpoints are encrypted using
      HTTPS. The default value is true.
-    :type use_encrypted_endpoints: object
+    :type use_encrypted_endpoints: any
     :param use_host_verification: Specifies whether to require the host name in the server's
      certificate to match the host name of the server when connecting over SSL. The default value is
      true.
-    :type use_host_verification: object
+    :type use_host_verification: any
     :param use_peer_verification: Specifies whether to verify the identity of the server when
      connecting over SSL. The default value is true.
-    :type use_peer_verification: object
+    :type use_peer_verification: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -468,23 +468,23 @@ class Dataset(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
@@ -534,28 +534,28 @@ class AmazonMWSObjectDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: The table name. Type: string (or Expression with resultType string).
-    :type table_name: object
+    :type table_name: any
     """
 
     _validation = {
@@ -595,18 +595,18 @@ class CopySource(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     """
 
     _validation = {
@@ -647,21 +647,21 @@ class TabularSource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
@@ -702,27 +702,27 @@ class AmazonMWSSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -756,7 +756,7 @@ class AmazonRedshiftLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -766,25 +766,25 @@ class AmazonRedshiftLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param server: Required. The name of the Amazon Redshift server. Type: string (or Expression
      with resultType string).
-    :type server: object
+    :type server: any
     :param username: The username of the Amazon Redshift source. Type: string (or Expression with
      resultType string).
-    :type username: object
+    :type username: any
     :param password: The password of the Amazon Redshift source.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param database: Required. The database name of the Amazon Redshift source. Type: string (or
      Expression with resultType string).
-    :type database: object
+    :type database: any
     :param port: The TCP port number that the Amazon Redshift server uses to listen for client
      connections. The default value is 5439. Type: integer (or Expression with resultType integer).
-    :type port: object
+    :type port: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -829,26 +829,26 @@ class AmazonRedshiftSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: Database query. Type: string (or Expression with resultType string).
-    :type query: object
+    :type query: any
     :param redshift_unload_settings: The Amazon S3 settings needed for the interim Amazon S3 when
      copying from Amazon Redshift with unload. With this, data from Amazon Redshift source will be
      unloaded into S3 first and then copied into the targeted sink from the interim S3.
@@ -888,35 +888,35 @@ class AmazonRedshiftTableDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: This property will be retired. Please consider using schema + table
      properties instead.
-    :type table_name: object
+    :type table_name: any
     :param table: The Amazon Redshift table name. Type: string (or Expression with resultType
      string).
-    :type table: object
+    :type table: any
     :param schema_type_properties_schema: The Amazon Redshift schema name. Type: string (or
      Expression with resultType string).
-    :type schema_type_properties_schema: object
+    :type schema_type_properties_schema: any
     """
 
     _validation = {
@@ -957,44 +957,44 @@ class AmazonS3Dataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param bucket_name: Required. The name of the Amazon S3 bucket. Type: string (or Expression
      with resultType string).
-    :type bucket_name: object
+    :type bucket_name: any
     :param key: The key of the Amazon S3 object. Type: string (or Expression with resultType
      string).
-    :type key: object
+    :type key: any
     :param prefix: The prefix filter for the S3 object name. Type: string (or Expression with
      resultType string).
-    :type prefix: object
+    :type prefix: any
     :param version: The version for the S3 object. Type: string (or Expression with resultType
      string).
-    :type version: object
+    :type version: any
     :param modified_datetime_start: The start of S3 object's modified datetime. Type: string (or
      Expression with resultType string).
-    :type modified_datetime_start: object
+    :type modified_datetime_start: any
     :param modified_datetime_end: The end of S3 object's modified datetime. Type: string (or
      Expression with resultType string).
-    :type modified_datetime_end: object
+    :type modified_datetime_end: any
     :param format: The format of files.
     :type format: ~azure.synapse.artifacts.models.DatasetStorageFormat
     :param compression: The data compression method used for the Amazon S3 object.
@@ -1050,7 +1050,7 @@ class AmazonS3LinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -1060,26 +1060,26 @@ class AmazonS3LinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param authentication_type: The authentication type of S3. Allowed value: AccessKey (default)
      or TemporarySecurityCredentials. Type: string (or Expression with resultType string).
-    :type authentication_type: object
+    :type authentication_type: any
     :param access_key_id: The access key identifier of the Amazon S3 Identity and Access Management
      (IAM) user. Type: string (or Expression with resultType string).
-    :type access_key_id: object
+    :type access_key_id: any
     :param secret_access_key: The secret access key of the Amazon S3 Identity and Access Management
      (IAM) user.
     :type secret_access_key: ~azure.synapse.artifacts.models.SecretBase
     :param service_url: This value specifies the endpoint to access with the S3 Connector. This is
      an optional property; change it only if you want to try a different service endpoint or want to
      switch between https and http. Type: string (or Expression with resultType string).
-    :type service_url: object
+    :type service_url: any
     :param session_token: The session token for the S3 temporary security credential.
     :type session_token: ~azure.synapse.artifacts.models.SecretBase
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -1125,15 +1125,15 @@ class DatasetLocation(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset storage location.Constant filled by server.
     :type type: str
     :param folder_path: Specify the folder path of dataset. Type: string (or Expression with
      resultType string).
-    :type folder_path: object
+    :type folder_path: any
     :param file_name: Specify the file name of dataset. Type: string (or Expression with resultType
      string).
-    :type file_name: object
+    :type file_name: any
     """
 
     _validation = {
@@ -1169,21 +1169,21 @@ class AmazonS3Location(DatasetLocation):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset storage location.Constant filled by server.
     :type type: str
     :param folder_path: Specify the folder path of dataset. Type: string (or Expression with
      resultType string).
-    :type folder_path: object
+    :type folder_path: any
     :param file_name: Specify the file name of dataset. Type: string (or Expression with resultType
      string).
-    :type file_name: object
+    :type file_name: any
     :param bucket_name: Specify the bucketName of amazon S3. Type: string (or Expression with
      resultType string).
-    :type bucket_name: object
+    :type bucket_name: any
     :param version: Specify the version of amazon S3. Type: string (or Expression with resultType
      string).
-    :type version: object
+    :type version: any
     """
 
     _validation = {
@@ -1219,12 +1219,12 @@ class StoreReadSettings(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The read setting type.Constant filled by server.
     :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     """
 
     _validation = {
@@ -1258,42 +1258,42 @@ class AmazonS3ReadSettings(StoreReadSettings):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The read setting type.Constant filled by server.
     :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param recursive: If true, files under the folder path will be read recursively. Default is
      true. Type: boolean (or Expression with resultType boolean).
-    :type recursive: object
+    :type recursive: any
     :param wildcard_folder_path: AmazonS3 wildcardFolderPath. Type: string (or Expression with
      resultType string).
-    :type wildcard_folder_path: object
+    :type wildcard_folder_path: any
     :param wildcard_file_name: AmazonS3 wildcardFileName. Type: string (or Expression with
      resultType string).
-    :type wildcard_file_name: object
+    :type wildcard_file_name: any
     :param prefix: The prefix filter for the S3 object name. Type: string (or Expression with
      resultType string).
-    :type prefix: object
+    :type prefix: any
     :param file_list_path: Point to a text file that lists each file (relative path to the path
      configured in the dataset) that you want to copy. Type: string (or Expression with resultType
      string).
-    :type file_list_path: object
+    :type file_list_path: any
     :param enable_partition_discovery: Indicates whether to enable partition discovery.
     :type enable_partition_discovery: bool
     :param partition_root_path: Specify the root path where partition discovery starts from. Type:
      string (or Expression with resultType string).
-    :type partition_root_path: object
+    :type partition_root_path: any
     :param delete_files_after_completion: Indicates whether the source files need to be deleted
      after copy completion. Default is false. Type: boolean (or Expression with resultType boolean).
-    :type delete_files_after_completion: object
+    :type delete_files_after_completion: any
     :param modified_datetime_start: The start of file's modified datetime. Type: string (or
      Expression with resultType string).
-    :type modified_datetime_start: object
+    :type modified_datetime_start: any
     :param modified_datetime_end: The end of file's modified datetime. Type: string (or Expression
      with resultType string).
-    :type modified_datetime_end: object
+    :type modified_datetime_end: any
     """
 
     _validation = {
@@ -1344,7 +1344,7 @@ class ControlActivity(Activity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -1390,7 +1390,7 @@ class AppendVariableActivity(ControlActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -1404,7 +1404,7 @@ class AppendVariableActivity(ControlActivity):
     :param variable_name: Name of the variable whose value needs to be appended to.
     :type variable_name: str
     :param value: Value to be appended. Could be a static value or Expression.
-    :type value: object
+    :type value: any
     """
 
     _validation = {
@@ -1514,30 +1514,30 @@ class AvroDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param location: The location of the avro storage.
     :type location: ~azure.synapse.artifacts.models.DatasetLocation
     :param avro_compression_codec: A string from AvroCompressionCodecEnum or an expression.
-    :type avro_compression_codec: object
+    :type avro_compression_codec: any
     :param avro_compression_level:
     :type avro_compression_level: int
     """
@@ -1584,13 +1584,13 @@ class DatasetStorageFormat(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset storage format.Constant filled by server.
     :type type: str
     :param serializer: Serializer. Type: string (or Expression with resultType string).
-    :type serializer: object
+    :type serializer: any
     :param deserializer: Deserializer. Type: string (or Expression with resultType string).
-    :type deserializer: object
+    :type deserializer: any
     """
 
     _validation = {
@@ -1626,13 +1626,13 @@ class AvroFormat(DatasetStorageFormat):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset storage format.Constant filled by server.
     :type type: str
     :param serializer: Serializer. Type: string (or Expression with resultType string).
-    :type serializer: object
+    :type serializer: any
     :param deserializer: Deserializer. Type: string (or Expression with resultType string).
-    :type deserializer: object
+    :type deserializer: any
     """
 
     _validation = {
@@ -1664,24 +1664,24 @@ class CopySink(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     """
 
     _validation = {
@@ -1723,24 +1723,24 @@ class AvroSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param store_settings: Avro store settings.
     :type store_settings: ~azure.synapse.artifacts.models.StoreWriteSettings
     :param format_settings: Avro format settings.
@@ -1780,18 +1780,18 @@ class AvroSource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param store_settings: Avro store settings.
     :type store_settings: ~azure.synapse.artifacts.models.StoreReadSettings
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
@@ -1833,7 +1833,7 @@ class FormatWriteSettings(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The write setting type.Constant filled by server.
     :type type: str
     """
@@ -1867,7 +1867,7 @@ class AvroWriteSettings(FormatWriteSettings):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The write setting type.Constant filled by server.
     :type type: str
     :param record_name: Top level record name in write result, which is required in AVRO spec.
@@ -1876,11 +1876,11 @@ class AvroWriteSettings(FormatWriteSettings):
     :type record_namespace: str
     :param max_rows_per_file: Limit the written file's row count to be smaller than or equal to the
      specified count. Type: integer (or Expression with resultType integer).
-    :type max_rows_per_file: object
+    :type max_rows_per_file: any
     :param file_name_prefix: Specifies the file name pattern
      :code:`<fileNamePrefix>`_:code:`<fileIndex>`.:code:`<fileExtension>` when copy from non-file
      based store without partitionOptions. Type: string (or Expression with resultType string).
-    :type file_name_prefix: object
+    :type file_name_prefix: any
     """
 
     _validation = {
@@ -1915,7 +1915,7 @@ class AzureBatchLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -1925,24 +1925,24 @@ class AzureBatchLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param account_name: Required. The Azure Batch account name. Type: string (or Expression with
      resultType string).
-    :type account_name: object
+    :type account_name: any
     :param access_key: The Azure Batch account access key.
     :type access_key: ~azure.synapse.artifacts.models.SecretBase
     :param batch_uri: Required. The Azure Batch URI. Type: string (or Expression with resultType
      string).
-    :type batch_uri: object
+    :type batch_uri: any
     :param pool_name: Required. The Azure Batch pool name. Type: string (or Expression with
      resultType string).
-    :type pool_name: object
+    :type pool_name: any
     :param linked_service_name: Required. The Azure Storage linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -1989,41 +1989,41 @@ class AzureBlobDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param folder_path: The path of the Azure Blob storage. Type: string (or Expression with
      resultType string).
-    :type folder_path: object
+    :type folder_path: any
     :param table_root_location: The root of blob path. Type: string (or Expression with resultType
      string).
-    :type table_root_location: object
+    :type table_root_location: any
     :param file_name: The name of the Azure Blob. Type: string (or Expression with resultType
      string).
-    :type file_name: object
+    :type file_name: any
     :param modified_datetime_start: The start of Azure Blob's modified datetime. Type: string (or
      Expression with resultType string).
-    :type modified_datetime_start: object
+    :type modified_datetime_start: any
     :param modified_datetime_end: The end of Azure Blob's modified datetime. Type: string (or
      Expression with resultType string).
-    :type modified_datetime_end: object
+    :type modified_datetime_end: any
     :param format: The format of the Azure Blob storage.
     :type format: ~azure.synapse.artifacts.models.DatasetStorageFormat
     :param compression: The data compression method used for the blob storage.
@@ -2076,32 +2076,32 @@ class AzureBlobFSDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param folder_path: The path of the Azure Data Lake Storage Gen2 storage. Type: string (or
      Expression with resultType string).
-    :type folder_path: object
+    :type folder_path: any
     :param file_name: The name of the Azure Data Lake Storage Gen2. Type: string (or Expression
      with resultType string).
-    :type file_name: object
+    :type file_name: any
     :param format: The format of the Azure Data Lake Storage Gen2 storage.
     :type format: ~azure.synapse.artifacts.models.DatasetStorageFormat
     :param compression: The data compression method used for the blob storage.
@@ -2148,7 +2148,7 @@ class AzureBlobFSLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -2158,30 +2158,30 @@ class AzureBlobFSLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param url: Required. Endpoint for the Azure Data Lake Storage Gen2 service. Type: string (or
      Expression with resultType string).
-    :type url: object
+    :type url: any
     :param account_key: Account key for the Azure Data Lake Storage Gen2 service. Type: string (or
      Expression with resultType string).
-    :type account_key: object
+    :type account_key: any
     :param service_principal_id: The ID of the application used to authenticate against the Azure
      Data Lake Storage Gen2 account. Type: string (or Expression with resultType string).
-    :type service_principal_id: object
+    :type service_principal_id: any
     :param service_principal_key: The Key of the application used to authenticate against the Azure
      Data Lake Storage Gen2 account.
     :type service_principal_key: ~azure.synapse.artifacts.models.SecretBase
     :param tenant: The name or ID of the tenant to which the service principal belongs. Type:
      string (or Expression with resultType string).
-    :type tenant: object
+    :type tenant: any
     :param azure_cloud_type: Indicates the azure cloud type of the service principle auth. Allowed
      values are AzurePublic, AzureChina, AzureUsGovernment, AzureGermany. Default value is the data
      factory regions’ cloud type. Type: string (or Expression with resultType string).
-    :type azure_cloud_type: object
+    :type azure_cloud_type: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -2227,18 +2227,18 @@ class AzureBlobFSLocation(DatasetLocation):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset storage location.Constant filled by server.
     :type type: str
     :param folder_path: Specify the folder path of dataset. Type: string (or Expression with
      resultType string).
-    :type folder_path: object
+    :type folder_path: any
     :param file_name: Specify the file name of dataset. Type: string (or Expression with resultType
      string).
-    :type file_name: object
+    :type file_name: any
     :param file_system: Specify the fileSystem of azure blobFS. Type: string (or Expression with
      resultType string).
-    :type file_system: object
+    :type file_system: any
     """
 
     _validation = {
@@ -2269,39 +2269,39 @@ class AzureBlobFSReadSettings(StoreReadSettings):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The read setting type.Constant filled by server.
     :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param recursive: If true, files under the folder path will be read recursively. Default is
      true. Type: boolean (or Expression with resultType boolean).
-    :type recursive: object
+    :type recursive: any
     :param wildcard_folder_path: Azure blobFS wildcardFolderPath. Type: string (or Expression with
      resultType string).
-    :type wildcard_folder_path: object
+    :type wildcard_folder_path: any
     :param wildcard_file_name: Azure blobFS wildcardFileName. Type: string (or Expression with
      resultType string).
-    :type wildcard_file_name: object
+    :type wildcard_file_name: any
     :param file_list_path: Point to a text file that lists each file (relative path to the path
      configured in the dataset) that you want to copy. Type: string (or Expression with resultType
      string).
-    :type file_list_path: object
+    :type file_list_path: any
     :param enable_partition_discovery: Indicates whether to enable partition discovery.
     :type enable_partition_discovery: bool
     :param partition_root_path: Specify the root path where partition discovery starts from. Type:
      string (or Expression with resultType string).
-    :type partition_root_path: object
+    :type partition_root_path: any
     :param delete_files_after_completion: Indicates whether the source files need to be deleted
      after copy completion. Default is false. Type: boolean (or Expression with resultType boolean).
-    :type delete_files_after_completion: object
+    :type delete_files_after_completion: any
     :param modified_datetime_start: The start of file's modified datetime. Type: string (or
      Expression with resultType string).
-    :type modified_datetime_start: object
+    :type modified_datetime_start: any
     :param modified_datetime_end: The end of file's modified datetime. Type: string (or Expression
      with resultType string).
-    :type modified_datetime_end: object
+    :type modified_datetime_end: any
     """
 
     _validation = {
@@ -2347,26 +2347,26 @@ class AzureBlobFSSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param copy_behavior: The type of copy behavior for copy sink.
-    :type copy_behavior: object
+    :type copy_behavior: any
     """
 
     _validation = {
@@ -2400,27 +2400,27 @@ class AzureBlobFSSource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param treat_empty_as_null: Treat empty as null. Type: boolean (or Expression with resultType
      boolean).
-    :type treat_empty_as_null: object
+    :type treat_empty_as_null: any
     :param skip_header_line_count: Number of header lines to skip from each blob. Type: integer (or
      Expression with resultType integer).
-    :type skip_header_line_count: object
+    :type skip_header_line_count: any
     :param recursive: If true, files under the folder path will be read recursively. Default is
      true. Type: boolean (or Expression with resultType boolean).
-    :type recursive: object
+    :type recursive: any
     """
 
     _validation = {
@@ -2459,14 +2459,14 @@ class StoreWriteSettings(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The write setting type.Constant filled by server.
     :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param copy_behavior: The type of copy behavior for copy sink.
-    :type copy_behavior: object
+    :type copy_behavior: any
     """
 
     _validation = {
@@ -2502,17 +2502,17 @@ class AzureBlobFSWriteSettings(StoreWriteSettings):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The write setting type.Constant filled by server.
     :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param copy_behavior: The type of copy behavior for copy sink.
-    :type copy_behavior: object
+    :type copy_behavior: any
     :param block_size_in_mb: Indicates the block size(MB) when writing data to blob. Type: integer
      (or Expression with resultType integer).
-    :type block_size_in_mb: object
+    :type block_size_in_mb: any
     """
 
     _validation = {
@@ -2543,7 +2543,7 @@ class AzureBlobStorageLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -2553,16 +2553,16 @@ class AzureBlobStorageLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_string: The connection string. It is mutually exclusive with sasUri,
      serviceEndpoint property. Type: string, SecureString or AzureKeyVaultSecretReference.
-    :type connection_string: object
+    :type connection_string: any
     :param account_key: The Azure key vault secret reference of accountKey in connection string.
     :type account_key: ~azure.synapse.artifacts.models.AzureKeyVaultSecretReference
     :param sas_uri: SAS URI of the Azure Blob Storage resource. It is mutually exclusive with
      connectionString, serviceEndpoint property. Type: string, SecureString or
      AzureKeyVaultSecretReference.
-    :type sas_uri: object
+    :type sas_uri: any
     :param sas_token: The Azure key vault secret reference of sasToken in sas uri.
     :type sas_token: ~azure.synapse.artifacts.models.AzureKeyVaultSecretReference
     :param service_endpoint: Blob service endpoint of the Azure Blob Storage resource. It is
@@ -2570,17 +2570,17 @@ class AzureBlobStorageLinkedService(LinkedService):
     :type service_endpoint: str
     :param service_principal_id: The ID of the service principal used to authenticate against Azure
      SQL Data Warehouse. Type: string (or Expression with resultType string).
-    :type service_principal_id: object
+    :type service_principal_id: any
     :param service_principal_key: The key of the service principal used to authenticate against
      Azure SQL Data Warehouse.
     :type service_principal_key: ~azure.synapse.artifacts.models.SecretBase
     :param tenant: The name or ID of the tenant to which the service principal belongs. Type:
      string (or Expression with resultType string).
-    :type tenant: object
+    :type tenant: any
     :param azure_cloud_type: Indicates the azure cloud type of the service principle auth. Allowed
      values are AzurePublic, AzureChina, AzureUsGovernment, AzureGermany. Default value is the data
      factory regions’ cloud type. Type: string (or Expression with resultType string).
-    :type azure_cloud_type: object
+    :type azure_cloud_type: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
@@ -2635,18 +2635,18 @@ class AzureBlobStorageLocation(DatasetLocation):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset storage location.Constant filled by server.
     :type type: str
     :param folder_path: Specify the folder path of dataset. Type: string (or Expression with
      resultType string).
-    :type folder_path: object
+    :type folder_path: any
     :param file_name: Specify the file name of dataset. Type: string (or Expression with resultType
      string).
-    :type file_name: object
+    :type file_name: any
     :param container: Specify the container of azure blob. Type: string (or Expression with
      resultType string).
-    :type container: object
+    :type container: any
     """
 
     _validation = {
@@ -2677,42 +2677,42 @@ class AzureBlobStorageReadSettings(StoreReadSettings):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The read setting type.Constant filled by server.
     :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param recursive: If true, files under the folder path will be read recursively. Default is
      true. Type: boolean (or Expression with resultType boolean).
-    :type recursive: object
+    :type recursive: any
     :param wildcard_folder_path: Azure blob wildcardFolderPath. Type: string (or Expression with
      resultType string).
-    :type wildcard_folder_path: object
+    :type wildcard_folder_path: any
     :param wildcard_file_name: Azure blob wildcardFileName. Type: string (or Expression with
      resultType string).
-    :type wildcard_file_name: object
+    :type wildcard_file_name: any
     :param prefix: The prefix filter for the Azure Blob name. Type: string (or Expression with
      resultType string).
-    :type prefix: object
+    :type prefix: any
     :param file_list_path: Point to a text file that lists each file (relative path to the path
      configured in the dataset) that you want to copy. Type: string (or Expression with resultType
      string).
-    :type file_list_path: object
+    :type file_list_path: any
     :param enable_partition_discovery: Indicates whether to enable partition discovery.
     :type enable_partition_discovery: bool
     :param partition_root_path: Specify the root path where partition discovery starts from. Type:
      string (or Expression with resultType string).
-    :type partition_root_path: object
+    :type partition_root_path: any
     :param delete_files_after_completion: Indicates whether the source files need to be deleted
      after copy completion. Default is false. Type: boolean (or Expression with resultType boolean).
-    :type delete_files_after_completion: object
+    :type delete_files_after_completion: any
     :param modified_datetime_start: The start of file's modified datetime. Type: string (or
      Expression with resultType string).
-    :type modified_datetime_start: object
+    :type modified_datetime_start: any
     :param modified_datetime_end: The end of file's modified datetime. Type: string (or Expression
      with resultType string).
-    :type modified_datetime_end: object
+    :type modified_datetime_end: any
     """
 
     _validation = {
@@ -2760,17 +2760,17 @@ class AzureBlobStorageWriteSettings(StoreWriteSettings):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The write setting type.Constant filled by server.
     :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param copy_behavior: The type of copy behavior for copy sink.
-    :type copy_behavior: object
+    :type copy_behavior: any
     :param block_size_in_mb: Indicates the block size(MB) when writing data to blob. Type: integer
      (or Expression with resultType integer).
-    :type block_size_in_mb: object
+    :type block_size_in_mb: any
     """
 
     _validation = {
@@ -2801,31 +2801,31 @@ class AzureDatabricksDeltaLakeDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table: The name of delta table. Type: string (or Expression with resultType string).
-    :type table: object
+    :type table: any
     :param database: The database name of delta table. Type: string (or Expression with resultType
      string).
-    :type database: object
+    :type database: any
     """
 
     _validation = {
@@ -2867,7 +2867,7 @@ class ExportSettings(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The export setting type.Constant filled by server.
     :type type: str
     """
@@ -2901,15 +2901,15 @@ class AzureDatabricksDeltaLakeExportCommand(ExportSettings):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The export setting type.Constant filled by server.
     :type type: str
     :param date_format: Specify the date format for the csv in Azure Databricks Delta Lake Copy.
      Type: string (or Expression with resultType string).
-    :type date_format: object
+    :type date_format: any
     :param timestamp_format: Specify the timestamp format for the csv in Azure Databricks Delta
      Lake Copy. Type: string (or Expression with resultType string).
-    :type timestamp_format: object
+    :type timestamp_format: any
     """
 
     _validation = {
@@ -2943,7 +2943,7 @@ class ImportSettings(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The import setting type.Constant filled by server.
     :type type: str
     """
@@ -2977,15 +2977,15 @@ class AzureDatabricksDeltaLakeImportCommand(ImportSettings):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The import setting type.Constant filled by server.
     :type type: str
     :param date_format: Specify the date format for csv in Azure Databricks Delta Lake Copy. Type:
      string (or Expression with resultType string).
-    :type date_format: object
+    :type date_format: any
     :param timestamp_format: Specify the timestamp format for csv in Azure Databricks Delta Lake
      Copy. Type: string (or Expression with resultType string).
-    :type timestamp_format: object
+    :type timestamp_format: any
     """
 
     _validation = {
@@ -3016,7 +3016,7 @@ class AzureDatabricksDeltaLakeLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -3026,21 +3026,21 @@ class AzureDatabricksDeltaLakeLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param domain: Required. :code:`<REGION>`.azuredatabricks.net, domain name of your Databricks
      deployment. Type: string (or Expression with resultType string).
-    :type domain: object
+    :type domain: any
     :param access_token: Required. Access token for databricks REST API. Refer to
      https://docs.azuredatabricks.net/api/latest/authentication.html. Type: string, SecureString or
      AzureKeyVaultSecretReference.
     :type access_token: ~azure.synapse.artifacts.models.SecretBase
     :param cluster_id: The id of an existing interactive cluster that will be used for all runs of
      this job. Type: string (or Expression with resultType string).
-    :type cluster_id: object
+    :type cluster_id: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -3081,27 +3081,27 @@ class AzureDatabricksDeltaLakeSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param pre_copy_script: SQL pre-copy script. Type: string (or Expression with resultType
      string).
-    :type pre_copy_script: object
+    :type pre_copy_script: any
     :param import_settings: Azure Databricks Delta Lake import settings.
     :type import_settings: ~azure.synapse.artifacts.models.AzureDatabricksDeltaLakeImportCommand
     """
@@ -3139,21 +3139,21 @@ class AzureDatabricksDeltaLakeSource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query: Azure Databricks Delta Lake Sql query. Type: string (or Expression with
      resultType string).
-    :type query: object
+    :type query: any
     :param export_settings: Azure Databricks Delta Lake export settings.
     :type export_settings: ~azure.synapse.artifacts.models.AzureDatabricksDeltaLakeExportCommand
     """
@@ -3189,7 +3189,7 @@ class AzureDatabricksLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -3199,72 +3199,72 @@ class AzureDatabricksLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param domain: Required. :code:`<REGION>`.azuredatabricks.net, domain name of your Databricks
      deployment. Type: string (or Expression with resultType string).
-    :type domain: object
+    :type domain: any
     :param access_token: Access token for databricks REST API. Refer to
      https://docs.azuredatabricks.net/api/latest/authentication.html. Type: string (or Expression
      with resultType string).
     :type access_token: ~azure.synapse.artifacts.models.SecretBase
     :param authentication: Required to specify MSI, if using Workspace resource id for databricks
      REST API. Type: string (or Expression with resultType string).
-    :type authentication: object
+    :type authentication: any
     :param workspace_resource_id: Workspace resource id for databricks REST API. Type: string (or
      Expression with resultType string).
-    :type workspace_resource_id: object
+    :type workspace_resource_id: any
     :param existing_cluster_id: The id of an existing interactive cluster that will be used for all
      runs of this activity. Type: string (or Expression with resultType string).
-    :type existing_cluster_id: object
+    :type existing_cluster_id: any
     :param instance_pool_id: The id of an existing instance pool that will be used for all runs of
      this activity. Type: string (or Expression with resultType string).
-    :type instance_pool_id: object
+    :type instance_pool_id: any
     :param new_cluster_version: If not using an existing interactive cluster, this specifies the
      Spark version of a new job cluster or instance pool nodes created for each run of this
      activity. Required if instancePoolId is specified. Type: string (or Expression with resultType
      string).
-    :type new_cluster_version: object
+    :type new_cluster_version: any
     :param new_cluster_num_of_worker: If not using an existing interactive cluster, this specifies
      the number of worker nodes to use for the new job cluster or instance pool. For new job
      clusters, this a string-formatted Int32, like '1' means numOfWorker is 1 or '1:10' means
      auto-scale from 1 (min) to 10 (max). For instance pools, this is a string-formatted Int32, and
      can only specify a fixed number of worker nodes, such as '2'. Required if newClusterVersion is
      specified. Type: string (or Expression with resultType string).
-    :type new_cluster_num_of_worker: object
+    :type new_cluster_num_of_worker: any
     :param new_cluster_node_type: The node type of the new job cluster. This property is required
      if newClusterVersion is specified and instancePoolId is not specified. If instancePoolId is
      specified, this property is ignored. Type: string (or Expression with resultType string).
-    :type new_cluster_node_type: object
+    :type new_cluster_node_type: any
     :param new_cluster_spark_conf: A set of optional, user-specified Spark configuration key-value
      pairs.
-    :type new_cluster_spark_conf: dict[str, object]
+    :type new_cluster_spark_conf: dict[str, any]
     :param new_cluster_spark_env_vars: A set of optional, user-specified Spark environment
      variables key-value pairs.
-    :type new_cluster_spark_env_vars: dict[str, object]
+    :type new_cluster_spark_env_vars: dict[str, any]
     :param new_cluster_custom_tags: Additional tags for cluster resources. This property is ignored
      in instance pool configurations.
-    :type new_cluster_custom_tags: dict[str, object]
+    :type new_cluster_custom_tags: dict[str, any]
     :param new_cluster_log_destination: Specify a location to deliver Spark driver, worker, and
      event logs. Type: string (or Expression with resultType string).
-    :type new_cluster_log_destination: object
+    :type new_cluster_log_destination: any
     :param new_cluster_driver_node_type: The driver node type for the new job cluster. This
      property is ignored in instance pool configurations. Type: string (or Expression with
      resultType string).
-    :type new_cluster_driver_node_type: object
+    :type new_cluster_driver_node_type: any
     :param new_cluster_init_scripts: User-defined initialization scripts for the new cluster. Type:
      array of strings (or Expression with resultType array of strings).
-    :type new_cluster_init_scripts: object
+    :type new_cluster_init_scripts: any
     :param new_cluster_enable_elastic_disk: Enable the elastic disk on the new cluster. This
      property is now ignored, and takes the default elastic disk behavior in Databricks (elastic
      disks are always enabled). Type: boolean (or Expression with resultType boolean).
-    :type new_cluster_enable_elastic_disk: object
+    :type new_cluster_enable_elastic_disk: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     :param policy_id: The policy id for limiting the ability to configure clusters based on a user
      defined set of rules. Type: string (or Expression with resultType string).
-    :type policy_id: object
+    :type policy_id: any
     """
 
     _validation = {
@@ -3335,7 +3335,7 @@ class ExecutionActivity(Activity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -3389,7 +3389,7 @@ class AzureDataExplorerCommandActivity(ExecutionActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -3406,10 +3406,10 @@ class AzureDataExplorerCommandActivity(ExecutionActivity):
     :type policy: ~azure.synapse.artifacts.models.ActivityPolicy
     :param command: Required. A control command, according to the Azure Data Explorer command
      syntax. Type: string (or Expression with resultType string).
-    :type command: object
+    :type command: any
     :param command_timeout: Control command timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9]))..).
-    :type command_timeout: object
+    :type command_timeout: any
     """
 
     _validation = {
@@ -3448,7 +3448,7 @@ class AzureDataExplorerLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -3458,23 +3458,23 @@ class AzureDataExplorerLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param endpoint: Required. The endpoint of Azure Data Explorer (the engine's endpoint). URL
      will be in the format https://:code:`<clusterName>`.:code:`<regionName>`.kusto.windows.net.
      Type: string (or Expression with resultType string).
-    :type endpoint: object
+    :type endpoint: any
     :param service_principal_id: Required. The ID of the service principal used to authenticate
      against Azure Data Explorer. Type: string (or Expression with resultType string).
-    :type service_principal_id: object
+    :type service_principal_id: any
     :param service_principal_key: Required. The key of the service principal used to authenticate
      against Kusto.
     :type service_principal_key: ~azure.synapse.artifacts.models.SecretBase
     :param database: Required. Database name for connection. Type: string (or Expression with
      resultType string).
-    :type database: object
+    :type database: any
     :param tenant: Required. The name or ID of the tenant to which the service principal belongs.
      Type: string (or Expression with resultType string).
-    :type tenant: object
+    :type tenant: any
     """
 
     _validation = {
@@ -3520,33 +3520,33 @@ class AzureDataExplorerSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param ingestion_mapping_name: A name of a pre-created csv mapping that was defined on the
      target Kusto table. Type: string.
-    :type ingestion_mapping_name: object
+    :type ingestion_mapping_name: any
     :param ingestion_mapping_as_json: An explicit column mapping description provided in a json
      format. Type: string.
-    :type ingestion_mapping_as_json: object
+    :type ingestion_mapping_as_json: any
     :param flush_immediately: If set to true, any aggregation will be skipped. Default is false.
      Type: boolean.
-    :type flush_immediately: object
+    :type flush_immediately: any
     """
 
     _validation = {
@@ -3584,27 +3584,27 @@ class AzureDataExplorerSource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query: Required. Database query. Should be a Kusto Query Language (KQL) query. Type:
      string (or Expression with resultType string).
-    :type query: object
+    :type query: any
     :param no_truncation: The name of the Boolean option that controls whether truncation is
      applied to result-sets that go beyond a certain row-count limit.
-    :type no_truncation: object
+    :type no_truncation: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9]))..
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
@@ -3646,29 +3646,29 @@ class AzureDataExplorerTableDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table: The table name of the Azure Data Explorer database. Type: string (or Expression
      with resultType string).
-    :type table: object
+    :type table: any
     """
 
     _validation = {
@@ -3705,7 +3705,7 @@ class AzureDataLakeAnalyticsLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -3715,32 +3715,32 @@ class AzureDataLakeAnalyticsLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param account_name: Required. The Azure Data Lake Analytics account name. Type: string (or
      Expression with resultType string).
-    :type account_name: object
+    :type account_name: any
     :param service_principal_id: The ID of the application used to authenticate against the Azure
      Data Lake Analytics account. Type: string (or Expression with resultType string).
-    :type service_principal_id: object
+    :type service_principal_id: any
     :param service_principal_key: The Key of the application used to authenticate against the Azure
      Data Lake Analytics account.
     :type service_principal_key: ~azure.synapse.artifacts.models.SecretBase
     :param tenant: Required. The name or ID of the tenant to which the service principal belongs.
      Type: string (or Expression with resultType string).
-    :type tenant: object
+    :type tenant: any
     :param subscription_id: Data Lake Analytics account subscription ID (if different from Data
      Factory account). Type: string (or Expression with resultType string).
-    :type subscription_id: object
+    :type subscription_id: any
     :param resource_group_name: Data Lake Analytics account resource group name (if different from
      Data Factory account). Type: string (or Expression with resultType string).
-    :type resource_group_name: object
+    :type resource_group_name: any
     :param data_lake_analytics_uri: Azure Data Lake Analytics URI Type: string (or Expression with
      resultType string).
-    :type data_lake_analytics_uri: object
+    :type data_lake_analytics_uri: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -3789,32 +3789,32 @@ class AzureDataLakeStoreDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param folder_path: Path to the folder in the Azure Data Lake Store. Type: string (or
      Expression with resultType string).
-    :type folder_path: object
+    :type folder_path: any
     :param file_name: The name of the file in the Azure Data Lake Store. Type: string (or
      Expression with resultType string).
-    :type file_name: object
+    :type file_name: any
     :param format: The format of the Data Lake Store.
     :type format: ~azure.synapse.artifacts.models.DatasetStorageFormat
     :param compression: The data compression method used for the item(s) in the Azure Data Lake
@@ -3862,7 +3862,7 @@ class AzureDataLakeStoreLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -3872,36 +3872,36 @@ class AzureDataLakeStoreLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param data_lake_store_uri: Required. Data Lake Store service URI. Type: string (or Expression
      with resultType string).
-    :type data_lake_store_uri: object
+    :type data_lake_store_uri: any
     :param service_principal_id: The ID of the application used to authenticate against the Azure
      Data Lake Store account. Type: string (or Expression with resultType string).
-    :type service_principal_id: object
+    :type service_principal_id: any
     :param service_principal_key: The Key of the application used to authenticate against the Azure
      Data Lake Store account.
     :type service_principal_key: ~azure.synapse.artifacts.models.SecretBase
     :param tenant: The name or ID of the tenant to which the service principal belongs. Type:
      string (or Expression with resultType string).
-    :type tenant: object
+    :type tenant: any
     :param azure_cloud_type: Indicates the azure cloud type of the service principle auth. Allowed
      values are AzurePublic, AzureChina, AzureUsGovernment, AzureGermany. Default value is the data
      factory regions’ cloud type. Type: string (or Expression with resultType string).
-    :type azure_cloud_type: object
+    :type azure_cloud_type: any
     :param account_name: Data Lake Store account name. Type: string (or Expression with resultType
      string).
-    :type account_name: object
+    :type account_name: any
     :param subscription_id: Data Lake Store account subscription ID (if different from Data Factory
      account). Type: string (or Expression with resultType string).
-    :type subscription_id: object
+    :type subscription_id: any
     :param resource_group_name: Data Lake Store account resource group name (if different from Data
      Factory account). Type: string (or Expression with resultType string).
-    :type resource_group_name: object
+    :type resource_group_name: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -3951,15 +3951,15 @@ class AzureDataLakeStoreLocation(DatasetLocation):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset storage location.Constant filled by server.
     :type type: str
     :param folder_path: Specify the folder path of dataset. Type: string (or Expression with
      resultType string).
-    :type folder_path: object
+    :type folder_path: any
     :param file_name: Specify the file name of dataset. Type: string (or Expression with resultType
      string).
-    :type file_name: object
+    :type file_name: any
     """
 
     _validation = {
@@ -3988,47 +3988,47 @@ class AzureDataLakeStoreReadSettings(StoreReadSettings):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The read setting type.Constant filled by server.
     :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param recursive: If true, files under the folder path will be read recursively. Default is
      true. Type: boolean (or Expression with resultType boolean).
-    :type recursive: object
+    :type recursive: any
     :param wildcard_folder_path: ADLS wildcardFolderPath. Type: string (or Expression with
      resultType string).
-    :type wildcard_folder_path: object
+    :type wildcard_folder_path: any
     :param wildcard_file_name: ADLS wildcardFileName. Type: string (or Expression with resultType
      string).
-    :type wildcard_file_name: object
+    :type wildcard_file_name: any
     :param file_list_path: Point to a text file that lists each file (relative path to the path
      configured in the dataset) that you want to copy. Type: string (or Expression with resultType
      string).
-    :type file_list_path: object
+    :type file_list_path: any
     :param list_after: Lists files after the value (exclusive) based on file/folder names’
      lexicographical order. Applies under the folderPath in data set, and filter files/sub-folders
      under the folderPath. Type: string (or Expression with resultType string).
-    :type list_after: object
+    :type list_after: any
     :param list_before: Lists files before the value (inclusive) based on file/folder names’
      lexicographical order. Applies under the folderPath in data set, and filter files/sub-folders
      under the folderPath. Type: string (or Expression with resultType string).
-    :type list_before: object
+    :type list_before: any
     :param enable_partition_discovery: Indicates whether to enable partition discovery.
     :type enable_partition_discovery: bool
     :param partition_root_path: Specify the root path where partition discovery starts from. Type:
      string (or Expression with resultType string).
-    :type partition_root_path: object
+    :type partition_root_path: any
     :param delete_files_after_completion: Indicates whether the source files need to be deleted
      after copy completion. Default is false. Type: boolean (or Expression with resultType boolean).
-    :type delete_files_after_completion: object
+    :type delete_files_after_completion: any
     :param modified_datetime_start: The start of file's modified datetime. Type: string (or
      Expression with resultType string).
-    :type modified_datetime_start: object
+    :type modified_datetime_start: any
     :param modified_datetime_end: The end of file's modified datetime. Type: string (or Expression
      with resultType string).
-    :type modified_datetime_end: object
+    :type modified_datetime_end: any
     """
 
     _validation = {
@@ -4078,28 +4078,28 @@ class AzureDataLakeStoreSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param copy_behavior: The type of copy behavior for copy sink.
-    :type copy_behavior: object
+    :type copy_behavior: any
     :param enable_adls_single_file_parallel: Single File Parallel.
-    :type enable_adls_single_file_parallel: object
+    :type enable_adls_single_file_parallel: any
     """
 
     _validation = {
@@ -4135,21 +4135,21 @@ class AzureDataLakeStoreSource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param recursive: If true, files under the folder path will be read recursively. Default is
      true. Type: boolean (or Expression with resultType boolean).
-    :type recursive: object
+    :type recursive: any
     """
 
     _validation = {
@@ -4181,18 +4181,18 @@ class AzureDataLakeStoreWriteSettings(StoreWriteSettings):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The write setting type.Constant filled by server.
     :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param copy_behavior: The type of copy behavior for copy sink.
-    :type copy_behavior: object
+    :type copy_behavior: any
     :param expiry_date_time: Specifies the expiry time of the written files. The time is applied to
      the UTC time zone in the format of "2018-12-01T05:00:00Z". Default value is NULL. Type: integer
      (or Expression with resultType integer).
-    :type expiry_date_time: object
+    :type expiry_date_time: any
     """
 
     _validation = {
@@ -4299,7 +4299,7 @@ class AzureFileStorageLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -4309,35 +4309,35 @@ class AzureFileStorageLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param host: Required. Host name of the server. Type: string (or Expression with resultType
      string).
-    :type host: object
+    :type host: any
     :param user_id: User ID to logon the server. Type: string (or Expression with resultType
      string).
-    :type user_id: object
+    :type user_id: any
     :param password: Password to logon the server.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param connection_string: The connection string. It is mutually exclusive with sasUri property.
      Type: string, SecureString or AzureKeyVaultSecretReference.
-    :type connection_string: object
+    :type connection_string: any
     :param account_key: The Azure key vault secret reference of accountKey in connection string.
     :type account_key: ~azure.synapse.artifacts.models.AzureKeyVaultSecretReference
     :param sas_uri: SAS URI of the Azure File resource. It is mutually exclusive with
      connectionString property. Type: string, SecureString or AzureKeyVaultSecretReference.
-    :type sas_uri: object
+    :type sas_uri: any
     :param sas_token: The Azure key vault secret reference of sasToken in sas uri.
     :type sas_token: ~azure.synapse.artifacts.models.AzureKeyVaultSecretReference
     :param file_share: The azure file share name. It is required when auth with
      accountKey/sasToken. Type: string (or Expression with resultType string).
-    :type file_share: object
+    :type file_share: any
     :param snapshot: The azure file share snapshot version. Type: string (or Expression with
      resultType string).
-    :type snapshot: object
+    :type snapshot: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -4389,15 +4389,15 @@ class AzureFileStorageLocation(DatasetLocation):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset storage location.Constant filled by server.
     :type type: str
     :param folder_path: Specify the folder path of dataset. Type: string (or Expression with
      resultType string).
-    :type folder_path: object
+    :type folder_path: any
     :param file_name: Specify the file name of dataset. Type: string (or Expression with resultType
      string).
-    :type file_name: object
+    :type file_name: any
     """
 
     _validation = {
@@ -4426,42 +4426,42 @@ class AzureFileStorageReadSettings(StoreReadSettings):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The read setting type.Constant filled by server.
     :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param recursive: If true, files under the folder path will be read recursively. Default is
      true. Type: boolean (or Expression with resultType boolean).
-    :type recursive: object
+    :type recursive: any
     :param wildcard_folder_path: Azure File Storage wildcardFolderPath. Type: string (or Expression
      with resultType string).
-    :type wildcard_folder_path: object
+    :type wildcard_folder_path: any
     :param wildcard_file_name: Azure File Storage wildcardFileName. Type: string (or Expression
      with resultType string).
-    :type wildcard_file_name: object
+    :type wildcard_file_name: any
     :param prefix: The prefix filter for the Azure File name starting from root path. Type: string
      (or Expression with resultType string).
-    :type prefix: object
+    :type prefix: any
     :param file_list_path: Point to a text file that lists each file (relative path to the path
      configured in the dataset) that you want to copy. Type: string (or Expression with resultType
      string).
-    :type file_list_path: object
+    :type file_list_path: any
     :param enable_partition_discovery: Indicates whether to enable partition discovery.
     :type enable_partition_discovery: bool
     :param partition_root_path: Specify the root path where partition discovery starts from. Type:
      string (or Expression with resultType string).
-    :type partition_root_path: object
+    :type partition_root_path: any
     :param delete_files_after_completion: Indicates whether the source files need to be deleted
      after copy completion. Default is false. Type: boolean (or Expression with resultType boolean).
-    :type delete_files_after_completion: object
+    :type delete_files_after_completion: any
     :param modified_datetime_start: The start of file's modified datetime. Type: string (or
      Expression with resultType string).
-    :type modified_datetime_start: object
+    :type modified_datetime_start: any
     :param modified_datetime_end: The end of file's modified datetime. Type: string (or Expression
      with resultType string).
-    :type modified_datetime_end: object
+    :type modified_datetime_end: any
     """
 
     _validation = {
@@ -4509,14 +4509,14 @@ class AzureFileStorageWriteSettings(StoreWriteSettings):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The write setting type.Constant filled by server.
     :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param copy_behavior: The type of copy behavior for copy sink.
-    :type copy_behavior: object
+    :type copy_behavior: any
     """
 
     _validation = {
@@ -4545,7 +4545,7 @@ class AzureFunctionActivity(ExecutionActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -4565,14 +4565,14 @@ class AzureFunctionActivity(ExecutionActivity):
     :type method: str or ~azure.synapse.artifacts.models.AzureFunctionActivityMethod
     :param function_name: Required. Name of the Function that the Azure Function Activity will
      call. Type: string (or Expression with resultType string).
-    :type function_name: object
+    :type function_name: any
     :param headers: Represents the headers that will be sent to the request. For example, to set
      the language and type on a request: "headers" : { "Accept-Language": "en-us", "Content-Type":
      "application/json" }. Type: string (or Expression with resultType string).
-    :type headers: object
+    :type headers: any
     :param body: Represents the payload that will be sent to the endpoint. Required for POST/PUT
      method, not allowed for GET method Type: string (or Expression with resultType string).
-    :type body: object
+    :type body: any
     """
 
     _validation = {
@@ -4616,7 +4616,7 @@ class AzureFunctionLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -4626,16 +4626,16 @@ class AzureFunctionLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param function_app_url: Required. The endpoint of the Azure Function App. URL will be in the
      format https://:code:`<accountName>`.azurewebsites.net.
-    :type function_app_url: object
+    :type function_app_url: any
     :param function_key: Function or Host key for Azure Function App.
     :type function_key: ~azure.synapse.artifacts.models.SecretBase
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -4673,7 +4673,7 @@ class AzureKeyVaultLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -4683,10 +4683,10 @@ class AzureKeyVaultLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param base_url: Required. The base URL of the Azure Key Vault. e.g.
      https://myakv.vault.azure.net Type: string (or Expression with resultType string).
-    :type base_url: object
+    :type base_url: any
     """
 
     _validation = {
@@ -4756,10 +4756,10 @@ class AzureKeyVaultSecretReference(SecretBase):
     :type store: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param secret_name: Required. The name of the secret in Azure Key Vault. Type: string (or
      Expression with resultType string).
-    :type secret_name: object
+    :type secret_name: any
     :param secret_version: The version of the secret in Azure Key Vault. The default value is the
      latest version of the secret. Type: string (or Expression with resultType string).
-    :type secret_version: object
+    :type secret_version: any
     """
 
     _validation = {
@@ -4793,7 +4793,7 @@ class AzureMariaDBLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -4803,16 +4803,16 @@ class AzureMariaDBLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_string: An ODBC connection string. Type: string, SecureString or
      AzureKeyVaultSecretReference.
-    :type connection_string: object
+    :type connection_string: any
     :param pwd: The Azure key vault secret reference of password in connection string.
     :type pwd: ~azure.synapse.artifacts.models.AzureKeyVaultSecretReference
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -4849,27 +4849,27 @@ class AzureMariaDBSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -4903,28 +4903,28 @@ class AzureMariaDBTableDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: The table name. Type: string (or Expression with resultType string).
-    :type table_name: object
+    :type table_name: any
     """
 
     _validation = {
@@ -4961,7 +4961,7 @@ class AzureMLBatchExecutionActivity(ExecutionActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -4980,7 +4980,7 @@ class AzureMLBatchExecutionActivity(ExecutionActivity):
      endpoint. Keys must match the names of web service parameters defined in the published Azure ML
      web service. Values will be passed in the GlobalParameters property of the Azure ML batch
      execution request.
-    :type global_parameters: dict[str, object]
+    :type global_parameters: dict[str, any]
     :param web_service_outputs: Key,Value pairs, mapping the names of Azure ML endpoint's Web
      Service Outputs to AzureMLWebServiceFile objects specifying the output Blob locations. This
      information will be passed in the WebServiceOutputs property of the Azure ML batch execution
@@ -5030,7 +5030,7 @@ class AzureMLExecutePipelineActivity(ExecutionActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -5047,25 +5047,25 @@ class AzureMLExecutePipelineActivity(ExecutionActivity):
     :type policy: ~azure.synapse.artifacts.models.ActivityPolicy
     :param ml_pipeline_id: Required. ID of the published Azure ML pipeline. Type: string (or
      Expression with resultType string).
-    :type ml_pipeline_id: object
+    :type ml_pipeline_id: any
     :param experiment_name: Run history experiment name of the pipeline run. This information will
      be passed in the ExperimentName property of the published pipeline execution request. Type:
      string (or Expression with resultType string).
-    :type experiment_name: object
+    :type experiment_name: any
     :param ml_pipeline_parameters: Key,Value pairs to be passed to the published Azure ML pipeline
      endpoint. Keys must match the names of pipeline parameters defined in the published pipeline.
      Values will be passed in the ParameterAssignments property of the published pipeline execution
      request. Type: object with key value pairs (or Expression with resultType object).
-    :type ml_pipeline_parameters: object
+    :type ml_pipeline_parameters: any
     :param ml_parent_run_id: The parent Azure ML Service pipeline run id. This information will be
      passed in the ParentRunId property of the published pipeline execution request. Type: string
      (or Expression with resultType string).
-    :type ml_parent_run_id: object
+    :type ml_parent_run_id: any
     :param continue_on_step_failure: Whether to continue execution of other steps in the
      PipelineRun if a step fails. This information will be passed in the continueOnStepFailure
      property of the published pipeline execution request. Type: boolean (or Expression with
      resultType boolean).
-    :type continue_on_step_failure: object
+    :type continue_on_step_failure: any
     """
 
     _validation = {
@@ -5110,7 +5110,7 @@ class AzureMLLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -5120,29 +5120,29 @@ class AzureMLLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param ml_endpoint: Required. The Batch Execution REST URL for an Azure ML Studio Web Service
      endpoint. Type: string (or Expression with resultType string).
-    :type ml_endpoint: object
+    :type ml_endpoint: any
     :param api_key: Required. The API key for accessing the Azure ML model endpoint.
     :type api_key: ~azure.synapse.artifacts.models.SecretBase
     :param update_resource_endpoint: The Update Resource REST URL for an Azure ML Studio Web
      Service endpoint. Type: string (or Expression with resultType string).
-    :type update_resource_endpoint: object
+    :type update_resource_endpoint: any
     :param service_principal_id: The ID of the service principal used to authenticate against the
      ARM-based updateResourceEndpoint of an Azure ML Studio web service. Type: string (or Expression
      with resultType string).
-    :type service_principal_id: object
+    :type service_principal_id: any
     :param service_principal_key: The key of the service principal used to authenticate against the
      ARM-based updateResourceEndpoint of an Azure ML Studio web service.
     :type service_principal_key: ~azure.synapse.artifacts.models.SecretBase
     :param tenant: The name or ID of the tenant to which the service principal belongs. Type:
      string (or Expression with resultType string).
-    :type tenant: object
+    :type tenant: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -5189,7 +5189,7 @@ class AzureMLServiceLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -5199,30 +5199,30 @@ class AzureMLServiceLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param subscription_id: Required. Azure ML Service workspace subscription ID. Type: string (or
      Expression with resultType string).
-    :type subscription_id: object
+    :type subscription_id: any
     :param resource_group_name: Required. Azure ML Service workspace resource group name. Type:
      string (or Expression with resultType string).
-    :type resource_group_name: object
+    :type resource_group_name: any
     :param ml_workspace_name: Required. Azure ML Service workspace name. Type: string (or
      Expression with resultType string).
-    :type ml_workspace_name: object
+    :type ml_workspace_name: any
     :param service_principal_id: The ID of the service principal used to authenticate against the
      endpoint of a published Azure ML Service pipeline. Type: string (or Expression with resultType
      string).
-    :type service_principal_id: object
+    :type service_principal_id: any
     :param service_principal_key: The key of the service principal used to authenticate against the
      endpoint of a published Azure ML Service pipeline.
     :type service_principal_key: ~azure.synapse.artifacts.models.SecretBase
     :param tenant: The name or ID of the tenant to which the service principal belongs. Type:
      string (or Expression with resultType string).
-    :type tenant: object
+    :type tenant: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -5270,7 +5270,7 @@ class AzureMLUpdateResourceActivity(ExecutionActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -5287,14 +5287,14 @@ class AzureMLUpdateResourceActivity(ExecutionActivity):
     :type policy: ~azure.synapse.artifacts.models.ActivityPolicy
     :param trained_model_name: Required. Name of the Trained Model module in the Web Service
      experiment to be updated. Type: string (or Expression with resultType string).
-    :type trained_model_name: object
+    :type trained_model_name: any
     :param trained_model_linked_service_name: Required. Name of Azure Storage linked service
      holding the .ilearner file that will be uploaded by the update operation.
     :type trained_model_linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param trained_model_file_path: Required. The relative file path in trainedModelLinkedService
      to represent the .ilearner file that will be uploaded by the update operation.  Type: string
      (or Expression with resultType string).
-    :type trained_model_file_path: object
+    :type trained_model_file_path: any
     """
 
     _validation = {
@@ -5337,7 +5337,7 @@ class AzureMLWebServiceFile(msrest.serialization.Model):
 
     :param file_path: Required. The relative file path, including container name, in the Azure Blob
      Storage specified by the LinkedService. Type: string (or Expression with resultType string).
-    :type file_path: object
+    :type file_path: any
     :param linked_service_name: Required. Reference to an Azure Storage LinkedService, where Azure
      ML WebService Input/Output file located.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
@@ -5369,7 +5369,7 @@ class AzureMySqlLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -5379,16 +5379,16 @@ class AzureMySqlLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_string: Required. The connection string. Type: string, SecureString or
      AzureKeyVaultSecretReference.
-    :type connection_string: object
+    :type connection_string: any
     :param password: The Azure key vault secret reference of password in connection string.
     :type password: ~azure.synapse.artifacts.models.AzureKeyVaultSecretReference
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -5426,27 +5426,27 @@ class AzureMySqlSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param pre_copy_script: A query to execute before starting the copy. Type: string (or
      Expression with resultType string).
-    :type pre_copy_script: object
+    :type pre_copy_script: any
     """
 
     _validation = {
@@ -5480,26 +5480,26 @@ class AzureMySqlSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: Database query. Type: string (or Expression with resultType string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -5533,32 +5533,32 @@ class AzureMySqlTableDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: The Azure MySQL database table name. Type: string (or Expression with
      resultType string).
-    :type table_name: object
+    :type table_name: any
     :param table: The name of Azure MySQL database table. Type: string (or Expression with
      resultType string).
-    :type table: object
+    :type table: any
     """
 
     _validation = {
@@ -5597,7 +5597,7 @@ class AzurePostgreSqlLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -5607,16 +5607,16 @@ class AzurePostgreSqlLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_string: An ODBC connection string. Type: string, SecureString or
      AzureKeyVaultSecretReference.
-    :type connection_string: object
+    :type connection_string: any
     :param password: The Azure key vault secret reference of password in connection string.
     :type password: ~azure.synapse.artifacts.models.AzureKeyVaultSecretReference
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -5653,27 +5653,27 @@ class AzurePostgreSqlSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param pre_copy_script: A query to execute before starting the copy. Type: string (or
      Expression with resultType string).
-    :type pre_copy_script: object
+    :type pre_copy_script: any
     """
 
     _validation = {
@@ -5707,27 +5707,27 @@ class AzurePostgreSqlSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -5761,35 +5761,35 @@ class AzurePostgreSqlTableDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: The table name of the Azure PostgreSQL database which includes both schema
      and table. Type: string (or Expression with resultType string).
-    :type table_name: object
+    :type table_name: any
     :param table: The table name of the Azure PostgreSQL database. Type: string (or Expression with
      resultType string).
-    :type table: object
+    :type table: any
     :param schema_type_properties_schema: The schema name of the Azure PostgreSQL database. Type:
      string (or Expression with resultType string).
-    :type schema_type_properties_schema: object
+    :type schema_type_properties_schema: any
     """
 
     _validation = {
@@ -5830,24 +5830,24 @@ class AzureQueueSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     """
 
     _validation = {
@@ -5879,29 +5879,29 @@ class AzureSearchIndexDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param index_name: Required. The name of the Azure Search Index. Type: string (or Expression
      with resultType string).
-    :type index_name: object
+    :type index_name: any
     """
 
     _validation = {
@@ -5939,24 +5939,24 @@ class AzureSearchIndexSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param write_behavior: Specify the write behavior when upserting documents into Azure Search
      Index. Possible values include: "Merge", "Upload".
     :type write_behavior: str or ~azure.synapse.artifacts.models.AzureSearchIndexWriteBehaviorType
@@ -5993,7 +5993,7 @@ class AzureSearchLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -6003,16 +6003,16 @@ class AzureSearchLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param url: Required. URL for Azure Search service. Type: string (or Expression with resultType
      string).
-    :type url: object
+    :type url: any
     :param key: Admin Key for Azure Search service.
     :type key: ~azure.synapse.artifacts.models.SecretBase
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -6050,7 +6050,7 @@ class AzureSqlDatabaseLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -6060,29 +6060,29 @@ class AzureSqlDatabaseLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_string: Required. The connection string. Type: string, SecureString or
      AzureKeyVaultSecretReference.
-    :type connection_string: object
+    :type connection_string: any
     :param password: The Azure key vault secret reference of password in connection string.
     :type password: ~azure.synapse.artifacts.models.AzureKeyVaultSecretReference
     :param service_principal_id: The ID of the service principal used to authenticate against Azure
      SQL Database. Type: string (or Expression with resultType string).
-    :type service_principal_id: object
+    :type service_principal_id: any
     :param service_principal_key: The key of the service principal used to authenticate against
      Azure SQL Database.
     :type service_principal_key: ~azure.synapse.artifacts.models.SecretBase
     :param tenant: The name or ID of the tenant to which the service principal belongs. Type:
      string (or Expression with resultType string).
-    :type tenant: object
+    :type tenant: any
     :param azure_cloud_type: Indicates the azure cloud type of the service principle auth. Allowed
      values are AzurePublic, AzureChina, AzureUsGovernment, AzureGermany. Default value is the data
      factory regions’ cloud type. Type: string (or Expression with resultType string).
-    :type azure_cloud_type: object
+    :type azure_cloud_type: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -6128,7 +6128,7 @@ class AzureSqlDWLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -6138,29 +6138,29 @@ class AzureSqlDWLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_string: Required. The connection string. Type: string, SecureString or
      AzureKeyVaultSecretReference. Type: string, SecureString or AzureKeyVaultSecretReference.
-    :type connection_string: object
+    :type connection_string: any
     :param password: The Azure key vault secret reference of password in connection string.
     :type password: ~azure.synapse.artifacts.models.AzureKeyVaultSecretReference
     :param service_principal_id: The ID of the service principal used to authenticate against Azure
      SQL Data Warehouse. Type: string (or Expression with resultType string).
-    :type service_principal_id: object
+    :type service_principal_id: any
     :param service_principal_key: The key of the service principal used to authenticate against
      Azure SQL Data Warehouse.
     :type service_principal_key: ~azure.synapse.artifacts.models.SecretBase
     :param tenant: The name or ID of the tenant to which the service principal belongs. Type:
      string (or Expression with resultType string).
-    :type tenant: object
+    :type tenant: any
     :param azure_cloud_type: Indicates the azure cloud type of the service principle auth. Allowed
      values are AzurePublic, AzureChina, AzureUsGovernment, AzureGermany. Default value is the data
      factory regions’ cloud type. Type: string (or Expression with resultType string).
-    :type azure_cloud_type: object
+    :type azure_cloud_type: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -6206,35 +6206,35 @@ class AzureSqlDWTableDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: This property will be retired. Please consider using schema + table
      properties instead.
-    :type table_name: object
+    :type table_name: any
     :param schema_type_properties_schema: The schema name of the Azure SQL Data Warehouse. Type:
      string (or Expression with resultType string).
-    :type schema_type_properties_schema: object
+    :type schema_type_properties_schema: any
     :param table: The table name of the Azure SQL Data Warehouse. Type: string (or Expression with
      resultType string).
-    :type table: object
+    :type table: any
     """
 
     _validation = {
@@ -6275,7 +6275,7 @@ class AzureSqlMILinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -6285,29 +6285,29 @@ class AzureSqlMILinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_string: Required. The connection string. Type: string, SecureString or
      AzureKeyVaultSecretReference.
-    :type connection_string: object
+    :type connection_string: any
     :param password: The Azure key vault secret reference of password in connection string.
     :type password: ~azure.synapse.artifacts.models.AzureKeyVaultSecretReference
     :param service_principal_id: The ID of the service principal used to authenticate against Azure
      SQL Managed Instance. Type: string (or Expression with resultType string).
-    :type service_principal_id: object
+    :type service_principal_id: any
     :param service_principal_key: The key of the service principal used to authenticate against
      Azure SQL Managed Instance.
     :type service_principal_key: ~azure.synapse.artifacts.models.SecretBase
     :param tenant: The name or ID of the tenant to which the service principal belongs. Type:
      string (or Expression with resultType string).
-    :type tenant: object
+    :type tenant: any
     :param azure_cloud_type: Indicates the azure cloud type of the service principle auth. Allowed
      values are AzurePublic, AzureChina, AzureUsGovernment, AzureGermany. Default value is the data
      factory regions’ cloud type. Type: string (or Expression with resultType string).
-    :type azure_cloud_type: object
+    :type azure_cloud_type: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -6353,35 +6353,35 @@ class AzureSqlMITableDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: This property will be retired. Please consider using schema + table
      properties instead.
-    :type table_name: object
+    :type table_name: any
     :param schema_type_properties_schema: The schema name of the Azure SQL Managed Instance. Type:
      string (or Expression with resultType string).
-    :type schema_type_properties_schema: object
+    :type schema_type_properties_schema: any
     :param table: The table name of the Azure SQL Managed Instance dataset. Type: string (or
      Expression with resultType string).
-    :type table: object
+    :type table: any
     """
 
     _validation = {
@@ -6422,42 +6422,42 @@ class AzureSqlSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param sql_writer_stored_procedure_name: SQL writer stored procedure name. Type: string (or
      Expression with resultType string).
-    :type sql_writer_stored_procedure_name: object
+    :type sql_writer_stored_procedure_name: any
     :param sql_writer_table_type: SQL writer table type. Type: string (or Expression with
      resultType string).
-    :type sql_writer_table_type: object
+    :type sql_writer_table_type: any
     :param pre_copy_script: SQL pre-copy script. Type: string (or Expression with resultType
      string).
-    :type pre_copy_script: object
+    :type pre_copy_script: any
     :param stored_procedure_parameters: SQL stored procedure parameters.
     :type stored_procedure_parameters: dict[str,
      ~azure.synapse.artifacts.models.StoredProcedureParameter]
     :param stored_procedure_table_type_parameter_name: The stored procedure parameter name of the
      table type. Type: string (or Expression with resultType string).
-    :type stored_procedure_table_type_parameter_name: object
+    :type stored_procedure_table_type_parameter_name: any
     :param table_option: The option to handle sink table, such as autoCreate. For now only
      'autoCreate' value is supported. Type: string (or Expression with resultType string).
-    :type table_option: object
+    :type table_option: any
     """
 
     _validation = {
@@ -6501,39 +6501,39 @@ class AzureSqlSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param sql_reader_query: SQL reader query. Type: string (or Expression with resultType string).
-    :type sql_reader_query: object
+    :type sql_reader_query: any
     :param sql_reader_stored_procedure_name: Name of the stored procedure for a SQL Database
      source. This cannot be used at the same time as SqlReaderQuery. Type: string (or Expression
      with resultType string).
-    :type sql_reader_stored_procedure_name: object
+    :type sql_reader_stored_procedure_name: any
     :param stored_procedure_parameters: Value and type setting for stored procedure parameters.
      Example: "{Parameter1: {value: "1", type: "int"}}".
     :type stored_procedure_parameters: dict[str,
      ~azure.synapse.artifacts.models.StoredProcedureParameter]
     :param produce_additional_types: Which additional types to produce.
-    :type produce_additional_types: object
+    :type produce_additional_types: any
     :param partition_option: The partition mechanism that will be used for Sql read in parallel.
      Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
-    :type partition_option: object
+    :type partition_option: any
     :param partition_settings: The settings that will be leveraged for Sql source partitioning.
     :type partition_settings: ~azure.synapse.artifacts.models.SqlPartitionSettings
     """
@@ -6579,35 +6579,35 @@ class AzureSqlTableDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: This property will be retired. Please consider using schema + table
      properties instead.
-    :type table_name: object
+    :type table_name: any
     :param schema_type_properties_schema: The schema name of the Azure SQL database. Type: string
      (or Expression with resultType string).
-    :type schema_type_properties_schema: object
+    :type schema_type_properties_schema: any
     :param table: The table name of the Azure SQL database. Type: string (or Expression with
      resultType string).
-    :type table: object
+    :type table: any
     """
 
     _validation = {
@@ -6648,7 +6648,7 @@ class AzureStorageLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -6658,15 +6658,15 @@ class AzureStorageLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_string: The connection string. It is mutually exclusive with sasUri property.
      Type: string, SecureString or AzureKeyVaultSecretReference.
-    :type connection_string: object
+    :type connection_string: any
     :param account_key: The Azure key vault secret reference of accountKey in connection string.
     :type account_key: ~azure.synapse.artifacts.models.AzureKeyVaultSecretReference
     :param sas_uri: SAS URI of the Azure Storage resource. It is mutually exclusive with
      connectionString property. Type: string, SecureString or AzureKeyVaultSecretReference.
-    :type sas_uri: object
+    :type sas_uri: any
     :param sas_token: The Azure key vault secret reference of sasToken in sas uri.
     :type sas_token: ~azure.synapse.artifacts.models.AzureKeyVaultSecretReference
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
@@ -6713,29 +6713,29 @@ class AzureTableDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: Required. The table name of the Azure Table storage. Type: string (or
      Expression with resultType string).
-    :type table_name: object
+    :type table_name: any
     """
 
     _validation = {
@@ -6773,36 +6773,36 @@ class AzureTableSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param azure_table_default_partition_key_value: Azure Table default partition key value. Type:
      string (or Expression with resultType string).
-    :type azure_table_default_partition_key_value: object
+    :type azure_table_default_partition_key_value: any
     :param azure_table_partition_key_name: Azure Table partition key name. Type: string (or
      Expression with resultType string).
-    :type azure_table_partition_key_name: object
+    :type azure_table_partition_key_name: any
     :param azure_table_row_key_name: Azure Table row key name. Type: string (or Expression with
      resultType string).
-    :type azure_table_row_key_name: object
+    :type azure_table_row_key_name: any
     :param azure_table_insert_type: Azure Table insert type. Type: string (or Expression with
      resultType string).
-    :type azure_table_insert_type: object
+    :type azure_table_insert_type: any
     """
 
     _validation = {
@@ -6842,30 +6842,30 @@ class AzureTableSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param azure_table_source_query: Azure Table source query. Type: string (or Expression with
      resultType string).
-    :type azure_table_source_query: object
+    :type azure_table_source_query: any
     :param azure_table_source_ignore_table_not_found: Azure Table source ignore table not found.
      Type: boolean (or Expression with resultType boolean).
-    :type azure_table_source_ignore_table_not_found: object
+    :type azure_table_source_ignore_table_not_found: any
     """
 
     _validation = {
@@ -6901,7 +6901,7 @@ class AzureTableStorageLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -6911,15 +6911,15 @@ class AzureTableStorageLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_string: The connection string. It is mutually exclusive with sasUri property.
      Type: string, SecureString or AzureKeyVaultSecretReference.
-    :type connection_string: object
+    :type connection_string: any
     :param account_key: The Azure key vault secret reference of accountKey in connection string.
     :type account_key: ~azure.synapse.artifacts.models.AzureKeyVaultSecretReference
     :param sas_uri: SAS URI of the Azure Storage resource. It is mutually exclusive with
      connectionString property. Type: string, SecureString or AzureKeyVaultSecretReference.
-    :type sas_uri: object
+    :type sas_uri: any
     :param sas_token: The Azure key vault secret reference of sasToken in sas uri.
     :type sas_token: ~azure.synapse.artifacts.models.AzureKeyVaultSecretReference
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
@@ -7183,23 +7183,23 @@ class BinaryDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
@@ -7248,7 +7248,7 @@ class FormatReadSettings(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The read setting type.Constant filled by server.
     :type type: str
     """
@@ -7282,7 +7282,7 @@ class BinaryReadSettings(FormatReadSettings):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The read setting type.Constant filled by server.
     :type type: str
     :param compression_properties: Compression settings.
@@ -7315,24 +7315,24 @@ class BinarySink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param store_settings: Binary store settings.
     :type store_settings: ~azure.synapse.artifacts.models.StoreWriteSettings
     """
@@ -7368,18 +7368,18 @@ class BinarySource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param store_settings: Binary store settings.
     :type store_settings: ~azure.synapse.artifacts.models.StoreReadSettings
     :param format_settings: Binary format settings.
@@ -7422,7 +7422,7 @@ class Trigger(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Trigger type.Constant filled by server.
     :type type: str
     :param description: Trigger description.
@@ -7431,7 +7431,7 @@ class Trigger(msrest.serialization.Model):
      called on the Trigger. Possible values include: "Started", "Stopped", "Disabled".
     :vartype runtime_state: str or ~azure.synapse.artifacts.models.TriggerRuntimeState
     :param annotations: List of tags that can be used for describing the trigger.
-    :type annotations: list[object]
+    :type annotations: list[any]
     """
 
     _validation = {
@@ -7475,7 +7475,7 @@ class MultiplePipelineTrigger(Trigger):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Trigger type.Constant filled by server.
     :type type: str
     :param description: Trigger description.
@@ -7484,7 +7484,7 @@ class MultiplePipelineTrigger(Trigger):
      called on the Trigger. Possible values include: "Started", "Stopped", "Disabled".
     :vartype runtime_state: str or ~azure.synapse.artifacts.models.TriggerRuntimeState
     :param annotations: List of tags that can be used for describing the trigger.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param pipelines: Pipelines that need to be started.
     :type pipelines: list[~azure.synapse.artifacts.models.TriggerPipelineReference]
     """
@@ -7525,7 +7525,7 @@ class BlobEventsTrigger(MultiplePipelineTrigger):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Trigger type.Constant filled by server.
     :type type: str
     :param description: Trigger description.
@@ -7534,7 +7534,7 @@ class BlobEventsTrigger(MultiplePipelineTrigger):
      called on the Trigger. Possible values include: "Started", "Stopped", "Disabled".
     :vartype runtime_state: str or ~azure.synapse.artifacts.models.TriggerRuntimeState
     :param annotations: List of tags that can be used for describing the trigger.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param pipelines: Pipelines that need to be started.
     :type pipelines: list[~azure.synapse.artifacts.models.TriggerPipelineReference]
     :param blob_path_begins_with: The blob path must begin with the pattern provided for trigger to
@@ -7595,35 +7595,35 @@ class BlobSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param blob_writer_overwrite_files: Blob writer overwrite files. Type: boolean (or Expression
      with resultType boolean).
-    :type blob_writer_overwrite_files: object
+    :type blob_writer_overwrite_files: any
     :param blob_writer_date_time_format: Blob writer date time format. Type: string (or Expression
      with resultType string).
-    :type blob_writer_date_time_format: object
+    :type blob_writer_date_time_format: any
     :param blob_writer_add_header: Blob writer add header. Type: boolean (or Expression with
      resultType boolean).
-    :type blob_writer_add_header: object
+    :type blob_writer_add_header: any
     :param copy_behavior: The type of copy behavior for copy sink.
-    :type copy_behavior: object
+    :type copy_behavior: any
     """
 
     _validation = {
@@ -7663,27 +7663,27 @@ class BlobSource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param treat_empty_as_null: Treat empty as null. Type: boolean (or Expression with resultType
      boolean).
-    :type treat_empty_as_null: object
+    :type treat_empty_as_null: any
     :param skip_header_line_count: Number of header lines to skip from each blob. Type: integer (or
      Expression with resultType integer).
-    :type skip_header_line_count: object
+    :type skip_header_line_count: any
     :param recursive: If true, files under the folder path will be read recursively. Default is
      true. Type: boolean (or Expression with resultType boolean).
-    :type recursive: object
+    :type recursive: any
     """
 
     _validation = {
@@ -7721,7 +7721,7 @@ class BlobTrigger(MultiplePipelineTrigger):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Trigger type.Constant filled by server.
     :type type: str
     :param description: Trigger description.
@@ -7730,7 +7730,7 @@ class BlobTrigger(MultiplePipelineTrigger):
      called on the Trigger. Possible values include: "Started", "Stopped", "Disabled".
     :vartype runtime_state: str or ~azure.synapse.artifacts.models.TriggerRuntimeState
     :param annotations: List of tags that can be used for describing the trigger.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param pipelines: Pipelines that need to be started.
     :type pipelines: list[~azure.synapse.artifacts.models.TriggerPipelineReference]
     :param folder_path: Required. The path of the container/folder that will trigger the pipeline.
@@ -7780,7 +7780,7 @@ class CassandraLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -7790,25 +7790,25 @@ class CassandraLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param host: Required. Host name for connection. Type: string (or Expression with resultType
      string).
-    :type host: object
+    :type host: any
     :param authentication_type: AuthenticationType to be used for connection. Type: string (or
      Expression with resultType string).
-    :type authentication_type: object
+    :type authentication_type: any
     :param port: The port for the connection. Type: integer (or Expression with resultType
      integer).
-    :type port: object
+    :type port: any
     :param username: Username for authentication. Type: string (or Expression with resultType
      string).
-    :type username: object
+    :type username: any
     :param password: Password for authentication.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -7852,27 +7852,27 @@ class CassandraSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: Database query. Should be a SQL-92 query expression or Cassandra Query Language
      (CQL) command. Type: string (or Expression with resultType string).
-    :type query: object
+    :type query: any
     :param consistency_level: The consistency level specifies how many Cassandra servers must
      respond to a read request before returning data to the client application. Cassandra checks the
      specified number of Cassandra servers for data to satisfy the read request. Must be one of
@@ -7916,32 +7916,32 @@ class CassandraTableDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: The table name of the Cassandra database. Type: string (or Expression with
      resultType string).
-    :type table_name: object
+    :type table_name: any
     :param keyspace: The keyspace of the Cassandra database. Type: string (or Expression with
      resultType string).
-    :type keyspace: object
+    :type keyspace: any
     """
 
     _validation = {
@@ -7982,7 +7982,7 @@ class ChainingTrigger(Trigger):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Trigger type.Constant filled by server.
     :type type: str
     :param description: Trigger description.
@@ -7991,7 +7991,7 @@ class ChainingTrigger(Trigger):
      called on the Trigger. Possible values include: "Started", "Stopped", "Disabled".
     :vartype runtime_state: str or ~azure.synapse.artifacts.models.TriggerRuntimeState
     :param annotations: List of tags that can be used for describing the trigger.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param pipeline: Required. Pipeline for which runs are created when all upstream pipelines
      complete successfully.
     :type pipeline: ~azure.synapse.artifacts.models.TriggerPipelineReference
@@ -8077,29 +8077,29 @@ class CommonDataServiceForAppsEntityDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param entity_name: The logical name of the entity. Type: string (or Expression with resultType
      string).
-    :type entity_name: object
+    :type entity_name: any
     """
 
     _validation = {
@@ -8136,7 +8136,7 @@ class CommonDataServiceForAppsLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -8146,7 +8146,7 @@ class CommonDataServiceForAppsLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param deployment_type: Required. The deployment type of the Common Data Service for Apps
      instance. 'Online' for Common Data Service for Apps Online and 'OnPremisesWithIfd' for Common
      Data Service for Apps on-premises with Ifd. Type: string (or Expression with resultType
@@ -8155,20 +8155,20 @@ class CommonDataServiceForAppsLinkedService(LinkedService):
     :param host_name: The host name of the on-premises Common Data Service for Apps server. The
      property is required for on-prem and not allowed for online. Type: string (or Expression with
      resultType string).
-    :type host_name: object
+    :type host_name: any
     :param port: The port of on-premises Common Data Service for Apps server. The property is
      required for on-prem and not allowed for online. Default is 443. Type: integer (or Expression
      with resultType integer), minimum: 0.
-    :type port: object
+    :type port: any
     :param service_uri: The URL to the Microsoft Common Data Service for Apps server. The property
      is required for on-line and not allowed for on-prem. Type: string (or Expression with
      resultType string).
-    :type service_uri: object
+    :type service_uri: any
     :param organization_name: The organization name of the Common Data Service for Apps instance.
      The property is required for on-prem and required for online when there are more than one
      Common Data Service for Apps instances associated with the user. Type: string (or Expression
      with resultType string).
-    :type organization_name: object
+    :type organization_name: any
     :param authentication_type: Required. The authentication type to connect to Common Data Service
      for Apps server. 'Office365' for online scenario, 'Ifd' for on-premises with Ifd scenario.
      'AADServicePrincipal' for Server-To-Server authentication in online scenario. Type: string (or
@@ -8177,15 +8177,15 @@ class CommonDataServiceForAppsLinkedService(LinkedService):
     :type authentication_type: str or ~azure.synapse.artifacts.models.DynamicsAuthenticationType
     :param username: User name to access the Common Data Service for Apps instance. Type: string
      (or Expression with resultType string).
-    :type username: object
+    :type username: any
     :param password: Password to access the Common Data Service for Apps instance.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param service_principal_id: The client ID of the application in Azure Active Directory used
      for Server-To-Server authentication. Type: string (or Expression with resultType string).
-    :type service_principal_id: object
+    :type service_principal_id: any
     :param service_principal_credential_type: A string from ServicePrincipalCredentialEnum or an
      expression.
-    :type service_principal_credential_type: object
+    :type service_principal_credential_type: any
     :param service_principal_credential: The credential of the service principal object in Azure
      Active Directory. If servicePrincipalCredentialType is 'ServicePrincipalKey',
      servicePrincipalCredential can be SecureString or AzureKeyVaultSecretReference. If
@@ -8195,7 +8195,7 @@ class CommonDataServiceForAppsLinkedService(LinkedService):
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -8252,34 +8252,34 @@ class CommonDataServiceForAppsSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param write_behavior: Required. The write behavior for the operation. Possible values include:
      "Upsert".
     :type write_behavior: str or ~azure.synapse.artifacts.models.DynamicsSinkWriteBehavior
     :param ignore_null_values: The flag indicating whether to ignore null values from input dataset
      (except key fields) during write operation. Default is false. Type: boolean (or Expression with
      resultType boolean).
-    :type ignore_null_values: object
+    :type ignore_null_values: any
     :param alternate_key_name: The logical name of the alternate key which will be used when
      upserting records. Type: string (or Expression with resultType string).
-    :type alternate_key_name: object
+    :type alternate_key_name: any
     """
 
     _validation = {
@@ -8318,21 +8318,21 @@ class CommonDataServiceForAppsSource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query: FetchXML is a proprietary query language that is used in Microsoft Common Data
      Service for Apps (online & on-premises). Type: string (or Expression with resultType string).
-    :type query: object
+    :type query: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
@@ -8372,7 +8372,7 @@ class CompressionReadSettings(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The Compression setting type.Constant filled by server.
     :type type: str
     """
@@ -8406,7 +8406,7 @@ class ConcurLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -8416,31 +8416,31 @@ class ConcurLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_properties: Properties used to connect to Concur. It is mutually exclusive
      with any other properties in the linked service. Type: object.
-    :type connection_properties: object
+    :type connection_properties: any
     :param client_id: Required. Application client_id supplied by Concur App Management.
-    :type client_id: object
+    :type client_id: any
     :param username: Required. The user name that you use to access Concur Service.
-    :type username: object
+    :type username: any
     :param password: The password corresponding to the user name that you provided in the username
      field.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param use_encrypted_endpoints: Specifies whether the data source endpoints are encrypted using
      HTTPS. The default value is true.
-    :type use_encrypted_endpoints: object
+    :type use_encrypted_endpoints: any
     :param use_host_verification: Specifies whether to require the host name in the server's
      certificate to match the host name of the server when connecting over SSL. The default value is
      true.
-    :type use_host_verification: object
+    :type use_host_verification: any
     :param use_peer_verification: Specifies whether to verify the identity of the server when
      connecting over SSL. The default value is true.
-    :type use_peer_verification: object
+    :type use_peer_verification: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -8489,28 +8489,28 @@ class ConcurObjectDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: The table name. Type: string (or Expression with resultType string).
-    :type table_name: object
+    :type table_name: any
     """
 
     _validation = {
@@ -8547,27 +8547,27 @@ class ConcurSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -8601,7 +8601,7 @@ class CopyActivity(ExecutionActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -8625,22 +8625,22 @@ class CopyActivity(ExecutionActivity):
     :param sink: Required. Copy activity sink.
     :type sink: ~azure.synapse.artifacts.models.CopySink
     :param translator: Copy activity translator. If not specified, tabular translator is used.
-    :type translator: object
+    :type translator: any
     :param enable_staging: Specifies whether to copy data via an interim staging. Default value is
      false. Type: boolean (or Expression with resultType boolean).
-    :type enable_staging: object
+    :type enable_staging: any
     :param staging_settings: Specifies interim staging settings when EnableStaging is true.
     :type staging_settings: ~azure.synapse.artifacts.models.StagingSettings
     :param parallel_copies: Maximum number of concurrent sessions opened on the source or sink to
      avoid overloading the data store. Type: integer (or Expression with resultType integer),
      minimum: 0.
-    :type parallel_copies: object
+    :type parallel_copies: any
     :param data_integration_units: Maximum number of data integration units that can be used to
      perform this data movement. Type: integer (or Expression with resultType integer), minimum: 0.
-    :type data_integration_units: object
+    :type data_integration_units: any
     :param enable_skip_incompatible_row: Whether to skip incompatible row. Default value is false.
      Type: boolean (or Expression with resultType boolean).
-    :type enable_skip_incompatible_row: object
+    :type enable_skip_incompatible_row: any
     :param redirect_incompatible_row_settings: Redirect incompatible row settings when
      EnableSkipIncompatibleRow is true.
     :type redirect_incompatible_row_settings:
@@ -8651,12 +8651,12 @@ class CopyActivity(ExecutionActivity):
     :param log_settings: Log settings customer needs provide when enabling log.
     :type log_settings: ~azure.synapse.artifacts.models.LogSettings
     :param preserve_rules: Preserve Rules.
-    :type preserve_rules: list[object]
+    :type preserve_rules: list[any]
     :param preserve: Preserve rules.
-    :type preserve: list[object]
+    :type preserve: list[any]
     :param validate_data_consistency: Whether to enable Data Consistency validation. Type: boolean
      (or Expression with resultType boolean).
-    :type validate_data_consistency: object
+    :type validate_data_consistency: any
     :param skip_error_file: Specify the fault tolerance for data consistency.
     :type skip_error_file: ~azure.synapse.artifacts.models.SkipErrorFile
     """
@@ -8726,10 +8726,10 @@ class CopyActivityLogSettings(msrest.serialization.Model):
 
     :param log_level: Gets or sets the log level, support: Info, Warning. Type: string (or
      Expression with resultType string).
-    :type log_level: object
+    :type log_level: any
     :param enable_reliable_logging: Specifies whether to enable reliable logging. Type: boolean (or
      Expression with resultType boolean).
-    :type enable_reliable_logging: object
+    :type enable_reliable_logging: any
     """
 
     _attribute_map = {
@@ -8756,7 +8756,7 @@ class CopyTranslator(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy translator type.Constant filled by server.
     :type type: str
     """
@@ -8790,7 +8790,7 @@ class CosmosDbLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -8800,22 +8800,22 @@ class CosmosDbLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_string: The connection string. Type: string, SecureString or
      AzureKeyVaultSecretReference.
-    :type connection_string: object
+    :type connection_string: any
     :param account_endpoint: The endpoint of the Azure CosmosDB account. Type: string (or
      Expression with resultType string).
-    :type account_endpoint: object
+    :type account_endpoint: any
     :param database: The name of the database. Type: string (or Expression with resultType string).
-    :type database: object
+    :type database: any
     :param account_key: The account key of the Azure CosmosDB account. Type: SecureString or
      AzureKeyVaultSecretReference.
     :type account_key: ~azure.synapse.artifacts.models.SecretBase
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -8856,29 +8856,29 @@ class CosmosDbMongoDbApiCollectionDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param collection: Required. The collection name of the CosmosDB (MongoDB API) database. Type:
      string (or Expression with resultType string).
-    :type collection: object
+    :type collection: any
     """
 
     _validation = {
@@ -8916,7 +8916,7 @@ class CosmosDbMongoDbApiLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -8926,14 +8926,14 @@ class CosmosDbMongoDbApiLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_string: Required. The CosmosDB (MongoDB API) connection string. Type: string,
      SecureString or AzureKeyVaultSecretReference. Type: string, SecureString or
      AzureKeyVaultSecretReference.
-    :type connection_string: object
+    :type connection_string: any
     :param database: Required. The name of the CosmosDB (MongoDB API) database that you want to
      access. Type: string (or Expression with resultType string).
-    :type database: object
+    :type database: any
     """
 
     _validation = {
@@ -8970,28 +8970,28 @@ class CosmosDbMongoDbApiSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param write_behavior: Specifies whether the document with same key to be overwritten (upsert)
      rather than throw exception (insert). The default value is "insert". Type: string (or
      Expression with resultType string). Type: string (or Expression with resultType string).
-    :type write_behavior: object
+    :type write_behavior: any
     """
 
     _validation = {
@@ -9025,32 +9025,32 @@ class CosmosDbMongoDbApiSource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param filter: Specifies selection filter using query operators. To return all documents in a
      collection, omit this parameter or pass an empty document ({}). Type: string (or Expression
      with resultType string).
-    :type filter: object
+    :type filter: any
     :param cursor_methods: Cursor methods for Mongodb query.
     :type cursor_methods: ~azure.synapse.artifacts.models.MongoDbCursorMethodsProperties
     :param batch_size: Specifies the number of documents to return in each batch of the response
      from MongoDB instance. In most cases, modifying the batch size will not affect the user or the
      application. This property's main purpose is to avoid hit the limitation of response size.
      Type: integer (or Expression with resultType integer).
-    :type batch_size: object
+    :type batch_size: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
@@ -9093,29 +9093,29 @@ class CosmosDbSqlApiCollectionDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param collection_name: Required. CosmosDB (SQL API) collection name. Type: string (or
      Expression with resultType string).
-    :type collection_name: object
+    :type collection_name: any
     """
 
     _validation = {
@@ -9153,27 +9153,27 @@ class CosmosDbSqlApiSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param write_behavior: Describes how to write data to Azure Cosmos DB. Type: string (or
      Expression with resultType string). Allowed values: insert and upsert.
-    :type write_behavior: object
+    :type write_behavior: any
     """
 
     _validation = {
@@ -9207,29 +9207,29 @@ class CosmosDbSqlApiSource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query: SQL API query. Type: string (or Expression with resultType string).
-    :type query: object
+    :type query: any
     :param page_size: Page size of the result. Type: integer (or Expression with resultType
      integer).
-    :type page_size: object
+    :type page_size: any
     :param preferred_regions: Preferred regions. Type: array of strings (or Expression with
      resultType array of strings).
-    :type preferred_regions: object
+    :type preferred_regions: any
     :param detect_datetime: Whether detect primitive values as datetime values. Type: boolean (or
      Expression with resultType boolean).
-    :type detect_datetime: object
+    :type detect_datetime: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
@@ -9272,7 +9272,7 @@ class CouchbaseLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -9282,16 +9282,16 @@ class CouchbaseLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_string: An ODBC connection string. Type: string, SecureString or
      AzureKeyVaultSecretReference.
-    :type connection_string: object
+    :type connection_string: any
     :param cred_string: The Azure key vault secret reference of credString in connection string.
     :type cred_string: ~azure.synapse.artifacts.models.AzureKeyVaultSecretReference
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -9328,27 +9328,27 @@ class CouchbaseSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -9382,28 +9382,28 @@ class CouchbaseTableDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: The table name. Type: string (or Expression with resultType string).
-    :type table_name: object
+    :type table_name: any
     """
 
     _validation = {
@@ -9523,7 +9523,7 @@ class CustomActivity(ExecutionActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -9540,24 +9540,24 @@ class CustomActivity(ExecutionActivity):
     :type policy: ~azure.synapse.artifacts.models.ActivityPolicy
     :param command: Required. Command for custom activity Type: string (or Expression with
      resultType string).
-    :type command: object
+    :type command: any
     :param resource_linked_service: Resource linked service reference.
     :type resource_linked_service: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param folder_path: Folder path for resource files Type: string (or Expression with resultType
      string).
-    :type folder_path: object
+    :type folder_path: any
     :param reference_objects: Reference objects.
     :type reference_objects: ~azure.synapse.artifacts.models.CustomActivityReferenceObject
     :param extended_properties: User defined property bag. There is no restriction on the keys or
      values that can be used. The user specified custom activity has the full responsibility to
      consume and interpret the content defined.
-    :type extended_properties: dict[str, object]
+    :type extended_properties: dict[str, any]
     :param retention_time_in_days: The retention time for the files submitted for custom activity.
      Type: double (or Expression with resultType double).
-    :type retention_time_in_days: object
+    :type retention_time_in_days: any
     :param auto_user_specification: Elevation level and scope for the user, default is nonadmin
      task. Type: string (or Expression with resultType double).
-    :type auto_user_specification: object
+    :type auto_user_specification: any
     """
 
     _validation = {
@@ -9629,28 +9629,28 @@ class CustomDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param type_properties: Custom dataset properties.
-    :type type_properties: object
+    :type type_properties: any
     """
 
     _validation = {
@@ -9687,7 +9687,7 @@ class CustomDataSourceLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -9697,9 +9697,9 @@ class CustomDataSourceLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param type_properties: Required. Custom linked service properties.
-    :type type_properties: object
+    :type type_properties: any
     """
 
     _validation = {
@@ -9764,7 +9764,7 @@ class CustomEventsTrigger(MultiplePipelineTrigger):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Trigger type.Constant filled by server.
     :type type: str
     :param description: Trigger description.
@@ -9773,7 +9773,7 @@ class CustomEventsTrigger(MultiplePipelineTrigger):
      called on the Trigger. Possible values include: "Started", "Stopped", "Disabled".
     :vartype runtime_state: str or ~azure.synapse.artifacts.models.TriggerRuntimeState
     :param annotations: List of tags that can be used for describing the trigger.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param pipelines: Pipelines that need to be started.
     :type pipelines: list[~azure.synapse.artifacts.models.TriggerPipelineReference]
     :param subject_begins_with: The event subject must begin with the pattern provided for trigger
@@ -9783,7 +9783,7 @@ class CustomEventsTrigger(MultiplePipelineTrigger):
      fire. At least one of these must be provided: subjectBeginsWith, subjectEndsWith.
     :type subject_ends_with: str
     :param events: Required. The list of event types that cause this trigger to fire.
-    :type events: list[object]
+    :type events: list[any]
     :param scope: Required. The ARM resource ID of the Azure Event Grid Topic.
     :type scope: str
     """
@@ -9859,7 +9859,7 @@ class DatabricksNotebookActivity(ExecutionActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -9877,12 +9877,12 @@ class DatabricksNotebookActivity(ExecutionActivity):
     :param notebook_path: Required. The absolute path of the notebook to be run in the Databricks
      Workspace. This path must begin with a slash. Type: string (or Expression with resultType
      string).
-    :type notebook_path: object
+    :type notebook_path: any
     :param base_parameters: Base parameters to be used for each run of this job.If the notebook
      takes a parameter that is not specified, the default value from the notebook will be used.
-    :type base_parameters: dict[str, object]
+    :type base_parameters: dict[str, any]
     :param libraries: A list of libraries to be installed on the cluster that will execute the job.
-    :type libraries: list[dict[str, object]]
+    :type libraries: list[dict[str, any]]
     """
 
     _validation = {
@@ -9923,7 +9923,7 @@ class DatabricksSparkJarActivity(ExecutionActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -9941,11 +9941,11 @@ class DatabricksSparkJarActivity(ExecutionActivity):
     :param main_class_name: Required. The full name of the class containing the main method to be
      executed. This class must be contained in a JAR provided as a library. Type: string (or
      Expression with resultType string).
-    :type main_class_name: object
+    :type main_class_name: any
     :param parameters: Parameters that will be passed to the main method.
-    :type parameters: list[object]
+    :type parameters: list[any]
     :param libraries: A list of libraries to be installed on the cluster that will execute the job.
-    :type libraries: list[dict[str, object]]
+    :type libraries: list[dict[str, any]]
     """
 
     _validation = {
@@ -9986,7 +9986,7 @@ class DatabricksSparkPythonActivity(ExecutionActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -10003,11 +10003,11 @@ class DatabricksSparkPythonActivity(ExecutionActivity):
     :type policy: ~azure.synapse.artifacts.models.ActivityPolicy
     :param python_file: Required. The URI of the Python file to be executed. DBFS paths are
      supported. Type: string (or Expression with resultType string).
-    :type python_file: object
+    :type python_file: any
     :param parameters: Command line parameters that will be passed to the Python file.
-    :type parameters: list[object]
+    :type parameters: list[any]
     :param libraries: A list of libraries to be installed on the cluster that will execute the job.
-    :type libraries: list[dict[str, object]]
+    :type libraries: list[dict[str, any]]
     """
 
     _validation = {
@@ -10054,7 +10054,7 @@ class DataFlow(msrest.serialization.Model):
     :param description: The description of the data flow.
     :type description: str
     :param annotations: List of tags that can be used for describing the data flow.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this data flow is in. If not specified, Data flow will appear at
      the root level.
     :type folder: ~azure.synapse.artifacts.models.DataFlowFolder
@@ -10098,7 +10098,7 @@ class DataFlowDebugCommandRequest(msrest.serialization.Model):
     :param command_name: The command name.
     :type command_name: str
     :param command_payload: Required. The command payload object.
-    :type command_payload: object
+    :type command_payload: any
     """
 
     _validation = {
@@ -10152,7 +10152,7 @@ class DataFlowDebugPackage(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param session_id: The ID of data flow debug session.
     :type session_id: str
     :param data_flow: Data flow instance.
@@ -10197,9 +10197,9 @@ class DataFlowDebugPackageDebugSettings(msrest.serialization.Model):
     :param source_settings: Source setting for data flow debug.
     :type source_settings: list[~azure.synapse.artifacts.models.DataFlowSourceSetting]
     :param parameters: Data flow parameters.
-    :type parameters: dict[str, object]
+    :type parameters: dict[str, any]
     :param dataset_parameters: Parameters for dataset.
-    :type dataset_parameters: object
+    :type dataset_parameters: any
     """
 
     _attribute_map = {
@@ -10343,7 +10343,7 @@ class DataFlowDebugSessionInfo(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param data_flow_name: The name of the data flow.
     :type data_flow_name: str
     :param compute_type: Compute type of the cluster.
@@ -10480,13 +10480,13 @@ class DataFlowReference(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Data flow reference type. Possible values include: "DataFlowReference".
     :type type: str or ~azure.synapse.artifacts.models.DataFlowReferenceType
     :param reference_name: Required. Reference data flow name.
     :type reference_name: str
     :param dataset_parameters: Reference data flow parameters from dataset.
-    :type dataset_parameters: object
+    :type dataset_parameters: any
     """
 
     _validation = {
@@ -10707,7 +10707,7 @@ class DataFlowSourceSetting(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param source_name: The data flow source name.
     :type source_name: str
     :param row_limit: Defines the row limit of data flow source in debug.
@@ -10760,7 +10760,7 @@ class DataLakeAnalyticsUSQLActivity(ExecutionActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -10777,24 +10777,24 @@ class DataLakeAnalyticsUSQLActivity(ExecutionActivity):
     :type policy: ~azure.synapse.artifacts.models.ActivityPolicy
     :param script_path: Required. Case-sensitive path to folder that contains the U-SQL script.
      Type: string (or Expression with resultType string).
-    :type script_path: object
+    :type script_path: any
     :param script_linked_service: Required. Script linked service reference.
     :type script_linked_service: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param degree_of_parallelism: The maximum number of nodes simultaneously used to run the job.
      Default value is 1. Type: integer (or Expression with resultType integer), minimum: 1.
-    :type degree_of_parallelism: object
+    :type degree_of_parallelism: any
     :param priority: Determines which jobs out of all that are queued should be selected to run
      first. The lower the number, the higher the priority. Default value is 1000. Type: integer (or
      Expression with resultType integer), minimum: 1.
-    :type priority: object
+    :type priority: any
     :param parameters: Parameters for U-SQL job request.
-    :type parameters: dict[str, object]
+    :type parameters: dict[str, any]
     :param runtime_version: Runtime version of the U-SQL engine to use. Type: string (or Expression
      with resultType string).
-    :type runtime_version: object
+    :type runtime_version: any
     :param compilation_mode: Compilation mode of U-SQL. Must be one of these values : Semantic,
      Full and SingleBox. Type: string (or Expression with resultType string).
-    :type compilation_mode: object
+    :type compilation_mode: any
     """
 
     _validation = {
@@ -10870,7 +10870,7 @@ class DatasetCompression(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset compression.Constant filled by server.
     :type type: str
     """
@@ -10904,7 +10904,7 @@ class DatasetBZip2Compression(DatasetCompression):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset compression.Constant filled by server.
     :type type: str
     """
@@ -10930,9 +10930,9 @@ class DatasetDataElement(msrest.serialization.Model):
     """Columns that define the structure of the dataset.
 
     :param name: Name of the column. Type: string (or Expression with resultType string).
-    :type name: object
+    :type name: any
     :param type: Type of the column. Type: string (or Expression with resultType string).
-    :type type: object
+    :type type: any
     """
 
     _attribute_map = {
@@ -10984,11 +10984,11 @@ class DatasetDeflateCompression(DatasetCompression):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset compression.Constant filled by server.
     :type type: str
     :param level: The Deflate compression level.
-    :type level: object
+    :type level: any
     """
 
     _validation = {
@@ -11036,11 +11036,11 @@ class DatasetGZipCompression(DatasetCompression):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset compression.Constant filled by server.
     :type type: str
     :param level: The GZip compression level.
-    :type level: object
+    :type level: any
     """
 
     _validation = {
@@ -11101,7 +11101,7 @@ class DatasetReference(msrest.serialization.Model):
     :param reference_name: Required. Reference dataset name.
     :type reference_name: str
     :param parameters: Arguments for dataset.
-    :type parameters: dict[str, object]
+    :type parameters: dict[str, any]
     """
 
     _validation = {
@@ -11175,11 +11175,11 @@ class DatasetSchemaDataElement(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Name of the schema column. Type: string (or Expression with resultType string).
-    :type name: object
+    :type name: any
     :param type: Type of the schema column. Type: string (or Expression with resultType string).
-    :type type: object
+    :type type: any
     """
 
     _attribute_map = {
@@ -11205,7 +11205,7 @@ class DatasetTarCompression(DatasetCompression):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset compression.Constant filled by server.
     :type type: str
     """
@@ -11234,11 +11234,11 @@ class DatasetTarGZipCompression(DatasetCompression):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset compression.Constant filled by server.
     :type type: str
     :param level: The TarGZip compression level.
-    :type level: object
+    :type level: any
     """
 
     _validation = {
@@ -11267,11 +11267,11 @@ class DatasetZipDeflateCompression(DatasetCompression):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset compression.Constant filled by server.
     :type type: str
     :param level: The ZipDeflate compression level.
-    :type level: object
+    :type level: any
     """
 
     _validation = {
@@ -11300,7 +11300,7 @@ class Db2LinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -11310,36 +11310,36 @@ class Db2LinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_string: The connection string. It is mutually exclusive with server,
      database, authenticationType, userName, packageCollection and certificateCommonName property.
      Type: string, SecureString or AzureKeyVaultSecretReference.
-    :type connection_string: object
+    :type connection_string: any
     :param server: Required. Server name for connection. It is mutually exclusive with
      connectionString property. Type: string (or Expression with resultType string).
-    :type server: object
+    :type server: any
     :param database: Required. Database name for connection. It is mutually exclusive with
      connectionString property. Type: string (or Expression with resultType string).
-    :type database: object
+    :type database: any
     :param authentication_type: AuthenticationType to be used for connection. It is mutually
      exclusive with connectionString property. Possible values include: "Basic".
     :type authentication_type: str or ~azure.synapse.artifacts.models.Db2AuthenticationType
     :param username: Username for authentication. It is mutually exclusive with connectionString
      property. Type: string (or Expression with resultType string).
-    :type username: object
+    :type username: any
     :param password: Password for authentication.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param package_collection: Under where packages are created when querying database. It is
      mutually exclusive with connectionString property. Type: string (or Expression with resultType
      string).
-    :type package_collection: object
+    :type package_collection: any
     :param certificate_common_name: Certificate Common Name when TLS is enabled. It is mutually
      exclusive with connectionString property. Type: string (or Expression with resultType string).
-    :type certificate_common_name: object
+    :type certificate_common_name: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. It is mutually exclusive with
      connectionString property. Type: string (or Expression with resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -11390,26 +11390,26 @@ class Db2Source(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: Database query. Type: string (or Expression with resultType string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -11443,34 +11443,34 @@ class Db2TableDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: This property will be retired. Please consider using schema + table
      properties instead.
-    :type table_name: object
+    :type table_name: any
     :param schema_type_properties_schema: The Db2 schema name. Type: string (or Expression with
      resultType string).
-    :type schema_type_properties_schema: object
+    :type schema_type_properties_schema: any
     :param table: The Db2 table name. Type: string (or Expression with resultType string).
-    :type table: object
+    :type table: any
     """
 
     _validation = {
@@ -11511,7 +11511,7 @@ class DeleteActivity(ExecutionActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -11528,13 +11528,13 @@ class DeleteActivity(ExecutionActivity):
     :type policy: ~azure.synapse.artifacts.models.ActivityPolicy
     :param recursive: If true, files or sub-folders under current folder path will be deleted
      recursively. Default is false. Type: boolean (or Expression with resultType boolean).
-    :type recursive: object
+    :type recursive: any
     :param max_concurrent_connections: The max concurrent connections to connect data source at the
      same time.
     :type max_concurrent_connections: int
     :param enable_logging: Whether to record detailed logs of delete-activity execution. Default
      value is false. Type: boolean (or Expression with resultType boolean).
-    :type enable_logging: object
+    :type enable_logging: any
     :param log_storage_settings: Log storage settings customer need to provide when enableLogging
      is true.
     :type log_storage_settings: ~azure.synapse.artifacts.models.LogStorageSettings
@@ -11612,23 +11612,23 @@ class DelimitedTextDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
@@ -11636,30 +11636,30 @@ class DelimitedTextDataset(Dataset):
     :type location: ~azure.synapse.artifacts.models.DatasetLocation
     :param column_delimiter: The column delimiter. Type: string (or Expression with resultType
      string).
-    :type column_delimiter: object
+    :type column_delimiter: any
     :param row_delimiter: The row delimiter. Type: string (or Expression with resultType string).
-    :type row_delimiter: object
+    :type row_delimiter: any
     :param encoding_name: The code page name of the preferred encoding. If miss, the default value
      is UTF-8, unless BOM denotes another Unicode encoding. Refer to the name column of the table in
      the following link to set supported values:
      https://msdn.microsoft.com/library/system.text.encoding.aspx. Type: string (or Expression with
      resultType string).
-    :type encoding_name: object
+    :type encoding_name: any
     :param compression_codec:  Possible values include: "bzip2", "gzip", "deflate", "zipDeflate",
      "snappy", "lz4", "tar", "tarGZip".
     :type compression_codec: str or ~azure.synapse.artifacts.models.CompressionCodec
     :param compression_level: The data compression method used for DelimitedText.
-    :type compression_level: object
+    :type compression_level: any
     :param quote_char: The quote character. Type: string (or Expression with resultType string).
-    :type quote_char: object
+    :type quote_char: any
     :param escape_char: The escape character. Type: string (or Expression with resultType string).
-    :type escape_char: object
+    :type escape_char: any
     :param first_row_as_header: When used as input, treat the first row of data as headers. When
      used as output,write the headers into the output as the first row of data. The default value is
      false. Type: boolean (or Expression with resultType boolean).
-    :type first_row_as_header: object
+    :type first_row_as_header: any
     :param null_value: The null value string. Type: string (or Expression with resultType string).
-    :type null_value: object
+    :type null_value: any
     """
 
     _validation = {
@@ -11714,12 +11714,12 @@ class DelimitedTextReadSettings(FormatReadSettings):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The read setting type.Constant filled by server.
     :type type: str
     :param skip_line_count: Indicates the number of non-empty rows to skip when reading data from
      input files. Type: integer (or Expression with resultType integer).
-    :type skip_line_count: object
+    :type skip_line_count: any
     :param compression_properties: Compression settings.
     :type compression_properties: ~azure.synapse.artifacts.models.CompressionReadSettings
     """
@@ -11752,24 +11752,24 @@ class DelimitedTextSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param store_settings: DelimitedText store settings.
     :type store_settings: ~azure.synapse.artifacts.models.StoreWriteSettings
     :param format_settings: DelimitedText format settings.
@@ -11809,18 +11809,18 @@ class DelimitedTextSource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param store_settings: DelimitedText store settings.
     :type store_settings: ~azure.synapse.artifacts.models.StoreReadSettings
     :param format_settings: DelimitedText format settings.
@@ -11863,22 +11863,22 @@ class DelimitedTextWriteSettings(FormatWriteSettings):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The write setting type.Constant filled by server.
     :type type: str
     :param quote_all_text: Indicates whether string values should always be enclosed with quotes.
      Type: boolean (or Expression with resultType boolean).
-    :type quote_all_text: object
+    :type quote_all_text: any
     :param file_extension: Required. The file extension used to create the files. Type: string (or
      Expression with resultType string).
-    :type file_extension: object
+    :type file_extension: any
     :param max_rows_per_file: Limit the written file's row count to be smaller than or equal to the
      specified count. Type: integer (or Expression with resultType integer).
-    :type max_rows_per_file: object
+    :type max_rows_per_file: any
     :param file_name_prefix: Specifies the file name pattern
      :code:`<fileNamePrefix>`_:code:`<fileIndex>`.:code:`<fileExtension>` when copy from non-file
      based store without partitionOptions. Type: string (or Expression with resultType string).
-    :type file_name_prefix: object
+    :type file_name_prefix: any
     """
 
     _validation = {
@@ -11946,14 +11946,14 @@ class DistcpSettings(msrest.serialization.Model):
 
     :param resource_manager_endpoint: Required. Specifies the Yarn ResourceManager endpoint. Type:
      string (or Expression with resultType string).
-    :type resource_manager_endpoint: object
+    :type resource_manager_endpoint: any
     :param temp_script_path: Required. Specifies an existing folder path which will be used to
      store temp Distcp command script. The script file is generated by ADF and will be removed after
      Copy job finished. Type: string (or Expression with resultType string).
-    :type temp_script_path: object
+    :type temp_script_path: any
     :param distcp_options: Specifies the Distcp options. Type: string (or Expression with
      resultType string).
-    :type distcp_options: object
+    :type distcp_options: any
     """
 
     _validation = {
@@ -11984,29 +11984,29 @@ class DocumentDbCollectionDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param collection_name: Required. Document Database collection name. Type: string (or
      Expression with resultType string).
-    :type collection_name: object
+    :type collection_name: any
     """
 
     _validation = {
@@ -12044,30 +12044,30 @@ class DocumentDbCollectionSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param nesting_separator: Nested properties separator. Default is . (dot). Type: string (or
      Expression with resultType string).
-    :type nesting_separator: object
+    :type nesting_separator: any
     :param write_behavior: Describes how to write data to Azure Cosmos DB. Type: string (or
      Expression with resultType string). Allowed values: insert and upsert.
-    :type write_behavior: object
+    :type write_behavior: any
     """
 
     _validation = {
@@ -12103,26 +12103,26 @@ class DocumentDbCollectionSource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query: Documents query. Type: string (or Expression with resultType string).
-    :type query: object
+    :type query: any
     :param nesting_separator: Nested properties separator. Type: string (or Expression with
      resultType string).
-    :type nesting_separator: object
+    :type nesting_separator: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
@@ -12163,7 +12163,7 @@ class DrillLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -12173,16 +12173,16 @@ class DrillLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_string: An ODBC connection string. Type: string, SecureString or
      AzureKeyVaultSecretReference.
-    :type connection_string: object
+    :type connection_string: any
     :param pwd: The Azure key vault secret reference of password in connection string.
     :type pwd: ~azure.synapse.artifacts.models.AzureKeyVaultSecretReference
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -12219,27 +12219,27 @@ class DrillSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -12273,34 +12273,34 @@ class DrillTableDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: This property will be retired. Please consider using schema + table
      properties instead.
-    :type table_name: object
+    :type table_name: any
     :param table: The table name of the Drill. Type: string (or Expression with resultType string).
-    :type table: object
+    :type table: any
     :param schema_type_properties_schema: The schema name of the Drill. Type: string (or Expression
      with resultType string).
-    :type schema_type_properties_schema: object
+    :type schema_type_properties_schema: any
     """
 
     _validation = {
@@ -12338,10 +12338,10 @@ class DWCopyCommandDefaultValue(msrest.serialization.Model):
     """Default value.
 
     :param column_name: Column name. Type: object (or Expression with resultType string).
-    :type column_name: object
+    :type column_name: any
     :param default_value: The default value of the column. Type: object (or Expression with
      resultType string).
-    :type default_value: object
+    :type default_value: any
     """
 
     _attribute_map = {
@@ -12412,7 +12412,7 @@ class DynamicsAXLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -12422,13 +12422,13 @@ class DynamicsAXLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param url: Required. The Dynamics AX (or Dynamics 365 Finance and Operations) instance OData
      endpoint.
-    :type url: object
+    :type url: any
     :param service_principal_id: Required. Specify the application's client ID. Type: string (or
      Expression with resultType string).
-    :type service_principal_id: object
+    :type service_principal_id: any
     :param service_principal_key: Required. Specify the application's key. Mark this field as a
      SecureString to store it securely in Data Factory, or reference a secret stored in Azure Key
      Vault. Type: string (or Expression with resultType string).
@@ -12436,14 +12436,14 @@ class DynamicsAXLinkedService(LinkedService):
     :param tenant: Required. Specify the tenant information (domain name or tenant ID) under which
      your application resides. Retrieve it by hovering the mouse in the top-right corner of the
      Azure portal. Type: string (or Expression with resultType string).
-    :type tenant: object
+    :type tenant: any
     :param aad_resource_id: Required. Specify the resource you are requesting authorization. Type:
      string (or Expression with resultType string).
-    :type aad_resource_id: object
+    :type aad_resource_id: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -12491,29 +12491,29 @@ class DynamicsAXResourceDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param path: Required. The path of the Dynamics AX OData entity. Type: string (or Expression
      with resultType string).
-    :type path: object
+    :type path: any
     """
 
     _validation = {
@@ -12551,32 +12551,32 @@ class DynamicsAXSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     :param http_request_timeout: The timeout (TimeSpan) to get an HTTP response. It is the timeout
      to get a response, not the timeout to read response data. Default value: 00:05:00. Type: string
      (or Expression with resultType string), pattern:
      ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type http_request_timeout: object
+    :type http_request_timeout: any
     """
 
     _validation = {
@@ -12612,29 +12612,29 @@ class DynamicsCrmEntityDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param entity_name: The logical name of the entity. Type: string (or Expression with resultType
      string).
-    :type entity_name: object
+    :type entity_name: any
     """
 
     _validation = {
@@ -12671,7 +12671,7 @@ class DynamicsCrmLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -12681,7 +12681,7 @@ class DynamicsCrmLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param deployment_type: Required. The deployment type of the Dynamics CRM instance. 'Online'
      for Dynamics CRM Online and 'OnPremisesWithIfd' for Dynamics CRM on-premises with Ifd. Type:
      string (or Expression with resultType string). Possible values include: "Online",
@@ -12690,18 +12690,18 @@ class DynamicsCrmLinkedService(LinkedService):
     :param host_name: The host name of the on-premises Dynamics CRM server. The property is
      required for on-prem and not allowed for online. Type: string (or Expression with resultType
      string).
-    :type host_name: object
+    :type host_name: any
     :param port: The port of on-premises Dynamics CRM server. The property is required for on-prem
      and not allowed for online. Default is 443. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type port: object
+    :type port: any
     :param service_uri: The URL to the Microsoft Dynamics CRM server. The property is required for
      on-line and not allowed for on-prem. Type: string (or Expression with resultType string).
-    :type service_uri: object
+    :type service_uri: any
     :param organization_name: The organization name of the Dynamics CRM instance. The property is
      required for on-prem and required for online when there are more than one Dynamics CRM
      instances associated with the user. Type: string (or Expression with resultType string).
-    :type organization_name: object
+    :type organization_name: any
     :param authentication_type: Required. The authentication type to connect to Dynamics CRM
      server. 'Office365' for online scenario, 'Ifd' for on-premises with Ifd scenario,
      'AADServicePrincipal' for Server-To-Server authentication in online scenario. Type: string (or
@@ -12710,15 +12710,15 @@ class DynamicsCrmLinkedService(LinkedService):
     :type authentication_type: str or ~azure.synapse.artifacts.models.DynamicsAuthenticationType
     :param username: User name to access the Dynamics CRM instance. Type: string (or Expression
      with resultType string).
-    :type username: object
+    :type username: any
     :param password: Password to access the Dynamics CRM instance.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param service_principal_id: The client ID of the application in Azure Active Directory used
      for Server-To-Server authentication. Type: string (or Expression with resultType string).
-    :type service_principal_id: object
+    :type service_principal_id: any
     :param service_principal_credential_type: A string from ServicePrincipalCredentialEnum or an
      expression.
-    :type service_principal_credential_type: object
+    :type service_principal_credential_type: any
     :param service_principal_credential: The credential of the service principal object in Azure
      Active Directory. If servicePrincipalCredentialType is 'ServicePrincipalKey',
      servicePrincipalCredential can be SecureString or AzureKeyVaultSecretReference. If
@@ -12728,7 +12728,7 @@ class DynamicsCrmLinkedService(LinkedService):
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -12785,34 +12785,34 @@ class DynamicsCrmSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param write_behavior: Required. The write behavior for the operation. Possible values include:
      "Upsert".
     :type write_behavior: str or ~azure.synapse.artifacts.models.DynamicsSinkWriteBehavior
     :param ignore_null_values: The flag indicating whether to ignore null values from input dataset
      (except key fields) during write operation. Default is false. Type: boolean (or Expression with
      resultType boolean).
-    :type ignore_null_values: object
+    :type ignore_null_values: any
     :param alternate_key_name: The logical name of the alternate key which will be used when
      upserting records. Type: string (or Expression with resultType string).
-    :type alternate_key_name: object
+    :type alternate_key_name: any
     """
 
     _validation = {
@@ -12851,21 +12851,21 @@ class DynamicsCrmSource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query: FetchXML is a proprietary query language that is used in Microsoft Dynamics CRM
      (online & on-premises). Type: string (or Expression with resultType string).
-    :type query: object
+    :type query: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
@@ -12902,29 +12902,29 @@ class DynamicsEntityDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param entity_name: The logical name of the entity. Type: string (or Expression with resultType
      string).
-    :type entity_name: object
+    :type entity_name: any
     """
 
     _validation = {
@@ -12961,7 +12961,7 @@ class DynamicsLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -12971,25 +12971,25 @@ class DynamicsLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param deployment_type: Required. The deployment type of the Dynamics instance. 'Online' for
      Dynamics Online and 'OnPremisesWithIfd' for Dynamics on-premises with Ifd. Type: string (or
      Expression with resultType string). Possible values include: "Online", "OnPremisesWithIfd".
     :type deployment_type: str or ~azure.synapse.artifacts.models.DynamicsDeploymentType
     :param host_name: The host name of the on-premises Dynamics server. The property is required
      for on-prem and not allowed for online. Type: string (or Expression with resultType string).
-    :type host_name: object
+    :type host_name: any
     :param port: The port of on-premises Dynamics server. The property is required for on-prem and
      not allowed for online. Default is 443. Type: integer (or Expression with resultType integer),
      minimum: 0.
-    :type port: object
+    :type port: any
     :param service_uri: The URL to the Microsoft Dynamics server. The property is required for
      on-line and not allowed for on-prem. Type: string (or Expression with resultType string).
-    :type service_uri: object
+    :type service_uri: any
     :param organization_name: The organization name of the Dynamics instance. The property is
      required for on-prem and required for online when there are more than one Dynamics instances
      associated with the user. Type: string (or Expression with resultType string).
-    :type organization_name: object
+    :type organization_name: any
     :param authentication_type: Required. The authentication type to connect to Dynamics server.
      'Office365' for online scenario, 'Ifd' for on-premises with Ifd scenario, 'AADServicePrincipal'
      for Server-To-Server authentication in online scenario. Type: string (or Expression with
@@ -12997,12 +12997,12 @@ class DynamicsLinkedService(LinkedService):
     :type authentication_type: str or ~azure.synapse.artifacts.models.DynamicsAuthenticationType
     :param username: User name to access the Dynamics instance. Type: string (or Expression with
      resultType string).
-    :type username: object
+    :type username: any
     :param password: Password to access the Dynamics instance.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param service_principal_id: The client ID of the application in Azure Active Directory used
      for Server-To-Server authentication. Type: string (or Expression with resultType string).
-    :type service_principal_id: object
+    :type service_principal_id: any
     :param service_principal_credential_type: The service principal credential type to use in
      Server-To-Server authentication. 'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert'
      for certificate. Type: string (or Expression with resultType string). Possible values include:
@@ -13018,7 +13018,7 @@ class DynamicsLinkedService(LinkedService):
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -13075,34 +13075,34 @@ class DynamicsSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param write_behavior: Required. The write behavior for the operation. Possible values include:
      "Upsert".
     :type write_behavior: str or ~azure.synapse.artifacts.models.DynamicsSinkWriteBehavior
     :param ignore_null_values: The flag indicating whether ignore null values from input dataset
      (except key fields) during write operation. Default is false. Type: boolean (or Expression with
      resultType boolean).
-    :type ignore_null_values: object
+    :type ignore_null_values: any
     :param alternate_key_name: The logical name of the alternate key which will be used when
      upserting records. Type: string (or Expression with resultType string).
-    :type alternate_key_name: object
+    :type alternate_key_name: any
     """
 
     _validation = {
@@ -13141,21 +13141,21 @@ class DynamicsSource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query: FetchXML is a proprietary query language that is used in Microsoft Dynamics
      (online & on-premises). Type: string (or Expression with resultType string).
-    :type query: object
+    :type query: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
@@ -13192,7 +13192,7 @@ class EloquaLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -13202,28 +13202,28 @@ class EloquaLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param endpoint: Required. The endpoint of the Eloqua server. (i.e. eloqua.example.com).
-    :type endpoint: object
+    :type endpoint: any
     :param username: Required. The site name and user name of your Eloqua account in the form:
      sitename/username. (i.e. Eloqua/Alice).
-    :type username: object
+    :type username: any
     :param password: The password corresponding to the user name.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param use_encrypted_endpoints: Specifies whether the data source endpoints are encrypted using
      HTTPS. The default value is true.
-    :type use_encrypted_endpoints: object
+    :type use_encrypted_endpoints: any
     :param use_host_verification: Specifies whether to require the host name in the server's
      certificate to match the host name of the server when connecting over SSL. The default value is
      true.
-    :type use_host_verification: object
+    :type use_host_verification: any
     :param use_peer_verification: Specifies whether to verify the identity of the server when
      connecting over SSL. The default value is true.
-    :type use_peer_verification: object
+    :type use_peer_verification: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -13270,28 +13270,28 @@ class EloquaObjectDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: The table name. Type: string (or Expression with resultType string).
-    :type table_name: object
+    :type table_name: any
     """
 
     _validation = {
@@ -13328,27 +13328,27 @@ class EloquaSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -13436,7 +13436,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: any
     """
 
     _validation = {
@@ -13564,23 +13564,23 @@ class ExcelDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
@@ -13588,18 +13588,18 @@ class ExcelDataset(Dataset):
     :type location: ~azure.synapse.artifacts.models.DatasetLocation
     :param sheet_name: The sheet of excel file. Type: string (or Expression with resultType
      string).
-    :type sheet_name: object
+    :type sheet_name: any
     :param range: The partial data of one sheet. Type: string (or Expression with resultType
      string).
-    :type range: object
+    :type range: any
     :param first_row_as_header: When used as input, treat the first row of data as headers. When
      used as output,write the headers into the output as the first row of data. The default value is
      false. Type: boolean (or Expression with resultType boolean).
-    :type first_row_as_header: object
+    :type first_row_as_header: any
     :param compression: The data compression method used for the json dataset.
     :type compression: ~azure.synapse.artifacts.models.DatasetCompression
     :param null_value: The null value string. Type: string (or Expression with resultType string).
-    :type null_value: object
+    :type null_value: any
     """
 
     _validation = {
@@ -13646,18 +13646,18 @@ class ExcelSource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param store_settings: Excel store settings.
     :type store_settings: ~azure.synapse.artifacts.models.StoreReadSettings
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
@@ -13696,7 +13696,7 @@ class ExecuteDataFlowActivity(ExecutionActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -13721,14 +13721,14 @@ class ExecuteDataFlowActivity(ExecutionActivity):
     :type compute: ~azure.synapse.artifacts.models.ExecuteDataFlowActivityTypePropertiesCompute
     :param trace_level: Trace level setting used for data flow monitoring output. Supported values
      are: 'coarse', 'fine', and 'none'. Type: string (or Expression with resultType string).
-    :type trace_level: object
+    :type trace_level: any
     :param continue_on_error: Continue on error setting used for data flow execution. Enables
      processing to continue if a sink fails. Type: boolean (or Expression with resultType boolean).
-    :type continue_on_error: object
+    :type continue_on_error: any
     :param run_concurrently: Concurrent run setting used for data flow execution. Allows sinks with
      the same save order to be processed concurrently. Type: boolean (or Expression with resultType
      boolean).
-    :type run_concurrently: object
+    :type run_concurrently: any
     """
 
     _validation = {
@@ -13802,7 +13802,7 @@ class ExecutePipelineActivity(ControlActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -13816,7 +13816,7 @@ class ExecutePipelineActivity(ControlActivity):
     :param pipeline: Required. Pipeline reference.
     :type pipeline: ~azure.synapse.artifacts.models.PipelineReference
     :param parameters: Pipeline parameters.
-    :type parameters: dict[str, object]
+    :type parameters: dict[str, any]
     :param wait_on_completion: Defines whether activity execution will wait for the dependent
      pipeline execution to finish. Default is false.
     :type wait_on_completion: bool
@@ -13858,7 +13858,7 @@ class ExecuteSSISPackageActivity(ExecutionActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -13877,13 +13877,13 @@ class ExecuteSSISPackageActivity(ExecutionActivity):
     :type package_location: ~azure.synapse.artifacts.models.SSISPackageLocation
     :param runtime: Specifies the runtime to execute SSIS package. The value should be "x86" or
      "x64". Type: string (or Expression with resultType string).
-    :type runtime: object
+    :type runtime: any
     :param logging_level: The logging level of SSIS package execution. Type: string (or Expression
      with resultType string).
-    :type logging_level: object
+    :type logging_level: any
     :param environment_path: The environment path to execute the SSIS package. Type: string (or
      Expression with resultType string).
-    :type environment_path: object
+    :type environment_path: any
     :param execution_credential: The package execution credential.
     :type execution_credential: ~azure.synapse.artifacts.models.SSISExecutionCredential
     :param connect_via: Required. The integration runtime reference.
@@ -14046,7 +14046,7 @@ class FileServerLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -14056,19 +14056,19 @@ class FileServerLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param host: Required. Host name of the server. Type: string (or Expression with resultType
      string).
-    :type host: object
+    :type host: any
     :param user_id: User ID to logon the server. Type: string (or Expression with resultType
      string).
-    :type user_id: object
+    :type user_id: any
     :param password: Password to logon the server.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -14108,15 +14108,15 @@ class FileServerLocation(DatasetLocation):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset storage location.Constant filled by server.
     :type type: str
     :param folder_path: Specify the folder path of dataset. Type: string (or Expression with
      resultType string).
-    :type folder_path: object
+    :type folder_path: any
     :param file_name: Specify the file name of dataset. Type: string (or Expression with resultType
      string).
-    :type file_name: object
+    :type file_name: any
     """
 
     _validation = {
@@ -14145,42 +14145,42 @@ class FileServerReadSettings(StoreReadSettings):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The read setting type.Constant filled by server.
     :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param recursive: If true, files under the folder path will be read recursively. Default is
      true. Type: boolean (or Expression with resultType boolean).
-    :type recursive: object
+    :type recursive: any
     :param wildcard_folder_path: FileServer wildcardFolderPath. Type: string (or Expression with
      resultType string).
-    :type wildcard_folder_path: object
+    :type wildcard_folder_path: any
     :param wildcard_file_name: FileServer wildcardFileName. Type: string (or Expression with
      resultType string).
-    :type wildcard_file_name: object
+    :type wildcard_file_name: any
     :param file_list_path: Point to a text file that lists each file (relative path to the path
      configured in the dataset) that you want to copy. Type: string (or Expression with resultType
      string).
-    :type file_list_path: object
+    :type file_list_path: any
     :param enable_partition_discovery: Indicates whether to enable partition discovery.
     :type enable_partition_discovery: bool
     :param partition_root_path: Specify the root path where partition discovery starts from. Type:
      string (or Expression with resultType string).
-    :type partition_root_path: object
+    :type partition_root_path: any
     :param delete_files_after_completion: Indicates whether the source files need to be deleted
      after copy completion. Default is false. Type: boolean (or Expression with resultType boolean).
-    :type delete_files_after_completion: object
+    :type delete_files_after_completion: any
     :param modified_datetime_start: The start of file's modified datetime. Type: string (or
      Expression with resultType string).
-    :type modified_datetime_start: object
+    :type modified_datetime_start: any
     :param modified_datetime_end: The end of file's modified datetime. Type: string (or Expression
      with resultType string).
-    :type modified_datetime_end: object
+    :type modified_datetime_end: any
     :param file_filter: Specify a filter to be used to select a subset of files in the folderPath
      rather than all files. Type: string (or Expression with resultType string).
-    :type file_filter: object
+    :type file_filter: any
     """
 
     _validation = {
@@ -14228,14 +14228,14 @@ class FileServerWriteSettings(StoreWriteSettings):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The write setting type.Constant filled by server.
     :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param copy_behavior: The type of copy behavior for copy sink.
-    :type copy_behavior: object
+    :type copy_behavior: any
     """
 
     _validation = {
@@ -14264,43 +14264,43 @@ class FileShareDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param folder_path: The path of the on-premises file system. Type: string (or Expression with
      resultType string).
-    :type folder_path: object
+    :type folder_path: any
     :param file_name: The name of the on-premises file system. Type: string (or Expression with
      resultType string).
-    :type file_name: object
+    :type file_name: any
     :param modified_datetime_start: The start of file's modified datetime. Type: string (or
      Expression with resultType string).
-    :type modified_datetime_start: object
+    :type modified_datetime_start: any
     :param modified_datetime_end: The end of file's modified datetime. Type: string (or Expression
      with resultType string).
-    :type modified_datetime_end: object
+    :type modified_datetime_end: any
     :param format: The format of the files.
     :type format: ~azure.synapse.artifacts.models.DatasetStorageFormat
     :param file_filter: Specify a filter to be used to select a subset of files in the folderPath
      rather than all files. Type: string (or Expression with resultType string).
-    :type file_filter: object
+    :type file_filter: any
     :param compression: The data compression method used for the file system.
     :type compression: ~azure.synapse.artifacts.models.DatasetCompression
     """
@@ -14351,26 +14351,26 @@ class FileSystemSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param copy_behavior: The type of copy behavior for copy sink.
-    :type copy_behavior: object
+    :type copy_behavior: any
     """
 
     _validation = {
@@ -14404,21 +14404,21 @@ class FileSystemSource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param recursive: If true, files under the folder path will be read recursively. Default is
      true. Type: boolean (or Expression with resultType boolean).
-    :type recursive: object
+    :type recursive: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
@@ -14455,7 +14455,7 @@ class FilterActivity(ControlActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -14507,7 +14507,7 @@ class ForEachActivity(ControlActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -14569,33 +14569,33 @@ class FtpReadSettings(StoreReadSettings):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The read setting type.Constant filled by server.
     :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param recursive: If true, files under the folder path will be read recursively. Default is
      true. Type: boolean (or Expression with resultType boolean).
-    :type recursive: object
+    :type recursive: any
     :param wildcard_folder_path: Ftp wildcardFolderPath. Type: string (or Expression with
      resultType string).
-    :type wildcard_folder_path: object
+    :type wildcard_folder_path: any
     :param wildcard_file_name: Ftp wildcardFileName. Type: string (or Expression with resultType
      string).
-    :type wildcard_file_name: object
+    :type wildcard_file_name: any
     :param enable_partition_discovery: Indicates whether to enable partition discovery.
     :type enable_partition_discovery: bool
     :param partition_root_path: Specify the root path where partition discovery starts from. Type:
      string (or Expression with resultType string).
-    :type partition_root_path: object
+    :type partition_root_path: any
     :param delete_files_after_completion: Indicates whether the source files need to be deleted
      after copy completion. Default is false. Type: boolean (or Expression with resultType boolean).
-    :type delete_files_after_completion: object
+    :type delete_files_after_completion: any
     :param file_list_path: Point to a text file that lists each file (relative path to the path
      configured in the dataset) that you want to copy. Type: string (or Expression with resultType
      string).
-    :type file_list_path: object
+    :type file_list_path: any
     :param use_binary_transfer: Specify whether to use binary transfer mode for FTP stores.
     :type use_binary_transfer: bool
     """
@@ -14641,7 +14641,7 @@ class FtpServerLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -14651,32 +14651,32 @@ class FtpServerLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param host: Required. Host name of the FTP server. Type: string (or Expression with resultType
      string).
-    :type host: object
+    :type host: any
     :param port: The TCP port number that the FTP server uses to listen for client connections.
      Default value is 21. Type: integer (or Expression with resultType integer), minimum: 0.
-    :type port: object
+    :type port: any
     :param authentication_type: The authentication type to be used to connect to the FTP server.
      Possible values include: "Basic", "Anonymous".
     :type authentication_type: str or ~azure.synapse.artifacts.models.FtpAuthenticationType
     :param user_name: Username to logon the FTP server. Type: string (or Expression with resultType
      string).
-    :type user_name: object
+    :type user_name: any
     :param password: Password to logon the FTP server.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     :param enable_ssl: If true, connect to the FTP server over SSL/TLS channel. Default value is
      true. Type: boolean (or Expression with resultType boolean).
-    :type enable_ssl: object
+    :type enable_ssl: any
     :param enable_server_certificate_validation: If true, validate the FTP server SSL certificate
      when connect over SSL/TLS channel. Default value is true. Type: boolean (or Expression with
      resultType boolean).
-    :type enable_server_certificate_validation: object
+    :type enable_server_certificate_validation: any
     """
 
     _validation = {
@@ -14724,15 +14724,15 @@ class FtpServerLocation(DatasetLocation):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset storage location.Constant filled by server.
     :type type: str
     :param folder_path: Specify the folder path of dataset. Type: string (or Expression with
      resultType string).
-    :type folder_path: object
+    :type folder_path: any
     :param file_name: Specify the file name of dataset. Type: string (or Expression with resultType
      string).
-    :type file_name: object
+    :type file_name: any
     """
 
     _validation = {
@@ -14761,7 +14761,7 @@ class GetMetadataActivity(ExecutionActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -14779,7 +14779,7 @@ class GetMetadataActivity(ExecutionActivity):
     :param dataset: Required. GetMetadata activity dataset reference.
     :type dataset: ~azure.synapse.artifacts.models.DatasetReference
     :param field_list: Fields of metadata to get from dataset.
-    :type field_list: list[object]
+    :type field_list: list[any]
     :param store_settings: GetMetadata activity store settings.
     :type store_settings: ~azure.synapse.artifacts.models.StoreReadSettings
     :param format_settings: GetMetadata activity format settings.
@@ -14899,7 +14899,7 @@ class GoogleAdWordsLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -14909,10 +14909,10 @@ class GoogleAdWordsLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param client_customer_id: Required. The Client customer ID of the AdWords account that you
      want to fetch report data for.
-    :type client_customer_id: object
+    :type client_customer_id: any
     :param developer_token: Required. The developer token associated with the manager account that
      you use to grant access to the AdWords API.
     :type developer_token: ~azure.synapse.artifacts.models.SecretBase
@@ -14926,27 +14926,27 @@ class GoogleAdWordsLinkedService(LinkedService):
     :type refresh_token: ~azure.synapse.artifacts.models.SecretBase
     :param client_id: The client id of the google application used to acquire the refresh token.
      Type: string (or Expression with resultType string).
-    :type client_id: object
+    :type client_id: any
     :param client_secret: The client secret of the google application used to acquire the refresh
      token.
     :type client_secret: ~azure.synapse.artifacts.models.SecretBase
     :param email: The service account email ID that is used for ServiceAuthentication and can only
      be used on self-hosted IR.
-    :type email: object
+    :type email: any
     :param key_file_path: The full path to the .p12 key file that is used to authenticate the
      service account email address and can only be used on self-hosted IR.
-    :type key_file_path: object
+    :type key_file_path: any
     :param trusted_cert_path: The full path of the .pem file containing trusted CA certificates for
      verifying the server when connecting over SSL. This property can only be set when using SSL on
      self-hosted IR. The default value is the cacerts.pem file installed with the IR.
-    :type trusted_cert_path: object
+    :type trusted_cert_path: any
     :param use_system_trust_store: Specifies whether to use a CA certificate from the system trust
      store or from a specified PEM file. The default value is false.
-    :type use_system_trust_store: object
+    :type use_system_trust_store: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -15002,28 +15002,28 @@ class GoogleAdWordsObjectDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: The table name. Type: string (or Expression with resultType string).
-    :type table_name: object
+    :type table_name: any
     """
 
     _validation = {
@@ -15060,27 +15060,27 @@ class GoogleAdWordsSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -15114,7 +15114,7 @@ class GoogleBigQueryLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -15124,15 +15124,15 @@ class GoogleBigQueryLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param project: Required. The default BigQuery project to query against.
-    :type project: object
+    :type project: any
     :param additional_projects: A comma-separated list of public BigQuery projects to access.
-    :type additional_projects: object
+    :type additional_projects: any
     :param request_google_drive_scope: Whether to request access to Google Drive. Allowing Google
      Drive access enables support for federated tables that combine BigQuery data with data from
      Google Drive. The default value is false.
-    :type request_google_drive_scope: object
+    :type request_google_drive_scope: any
     :param authentication_type: Required. The OAuth 2.0 authentication mechanism used for
      authentication. ServiceAuthentication can only be used on self-hosted IR. Possible values
      include: "ServiceAuthentication", "UserAuthentication".
@@ -15143,27 +15143,27 @@ class GoogleBigQueryLinkedService(LinkedService):
     :type refresh_token: ~azure.synapse.artifacts.models.SecretBase
     :param client_id: The client id of the google application used to acquire the refresh token.
      Type: string (or Expression with resultType string).
-    :type client_id: object
+    :type client_id: any
     :param client_secret: The client secret of the google application used to acquire the refresh
      token.
     :type client_secret: ~azure.synapse.artifacts.models.SecretBase
     :param email: The service account email ID that is used for ServiceAuthentication and can only
      be used on self-hosted IR.
-    :type email: object
+    :type email: any
     :param key_file_path: The full path to the .p12 key file that is used to authenticate the
      service account email address and can only be used on self-hosted IR.
-    :type key_file_path: object
+    :type key_file_path: any
     :param trusted_cert_path: The full path of the .pem file containing trusted CA certificates for
      verifying the server when connecting over SSL. This property can only be set when using SSL on
      self-hosted IR. The default value is the cacerts.pem file installed with the IR.
-    :type trusted_cert_path: object
+    :type trusted_cert_path: any
     :param use_system_trust_store: Specifies whether to use a CA certificate from the system trust
      store or from a specified PEM file. The default value is false.
-    :type use_system_trust_store: object
+    :type use_system_trust_store: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -15220,35 +15220,35 @@ class GoogleBigQueryObjectDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: This property will be retired. Please consider using database + table
      properties instead.
-    :type table_name: object
+    :type table_name: any
     :param table: The table name of the Google BigQuery. Type: string (or Expression with
      resultType string).
-    :type table: object
+    :type table: any
     :param dataset: The database name of the Google BigQuery. Type: string (or Expression with
      resultType string).
-    :type dataset: object
+    :type dataset: any
     """
 
     _validation = {
@@ -15289,27 +15289,27 @@ class GoogleBigQuerySource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -15343,7 +15343,7 @@ class GoogleCloudStorageLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -15353,10 +15353,10 @@ class GoogleCloudStorageLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param access_key_id: The access key identifier of the Google Cloud Storage Identity and Access
      Management (IAM) user. Type: string (or Expression with resultType string).
-    :type access_key_id: object
+    :type access_key_id: any
     :param secret_access_key: The secret access key of the Google Cloud Storage Identity and Access
      Management (IAM) user.
     :type secret_access_key: ~azure.synapse.artifacts.models.SecretBase
@@ -15364,11 +15364,11 @@ class GoogleCloudStorageLinkedService(LinkedService):
      Connector. This is an optional property; change it only if you want to try a different service
      endpoint or want to switch between https and http. Type: string (or Expression with resultType
      string).
-    :type service_url: object
+    :type service_url: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -15407,21 +15407,21 @@ class GoogleCloudStorageLocation(DatasetLocation):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset storage location.Constant filled by server.
     :type type: str
     :param folder_path: Specify the folder path of dataset. Type: string (or Expression with
      resultType string).
-    :type folder_path: object
+    :type folder_path: any
     :param file_name: Specify the file name of dataset. Type: string (or Expression with resultType
      string).
-    :type file_name: object
+    :type file_name: any
     :param bucket_name: Specify the bucketName of Google Cloud Storage. Type: string (or Expression
      with resultType string).
-    :type bucket_name: object
+    :type bucket_name: any
     :param version: Specify the version of Google Cloud Storage. Type: string (or Expression with
      resultType string).
-    :type version: object
+    :type version: any
     """
 
     _validation = {
@@ -15454,42 +15454,42 @@ class GoogleCloudStorageReadSettings(StoreReadSettings):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The read setting type.Constant filled by server.
     :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param recursive: If true, files under the folder path will be read recursively. Default is
      true. Type: boolean (or Expression with resultType boolean).
-    :type recursive: object
+    :type recursive: any
     :param wildcard_folder_path: Google Cloud Storage wildcardFolderPath. Type: string (or
      Expression with resultType string).
-    :type wildcard_folder_path: object
+    :type wildcard_folder_path: any
     :param wildcard_file_name: Google Cloud Storage wildcardFileName. Type: string (or Expression
      with resultType string).
-    :type wildcard_file_name: object
+    :type wildcard_file_name: any
     :param prefix: The prefix filter for the Google Cloud Storage object name. Type: string (or
      Expression with resultType string).
-    :type prefix: object
+    :type prefix: any
     :param file_list_path: Point to a text file that lists each file (relative path to the path
      configured in the dataset) that you want to copy. Type: string (or Expression with resultType
      string).
-    :type file_list_path: object
+    :type file_list_path: any
     :param enable_partition_discovery: Indicates whether to enable partition discovery.
     :type enable_partition_discovery: bool
     :param partition_root_path: Specify the root path where partition discovery starts from. Type:
      string (or Expression with resultType string).
-    :type partition_root_path: object
+    :type partition_root_path: any
     :param delete_files_after_completion: Indicates whether the source files need to be deleted
      after copy completion. Default is false. Type: boolean (or Expression with resultType boolean).
-    :type delete_files_after_completion: object
+    :type delete_files_after_completion: any
     :param modified_datetime_start: The start of file's modified datetime. Type: string (or
      Expression with resultType string).
-    :type modified_datetime_start: object
+    :type modified_datetime_start: any
     :param modified_datetime_end: The end of file's modified datetime. Type: string (or Expression
      with resultType string).
-    :type modified_datetime_end: object
+    :type modified_datetime_end: any
     """
 
     _validation = {
@@ -15537,7 +15537,7 @@ class GreenplumLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -15547,16 +15547,16 @@ class GreenplumLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_string: An ODBC connection string. Type: string, SecureString or
      AzureKeyVaultSecretReference.
-    :type connection_string: object
+    :type connection_string: any
     :param pwd: The Azure key vault secret reference of password in connection string.
     :type pwd: ~azure.synapse.artifacts.models.AzureKeyVaultSecretReference
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -15593,27 +15593,27 @@ class GreenplumSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -15647,34 +15647,34 @@ class GreenplumTableDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: This property will be retired. Please consider using schema + table
      properties instead.
-    :type table_name: object
+    :type table_name: any
     :param table: The table name of Greenplum. Type: string (or Expression with resultType string).
-    :type table: object
+    :type table: any
     :param schema_type_properties_schema: The schema name of Greenplum. Type: string (or Expression
      with resultType string).
-    :type schema_type_properties_schema: object
+    :type schema_type_properties_schema: any
     """
 
     _validation = {
@@ -15715,7 +15715,7 @@ class HBaseLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -15725,39 +15725,39 @@ class HBaseLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param host: Required. The IP address or host name of the HBase server. (i.e. 192.168.222.160).
-    :type host: object
+    :type host: any
     :param port: The TCP port that the HBase instance uses to listen for client connections. The
      default value is 9090.
-    :type port: object
+    :type port: any
     :param http_path: The partial URL corresponding to the HBase server. (i.e.
      /gateway/sandbox/hbase/version).
-    :type http_path: object
+    :type http_path: any
     :param authentication_type: Required. The authentication mechanism to use to connect to the
      HBase server. Possible values include: "Anonymous", "Basic".
     :type authentication_type: str or ~azure.synapse.artifacts.models.HBaseAuthenticationType
     :param username: The user name used to connect to the HBase instance.
-    :type username: object
+    :type username: any
     :param password: The password corresponding to the user name.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param enable_ssl: Specifies whether the connections to the server are encrypted using SSL. The
      default value is false.
-    :type enable_ssl: object
+    :type enable_ssl: any
     :param trusted_cert_path: The full path of the .pem file containing trusted CA certificates for
      verifying the server when connecting over SSL. This property can only be set when using SSL on
      self-hosted IR. The default value is the cacerts.pem file installed with the IR.
-    :type trusted_cert_path: object
+    :type trusted_cert_path: any
     :param allow_host_name_cn_mismatch: Specifies whether to require a CA-issued SSL certificate
      name to match the host name of the server when connecting over SSL. The default value is false.
-    :type allow_host_name_cn_mismatch: object
+    :type allow_host_name_cn_mismatch: any
     :param allow_self_signed_server_cert: Specifies whether to allow self-signed certificates from
      the server. The default value is false.
-    :type allow_self_signed_server_cert: object
+    :type allow_self_signed_server_cert: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -15812,28 +15812,28 @@ class HBaseObjectDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: The table name. Type: string (or Expression with resultType string).
-    :type table_name: object
+    :type table_name: any
     """
 
     _validation = {
@@ -15870,27 +15870,27 @@ class HBaseSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -15924,7 +15924,7 @@ class HdfsLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -15934,20 +15934,20 @@ class HdfsLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param url: Required. The URL of the HDFS service endpoint, e.g.
      http://myhostname:50070/webhdfs/v1 . Type: string (or Expression with resultType string).
-    :type url: object
+    :type url: any
     :param authentication_type: Type of authentication used to connect to the HDFS. Possible values
      are: Anonymous and Windows. Type: string (or Expression with resultType string).
-    :type authentication_type: object
+    :type authentication_type: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     :param user_name: User name for Windows authentication. Type: string (or Expression with
      resultType string).
-    :type user_name: object
+    :type user_name: any
     :param password: Password for Windows authentication.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     """
@@ -15991,15 +15991,15 @@ class HdfsLocation(DatasetLocation):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset storage location.Constant filled by server.
     :type type: str
     :param folder_path: Specify the folder path of dataset. Type: string (or Expression with
      resultType string).
-    :type folder_path: object
+    :type folder_path: any
     :param file_name: Specify the file name of dataset. Type: string (or Expression with resultType
      string).
-    :type file_name: object
+    :type file_name: any
     """
 
     _validation = {
@@ -16028,41 +16028,41 @@ class HdfsReadSettings(StoreReadSettings):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The read setting type.Constant filled by server.
     :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param recursive: If true, files under the folder path will be read recursively. Default is
      true. Type: boolean (or Expression with resultType boolean).
-    :type recursive: object
+    :type recursive: any
     :param wildcard_folder_path: HDFS wildcardFolderPath. Type: string (or Expression with
      resultType string).
-    :type wildcard_folder_path: object
+    :type wildcard_folder_path: any
     :param wildcard_file_name: HDFS wildcardFileName. Type: string (or Expression with resultType
      string).
-    :type wildcard_file_name: object
+    :type wildcard_file_name: any
     :param file_list_path: Point to a text file that lists each file (relative path to the path
      configured in the dataset) that you want to copy. Type: string (or Expression with resultType
      string).
-    :type file_list_path: object
+    :type file_list_path: any
     :param enable_partition_discovery: Indicates whether to enable partition discovery.
     :type enable_partition_discovery: bool
     :param partition_root_path: Specify the root path where partition discovery starts from. Type:
      string (or Expression with resultType string).
-    :type partition_root_path: object
+    :type partition_root_path: any
     :param modified_datetime_start: The start of file's modified datetime. Type: string (or
      Expression with resultType string).
-    :type modified_datetime_start: object
+    :type modified_datetime_start: any
     :param modified_datetime_end: The end of file's modified datetime. Type: string (or Expression
      with resultType string).
-    :type modified_datetime_end: object
+    :type modified_datetime_end: any
     :param distcp_settings: Specifies Distcp-related settings.
     :type distcp_settings: ~azure.synapse.artifacts.models.DistcpSettings
     :param delete_files_after_completion: Indicates whether the source files need to be deleted
      after copy completion. Default is false. Type: boolean (or Expression with resultType boolean).
-    :type delete_files_after_completion: object
+    :type delete_files_after_completion: any
     """
 
     _validation = {
@@ -16110,21 +16110,21 @@ class HdfsSource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param recursive: If true, files under the folder path will be read recursively. Default is
      true. Type: boolean (or Expression with resultType boolean).
-    :type recursive: object
+    :type recursive: any
     :param distcp_settings: Specifies Distcp-related settings.
     :type distcp_settings: ~azure.synapse.artifacts.models.DistcpSettings
     """
@@ -16160,7 +16160,7 @@ class HDInsightHiveActivity(ExecutionActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -16178,17 +16178,17 @@ class HDInsightHiveActivity(ExecutionActivity):
     :param storage_linked_services: Storage linked service references.
     :type storage_linked_services: list[~azure.synapse.artifacts.models.LinkedServiceReference]
     :param arguments: User specified arguments to HDInsightActivity.
-    :type arguments: list[object]
+    :type arguments: list[any]
     :param get_debug_info: Debug info option. Possible values include: "None", "Always", "Failure".
     :type get_debug_info: str or ~azure.synapse.artifacts.models.HDInsightActivityDebugInfoOption
     :param script_path: Script path. Type: string (or Expression with resultType string).
-    :type script_path: object
+    :type script_path: any
     :param script_linked_service: Script linked service reference.
     :type script_linked_service: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param defines: Allows user to specify defines for Hive job request.
-    :type defines: dict[str, object]
+    :type defines: dict[str, any]
     :param variables: User specified arguments under hivevar namespace.
-    :type variables: list[object]
+    :type variables: list[any]
     :param query_timeout: Query timeout value (in minutes).  Effective when the HDInsight cluster
      is with ESP (Enterprise Security Package).
     :type query_timeout: int
@@ -16241,7 +16241,7 @@ class HDInsightLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -16251,13 +16251,13 @@ class HDInsightLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param cluster_uri: Required. HDInsight cluster URI. Type: string (or Expression with
      resultType string).
-    :type cluster_uri: object
+    :type cluster_uri: any
     :param user_name: HDInsight cluster user name. Type: string (or Expression with resultType
      string).
-    :type user_name: object
+    :type user_name: any
     :param password: HDInsight cluster password.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param linked_service_name: The Azure Storage linked service reference.
@@ -16268,13 +16268,13 @@ class HDInsightLinkedService(LinkedService):
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     :param is_esp_enabled: Specify if the HDInsight is created with ESP (Enterprise Security
      Package). Type: Boolean.
-    :type is_esp_enabled: object
+    :type is_esp_enabled: any
     :param file_system: Specify the FileSystem if the main storage for the HDInsight is ADLS Gen2.
      Type: string (or Expression with resultType string).
-    :type file_system: object
+    :type file_system: any
     """
 
     _validation = {
@@ -16322,7 +16322,7 @@ class HDInsightMapReduceActivity(ExecutionActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -16340,19 +16340,19 @@ class HDInsightMapReduceActivity(ExecutionActivity):
     :param storage_linked_services: Storage linked service references.
     :type storage_linked_services: list[~azure.synapse.artifacts.models.LinkedServiceReference]
     :param arguments: User specified arguments to HDInsightActivity.
-    :type arguments: list[object]
+    :type arguments: list[any]
     :param get_debug_info: Debug info option. Possible values include: "None", "Always", "Failure".
     :type get_debug_info: str or ~azure.synapse.artifacts.models.HDInsightActivityDebugInfoOption
     :param class_name: Required. Class name. Type: string (or Expression with resultType string).
-    :type class_name: object
+    :type class_name: any
     :param jar_file_path: Required. Jar path. Type: string (or Expression with resultType string).
-    :type jar_file_path: object
+    :type jar_file_path: any
     :param jar_linked_service: Jar linked service reference.
     :type jar_linked_service: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param jar_libs: Jar libs.
-    :type jar_libs: list[object]
+    :type jar_libs: list[any]
     :param defines: Allows user to specify defines for the MapReduce job request.
-    :type defines: dict[str, object]
+    :type defines: dict[str, any]
     """
 
     _validation = {
@@ -16404,7 +16404,7 @@ class HDInsightOnDemandLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -16414,46 +16414,46 @@ class HDInsightOnDemandLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param cluster_size: Required. Number of worker/data nodes in the cluster. Suggestion value: 4.
      Type: string (or Expression with resultType string).
-    :type cluster_size: object
+    :type cluster_size: any
     :param time_to_live: Required. The allowed idle time for the on-demand HDInsight cluster.
      Specifies how long the on-demand HDInsight cluster stays alive after completion of an activity
      run if there are no other active jobs in the cluster. The minimum value is 5 mins. Type: string
      (or Expression with resultType string).
-    :type time_to_live: object
+    :type time_to_live: any
     :param version: Required. Version of the HDInsight cluster.  Type: string (or Expression with
      resultType string).
-    :type version: object
+    :type version: any
     :param linked_service_name: Required. Azure Storage linked service to be used by the on-demand
      cluster for storing and processing data.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param host_subscription_id: Required. The customer’s subscription to host the cluster. Type:
      string (or Expression with resultType string).
-    :type host_subscription_id: object
+    :type host_subscription_id: any
     :param service_principal_id: The service principal id for the hostSubscriptionId. Type: string
      (or Expression with resultType string).
-    :type service_principal_id: object
+    :type service_principal_id: any
     :param service_principal_key: The key for the service principal id.
     :type service_principal_key: ~azure.synapse.artifacts.models.SecretBase
     :param tenant: Required. The Tenant id/name to which the service principal belongs. Type:
      string (or Expression with resultType string).
-    :type tenant: object
+    :type tenant: any
     :param cluster_resource_group: Required. The resource group where the cluster belongs. Type:
      string (or Expression with resultType string).
-    :type cluster_resource_group: object
+    :type cluster_resource_group: any
     :param cluster_name_prefix: The prefix of cluster name, postfix will be distinct with
      timestamp. Type: string (or Expression with resultType string).
-    :type cluster_name_prefix: object
+    :type cluster_name_prefix: any
     :param cluster_user_name: The username to access the cluster. Type: string (or Expression with
      resultType string).
-    :type cluster_user_name: object
+    :type cluster_user_name: any
     :param cluster_password: The password to access the cluster.
     :type cluster_password: ~azure.synapse.artifacts.models.SecretBase
     :param cluster_ssh_user_name: The username to SSH remotely connect to cluster’s node (for
      Linux). Type: string (or Expression with resultType string).
-    :type cluster_ssh_user_name: object
+    :type cluster_ssh_user_name: any
     :param cluster_ssh_password: The password to SSH remotely connect cluster’s node (for Linux).
     :type cluster_ssh_password: ~azure.synapse.artifacts.models.SecretBase
     :param additional_linked_service_names: Specifies additional storage accounts for the HDInsight
@@ -16465,55 +16465,55 @@ class HDInsightOnDemandLinkedService(LinkedService):
      as the metastore.
     :type hcatalog_linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param cluster_type: The cluster type. Type: string (or Expression with resultType string).
-    :type cluster_type: object
+    :type cluster_type: any
     :param spark_version: The version of spark if the cluster type is 'spark'. Type: string (or
      Expression with resultType string).
-    :type spark_version: object
+    :type spark_version: any
     :param core_configuration: Specifies the core configuration parameters (as in core-site.xml)
      for the HDInsight cluster to be created.
-    :type core_configuration: object
+    :type core_configuration: any
     :param h_base_configuration: Specifies the HBase configuration parameters (hbase-site.xml) for
      the HDInsight cluster.
-    :type h_base_configuration: object
+    :type h_base_configuration: any
     :param hdfs_configuration: Specifies the HDFS configuration parameters (hdfs-site.xml) for the
      HDInsight cluster.
-    :type hdfs_configuration: object
+    :type hdfs_configuration: any
     :param hive_configuration: Specifies the hive configuration parameters (hive-site.xml) for the
      HDInsight cluster.
-    :type hive_configuration: object
+    :type hive_configuration: any
     :param map_reduce_configuration: Specifies the MapReduce configuration parameters
      (mapred-site.xml) for the HDInsight cluster.
-    :type map_reduce_configuration: object
+    :type map_reduce_configuration: any
     :param oozie_configuration: Specifies the Oozie configuration parameters (oozie-site.xml) for
      the HDInsight cluster.
-    :type oozie_configuration: object
+    :type oozie_configuration: any
     :param storm_configuration: Specifies the Storm configuration parameters (storm-site.xml) for
      the HDInsight cluster.
-    :type storm_configuration: object
+    :type storm_configuration: any
     :param yarn_configuration: Specifies the Yarn configuration parameters (yarn-site.xml) for the
      HDInsight cluster.
-    :type yarn_configuration: object
+    :type yarn_configuration: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     :param head_node_size: Specifies the size of the head node for the HDInsight cluster.
-    :type head_node_size: object
+    :type head_node_size: any
     :param data_node_size: Specifies the size of the data node for the HDInsight cluster.
-    :type data_node_size: object
+    :type data_node_size: any
     :param zookeeper_node_size: Specifies the size of the Zoo Keeper node for the HDInsight
      cluster.
-    :type zookeeper_node_size: object
+    :type zookeeper_node_size: any
     :param script_actions: Custom script actions to run on HDI ondemand cluster once it's up.
      Please refer to
      https://docs.microsoft.com/en-us/azure/hdinsight/hdinsight-hadoop-customize-cluster-linux?toc=%2Fen-us%2Fazure%2Fhdinsight%2Fr-server%2FTOC.json&bc=%2Fen-us%2Fazure%2Fbread%2Ftoc.json#understanding-script-actions.
     :type script_actions: list[~azure.synapse.artifacts.models.ScriptAction]
     :param virtual_network_id: The ARM resource ID for the vNet to which the cluster should be
      joined after creation. Type: string (or Expression with resultType string).
-    :type virtual_network_id: object
+    :type virtual_network_id: any
     :param subnet_name: The ARM resource ID for the subnet in the vNet. If virtualNetworkId was
      specified, then this property is required. Type: string (or Expression with resultType string).
-    :type subnet_name: object
+    :type subnet_name: any
     """
 
     _validation = {
@@ -16617,7 +16617,7 @@ class HDInsightPigActivity(ExecutionActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -16636,15 +16636,15 @@ class HDInsightPigActivity(ExecutionActivity):
     :type storage_linked_services: list[~azure.synapse.artifacts.models.LinkedServiceReference]
     :param arguments: User specified arguments to HDInsightActivity. Type: array (or Expression
      with resultType array).
-    :type arguments: object
+    :type arguments: any
     :param get_debug_info: Debug info option. Possible values include: "None", "Always", "Failure".
     :type get_debug_info: str or ~azure.synapse.artifacts.models.HDInsightActivityDebugInfoOption
     :param script_path: Script path. Type: string (or Expression with resultType string).
-    :type script_path: object
+    :type script_path: any
     :param script_linked_service: Script linked service reference.
     :type script_linked_service: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param defines: Allows user to specify defines for Pig job request.
-    :type defines: dict[str, object]
+    :type defines: dict[str, any]
     """
 
     _validation = {
@@ -16690,7 +16690,7 @@ class HDInsightSparkActivity(ExecutionActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -16707,12 +16707,12 @@ class HDInsightSparkActivity(ExecutionActivity):
     :type policy: ~azure.synapse.artifacts.models.ActivityPolicy
     :param root_path: Required. The root path in 'sparkJobLinkedService' for all the job’s files.
      Type: string (or Expression with resultType string).
-    :type root_path: object
+    :type root_path: any
     :param entry_file_path: Required. The relative path to the root folder of the code/package to
      be executed. Type: string (or Expression with resultType string).
-    :type entry_file_path: object
+    :type entry_file_path: any
     :param arguments: The user-specified arguments to HDInsightSparkActivity.
-    :type arguments: list[object]
+    :type arguments: list[any]
     :param get_debug_info: Debug info option. Possible values include: "None", "Always", "Failure".
     :type get_debug_info: str or ~azure.synapse.artifacts.models.HDInsightActivityDebugInfoOption
     :param spark_job_linked_service: The storage linked service for uploading the entry file and
@@ -16722,9 +16722,9 @@ class HDInsightSparkActivity(ExecutionActivity):
     :type class_name: str
     :param proxy_user: The user to impersonate that will execute the job. Type: string (or
      Expression with resultType string).
-    :type proxy_user: object
+    :type proxy_user: any
     :param spark_config: Spark configuration property.
-    :type spark_config: dict[str, object]
+    :type spark_config: dict[str, any]
     """
 
     _validation = {
@@ -16776,7 +16776,7 @@ class HDInsightStreamingActivity(ExecutionActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -16794,29 +16794,29 @@ class HDInsightStreamingActivity(ExecutionActivity):
     :param storage_linked_services: Storage linked service references.
     :type storage_linked_services: list[~azure.synapse.artifacts.models.LinkedServiceReference]
     :param arguments: User specified arguments to HDInsightActivity.
-    :type arguments: list[object]
+    :type arguments: list[any]
     :param get_debug_info: Debug info option. Possible values include: "None", "Always", "Failure".
     :type get_debug_info: str or ~azure.synapse.artifacts.models.HDInsightActivityDebugInfoOption
     :param mapper: Required. Mapper executable name. Type: string (or Expression with resultType
      string).
-    :type mapper: object
+    :type mapper: any
     :param reducer: Required. Reducer executable name. Type: string (or Expression with resultType
      string).
-    :type reducer: object
+    :type reducer: any
     :param input: Required. Input blob path. Type: string (or Expression with resultType string).
-    :type input: object
+    :type input: any
     :param output: Required. Output blob path. Type: string (or Expression with resultType string).
-    :type output: object
+    :type output: any
     :param file_paths: Required. Paths to streaming job files. Can be directories.
-    :type file_paths: list[object]
+    :type file_paths: list[any]
     :param file_linked_service: Linked service reference where the files are located.
     :type file_linked_service: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param combiner: Combiner executable name. Type: string (or Expression with resultType string).
-    :type combiner: object
+    :type combiner: any
     :param command_environment: Command line environment values.
-    :type command_environment: list[object]
+    :type command_environment: list[any]
     :param defines: Allows user to specify defines for streaming job request.
-    :type defines: dict[str, object]
+    :type defines: dict[str, any]
     """
 
     _validation = {
@@ -16879,7 +16879,7 @@ class HiveLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -16889,12 +16889,12 @@ class HiveLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param host: Required. IP address or host name of the Hive server, separated by ';' for
      multiple hosts (only when serviceDiscoveryMode is enable).
-    :type host: object
+    :type host: any
     :param port: The TCP port that the Hive server uses to listen for client connections.
-    :type port: object
+    :type port: any
     :param server_type: The type of Hive server. Possible values include: "HiveServer1",
      "HiveServer2", "HiveThriftServer".
     :type server_type: str or ~azure.synapse.artifacts.models.HiveServerType
@@ -16907,40 +16907,40 @@ class HiveLinkedService(LinkedService):
      "WindowsAzureHDInsightService".
     :type authentication_type: str or ~azure.synapse.artifacts.models.HiveAuthenticationType
     :param service_discovery_mode: true to indicate using the ZooKeeper service, false not.
-    :type service_discovery_mode: object
+    :type service_discovery_mode: any
     :param zoo_keeper_name_space: The namespace on ZooKeeper under which Hive Server 2 nodes are
      added.
-    :type zoo_keeper_name_space: object
+    :type zoo_keeper_name_space: any
     :param use_native_query: Specifies whether the driver uses native HiveQL queries,or converts
      them into an equivalent form in HiveQL.
-    :type use_native_query: object
+    :type use_native_query: any
     :param username: The user name that you use to access Hive Server.
-    :type username: object
+    :type username: any
     :param password: The password corresponding to the user name that you provided in the Username
      field.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param http_path: The partial URL corresponding to the Hive server.
-    :type http_path: object
+    :type http_path: any
     :param enable_ssl: Specifies whether the connections to the server are encrypted using SSL. The
      default value is false.
-    :type enable_ssl: object
+    :type enable_ssl: any
     :param trusted_cert_path: The full path of the .pem file containing trusted CA certificates for
      verifying the server when connecting over SSL. This property can only be set when using SSL on
      self-hosted IR. The default value is the cacerts.pem file installed with the IR.
-    :type trusted_cert_path: object
+    :type trusted_cert_path: any
     :param use_system_trust_store: Specifies whether to use a CA certificate from the system trust
      store or from a specified PEM file. The default value is false.
-    :type use_system_trust_store: object
+    :type use_system_trust_store: any
     :param allow_host_name_cn_mismatch: Specifies whether to require a CA-issued SSL certificate
      name to match the host name of the server when connecting over SSL. The default value is false.
-    :type allow_host_name_cn_mismatch: object
+    :type allow_host_name_cn_mismatch: any
     :param allow_self_signed_server_cert: Specifies whether to allow self-signed certificates from
      the server. The default value is false.
-    :type allow_self_signed_server_cert: object
+    :type allow_self_signed_server_cert: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -17007,34 +17007,34 @@ class HiveObjectDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: This property will be retired. Please consider using schema + table
      properties instead.
-    :type table_name: object
+    :type table_name: any
     :param table: The table name of the Hive. Type: string (or Expression with resultType string).
-    :type table: object
+    :type table: any
     :param schema_type_properties_schema: The schema name of the Hive. Type: string (or Expression
      with resultType string).
-    :type schema_type_properties_schema: object
+    :type schema_type_properties_schema: any
     """
 
     _validation = {
@@ -17075,27 +17075,27 @@ class HiveSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -17129,41 +17129,41 @@ class HttpDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param relative_url: The relative URL based on the URL in the HttpLinkedService refers to an
      HTTP file Type: string (or Expression with resultType string).
-    :type relative_url: object
+    :type relative_url: any
     :param request_method: The HTTP method for the HTTP request. Type: string (or Expression with
      resultType string).
-    :type request_method: object
+    :type request_method: any
     :param request_body: The body for the HTTP request. Type: string (or Expression with resultType
      string).
-    :type request_body: object
+    :type request_body: any
     :param additional_headers: The headers for the HTTP Request. e.g.
      request-header-name-1:request-header-value-1
      ...
      request-header-name-n:request-header-value-n Type: string (or Expression with resultType
      string).
-    :type additional_headers: object
+    :type additional_headers: any
     :param format: The format of files.
     :type format: ~azure.synapse.artifacts.models.DatasetStorageFormat
     :param compression: The data compression method used on files.
@@ -17214,7 +17214,7 @@ class HttpLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -17224,16 +17224,16 @@ class HttpLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param url: Required. The base URL of the HTTP endpoint, e.g. http://www.microsoft.com. Type:
      string (or Expression with resultType string).
-    :type url: object
+    :type url: any
     :param authentication_type: The authentication type to be used to connect to the HTTP server.
      Possible values include: "Basic", "Anonymous", "Digest", "Windows", "ClientCertificate".
     :type authentication_type: str or ~azure.synapse.artifacts.models.HttpAuthenticationType
     :param user_name: User name for Basic, Digest, or Windows authentication. Type: string (or
      Expression with resultType string).
-    :type user_name: object
+    :type user_name: any
     :param password: Password for Basic, Digest, Windows, or ClientCertificate with
      EmbeddedCertData authentication.
     :type password: ~azure.synapse.artifacts.models.SecretBase
@@ -17241,19 +17241,19 @@ class HttpLinkedService(LinkedService):
      authentication. For on-premises copy with ClientCertificate authentication, either
      CertThumbprint or EmbeddedCertData/Password should be specified. Type: string (or Expression
      with resultType string).
-    :type embedded_cert_data: object
+    :type embedded_cert_data: any
     :param cert_thumbprint: Thumbprint of certificate for ClientCertificate authentication. Only
      valid for on-premises copy. For on-premises copy with ClientCertificate authentication, either
      CertThumbprint or EmbeddedCertData/Password should be specified. Type: string (or Expression
      with resultType string).
-    :type cert_thumbprint: object
+    :type cert_thumbprint: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     :param enable_server_certificate_validation: If true, validate the HTTPS server SSL
      certificate. Default value is true. Type: boolean (or Expression with resultType boolean).
-    :type enable_server_certificate_validation: object
+    :type enable_server_certificate_validation: any
     """
 
     _validation = {
@@ -17301,29 +17301,29 @@ class HttpReadSettings(StoreReadSettings):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The read setting type.Constant filled by server.
     :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param request_method: The HTTP method used to call the RESTful API. The default is GET. Type:
      string (or Expression with resultType string).
-    :type request_method: object
+    :type request_method: any
     :param request_body: The HTTP request body to the RESTful API if requestMethod is POST. Type:
      string (or Expression with resultType string).
-    :type request_body: object
+    :type request_body: any
     :param additional_headers: The additional HTTP headers in the request to the RESTful API. Type:
      string (or Expression with resultType string).
-    :type additional_headers: object
+    :type additional_headers: any
     :param request_timeout: Specifies the timeout for a HTTP client to get HTTP response from HTTP
      server.
-    :type request_timeout: object
+    :type request_timeout: any
     :param enable_partition_discovery: Indicates whether to enable partition discovery.
     :type enable_partition_discovery: bool
     :param partition_root_path: Specify the root path where partition discovery starts from. Type:
      string (or Expression with resultType string).
-    :type partition_root_path: object
+    :type partition_root_path: any
     """
 
     _validation = {
@@ -17363,18 +17363,18 @@ class HttpServerLocation(DatasetLocation):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset storage location.Constant filled by server.
     :type type: str
     :param folder_path: Specify the folder path of dataset. Type: string (or Expression with
      resultType string).
-    :type folder_path: object
+    :type folder_path: any
     :param file_name: Specify the file name of dataset. Type: string (or Expression with resultType
      string).
-    :type file_name: object
+    :type file_name: any
     :param relative_url: Specify the relativeUrl of http server. Type: string (or Expression with
      resultType string).
-    :type relative_url: object
+    :type relative_url: any
     """
 
     _validation = {
@@ -17405,23 +17405,23 @@ class HttpSource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param http_request_timeout: Specifies the timeout for a HTTP client to get HTTP response from
      HTTP server. The default value is equivalent to System.Net.HttpWebRequest.Timeout. Type: string
      (or Expression with resultType string), pattern:
      ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type http_request_timeout: object
+    :type http_request_timeout: any
     """
 
     _validation = {
@@ -17453,7 +17453,7 @@ class HubspotLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -17463,9 +17463,9 @@ class HubspotLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param client_id: Required. The client ID associated with your Hubspot application.
-    :type client_id: object
+    :type client_id: any
     :param client_secret: The client secret associated with your Hubspot application.
     :type client_secret: ~azure.synapse.artifacts.models.SecretBase
     :param access_token: The access token obtained when initially authenticating your OAuth
@@ -17476,18 +17476,18 @@ class HubspotLinkedService(LinkedService):
     :type refresh_token: ~azure.synapse.artifacts.models.SecretBase
     :param use_encrypted_endpoints: Specifies whether the data source endpoints are encrypted using
      HTTPS. The default value is true.
-    :type use_encrypted_endpoints: object
+    :type use_encrypted_endpoints: any
     :param use_host_verification: Specifies whether to require the host name in the server's
      certificate to match the host name of the server when connecting over SSL. The default value is
      true.
-    :type use_host_verification: object
+    :type use_host_verification: any
     :param use_peer_verification: Specifies whether to verify the identity of the server when
      connecting over SSL. The default value is true.
-    :type use_peer_verification: object
+    :type use_peer_verification: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -17535,28 +17535,28 @@ class HubspotObjectDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: The table name. Type: string (or Expression with resultType string).
-    :type table_name: object
+    :type table_name: any
     """
 
     _validation = {
@@ -17593,27 +17593,27 @@ class HubspotSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -17647,7 +17647,7 @@ class IfConditionActivity(ControlActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -17706,7 +17706,7 @@ class ImpalaLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -17716,41 +17716,41 @@ class ImpalaLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param host: Required. The IP address or host name of the Impala server. (i.e.
      192.168.222.160).
-    :type host: object
+    :type host: any
     :param port: The TCP port that the Impala server uses to listen for client connections. The
      default value is 21050.
-    :type port: object
+    :type port: any
     :param authentication_type: Required. The authentication type to use. Possible values include:
      "Anonymous", "SASLUsername", "UsernameAndPassword".
     :type authentication_type: str or ~azure.synapse.artifacts.models.ImpalaAuthenticationType
     :param username: The user name used to access the Impala server. The default value is anonymous
      when using SASLUsername.
-    :type username: object
+    :type username: any
     :param password: The password corresponding to the user name when using UsernameAndPassword.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param enable_ssl: Specifies whether the connections to the server are encrypted using SSL. The
      default value is false.
-    :type enable_ssl: object
+    :type enable_ssl: any
     :param trusted_cert_path: The full path of the .pem file containing trusted CA certificates for
      verifying the server when connecting over SSL. This property can only be set when using SSL on
      self-hosted IR. The default value is the cacerts.pem file installed with the IR.
-    :type trusted_cert_path: object
+    :type trusted_cert_path: any
     :param use_system_trust_store: Specifies whether to use a CA certificate from the system trust
      store or from a specified PEM file. The default value is false.
-    :type use_system_trust_store: object
+    :type use_system_trust_store: any
     :param allow_host_name_cn_mismatch: Specifies whether to require a CA-issued SSL certificate
      name to match the host name of the server when connecting over SSL. The default value is false.
-    :type allow_host_name_cn_mismatch: object
+    :type allow_host_name_cn_mismatch: any
     :param allow_self_signed_server_cert: Specifies whether to allow self-signed certificates from
      the server. The default value is false.
-    :type allow_self_signed_server_cert: object
+    :type allow_self_signed_server_cert: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -17805,35 +17805,35 @@ class ImpalaObjectDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: This property will be retired. Please consider using schema + table
      properties instead.
-    :type table_name: object
+    :type table_name: any
     :param table: The table name of the Impala. Type: string (or Expression with resultType
      string).
-    :type table: object
+    :type table: any
     :param schema_type_properties_schema: The schema name of the Impala. Type: string (or
      Expression with resultType string).
-    :type schema_type_properties_schema: object
+    :type schema_type_properties_schema: any
     """
 
     _validation = {
@@ -17874,27 +17874,27 @@ class ImpalaSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -17928,7 +17928,7 @@ class InformixLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -17938,27 +17938,27 @@ class InformixLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_string: Required. The non-access credential portion of the connection string
      as well as an optional encrypted credential. Type: string, SecureString or
      AzureKeyVaultSecretReference.
-    :type connection_string: object
+    :type connection_string: any
     :param authentication_type: Type of authentication used to connect to the Informix as ODBC data
      store. Possible values are: Anonymous and Basic. Type: string (or Expression with resultType
      string).
-    :type authentication_type: object
+    :type authentication_type: any
     :param credential: The access credential portion of the connection string specified in
      driver-specific property-value format.
     :type credential: ~azure.synapse.artifacts.models.SecretBase
     :param user_name: User name for Basic authentication. Type: string (or Expression with
      resultType string).
-    :type user_name: object
+    :type user_name: any
     :param password: Password for Basic authentication.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -18002,27 +18002,27 @@ class InformixSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param pre_copy_script: A query to execute before starting the copy. Type: string (or
      Expression with resultType string).
-    :type pre_copy_script: object
+    :type pre_copy_script: any
     """
 
     _validation = {
@@ -18056,26 +18056,26 @@ class InformixSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: Database query. Type: string (or Expression with resultType string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -18109,29 +18109,29 @@ class InformixTableDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: The Informix table name. Type: string (or Expression with resultType
      string).
-    :type table_name: object
+    :type table_name: any
     """
 
     _validation = {
@@ -18171,7 +18171,7 @@ class IntegrationRuntime(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of integration runtime.Constant filled by server.  Possible values
      include: "Managed", "SelfHosted".
     :type type: str or ~azure.synapse.artifacts.models.IntegrationRuntimeType
@@ -18208,7 +18208,7 @@ class IntegrationRuntimeComputeProperties(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param location: The location for managed integration runtime. The supported regions could be
      found on
      https://docs.microsoft.com/en-us/azure/data-factory/data-factory-data-movement-activities.
@@ -18285,7 +18285,7 @@ class IntegrationRuntimeDataFlowProperties(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param compute_type: Compute type of the cluster which will execute data flow job. Possible
      values include: "General", "MemoryOptimized", "ComputeOptimized".
     :type compute_type: str or ~azure.synapse.artifacts.models.DataFlowComputeType
@@ -18386,7 +18386,7 @@ class IntegrationRuntimeReference(msrest.serialization.Model):
     :param reference_name: Required. Reference integration runtime name.
     :type reference_name: str
     :param parameters: Arguments for integration runtime.
-    :type parameters: dict[str, object]
+    :type parameters: dict[str, any]
     """
 
     _validation = {
@@ -18460,7 +18460,7 @@ class IntegrationRuntimeSsisCatalogInfo(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param catalog_server_endpoint: The catalog database server URL.
     :type catalog_server_endpoint: str
     :param catalog_admin_user_name: The administrator user name of catalog database.
@@ -18504,7 +18504,7 @@ class IntegrationRuntimeSsisProperties(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param catalog_info: Catalog information for managed dedicated integration runtime.
     :type catalog_info: ~azure.synapse.artifacts.models.IntegrationRuntimeSsisCatalogInfo
     :param license_type: License type for bringing your own license scenario. Possible values
@@ -18555,7 +18555,7 @@ class IntegrationRuntimeVNetProperties(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param v_net_id: The ID of the VNet that this integration runtime will join.
     :type v_net_id: str
     :param subnet: The name of the subnet this integration runtime will join.
@@ -18590,7 +18590,7 @@ class JiraLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -18600,32 +18600,32 @@ class JiraLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param host: Required. The IP address or host name of the Jira service. (e.g.
      jira.example.com).
-    :type host: object
+    :type host: any
     :param port: The TCP port that the Jira server uses to listen for client connections. The
      default value is 443 if connecting through HTTPS, or 8080 if connecting through HTTP.
-    :type port: object
+    :type port: any
     :param username: Required. The user name that you use to access Jira Service.
-    :type username: object
+    :type username: any
     :param password: The password corresponding to the user name that you provided in the username
      field.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param use_encrypted_endpoints: Specifies whether the data source endpoints are encrypted using
      HTTPS. The default value is true.
-    :type use_encrypted_endpoints: object
+    :type use_encrypted_endpoints: any
     :param use_host_verification: Specifies whether to require the host name in the server's
      certificate to match the host name of the server when connecting over SSL. The default value is
      true.
-    :type use_host_verification: object
+    :type use_host_verification: any
     :param use_peer_verification: Specifies whether to verify the identity of the server when
      connecting over SSL. The default value is true.
-    :type use_peer_verification: object
+    :type use_peer_verification: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -18674,28 +18674,28 @@ class JiraObjectDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: The table name. Type: string (or Expression with resultType string).
-    :type table_name: object
+    :type table_name: any
     """
 
     _validation = {
@@ -18732,27 +18732,27 @@ class JiraSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -18786,23 +18786,23 @@ class JsonDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
@@ -18813,7 +18813,7 @@ class JsonDataset(Dataset):
      of the table in the following link to set supported values:
      https://msdn.microsoft.com/library/system.text.encoding.aspx. Type: string (or Expression with
      resultType string).
-    :type encoding_name: object
+    :type encoding_name: any
     :param compression: The data compression method used for the json dataset.
     :type compression: ~azure.synapse.artifacts.models.DatasetCompression
     """
@@ -18856,35 +18856,35 @@ class JsonFormat(DatasetStorageFormat):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset storage format.Constant filled by server.
     :type type: str
     :param serializer: Serializer. Type: string (or Expression with resultType string).
-    :type serializer: object
+    :type serializer: any
     :param deserializer: Deserializer. Type: string (or Expression with resultType string).
-    :type deserializer: object
+    :type deserializer: any
     :param file_pattern: File pattern of JSON. To be more specific, the way of separating a
      collection of JSON objects. The default value is 'setOfObjects'. It is case-sensitive. Possible
      values include: "setOfObjects", "arrayOfObjects".
     :type file_pattern: str or ~azure.synapse.artifacts.models.JsonFormatFilePattern
     :param nesting_separator: The character used to separate nesting levels. Default value is '.'
      (dot). Type: string (or Expression with resultType string).
-    :type nesting_separator: object
+    :type nesting_separator: any
     :param encoding_name: The code page name of the preferred encoding. If not provided, the
      default value is 'utf-8', unless the byte order mark (BOM) denotes another Unicode encoding.
      The full list of supported values can be found in the 'Name' column of the table of encodings
      in the following reference: https://go.microsoft.com/fwlink/?linkid=861078. Type: string (or
      Expression with resultType string).
-    :type encoding_name: object
+    :type encoding_name: any
     :param json_node_reference: The JSONPath of the JSON array element to be flattened. Example:
      "$.ArrayPath". Type: string (or Expression with resultType string).
-    :type json_node_reference: object
+    :type json_node_reference: any
     :param json_path_definition: The JSONPath definition for each column mapping with a customized
      column name to extract data from JSON file. For fields under root object, start with "$"; for
      fields inside the array chosen by jsonNodeReference property, start from the array element.
      Example: {"Column1": "$.Column1Path", "Column2": "Column2PathInArray"}. Type: object (or
      Expression with resultType object).
-    :type json_path_definition: object
+    :type json_path_definition: any
     """
 
     _validation = {
@@ -18923,7 +18923,7 @@ class JsonReadSettings(FormatReadSettings):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The read setting type.Constant filled by server.
     :type type: str
     :param compression_properties: Compression settings.
@@ -18956,24 +18956,24 @@ class JsonSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param store_settings: Json store settings.
     :type store_settings: ~azure.synapse.artifacts.models.StoreWriteSettings
     :param format_settings: Json format settings.
@@ -19013,18 +19013,18 @@ class JsonSource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param store_settings: Json store settings.
     :type store_settings: ~azure.synapse.artifacts.models.StoreReadSettings
     :param format_settings: Json format settings.
@@ -19067,7 +19067,7 @@ class JsonWriteSettings(FormatWriteSettings):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The write setting type.Constant filled by server.
     :type type: str
     :param file_pattern: File pattern of JSON. This setting controls the way a collection of JSON
@@ -19537,7 +19537,7 @@ class LinkedServiceReference(msrest.serialization.Model):
     :param reference_name: Required. Reference LinkedService name.
     :type reference_name: str
     :param parameters: Arguments for LinkedService.
-    :type parameters: dict[str, object]
+    :type parameters: dict[str, any]
     """
 
     _validation = {
@@ -19615,7 +19615,7 @@ class LogLocationSettings(msrest.serialization.Model):
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param path: The path to storage for storing detailed logs of activity execution. Type: string
      (or Expression with resultType string).
-    :type path: object
+    :type path: any
     """
 
     _validation = {
@@ -19643,7 +19643,7 @@ class LogSettings(msrest.serialization.Model):
 
     :param enable_copy_activity_log: Specifies whether to enable copy activity log. Type: boolean
      (or Expression with resultType boolean).
-    :type enable_copy_activity_log: object
+    :type enable_copy_activity_log: any
     :param copy_activity_log_settings: Specifies settings for copy activity log.
     :type copy_activity_log_settings: ~azure.synapse.artifacts.models.CopyActivityLogSettings
     :param log_location_settings: Required. Log location settings customer needs to provide when
@@ -19678,18 +19678,18 @@ class LogStorageSettings(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param linked_service_name: Required. Log storage linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param path: The path to storage for storing detailed logs of activity execution. Type: string
      (or Expression with resultType string).
-    :type path: object
+    :type path: any
     :param log_level: Gets or sets the log level, support: Info, Warning. Type: string (or
      Expression with resultType string).
-    :type log_level: object
+    :type log_level: any
     :param enable_reliable_logging: Specifies whether to enable reliable logging. Type: boolean (or
      Expression with resultType boolean).
-    :type enable_reliable_logging: object
+    :type enable_reliable_logging: any
     """
 
     _validation = {
@@ -19723,7 +19723,7 @@ class LookupActivity(ExecutionActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -19744,7 +19744,7 @@ class LookupActivity(ExecutionActivity):
     :type dataset: ~azure.synapse.artifacts.models.DatasetReference
     :param first_row_only: Whether to return first row or all rows. Default value is true. Type:
      boolean (or Expression with resultType boolean).
-    :type first_row_only: object
+    :type first_row_only: any
     """
 
     _validation = {
@@ -19786,7 +19786,7 @@ class MagentoLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -19796,25 +19796,25 @@ class MagentoLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param host: Required. The URL of the Magento instance. (i.e. 192.168.222.110/magento3).
-    :type host: object
+    :type host: any
     :param access_token: The access token from Magento.
     :type access_token: ~azure.synapse.artifacts.models.SecretBase
     :param use_encrypted_endpoints: Specifies whether the data source endpoints are encrypted using
      HTTPS. The default value is true.
-    :type use_encrypted_endpoints: object
+    :type use_encrypted_endpoints: any
     :param use_host_verification: Specifies whether to require the host name in the server's
      certificate to match the host name of the server when connecting over SSL. The default value is
      true.
-    :type use_host_verification: object
+    :type use_host_verification: any
     :param use_peer_verification: Specifies whether to verify the identity of the server when
      connecting over SSL. The default value is true.
-    :type use_peer_verification: object
+    :type use_peer_verification: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -19858,28 +19858,28 @@ class MagentoObjectDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: The table name. Type: string (or Expression with resultType string).
-    :type table_name: object
+    :type table_name: any
     """
 
     _validation = {
@@ -19916,27 +19916,27 @@ class MagentoSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -20007,7 +20007,7 @@ class ManagedIntegrationRuntime(IntegrationRuntime):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of integration runtime.Constant filled by server.  Possible values
      include: "Managed", "SelfHosted".
     :type type: str or ~azure.synapse.artifacts.models.IntegrationRuntimeType
@@ -20059,7 +20059,7 @@ class ManagedVirtualNetworkReference(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. Managed Virtual Network reference type. Default value:
+    :ivar type: Managed Virtual Network reference type. Has constant value:
      "ManagedVirtualNetworkReference".
     :vartype type: str
     :param reference_name: Required. Reference ManagedVirtualNetwork name.
@@ -20123,7 +20123,7 @@ class MappingDataFlow(DataFlow):
     :param description: The description of the data flow.
     :type description: str
     :param annotations: List of tags that can be used for describing the data flow.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this data flow is in. If not specified, Data flow will appear at
      the root level.
     :type folder: ~azure.synapse.artifacts.models.DataFlowFolder
@@ -20171,7 +20171,7 @@ class MariaDBLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -20181,16 +20181,16 @@ class MariaDBLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_string: An ODBC connection string. Type: string, SecureString or
      AzureKeyVaultSecretReference.
-    :type connection_string: object
+    :type connection_string: any
     :param pwd: The Azure key vault secret reference of password in connection string.
     :type pwd: ~azure.synapse.artifacts.models.AzureKeyVaultSecretReference
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -20227,27 +20227,27 @@ class MariaDBSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -20281,28 +20281,28 @@ class MariaDBTableDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: The table name. Type: string (or Expression with resultType string).
-    :type table_name: object
+    :type table_name: any
     """
 
     _validation = {
@@ -20339,7 +20339,7 @@ class MarketoLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -20349,27 +20349,27 @@ class MarketoLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param endpoint: Required. The endpoint of the Marketo server. (i.e. 123-ABC-321.mktorest.com).
-    :type endpoint: object
+    :type endpoint: any
     :param client_id: Required. The client Id of your Marketo service.
-    :type client_id: object
+    :type client_id: any
     :param client_secret: The client secret of your Marketo service.
     :type client_secret: ~azure.synapse.artifacts.models.SecretBase
     :param use_encrypted_endpoints: Specifies whether the data source endpoints are encrypted using
      HTTPS. The default value is true.
-    :type use_encrypted_endpoints: object
+    :type use_encrypted_endpoints: any
     :param use_host_verification: Specifies whether to require the host name in the server's
      certificate to match the host name of the server when connecting over SSL. The default value is
      true.
-    :type use_host_verification: object
+    :type use_host_verification: any
     :param use_peer_verification: Specifies whether to verify the identity of the server when
      connecting over SSL. The default value is true.
-    :type use_peer_verification: object
+    :type use_peer_verification: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -20416,28 +20416,28 @@ class MarketoObjectDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: The table name. Type: string (or Expression with resultType string).
-    :type table_name: object
+    :type table_name: any
     """
 
     _validation = {
@@ -20474,27 +20474,27 @@ class MarketoSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -20528,7 +20528,7 @@ class MicrosoftAccessLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -20538,27 +20538,27 @@ class MicrosoftAccessLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_string: Required. The non-access credential portion of the connection string
      as well as an optional encrypted credential. Type: string, SecureString or
      AzureKeyVaultSecretReference.
-    :type connection_string: object
+    :type connection_string: any
     :param authentication_type: Type of authentication used to connect to the Microsoft Access as
      ODBC data store. Possible values are: Anonymous and Basic. Type: string (or Expression with
      resultType string).
-    :type authentication_type: object
+    :type authentication_type: any
     :param credential: The access credential portion of the connection string specified in
      driver-specific property-value format.
     :type credential: ~azure.synapse.artifacts.models.SecretBase
     :param user_name: User name for Basic authentication. Type: string (or Expression with
      resultType string).
-    :type user_name: object
+    :type user_name: any
     :param password: Password for Basic authentication.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -20602,27 +20602,27 @@ class MicrosoftAccessSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param pre_copy_script: A query to execute before starting the copy. Type: string (or
      Expression with resultType string).
-    :type pre_copy_script: object
+    :type pre_copy_script: any
     """
 
     _validation = {
@@ -20656,20 +20656,20 @@ class MicrosoftAccessSource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query: Database query. Type: string (or Expression with resultType string).
-    :type query: object
+    :type query: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
@@ -20706,29 +20706,29 @@ class MicrosoftAccessTableDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: The Microsoft Access table name. Type: string (or Expression with resultType
      string).
-    :type table_name: object
+    :type table_name: any
     """
 
     _validation = {
@@ -20765,29 +20765,29 @@ class MongoDbAtlasCollectionDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param collection: Required. The collection name of the MongoDB Atlas database. Type: string
      (or Expression with resultType string).
-    :type collection: object
+    :type collection: any
     """
 
     _validation = {
@@ -20825,7 +20825,7 @@ class MongoDbAtlasLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -20835,14 +20835,14 @@ class MongoDbAtlasLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_string: Required. The MongoDB Atlas connection string. Type: string,
      SecureString or AzureKeyVaultSecretReference. Type: string, SecureString or
      AzureKeyVaultSecretReference.
-    :type connection_string: object
+    :type connection_string: any
     :param database: Required. The name of the MongoDB Atlas database that you want to access.
      Type: string (or Expression with resultType string).
-    :type database: object
+    :type database: any
     """
 
     _validation = {
@@ -20879,32 +20879,32 @@ class MongoDbAtlasSource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param filter: Specifies selection filter using query operators. To return all documents in a
      collection, omit this parameter or pass an empty document ({}). Type: string (or Expression
      with resultType string).
-    :type filter: object
+    :type filter: any
     :param cursor_methods: Cursor methods for Mongodb query.
     :type cursor_methods: ~azure.synapse.artifacts.models.MongoDbCursorMethodsProperties
     :param batch_size: Specifies the number of documents to return in each batch of the response
      from MongoDB Atlas instance. In most cases, modifying the batch size will not affect the user
      or the application. This property's main purpose is to avoid hit the limitation of response
      size. Type: integer (or Expression with resultType integer).
-    :type batch_size: object
+    :type batch_size: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
@@ -20947,29 +20947,29 @@ class MongoDbCollectionDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param collection_name: Required. The table name of the MongoDB database. Type: string (or
      Expression with resultType string).
-    :type collection_name: object
+    :type collection_name: any
     """
 
     _validation = {
@@ -21005,22 +21005,22 @@ class MongoDbCursorMethodsProperties(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param project: Specifies the fields to return in the documents that match the query filter. To
      return all fields in the matching documents, omit this parameter. Type: string (or Expression
      with resultType string).
-    :type project: object
+    :type project: any
     :param sort: Specifies the order in which the query returns matching documents. Type: string
      (or Expression with resultType string). Type: string (or Expression with resultType string).
-    :type sort: object
+    :type sort: any
     :param skip: Specifies the how many documents skipped and where MongoDB begins returning
      results. This approach may be useful in implementing paginated results. Type: integer (or
      Expression with resultType integer).
-    :type skip: object
+    :type skip: any
     :param limit: Specifies the maximum number of documents the server returns. limit() is
      analogous to the LIMIT statement in a SQL database. Type: integer (or Expression with
      resultType integer).
-    :type limit: object
+    :type limit: any
     """
 
     _attribute_map = {
@@ -21050,7 +21050,7 @@ class MongoDbLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -21060,37 +21060,37 @@ class MongoDbLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param server: Required. The IP address or server name of the MongoDB server. Type: string (or
      Expression with resultType string).
-    :type server: object
+    :type server: any
     :param authentication_type: The authentication type to be used to connect to the MongoDB
      database. Possible values include: "Basic", "Anonymous".
     :type authentication_type: str or ~azure.synapse.artifacts.models.MongoDbAuthenticationType
     :param database_name: Required. The name of the MongoDB database that you want to access. Type:
      string (or Expression with resultType string).
-    :type database_name: object
+    :type database_name: any
     :param username: Username for authentication. Type: string (or Expression with resultType
      string).
-    :type username: object
+    :type username: any
     :param password: Password for authentication.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param auth_source: Database to verify the username and password. Type: string (or Expression
      with resultType string).
-    :type auth_source: object
+    :type auth_source: any
     :param port: The TCP port number that the MongoDB server uses to listen for client connections.
      The default value is 27017. Type: integer (or Expression with resultType integer), minimum: 0.
-    :type port: object
+    :type port: any
     :param enable_ssl: Specifies whether the connections to the server are encrypted using SSL. The
      default value is false. Type: boolean (or Expression with resultType boolean).
-    :type enable_ssl: object
+    :type enable_ssl: any
     :param allow_self_signed_server_cert: Specifies whether to allow self-signed certificates from
      the server. The default value is false. Type: boolean (or Expression with resultType boolean).
-    :type allow_self_signed_server_cert: object
+    :type allow_self_signed_server_cert: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -21143,21 +21143,21 @@ class MongoDbSource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query: Database query. Should be a SQL-92 query expression. Type: string (or Expression
      with resultType string).
-    :type query: object
+    :type query: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
@@ -21194,29 +21194,29 @@ class MongoDbV2CollectionDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param collection: Required. The collection name of the MongoDB database. Type: string (or
      Expression with resultType string).
-    :type collection: object
+    :type collection: any
     """
 
     _validation = {
@@ -21254,7 +21254,7 @@ class MongoDbV2LinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -21264,13 +21264,13 @@ class MongoDbV2LinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_string: Required. The MongoDB connection string. Type: string, SecureString
      or AzureKeyVaultSecretReference. Type: string, SecureString or AzureKeyVaultSecretReference.
-    :type connection_string: object
+    :type connection_string: any
     :param database: Required. The name of the MongoDB database that you want to access. Type:
      string (or Expression with resultType string).
-    :type database: object
+    :type database: any
     """
 
     _validation = {
@@ -21307,32 +21307,32 @@ class MongoDbV2Source(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param filter: Specifies selection filter using query operators. To return all documents in a
      collection, omit this parameter or pass an empty document ({}). Type: string (or Expression
      with resultType string).
-    :type filter: object
+    :type filter: any
     :param cursor_methods: Cursor methods for Mongodb query.
     :type cursor_methods: ~azure.synapse.artifacts.models.MongoDbCursorMethodsProperties
     :param batch_size: Specifies the number of documents to return in each batch of the response
      from MongoDB instance. In most cases, modifying the batch size will not affect the user or the
      application. This property's main purpose is to avoid hit the limitation of response size.
      Type: integer (or Expression with resultType integer).
-    :type batch_size: object
+    :type batch_size: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
@@ -21375,7 +21375,7 @@ class MySqlLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -21385,15 +21385,15 @@ class MySqlLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_string: Required. The connection string.
-    :type connection_string: object
+    :type connection_string: any
     :param password: The Azure key vault secret reference of password in connection string.
     :type password: ~azure.synapse.artifacts.models.AzureKeyVaultSecretReference
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -21431,26 +21431,26 @@ class MySqlSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: Database query. Type: string (or Expression with resultType string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -21484,28 +21484,28 @@ class MySqlTableDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: The MySQL table name. Type: string (or Expression with resultType string).
-    :type table_name: object
+    :type table_name: any
     """
 
     _validation = {
@@ -21542,7 +21542,7 @@ class NetezzaLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -21552,16 +21552,16 @@ class NetezzaLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_string: An ODBC connection string. Type: string, SecureString or
      AzureKeyVaultSecretReference.
-    :type connection_string: object
+    :type connection_string: any
     :param pwd: The Azure key vault secret reference of password in connection string.
     :type pwd: ~azure.synapse.artifacts.models.AzureKeyVaultSecretReference
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -21596,15 +21596,15 @@ class NetezzaPartitionSettings(msrest.serialization.Model):
 
     :param partition_column_name: The name of the column in integer type that will be used for
      proceeding range partitioning. Type: string (or Expression with resultType string).
-    :type partition_column_name: object
+    :type partition_column_name: any
     :param partition_upper_bound: The maximum value of column specified in partitionColumnName that
      will be used for proceeding range partitioning. Type: string (or Expression with resultType
      string).
-    :type partition_upper_bound: object
+    :type partition_upper_bound: any
     :param partition_lower_bound: The minimum value of column specified in partitionColumnName that
      will be used for proceeding range partitioning. Type: string (or Expression with resultType
      string).
-    :type partition_lower_bound: object
+    :type partition_lower_bound: any
     """
 
     _attribute_map = {
@@ -21630,27 +21630,27 @@ class NetezzaSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     :param partition_option: The partition mechanism that will be used for Netezza read in
      parallel. Possible values include: "None", "DataSlice", "DynamicRange".
     :type partition_option: str or ~azure.synapse.artifacts.models.NetezzaPartitionOption
@@ -21693,35 +21693,35 @@ class NetezzaTableDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: This property will be retired. Please consider using schema + table
      properties instead.
-    :type table_name: object
+    :type table_name: any
     :param table: The table name of the Netezza. Type: string (or Expression with resultType
      string).
-    :type table: object
+    :type table: any
     :param schema_type_properties_schema: The schema name of the Netezza. Type: string (or
      Expression with resultType string).
-    :type schema_type_properties_schema: object
+    :type schema_type_properties_schema: any
     """
 
     _validation = {
@@ -21762,7 +21762,7 @@ class Notebook(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param description: The description of the notebook.
     :type description: str
     :param big_data_pool: Big data pool reference.
@@ -21821,15 +21821,15 @@ class NotebookCell(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param cell_type: Required. String identifying the type of cell.
     :type cell_type: str
     :param metadata: Required. Cell-level metadata.
-    :type metadata: object
+    :type metadata: any
     :param source: Required. Contents of the cell, represented as an array of lines.
     :type source: list[str]
     :param attachments: Attachments associated with the cell.
-    :type attachments: object
+    :type attachments: any
     :param outputs: Cell-level output items.
     :type outputs: list[~azure.synapse.artifacts.models.NotebookCellOutputItem]
     """
@@ -21876,11 +21876,11 @@ class NotebookCellOutputItem(msrest.serialization.Model):
     :type output_type: str or ~azure.synapse.artifacts.models.CellOutputType
     :param text: For output_type=stream, the stream's text output, represented as a string or an
      array of strings.
-    :type text: object
+    :type text: any
     :param data: Output data. Use MIME type as key, and content as value.
-    :type data: object
+    :type data: any
     :param metadata: Metadata for the output item.
-    :type metadata: object
+    :type metadata: any
     """
 
     _validation = {
@@ -21916,7 +21916,7 @@ class NotebookKernelSpec(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Name of the kernel specification.
     :type name: str
     :param display_name: Required. Name to display in UI.
@@ -21951,7 +21951,7 @@ class NotebookLanguageInfo(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. The programming language which this kernel runs.
     :type name: str
     :param codemirror_mode: The codemirror mode to use for code in this language.
@@ -22012,7 +22012,7 @@ class NotebookMetadata(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param kernelspec: Kernel information.
     :type kernelspec: ~azure.synapse.artifacts.models.NotebookKernelSpec
     :param language_info: Language info.
@@ -22136,7 +22136,7 @@ class ODataLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -22146,32 +22146,32 @@ class ODataLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param url: Required. The URL of the OData service endpoint. Type: string (or Expression with
      resultType string).
-    :type url: object
+    :type url: any
     :param authentication_type: Type of authentication used to connect to the OData service.
      Possible values include: "Basic", "Anonymous", "Windows", "AadServicePrincipal",
      "ManagedServiceIdentity".
     :type authentication_type: str or ~azure.synapse.artifacts.models.ODataAuthenticationType
     :param user_name: User name of the OData service. Type: string (or Expression with resultType
      string).
-    :type user_name: object
+    :type user_name: any
     :param password: Password of the OData service.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param tenant: Specify the tenant information (domain name or tenant ID) under which your
      application resides. Type: string (or Expression with resultType string).
-    :type tenant: object
+    :type tenant: any
     :param service_principal_id: Specify the application id of your application registered in Azure
      Active Directory. Type: string (or Expression with resultType string).
-    :type service_principal_id: object
+    :type service_principal_id: any
     :param azure_cloud_type: Indicates the azure cloud type of the service principle auth. Allowed
      values are AzurePublic, AzureChina, AzureUsGovernment, AzureGermany. Default value is the data
      factory regions’ cloud type. Type: string (or Expression with resultType string).
-    :type azure_cloud_type: object
+    :type azure_cloud_type: any
     :param aad_resource_id: Specify the resource you are requesting authorization to use Directory.
      Type: string (or Expression with resultType string).
-    :type aad_resource_id: object
+    :type aad_resource_id: any
     :param aad_service_principal_credential_type: Specify the credential type (key or cert) is used
      for service principal. Possible values include: "ServicePrincipalKey", "ServicePrincipalCert".
     :type aad_service_principal_credential_type: str or
@@ -22190,7 +22190,7 @@ class ODataLinkedService(LinkedService):
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -22248,28 +22248,28 @@ class ODataResourceDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param path: The OData resource path. Type: string (or Expression with resultType string).
-    :type path: object
+    :type path: any
     """
 
     _validation = {
@@ -22306,26 +22306,26 @@ class ODataSource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query: OData query. For example, "$top=1". Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     :param http_request_timeout: The timeout (TimeSpan) to get an HTTP response. It is the timeout
      to get a response, not the timeout to read response data. Default value: 00:05:00. Type: string
      (or Expression with resultType string), pattern:
      ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type http_request_timeout: object
+    :type http_request_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
@@ -22364,7 +22364,7 @@ class OdbcLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -22374,26 +22374,26 @@ class OdbcLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_string: Required. The non-access credential portion of the connection string
      as well as an optional encrypted credential. Type: string, SecureString or
      AzureKeyVaultSecretReference.
-    :type connection_string: object
+    :type connection_string: any
     :param authentication_type: Type of authentication used to connect to the ODBC data store.
      Possible values are: Anonymous and Basic. Type: string (or Expression with resultType string).
-    :type authentication_type: object
+    :type authentication_type: any
     :param credential: The access credential portion of the connection string specified in
      driver-specific property-value format.
     :type credential: ~azure.synapse.artifacts.models.SecretBase
     :param user_name: User name for Basic authentication. Type: string (or Expression with
      resultType string).
-    :type user_name: object
+    :type user_name: any
     :param password: Password for Basic authentication.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -22437,27 +22437,27 @@ class OdbcSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param pre_copy_script: A query to execute before starting the copy. Type: string (or
      Expression with resultType string).
-    :type pre_copy_script: object
+    :type pre_copy_script: any
     """
 
     _validation = {
@@ -22491,26 +22491,26 @@ class OdbcSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: Database query. Type: string (or Expression with resultType string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -22544,28 +22544,28 @@ class OdbcTableDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: The ODBC table name. Type: string (or Expression with resultType string).
-    :type table_name: object
+    :type table_name: any
     """
 
     _validation = {
@@ -22602,32 +22602,32 @@ class Office365Dataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: Required. Name of the dataset to extract from Office 365. Type: string (or
      Expression with resultType string).
-    :type table_name: object
+    :type table_name: any
     :param predicate: A predicate expression that can be used to filter the specific rows to
      extract from Office 365. Type: string (or Expression with resultType string).
-    :type predicate: object
+    :type predicate: any
     """
 
     _validation = {
@@ -22667,7 +22667,7 @@ class Office365LinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -22677,22 +22677,22 @@ class Office365LinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param office365_tenant_id: Required. Azure tenant ID to which the Office 365 account belongs.
      Type: string (or Expression with resultType string).
-    :type office365_tenant_id: object
+    :type office365_tenant_id: any
     :param service_principal_tenant_id: Required. Specify the tenant information under which your
      Azure AD web application resides. Type: string (or Expression with resultType string).
-    :type service_principal_tenant_id: object
+    :type service_principal_tenant_id: any
     :param service_principal_id: Required. Specify the application's client ID. Type: string (or
      Expression with resultType string).
-    :type service_principal_id: object
+    :type service_principal_id: any
     :param service_principal_key: Required. Specify the application's key.
     :type service_principal_key: ~azure.synapse.artifacts.models.SecretBase
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -22737,37 +22737,37 @@ class Office365Source(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param allowed_groups: The groups containing all the users. Type: array of strings (or
      Expression with resultType array of strings).
-    :type allowed_groups: object
+    :type allowed_groups: any
     :param user_scope_filter_uri: The user scope uri. Type: string (or Expression with resultType
      string).
-    :type user_scope_filter_uri: object
+    :type user_scope_filter_uri: any
     :param date_filter_column: The Column to apply the :code:`<paramref name="StartTime"/>` and
      :code:`<paramref name="EndTime"/>`. Type: string (or Expression with resultType string).
-    :type date_filter_column: object
+    :type date_filter_column: any
     :param start_time: Start time of the requested range for this dataset. Type: string (or
      Expression with resultType string).
-    :type start_time: object
+    :type start_time: any
     :param end_time: End time of the requested range for this dataset. Type: string (or Expression
      with resultType string).
-    :type end_time: object
+    :type end_time: any
     :param output_columns: The columns to be read out from the Office 365 table. Type: array of
      objects (or Expression with resultType array of objects). Example: [ { "name": "Id" }, {
      "name": "CreatedDateTime" } ].
-    :type output_columns: object
+    :type output_columns: any
     """
 
     _validation = {
@@ -22850,7 +22850,7 @@ class OracleLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -22860,16 +22860,16 @@ class OracleLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_string: Required. The connection string. Type: string, SecureString or
      AzureKeyVaultSecretReference.
-    :type connection_string: object
+    :type connection_string: any
     :param password: The Azure key vault secret reference of password in connection string.
     :type password: ~azure.synapse.artifacts.models.AzureKeyVaultSecretReference
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -22904,18 +22904,18 @@ class OraclePartitionSettings(msrest.serialization.Model):
     """The settings that will be leveraged for Oracle source partitioning.
 
     :param partition_names: Names of the physical partitions of Oracle table.
-    :type partition_names: object
+    :type partition_names: any
     :param partition_column_name: The name of the column in integer type that will be used for
      proceeding range partitioning. Type: string (or Expression with resultType string).
-    :type partition_column_name: object
+    :type partition_column_name: any
     :param partition_upper_bound: The maximum value of column specified in partitionColumnName that
      will be used for proceeding range partitioning. Type: string (or Expression with resultType
      string).
-    :type partition_upper_bound: object
+    :type partition_upper_bound: any
     :param partition_lower_bound: The minimum value of column specified in partitionColumnName that
      will be used for proceeding range partitioning. Type: string (or Expression with resultType
      string).
-    :type partition_lower_bound: object
+    :type partition_lower_bound: any
     """
 
     _attribute_map = {
@@ -22943,7 +22943,7 @@ class OracleServiceCloudLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -22953,29 +22953,29 @@ class OracleServiceCloudLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param host: Required. The URL of the Oracle Service Cloud instance.
-    :type host: object
+    :type host: any
     :param username: Required. The user name that you use to access Oracle Service Cloud server.
-    :type username: object
+    :type username: any
     :param password: Required. The password corresponding to the user name that you provided in the
      username key.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param use_encrypted_endpoints: Specifies whether the data source endpoints are encrypted using
      HTTPS. The default value is true. Type: boolean (or Expression with resultType boolean).
-    :type use_encrypted_endpoints: object
+    :type use_encrypted_endpoints: any
     :param use_host_verification: Specifies whether to require the host name in the server's
      certificate to match the host name of the server when connecting over SSL. The default value is
      true. Type: boolean (or Expression with resultType boolean).
-    :type use_host_verification: object
+    :type use_host_verification: any
     :param use_peer_verification: Specifies whether to verify the identity of the server when
      connecting over SSL. The default value is true. Type: boolean (or Expression with resultType
      boolean).
-    :type use_peer_verification: object
+    :type use_peer_verification: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -23023,28 +23023,28 @@ class OracleServiceCloudObjectDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: The table name. Type: string (or Expression with resultType string).
-    :type table_name: object
+    :type table_name: any
     """
 
     _validation = {
@@ -23081,27 +23081,27 @@ class OracleServiceCloudSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -23135,27 +23135,27 @@ class OracleSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param pre_copy_script: SQL pre-copy script. Type: string (or Expression with resultType
      string).
-    :type pre_copy_script: object
+    :type pre_copy_script: any
     """
 
     _validation = {
@@ -23189,24 +23189,24 @@ class OracleSource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param oracle_reader_query: Oracle reader query. Type: string (or Expression with resultType
      string).
-    :type oracle_reader_query: object
+    :type oracle_reader_query: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param partition_option: The partition mechanism that will be used for Oracle read in parallel.
      Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
     :type partition_option: str or ~azure.synapse.artifacts.models.OraclePartitionOption
@@ -23254,35 +23254,35 @@ class OracleTableDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: This property will be retired. Please consider using schema + table
      properties instead.
-    :type table_name: object
+    :type table_name: any
     :param schema_type_properties_schema: The schema name of the on-premises Oracle database. Type:
      string (or Expression with resultType string).
-    :type schema_type_properties_schema: object
+    :type schema_type_properties_schema: any
     :param table: The table name of the on-premises Oracle database. Type: string (or Expression
      with resultType string).
-    :type table: object
+    :type table: any
     """
 
     _validation = {
@@ -23323,23 +23323,23 @@ class OrcDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
@@ -23385,13 +23385,13 @@ class OrcFormat(DatasetStorageFormat):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset storage format.Constant filled by server.
     :type type: str
     :param serializer: Serializer. Type: string (or Expression with resultType string).
-    :type serializer: object
+    :type serializer: any
     :param deserializer: Deserializer. Type: string (or Expression with resultType string).
-    :type deserializer: object
+    :type deserializer: any
     """
 
     _validation = {
@@ -23420,24 +23420,24 @@ class OrcSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param store_settings: ORC store settings.
     :type store_settings: ~azure.synapse.artifacts.models.StoreWriteSettings
     :param format_settings: ORC format settings.
@@ -23477,18 +23477,18 @@ class OrcSource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param store_settings: ORC store settings.
     :type store_settings: ~azure.synapse.artifacts.models.StoreReadSettings
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
@@ -23527,16 +23527,16 @@ class OrcWriteSettings(FormatWriteSettings):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The write setting type.Constant filled by server.
     :type type: str
     :param max_rows_per_file: Limit the written file's row count to be smaller than or equal to the
      specified count. Type: integer (or Expression with resultType integer).
-    :type max_rows_per_file: object
+    :type max_rows_per_file: any
     :param file_name_prefix: Specifies the file name pattern
      :code:`<fileNamePrefix>`_:code:`<fileIndex>`.:code:`<fileExtension>` when copy from non-file
      based store without partitionOptions. Type: string (or Expression with resultType string).
-    :type file_name_prefix: object
+    :type file_name_prefix: any
     """
 
     _validation = {
@@ -23569,7 +23569,7 @@ class ParameterSpecification(msrest.serialization.Model):
      "Float", "Bool", "Array", "SecureString".
     :type type: str or ~azure.synapse.artifacts.models.ParameterType
     :param default_value: Default value of parameter.
-    :type default_value: object
+    :type default_value: any
     """
 
     _validation = {
@@ -23597,30 +23597,30 @@ class ParquetDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param location: The location of the parquet storage.
     :type location: ~azure.synapse.artifacts.models.DatasetLocation
     :param compression_codec: A string from ParquetCompressionCodecEnum or an expression.
-    :type compression_codec: object
+    :type compression_codec: any
     """
 
     _validation = {
@@ -23659,13 +23659,13 @@ class ParquetFormat(DatasetStorageFormat):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset storage format.Constant filled by server.
     :type type: str
     :param serializer: Serializer. Type: string (or Expression with resultType string).
-    :type serializer: object
+    :type serializer: any
     :param deserializer: Deserializer. Type: string (or Expression with resultType string).
-    :type deserializer: object
+    :type deserializer: any
     """
 
     _validation = {
@@ -23694,24 +23694,24 @@ class ParquetSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param store_settings: Parquet store settings.
     :type store_settings: ~azure.synapse.artifacts.models.StoreWriteSettings
     :param format_settings: Parquet format settings.
@@ -23751,18 +23751,18 @@ class ParquetSource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param store_settings: Parquet store settings.
     :type store_settings: ~azure.synapse.artifacts.models.StoreReadSettings
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
@@ -23801,16 +23801,16 @@ class ParquetWriteSettings(FormatWriteSettings):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The write setting type.Constant filled by server.
     :type type: str
     :param max_rows_per_file: Limit the written file's row count to be smaller than or equal to the
      specified count. Type: integer (or Expression with resultType integer).
-    :type max_rows_per_file: object
+    :type max_rows_per_file: any
     :param file_name_prefix: Specifies the file name pattern
      :code:`<fileNamePrefix>`_:code:`<fileIndex>`.:code:`<fileExtension>` when copy from non-file
      based store without partitionOptions. Type: string (or Expression with resultType string).
-    :type file_name_prefix: object
+    :type file_name_prefix: any
     """
 
     _validation = {
@@ -23841,7 +23841,7 @@ class PaypalLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -23851,27 +23851,27 @@ class PaypalLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param host: Required. The URL of the PayPal instance. (i.e. api.sandbox.paypal.com).
-    :type host: object
+    :type host: any
     :param client_id: Required. The client ID associated with your PayPal application.
-    :type client_id: object
+    :type client_id: any
     :param client_secret: The client secret associated with your PayPal application.
     :type client_secret: ~azure.synapse.artifacts.models.SecretBase
     :param use_encrypted_endpoints: Specifies whether the data source endpoints are encrypted using
      HTTPS. The default value is true.
-    :type use_encrypted_endpoints: object
+    :type use_encrypted_endpoints: any
     :param use_host_verification: Specifies whether to require the host name in the server's
      certificate to match the host name of the server when connecting over SSL. The default value is
      true.
-    :type use_host_verification: object
+    :type use_host_verification: any
     :param use_peer_verification: Specifies whether to verify the identity of the server when
      connecting over SSL. The default value is true.
-    :type use_peer_verification: object
+    :type use_peer_verification: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -23918,28 +23918,28 @@ class PaypalObjectDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: The table name. Type: string (or Expression with resultType string).
-    :type table_name: object
+    :type table_name: any
     """
 
     _validation = {
@@ -23976,27 +23976,27 @@ class PaypalSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -24030,7 +24030,7 @@ class PhoenixLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -24040,45 +24040,45 @@ class PhoenixLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param host: Required. The IP address or host name of the Phoenix server. (i.e.
      192.168.222.160).
-    :type host: object
+    :type host: any
     :param port: The TCP port that the Phoenix server uses to listen for client connections. The
      default value is 8765.
-    :type port: object
+    :type port: any
     :param http_path: The partial URL corresponding to the Phoenix server. (i.e.
      /gateway/sandbox/phoenix/version). The default value is hbasephoenix if using
      WindowsAzureHDInsightService.
-    :type http_path: object
+    :type http_path: any
     :param authentication_type: Required. The authentication mechanism used to connect to the
      Phoenix server. Possible values include: "Anonymous", "UsernameAndPassword",
      "WindowsAzureHDInsightService".
     :type authentication_type: str or ~azure.synapse.artifacts.models.PhoenixAuthenticationType
     :param username: The user name used to connect to the Phoenix server.
-    :type username: object
+    :type username: any
     :param password: The password corresponding to the user name.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param enable_ssl: Specifies whether the connections to the server are encrypted using SSL. The
      default value is false.
-    :type enable_ssl: object
+    :type enable_ssl: any
     :param trusted_cert_path: The full path of the .pem file containing trusted CA certificates for
      verifying the server when connecting over SSL. This property can only be set when using SSL on
      self-hosted IR. The default value is the cacerts.pem file installed with the IR.
-    :type trusted_cert_path: object
+    :type trusted_cert_path: any
     :param use_system_trust_store: Specifies whether to use a CA certificate from the system trust
      store or from a specified PEM file. The default value is false.
-    :type use_system_trust_store: object
+    :type use_system_trust_store: any
     :param allow_host_name_cn_mismatch: Specifies whether to require a CA-issued SSL certificate
      name to match the host name of the server when connecting over SSL. The default value is false.
-    :type allow_host_name_cn_mismatch: object
+    :type allow_host_name_cn_mismatch: any
     :param allow_self_signed_server_cert: Specifies whether to allow self-signed certificates from
      the server. The default value is false.
-    :type allow_self_signed_server_cert: object
+    :type allow_self_signed_server_cert: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -24135,35 +24135,35 @@ class PhoenixObjectDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: This property will be retired. Please consider using schema + table
      properties instead.
-    :type table_name: object
+    :type table_name: any
     :param table: The table name of the Phoenix. Type: string (or Expression with resultType
      string).
-    :type table: object
+    :type table: any
     :param schema_type_properties_schema: The schema name of the Phoenix. Type: string (or
      Expression with resultType string).
-    :type schema_type_properties_schema: object
+    :type schema_type_properties_schema: any
     """
 
     _validation = {
@@ -24204,27 +24204,27 @@ class PhoenixSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -24350,7 +24350,7 @@ class PipelineResource(SubResource):
     :vartype etag: str
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param description: The description of the pipeline.
     :type description: str
     :param activities: List of activities in pipeline.
@@ -24362,9 +24362,9 @@ class PipelineResource(SubResource):
     :param concurrency: The max number of concurrent runs for the pipeline.
     :type concurrency: int
     :param annotations: List of tags that can be used for describing the Pipeline.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param run_dimensions: Dimensions emitted by Pipeline.
-    :type run_dimensions: dict[str, object]
+    :type run_dimensions: dict[str, any]
     :param folder: The folder that this Pipeline is in. If not specified, Pipeline will appear at
      the root level.
     :type folder: ~azure.synapse.artifacts.models.PipelineFolder
@@ -24417,7 +24417,7 @@ class PipelineRun(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :ivar run_id: Identifier of a run.
     :vartype run_id: str
     :ivar run_group_id: Identifier that correlates all the recovery runs of a pipeline run.
@@ -24566,20 +24566,20 @@ class PolybaseSettings(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param reject_type: Reject type. Possible values include: "value", "percentage".
     :type reject_type: str or ~azure.synapse.artifacts.models.PolybaseSettingsRejectType
     :param reject_value: Specifies the value or the percentage of rows that can be rejected before
      the query fails. Type: number (or Expression with resultType number), minimum: 0.
-    :type reject_value: object
+    :type reject_value: any
     :param reject_sample_value: Determines the number of rows to attempt to retrieve before the
      PolyBase recalculates the percentage of rejected rows. Type: integer (or Expression with
      resultType integer), minimum: 0.
-    :type reject_sample_value: object
+    :type reject_sample_value: any
     :param use_type_default: Specifies how to handle missing values in delimited text files when
      PolyBase retrieves data from the text file. Type: boolean (or Expression with resultType
      boolean).
-    :type use_type_default: object
+    :type use_type_default: any
     """
 
     _attribute_map = {
@@ -24609,7 +24609,7 @@ class PostgreSqlLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -24619,15 +24619,15 @@ class PostgreSqlLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_string: Required. The connection string.
-    :type connection_string: object
+    :type connection_string: any
     :param password: The Azure key vault secret reference of password in connection string.
     :type password: ~azure.synapse.artifacts.models.AzureKeyVaultSecretReference
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -24665,26 +24665,26 @@ class PostgreSqlSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: Database query. Type: string (or Expression with resultType string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -24718,34 +24718,34 @@ class PostgreSqlTableDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: This property will be retired. Please consider using schema + table
      properties instead.
-    :type table_name: object
+    :type table_name: any
     :param table: The PostgreSQL table name. Type: string (or Expression with resultType string).
-    :type table: object
+    :type table: any
     :param schema_type_properties_schema: The PostgreSQL schema name. Type: string (or Expression
      with resultType string).
-    :type schema_type_properties_schema: object
+    :type schema_type_properties_schema: any
     """
 
     _validation = {
@@ -24786,7 +24786,7 @@ class PrestoLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -24796,47 +24796,47 @@ class PrestoLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param host: Required. The IP address or host name of the Presto server. (i.e.
      192.168.222.160).
-    :type host: object
+    :type host: any
     :param server_version: Required. The version of the Presto server. (i.e. 0.148-t).
-    :type server_version: object
+    :type server_version: any
     :param catalog: Required. The catalog context for all request against the server.
-    :type catalog: object
+    :type catalog: any
     :param port: The TCP port that the Presto server uses to listen for client connections. The
      default value is 8080.
-    :type port: object
+    :type port: any
     :param authentication_type: Required. The authentication mechanism used to connect to the
      Presto server. Possible values include: "Anonymous", "LDAP".
     :type authentication_type: str or ~azure.synapse.artifacts.models.PrestoAuthenticationType
     :param username: The user name used to connect to the Presto server.
-    :type username: object
+    :type username: any
     :param password: The password corresponding to the user name.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param enable_ssl: Specifies whether the connections to the server are encrypted using SSL. The
      default value is false.
-    :type enable_ssl: object
+    :type enable_ssl: any
     :param trusted_cert_path: The full path of the .pem file containing trusted CA certificates for
      verifying the server when connecting over SSL. This property can only be set when using SSL on
      self-hosted IR. The default value is the cacerts.pem file installed with the IR.
-    :type trusted_cert_path: object
+    :type trusted_cert_path: any
     :param use_system_trust_store: Specifies whether to use a CA certificate from the system trust
      store or from a specified PEM file. The default value is false.
-    :type use_system_trust_store: object
+    :type use_system_trust_store: any
     :param allow_host_name_cn_mismatch: Specifies whether to require a CA-issued SSL certificate
      name to match the host name of the server when connecting over SSL. The default value is false.
-    :type allow_host_name_cn_mismatch: object
+    :type allow_host_name_cn_mismatch: any
     :param allow_self_signed_server_cert: Specifies whether to allow self-signed certificates from
      the server. The default value is false.
-    :type allow_self_signed_server_cert: object
+    :type allow_self_signed_server_cert: any
     :param time_zone_id: The local time zone used by the connection. Valid values for this option
      are specified in the IANA Time Zone Database. The default value is the system time zone.
-    :type time_zone_id: object
+    :type time_zone_id: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -24899,35 +24899,35 @@ class PrestoObjectDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: This property will be retired. Please consider using schema + table
      properties instead.
-    :type table_name: object
+    :type table_name: any
     :param table: The table name of the Presto. Type: string (or Expression with resultType
      string).
-    :type table: object
+    :type table: any
     :param schema_type_properties_schema: The schema name of the Presto. Type: string (or
      Expression with resultType string).
-    :type schema_type_properties_schema: object
+    :type schema_type_properties_schema: any
     """
 
     _validation = {
@@ -24968,27 +24968,27 @@ class PrestoSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -25205,7 +25205,7 @@ class QuickBooksLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -25215,17 +25215,17 @@ class QuickBooksLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_properties: Properties used to connect to QuickBooks. It is mutually
      exclusive with any other properties in the linked service. Type: object.
-    :type connection_properties: object
+    :type connection_properties: any
     :param endpoint: Required. The endpoint of the QuickBooks server. (i.e.
      quickbooks.api.intuit.com).
-    :type endpoint: object
+    :type endpoint: any
     :param company_id: Required. The company ID of the QuickBooks company to authorize.
-    :type company_id: object
+    :type company_id: any
     :param consumer_key: Required. The consumer key for OAuth 1.0 authentication.
-    :type consumer_key: object
+    :type consumer_key: any
     :param consumer_secret: Required. The consumer secret for OAuth 1.0 authentication.
     :type consumer_secret: ~azure.synapse.artifacts.models.SecretBase
     :param access_token: Required. The access token for OAuth 1.0 authentication.
@@ -25234,11 +25234,11 @@ class QuickBooksLinkedService(LinkedService):
     :type access_token_secret: ~azure.synapse.artifacts.models.SecretBase
     :param use_encrypted_endpoints: Specifies whether the data source endpoints are encrypted using
      HTTPS. The default value is true.
-    :type use_encrypted_endpoints: object
+    :type use_encrypted_endpoints: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -25293,28 +25293,28 @@ class QuickBooksObjectDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: The table name. Type: string (or Expression with resultType string).
-    :type table_name: object
+    :type table_name: any
     """
 
     _validation = {
@@ -25351,27 +25351,27 @@ class QuickBooksSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -25403,7 +25403,7 @@ class RecurrenceSchedule(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param minutes: The minutes.
     :type minutes: list[int]
     :param hours: The hours.
@@ -25443,7 +25443,7 @@ class RecurrenceScheduleOccurrence(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param day: The day of the week. Possible values include: "Sunday", "Monday", "Tuesday",
      "Wednesday", "Thursday", "Friday", "Saturday".
     :type day: str or ~azure.synapse.artifacts.models.DayOfWeek
@@ -25474,15 +25474,15 @@ class RedirectIncompatibleRowSettings(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param linked_service_name: Required. Name of the Azure Storage, Storage SAS, or Azure Data
      Lake Store linked service used for redirecting incompatible row. Must be specified if
      redirectIncompatibleRowSettings is specified. Type: string (or Expression with resultType
      string).
-    :type linked_service_name: object
+    :type linked_service_name: any
     :param path: The path for storing the redirect incompatible row data. Type: string (or
      Expression with resultType string).
-    :type path: object
+    :type path: any
     """
 
     _validation = {
@@ -25516,7 +25516,7 @@ class RedshiftUnloadSettings(msrest.serialization.Model):
     :param bucket_name: Required. The bucket of the interim Amazon S3 which will be used to store
      the unloaded data from Amazon Redshift source. The bucket must be in the same region as the
      Amazon Redshift source. Type: string (or Expression with resultType string).
-    :type bucket_name: object
+    :type bucket_name: any
     """
 
     _validation = {
@@ -25545,20 +25545,20 @@ class RelationalSource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query: Database query. Type: string (or Expression with resultType string).
-    :type query: object
+    :type query: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
@@ -25595,29 +25595,29 @@ class RelationalTableDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: The relational table name. Type: string (or Expression with resultType
      string).
-    :type table_name: object
+    :type table_name: any
     """
 
     _validation = {
@@ -25734,7 +25734,7 @@ class RerunTumblingWindowTrigger(Trigger):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Trigger type.Constant filled by server.
     :type type: str
     :param description: Trigger description.
@@ -25743,9 +25743,9 @@ class RerunTumblingWindowTrigger(Trigger):
      called on the Trigger. Possible values include: "Started", "Stopped", "Disabled".
     :vartype runtime_state: str or ~azure.synapse.artifacts.models.TriggerRuntimeState
     :param annotations: List of tags that can be used for describing the trigger.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param parent_trigger: Required. The parent trigger reference.
-    :type parent_trigger: object
+    :type parent_trigger: any
     :param requested_start_time: Required. The start time for the time period for which restatement
      is initiated. Only UTC time is currently supported.
     :type requested_start_time: ~datetime.datetime
@@ -25835,7 +25835,7 @@ class ResponsysLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -25845,30 +25845,30 @@ class ResponsysLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param endpoint: Required. The endpoint of the Responsys server.
-    :type endpoint: object
+    :type endpoint: any
     :param client_id: Required. The client ID associated with the Responsys application. Type:
      string (or Expression with resultType string).
-    :type client_id: object
+    :type client_id: any
     :param client_secret: The client secret associated with the Responsys application. Type: string
      (or Expression with resultType string).
     :type client_secret: ~azure.synapse.artifacts.models.SecretBase
     :param use_encrypted_endpoints: Specifies whether the data source endpoints are encrypted using
      HTTPS. The default value is true. Type: boolean (or Expression with resultType boolean).
-    :type use_encrypted_endpoints: object
+    :type use_encrypted_endpoints: any
     :param use_host_verification: Specifies whether to require the host name in the server's
      certificate to match the host name of the server when connecting over SSL. The default value is
      true. Type: boolean (or Expression with resultType boolean).
-    :type use_host_verification: object
+    :type use_host_verification: any
     :param use_peer_verification: Specifies whether to verify the identity of the server when
      connecting over SSL. The default value is true. Type: boolean (or Expression with resultType
      boolean).
-    :type use_peer_verification: object
+    :type use_peer_verification: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -25915,28 +25915,28 @@ class ResponsysObjectDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: The table name. Type: string (or Expression with resultType string).
-    :type table_name: object
+    :type table_name: any
     """
 
     _validation = {
@@ -25973,27 +25973,27 @@ class ResponsysSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -26027,41 +26027,41 @@ class RestResourceDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param relative_url: The relative URL to the resource that the RESTful API provides. Type:
      string (or Expression with resultType string).
-    :type relative_url: object
+    :type relative_url: any
     :param request_method: The HTTP method used to call the RESTful API. The default is GET. Type:
      string (or Expression with resultType string).
-    :type request_method: object
+    :type request_method: any
     :param request_body: The HTTP request body to the RESTful API if requestMethod is POST. Type:
      string (or Expression with resultType string).
-    :type request_body: object
+    :type request_body: any
     :param additional_headers: The additional HTTP headers in the request to the RESTful API. Type:
      string (or Expression with resultType string).
-    :type additional_headers: object
+    :type additional_headers: any
     :param pagination_rules: The pagination rules to compose next page requests. Type: string (or
      Expression with resultType string).
-    :type pagination_rules: object
+    :type pagination_rules: any
     """
 
     _validation = {
@@ -26106,7 +26106,7 @@ class RestServiceLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -26116,40 +26116,40 @@ class RestServiceLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param url: Required. The base URL of the REST service.
-    :type url: object
+    :type url: any
     :param enable_server_certificate_validation: Whether to validate server side SSL certificate
      when connecting to the endpoint.The default value is true. Type: boolean (or Expression with
      resultType boolean).
-    :type enable_server_certificate_validation: object
+    :type enable_server_certificate_validation: any
     :param authentication_type: Required. Type of authentication used to connect to the REST
      service. Possible values include: "Anonymous", "Basic", "AadServicePrincipal",
      "ManagedServiceIdentity".
     :type authentication_type: str or ~azure.synapse.artifacts.models.RestServiceAuthenticationType
     :param user_name: The user name used in Basic authentication type.
-    :type user_name: object
+    :type user_name: any
     :param password: The password used in Basic authentication type.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param service_principal_id: The application's client ID used in AadServicePrincipal
      authentication type.
-    :type service_principal_id: object
+    :type service_principal_id: any
     :param service_principal_key: The application's key used in AadServicePrincipal authentication
      type.
     :type service_principal_key: ~azure.synapse.artifacts.models.SecretBase
     :param tenant: The tenant information (domain name or tenant ID) used in AadServicePrincipal
      authentication type under which your application resides.
-    :type tenant: object
+    :type tenant: any
     :param azure_cloud_type: Indicates the azure cloud type of the service principle auth. Allowed
      values are AzurePublic, AzureChina, AzureUsGovernment, AzureGermany. Default value is the data
      factory regions’ cloud type. Type: string (or Expression with resultType string).
-    :type azure_cloud_type: object
+    :type azure_cloud_type: any
     :param aad_resource_id: The resource you are requesting authorization to use.
-    :type aad_resource_id: object
+    :type aad_resource_id: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -26204,40 +26204,40 @@ class RestSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param request_method: The HTTP method used to call the RESTful API. The default is POST. Type:
      string (or Expression with resultType string).
-    :type request_method: object
+    :type request_method: any
     :param additional_headers: The additional HTTP headers in the request to the RESTful API. Type:
      string (or Expression with resultType string).
-    :type additional_headers: object
+    :type additional_headers: any
     :param http_request_timeout: The timeout (TimeSpan) to get an HTTP response. It is the timeout
      to get a response, not the timeout to read response data. Default value: 00:01:40. Type: string
      (or Expression with resultType string), pattern:
      ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type http_request_timeout: object
+    :type http_request_timeout: any
     :param request_interval: The time to await before sending next request, in milliseconds.
-    :type request_interval: object
+    :type request_interval: any
     :param http_compression_type: Http Compression Type to Send data in compressed format with
      Optimal Compression Level, Default is None. And The Only Supported option is Gzip.
-    :type http_compression_type: object
+    :type http_compression_type: any
     """
 
     _validation = {
@@ -26279,37 +26279,37 @@ class RestSource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param request_method: The HTTP method used to call the RESTful API. The default is GET. Type:
      string (or Expression with resultType string).
-    :type request_method: object
+    :type request_method: any
     :param request_body: The HTTP request body to the RESTful API if requestMethod is POST. Type:
      string (or Expression with resultType string).
-    :type request_body: object
+    :type request_body: any
     :param additional_headers: The additional HTTP headers in the request to the RESTful API. Type:
      string (or Expression with resultType string).
-    :type additional_headers: object
+    :type additional_headers: any
     :param pagination_rules: The pagination rules to compose next page requests. Type: string (or
      Expression with resultType string).
-    :type pagination_rules: object
+    :type pagination_rules: any
     :param http_request_timeout: The timeout (TimeSpan) to get an HTTP response. It is the timeout
      to get a response, not the timeout to read response data. Default value: 00:01:40. Type: string
      (or Expression with resultType string), pattern:
      ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type http_request_timeout: object
+    :type http_request_timeout: any
     :param request_interval: The time to await before sending next page request.
-    :type request_interval: object
+    :type request_interval: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
@@ -26354,7 +26354,7 @@ class RetryPolicy(msrest.serialization.Model):
 
     :param count: Maximum ordinary retry attempts. Default is 0. Type: integer (or Expression with
      resultType integer), minimum: 0.
-    :type count: object
+    :type count: any
     :param interval_in_seconds: Interval between retries in seconds. Default is 30.
     :type interval_in_seconds: int
     """
@@ -26505,7 +26505,7 @@ class SalesforceLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -26515,26 +26515,26 @@ class SalesforceLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param environment_url: The URL of Salesforce instance. Default is
      'https://login.salesforce.com'. To copy data from sandbox, specify
      'https://test.salesforce.com'. To copy data from custom domain, specify, for example,
      'https://[domain].my.salesforce.com'. Type: string (or Expression with resultType string).
-    :type environment_url: object
+    :type environment_url: any
     :param username: The username for Basic authentication of the Salesforce instance. Type: string
      (or Expression with resultType string).
-    :type username: object
+    :type username: any
     :param password: The password for Basic authentication of the Salesforce instance.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param security_token: The security token is optional to remotely access Salesforce instance.
     :type security_token: ~azure.synapse.artifacts.models.SecretBase
     :param api_version: The Salesforce API version used in ADF. Type: string (or Expression with
      resultType string).
-    :type api_version: object
+    :type api_version: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -26577,7 +26577,7 @@ class SalesforceMarketingCloudLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -26587,31 +26587,31 @@ class SalesforceMarketingCloudLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_properties: Properties used to connect to Salesforce Marketing Cloud. It is
      mutually exclusive with any other properties in the linked service. Type: object.
-    :type connection_properties: object
+    :type connection_properties: any
     :param client_id: Required. The client ID associated with the Salesforce Marketing Cloud
      application. Type: string (or Expression with resultType string).
-    :type client_id: object
+    :type client_id: any
     :param client_secret: The client secret associated with the Salesforce Marketing Cloud
      application. Type: string (or Expression with resultType string).
     :type client_secret: ~azure.synapse.artifacts.models.SecretBase
     :param use_encrypted_endpoints: Specifies whether the data source endpoints are encrypted using
      HTTPS. The default value is true. Type: boolean (or Expression with resultType boolean).
-    :type use_encrypted_endpoints: object
+    :type use_encrypted_endpoints: any
     :param use_host_verification: Specifies whether to require the host name in the server's
      certificate to match the host name of the server when connecting over SSL. The default value is
      true. Type: boolean (or Expression with resultType boolean).
-    :type use_host_verification: object
+    :type use_host_verification: any
     :param use_peer_verification: Specifies whether to verify the identity of the server when
      connecting over SSL. The default value is true. Type: boolean (or Expression with resultType
      boolean).
-    :type use_peer_verification: object
+    :type use_peer_verification: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -26657,28 +26657,28 @@ class SalesforceMarketingCloudObjectDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: The table name. Type: string (or Expression with resultType string).
-    :type table_name: object
+    :type table_name: any
     """
 
     _validation = {
@@ -26715,27 +26715,27 @@ class SalesforceMarketingCloudSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -26769,29 +26769,29 @@ class SalesforceObjectDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param object_api_name: The Salesforce object API name. Type: string (or Expression with
      resultType string).
-    :type object_api_name: object
+    :type object_api_name: any
     """
 
     _validation = {
@@ -26828,7 +26828,7 @@ class SalesforceServiceCloudLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -26838,29 +26838,29 @@ class SalesforceServiceCloudLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param environment_url: The URL of Salesforce Service Cloud instance. Default is
      'https://login.salesforce.com'. To copy data from sandbox, specify
      'https://test.salesforce.com'. To copy data from custom domain, specify, for example,
      'https://[domain].my.salesforce.com'. Type: string (or Expression with resultType string).
-    :type environment_url: object
+    :type environment_url: any
     :param username: The username for Basic authentication of the Salesforce instance. Type: string
      (or Expression with resultType string).
-    :type username: object
+    :type username: any
     :param password: The password for Basic authentication of the Salesforce instance.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param security_token: The security token is optional to remotely access Salesforce instance.
     :type security_token: ~azure.synapse.artifacts.models.SecretBase
     :param api_version: The Salesforce API version used in ADF. Type: string (or Expression with
      resultType string).
-    :type api_version: object
+    :type api_version: any
     :param extended_properties: Extended properties appended to the connection string. Type: string
      (or Expression with resultType string).
-    :type extended_properties: object
+    :type extended_properties: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -26905,29 +26905,29 @@ class SalesforceServiceCloudObjectDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param object_api_name: The Salesforce Service Cloud object API name. Type: string (or
      Expression with resultType string).
-    :type object_api_name: object
+    :type object_api_name: any
     """
 
     _validation = {
@@ -26964,37 +26964,37 @@ class SalesforceServiceCloudSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param write_behavior: The write behavior for the operation. Default is Insert. Possible values
      include: "Insert", "Upsert".
     :type write_behavior: str or ~azure.synapse.artifacts.models.SalesforceSinkWriteBehavior
     :param external_id_field_name: The name of the external ID field for upsert operation. Default
      value is 'Id' column. Type: string (or Expression with resultType string).
-    :type external_id_field_name: object
+    :type external_id_field_name: any
     :param ignore_null_values: The flag indicating whether or not to ignore null values from input
      dataset (except key fields) during write operation. Default value is false. If set it to true,
      it means ADF will leave the data in the destination object unchanged when doing upsert/update
      operation and insert defined default value when doing insert operation, versus ADF will update
      the data in the destination object to NULL when doing upsert/update operation and insert NULL
      value when doing insert operation. Type: boolean (or Expression with resultType boolean).
-    :type ignore_null_values: object
+    :type ignore_null_values: any
     """
 
     _validation = {
@@ -27032,20 +27032,20 @@ class SalesforceServiceCloudSource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query: Database query. Type: string (or Expression with resultType string).
-    :type query: object
+    :type query: any
     :param read_behavior: The read behavior for the operation. Default is Query. Possible values
      include: "Query", "QueryAll".
     :type read_behavior: str or ~azure.synapse.artifacts.models.SalesforceSourceReadBehavior
@@ -27087,37 +27087,37 @@ class SalesforceSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param write_behavior: The write behavior for the operation. Default is Insert. Possible values
      include: "Insert", "Upsert".
     :type write_behavior: str or ~azure.synapse.artifacts.models.SalesforceSinkWriteBehavior
     :param external_id_field_name: The name of the external ID field for upsert operation. Default
      value is 'Id' column. Type: string (or Expression with resultType string).
-    :type external_id_field_name: object
+    :type external_id_field_name: any
     :param ignore_null_values: The flag indicating whether or not to ignore null values from input
      dataset (except key fields) during write operation. Default value is false. If set it to true,
      it means ADF will leave the data in the destination object unchanged when doing upsert/update
      operation and insert defined default value when doing insert operation, versus ADF will update
      the data in the destination object to NULL when doing upsert/update operation and insert NULL
      value when doing insert operation. Type: boolean (or Expression with resultType boolean).
-    :type ignore_null_values: object
+    :type ignore_null_values: any
     """
 
     _validation = {
@@ -27155,26 +27155,26 @@ class SalesforceSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: Database query. Type: string (or Expression with resultType string).
-    :type query: object
+    :type query: any
     :param read_behavior: The read behavior for the operation. Default is Query. Possible values
      include: "Query", "QueryAll".
     :type read_behavior: str or ~azure.synapse.artifacts.models.SalesforceSourceReadBehavior
@@ -27213,23 +27213,23 @@ class SapBwCubeDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
@@ -27267,7 +27267,7 @@ class SapBWLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -27277,25 +27277,25 @@ class SapBWLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param server: Required. Host name of the SAP BW instance. Type: string (or Expression with
      resultType string).
-    :type server: object
+    :type server: any
     :param system_number: Required. System number of the BW system. (Usually a two-digit decimal
      number represented as a string.) Type: string (or Expression with resultType string).
-    :type system_number: object
+    :type system_number: any
     :param client_id: Required. Client ID of the client on the BW system. (Usually a three-digit
      decimal number represented as a string) Type: string (or Expression with resultType string).
-    :type client_id: object
+    :type client_id: any
     :param user_name: Username to access the SAP BW server. Type: string (or Expression with
      resultType string).
-    :type user_name: object
+    :type user_name: any
     :param password: Password to access the SAP BW server.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -27341,26 +27341,26 @@ class SapBwSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: MDX query. Type: string (or Expression with resultType string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -27394,7 +27394,7 @@ class SapCloudForCustomerLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -27404,20 +27404,20 @@ class SapCloudForCustomerLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param url: Required. The URL of SAP Cloud for Customer OData API. For example,
      '[https://[tenantname].crm.ondemand.com/sap/c4c/odata/v1]'. Type: string (or Expression with
      resultType string).
-    :type url: object
+    :type url: any
     :param username: The username for Basic authentication. Type: string (or Expression with
      resultType string).
-    :type username: object
+    :type username: any
     :param password: The password for Basic authentication.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Either encryptedCredential or
      username/password must be provided. Type: string (or Expression with resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -27457,29 +27457,29 @@ class SapCloudForCustomerResourceDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param path: Required. The path of the SAP Cloud for Customer OData entity. Type: string (or
      Expression with resultType string).
-    :type path: object
+    :type path: any
     """
 
     _validation = {
@@ -27517,24 +27517,24 @@ class SapCloudForCustomerSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param write_behavior: The write behavior for the operation. Default is 'Insert'. Possible
      values include: "Insert", "Update".
     :type write_behavior: str or
@@ -27543,7 +27543,7 @@ class SapCloudForCustomerSink(CopySink):
      to get a response, not the timeout to read response data. Default value: 00:05:00. Type: string
      (or Expression with resultType string), pattern:
      ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type http_request_timeout: object
+    :type http_request_timeout: any
     """
 
     _validation = {
@@ -27579,32 +27579,32 @@ class SapCloudForCustomerSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: SAP Cloud for Customer OData query. For example, "$top=1". Type: string (or
      Expression with resultType string).
-    :type query: object
+    :type query: any
     :param http_request_timeout: The timeout (TimeSpan) to get an HTTP response. It is the timeout
      to get a response, not the timeout to read response data. Default value: 00:05:00. Type: string
      (or Expression with resultType string), pattern:
      ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type http_request_timeout: object
+    :type http_request_timeout: any
     """
 
     _validation = {
@@ -27640,7 +27640,7 @@ class SapEccLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -27650,7 +27650,7 @@ class SapEccLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param url: Required. The URL of SAP ECC OData API. For example,
      '[https://hostname:port/sap/opu/odata/sap/servicename/]'. Type: string (or Expression with
      resultType string).
@@ -27703,29 +27703,29 @@ class SapEccResourceDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param path: Required. The path of the SAP ECC OData entity. Type: string (or Expression with
      resultType string).
-    :type path: object
+    :type path: any
     """
 
     _validation = {
@@ -27763,32 +27763,32 @@ class SapEccSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: SAP ECC OData query. For example, "$top=1". Type: string (or Expression with
      resultType string).
-    :type query: object
+    :type query: any
     :param http_request_timeout: The timeout (TimeSpan) to get an HTTP response. It is the timeout
      to get a response, not the timeout to read response data. Default value: 00:05:00. Type: string
      (or Expression with resultType string), pattern:
      ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type http_request_timeout: object
+    :type http_request_timeout: any
     """
 
     _validation = {
@@ -27824,7 +27824,7 @@ class SapHanaLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -27834,25 +27834,25 @@ class SapHanaLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_string: SAP HANA ODBC connection string. Type: string, SecureString or
      AzureKeyVaultSecretReference.
-    :type connection_string: object
+    :type connection_string: any
     :param server: Required. Host name of the SAP HANA server. Type: string (or Expression with
      resultType string).
-    :type server: object
+    :type server: any
     :param authentication_type: The authentication type to be used to connect to the SAP HANA
      server. Possible values include: "Basic", "Windows".
     :type authentication_type: str or ~azure.synapse.artifacts.models.SapHanaAuthenticationType
     :param user_name: Username to access the SAP HANA server. Type: string (or Expression with
      resultType string).
-    :type user_name: object
+    :type user_name: any
     :param password: Password to access the SAP HANA server.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -27894,7 +27894,7 @@ class SapHanaPartitionSettings(msrest.serialization.Model):
 
     :param partition_column_name: The name of the column that will be used for proceeding range
      partitioning. Type: string (or Expression with resultType string).
-    :type partition_column_name: object
+    :type partition_column_name: any
     """
 
     _attribute_map = {
@@ -27916,29 +27916,29 @@ class SapHanaSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: SAP HANA Sql query. Type: string (or Expression with resultType string).
-    :type query: object
+    :type query: any
     :param packet_size: The packet size of data read from SAP HANA. Type: integer(or Expression
      with resultType integer).
-    :type packet_size: object
+    :type packet_size: any
     :param partition_option: The partition mechanism that will be used for SAP HANA read in
      parallel. Possible values include: "None", "PhysicalPartitionsOfTable", "SapHanaDynamicRange".
     :type partition_option: str or ~azure.synapse.artifacts.models.SapHanaPartitionOption
@@ -27984,31 +27984,31 @@ class SapHanaTableDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param schema_type_properties_schema: The schema name of SAP HANA. Type: string (or Expression
      with resultType string).
-    :type schema_type_properties_schema: object
+    :type schema_type_properties_schema: any
     :param table: The table name of SAP HANA. Type: string (or Expression with resultType string).
-    :type table: object
+    :type table: any
     """
 
     _validation = {
@@ -28047,7 +28047,7 @@ class SapOpenHubLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -28057,43 +28057,43 @@ class SapOpenHubLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param server: Required. Host name of the SAP BW instance where the open hub destination is
      located. Type: string (or Expression with resultType string).
-    :type server: object
+    :type server: any
     :param system_number: Required. System number of the BW system where the open hub destination
      is located. (Usually a two-digit decimal number represented as a string.) Type: string (or
      Expression with resultType string).
-    :type system_number: object
+    :type system_number: any
     :param client_id: Required. Client ID of the client on the BW system where the open hub
      destination is located. (Usually a three-digit decimal number represented as a string) Type:
      string (or Expression with resultType string).
-    :type client_id: object
+    :type client_id: any
     :param language: Language of the BW system where the open hub destination is located. The
      default value is EN. Type: string (or Expression with resultType string).
-    :type language: object
+    :type language: any
     :param system_id: SystemID of the SAP system where the table is located. Type: string (or
      Expression with resultType string).
-    :type system_id: object
+    :type system_id: any
     :param user_name: Username to access the SAP BW server where the open hub destination is
      located. Type: string (or Expression with resultType string).
-    :type user_name: object
+    :type user_name: any
     :param password: Password to access the SAP BW server where the open hub destination is
      located.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param message_server: The hostname of the SAP Message Server. Type: string (or Expression with
      resultType string).
-    :type message_server: object
+    :type message_server: any
     :param message_server_service: The service name or port number of the Message Server. Type:
      string (or Expression with resultType string).
-    :type message_server_service: object
+    :type message_server_service: any
     :param logon_group: The Logon Group for the SAP System. Type: string (or Expression with
      resultType string).
-    :type logon_group: object
+    :type logon_group: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -28149,38 +28149,38 @@ class SapOpenHubSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param exclude_last_request: Whether to exclude the records of the last request. The default
      value is true. Type: boolean (or Expression with resultType boolean).
-    :type exclude_last_request: object
+    :type exclude_last_request: any
     :param base_request_id: The ID of request for delta loading. Once it is set, only data with
      requestId larger than the value of this property will be retrieved. The default value is 0.
      Type: integer (or Expression with resultType integer ).
-    :type base_request_id: object
+    :type base_request_id: any
     :param custom_rfc_read_table_function_module: Specifies the custom RFC function module that
      will be used to read data from SAP Table. Type: string (or Expression with resultType string).
-    :type custom_rfc_read_table_function_module: object
+    :type custom_rfc_read_table_function_module: any
     :param sap_data_column_delimiter: The single character that will be used as delimiter passed to
      SAP RFC as well as splitting the output data retrieved. Type: string (or Expression with
      resultType string).
-    :type sap_data_column_delimiter: object
+    :type sap_data_column_delimiter: any
     """
 
     _validation = {
@@ -28220,36 +28220,36 @@ class SapOpenHubTableDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param open_hub_destination_name: Required. The name of the Open Hub Destination with
      destination type as Database Table. Type: string (or Expression with resultType string).
-    :type open_hub_destination_name: object
+    :type open_hub_destination_name: any
     :param exclude_last_request: Whether to exclude the records of the last request. The default
      value is true. Type: boolean (or Expression with resultType boolean).
-    :type exclude_last_request: object
+    :type exclude_last_request: any
     :param base_request_id: The ID of request for delta loading. Once it is set, only data with
      requestId larger than the value of this property will be retrieved. The default value is 0.
      Type: integer (or Expression with resultType integer ).
-    :type base_request_id: object
+    :type base_request_id: any
     """
 
     _validation = {
@@ -28291,7 +28291,7 @@ class SapTableLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -28301,57 +28301,57 @@ class SapTableLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param server: Host name of the SAP instance where the table is located. Type: string (or
      Expression with resultType string).
-    :type server: object
+    :type server: any
     :param system_number: System number of the SAP system where the table is located. (Usually a
      two-digit decimal number represented as a string.) Type: string (or Expression with resultType
      string).
-    :type system_number: object
+    :type system_number: any
     :param client_id: Client ID of the client on the SAP system where the table is located.
      (Usually a three-digit decimal number represented as a string) Type: string (or Expression with
      resultType string).
-    :type client_id: object
+    :type client_id: any
     :param language: Language of the SAP system where the table is located. The default value is
      EN. Type: string (or Expression with resultType string).
-    :type language: object
+    :type language: any
     :param system_id: SystemID of the SAP system where the table is located. Type: string (or
      Expression with resultType string).
-    :type system_id: object
+    :type system_id: any
     :param user_name: Username to access the SAP server where the table is located. Type: string
      (or Expression with resultType string).
-    :type user_name: object
+    :type user_name: any
     :param password: Password to access the SAP server where the table is located.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param message_server: The hostname of the SAP Message Server. Type: string (or Expression with
      resultType string).
-    :type message_server: object
+    :type message_server: any
     :param message_server_service: The service name or port number of the Message Server. Type:
      string (or Expression with resultType string).
-    :type message_server_service: object
+    :type message_server_service: any
     :param snc_mode: SNC activation indicator to access the SAP server where the table is located.
      Must be either 0 (off) or 1 (on). Type: string (or Expression with resultType string).
-    :type snc_mode: object
+    :type snc_mode: any
     :param snc_my_name: Initiator's SNC name to access the SAP server where the table is located.
      Type: string (or Expression with resultType string).
-    :type snc_my_name: object
+    :type snc_my_name: any
     :param snc_partner_name: Communication partner's SNC name to access the SAP server where the
      table is located. Type: string (or Expression with resultType string).
-    :type snc_partner_name: object
+    :type snc_partner_name: any
     :param snc_library_path: External security product's library to access the SAP server where the
      table is located. Type: string (or Expression with resultType string).
-    :type snc_library_path: object
+    :type snc_library_path: any
     :param snc_qop: SNC Quality of Protection. Allowed value include: 1, 2, 3, 8, 9. Type: string
      (or Expression with resultType string).
-    :type snc_qop: object
+    :type snc_qop: any
     :param logon_group: The Logon Group for the SAP System. Type: string (or Expression with
      resultType string).
-    :type logon_group: object
+    :type logon_group: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -28412,18 +28412,18 @@ class SapTablePartitionSettings(msrest.serialization.Model):
 
     :param partition_column_name: The name of the column that will be used for proceeding range
      partitioning. Type: string (or Expression with resultType string).
-    :type partition_column_name: object
+    :type partition_column_name: any
     :param partition_upper_bound: The maximum value of column specified in partitionColumnName that
      will be used for proceeding range partitioning. Type: string (or Expression with resultType
      string).
-    :type partition_upper_bound: object
+    :type partition_upper_bound: any
     :param partition_lower_bound: The minimum value of column specified in partitionColumnName that
      will be used for proceeding range partitioning. Type: string (or Expression with resultType
      string).
-    :type partition_lower_bound: object
+    :type partition_lower_bound: any
     :param max_partitions_number: The maximum value of partitions the table will be split into.
      Type: integer (or Expression with resultType string).
-    :type max_partitions_number: object
+    :type max_partitions_number: any
     """
 
     _attribute_map = {
@@ -28451,29 +28451,29 @@ class SapTableResourceDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: Required. The name of the SAP Table. Type: string (or Expression with
      resultType string).
-    :type table_name: object
+    :type table_name: any
     """
 
     _validation = {
@@ -28511,46 +28511,46 @@ class SapTableSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param row_count: The number of rows to be retrieved. Type: integer(or Expression with
      resultType integer).
-    :type row_count: object
+    :type row_count: any
     :param row_skips: The number of rows that will be skipped. Type: integer (or Expression with
      resultType integer).
-    :type row_skips: object
+    :type row_skips: any
     :param rfc_table_fields: The fields of the SAP table that will be retrieved. For example,
      column0, column1. Type: string (or Expression with resultType string).
-    :type rfc_table_fields: object
+    :type rfc_table_fields: any
     :param rfc_table_options: The options for the filtering of the SAP Table. For example, COLUMN0
      EQ SOME VALUE. Type: string (or Expression with resultType string).
-    :type rfc_table_options: object
+    :type rfc_table_options: any
     :param batch_size: Specifies the maximum number of rows that will be retrieved at a time when
      retrieving data from SAP Table. Type: integer (or Expression with resultType integer).
-    :type batch_size: object
+    :type batch_size: any
     :param custom_rfc_read_table_function_module: Specifies the custom RFC function module that
      will be used to read data from SAP Table. Type: string (or Expression with resultType string).
-    :type custom_rfc_read_table_function_module: object
+    :type custom_rfc_read_table_function_module: any
     :param sap_data_column_delimiter: The single character that will be used as delimiter passed to
      SAP RFC as well as splitting the output data retrieved. Type: string (or Expression with
      resultType string).
-    :type sap_data_column_delimiter: object
+    :type sap_data_column_delimiter: any
     :param partition_option: The partition mechanism that will be used for SAP table read in
      parallel. Possible values include: "None", "PartitionOnInt", "PartitionOnCalendarYear",
      "PartitionOnCalendarMonth", "PartitionOnCalendarDate", "PartitionOnTime".
@@ -28609,7 +28609,7 @@ class ScheduleTrigger(MultiplePipelineTrigger):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Trigger type.Constant filled by server.
     :type type: str
     :param description: Trigger description.
@@ -28618,7 +28618,7 @@ class ScheduleTrigger(MultiplePipelineTrigger):
      called on the Trigger. Possible values include: "Started", "Stopped", "Disabled".
     :vartype runtime_state: str or ~azure.synapse.artifacts.models.TriggerRuntimeState
     :param annotations: List of tags that can be used for describing the trigger.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param pipelines: Pipelines that need to be started.
     :type pipelines: list[~azure.synapse.artifacts.models.TriggerPipelineReference]
     :param recurrence: Required. Recurrence schedule configuration.
@@ -28655,7 +28655,7 @@ class ScheduleTriggerRecurrence(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param frequency: The frequency. Possible values include: "NotSpecified", "Minute", "Hour",
      "Day", "Week", "Month", "Year".
     :type frequency: str or ~azure.synapse.artifacts.models.RecurrenceFrequency
@@ -28809,7 +28809,7 @@ class SelfHostedIntegrationRuntime(IntegrationRuntime):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of integration runtime.Constant filled by server.  Possible values
      include: "Managed", "SelfHosted".
     :type type: str or ~azure.synapse.artifacts.models.IntegrationRuntimeType
@@ -28846,7 +28846,7 @@ class ServiceNowLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -28856,37 +28856,37 @@ class ServiceNowLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param endpoint: Required. The endpoint of the ServiceNow server. (i.e.
      :code:`<instance>`.service-now.com).
-    :type endpoint: object
+    :type endpoint: any
     :param authentication_type: Required. The authentication type to use. Possible values include:
      "Basic", "OAuth2".
     :type authentication_type: str or ~azure.synapse.artifacts.models.ServiceNowAuthenticationType
     :param username: The user name used to connect to the ServiceNow server for Basic and OAuth2
      authentication.
-    :type username: object
+    :type username: any
     :param password: The password corresponding to the user name for Basic and OAuth2
      authentication.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param client_id: The client id for OAuth2 authentication.
-    :type client_id: object
+    :type client_id: any
     :param client_secret: The client secret for OAuth2 authentication.
     :type client_secret: ~azure.synapse.artifacts.models.SecretBase
     :param use_encrypted_endpoints: Specifies whether the data source endpoints are encrypted using
      HTTPS. The default value is true.
-    :type use_encrypted_endpoints: object
+    :type use_encrypted_endpoints: any
     :param use_host_verification: Specifies whether to require the host name in the server's
      certificate to match the host name of the server when connecting over SSL. The default value is
      true.
-    :type use_host_verification: object
+    :type use_host_verification: any
     :param use_peer_verification: Specifies whether to verify the identity of the server when
      connecting over SSL. The default value is true.
-    :type use_peer_verification: object
+    :type use_peer_verification: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -28939,28 +28939,28 @@ class ServiceNowObjectDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: The table name. Type: string (or Expression with resultType string).
-    :type table_name: object
+    :type table_name: any
     """
 
     _validation = {
@@ -28997,27 +28997,27 @@ class ServiceNowSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -29051,7 +29051,7 @@ class SetVariableActivity(ControlActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -29065,7 +29065,7 @@ class SetVariableActivity(ControlActivity):
     :param variable_name: Name of the variable whose value needs to be set.
     :type variable_name: str
     :param value: Value to be set. Could be a static value or Expression.
-    :type value: object
+    :type value: any
     """
 
     _validation = {
@@ -29101,15 +29101,15 @@ class SftpLocation(DatasetLocation):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset storage location.Constant filled by server.
     :type type: str
     :param folder_path: Specify the folder path of dataset. Type: string (or Expression with
      resultType string).
-    :type folder_path: object
+    :type folder_path: any
     :param file_name: Specify the file name of dataset. Type: string (or Expression with resultType
      string).
-    :type file_name: object
+    :type file_name: any
     """
 
     _validation = {
@@ -29138,39 +29138,39 @@ class SftpReadSettings(StoreReadSettings):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The read setting type.Constant filled by server.
     :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param recursive: If true, files under the folder path will be read recursively. Default is
      true. Type: boolean (or Expression with resultType boolean).
-    :type recursive: object
+    :type recursive: any
     :param wildcard_folder_path: Sftp wildcardFolderPath. Type: string (or Expression with
      resultType string).
-    :type wildcard_folder_path: object
+    :type wildcard_folder_path: any
     :param wildcard_file_name: Sftp wildcardFileName. Type: string (or Expression with resultType
      string).
-    :type wildcard_file_name: object
+    :type wildcard_file_name: any
     :param enable_partition_discovery: Indicates whether to enable partition discovery.
     :type enable_partition_discovery: bool
     :param partition_root_path: Specify the root path where partition discovery starts from. Type:
      string (or Expression with resultType string).
-    :type partition_root_path: object
+    :type partition_root_path: any
     :param file_list_path: Point to a text file that lists each file (relative path to the path
      configured in the dataset) that you want to copy. Type: string (or Expression with resultType
      string).
-    :type file_list_path: object
+    :type file_list_path: any
     :param delete_files_after_completion: Indicates whether the source files need to be deleted
      after copy completion. Default is false. Type: boolean (or Expression with resultType boolean).
-    :type delete_files_after_completion: object
+    :type delete_files_after_completion: any
     :param modified_datetime_start: The start of file's modified datetime. Type: string (or
      Expression with resultType string).
-    :type modified_datetime_start: object
+    :type modified_datetime_start: any
     :param modified_datetime_end: The end of file's modified datetime. Type: string (or Expression
      with resultType string).
-    :type modified_datetime_end: object
+    :type modified_datetime_end: any
     """
 
     _validation = {
@@ -29216,7 +29216,7 @@ class SftpServerLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -29226,30 +29226,30 @@ class SftpServerLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param host: Required. The SFTP server host name. Type: string (or Expression with resultType
      string).
-    :type host: object
+    :type host: any
     :param port: The TCP port number that the SFTP server uses to listen for client connections.
      Default value is 22. Type: integer (or Expression with resultType integer), minimum: 0.
-    :type port: object
+    :type port: any
     :param authentication_type: The authentication type to be used to connect to the FTP server.
      Possible values include: "Basic", "SshPublicKey".
     :type authentication_type: str or ~azure.synapse.artifacts.models.SftpAuthenticationType
     :param user_name: The username used to log on to the SFTP server. Type: string (or Expression
      with resultType string).
-    :type user_name: object
+    :type user_name: any
     :param password: Password to logon the SFTP server for Basic authentication.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     :param private_key_path: The SSH private key file path for SshPublicKey authentication. Only
      valid for on-premises copy. For on-premises copy with SshPublicKey authentication, either
      PrivateKeyPath or PrivateKeyContent should be specified. SSH private key should be OpenSSH
      format. Type: string (or Expression with resultType string).
-    :type private_key_path: object
+    :type private_key_path: any
     :param private_key_content: Base64 encoded SSH private key content for SshPublicKey
      authentication. For on-premises copy with SshPublicKey authentication, either PrivateKeyPath or
      PrivateKeyContent should be specified. SSH private key should be OpenSSH format.
@@ -29259,11 +29259,11 @@ class SftpServerLinkedService(LinkedService):
     :type pass_phrase: ~azure.synapse.artifacts.models.SecretBase
     :param skip_host_key_validation: If true, skip the SSH host key validation. Default value is
      false. Type: boolean (or Expression with resultType boolean).
-    :type skip_host_key_validation: object
+    :type skip_host_key_validation: any
     :param host_key_fingerprint: The host key finger-print of the SFTP server. When
      SkipHostKeyValidation is false, HostKeyFingerprint should be specified. Type: string (or
      Expression with resultType string).
-    :type host_key_fingerprint: object
+    :type host_key_fingerprint: any
     """
 
     _validation = {
@@ -29317,21 +29317,21 @@ class SftpWriteSettings(StoreWriteSettings):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The write setting type.Constant filled by server.
     :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param copy_behavior: The type of copy behavior for copy sink.
-    :type copy_behavior: object
+    :type copy_behavior: any
     :param operation_timeout: Specifies the timeout for writing each chunk to SFTP server. Default
      value: 01:00:00 (one hour). Type: string (or Expression with resultType string).
-    :type operation_timeout: object
+    :type operation_timeout: any
     :param use_temp_file_rename: Upload to temporary file(s) and rename. Disable this option if
      your SFTP server doesn't support rename operation. Type: boolean (or Expression with resultType
      boolean).
-    :type use_temp_file_rename: object
+    :type use_temp_file_rename: any
     """
 
     _validation = {
@@ -29364,7 +29364,7 @@ class SharePointOnlineListLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -29374,26 +29374,26 @@ class SharePointOnlineListLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param site_url: Required. The URL of the SharePoint Online site. For example,
      https://contoso.sharepoint.com/sites/siteName. Type: string (or Expression with resultType
      string).
-    :type site_url: object
+    :type site_url: any
     :param tenant_id: Required. The tenant ID under which your application resides. You can find it
      from Azure portal Active Directory overview page. Type: string (or Expression with resultType
      string).
-    :type tenant_id: object
+    :type tenant_id: any
     :param service_principal_id: Required. The application (client) ID of your application
      registered in Azure Active Directory. Make sure to grant SharePoint site permission to this
      application. Type: string (or Expression with resultType string).
-    :type service_principal_id: object
+    :type service_principal_id: any
     :param service_principal_key: Required. The client secret of your application registered in
      Azure Active Directory. Type: string (or Expression with resultType string).
     :type service_principal_key: ~azure.synapse.artifacts.models.SecretBase
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -29438,29 +29438,29 @@ class SharePointOnlineListResourceDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param list_name: The name of the SharePoint Online list. Type: string (or Expression with
      resultType string).
-    :type list_name: object
+    :type list_name: any
     """
 
     _validation = {
@@ -29497,25 +29497,25 @@ class SharePointOnlineListSource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query: The OData query to filter the data in SharePoint Online list. For example,
      "$top=1". Type: string (or Expression with resultType string).
-    :type query: object
+    :type query: any
     :param http_request_timeout: The wait time to get a response from SharePoint Online. Default
      value is 5 minutes (00:05:00). Type: string (or Expression with resultType string), pattern:
      ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type http_request_timeout: object
+    :type http_request_timeout: any
     """
 
     _validation = {
@@ -29549,7 +29549,7 @@ class ShopifyLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -29559,26 +29559,26 @@ class ShopifyLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param host: Required. The endpoint of the Shopify server. (i.e. mystore.myshopify.com).
-    :type host: object
+    :type host: any
     :param access_token: The API access token that can be used to access Shopify’s data. The token
      won't expire if it is offline mode.
     :type access_token: ~azure.synapse.artifacts.models.SecretBase
     :param use_encrypted_endpoints: Specifies whether the data source endpoints are encrypted using
      HTTPS. The default value is true.
-    :type use_encrypted_endpoints: object
+    :type use_encrypted_endpoints: any
     :param use_host_verification: Specifies whether to require the host name in the server's
      certificate to match the host name of the server when connecting over SSL. The default value is
      true.
-    :type use_host_verification: object
+    :type use_host_verification: any
     :param use_peer_verification: Specifies whether to verify the identity of the server when
      connecting over SSL. The default value is true.
-    :type use_peer_verification: object
+    :type use_peer_verification: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -29622,28 +29622,28 @@ class ShopifyObjectDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: The table name. Type: string (or Expression with resultType string).
-    :type table_name: object
+    :type table_name: any
     """
 
     _validation = {
@@ -29680,27 +29680,27 @@ class ShopifySource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -29732,10 +29732,10 @@ class SkipErrorFile(msrest.serialization.Model):
 
     :param file_missing: Skip if file is deleted by other client during copy. Default is true.
      Type: boolean (or Expression with resultType boolean).
-    :type file_missing: object
+    :type file_missing: any
     :param data_inconsistency: Skip if source/sink file changed by other concurrent write. Default
      is false. Type: boolean (or Expression with resultType boolean).
-    :type data_inconsistency: object
+    :type data_inconsistency: any
     """
 
     _attribute_map = {
@@ -29787,32 +29787,32 @@ class SnowflakeDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param schema_type_properties_schema: The schema name of the Snowflake database. Type: string
      (or Expression with resultType string).
-    :type schema_type_properties_schema: object
+    :type schema_type_properties_schema: any
     :param table: The table name of the Snowflake database. Type: string (or Expression with
      resultType string).
-    :type table: object
+    :type table: any
     """
 
     _validation = {
@@ -29851,19 +29851,19 @@ class SnowflakeExportCopyCommand(ExportSettings):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The export setting type.Constant filled by server.
     :type type: str
     :param additional_copy_options: Additional copy options directly passed to snowflake Copy
      Command. Type: key value pairs (value should be string type) (or Expression with resultType
      object). Example: "additionalCopyOptions": { "DATE_FORMAT": "MM/DD/YYYY", "TIME_FORMAT":
      "'HH24:MI:SS.FF'" }.
-    :type additional_copy_options: dict[str, object]
+    :type additional_copy_options: dict[str, any]
     :param additional_format_options: Additional format options directly passed to snowflake Copy
      Command. Type: key value pairs (value should be string type) (or Expression with resultType
      object). Example: "additionalFormatOptions": { "OVERWRITE": "TRUE", "MAX_FILE_SIZE": "'FALSE'"
      }.
-    :type additional_format_options: dict[str, object]
+    :type additional_format_options: dict[str, any]
     """
 
     _validation = {
@@ -29894,19 +29894,19 @@ class SnowflakeImportCopyCommand(ImportSettings):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The import setting type.Constant filled by server.
     :type type: str
     :param additional_copy_options: Additional copy options directly passed to snowflake Copy
      Command. Type: key value pairs (value should be string type) (or Expression with resultType
      object). Example: "additionalCopyOptions": { "DATE_FORMAT": "MM/DD/YYYY", "TIME_FORMAT":
      "'HH24:MI:SS.FF'" }.
-    :type additional_copy_options: dict[str, object]
+    :type additional_copy_options: dict[str, any]
     :param additional_format_options: Additional format options directly passed to snowflake Copy
      Command. Type: key value pairs (value should be string type) (or Expression with resultType
      object). Example: "additionalFormatOptions": { "FORCE": "TRUE", "LOAD_UNCERTAIN_FILES":
      "'FALSE'" }.
-    :type additional_format_options: dict[str, object]
+    :type additional_format_options: dict[str, any]
     """
 
     _validation = {
@@ -29937,7 +29937,7 @@ class SnowflakeLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -29947,16 +29947,16 @@ class SnowflakeLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_string: Required. The connection string of snowflake. Type: string,
      SecureString.
-    :type connection_string: object
+    :type connection_string: any
     :param password: The Azure key vault secret reference of password in connection string.
     :type password: ~azure.synapse.artifacts.models.AzureKeyVaultSecretReference
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -29994,27 +29994,27 @@ class SnowflakeSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param pre_copy_script: SQL pre-copy script. Type: string (or Expression with resultType
      string).
-    :type pre_copy_script: object
+    :type pre_copy_script: any
     :param import_settings: Snowflake import settings.
     :type import_settings: ~azure.synapse.artifacts.models.SnowflakeImportCopyCommand
     """
@@ -30052,20 +30052,20 @@ class SnowflakeSource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query: Snowflake Sql query. Type: string (or Expression with resultType string).
-    :type query: object
+    :type query: any
     :param export_settings: Snowflake export settings.
     :type export_settings: ~azure.synapse.artifacts.models.SnowflakeExportCopyCommand
     """
@@ -30246,7 +30246,7 @@ class SparkJobDefinition(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param description: The description of the Spark job definition.
     :type description: str
     :param target_big_data_pool: Required. Big data pool reference.
@@ -30367,7 +30367,7 @@ class SparkJobProperties(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: The name of the job.
     :type name: str
     :param file: Required. File containing the application to execute.
@@ -30375,7 +30375,7 @@ class SparkJobProperties(msrest.serialization.Model):
     :param class_name: Main class for Java/Scala application.
     :type class_name: str
     :param conf: Spark configuration properties.
-    :type conf: object
+    :type conf: any
     :param args: Command line arguments for the application.
     :type args: list[str]
     :param jars: Jars to be used in this job.
@@ -30450,7 +30450,7 @@ class SparkLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -30460,12 +30460,12 @@ class SparkLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param host: Required. IP address or host name of the Spark server.
-    :type host: object
+    :type host: any
     :param port: Required. The TCP port that the Spark server uses to listen for client
      connections.
-    :type port: object
+    :type port: any
     :param server_type: The type of Spark server. Possible values include: "SharkServer",
      "SharkServer2", "SparkThriftServer".
     :type server_type: str or ~azure.synapse.artifacts.models.SparkServerType
@@ -30478,32 +30478,32 @@ class SparkLinkedService(LinkedService):
      "WindowsAzureHDInsightService".
     :type authentication_type: str or ~azure.synapse.artifacts.models.SparkAuthenticationType
     :param username: The user name that you use to access Spark Server.
-    :type username: object
+    :type username: any
     :param password: The password corresponding to the user name that you provided in the Username
      field.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param http_path: The partial URL corresponding to the Spark server.
-    :type http_path: object
+    :type http_path: any
     :param enable_ssl: Specifies whether the connections to the server are encrypted using SSL. The
      default value is false.
-    :type enable_ssl: object
+    :type enable_ssl: any
     :param trusted_cert_path: The full path of the .pem file containing trusted CA certificates for
      verifying the server when connecting over SSL. This property can only be set when using SSL on
      self-hosted IR. The default value is the cacerts.pem file installed with the IR.
-    :type trusted_cert_path: object
+    :type trusted_cert_path: any
     :param use_system_trust_store: Specifies whether to use a CA certificate from the system trust
      store or from a specified PEM file. The default value is false.
-    :type use_system_trust_store: object
+    :type use_system_trust_store: any
     :param allow_host_name_cn_mismatch: Specifies whether to require a CA-issued SSL certificate
      name to match the host name of the server when connecting over SSL. The default value is false.
-    :type allow_host_name_cn_mismatch: object
+    :type allow_host_name_cn_mismatch: any
     :param allow_self_signed_server_cert: Specifies whether to allow self-signed certificates from
      the server. The default value is false.
-    :type allow_self_signed_server_cert: object
+    :type allow_self_signed_server_cert: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -30565,34 +30565,34 @@ class SparkObjectDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: This property will be retired. Please consider using schema + table
      properties instead.
-    :type table_name: object
+    :type table_name: any
     :param table: The table name of the Spark. Type: string (or Expression with resultType string).
-    :type table: object
+    :type table: any
     :param schema_type_properties_schema: The schema name of the Spark. Type: string (or Expression
      with resultType string).
-    :type schema_type_properties_schema: object
+    :type schema_type_properties_schema: any
     """
 
     _validation = {
@@ -30806,27 +30806,27 @@ class SparkSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -30860,7 +30860,7 @@ class SqlConnection(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The type of the connection. Possible values include: "SqlOnDemand",
      "SqlPool".
     :type type: str or ~azure.synapse.artifacts.models.SqlConnectionType
@@ -30896,41 +30896,41 @@ class SqlDWSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param pre_copy_script: SQL pre-copy script. Type: string (or Expression with resultType
      string).
-    :type pre_copy_script: object
+    :type pre_copy_script: any
     :param allow_poly_base: Indicates to use PolyBase to copy data into SQL Data Warehouse when
      applicable. Type: boolean (or Expression with resultType boolean).
-    :type allow_poly_base: object
+    :type allow_poly_base: any
     :param poly_base_settings: Specifies PolyBase-related settings when allowPolyBase is true.
     :type poly_base_settings: ~azure.synapse.artifacts.models.PolybaseSettings
     :param allow_copy_command: Indicates to use Copy Command to copy data into SQL Data Warehouse.
      Type: boolean (or Expression with resultType boolean).
-    :type allow_copy_command: object
+    :type allow_copy_command: any
     :param copy_command_settings: Specifies Copy Command related settings when allowCopyCommand is
      true.
     :type copy_command_settings: ~azure.synapse.artifacts.models.DWCopyCommandSettings
     :param table_option: The option to handle sink table, such as autoCreate. For now only
      'autoCreate' value is supported. Type: string (or Expression with resultType string).
-    :type table_option: object
+    :type table_option: any
     """
 
     _validation = {
@@ -30974,38 +30974,38 @@ class SqlDWSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param sql_reader_query: SQL Data Warehouse reader query. Type: string (or Expression with
      resultType string).
-    :type sql_reader_query: object
+    :type sql_reader_query: any
     :param sql_reader_stored_procedure_name: Name of the stored procedure for a SQL Data Warehouse
      source. This cannot be used at the same time as SqlReaderQuery. Type: string (or Expression
      with resultType string).
-    :type sql_reader_stored_procedure_name: object
+    :type sql_reader_stored_procedure_name: any
     :param stored_procedure_parameters: Value and type setting for stored procedure parameters.
      Example: "{Parameter1: {value: "1", type: "int"}}". Type: object (or Expression with resultType
      object), itemType: StoredProcedureParameter.
-    :type stored_procedure_parameters: object
+    :type stored_procedure_parameters: any
     :param partition_option: The partition mechanism that will be used for Sql read in parallel.
      Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
-    :type partition_option: object
+    :type partition_option: any
     :param partition_settings: The settings that will be leveraged for Sql source partitioning.
     :type partition_settings: ~azure.synapse.artifacts.models.SqlPartitionSettings
     """
@@ -31049,42 +31049,42 @@ class SqlMISink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param sql_writer_stored_procedure_name: SQL writer stored procedure name. Type: string (or
      Expression with resultType string).
-    :type sql_writer_stored_procedure_name: object
+    :type sql_writer_stored_procedure_name: any
     :param sql_writer_table_type: SQL writer table type. Type: string (or Expression with
      resultType string).
-    :type sql_writer_table_type: object
+    :type sql_writer_table_type: any
     :param pre_copy_script: SQL pre-copy script. Type: string (or Expression with resultType
      string).
-    :type pre_copy_script: object
+    :type pre_copy_script: any
     :param stored_procedure_parameters: SQL stored procedure parameters.
     :type stored_procedure_parameters: dict[str,
      ~azure.synapse.artifacts.models.StoredProcedureParameter]
     :param stored_procedure_table_type_parameter_name: The stored procedure parameter name of the
      table type. Type: string (or Expression with resultType string).
-    :type stored_procedure_table_type_parameter_name: object
+    :type stored_procedure_table_type_parameter_name: any
     :param table_option: The option to handle sink table, such as autoCreate. For now only
      'autoCreate' value is supported. Type: string (or Expression with resultType string).
-    :type table_option: object
+    :type table_option: any
     """
 
     _validation = {
@@ -31128,39 +31128,39 @@ class SqlMISource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param sql_reader_query: SQL reader query. Type: string (or Expression with resultType string).
-    :type sql_reader_query: object
+    :type sql_reader_query: any
     :param sql_reader_stored_procedure_name: Name of the stored procedure for a Azure SQL Managed
      Instance source. This cannot be used at the same time as SqlReaderQuery. Type: string (or
      Expression with resultType string).
-    :type sql_reader_stored_procedure_name: object
+    :type sql_reader_stored_procedure_name: any
     :param stored_procedure_parameters: Value and type setting for stored procedure parameters.
      Example: "{Parameter1: {value: "1", type: "int"}}".
     :type stored_procedure_parameters: dict[str,
      ~azure.synapse.artifacts.models.StoredProcedureParameter]
     :param produce_additional_types: Which additional types to produce.
-    :type produce_additional_types: object
+    :type produce_additional_types: any
     :param partition_option: The partition mechanism that will be used for Sql read in parallel.
      Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
-    :type partition_option: object
+    :type partition_option: any
     :param partition_settings: The settings that will be leveraged for Sql source partitioning.
     :type partition_settings: ~azure.synapse.artifacts.models.SqlPartitionSettings
     """
@@ -31206,17 +31206,17 @@ class SqlPartitionSettings(msrest.serialization.Model):
      used for proceeding partitioning. If not specified, the primary key of the table is
      auto-detected and used as the partition column. Type: string (or Expression with resultType
      string).
-    :type partition_column_name: object
+    :type partition_column_name: any
     :param partition_upper_bound: The maximum value of the partition column for partition range
      splitting. This value is used to decide the partition stride, not for filtering the rows in
      table. All rows in the table or query result will be partitioned and copied. Type: string (or
      Expression with resultType string).
-    :type partition_upper_bound: object
+    :type partition_upper_bound: any
     :param partition_lower_bound: The minimum value of the partition column for partition range
      splitting. This value is used to decide the partition stride, not for filtering the rows in
      table. All rows in the table or query result will be partitioned and copied. Type: string (or
      Expression with resultType string).
-    :type partition_lower_bound: object
+    :type partition_lower_bound: any
     """
 
     _attribute_map = {
@@ -31378,7 +31378,7 @@ class SqlPoolStoredProcedureActivity(Activity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -31393,7 +31393,7 @@ class SqlPoolStoredProcedureActivity(Activity):
     :type sql_pool: ~azure.synapse.artifacts.models.SqlPoolReference
     :param stored_procedure_name: Required. Stored procedure name. Type: string (or Expression with
      resultType string).
-    :type stored_procedure_name: object
+    :type stored_procedure_name: any
     :param stored_procedure_parameters: Value and type setting for stored procedure parameters.
      Example: "{Parameter1: {value: "1", type: "int"}}".
     :type stored_procedure_parameters: dict[str,
@@ -31437,7 +31437,7 @@ class SqlScript(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param description: The description of the SQL script.
     :type description: str
     :param type: The type of the SQL script. Possible values include: "SqlQuery".
@@ -31475,7 +31475,7 @@ class SqlScriptContent(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param query: Required. SQL query to execute.
     :type query: str
     :param current_connection: Required. The connection used to execute the SQL script.
@@ -31512,7 +31512,7 @@ class SqlScriptMetadata(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param language: The language of the SQL script.
     :type language: str
     """
@@ -31616,7 +31616,7 @@ class SqlServerLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -31626,19 +31626,19 @@ class SqlServerLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_string: Required. The connection string. Type: string, SecureString or
      AzureKeyVaultSecretReference.
-    :type connection_string: object
+    :type connection_string: any
     :param user_name: The on-premises Windows authentication user name. Type: string (or Expression
      with resultType string).
-    :type user_name: object
+    :type user_name: any
     :param password: The on-premises Windows authentication password.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -31678,42 +31678,42 @@ class SqlServerSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param sql_writer_stored_procedure_name: SQL writer stored procedure name. Type: string (or
      Expression with resultType string).
-    :type sql_writer_stored_procedure_name: object
+    :type sql_writer_stored_procedure_name: any
     :param sql_writer_table_type: SQL writer table type. Type: string (or Expression with
      resultType string).
-    :type sql_writer_table_type: object
+    :type sql_writer_table_type: any
     :param pre_copy_script: SQL pre-copy script. Type: string (or Expression with resultType
      string).
-    :type pre_copy_script: object
+    :type pre_copy_script: any
     :param stored_procedure_parameters: SQL stored procedure parameters.
     :type stored_procedure_parameters: dict[str,
      ~azure.synapse.artifacts.models.StoredProcedureParameter]
     :param stored_procedure_table_type_parameter_name: The stored procedure parameter name of the
      table type. Type: string (or Expression with resultType string).
-    :type stored_procedure_table_type_parameter_name: object
+    :type stored_procedure_table_type_parameter_name: any
     :param table_option: The option to handle sink table, such as autoCreate. For now only
      'autoCreate' value is supported. Type: string (or Expression with resultType string).
-    :type table_option: object
+    :type table_option: any
     """
 
     _validation = {
@@ -31757,39 +31757,39 @@ class SqlServerSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param sql_reader_query: SQL reader query. Type: string (or Expression with resultType string).
-    :type sql_reader_query: object
+    :type sql_reader_query: any
     :param sql_reader_stored_procedure_name: Name of the stored procedure for a SQL Database
      source. This cannot be used at the same time as SqlReaderQuery. Type: string (or Expression
      with resultType string).
-    :type sql_reader_stored_procedure_name: object
+    :type sql_reader_stored_procedure_name: any
     :param stored_procedure_parameters: Value and type setting for stored procedure parameters.
      Example: "{Parameter1: {value: "1", type: "int"}}".
     :type stored_procedure_parameters: dict[str,
      ~azure.synapse.artifacts.models.StoredProcedureParameter]
     :param produce_additional_types: Which additional types to produce.
-    :type produce_additional_types: object
+    :type produce_additional_types: any
     :param partition_option: The partition mechanism that will be used for Sql read in parallel.
      Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
-    :type partition_option: object
+    :type partition_option: any
     :param partition_settings: The settings that will be leveraged for Sql source partitioning.
     :type partition_settings: ~azure.synapse.artifacts.models.SqlPartitionSettings
     """
@@ -31835,7 +31835,7 @@ class SqlServerStoredProcedureActivity(ExecutionActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -31852,7 +31852,7 @@ class SqlServerStoredProcedureActivity(ExecutionActivity):
     :type policy: ~azure.synapse.artifacts.models.ActivityPolicy
     :param stored_procedure_name: Required. Stored procedure name. Type: string (or Expression with
      resultType string).
-    :type stored_procedure_name: object
+    :type stored_procedure_name: any
     :param stored_procedure_parameters: Value and type setting for stored procedure parameters.
      Example: "{Parameter1: {value: "1", type: "int"}}".
     :type stored_procedure_parameters: dict[str,
@@ -31895,35 +31895,35 @@ class SqlServerTableDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: This property will be retired. Please consider using schema + table
      properties instead.
-    :type table_name: object
+    :type table_name: any
     :param schema_type_properties_schema: The schema name of the SQL Server dataset. Type: string
      (or Expression with resultType string).
-    :type schema_type_properties_schema: object
+    :type schema_type_properties_schema: any
     :param table: The table name of the SQL Server dataset. Type: string (or Expression with
      resultType string).
-    :type table: object
+    :type table: any
     """
 
     _validation = {
@@ -31964,42 +31964,42 @@ class SqlSink(CopySink):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy sink type.Constant filled by server.
     :type type: str
     :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
      integer), minimum: 0.
-    :type write_batch_size: object
+    :type write_batch_size: any
     :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
+    :type write_batch_timeout: any
     :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
      integer).
-    :type sink_retry_count: object
+    :type sink_retry_count: any
     :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
+    :type sink_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param sql_writer_stored_procedure_name: SQL writer stored procedure name. Type: string (or
      Expression with resultType string).
-    :type sql_writer_stored_procedure_name: object
+    :type sql_writer_stored_procedure_name: any
     :param sql_writer_table_type: SQL writer table type. Type: string (or Expression with
      resultType string).
-    :type sql_writer_table_type: object
+    :type sql_writer_table_type: any
     :param pre_copy_script: SQL pre-copy script. Type: string (or Expression with resultType
      string).
-    :type pre_copy_script: object
+    :type pre_copy_script: any
     :param stored_procedure_parameters: SQL stored procedure parameters.
     :type stored_procedure_parameters: dict[str,
      ~azure.synapse.artifacts.models.StoredProcedureParameter]
     :param stored_procedure_table_type_parameter_name: The stored procedure parameter name of the
      table type. Type: string (or Expression with resultType string).
-    :type stored_procedure_table_type_parameter_name: object
+    :type stored_procedure_table_type_parameter_name: any
     :param table_option: The option to handle sink table, such as autoCreate. For now only
      'autoCreate' value is supported. Type: string (or Expression with resultType string).
-    :type table_option: object
+    :type table_option: any
     """
 
     _validation = {
@@ -32043,30 +32043,30 @@ class SqlSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param sql_reader_query: SQL reader query. Type: string (or Expression with resultType string).
-    :type sql_reader_query: object
+    :type sql_reader_query: any
     :param sql_reader_stored_procedure_name: Name of the stored procedure for a SQL Database
      source. This cannot be used at the same time as SqlReaderQuery. Type: string (or Expression
      with resultType string).
-    :type sql_reader_stored_procedure_name: object
+    :type sql_reader_stored_procedure_name: any
     :param stored_procedure_parameters: Value and type setting for stored procedure parameters.
      Example: "{Parameter1: {value: "1", type: "int"}}".
     :type stored_procedure_parameters: dict[str,
@@ -32074,10 +32074,10 @@ class SqlSource(TabularSource):
     :param isolation_level: Specifies the transaction locking behavior for the SQL source. Allowed
      values: ReadCommitted/ReadUncommitted/RepeatableRead/Serializable/Snapshot. The default value
      is ReadCommitted. Type: string (or Expression with resultType string).
-    :type isolation_level: object
+    :type isolation_level: any
     :param partition_option: The partition mechanism that will be used for Sql read in parallel.
      Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
-    :type partition_option: object
+    :type partition_option: any
     :param partition_settings: The settings that will be leveraged for Sql source partitioning.
     :type partition_settings: ~azure.synapse.artifacts.models.SqlPartitionSettings
     """
@@ -32123,7 +32123,7 @@ class SquareLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -32133,33 +32133,33 @@ class SquareLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_properties: Properties used to connect to Square. It is mutually exclusive
      with any other properties in the linked service. Type: object.
-    :type connection_properties: object
+    :type connection_properties: any
     :param host: Required. The URL of the Square instance. (i.e. mystore.mysquare.com).
-    :type host: object
+    :type host: any
     :param client_id: Required. The client ID associated with your Square application.
-    :type client_id: object
+    :type client_id: any
     :param client_secret: The client secret associated with your Square application.
     :type client_secret: ~azure.synapse.artifacts.models.SecretBase
     :param redirect_uri: Required. The redirect URL assigned in the Square application dashboard.
      (i.e. http://localhost:2500).
-    :type redirect_uri: object
+    :type redirect_uri: any
     :param use_encrypted_endpoints: Specifies whether the data source endpoints are encrypted using
      HTTPS. The default value is true.
-    :type use_encrypted_endpoints: object
+    :type use_encrypted_endpoints: any
     :param use_host_verification: Specifies whether to require the host name in the server's
      certificate to match the host name of the server when connecting over SSL. The default value is
      true.
-    :type use_host_verification: object
+    :type use_host_verification: any
     :param use_peer_verification: Specifies whether to verify the identity of the server when
      connecting over SSL. The default value is true.
-    :type use_peer_verification: object
+    :type use_peer_verification: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -32211,28 +32211,28 @@ class SquareObjectDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: The table name. Type: string (or Expression with resultType string).
-    :type table_name: object
+    :type table_name: any
     """
 
     _validation = {
@@ -32269,27 +32269,27 @@ class SquareSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -32322,9 +32322,9 @@ class SSISAccessCredential(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param domain: Required. Domain for windows authentication.
-    :type domain: object
+    :type domain: any
     :param user_name: Required. UseName for windows authentication.
-    :type user_name: object
+    :type user_name: any
     :param password: Required. Password for windows authentication.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     """
@@ -32358,12 +32358,12 @@ class SSISChildPackage(msrest.serialization.Model):
 
     :param package_path: Required. Path for embedded child package. Type: string (or Expression
      with resultType string).
-    :type package_path: object
+    :type package_path: any
     :param package_name: Name for embedded child package.
     :type package_name: str
     :param package_content: Required. Content for embedded child package. Type: string (or
      Expression with resultType string).
-    :type package_content: object
+    :type package_content: any
     :param package_last_modified_date: Last modified date for embedded child package.
     :type package_last_modified_date: str
     """
@@ -32397,9 +32397,9 @@ class SSISExecutionCredential(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param domain: Required. Domain for windows authentication.
-    :type domain: object
+    :type domain: any
     :param user_name: Required. UseName for windows authentication.
-    :type user_name: object
+    :type user_name: any
     :param password: Required. Password for windows authentication.
     :type password: ~azure.synapse.artifacts.models.SecureString
     """
@@ -32433,7 +32433,7 @@ class SSISExecutionParameter(msrest.serialization.Model):
 
     :param value: Required. SSIS package execution parameter value. Type: string (or Expression
      with resultType string).
-    :type value: object
+    :type value: any
     """
 
     _validation = {
@@ -32459,7 +32459,7 @@ class SSISLogLocation(msrest.serialization.Model):
 
     :param log_path: Required. The SSIS package execution log path. Type: string (or Expression
      with resultType string).
-    :type log_path: object
+    :type log_path: any
     :param type: Required. The type of SSIS log location. Possible values include: "File".
     :type type: str or ~azure.synapse.artifacts.models.SsisLogLocationType
     :param access_credential: The package execution log access credential.
@@ -32467,7 +32467,7 @@ class SSISLogLocation(msrest.serialization.Model):
     :param log_refresh_interval: Specifies the interval to refresh log. The default interval is 5
      minutes. Type: string (or Expression with resultType string), pattern:
      ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type log_refresh_interval: object
+    :type log_refresh_interval: any
     """
 
     _validation = {
@@ -32529,7 +32529,7 @@ class SSISPackageLocation(msrest.serialization.Model):
 
     :param package_path: The SSIS package path. Type: string (or Expression with resultType
      string).
-    :type package_path: object
+    :type package_path: any
     :param type: The type of SSIS package location. Possible values include: "SSISDB", "File",
      "InlinePackage", "PackageStore".
     :type type: str or ~azure.synapse.artifacts.models.SsisPackageLocationType
@@ -32539,14 +32539,14 @@ class SSISPackageLocation(msrest.serialization.Model):
     :type access_credential: ~azure.synapse.artifacts.models.SSISAccessCredential
     :param configuration_path: The configuration file of the package execution. Type: string (or
      Expression with resultType string).
-    :type configuration_path: object
+    :type configuration_path: any
     :param configuration_access_credential: The configuration file access credential.
     :type configuration_access_credential: ~azure.synapse.artifacts.models.SSISAccessCredential
     :param package_name: The package name.
     :type package_name: str
     :param package_content: The embedded package content. Type: string (or Expression with
      resultType string).
-    :type package_content: object
+    :type package_content: any
     :param package_last_modified_date: The embedded package last modified date.
     :type package_last_modified_date: str
     :param child_packages: The embedded child package list.
@@ -32590,7 +32590,7 @@ class SSISPropertyOverride(msrest.serialization.Model):
 
     :param value: Required. SSIS package property override value. Type: string (or Expression with
      resultType string).
-    :type value: object
+    :type value: any
     :param is_sensitive: Whether SSIS package property override value is sensitive data. Value will
      be encrypted in SSISDB if it is true.
     :type is_sensitive: bool
@@ -32621,15 +32621,15 @@ class StagingSettings(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param linked_service_name: Required. Staging linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param path: The path to storage for storing the interim data. Type: string (or Expression with
      resultType string).
-    :type path: object
+    :type path: any
     :param enable_compression: Specifies whether to use compression when copying data via an
      interim staging. Default value is false. Type: boolean (or Expression with resultType boolean).
-    :type enable_compression: object
+    :type enable_compression: any
     """
 
     _validation = {
@@ -32666,9 +32666,9 @@ class StartDataFlowDebugSessionRequest(msrest.serialization.Model):
     :param linked_services: List of linked services.
     :type linked_services: list[~azure.synapse.artifacts.models.LinkedServiceResource]
     :param staging: Staging info for debug session.
-    :type staging: object
+    :type staging: any
     :param debug_settings: Data flow debug settings.
-    :type debug_settings: object
+    :type debug_settings: any
     :param incremental_debug: The type of new Databricks cluster.
     :type incremental_debug: bool
     """
@@ -32721,7 +32721,7 @@ class StoredProcedureParameter(msrest.serialization.Model):
 
     :param value: Stored procedure parameter value. Type: string (or Expression with resultType
      string).
-    :type value: object
+    :type value: any
     :param type: Stored procedure parameter type. Possible values include: "String", "Int",
      "Int64", "Decimal", "Guid", "Boolean", "Date".
     :type type: str or ~azure.synapse.artifacts.models.StoredProcedureParameterType
@@ -32748,7 +32748,7 @@ class SwitchActivity(ControlActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -32830,7 +32830,7 @@ class SybaseLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -32840,27 +32840,27 @@ class SybaseLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param server: Required. Server name for connection. Type: string (or Expression with
      resultType string).
-    :type server: object
+    :type server: any
     :param database: Required. Database name for connection. Type: string (or Expression with
      resultType string).
-    :type database: object
+    :type database: any
     :param schema: Schema name for connection. Type: string (or Expression with resultType string).
-    :type schema: object
+    :type schema: any
     :param authentication_type: AuthenticationType to be used for connection. Possible values
      include: "Basic", "Windows".
     :type authentication_type: str or ~azure.synapse.artifacts.models.SybaseAuthenticationType
     :param username: Username for authentication. Type: string (or Expression with resultType
      string).
-    :type username: object
+    :type username: any
     :param password: Password for authentication.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -32907,26 +32907,26 @@ class SybaseSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: Database query. Type: string (or Expression with resultType string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -32960,28 +32960,28 @@ class SybaseTableDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: The Sybase table name. Type: string (or Expression with resultType string).
-    :type table_name: object
+    :type table_name: any
     """
 
     _validation = {
@@ -33018,7 +33018,7 @@ class SynapseNotebookActivity(ExecutionActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -33036,7 +33036,7 @@ class SynapseNotebookActivity(ExecutionActivity):
     :param notebook: Required. Synapse notebook reference.
     :type notebook: ~azure.synapse.artifacts.models.SynapseNotebookReference
     :param parameters: Notebook parameters.
-    :type parameters: dict[str, object]
+    :type parameters: dict[str, any]
     """
 
     _validation = {
@@ -33106,7 +33106,7 @@ class SynapseSparkJobDefinitionActivity(ExecutionActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -33190,33 +33190,33 @@ class TabularTranslator(CopyTranslator):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy translator type.Constant filled by server.
     :type type: str
     :param column_mappings: Column mappings. Example: "UserId: MyUserId, Group: MyGroup, Name:
      MyName" Type: string (or Expression with resultType string). This property will be retired.
      Please use mappings property.
-    :type column_mappings: object
+    :type column_mappings: any
     :param schema_mapping: The schema mapping to map between tabular data and hierarchical data.
      Example: {"Column1": "$.Column1", "Column2": "$.Column2.Property1", "Column3":
      "$.Column2.Property2"}. Type: object (or Expression with resultType object). This property will
      be retired. Please use mappings property.
-    :type schema_mapping: object
+    :type schema_mapping: any
     :param collection_reference: The JSON Path of the Nested Array that is going to do cross-apply.
      Type: object (or Expression with resultType object).
-    :type collection_reference: object
+    :type collection_reference: any
     :param map_complex_values_to_string: Whether to map complex (array and object) values to simple
      strings in json format. Type: boolean (or Expression with resultType boolean).
-    :type map_complex_values_to_string: object
+    :type map_complex_values_to_string: any
     :param mappings: Column mappings with logical types. Tabular->tabular example:
      [{"source":{"name":"CustomerName","type":"String"},"sink":{"name":"ClientName","type":"String"}},{"source":{"name":"CustomerAddress","type":"String"},"sink":{"name":"ClientAddress","type":"String"}}].
      Hierarchical->tabular example:
      [{"source":{"path":"$.CustomerName","type":"String"},"sink":{"name":"ClientName","type":"String"}},{"source":{"path":"$.CustomerAddress","type":"String"},"sink":{"name":"ClientAddress","type":"String"}}].
      Type: object (or Expression with resultType object).
-    :type mappings: object
+    :type mappings: any
     :param type_conversion: Whether to enable the advanced type conversion feature in the Copy
      activity. Type: boolean (or Expression with resultType boolean).
-    :type type_conversion: object
+    :type type_conversion: any
     :param type_conversion_settings: Type conversion settings.
     :type type_conversion_settings: ~azure.synapse.artifacts.models.TypeConversionSettings
     """
@@ -33259,12 +33259,12 @@ class TarGZipReadSettings(CompressionReadSettings):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The Compression setting type.Constant filled by server.
     :type type: str
     :param preserve_compression_file_name_as_folder: Preserve the compression file name as folder
      path. Type: boolean (or Expression with resultType boolean).
-    :type preserve_compression_file_name_as_folder: object
+    :type preserve_compression_file_name_as_folder: any
     """
 
     _validation = {
@@ -33293,12 +33293,12 @@ class TarReadSettings(CompressionReadSettings):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The Compression setting type.Constant filled by server.
     :type type: str
     :param preserve_compression_file_name_as_folder: Preserve the compression file name as folder
      path. Type: boolean (or Expression with resultType boolean).
-    :type preserve_compression_file_name_as_folder: object
+    :type preserve_compression_file_name_as_folder: any
     """
 
     _validation = {
@@ -33327,7 +33327,7 @@ class TeradataLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -33337,24 +33337,24 @@ class TeradataLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_string: Teradata ODBC connection string. Type: string, SecureString or
      AzureKeyVaultSecretReference.
-    :type connection_string: object
+    :type connection_string: any
     :param server: Server name for connection. Type: string (or Expression with resultType string).
-    :type server: object
+    :type server: any
     :param authentication_type: AuthenticationType to be used for connection. Possible values
      include: "Basic", "Windows".
     :type authentication_type: str or ~azure.synapse.artifacts.models.TeradataAuthenticationType
     :param username: Username for authentication. Type: string (or Expression with resultType
      string).
-    :type username: object
+    :type username: any
     :param password: Password for authentication.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -33395,15 +33395,15 @@ class TeradataPartitionSettings(msrest.serialization.Model):
 
     :param partition_column_name: The name of the column that will be used for proceeding range or
      hash partitioning. Type: string (or Expression with resultType string).
-    :type partition_column_name: object
+    :type partition_column_name: any
     :param partition_upper_bound: The maximum value of column specified in partitionColumnName that
      will be used for proceeding range partitioning. Type: string (or Expression with resultType
      string).
-    :type partition_upper_bound: object
+    :type partition_upper_bound: any
     :param partition_lower_bound: The minimum value of column specified in partitionColumnName that
      will be used for proceeding range partitioning. Type: string (or Expression with resultType
      string).
-    :type partition_lower_bound: object
+    :type partition_lower_bound: any
     """
 
     _attribute_map = {
@@ -33429,26 +33429,26 @@ class TeradataSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: Teradata query. Type: string (or Expression with resultType string).
-    :type query: object
+    :type query: any
     :param partition_option: The partition mechanism that will be used for teradata read in
      parallel. Possible values include: "None", "Hash", "DynamicRange".
     :type partition_option: str or ~azure.synapse.artifacts.models.TeradataPartitionOption
@@ -33492,31 +33492,31 @@ class TeradataTableDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param database: The database name of Teradata. Type: string (or Expression with resultType
      string).
-    :type database: object
+    :type database: any
     :param table: The table name of Teradata. Type: string (or Expression with resultType string).
-    :type table: object
+    :type table: any
     """
 
     _validation = {
@@ -33555,40 +33555,40 @@ class TextFormat(DatasetStorageFormat):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset storage format.Constant filled by server.
     :type type: str
     :param serializer: Serializer. Type: string (or Expression with resultType string).
-    :type serializer: object
+    :type serializer: any
     :param deserializer: Deserializer. Type: string (or Expression with resultType string).
-    :type deserializer: object
+    :type deserializer: any
     :param column_delimiter: The column delimiter. Type: string (or Expression with resultType
      string).
-    :type column_delimiter: object
+    :type column_delimiter: any
     :param row_delimiter: The row delimiter. Type: string (or Expression with resultType string).
-    :type row_delimiter: object
+    :type row_delimiter: any
     :param escape_char: The escape character. Type: string (or Expression with resultType string).
-    :type escape_char: object
+    :type escape_char: any
     :param quote_char: The quote character. Type: string (or Expression with resultType string).
-    :type quote_char: object
+    :type quote_char: any
     :param null_value: The null value string. Type: string (or Expression with resultType string).
-    :type null_value: object
+    :type null_value: any
     :param encoding_name: The code page name of the preferred encoding. If miss, the default value
      is ΓÇ£utf-8ΓÇ¥, unless BOM denotes another Unicode encoding. Refer to the ΓÇ£NameΓÇ¥ column of
      the table in the following link to set supported values:
      https://msdn.microsoft.com/library/system.text.encoding.aspx. Type: string (or Expression with
      resultType string).
-    :type encoding_name: object
+    :type encoding_name: any
     :param treat_empty_as_null: Treat empty column values in the text file as null. The default
      value is true. Type: boolean (or Expression with resultType boolean).
-    :type treat_empty_as_null: object
+    :type treat_empty_as_null: any
     :param skip_line_count: The number of lines/rows to be skipped when parsing text files. The
      default value is 0. Type: integer (or Expression with resultType integer).
-    :type skip_line_count: object
+    :type skip_line_count: any
     :param first_row_as_header: When used as input, treat the first row of data as headers. When
      used as output,write the headers into the output as the first row of data. The default value is
      false. Type: boolean (or Expression with resultType boolean).
-    :type first_row_as_header: object
+    :type first_row_as_header: any
     """
 
     _validation = {
@@ -33730,7 +33730,7 @@ class TriggerPipelineReference(msrest.serialization.Model):
     :param pipeline_reference: Pipeline reference.
     :type pipeline_reference: ~azure.synapse.artifacts.models.PipelineReference
     :param parameters: Pipeline parameters.
-    :type parameters: dict[str, object]
+    :type parameters: dict[str, any]
     """
 
     _attribute_map = {
@@ -33829,7 +33829,7 @@ class TriggerRun(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :ivar trigger_run_id: Trigger run id.
     :vartype trigger_run_id: str
     :ivar trigger_name: Trigger name.
@@ -33958,7 +33958,7 @@ class TumblingWindowTrigger(Trigger):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Trigger type.Constant filled by server.
     :type type: str
     :param description: Trigger description.
@@ -33967,7 +33967,7 @@ class TumblingWindowTrigger(Trigger):
      called on the Trigger. Possible values include: "Started", "Stopped", "Disabled".
     :vartype runtime_state: str or ~azure.synapse.artifacts.models.TriggerRuntimeState
     :param annotations: List of tags that can be used for describing the trigger.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param pipeline: Required. Pipeline for which runs are created when an event is fired for
      trigger window that is ready.
     :type pipeline: ~azure.synapse.artifacts.models.TriggerPipelineReference
@@ -33986,7 +33986,7 @@ class TumblingWindowTrigger(Trigger):
     :param delay: Specifies how long the trigger waits past due time before triggering new run. It
      doesn't alter window start and end time. The default is 0. Type: string (or Expression with
      resultType string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type delay: object
+    :type delay: any
     :param max_concurrency: Required. The max number of parallel time windows (ready for execution)
      for which a new run is triggered.
     :type max_concurrency: int
@@ -34087,22 +34087,22 @@ class TypeConversionSettings(msrest.serialization.Model):
 
     :param allow_data_truncation: Whether to allow data truncation when converting the data. Type:
      boolean (or Expression with resultType boolean).
-    :type allow_data_truncation: object
+    :type allow_data_truncation: any
     :param treat_boolean_as_number: Whether to treat boolean values as numbers. Type: boolean (or
      Expression with resultType boolean).
-    :type treat_boolean_as_number: object
+    :type treat_boolean_as_number: any
     :param date_time_format: The format for DateTime values. Type: string (or Expression with
      resultType string).
-    :type date_time_format: object
+    :type date_time_format: any
     :param date_time_offset_format: The format for DateTimeOffset values. Type: string (or
      Expression with resultType string).
-    :type date_time_offset_format: object
+    :type date_time_offset_format: any
     :param time_span_format: The format for TimeSpan values. Type: string (or Expression with
      resultType string).
-    :type time_span_format: object
+    :type time_span_format: any
     :param culture: The culture used to convert data from/to string. Type: string (or Expression
      with resultType string).
-    :type culture: object
+    :type culture: any
     """
 
     _attribute_map = {
@@ -34134,7 +34134,7 @@ class UntilActivity(ControlActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -34153,7 +34153,7 @@ class UntilActivity(ControlActivity):
      Expression with resultType string), pattern:
      ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])). Type: string (or Expression with
      resultType string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type timeout: object
+    :type timeout: any
     :param activities: Required. List of activities to execute.
     :type activities: list[~azure.synapse.artifacts.models.Activity]
     """
@@ -34197,7 +34197,7 @@ class UserProperty(msrest.serialization.Model):
     :type name: str
     :param value: Required. User property value. Type: string (or Expression with resultType
      string).
-    :type value: object
+    :type value: any
     """
 
     _validation = {
@@ -34226,7 +34226,7 @@ class ValidationActivity(ControlActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -34241,17 +34241,17 @@ class ValidationActivity(ControlActivity):
      it takes the value of TimeSpan.FromDays(7) which is 1 week as default. Type: string (or
      Expression with resultType string), pattern:
      ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type timeout: object
+    :type timeout: any
     :param sleep: A delay in seconds between validation attempts. If no value is specified, 10
      seconds will be used as the default. Type: integer (or Expression with resultType integer).
-    :type sleep: object
+    :type sleep: any
     :param minimum_size: Can be used if dataset points to a file. The file must be greater than or
      equal in size to the value specified. Type: integer (or Expression with resultType integer).
-    :type minimum_size: object
+    :type minimum_size: any
     :param child_items: Can be used if dataset points to a folder. If set to true, the folder must
      have at least one file. If set to false, the folder must be empty. Type: boolean (or Expression
      with resultType boolean).
-    :type child_items: object
+    :type child_items: any
     :param dataset: Required. Validation activity dataset reference.
     :type dataset: ~azure.synapse.artifacts.models.DatasetReference
     """
@@ -34298,7 +34298,7 @@ class VariableSpecification(msrest.serialization.Model):
      "Array".
     :type type: str or ~azure.synapse.artifacts.models.VariableType
     :param default_value: Default value of variable.
-    :type default_value: object
+    :type default_value: any
     """
 
     _validation = {
@@ -34326,7 +34326,7 @@ class VerticaLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -34336,16 +34336,16 @@ class VerticaLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_string: An ODBC connection string. Type: string, SecureString or
      AzureKeyVaultSecretReference.
-    :type connection_string: object
+    :type connection_string: any
     :param pwd: The Azure key vault secret reference of password in connection string.
     :type pwd: ~azure.synapse.artifacts.models.AzureKeyVaultSecretReference
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -34382,27 +34382,27 @@ class VerticaSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -34436,35 +34436,35 @@ class VerticaTableDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: This property will be retired. Please consider using schema + table
      properties instead.
-    :type table_name: object
+    :type table_name: any
     :param table: The table name of the Vertica. Type: string (or Expression with resultType
      string).
-    :type table: object
+    :type table: any
     :param schema_type_properties_schema: The schema name of the Vertica. Type: string (or
      Expression with resultType string).
-    :type schema_type_properties_schema: object
+    :type schema_type_properties_schema: any
     """
 
     _validation = {
@@ -34524,7 +34524,7 @@ class WaitActivity(ControlActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -34536,7 +34536,7 @@ class WaitActivity(ControlActivity):
     :param user_properties: Activity user properties.
     :type user_properties: list[~azure.synapse.artifacts.models.UserProperty]
     :param wait_time_in_seconds: Required. Duration in seconds.
-    :type wait_time_in_seconds: object
+    :type wait_time_in_seconds: any
     """
 
     _validation = {
@@ -34571,7 +34571,7 @@ class WebActivity(ExecutionActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -34591,14 +34591,14 @@ class WebActivity(ExecutionActivity):
     :type method: str or ~azure.synapse.artifacts.models.WebActivityMethod
     :param url: Required. Web activity target endpoint and path. Type: string (or Expression with
      resultType string).
-    :type url: object
+    :type url: any
     :param headers: Represents the headers that will be sent to the request. For example, to set
      the language and type on a request: "headers" : { "Accept-Language": "en-us", "Content-Type":
      "application/json" }. Type: string (or Expression with resultType string).
-    :type headers: object
+    :type headers: any
     :param body: Represents the payload that will be sent to the endpoint. Required for POST/PUT
      method, not allowed for GET method Type: string (or Expression with resultType string).
-    :type body: object
+    :type body: any
     :param authentication: Authentication method used for calling the endpoint.
     :type authentication: ~azure.synapse.artifacts.models.WebActivityAuthentication
     :param datasets: List of datasets passed to web endpoint.
@@ -34703,7 +34703,7 @@ class WebLinkedServiceTypeProperties(msrest.serialization.Model):
 
     :param url: Required. The URL of the web service endpoint, e.g. http://www.microsoft.com .
      Type: string (or Expression with resultType string).
-    :type url: object
+    :type url: any
     :param authentication_type: Required. Type of authentication used to connect to the web table
      source.Constant filled by server.  Possible values include: "Basic", "Anonymous",
      "ClientCertificate".
@@ -34740,7 +34740,7 @@ class WebAnonymousAuthentication(WebLinkedServiceTypeProperties):
 
     :param url: Required. The URL of the web service endpoint, e.g. http://www.microsoft.com .
      Type: string (or Expression with resultType string).
-    :type url: object
+    :type url: any
     :param authentication_type: Required. Type of authentication used to connect to the web table
      source.Constant filled by server.  Possible values include: "Basic", "Anonymous",
      "ClientCertificate".
@@ -34772,14 +34772,14 @@ class WebBasicAuthentication(WebLinkedServiceTypeProperties):
 
     :param url: Required. The URL of the web service endpoint, e.g. http://www.microsoft.com .
      Type: string (or Expression with resultType string).
-    :type url: object
+    :type url: any
     :param authentication_type: Required. Type of authentication used to connect to the web table
      source.Constant filled by server.  Possible values include: "Basic", "Anonymous",
      "ClientCertificate".
     :type authentication_type: str or ~azure.synapse.artifacts.models.WebAuthenticationType
     :param username: Required. User name for Basic authentication. Type: string (or Expression with
      resultType string).
-    :type username: object
+    :type username: any
     :param password: Required. The password for Basic authentication.
     :type password: ~azure.synapse.artifacts.models.SecretBase
     """
@@ -34815,7 +34815,7 @@ class WebClientCertificateAuthentication(WebLinkedServiceTypeProperties):
 
     :param url: Required. The URL of the web service endpoint, e.g. http://www.microsoft.com .
      Type: string (or Expression with resultType string).
-    :type url: object
+    :type url: any
     :param authentication_type: Required. Type of authentication used to connect to the web table
      source.Constant filled by server.  Possible values include: "Basic", "Anonymous",
      "ClientCertificate".
@@ -34857,7 +34857,7 @@ class WebHookActivity(ControlActivity):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param name: Required. Activity name.
     :type name: str
     :param type: Required. Type of activity.Constant filled by server.
@@ -34872,7 +34872,7 @@ class WebHookActivity(ControlActivity):
     :type method: str or ~azure.synapse.artifacts.models.WebHookActivityMethod
     :param url: Required. WebHook activity target endpoint and path. Type: string (or Expression
      with resultType string).
-    :type url: object
+    :type url: any
     :param timeout: The timeout within which the webhook should be called back. If there is no
      value specified, it defaults to 10 minutes. Type: string. Pattern:
      ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
@@ -34880,17 +34880,17 @@ class WebHookActivity(ControlActivity):
     :param headers: Represents the headers that will be sent to the request. For example, to set
      the language and type on a request: "headers" : { "Accept-Language": "en-us", "Content-Type":
      "application/json" }. Type: string (or Expression with resultType string).
-    :type headers: object
+    :type headers: any
     :param body: Represents the payload that will be sent to the endpoint. Required for POST/PUT
      method, not allowed for GET method Type: string (or Expression with resultType string).
-    :type body: object
+    :type body: any
     :param authentication: Authentication method used for calling the endpoint.
     :type authentication: ~azure.synapse.artifacts.models.WebActivityAuthentication
     :param report_status_on_call_back: When set to true, statusCode, output and error in callback
      request body will be consumed by activity. The activity can be marked as failed by setting
      statusCode >= 400 in callback request. Default is false. Type: boolean (or Expression with
      resultType boolean).
-    :type report_status_on_call_back: object
+    :type report_status_on_call_back: any
     """
 
     _validation = {
@@ -34938,7 +34938,7 @@ class WebLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -34948,7 +34948,7 @@ class WebLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param type_properties: Required. Web linked service properties.
     :type type_properties: ~azure.synapse.artifacts.models.WebLinkedServiceTypeProperties
     """
@@ -34984,18 +34984,18 @@ class WebSource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
@@ -35030,32 +35030,32 @@ class WebTableDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param index: Required. The zero-based index of the table in the web page. Type: integer (or
      Expression with resultType integer), minimum: 0.
-    :type index: object
+    :type index: any
     :param path: The relative URL to the web page from the linked service URL. Type: string (or
      Expression with resultType string).
-    :type path: object
+    :type path: any
     """
 
     _validation = {
@@ -35137,7 +35137,7 @@ class Workspace(TrackedResource):
     :ivar workspace_uid: The workspace unique identifier.
     :vartype workspace_uid: str
     :ivar extra_properties: Workspace level configs and feature flags.
-    :vartype extra_properties: dict[str, object]
+    :vartype extra_properties: dict[str, any]
     :param managed_virtual_network_settings: Managed Virtual Network Settings.
     :type managed_virtual_network_settings:
      ~azure.synapse.artifacts.models.ManagedVirtualNetworkSettings
@@ -35217,8 +35217,8 @@ class WorkspaceIdentity(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The identity type. Currently the only supported type is 'SystemAssigned'.
-     Default value: "SystemAssigned".
+    :ivar type: The identity type. Currently the only supported type is 'SystemAssigned'. Has
+     constant value: "SystemAssigned".
     :vartype type: str
     :ivar principal_id: The principal id of the identity.
     :vartype principal_id: str
@@ -35354,7 +35354,7 @@ class XeroLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -35364,12 +35364,12 @@ class XeroLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_properties: Properties used to connect to Xero. It is mutually exclusive with
      any other properties in the linked service. Type: object.
-    :type connection_properties: object
+    :type connection_properties: any
     :param host: Required. The endpoint of the Xero server. (i.e. api.xero.com).
-    :type host: object
+    :type host: any
     :param consumer_key: The consumer key associated with the Xero application.
     :type consumer_key: ~azure.synapse.artifacts.models.SecretBase
     :param private_key: The private key from the .pem file that was generated for your Xero private
@@ -35378,18 +35378,18 @@ class XeroLinkedService(LinkedService):
     :type private_key: ~azure.synapse.artifacts.models.SecretBase
     :param use_encrypted_endpoints: Specifies whether the data source endpoints are encrypted using
      HTTPS. The default value is true.
-    :type use_encrypted_endpoints: object
+    :type use_encrypted_endpoints: any
     :param use_host_verification: Specifies whether to require the host name in the server's
      certificate to match the host name of the server when connecting over SSL. The default value is
      true.
-    :type use_host_verification: object
+    :type use_host_verification: any
     :param use_peer_verification: Specifies whether to verify the identity of the server when
      connecting over SSL. The default value is true.
-    :type use_peer_verification: object
+    :type use_peer_verification: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -35437,28 +35437,28 @@ class XeroObjectDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: The table name. Type: string (or Expression with resultType string).
-    :type table_name: object
+    :type table_name: any
     """
 
     _validation = {
@@ -35495,27 +35495,27 @@ class XeroSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
@@ -35549,23 +35549,23 @@ class XmlDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
@@ -35576,9 +35576,9 @@ class XmlDataset(Dataset):
      of the table in the following link to set supported values:
      https://msdn.microsoft.com/library/system.text.encoding.aspx. Type: string (or Expression with
      resultType string).
-    :type encoding_name: object
+    :type encoding_name: any
     :param null_value: The null value string. Type: string (or Expression with resultType string).
-    :type null_value: object
+    :type null_value: any
     :param compression: The data compression method used for the json dataset.
     :type compression: ~azure.synapse.artifacts.models.DatasetCompression
     """
@@ -35623,25 +35623,25 @@ class XmlReadSettings(FormatReadSettings):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The read setting type.Constant filled by server.
     :type type: str
     :param compression_properties: Compression settings.
     :type compression_properties: ~azure.synapse.artifacts.models.CompressionReadSettings
     :param validation_mode: Indicates what validation method is used when reading the xml files.
      Allowed values: 'none', 'xsd', or 'dtd'. Type: string (or Expression with resultType string).
-    :type validation_mode: object
+    :type validation_mode: any
     :param detect_data_type: Indicates whether type detection is enabled when reading the xml
      files. Type: boolean (or Expression with resultType boolean).
-    :type detect_data_type: object
+    :type detect_data_type: any
     :param namespaces: Indicates whether namespace is enabled when reading the xml files. Type:
      boolean (or Expression with resultType boolean).
-    :type namespaces: object
+    :type namespaces: any
     :param namespace_prefixes: Namespace uri to prefix mappings to override the prefixes in column
      names when namespace is enabled, if no prefix is defined for a namespace uri, the prefix of xml
      element/attribute name in the xml data file will be used. Example:
      "{"http://www.example.com/xml":"prefix"}" Type: object (or Expression with resultType object).
-    :type namespace_prefixes: object
+    :type namespace_prefixes: any
     """
 
     _validation = {
@@ -35678,18 +35678,18 @@ class XmlSource(CopySource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param store_settings: Xml store settings.
     :type store_settings: ~azure.synapse.artifacts.models.StoreReadSettings
     :param format_settings: Xml format settings.
@@ -35732,12 +35732,12 @@ class ZipDeflateReadSettings(CompressionReadSettings):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. The Compression setting type.Constant filled by server.
     :type type: str
     :param preserve_zip_file_name_as_folder: Preserve the zip file name as folder path. Type:
      boolean (or Expression with resultType boolean).
-    :type preserve_zip_file_name_as_folder: object
+    :type preserve_zip_file_name_as_folder: any
     """
 
     _validation = {
@@ -35766,7 +35766,7 @@ class ZohoLinkedService(LinkedService):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of linked service.Constant filled by server.
     :type type: str
     :param connect_via: The integration runtime reference.
@@ -35776,28 +35776,28 @@ class ZohoLinkedService(LinkedService):
     :param parameters: Parameters for linked service.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the linked service.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param connection_properties: Properties used to connect to Zoho. It is mutually exclusive with
      any other properties in the linked service. Type: object.
-    :type connection_properties: object
+    :type connection_properties: any
     :param endpoint: Required. The endpoint of the Zoho server. (i.e. crm.zoho.com/crm/private).
-    :type endpoint: object
+    :type endpoint: any
     :param access_token: The access token for Zoho authentication.
     :type access_token: ~azure.synapse.artifacts.models.SecretBase
     :param use_encrypted_endpoints: Specifies whether the data source endpoints are encrypted using
      HTTPS. The default value is true.
-    :type use_encrypted_endpoints: object
+    :type use_encrypted_endpoints: any
     :param use_host_verification: Specifies whether to require the host name in the server's
      certificate to match the host name of the server when connecting over SSL. The default value is
      true.
-    :type use_host_verification: object
+    :type use_host_verification: any
     :param use_peer_verification: Specifies whether to verify the identity of the server when
      connecting over SSL. The default value is true.
-    :type use_peer_verification: object
+    :type use_peer_verification: any
     :param encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
-    :type encrypted_credential: object
+    :type encrypted_credential: any
     """
 
     _validation = {
@@ -35843,28 +35843,28 @@ class ZohoObjectDataset(Dataset):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset.Constant filled by server.
     :type type: str
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type: array (or Expression
      with resultType array), itemType: DatasetDataElement.
-    :type structure: object
+    :type structure: any
     :param schema: Columns that define the physical type schema of the dataset. Type: array (or
      Expression with resultType array), itemType: DatasetSchemaDataElement.
-    :type schema: object
+    :type schema: any
     :param linked_service_name: Required. Linked service reference.
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the Dataset.
-    :type annotations: list[object]
+    :type annotations: list[any]
     :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :type folder: ~azure.synapse.artifacts.models.DatasetFolder
     :param table_name: The table name. Type: string (or Expression with resultType string).
-    :type table_name: object
+    :type table_name: any
     """
 
     _validation = {
@@ -35901,27 +35901,27 @@ class ZohoSource(TabularSource):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Copy source type.Constant filled by server.
     :type type: str
     :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
      integer).
-    :type source_retry_count: object
+    :type source_retry_count: any
     :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
      string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
+    :type source_retry_wait: any
     :param max_concurrent_connections: The maximum concurrent connection count for the source data
      store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
+    :type max_concurrent_connections: any
     :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
      pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type query_timeout: object
+    :type query_timeout: any
     :param additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects (or Expression with resultType array of objects).
     :type additional_columns: list[~azure.synapse.artifacts.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or Expression with resultType
      string).
-    :type query: object
+    :type query: any
     """
 
     _validation = {
