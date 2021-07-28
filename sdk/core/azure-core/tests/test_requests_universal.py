@@ -46,12 +46,6 @@ def test_threading_basic_requests():
         future = executor.submit(thread_body, sender)
         assert future.result()
 
-def test_requests_auto_headers():
-    request = HttpRequest("POST", "https://www.bing.com/")
-    with RequestsTransport() as sender:
-        response = sender.send(request)
-        auto_headers = response.internal_response.request.headers
-        assert 'Content-Type' not in auto_headers
 
 def _create_requests_response(body_bytes, headers=None):
     # https://github.com/psf/requests/blob/67a7b2e8336951d527e223429672354989384197/requests/adapters.py#L255

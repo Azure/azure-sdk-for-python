@@ -65,7 +65,7 @@ def test_retry_types():
 @pytest.mark.parametrize("retry_after_input", [('0'), ('800'), ('1000'), ('1200')])
 def test_retry_after(retry_after_input):
     retry_policy = RetryPolicy()
-    request = HttpRequest("GET", "https://bing.com")
+    request = HttpRequest("GET", "http://127.0.0.1")
     response = HttpResponse(request, None)
     response.headers["retry-after-ms"] = retry_after_input
     pipeline_response = PipelineResponse(request, response, None)
@@ -83,7 +83,7 @@ def test_retry_after(retry_after_input):
 @pytest.mark.parametrize("retry_after_input", [('0'), ('800'), ('1000'), ('1200')])
 def test_x_ms_retry_after(retry_after_input):
     retry_policy = RetryPolicy()
-    request = HttpRequest("GET", "https://bing.com")
+    request = HttpRequest("GET", "http://127.0.0.1")
     response = HttpResponse(request, None)
     response.headers["x-ms-retry-after-ms"] = retry_after_input
     pipeline_response = PipelineResponse(request, response, None)

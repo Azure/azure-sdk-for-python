@@ -31,7 +31,7 @@ class MockClient:
     @distributed_trace
     def __init__(self, policies=None, assert_current_span=False):
         time.sleep(0.001)
-        self.request = HttpRequest("GET", "https://bing.com")
+        self.request = HttpRequest("GET", "http://127.0.0.1")
         if policies is None:
             policies = []
         policies.append(mock.Mock(spec=HTTPPolicy, send=self.verify_request))

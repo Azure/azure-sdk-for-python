@@ -96,27 +96,6 @@ def test_url_join():
     assert _urljoin('devstoreaccount1/', 'testdir/') == 'devstoreaccount1/testdir/'
 
 
-def test_http_client_response():
-    # Create a core request
-    request = HttpRequest("GET", "www.httpbin.org")
-
-    # Fake a transport based on http.client
-    conn = HTTPConnection("www.httpbin.org")
-    conn.request("GET", "/get")
-    r1 = conn.getresponse()
-
-    response = HttpClientTransportResponse(request, r1)
-
-    # Don't assume too much in those assert, since we reach a real server
-    assert response.internal_response is r1
-    assert response.reason is not None
-    assert isinstance(response.status_code, int)
-    assert len(response.headers.keys()) != 0
-    assert len(response.text()) != 0
-    assert "content-type" in response.headers
-    assert "Content-Type" in response.headers
-
-
 def test_response_deserialization():
 
     # Method + Url
@@ -1108,36 +1087,6 @@ def test_close_unopened_transport():
     transport = RequestsTransport()
     transport.close()
 
-def test_timeout(caplog):
-    transport = RequestsTransport()
-
-    request = HttpRequest("GET", "https://www.bing.com")
-
-    with caplog.at_level(logging.WARNING, logger="azure.core.pipeline.transport"):
-        with Pipeline(transport) as pipeline:
-            pipeline.run(request, connection_timeout=100)
-
-    assert "Tuple timeout setting is deprecated" not in caplog.text
-
-def test_tuple_timeout(caplog):
-    transport = RequestsTransport()
-
-    request = HttpRequest("GET", "https://www.bing.com")
-
-    with caplog.at_level(logging.WARNING, logger="azure.core.pipeline.transport"):
-        with Pipeline(transport) as pipeline:
-            pipeline.run(request, connection_timeout=(100, 100))
-
-    assert "Tuple timeout setting is deprecated" in caplog.text
-
-def test_conflict_timeout(caplog):
-    transport = RequestsTransport()
-
-    request = HttpRequest("GET", "https://www.bing.com")
-
-    with pytest.raises(ValueError):
-        with Pipeline(transport) as pipeline:
-            pipeline.run(request, connection_timeout=(100, 100), read_timeout = 100)
 
 @pytest.mark.skipif(sys.version_info < (3, 10), reason="Loop parameter is deprecated since Python 3.10")
 def test_aiohttp_loop():

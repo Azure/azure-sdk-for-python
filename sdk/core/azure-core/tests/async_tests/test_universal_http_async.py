@@ -40,58 +40,6 @@ import pytest
 from unittest import mock
 
 
-@pytest.mark.asyncio
-async def test_basic_aiohttp():
-
-    request = HttpRequest("GET", "https://www.bing.com/")
-    async with AioHttpTransport() as sender:
-        response = await sender.send(request)
-        assert response.body() is not None
-
-    assert sender.session is None
-    assert isinstance(response.status_code, int)
-
-@pytest.mark.asyncio
-async def test_aiohttp_auto_headers():
-
-    request = HttpRequest("POST", "https://www.bing.com/")
-    async with AioHttpTransport() as sender:
-        response = await sender.send(request)
-        auto_headers = response.internal_response.request_info.headers
-        assert 'Content-Type' not in auto_headers
-
-@pytest.mark.asyncio
-async def test_basic_async_requests():
-
-    request = HttpRequest("GET", "https://www.bing.com/")
-    async with AsyncioRequestsTransport() as sender:
-        response = await sender.send(request)
-        assert response.body() is not None
-
-    assert isinstance(response.status_code, int)
-
-@pytest.mark.asyncio
-async def test_conf_async_requests():
-
-    request = HttpRequest("GET", "https://www.bing.com/")
-    async with AsyncioRequestsTransport() as sender:
-        response = await sender.send(request)
-        assert response.body() is not None
-
-    assert isinstance(response.status_code, int)
-
-def test_conf_async_trio_requests():
-
-    async def do():
-        request = HttpRequest("GET", "https://www.bing.com/")
-        async with TrioRequestsTransport() as sender:
-            return await sender.send(request)
-            assert response.body() is not None
-
-    response = trio.run(do)
-    assert isinstance(response.status_code, int)
-
-
 def _create_aiohttp_response(body_bytes, headers=None):
     class MockAiohttpClientResponse(aiohttp.ClientResponse):
         def __init__(self, body_bytes, headers=None):

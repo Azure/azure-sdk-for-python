@@ -42,17 +42,6 @@ class MockResponse(AsyncHttpResponse):
 
 
 @pytest.mark.asyncio
-async def test_basic_options_aiohttp():
-
-    request = HttpRequest("OPTIONS", "https://httpbin.org")
-    async with AsyncPipeline(AioHttpTransport(), policies=[]) as pipeline:
-        response = await pipeline.run(request)
-
-    assert pipeline._transport.session is None
-    assert isinstance(response.http_response.status_code, int)
-
-
-@pytest.mark.asyncio
 async def test_multipart_send():
     transport = MockAsyncHttpTransport()
 
