@@ -210,6 +210,18 @@ class KeyProperties(object):
         """
         return self._managed
 
+    @property
+    def exportable(self):
+        # type: () -> Optional[bool]
+        """Whether the private key can be exported
+
+        :rtype: bool
+        """
+        # exportable was added in 7.3-preview
+        if self._attributes and hasattr(self._attributes, "exportable"):
+            return self._attributes.exportable
+        return None
+
 
 class KeyReleasePolicy(object):
     """The policy rules under which a key can be exported.
