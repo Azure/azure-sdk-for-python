@@ -30,13 +30,12 @@ from test_vscode_credential import GET_USER_SETTINGS
 
 
 class CredentialFixture:
-    def __init__(self, cls, default_kwargs=None, ctor_patch=None, get_token_patch=None):
+    def __init__(self, cls, default_kwargs=None, ctor_patch=None):
         self.cls = cls
-        self.get_token_patch = get_token_patch or MagicMock()
         self._default_kwargs = default_kwargs or {}
         self._ctor_patch = ctor_patch or MagicMock()
 
-    def __call__(self, **kwargs):
+    def get_credential(self, **kwargs):
         with self._ctor_patch:
             return self.cls(**dict(self._default_kwargs, **kwargs))
 
@@ -51,20 +50,21 @@ FIXTURES = (
     CredentialFixture(DeviceCodeCredential),
     CredentialFixture(
         EnvironmentCredential,
-        ctor_patch=patch.dict("os.environ", {var: ".." for var in EnvironmentVariables.CLIENT_SECRET_VARS}, clear=True),
+        ctor_patch=patch.dict(
+            EnvironmentCredential.__module__ + ".os.environ",
+            {var: "..." for var in EnvironmentVariables.CLIENT_SECRET_VARS},
+        ),
     ),
     CredentialFixture(InteractiveBrowserCredential),
     CredentialFixture(UsernamePasswordCredential, {"client_id": "...", "username": "...", "password": "..."}),
     CredentialFixture(VisualStudioCodeCredential, ctor_patch=patch(GET_USER_SETTINGS, lambda: {})),
 )
 
-all_fixtures = pytest.mark.parametrize("fixture", FIXTURES, ids=lambda fixture: fixture.cls.__name__)
 
-
-@all_fixtures
+@pytest.mark.parametrize("fixture", FIXTURES, ids=lambda fixture: fixture.cls.__name__)
 def test_close(fixture):
     transport = MagicMock()
-    credential = fixture(transport=transport)
+    credential = fixture.get_credential(transport=transport)
     assert not transport.__enter__.called
     assert not transport.__exit__.called
 
@@ -73,10 +73,10 @@ def test_close(fixture):
     assert transport.__exit__.call_count == 1
 
 
-@all_fixtures
+@pytest.mark.parametrize("fixture", FIXTURES, ids=lambda fixture: fixture.cls.__name__)
 def test_context_manager(fixture):
     transport = MagicMock()
-    credential = fixture(transport=transport)
+    credential = fixture.get_credential(transport=transport)
 
     with credential:
         assert transport.__enter__.call_count == 1
@@ -86,17 +86,24 @@ def test_context_manager(fixture):
     assert transport.__exit__.call_count == 1
 
 
-@all_fixtures
+@pytest.mark.parametrize("fixture", FIXTURES, ids=lambda fixture: fixture.cls.__name__)
 def test_exit_args(fixture):
     transport = MagicMock()
-    credential = fixture(transport=transport)
+    credential = fixture.get_credential(transport=transport)
     expected_args = ("type", "value", "traceback")
     credential.__exit__(*expected_args)
     transport.__exit__.assert_called_once_with(*expected_args)
 
 
 @pytest.mark.parametrize(
-    "cls", (AzureCliCredential, AzureApplicationCredential, AzurePowerShellCredential, EnvironmentCredential, SharedTokenCacheCredential)
+    "cls",
+    (
+        AzureCliCredential,
+        AzureApplicationCredential,
+        AzurePowerShellCredential,
+        EnvironmentCredential,
+        SharedTokenCacheCredential,
+    ),
 )
 def test_no_op(cls):
     """Credentials that don't allow custom transports, or require initialization or optional config, should have no-op methods"""
