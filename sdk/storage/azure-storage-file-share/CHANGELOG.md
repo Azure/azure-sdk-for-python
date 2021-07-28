@@ -1,5 +1,15 @@
 # Release History
 
+## 12.6.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 12.6.0b1 (2021-07-27)
 **New features**
 - Added OAuth support for file copy source.
