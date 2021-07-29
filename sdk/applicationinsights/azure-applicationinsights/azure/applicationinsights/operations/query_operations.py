@@ -38,7 +38,7 @@ class QueryOperations(object):
         """Execute an Analytics query.
 
         Executes an Analytics query for data.
-        
+
         `Here <https://dev.applicationinsights.io/documentation/Using-the-API/Query>`_
         is an example for using POST with an Analytics query.
 
@@ -46,7 +46,7 @@ class QueryOperations(object):
          API Access settings blade in the Azure portal.
         :type app_id: str
         :param body: The Analytics query. Learn more about the `Analytics
-         query syntax <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_
+         query syntax <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
         :type body: ~azure.applicationinsights.models.QueryBody
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
