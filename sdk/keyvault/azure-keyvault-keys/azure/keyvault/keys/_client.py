@@ -683,8 +683,8 @@ class KeyClient(KeyVaultClientBase):
         :param str version: (optional) A specific version of the key to release. If unspecified, the latest version is
             released.
 
-        :keyword str algorithm: The encryption algorithm to use to protect the released key material. Possible values
-         include: "CKM_RSA_AES_KEY_WRAP", "RSA_AES_KEY_WRAP_256", "RSA_AES_KEY_WRAP_384".
+        :keyword algorithm: The encryption algorithm to use to protect the released key material.
+        :paramtype algorithm: ~azure.keyvault.keys.KeyExportEncryptionAlgorithm
         :keyword str nonce: A client-provided nonce for freshness.
 
         :return: The result of the key release.

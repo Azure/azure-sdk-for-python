@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # -------------------------------------
-from ._enums import KeyCurveName, KeyOperation, KeyType
+from ._enums import KeyCurveName, KeyExportEncryptionAlgorithm, KeyOperation, KeyType
 from ._shared.client_base import ApiVersion
 from ._models import (
     DeletedKey,
@@ -23,6 +23,7 @@ __all__ = [
     "KeyVaultKey",
     "KeyVaultKeyIdentifier",
     "KeyCurveName",
+    "KeyExportEncryptionAlgorithm",
     "KeyOperation",
     "KeyType",
     "DeletedKey",
