@@ -40,7 +40,7 @@ class AzureBlobStorage(object):
     :vartype append_blob: azure.storage.blob.aio.operations.AppendBlobOperations
     :ivar block_blob: BlockBlobOperations operations
     :vartype block_blob: azure.storage.blob.aio.operations.BlockBlobOperations
-    :param url: The URL of the service account, container, or blob that is the targe of the desired operation.
+    :param url: The URL of the service account, container, or blob that is the target of the desired operation.
     :type url: str
     """
 

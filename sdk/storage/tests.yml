@@ -19,6 +19,8 @@ stages:
         BuildTargetingString: ${{ service }}
         ${{ if eq(service, 'azure-storage-file-datalake') }}:
           DeployArmTemplate: true
+          Location: 'canadacentral'
+
           # All 5 service stages run in parallel, and with no parallel limits the tests may get throttled.
         MaxParallel: 2
         ServiceDirectory: storage

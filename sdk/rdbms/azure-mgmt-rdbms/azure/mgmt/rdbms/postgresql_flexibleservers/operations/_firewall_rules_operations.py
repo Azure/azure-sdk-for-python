@@ -32,7 +32,7 @@ class FirewallRulesOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~postgre_sql_management_client.models
+    :type models: ~azure.mgmt.rdbms.postgresql_flexibleservers.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -106,7 +106,7 @@ class FirewallRulesOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}/firewallRules/{firewallRuleName}'}  # type: ignore
+    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/firewallRules/{firewallRuleName}'}  # type: ignore
 
     def begin_create_or_update(
         self,
@@ -126,7 +126,7 @@ class FirewallRulesOperations(object):
         :param firewall_rule_name: The name of the server firewall rule.
         :type firewall_rule_name: str
         :param parameters: The required parameters for creating or updating a firewall rule.
-        :type parameters: ~postgre_sql_management_client.models.FirewallRule
+        :type parameters: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.FirewallRule
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling.
@@ -134,7 +134,7 @@ class FirewallRulesOperations(object):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either FirewallRule or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~postgre_sql_management_client.models.FirewallRule]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.rdbms.postgresql_flexibleservers.models.FirewallRule]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
@@ -183,7 +183,7 @@ class FirewallRulesOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}/firewallRules/{firewallRuleName}'}  # type: ignore
+    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/firewallRules/{firewallRuleName}'}  # type: ignore
 
     def _delete_initial(
         self,
@@ -230,7 +230,7 @@ class FirewallRulesOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}/firewallRules/{firewallRuleName}'}  # type: ignore
+    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/firewallRules/{firewallRuleName}'}  # type: ignore
 
     def begin_delete(
         self,
@@ -300,7 +300,7 @@ class FirewallRulesOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}/firewallRules/{firewallRuleName}'}  # type: ignore
+    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/firewallRules/{firewallRuleName}'}  # type: ignore
 
     def get(
         self,
@@ -320,7 +320,7 @@ class FirewallRulesOperations(object):
         :type firewall_rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FirewallRule, or the result of cls(response)
-        :rtype: ~postgre_sql_management_client.models.FirewallRule
+        :rtype: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.FirewallRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.FirewallRule"]
@@ -363,7 +363,7 @@ class FirewallRulesOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}/firewallRules/{firewallRuleName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/firewallRules/{firewallRuleName}'}  # type: ignore
 
     def list_by_server(
         self,
@@ -380,7 +380,7 @@ class FirewallRulesOperations(object):
         :type server_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either FirewallRuleListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~postgre_sql_management_client.models.FirewallRuleListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.rdbms.postgresql_flexibleservers.models.FirewallRuleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.FirewallRuleListResult"]
@@ -438,4 +438,4 @@ class FirewallRulesOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list_by_server.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}/firewallRules'}  # type: ignore
+    list_by_server.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/firewallRules'}  # type: ignore

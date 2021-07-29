@@ -21,7 +21,7 @@ These sample programs show common scenarios for the QuestionAnswering client's o
 
 |**File Name**|**Description**|
 |-------------|---------------|
-|[sample_query_knowledgebase.py][query_knowledgebase] and [sample_query_knowledgebase_async.py][query_knowledgebase_async]|Ask a question from a knowledgebase|
+|[sample_query_knowledgebase.py][query_knowledgebase] and [sample_query_knowledgebase_async.py][query_knowledgebase_async]|Ask a question from a knowledge base|
 |[sample_chat.py][chat] and [sample_chat_async.py][chat_async]|Ask a follow-up question (chit-chat)|
 |[sample_query_text.py][query_text] and [sample_query_text_async.py][query_text_async]|Ask a question from provided text data|
 
@@ -35,7 +35,7 @@ These sample programs show common scenarios for the QuestionAnswering client's o
 
 ## Setup
 
-1. Install the Azure QuestionAnswering client library for Python with [pip][pip]):
+1. Install the Azure QuestionAnswering client library for Python with [pip][pip]:
 ```bash
 pip install --pre azure-ai-language-questionanswering
 ```

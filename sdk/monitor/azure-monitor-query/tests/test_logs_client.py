@@ -48,6 +48,7 @@ def test_logs_single_query_with_partial_success():
 
     assert response is not None
 
+@pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/19917")
 @pytest.mark.live_test_only
 def test_logs_server_timeout():
     client = LogsQueryClient(_credential())
@@ -55,10 +56,10 @@ def test_logs_server_timeout():
     with pytest.raises(HttpResponseError) as e:
         response = client.query(
             os.environ['LOG_WORKSPACE_ID'],
-            "range x from 1 to 10000000000 step 1 | count",
+            "range x from 1 to 1000000000000000 step 1 | count",
             server_timeout=1,
         )
-        assert e.message.contains('Gateway timeout')
+    assert 'Gateway timeout' in e.value.message
 
 @pytest.mark.live_test_only
 def test_logs_batch_query():
@@ -83,7 +84,7 @@ def test_logs_batch_query():
     ]
     response = client.batch_query(requests)
 
-    assert len(response.responses) == 3
+    assert len(response) == 3
 
 @pytest.mark.live_test_only
 def test_logs_single_query_with_statistics():
@@ -121,9 +122,9 @@ def test_logs_batch_query_with_statistics_in_some():
     ]
     response = client.batch_query(requests)
 
-    assert len(response.responses) == 3
-    assert response.responses[0].body.statistics is None
-    assert response.responses[2].body.statistics is not None
+    assert len(response) == 3
+    assert response[0].body.statistics is None
+    assert response[2].body.statistics is not None
 
 @pytest.mark.skip('https://github.com/Azure/azure-sdk-for-python/issues/19382')
 @pytest.mark.live_test_only
@@ -169,5 +170,5 @@ def test_logs_batch_query_additional_workspaces():
     ]
     response = client.batch_query(requests)
 
-    for resp in response.responses:
+    for resp in response:
         assert len(resp.body.tables[0].rows) == 2

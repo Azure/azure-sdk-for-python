@@ -47,15 +47,15 @@ class ShareOperations:
         access_tier: Optional[Union[str, "_models.ShareAccessTier"]] = None,
         enabled_protocols: Optional[str] = None,
         root_squash: Optional[Union[str, "_models.ShareRootSquash"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Creates a new share under the specified account. If the share with the same name already
         exists, the operation fails.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param metadata: A name-value pair to associate with a file storage object.
         :type metadata: str
@@ -114,7 +114,7 @@ class ShareOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -134,7 +134,7 @@ class ShareOperations:
         sharesnapshot: Optional[str] = None,
         timeout: Optional[int] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Returns all user-defined metadata and system properties for the specified share or share
         snapshot. The data returned does not include the share's list of files.
@@ -143,9 +143,9 @@ class ShareOperations:
          specifies the share snapshot to query.
         :type sharesnapshot: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param lease_access_conditions: Parameter group.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
@@ -194,7 +194,7 @@ class ShareOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -229,7 +229,7 @@ class ShareOperations:
         timeout: Optional[int] = None,
         delete_snapshots: Optional[Union[str, "_models.DeleteSnapshotsOptionType"]] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Operation marks the specified share or share snapshot for deletion. The share or share snapshot
         and any files contained within it are later deleted during garbage collection.
@@ -238,9 +238,9 @@ class ShareOperations:
          specifies the share snapshot to query.
         :type sharesnapshot: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param delete_snapshots: Specifies the option include to delete the base share and all of its
          snapshots.
@@ -294,7 +294,7 @@ class ShareOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -314,15 +314,15 @@ class ShareOperations:
         proposed_lease_id: Optional[str] = None,
         sharesnapshot: Optional[str] = None,
         request_id_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Lease Share operation establishes and manages a lock on a share, or the specified snapshot
         for set and delete share operations.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param duration: Specifies the duration of the lease, in seconds, or negative one (-1) for a
          lease that never expires. A non-infinite lease can be between 15 and 60 seconds. A lease
@@ -387,7 +387,7 @@ class ShareOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -410,7 +410,7 @@ class ShareOperations:
         timeout: Optional[int] = None,
         sharesnapshot: Optional[str] = None,
         request_id_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Lease Share operation establishes and manages a lock on a share, or the specified snapshot
         for set and delete share operations.
@@ -418,9 +418,9 @@ class ShareOperations:
         :param lease_id: Specifies the current lease ID on the resource.
         :type lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the share snapshot to query.
@@ -474,7 +474,7 @@ class ShareOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -497,7 +497,7 @@ class ShareOperations:
         proposed_lease_id: Optional[str] = None,
         sharesnapshot: Optional[str] = None,
         request_id_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Lease Share operation establishes and manages a lock on a share, or the specified snapshot
         for set and delete share operations.
@@ -505,9 +505,9 @@ class ShareOperations:
         :param lease_id: Specifies the current lease ID on the resource.
         :type lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param proposed_lease_id: Proposed lease ID, in a GUID string format. The File service returns
          400 (Invalid request) if the proposed lease ID is not in the correct format. See Guid
@@ -567,7 +567,7 @@ class ShareOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -590,7 +590,7 @@ class ShareOperations:
         timeout: Optional[int] = None,
         sharesnapshot: Optional[str] = None,
         request_id_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Lease Share operation establishes and manages a lock on a share, or the specified snapshot
         for set and delete share operations.
@@ -598,9 +598,9 @@ class ShareOperations:
         :param lease_id: Specifies the current lease ID on the resource.
         :type lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the share snapshot to query.
@@ -654,7 +654,7 @@ class ShareOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -678,23 +678,23 @@ class ShareOperations:
         request_id_parameter: Optional[str] = None,
         sharesnapshot: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Lease Share operation establishes and manages a lock on a share, or the specified snapshot
         for set and delete share operations.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param break_period: For a break operation, proposed duration the lease should continue before
          it is broken, in seconds, between 0 and 60. This break period is only used if it is shorter
          than the time remaining on the lease. If longer, the time remaining on the lease is used. A new
          lease will not be available before the break period has expired, but the lease may be held for
-         longer than the break period. If this header does not appear with a break operation, a fixed-
-         duration lease breaks after the remaining lease period elapses, and an infinite lease breaks
-         immediately.
+         longer than the break period. If this header does not appear with a break operation, a
+         fixed-duration lease breaks after the remaining lease period elapses, and an infinite lease
+         breaks immediately.
         :type break_period: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -757,7 +757,7 @@ class ShareOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -779,14 +779,14 @@ class ShareOperations:
         self,
         timeout: Optional[int] = None,
         metadata: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Creates a read-only snapshot of a share.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param metadata: A name-value pair to associate with a file storage object.
         :type metadata: str
@@ -831,7 +831,7 @@ class ShareOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -851,16 +851,16 @@ class ShareOperations:
         self,
         share_permission: "_models.SharePermission",
         timeout: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Create a permission (a security descriptor).
 
         :param share_permission: A permission (a security descriptor) at the share level.
         :type share_permission: ~azure.storage.fileshare.models.SharePermission
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -906,7 +906,7 @@ class ShareOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -924,16 +924,16 @@ class ShareOperations:
         self,
         file_permission_key: str,
         timeout: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SharePermission":
         """Returns the permission (security descriptor) for a given key.
 
         :param file_permission_key: Key of the permission to be set for the directory/file.
         :type file_permission_key: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SharePermission, or the result of cls(response)
@@ -975,7 +975,7 @@ class ShareOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -997,14 +997,14 @@ class ShareOperations:
         access_tier: Optional[Union[str, "_models.ShareAccessTier"]] = None,
         root_squash: Optional[Union[str, "_models.ShareRootSquash"]] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Sets properties for the specified share.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param quota: Specifies the maximum size of the share, in gigabytes.
         :type quota: int
@@ -1065,7 +1065,7 @@ class ShareOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1085,14 +1085,14 @@ class ShareOperations:
         timeout: Optional[int] = None,
         metadata: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Sets one or more user-defined name-value pairs for the specified share.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param metadata: A name-value pair to associate with a file storage object.
         :type metadata: str
@@ -1145,7 +1145,7 @@ class ShareOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1164,14 +1164,14 @@ class ShareOperations:
         self,
         timeout: Optional[int] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.SignedIdentifier"]:
         """Returns information about stored access policies specified on the share.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param lease_access_conditions: Parameter group.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
@@ -1220,7 +1220,7 @@ class ShareOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1242,14 +1242,14 @@ class ShareOperations:
         timeout: Optional[int] = None,
         share_acl: Optional[List["_models.SignedIdentifier"]] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Sets a stored access policy for use with shared access signatures.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param share_acl: The ACL for the share.
         :type share_acl: list[~azure.storage.fileshare.models.SignedIdentifier]
@@ -1309,7 +1309,7 @@ class ShareOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1328,14 +1328,14 @@ class ShareOperations:
         self,
         timeout: Optional[int] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ShareStats":
         """Retrieves statistics related to the share.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param lease_access_conditions: Parameter group.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
@@ -1384,7 +1384,7 @@ class ShareOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1407,14 +1407,14 @@ class ShareOperations:
         request_id_parameter: Optional[str] = None,
         deleted_share_name: Optional[str] = None,
         deleted_share_version: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Restores a previously deleted Share.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -1468,7 +1468,7 @@ class ShareOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
