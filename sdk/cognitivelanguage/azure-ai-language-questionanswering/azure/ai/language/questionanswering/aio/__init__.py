@@ -8,4 +8,4 @@
 
 from ._question_answering_client import QuestionAnsweringClient
 
-__all__ = ['QuestionAnsweringClient']
+__all__ = ["QuestionAnsweringClient"]

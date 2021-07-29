@@ -31,15 +31,12 @@ class FeatureClientConfiguration(Configuration):
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The Azure subscription ID.
     :type subscription_id: str
-    :param provider_namespace: The provider namespace.
-    :type provider_namespace: str
     """
 
     def __init__(
         self,
         credential,  # type: "TokenCredential"
         subscription_id,  # type: str
-        provider_namespace,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -47,13 +44,10 @@ class FeatureClientConfiguration(Configuration):
             raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if provider_namespace is None:
-            raise ValueError("Parameter 'provider_namespace' must not be None.")
         super(FeatureClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.provider_namespace = provider_namespace
         self.api_version = "2021-07-01"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-resource/{}'.format(VERSION))

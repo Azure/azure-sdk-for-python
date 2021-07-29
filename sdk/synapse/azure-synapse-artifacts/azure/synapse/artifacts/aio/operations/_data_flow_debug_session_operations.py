@@ -45,14 +45,14 @@ class DataFlowDebugSessionOperations:
     async def _create_data_flow_debug_session_initial(
         self,
         request: "_models.CreateDataFlowDebugSessionRequest",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.CreateDataFlowDebugSessionResponse"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.CreateDataFlowDebugSessionResponse"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -101,7 +101,7 @@ class DataFlowDebugSessionOperations:
     async def begin_create_data_flow_debug_session(
         self,
         request: "_models.CreateDataFlowDebugSessionRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.CreateDataFlowDebugSessionResponse"]:
         """Creates a data flow debug session.
 
@@ -161,7 +161,7 @@ class DataFlowDebugSessionOperations:
 
     def query_data_flow_debug_sessions_by_workspace(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.QueryDataFlowDebugSessionsResponse"]:
         """Query all active data flow debug sessions.
 
@@ -175,7 +175,7 @@ class DataFlowDebugSessionOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -233,7 +233,7 @@ class DataFlowDebugSessionOperations:
     async def add_data_flow(
         self,
         request: "_models.DataFlowDebugPackage",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AddDataFlowToDebugSessionResponse":
         """Add a data flow into debug session.
 
@@ -249,7 +249,7 @@ class DataFlowDebugSessionOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -292,7 +292,7 @@ class DataFlowDebugSessionOperations:
     async def delete_data_flow_debug_session(
         self,
         request: "_models.DeleteDataFlowDebugSessionRequest",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a data flow debug session.
 
@@ -308,7 +308,7 @@ class DataFlowDebugSessionOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -348,14 +348,14 @@ class DataFlowDebugSessionOperations:
     async def _execute_command_initial(
         self,
         request: "_models.DataFlowDebugCommandRequest",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.DataFlowDebugCommandResponse"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.DataFlowDebugCommandResponse"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -404,7 +404,7 @@ class DataFlowDebugSessionOperations:
     async def begin_execute_command(
         self,
         request: "_models.DataFlowDebugCommandRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DataFlowDebugCommandResponse"]:
         """Execute a data flow debug command.
 

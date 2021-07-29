@@ -9,7 +9,7 @@ from enum import Enum
 import uuid
 from typing import Any, Optional, List
 
-from ._helpers import order_results, construct_iso8601
+from ._helpers import construct_iso8601
 from ._generated.models import (
     Column as InternalColumn,
     BatchQueryRequest as InternalLogQueryRequest,
@@ -232,29 +232,6 @@ class LogsQueryResult(object):
             id=generated.id,
             status=generated.status,
             body=LogsQueryResults._from_generated(generated.body) # pylint: disable=protected-access
-        )
-
-class LogsBatchResults(object):
-    """Response to a batch.
-
-    :keyword responses: An array of responses corresponding to each individual request in a batch.
-    :paramtype responses: list[azure.monitor.query.LogsQueryResult]
-    :keyword error: Error response for a batch request.
-    :paramtype error: ~azure.monitor.query.LogsBatchResultError
-    """
-    def __init__(self, **kwargs):
-        # type: (Any) -> None
-        self.responses = kwargs.get("responses", None)
-        self.error = kwargs.get("error", None)
-
-    @classmethod
-    def _from_generated(cls, generated, request_order):
-        if not generated:
-            return cls()
-        return cls(
-            responses=order_results(request_order, [
-                LogsQueryResult._from_generated(rsp) for rsp in generated.responses # pylint: disable=protected-access
-                ])
         )
 
 
@@ -483,7 +460,7 @@ class TimeSeriesElement(object):
 
     :keyword metadata_values: the metadata values returned if $filter was specified in the call.
     :paramtype metadata_values: list[~monitor_query_client.models.MetadataValue]
-    :keyword data: An array of data points representing the metric values.  This is only returned if
+    :keyword data: An array of data points representing the metric values. This is only returned if
      a result type of data is specified.
     :paramtype data: list[~monitor_query_client.models.MetricValue]
     """

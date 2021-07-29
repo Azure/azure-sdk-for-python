@@ -155,6 +155,20 @@ class ChannelMapping(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: The Right Stereo channel.  Sometimes referred to as Down Mix Right.
     STEREO_RIGHT = "StereoRight"
 
+class Complexity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Allows you to configure the encoder settings to control the balance between speed and quality.
+    Example: set Complexity as Speed for faster encoding but less compression efficiency.
+    """
+
+    #: Configures the encoder to use settings optimized for faster encoding. Quality is sacrificed to
+    #: decrease encoding time.
+    SPEED = "Speed"
+    #: Configures the encoder to use settings that achieve a balance between speed and quality.
+    BALANCED = "Balanced"
+    #: Configures the encoder to use settings optimized to produce higher quality output at the
+    #: expense of slower overall encode time.
+    QUALITY = "Quality"
+
 class ContentKeyPolicyFairPlayRentalAndLeaseKeyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The rental and lease key type.
     """
@@ -468,6 +482,17 @@ class InsightsType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Generate both audio and video insights. Fails if either audio or video Insights fail.
     ALL_INSIGHTS = "AllInsights"
 
+class InterleaveOutput(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Sets the interleave mode of the output to control how audio and video are stored in the
+    container format. Example: set InterleavedOutput as NonInterleavedOutput to produce audio-only
+    and video-only outputs in separate MP4 files.
+    """
+
+    #: The output is video-only or audio-only.
+    NON_INTERLEAVED_OUTPUT = "NonInterleavedOutput"
+    #: The output includes both audio and video.
+    INTERLEAVED_OUTPUT = "InterleavedOutput"
+
 class JobErrorCategory(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Helps with categorization of errors.
     """
@@ -563,6 +588,10 @@ class LiveEventEncodingType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     #: A contribution live encoder sends a single bitrate stream to the live event and Media Services
     #: creates multiple bitrate streams. The output cannot exceed 1080p in resolution.
     PREMIUM1080_P = "Premium1080p"
+    #: Pending update...
+    PASSTHROUGH_BASIC = "PassthroughBasic"
+    #: Pending update...
+    PASSTHROUGH_STANDARD = "PassthroughStandard"
 
 class LiveEventInputProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The input protocol for the live event. This is specified at creation time and cannot be
@@ -618,15 +647,6 @@ class LiveOutputResourceState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     #: Live output is being deleted. The live asset is being converted from live to on-demand asset.
     #: Any streaming URLs created on the live output asset continue to work.
     DELETING = "Deleting"
-
-class ManagedIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The identity type.
-    """
-
-    #: A system-assigned managed identity.
-    SYSTEM_ASSIGNED = "SystemAssigned"
-    #: No managed identity.
-    NONE = "None"
 
 class MetricAggregationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The metric aggregation type
@@ -693,6 +713,15 @@ class PrivateEndpointServiceConnectionStatus(with_metaclass(_CaseInsensitiveEnum
     PENDING = "Pending"
     APPROVED = "Approved"
     REJECTED = "Rejected"
+
+class PublicNetworkAccess(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Whether or not public network access is allowed for resources under the Media Services account.
+    """
+
+    #: Public network access is enabled.
+    ENABLED = "Enabled"
+    #: Public network access is disabled.
+    DISABLED = "Disabled"
 
 class Rotation(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The rotation, if any, to be applied to the input video, before it is encoded. Default is Auto

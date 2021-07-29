@@ -16,15 +16,15 @@ from testcase import (
 from asynctestcase import AsyncQuestionAnsweringTest
 
 from azure.ai.language.questionanswering.models import (
-    KnowledgebaseQueryParameters,
-    KnowledgebaseAnswerRequestContext,
+    KnowledgeBaseQueryOptions,
+    KnowledgeBaseAnswerRequestContext,
     AnswerSpanRequest,
 )
 from azure.ai.language.questionanswering.aio import QuestionAnsweringClient
-from azure.ai.language.questionanswering.rest import *
+from azure.ai.language.questionanswering._rest import *
 
 
-class QnAKnowledgebaseTestsAsync(AsyncQuestionAnsweringTest):
+class QnAKnowledgeBaseTestsAsync(AsyncQuestionAnsweringTest):
 
     @GlobalQuestionAnsweringAccountPreparer()
     async def test_query_knowledgebase_llc(self, qna_account, qna_key, qna_project):
@@ -127,10 +127,10 @@ class QnAKnowledgebaseTestsAsync(AsyncQuestionAnsweringTest):
     @GlobalQuestionAnsweringAccountPreparer()
     async def test_query_knowledgebase(self, qna_account, qna_key, qna_project):
         client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
-        query_params = KnowledgebaseQueryParameters(
+        query_params = KnowledgeBaseQueryOptions(
             question="Ports and connectors",
             top=3,
-            context=KnowledgebaseAnswerRequestContext(
+            context=KnowledgeBaseAnswerRequestContext(
                 previous_user_query="Meet Surface Pro 4",
                 previous_qna_id=4
             )
@@ -138,9 +138,9 @@ class QnAKnowledgebaseTestsAsync(AsyncQuestionAnsweringTest):
 
         async with client:
             output = await client.query_knowledgebase(
+                query_params,
                 project_name=qna_project,
-                deployment_name='test',
-                knowledgebase_query_parameters=query_params
+                deployment_name='test'
             )
 
         assert output.answers
@@ -168,10 +168,10 @@ class QnAKnowledgebaseTestsAsync(AsyncQuestionAnsweringTest):
     @GlobalQuestionAnsweringAccountPreparer()
     async def test_query_knowledgebase_with_answerspan(self, qna_account, qna_key, qna_project):
         client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
-        query_params = KnowledgebaseQueryParameters(
+        query_params = KnowledgeBaseQueryOptions(
             question="Ports and connectors",
             top=3,
-            context=KnowledgebaseAnswerRequestContext(
+            context=KnowledgeBaseAnswerRequestContext(
                 previous_user_query="Meet Surface Pro 4",
                 previous_qna_id=4
             ),
@@ -184,9 +184,9 @@ class QnAKnowledgebaseTestsAsync(AsyncQuestionAnsweringTest):
 
         async with client:
             output = await client.query_knowledgebase(
+                query_params,
                 project_name=qna_project,
-                deployment_name='test',
-                knowledgebase_query_parameters=query_params
+                deployment_name='test'
             )
 
         assert output.answers
@@ -234,9 +234,33 @@ class QnAKnowledgebaseTestsAsync(AsyncQuestionAnsweringTest):
 
         async with client:
             output = await client.query_knowledgebase(
+                query_params,
+                project_name=qna_project,
+                deployment_name='test'
+            )
+
+        assert len(output.answers) == 3
+        confident_answers = [a for a in output.answers if a.confidence_score > 0.9]
+        assert len(confident_answers) == 1
+        assert confident_answers[0].source == "surface-pro-4-user-guide-EN.pdf"
+
+    @GlobalQuestionAnsweringAccountPreparer()
+    async def test_query_knowledgebase_overload(self, qna_account, qna_key, qna_project):
+        client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
+        async with client:
+            output = await client.query_knowledgebase(
                 project_name=qna_project,
                 deployment_name='test',
-                knowledgebase_query_parameters=query_params
+                question="How long should my Surface battery last?",
+                top=3,
+                user_id="sd53lsY=",
+                confidence_score_threshold=0.2,
+                answer_span_request=AnswerSpanRequest(
+                    enable=True,
+                    confidence_score_threshold=0.2,
+                    top_answers_with_span=1
+                ),
+                include_unstructured_sources=True
             )
 
         assert len(output.answers) == 3
@@ -248,7 +272,7 @@ class QnAKnowledgebaseTestsAsync(AsyncQuestionAnsweringTest):
     async def test_query_knowledgebase_with_followup(self, qna_account, qna_key, qna_project):
         client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
         async with client:
-            query_params = KnowledgebaseQueryParameters(
+            query_params = KnowledgeBaseQueryOptions(
                 question="How long should my Surface battery last?",
                 top=3,
                 user_id="sd53lsY=",
@@ -262,20 +286,20 @@ class QnAKnowledgebaseTestsAsync(AsyncQuestionAnsweringTest):
             )
 
             output = await client.query_knowledgebase(
+                query_params,
                 project_name=qna_project,
-                deployment_name='test',
-                knowledgebase_query_parameters=query_params
+                deployment_name='test'
             )
             confident_answers = [a for a in output.answers if a.confidence_score > 0.9]
             assert len(confident_answers) == 1
             assert confident_answers[0].source == "surface-pro-4-user-guide-EN.pdf"
 
-            query_params = KnowledgebaseQueryParameters(
+            query_params = KnowledgeBaseQueryOptions(
                 question="How long it takes to charge Surface?",
                 top=3,
                 user_id="sd53lsY=",
                 confidence_score_threshold=0.2,
-                context=KnowledgebaseAnswerRequestContext(
+                context=KnowledgeBaseAnswerRequestContext(
                     previous_user_query="How long should my Surface battery last?",
                     previous_qna_id=confident_answers[0].id
                 ),
@@ -287,9 +311,9 @@ class QnAKnowledgebaseTestsAsync(AsyncQuestionAnsweringTest):
                 include_unstructured_sources=True
             )
             output = await client.query_knowledgebase(
+                query_params,
                 project_name=qna_project,
-                deployment_name='test',
-                knowledgebase_query_parameters=query_params
+                deployment_name='test'
             )
 
             assert len(output.answers) == 2
@@ -304,23 +328,23 @@ class QnAKnowledgebaseTestsAsync(AsyncQuestionAnsweringTest):
             query_params = {"qnaId": 19}
 
             output = await client.query_knowledgebase(
+                query_params,
                 project_name=qna_project,
-                deployment_name='test',
-                knowledgebase_query_parameters=query_params
+                deployment_name='test'
             )
             
             assert len(output.answers) == 1
 
     @GlobalQuestionAnsweringAccountPreparer()
-    async def test_query_knowledgebase_bad_request(self, qna_account, qna_key, qna_project):
+    async def test_query_knowledgebase_python_dict(self, qna_account, qna_key, qna_project):
         client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
         async with client:
             query_params = {"qna_id": 19}
 
-            with pytest.raises(HttpResponseError):
-                await client.query_knowledgebase(
-                    project_name=qna_project,
-                    deployment_name='test',
-                    knowledgebase_query_parameters=query_params
-                )
+            output = await client.query_knowledgebase(
+                query_params,
+                project_name=qna_project,
+                deployment_name='test'
+            )
 
+            assert len(output.answers) == 1

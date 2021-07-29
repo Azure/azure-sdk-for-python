@@ -25,7 +25,7 @@ class GetPrivateDnsZoneSuffixOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~postgre_sql_management_client.models
+    :type models: ~azure.mgmt.rdbms.postgresql_flexibleservers.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -84,4 +84,4 @@ class GetPrivateDnsZoneSuffixOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    execute.metadata = {'url': '/providers/Microsoft.DBForPostgreSql/getPrivateDnsZoneSuffix'}  # type: ignore
+    execute.metadata = {'url': '/providers/Microsoft.DBforPostgreSQL/getPrivateDnsZoneSuffix'}  # type: ignore

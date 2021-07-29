@@ -28,12 +28,15 @@ from .operations import DataFlowDebugSessionOperations
 from .operations import SqlScriptOperations
 from .operations import SparkJobDefinitionOperations
 from .operations import NotebookOperations
-from .operations import WorkspaceOperations
-from .operations import SqlPoolsOperations
+from .operations import NotebookOperationResultOperations
 from .operations import BigDataPoolsOperations
+from .operations import WorkspaceGitRepoManagementOperations
 from .operations import IntegrationRuntimesOperations
 from .operations import LibraryOperations
-from .operations import WorkspaceGitRepoManagementOperations
+from .operations import OperationResultOperations
+from .operations import OperationStatusOperations
+from .operations import SqlPoolsOperations
+from .operations import WorkspaceOperations
 from .. import models
 
 
@@ -62,18 +65,24 @@ class ArtifactsClient(object):
     :vartype spark_job_definition: azure.synapse.artifacts.aio.operations.SparkJobDefinitionOperations
     :ivar notebook: NotebookOperations operations
     :vartype notebook: azure.synapse.artifacts.aio.operations.NotebookOperations
-    :ivar workspace: WorkspaceOperations operations
-    :vartype workspace: azure.synapse.artifacts.aio.operations.WorkspaceOperations
-    :ivar sql_pools: SqlPoolsOperations operations
-    :vartype sql_pools: azure.synapse.artifacts.aio.operations.SqlPoolsOperations
+    :ivar notebook_operation_result: NotebookOperationResultOperations operations
+    :vartype notebook_operation_result: azure.synapse.artifacts.aio.operations.NotebookOperationResultOperations
     :ivar big_data_pools: BigDataPoolsOperations operations
     :vartype big_data_pools: azure.synapse.artifacts.aio.operations.BigDataPoolsOperations
+    :ivar workspace_git_repo_management: WorkspaceGitRepoManagementOperations operations
+    :vartype workspace_git_repo_management: azure.synapse.artifacts.aio.operations.WorkspaceGitRepoManagementOperations
     :ivar integration_runtimes: IntegrationRuntimesOperations operations
     :vartype integration_runtimes: azure.synapse.artifacts.aio.operations.IntegrationRuntimesOperations
     :ivar library: LibraryOperations operations
     :vartype library: azure.synapse.artifacts.aio.operations.LibraryOperations
-    :ivar workspace_git_repo_management: WorkspaceGitRepoManagementOperations operations
-    :vartype workspace_git_repo_management: azure.synapse.artifacts.aio.operations.WorkspaceGitRepoManagementOperations
+    :ivar operation_result: OperationResultOperations operations
+    :vartype operation_result: azure.synapse.artifacts.aio.operations.OperationResultOperations
+    :ivar operation_status: OperationStatusOperations operations
+    :vartype operation_status: azure.synapse.artifacts.aio.operations.OperationStatusOperations
+    :ivar sql_pools: SqlPoolsOperations operations
+    :vartype sql_pools: azure.synapse.artifacts.aio.operations.SqlPoolsOperations
+    :ivar workspace: WorkspaceOperations operations
+    :vartype workspace: azure.synapse.artifacts.aio.operations.WorkspaceOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param endpoint: The workspace development endpoint, for example https://myworkspace.dev.azuresynapse.net.
@@ -118,17 +127,23 @@ class ArtifactsClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.notebook = NotebookOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.workspace = WorkspaceOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.sql_pools = SqlPoolsOperations(
+        self.notebook_operation_result = NotebookOperationResultOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.big_data_pools = BigDataPoolsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.workspace_git_repo_management = WorkspaceGitRepoManagementOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.integration_runtimes = IntegrationRuntimesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.library = LibraryOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.workspace_git_repo_management = WorkspaceGitRepoManagementOperations(
+        self.operation_result = OperationResultOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.operation_status = OperationStatusOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.sql_pools = SqlPoolsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.workspace = WorkspaceOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
