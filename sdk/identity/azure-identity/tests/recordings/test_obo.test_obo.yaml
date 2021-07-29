@@ -1,0 +1,358 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-identity/1.7.0b3 Python/3.8.10 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+    method: GET
+    uri: https://login.microsoftonline.com/tenant/v2.0/.well-known/openid-configuration
+  response:
+    body:
+      string: '{"token_endpoint": "https://login.microsoftonline.com/tenant/oauth2/v2.0/token",
+        "token_endpoint_auth_methods_supported": ["client_secret_post", "private_key_jwt",
+        "client_secret_basic"], "jwks_uri": "https://login.microsoftonline.com/tenant/discovery/v2.0/keys",
+        "response_modes_supported": ["query", "fragment", "form_post"], "subject_types_supported":
+        ["pairwise"], "id_token_signing_alg_values_supported": ["RS256"], "response_types_supported":
+        ["code", "id_token", "code id_token", "id_token token"], "scopes_supported":
+        ["openid", "profile", "email", "offline_access"], "issuer": "https://login.microsoftonline.com/tenant/v2.0",
+        "request_uri_parameter_supported": false, "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
+        "authorization_endpoint": "https://login.microsoftonline.com/tenant/oauth2/v2.0/authorize",
+        "device_authorization_endpoint": "https://login.microsoftonline.com/tenant/oauth2/v2.0/devicecode",
+        "http_logout_supported": true, "frontchannel_logout_supported": true, "end_session_endpoint":
+        "https://login.microsoftonline.com/tenant/oauth2/v2.0/logout", "claims_supported":
+        ["sub", "iss", "cloud_instance_name", "cloud_instance_host_name", "cloud_graph_host_name",
+        "msgraph_host", "aud", "exp", "iat", "auth_time", "acr", "nonce", "preferred_username",
+        "name", "tid", "ver", "at_hash", "c_hash", "email"], "kerberos_endpoint":
+        "https://login.microsoftonline.com/tenant/kerberos", "tenant_region_scope":
+        "NA", "cloud_instance_name": "microsoftonline.com", "cloud_graph_host_name":
+        "graph.windows.net", "msgraph_host": "graph.microsoft.com", "rbac_url": "https://pas.windows.net"}'
+    headers:
+      access-control-allow-methods:
+      - GET, OPTIONS
+      access-control-allow-origin:
+      - '*'
+      cache-control:
+      - max-age=86400, private
+      content-length:
+      - '1753'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 29 Jul 2021 20:37:31 GMT
+      p3p:
+      - CP="DSP CUR OTPi IND OTRi ONL FIN"
+      set-cookie:
+      - fpc=AirMv4PHgBVBo-o6QOflKag; expires=Sat, 28-Aug-2021 20:37:32 GMT; path=/;
+        secure; HttpOnly; SameSite=None
+      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrtQlEc_N-SuCmbdpHdwJasCjkr87Cdqydgq-yIwincsxAaRfQ-YS-Wb35C1WqAkgQIcX5Dv3KzIOYWt0K16YPNDJjbsnoyypsv8RoaiOJAhTekIeCSli3avgYDybMxyYTe9VgWF4oTuFdbU4p3gf9wriM-T4_X9sybZMRbvauELEgAA;
+        domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None
+      - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
+      - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ests-server:
+      - 2.1.11898.12 - NCUS ProdSlices
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Cookie:
+      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrtQlEc_N-SuCmbdpHdwJasCjkr87Cdqydgq-yIwincsxAaRfQ-YS-Wb35C1WqAkgQIcX5Dv3KzIOYWt0K16YPNDJjbsnoyypsv8RoaiOJAhTekIeCSli3avgYDybMxyYTe9VgWF4oTuFdbU4p3gf9wriM-T4_X9sybZMRbvauELEgAA;
+        fpc=AirMv4PHgBVBo-o6QOflKag; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
+      User-Agent:
+      - azsdk-python-identity/1.7.0b3 Python/3.8.10 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+    method: GET
+    uri: https://login.microsoftonline.com/common/userrealm/username?api-version=1.0
+  response:
+    body:
+      string: '{"ver": "1.0", "account_type": "Managed", "domain_name": "chlowehotmail.onmicrosoft.com",
+        "cloud_instance_name": "microsoftonline.com", "cloud_audience_urn": "urn:federation:MicrosoftOnline"}'
+    headers:
+      cache-control:
+      - no-store, no-cache
+      content-disposition:
+      - inline; filename=userrealm.json
+      content-length:
+      - '182'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 29 Jul 2021 20:37:31 GMT
+      expires:
+      - '-1'
+      p3p:
+      - CP="DSP CUR OTPi IND OTRi ONL FIN"
+      pragma:
+      - no-cache
+      set-cookie:
+      - fpc=AirMv4PHgBVBo-o6QOflKag; expires=Sat, 28-Aug-2021 20:37:32 GMT; path=/;
+        secure; HttpOnly; SameSite=None
+      - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
+      - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ests-server:
+      - 2.1.11898.12 - SCUS ProdSlices
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '304'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrtQlEc_N-SuCmbdpHdwJasCjkr87Cdqydgq-yIwincsxAaRfQ-YS-Wb35C1WqAkgQIcX5Dv3KzIOYWt0K16YPNDJjbsnoyypsv8RoaiOJAhTekIeCSli3avgYDybMxyYTe9VgWF4oTuFdbU4p3gf9wriM-T4_X9sybZMRbvauELEgAA;
+        fpc=AirMv4PHgBVBo-o6QOflKag; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
+      User-Agent:
+      - azsdk-python-identity/1.7.0b3 Python/3.8.10 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+      x-client-cpu:
+      - x64
+      x-client-current-telemetry:
+      - 4|301,0|
+      x-client-last-telemetry:
+      - 4|0|||
+      x-client-os:
+      - linux
+      x-client-sku:
+      - MSAL.Python
+      x-client-ver:
+      - 1.12.0
+    method: POST
+    uri: https://login.microsoftonline.com/tenant/oauth2/v2.0/token
+  response:
+    body:
+      string: '{"token_type": "Bearer", "scope": "api://foo/Foo", "expires_in": 3599,
+        "ext_expires_in": 3599, "access_token": "redacted", "refresh_token": "redacted",
+        "id_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyJ9.eyJhdWQiOiJkNzBmYzVhZS01MmU0LTQ4OTUtYmYxYi04OTQxMDNkN2VmMTQiLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vM2M2MzFiYjctYTlmNy00MzQzLWE1YmEtYTYxNTkxMzVmMWZjL3YyLjAiLCJpYXQiOjE2Mjc1OTA3NTIsIm5iZiI6MTYyNzU5MDc1MiwiZXhwIjoxNjI3NTk0NjUyLCJuYW1lIjoidGVzdGVyIGEiLCJvaWQiOiJjZGQ2ZWUyNi1lNGJhLTQyNGUtODJlNS1lN2ZhNzc4M2I1ODAiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJ0ZXN0ZXJhQGNobG93ZWhvdG1haWwub25taWNyb3NvZnQuY29tIiwicmgiOiIwLkFSY0F0eHRqUFBlcFEwT2x1cVlWa1RYeF9LN0ZEOWZrVXBWSXZ4dUpRUVBYN3hRWEFQcy4iLCJzdWIiOiJERWVYNWpEZVU5dDU0WkJpVnVKdktncFRRN0ctYWs2LWpidGZuaHp1RFlVIiwidGlkIjoiM2M2MzFiYjctYTlmNy00MzQzLWE1YmEtYTYxNTkxMzVmMWZjIiwidXRpIjoiSVBuVDJGVDM5RUMtWVRiU25PMWpBQSIsInZlciI6IjIuMCJ9.OHoO8nx0JYTlmJTspjBSMWUjcu5waN_n5rth-z17WLY9SYV8LVgaJT-Bv8bvcJXFkRmhHhKf_49wOyFsnG4lSKToC1fWmJw2b0K_AcTzntuZI1g6nvsJTVhstuauTQr78HgYuWkxleCWsj7Z4UIQ2RA1Qj9n-F4i4_D4pdFO2BpPg2NRwFWVjCJtXR3z3UfClqIxCjYewd5KSnmjTC45zMLxe6ASU0jSyd4kgx65Behlk1vmcB_YNEKjkS5RpOgrd6OOLsUQ4XQnqkmA3Tl4Wt_gq7dW3ovnVayf8sGyCqGoXhDiYItr__CruuD2xV0SYQQWujde-FrekrhZCSlXdQ",
+        "client_info": "eyJ1aWQiOiJjZGQ2ZWUyNi1lNGJhLTQyNGUtODJlNS1lN2ZhNzc4M2I1ODAiLCJ1dGlkIjoiM2M2MzFiYjctYTlmNy00MzQzLWE1YmEtYTYxNTkxMzVmMWZjIn0"}'
+    headers:
+      cache-control:
+      - no-store, no-cache
+      content-length:
+      - '3768'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 29 Jul 2021 20:37:32 GMT
+      expires:
+      - '-1'
+      p3p:
+      - CP="DSP CUR OTPi IND OTRi ONL FIN"
+      pragma:
+      - no-cache
+      set-cookie:
+      - fpc=AirMv4PHgBVBo-o6QOflKajArTo4AQAAAIsIldgOAAAA; expires=Sat, 28-Aug-2021
+        20:37:32 GMT; path=/; secure; HttpOnly; SameSite=None
+      - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
+      - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-clitelem:
+      - 1,0,0,,
+      x-ms-ests-server:
+      - 2.1.11898.12 - NCUS ProdSlices
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-identity/1.7.0b3 Python/3.8.10 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+    method: GET
+    uri: https://login.microsoftonline.com/tenant/v2.0/.well-known/openid-configuration
+  response:
+    body:
+      string: '{"token_endpoint": "https://login.microsoftonline.com/tenant/oauth2/v2.0/token",
+        "token_endpoint_auth_methods_supported": ["client_secret_post", "private_key_jwt",
+        "client_secret_basic"], "jwks_uri": "https://login.microsoftonline.com/tenant/discovery/v2.0/keys",
+        "response_modes_supported": ["query", "fragment", "form_post"], "subject_types_supported":
+        ["pairwise"], "id_token_signing_alg_values_supported": ["RS256"], "response_types_supported":
+        ["code", "id_token", "code id_token", "id_token token"], "scopes_supported":
+        ["openid", "profile", "email", "offline_access"], "issuer": "https://login.microsoftonline.com/tenant/v2.0",
+        "request_uri_parameter_supported": false, "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
+        "authorization_endpoint": "https://login.microsoftonline.com/tenant/oauth2/v2.0/authorize",
+        "device_authorization_endpoint": "https://login.microsoftonline.com/tenant/oauth2/v2.0/devicecode",
+        "http_logout_supported": true, "frontchannel_logout_supported": true, "end_session_endpoint":
+        "https://login.microsoftonline.com/tenant/oauth2/v2.0/logout", "claims_supported":
+        ["sub", "iss", "cloud_instance_name", "cloud_instance_host_name", "cloud_graph_host_name",
+        "msgraph_host", "aud", "exp", "iat", "auth_time", "acr", "nonce", "preferred_username",
+        "name", "tid", "ver", "at_hash", "c_hash", "email"], "kerberos_endpoint":
+        "https://login.microsoftonline.com/tenant/kerberos", "tenant_region_scope":
+        "NA", "cloud_instance_name": "microsoftonline.com", "cloud_graph_host_name":
+        "graph.windows.net", "msgraph_host": "graph.microsoft.com", "rbac_url": "https://pas.windows.net"}'
+    headers:
+      access-control-allow-methods:
+      - GET, OPTIONS
+      access-control-allow-origin:
+      - '*'
+      cache-control:
+      - max-age=86400, private
+      content-length:
+      - '1753'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 29 Jul 2021 20:37:32 GMT
+      p3p:
+      - CP="DSP CUR OTPi IND OTRi ONL FIN"
+      set-cookie:
+      - fpc=Ai789is3BctBiohHVUk7ivc; expires=Sat, 28-Aug-2021 20:37:32 GMT; path=/;
+        secure; HttpOnly; SameSite=None
+      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrCfLlyQoXMal6UyrcFqEyuxdFsiypUZpCamjZIwSECrhlUaIfyFHLu6iVFxYFnMw-X_uNPRTo-oubW_HYf-x5-cSzl65-7pWdrG-CkPewZv6Xc-783aNW9jiKn4N18K48OvR2p_sHkeHQNPHnpyih-yTg8M6JAGD7GB7_HWwFuXsgAA;
+        domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None
+      - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
+      - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ests-server:
+      - 2.1.11898.12 - NCUS ProdSlices
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1821'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrCfLlyQoXMal6UyrcFqEyuxdFsiypUZpCamjZIwSECrhlUaIfyFHLu6iVFxYFnMw-X_uNPRTo-oubW_HYf-x5-cSzl65-7pWdrG-CkPewZv6Xc-783aNW9jiKn4N18K48OvR2p_sHkeHQNPHnpyih-yTg8M6JAGD7GB7_HWwFuXsgAA;
+        fpc=Ai789is3BctBiohHVUk7ivc; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
+      User-Agent:
+      - azsdk-python-identity/1.7.0b3 Python/3.8.10 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+      x-client-cpu:
+      - x64
+      x-client-current-telemetry:
+      - 4|523,0|
+      x-client-last-telemetry:
+      - 4|0|||
+      x-client-os:
+      - linux
+      x-client-sku:
+      - MSAL.Python
+      x-client-ver:
+      - 1.12.0
+    method: POST
+    uri: https://login.microsoftonline.com/tenant/oauth2/v2.0/token
+  response:
+    body:
+      string: '{"token_type": "Bearer", "scope": "https://management.azure.com/user_impersonation
+        https://management.azure.com/.default", "expires_in": 3597, "ext_expires_in":
+        3597, "access_token": "redacted", "refresh_token": "redacted", "id_token":
+        "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyJ9.eyJhdWQiOiJkNzBmYzVhZS01MmU0LTQ4OTUtYmYxYi04OTQxMDNkN2VmMTQiLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vM2M2MzFiYjctYTlmNy00MzQzLWE1YmEtYTYxNTkxMzVmMWZjL3YyLjAiLCJpYXQiOjE2Mjc1OTA3NTIsIm5iZiI6MTYyNzU5MDc1MiwiZXhwIjoxNjI3NTk0NjUwLCJuYW1lIjoidGVzdGVyIGEiLCJvaWQiOiJjZGQ2ZWUyNi1lNGJhLTQyNGUtODJlNS1lN2ZhNzc4M2I1ODAiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJ0ZXN0ZXJhQGNobG93ZWhvdG1haWwub25taWNyb3NvZnQuY29tIiwicmgiOiIwLkFSY0F0eHRqUFBlcFEwT2x1cVlWa1RYeF9LN0ZEOWZrVXBWSXZ4dUpRUVBYN3hRWEFQcy4iLCJzdWIiOiJERWVYNWpEZVU5dDU0WkJpVnVKdktncFRRN0ctYWs2LWpidGZuaHp1RFlVIiwidGlkIjoiM2M2MzFiYjctYTlmNy00MzQzLWE1YmEtYTYxNTkxMzVmMWZjIiwidXRpIjoicy1kdDVQREVvMFdvQ3lmU3RPUnNBQSIsInZlciI6IjIuMCJ9.TS-ssfyD2TJH_DpL9srLLtlvla5jRuaQDpN8StJcRCbgTSOTdWIJQnJtIX-kN2n4_-XVPAU58m-CnrB7s1SWEOiysumV5iykSSYcgWcbpjCtVM7MzmSNfbDw8NdQ0Quqlo2mEqin8rKGR1QyaFj-N1GSM76kHpeX_iU4W5_ouD_H1jpuT_FLj6roC5a0t09GQwKQnxIrl5cNmv2nzylO1Dqkyzw2lNmDdldF4pR2XMr_jnLGxlpZtO07VXQiQMHCMffhYo5RMcjkqU5JTtJIOpaAul2q8ZDJSNUCGeMC_S3ZFdN_Fn31HRXNZ2_tQCyykoHilPjO2MKdp5qMzcyJ2g",
+        "client_info": "eyJ1aWQiOiJjZGQ2ZWUyNi1lNGJhLTQyNGUtODJlNS1lN2ZhNzc4M2I1ODAiLCJ1dGlkIjoiM2M2MzFiYjctYTlmNy00MzQzLWE1YmEtYTYxNTkxMzVmMWZjIn0"}'
+    headers:
+      cache-control:
+      - no-store, no-cache
+      content-length:
+      - '4199'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 29 Jul 2021 20:37:32 GMT
+      expires:
+      - '-1'
+      p3p:
+      - CP="DSP CUR OTPi IND OTRi ONL FIN"
+      pragma:
+      - no-cache
+      set-cookie:
+      - fpc=Ai789is3BctBiohHVUk7ivf0CaNgAQAAAIwIldgOAAAA; expires=Sat, 28-Aug-2021
+        20:37:33 GMT; path=/; secure; HttpOnly; SameSite=None
+      - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
+      - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-clitelem:
+      - 1,0,0,,
+      x-ms-ests-server:
+      - 2.1.11898.12 - WUS2 ProdSlices
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-resource/18.1.0 Python/3.8.10 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+    method: GET
+    uri: https://management.azure.com/subscriptions?api-version=2019-11-01
+  response:
+    body:
+      string: '{"value":[]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '432'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 29 Jul 2021 20:37:32 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+version: 1

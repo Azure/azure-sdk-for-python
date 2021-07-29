@@ -14,6 +14,9 @@ except ImportError:  # python < 3.3
     import mock  # type: ignore
 
 
+FAKE_CLIENT_ID = "fake-client-id"
+
+
 def build_id_token(
     iss="issuer",
     sub="subject",
