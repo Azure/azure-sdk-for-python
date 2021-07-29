@@ -1,5 +1,16 @@
 # Release History
 
+## 2.0.0 (2021-07-29)
+
+**Features**
+
+  - Model ApplicationInsightsComponent has a new parameter force_customer_storage_for_profiler
+  - Model ApplicationInsightsComponent has a new parameter disable_local_auth
+
+**Breaking changes**
+
+  - Model ErrorResponse has a new signature
+
 ## 1.0.0 (2021-02-04)
 
 **Features**
