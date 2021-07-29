@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 # pylint:disable=protected-access
-from typing import Any, Dict
+from typing import Any
 import datetime as dt
 import uuid
 import json
@@ -127,6 +127,6 @@ class EventGridEvent(InternalEventGridEvent):
                 raise ValueError(
                     "Failed to retrieve body from the object. Make sure the "
                     + "body follows the EventGridEvent schema."
-                    )           
+                    )
             except: # pylint: disable=bare-except
                 return obj

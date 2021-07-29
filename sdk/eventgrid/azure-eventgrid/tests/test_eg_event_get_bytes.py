@@ -38,8 +38,8 @@ class MockServiceBusReceivedMessage(object):
         self.dead_letter_source=None
         self.delivery_count=13
         self.enqueued_sequence_number=0
-        self.enqueued_time_utc=datetime.datetime(2021, 7, 22, 22, 27, 41, 236000, tzinfo=datetime.timezone.utc)
-        self.expires_at_utc=datetime.datetime(2021, 8, 5, 22, 27, 41, 236000, tzinfo=datetime.timezone.utc)
+        self.enqueued_time_utc=datetime.datetime(2021, 7, 22, 22, 27, 41, 236000)
+        self.expires_at_utc=datetime.datetime(2021, 8, 5, 22, 27, 41, 236000)
         self.sequence_number=11219
         self.lock_token='233146e3-d5a6-45eb-826f-691d82fb8b13'
 
@@ -134,8 +134,8 @@ def test_get_bytes_servicebus():
         time_to_live=datetime.timedelta(days=14),
         delivery_count=13,
         enqueued_sequence_number=0,
-        enqueued_time_utc=datetime.datetime(2021, 7, 22, 22, 27, 41, 236000, tzinfo=datetime.timezone.utc),
-        expires_at_utc=datetime.datetime(2021, 8, 5, 22, 27, 41, 236000, tzinfo=datetime.timezone.utc),
+        enqueued_time_utc=datetime.datetime(2021, 7, 22, 22, 27, 41, 236000),
+        expires_at_utc=datetime.datetime(2021, 8, 5, 22, 27, 41, 236000),
         sequence_number=11219,
         lock_token='233146e3-d5a6-45eb-826f-691d82fb8b13'
     )
@@ -151,8 +151,8 @@ def test_get_bytes_servicebus_wrong_content():
         time_to_live=datetime.timedelta(days=14),
         delivery_count=13,
         enqueued_sequence_number=0,
-        enqueued_time_utc=datetime.datetime(2021, 7, 22, 22, 27, 41, 236000, tzinfo=datetime.timezone.utc),
-        expires_at_utc=datetime.datetime(2021, 8, 5, 22, 27, 41, 236000, tzinfo=datetime.timezone.utc),
+        enqueued_time_utc=datetime.datetime(2021, 7, 22, 22, 27, 41, 236000),
+        expires_at_utc=datetime.datetime(2021, 8, 5, 22, 27, 41, 236000),
         sequence_number=11219,
         lock_token='233146e3-d5a6-45eb-826f-691d82fb8b13'
     )
