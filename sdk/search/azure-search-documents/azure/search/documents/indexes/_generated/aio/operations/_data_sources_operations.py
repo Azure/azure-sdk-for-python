@@ -45,6 +45,7 @@ class DataSourcesOperations:
         data_source: "_models.SearchIndexerDataSource",
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
+        ignore_reset_requirements: Optional[bool] = None,
         request_options: Optional["_models.RequestOptions"] = None,
         **kwargs: Any
     ) -> "_models.SearchIndexerDataSource":
@@ -60,6 +61,8 @@ class DataSourcesOperations:
         :param if_none_match: Defines the If-None-Match condition. The operation will be performed only
          if the ETag on the server does not match this value.
         :type if_none_match: str
+        :param ignore_reset_requirements: Ignores cache reset requirements.
+        :type ignore_reset_requirements: bool
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -92,6 +95,8 @@ class DataSourcesOperations:
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if ignore_reset_requirements is not None:
+            query_parameters['ignoreResetRequirements'] = self._serialize.query("ignore_reset_requirements", ignore_reset_requirements, 'bool')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
