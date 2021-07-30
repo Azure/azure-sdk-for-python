@@ -12,7 +12,7 @@ from ._generated._monitor_query_client import MonitorQueryClient
 
 from ._generated.models import BatchRequest, QueryBody as LogsQueryBody
 from ._helpers import get_authentication_policy, process_error, construct_iso8601, order_results
-from ._models import LogsQueryResults, LogsBatchQueryRequest, LogsQueryResult
+from ._models import LogsQueryResults, LogsBatchQueryRequest, LogsBatchQueryResult
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -131,7 +131,7 @@ class LogsQueryClient(object):
             process_error(e)
 
     def batch_query(self, queries, **kwargs):
-        # type: (Union[Sequence[Dict], Sequence[LogsBatchQueryRequest]], Any) -> Sequence[LogsQueryResult]
+        # type: (Union[Sequence[Dict], Sequence[LogsBatchQueryRequest]], Any) -> Sequence[LogsBatchQueryResult]
         """Execute a list of analytics queries. Each request can be either a LogQueryRequest
         object or an equivalent serialized model.
 
@@ -140,7 +140,7 @@ class LogsQueryClient(object):
         :param queries: The list of queries that should be processed
         :type queries: list[dict] or list[~azure.monitor.query.LogsBatchQueryRequest]
         :return: BatchResponse, or the result of cls(response)
-        :rtype: ~list[~azure.monitor.query.LogsQueryResult]
+        :rtype: ~list[~azure.monitor.query.LogsBatchQueryResult]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -165,7 +165,7 @@ class LogsQueryClient(object):
         return order_results(
             request_order,
             [
-                LogsQueryResult._from_generated(rsp) for rsp in generated.responses # pylint: disable=protected-access
+                LogsBatchQueryResult._from_generated(rsp) for rsp in generated.responses # pylint: disable=protected-access
             ])
 
     def close(self):

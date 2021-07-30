@@ -206,8 +206,8 @@ class LogsBatchQueryRequest(InternalLogQueryRequest):
         self.headers = headers
         self.workspace = workspace_id
 
-class LogsQueryResult(object):
-    """The LogsQueryResult.
+class LogsBatchQueryResult(object):
+    """The LogsBatchQueryResult.
 
     :param id:
     :type id: str

@@ -6,6 +6,7 @@
 ### Features Added
 
 - Added enum `AggregationType` which can be used to specify aggregations in the query API.
+- Added `LogsBatchQueryResult` model that is returned for a logs batch query.
 
 ### Breaking Changes
 
