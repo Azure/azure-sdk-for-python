@@ -70,6 +70,9 @@ class MockBody(object):
             return """{"id":"f208feff-099b-4bda-a341-4afd0fa02fef","subject":"https://egsample.dev/sampleevent","data":"ServiceBus","event_type":"Azure.Sdk.Sample","event_time":"2021-07-22T22:27:38.960209Z","data_version":"1.0"}"""
         return self.data
 
+    next = __next__
+
+
 class MockEhBody(object):
     def __init__(self, data=None):
         self.data = data
@@ -81,6 +84,8 @@ class MockEhBody(object):
         if not self.data:
             return b'[{"id":"f208feff-099b-4bda-a341-4afd0fa02fef","subject":"https://egsample.dev/sampleevent","data":"Eventhub","event_type":"Azure.Sdk.Sample","event_time":"2021-07-22T22:27:38.960209Z","data_version":"1.0"}]'
         return self.data
+    
+    next = __next__
 
 def test_get_bytes_storage_queue():
     cloud_storage_dict = """{

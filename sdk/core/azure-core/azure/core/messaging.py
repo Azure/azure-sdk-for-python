@@ -208,6 +208,6 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
                 raise ValueError(
                     "Failed to retrieve body from the object. Make sure the "
                     + "body follows the CloudEvent schema."
-                    )  
+                    )
             except: # pylint: disable=bare-except
                 return obj

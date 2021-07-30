@@ -73,6 +73,8 @@ class MockBody(object):
         if not self.data:
             return """{"id":"f208feff-099b-4bda-a341-4afd0fa02fef","source":"https://egsample.dev/sampleevent","data":"ServiceBus","type":"Azure.Sdk.Sample","time":"2021-07-22T22:27:38.960209Z","specversion":"1.0"}"""
         return self.data
+    
+    next = __next__
 
 class MockEhBody(object):
     def __init__(self, data=None):
@@ -85,6 +87,8 @@ class MockEhBody(object):
         if not self.data:
             return b'[{"id":"f208feff-099b-4bda-a341-4afd0fa02fef","source":"https://egsample.dev/sampleevent","data":"Eventhub","type":"Azure.Sdk.Sample","time":"2021-07-22T22:27:38.960209Z","specversion":"1.0"}]'
         return self.data
+
+    next = __next__
 
 
 # Cloud Event tests
