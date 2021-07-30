@@ -1,6 +1,6 @@
 # Release History
 
-## 15.1.0 (2021-07-30)
+## 16.0.0 (2021-07-30)
 
 **Features**
 
@@ -19,6 +19,10 @@
   - Added operation BatchAccountOperations.list_outbound_network_dependencies_endpoints
   - Added operation LocationOperations.list_supported_cloud_service_skus
   - Added operation LocationOperations.list_supported_virtual_machine_skus
+
+**Breaking changes**
+
+  - Rename `BatchManagement` to `BatchManagementClient`
 
 ## 15.0.0 (2021-02-01)
 
