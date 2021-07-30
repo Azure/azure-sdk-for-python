@@ -23,6 +23,11 @@ jobs:
         addToPath: true
         architecture: 'x64'
     - bash: |
+        # verify $ISSUE_LINK and $BASE_BRANCH is not null
+        if [ ! "$BASE_BRANCH" || "$ISSUE_LINK" ]; then
+          echo "$ISSUE_LINK or $BASE_BRANCH do not exist, pipeline fail!!!"
+          exit 1
+        fi
         script_path=$(pwd)/scripts/auto_release
         cd ..
         git config --global user.email "PythonSdkPipelines"
@@ -82,6 +87,6 @@ jobs:
 
         # if test fail, still push and crete PR. But pipeline would fail to remind user
         if [ -f "$output_path/live_test_fail.txt" ]; then
-          echo "please fix failure test!!! \'[AutoRelease] $new_branch \' has been created!!!"
+          echo "please fix failure test $(ISSUE_LINK)!!! \'[AutoRelease] $new_branch \' has been created!!!"
           exit 1
         fi
