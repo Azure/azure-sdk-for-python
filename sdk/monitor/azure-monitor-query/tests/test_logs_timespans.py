@@ -6,7 +6,7 @@ from msrest.serialization import UTC
 
 from azure.identity import ClientSecretCredential
 from azure.core.exceptions import HttpResponseError
-from azure.monitor.query import LogsQueryClient, LogsQueryRequest
+from azure.monitor.query import LogsQueryClient, LogsBatchQueryRequest
 
 from azure.monitor.query._helpers import construct_iso8601
 
