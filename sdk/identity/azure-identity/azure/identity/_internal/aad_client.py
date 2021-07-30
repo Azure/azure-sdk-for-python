@@ -61,6 +61,11 @@ class AadClient(AadClientBase):
         response = self._pipeline.run(request, stream=False, retry_on_methods=self._POST, **kwargs)
         return self._process_response(response, now)
 
+    def obtain_token_on_behalf_of(self, scopes, secret, user_assertion, **kwargs):
+        # type: (Iterable[str], str, str, **Any) -> AccessToken
+        # no need for an implementation, non-async OnBehalfOfCredential acquires tokens through MSAL
+        raise NotImplementedError()
+
     # pylint:disable=no-self-use
     def _build_pipeline(self, config=None, policies=None, transport=None, **kwargs):
         # type: (Optional[Configuration], Optional[List[Policy]], Optional[HttpTransport], **Any) -> Pipeline

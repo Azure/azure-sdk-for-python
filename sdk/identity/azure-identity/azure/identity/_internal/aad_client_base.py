@@ -93,6 +93,10 @@ class AadClientBase(ABC):
         pass
 
     @abc.abstractmethod
+    def obtain_token_on_behalf_of(self, scopes, secret, user_assertion, **kwargs):
+        pass
+
+    @abc.abstractmethod
     def _build_pipeline(self, config=None, policies=None, transport=None, **kwargs):
         pass
 
@@ -213,6 +217,19 @@ class AadClientBase(ABC):
         jwt_bytes = jws + b"." + base64.urlsafe_b64encode(signature)
 
         return jwt_bytes.decode("utf-8")
+
+    def _get_on_behalf_of_request(self, scopes, secret, user_assertion, **kwargs):
+        # type: (Iterable[str], str, str, **Any) -> HttpRequest
+        data = {
+            "assertion": user_assertion,
+            "client_id": self._client_id,
+            "client_secret": secret,
+            "grant_type": "urn:ietf:params:oauth:grant-type:jwt-bearer",
+            "requested_token_use": "on_behalf_of",
+            "scope": " ".join(scopes),
+        }
+        request = self._post(data, **kwargs)
+        return request
 
     def _get_refresh_token_request(self, scopes, refresh_token, **kwargs):
         # type: (Iterable[str], str, **Any) -> HttpRequest

@@ -15,6 +15,7 @@ from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
     HttpLoggingPolicy,
 )
+from azure.core.pipeline.transport import HttpRequest
 from ..._internal import AadClientBase
 from ..._internal.user_agent import USER_AGENT
 
@@ -58,8 +59,9 @@ class AadClient(AadClientBase):
         response = await self._pipeline.run(request, retry_on_methods=self._POST, **kwargs)
         return self._process_response(response, now)
 
-    async def obtain_token_by_client_certificate(self, scopes, certificate, **kwargs):
-        # type: (Iterable[str], AadClientCertificate, **Any) -> AccessToken
+    async def obtain_token_by_client_certificate(
+        self, scopes: "Iterable[str]", certificate: "AadClientCertificate", **kwargs: "Any"
+    ) -> "AccessToken":
         request = self._get_client_certificate_request(scopes, certificate, **kwargs)
         now = int(time.time())
         response = await self._pipeline.run(request, stream=False, retry_on_methods=self._POST, **kwargs)
@@ -77,6 +79,14 @@ class AadClient(AadClientBase):
         self, scopes: "Iterable[str]", refresh_token: str, **kwargs: "Any"
     ) -> "AccessToken":
         request = self._get_refresh_token_request(scopes, refresh_token, **kwargs)
+        now = int(time.time())
+        response = await self._pipeline.run(request, retry_on_methods=self._POST, **kwargs)
+        return self._process_response(response, now)
+
+    async def obtain_token_on_behalf_of(
+        self, scopes: "Iterable[str]", secret: str, user_assertion: str, **kwargs: "Any"
+    ) -> "AccessToken":
+        request = self._get_on_behalf_of_request(scopes=scopes, secret=secret, user_assertion=user_assertion, **kwargs)
         now = int(time.time())
         response = await self._pipeline.run(request, retry_on_methods=self._POST, **kwargs)
         return self._process_response(response, now)
