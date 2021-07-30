@@ -13,7 +13,7 @@ from .utils._utils import _FixedOffset
 if TYPE_CHECKING:
     from datetime import timedelta
 
-__all__ = ["NULL"]
+__all__ = ["NULL", "ComplexEncoder"]
 
 
 class _Null(object):
@@ -103,7 +103,8 @@ class ComplexEncoder(JSONEncoder):
             try:
                 # First try datetime.datetime
                 if hasattr(o, "year") and hasattr(o, "hour"):
-                    if not o.tzinfo:  # astimezone() fails for naive times in Python 2.7
+                    # astimezone() fails for naive times in Python 2.7, so make make sure o is aware (tzinfo is set)
+                    if not o.tzinfo:
                         return o.replace(tzinfo=TZ_UTC).isoformat()
                     return o.astimezone(TZ_UTC).isoformat()
                 # Next try datetime.date or datetime.time
