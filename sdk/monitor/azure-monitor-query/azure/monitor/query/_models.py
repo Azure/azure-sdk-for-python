@@ -64,7 +64,7 @@ class LogsQueryResultColumn(InternalColumn):
         self.type = kwargs.get("type", None)
 
 
-class LogsQueryResults(object):
+class LogsQueryResult(object):
     """Contains the tables, columns & rows resulting from a query.
 
     :keyword tables: The list of tables, columns and rows.
@@ -206,15 +206,15 @@ class LogsBatchQueryRequest(InternalLogQueryRequest):
         self.headers = headers
         self.workspace = workspace_id
 
-class LogsQueryResult(object):
-    """The LogsQueryResult.
+class LogsBatchQueryResult(object):
+    """The LogsBatchQueryResult.
 
     :param id:
     :type id: str
     :param status:
     :type status: int
     :param body: Contains the tables, columns & rows resulting from a query.
-    :type body: ~azure.monitor.query.LogsQueryResults
+    :type body: ~azure.monitor.query.LogsQueryResult
     """
     def __init__(
         self,
@@ -231,7 +231,7 @@ class LogsQueryResult(object):
         return cls(
             id=generated.id,
             status=generated.status,
-            body=LogsQueryResults._from_generated(generated.body) # pylint: disable=protected-access
+            body=LogsQueryResult._from_generated(generated.body) # pylint: disable=protected-access
         )
 
 

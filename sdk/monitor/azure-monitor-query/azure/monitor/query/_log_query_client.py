@@ -12,7 +12,7 @@ from ._generated._monitor_query_client import MonitorQueryClient
 
 from ._generated.models import BatchRequest, QueryBody as LogsQueryBody
 from ._helpers import get_authentication_policy, process_error, construct_iso8601, order_results
-from ._models import LogsQueryResults, LogsBatchQueryRequest, LogsQueryResult
+from ._models import LogsQueryResult, LogsBatchQueryRequest, LogsBatchQueryResult
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -50,7 +50,7 @@ class LogsQueryClient(object):
         self._query_op = self._client.query
 
     def query(self, workspace_id, query, duration=None, **kwargs):
-        # type: (str, str, Optional[timedelta], Any) -> LogsQueryResults
+        # type: (str, str, Optional[timedelta], Any) -> LogsQueryResult
         """Execute an Analytics query.
 
         Executes an Analytics query for data.
@@ -81,7 +81,7 @@ class LogsQueryClient(object):
          These can be qualified workspace names, workspace Ids, or Azure resource Ids.
         :paramtype additional_workspaces: list[str]
         :return: QueryResults, or the result of cls(response)
-        :rtype: ~azure.monitor.query.LogsQueryResults
+        :rtype: ~azure.monitor.query.LogsQueryResult
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -121,7 +121,7 @@ class LogsQueryClient(object):
         )
 
         try:
-            return LogsQueryResults._from_generated(self._query_op.execute( # pylint: disable=protected-access
+            return LogsQueryResult._from_generated(self._query_op.execute( # pylint: disable=protected-access
                 workspace_id=workspace_id,
                 body=body,
                 prefer=prefer,
@@ -131,7 +131,7 @@ class LogsQueryClient(object):
             process_error(e)
 
     def batch_query(self, queries, **kwargs):
-        # type: (Union[Sequence[Dict], Sequence[LogsBatchQueryRequest]], Any) -> Sequence[LogsQueryResult]
+        # type: (Union[Sequence[Dict], Sequence[LogsBatchQueryRequest]], Any) -> Sequence[LogsBatchQueryResult]
         """Execute a list of analytics queries. Each request can be either a LogQueryRequest
         object or an equivalent serialized model.
 
@@ -140,7 +140,7 @@ class LogsQueryClient(object):
         :param queries: The list of queries that should be processed
         :type queries: list[dict] or list[~azure.monitor.query.LogsBatchQueryRequest]
         :return: BatchResponse, or the result of cls(response)
-        :rtype: ~list[~azure.monitor.query.LogsQueryResult]
+        :rtype: ~list[~azure.monitor.query.LogsBatchQueryResult]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -165,7 +165,7 @@ class LogsQueryClient(object):
         return order_results(
             request_order,
             [
-                LogsQueryResult._from_generated(rsp) for rsp in generated.responses # pylint: disable=protected-access
+                LogsBatchQueryResult._from_generated(rsp) for rsp in generated.responses # pylint: disable=protected-access
             ])
 
     def close(self):
