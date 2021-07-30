@@ -63,7 +63,7 @@ class NotebookOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -135,7 +135,7 @@ class NotebookOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -188,7 +188,7 @@ class NotebookOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    get_notebook_summary_by_work_space.metadata = {'url': '/notebooks/summary'}  # type: ignore
+    get_notebook_summary_by_work_space.metadata = {'url': '/notebooksSummary'}  # type: ignore
 
     def _create_or_update_notebook_initial(
         self,
@@ -203,7 +203,7 @@ class NotebookOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -344,7 +344,7 @@ class NotebookOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -395,7 +395,7 @@ class NotebookOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -502,7 +502,7 @@ class NotebookOperations(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         _request = _models.ArtifactRenameRequest(new_name=new_name)
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

@@ -44,7 +44,7 @@ class SparkJobDefinitionOperations:
 
     def get_spark_job_definitions_by_workspace(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SparkJobDefinitionsListResponse"]:
         """Lists spark job definitions.
 
@@ -58,7 +58,7 @@ class SparkJobDefinitionOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -118,7 +118,7 @@ class SparkJobDefinitionOperations:
         spark_job_definition_name: str,
         properties: "_models.SparkJobDefinition",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.SparkJobDefinitionResource"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.SparkJobDefinitionResource"]]
         error_map = {
@@ -127,7 +127,7 @@ class SparkJobDefinitionOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         _spark_job_definition = _models.SparkJobDefinitionResource(properties=properties)
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -177,7 +177,7 @@ class SparkJobDefinitionOperations:
         spark_job_definition_name: str,
         properties: "_models.SparkJobDefinition",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.SparkJobDefinitionResource"]:
         """Creates or updates a Spark Job Definition.
 
@@ -247,7 +247,7 @@ class SparkJobDefinitionOperations:
         self,
         spark_job_definition_name: str,
         if_none_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.SparkJobDefinitionResource"]:
         """Gets a Spark Job Definition.
 
@@ -267,7 +267,7 @@ class SparkJobDefinitionOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -310,14 +310,14 @@ class SparkJobDefinitionOperations:
     async def _delete_spark_job_definition_initial(
         self,
         spark_job_definition_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -353,7 +353,7 @@ class SparkJobDefinitionOperations:
     async def begin_delete_spark_job_definition(
         self,
         spark_job_definition_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a Spark Job Definition.
 
@@ -412,14 +412,14 @@ class SparkJobDefinitionOperations:
     async def _execute_spark_job_definition_initial(
         self,
         spark_job_definition_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SparkBatchJob":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SparkBatchJob"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -462,7 +462,7 @@ class SparkJobDefinitionOperations:
     async def begin_execute_spark_job_definition(
         self,
         spark_job_definition_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.SparkBatchJob"]:
         """Executes the spark job definition.
 
@@ -525,7 +525,7 @@ class SparkJobDefinitionOperations:
         self,
         spark_job_definition_name: str,
         new_name: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -534,7 +534,7 @@ class SparkJobDefinitionOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         _request = _models.ArtifactRenameRequest(new_name=new_name)
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -576,7 +576,7 @@ class SparkJobDefinitionOperations:
         self,
         spark_job_definition_name: str,
         new_name: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Renames a sparkJobDefinition.
 
@@ -638,7 +638,7 @@ class SparkJobDefinitionOperations:
     async def _debug_spark_job_definition_initial(
         self,
         properties: "_models.SparkJobDefinition",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SparkBatchJob":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SparkBatchJob"]
         error_map = {
@@ -647,7 +647,7 @@ class SparkJobDefinitionOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         _spark_job_definition_azure_resource = _models.SparkJobDefinitionResource(properties=properties)
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -694,7 +694,7 @@ class SparkJobDefinitionOperations:
     async def begin_debug_spark_job_definition(
         self,
         properties: "_models.SparkJobDefinition",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.SparkBatchJob"]:
         """Debug the spark job definition.
 

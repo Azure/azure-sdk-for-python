@@ -20,7 +20,8 @@ class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
 
     :param str glossary_url: Required. Location of the glossary file. This should be a SAS URL to
         the glossary file in the storage blob container. If the translation language pair is
-        not present in the glossary, it will not be applied.
+        not present in the glossary, it will not be applied. See the service documentation for the
+        supported SAS permissions: https://aka.ms/azsdk/documenttranslation/sas-permissions
     :param str file_format: Required. Format of the glossary file. To see supported formats,
         call the :func:`~DocumentTranslationClient.get_supported_glossary_formats()` client method.
     :keyword str format_version: File format version. If not specified, the service will
@@ -31,7 +32,8 @@ class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
 
     :ivar str glossary_url: Required. Location of the glossary file. This should be a SAS URL to
         the glossary file in the storage blob container. If the translation language pair is
-        not present in the glossary, it will not be applied.
+        not present in the glossary, it will not be applied. See the service documentation for the
+        supported SAS permissions: https://aka.ms/azsdk/documenttranslation/sas-permissions
     :ivar str file_format: Required. Format of the glossary file. To see supported formats,
         call the :func:`~DocumentTranslationClient.get_supported_glossary_formats()` client method.
     :ivar str format_version: File format version. If not specified, the service will
@@ -79,7 +81,9 @@ class TranslationTarget(object):  # pylint: disable=useless-object-inheritance
     """Destination for the finished translated documents.
 
     :param str target_url: Required. The target location for your translated documents.
-        This should be a container SAS URL to your target container.
+        This should be a container SAS URL to your target container/blob. See the service
+        documentation for the supported SAS permissions for accessing
+        target storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions
     :param str language_code: Required. Target Language Code. This is the language
         you want your documents to be translated to. See supported languages here:
         https://docs.microsoft.com/azure/cognitive-services/translator/language-support#translate
@@ -90,7 +94,9 @@ class TranslationTarget(object):  # pylint: disable=useless-object-inheritance
         Currently only "AzureBlob" is supported.
 
     :ivar str target_url: Required. The target location for your translated documents.
-        This should be a container SAS URL to your target container.
+        This should be a container SAS URL to your target container/blob. See the service
+        documentation for the supported SAS permissions for accessing
+        target storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions
     :ivar str language_code: Required. Target Language Code. This is the language
         you want your documents to be translated to. See supported languages here:
         https://docs.microsoft.com/azure/cognitive-services/translator/language-support#translate
@@ -150,7 +156,8 @@ class DocumentTranslationInput(object):  # pylint: disable=useless-object-inheri
     translated and written to the location provided by the TranslationTargets.
 
     :param str source_url: Required. Location of the folder / container or single file with your
-        documents.
+        documents. See the service documentation for the supported SAS permissions for accessing
+        source storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions
     :param targets: Required. Location of the destination for the output. This is a list of
         TranslationTargets. Note that a TranslationTarget is required for each language code specified.
     :type targets: list[~azure.ai.translation.document.TranslationTarget]
@@ -168,7 +175,8 @@ class DocumentTranslationInput(object):  # pylint: disable=useless-object-inheri
         Currently only "AzureBlob" is supported.
 
     :ivar str source_url: Required. Location of the folder / container or single file with your
-        documents.
+        documents. See the service documentation for the supported SAS permissions for accessing
+        source storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions
     :ivar targets: Required. Location of the destination for the output. This is a list of
         TranslationTargets. Note that a TranslationTarget is required for each language code specified.
     :vartype targets: list[~azure.ai.translation.document.TranslationTarget]

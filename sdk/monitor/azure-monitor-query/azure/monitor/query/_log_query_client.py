@@ -78,7 +78,7 @@ class LogsQueryClient(object):
          By default, the API does not return information regarding the type of visualization to show.
          If your client requires this information, specify the preference
         :keyword additional_workspaces: A list of workspaces that are included in the query.
-         These can be qualified workspace names, workspsce Ids or Azure resource Ids.
+         These can be qualified workspace names, workspace Ids, or Azure resource Ids.
         :paramtype additional_workspaces: list[str]
         :return: QueryResults, or the result of cls(response)
         :rtype: ~azure.monitor.query.LogsQueryResults
