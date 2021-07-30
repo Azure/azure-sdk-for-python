@@ -147,18 +147,6 @@ for table in response.tables:
     print(df)
 ```
 
-#### Query multiple workspaces
-
-The `additional_workspaces` parameter can be used to pass a list of workspaces that are included in the query when querying a single query over multiple workspaces. The parameter's list items can be qualified workspace names, workspace IDs, or Azure resource IDs. A primary workspace ID must be provided when querying multiple workspaces, as in the following example:
-
-```python
- client.query(
-    <primary_workspace_id>,
-    query,
-    additional_workspaces=['<workspace 1>', '<workspace 2>']
-    )
-```
-
 #### Set logs query timeout
 
 The following example shows setting a server timeout in seconds. A gateway timeout is raised if the query takes more time than the mentioned timeout. The default is 180 seconds and can be set up to 10 minutes (600 seconds).
@@ -312,6 +300,22 @@ for metric in response.metrics:
                     )
                 )
 ```
+
+### Advacned Scenarios
+
+#### Query multiple workspaces
+
+One of the more advanced scenarios is to query the same query on multiple workspaces. The `additional_workspaces` parameter can be used to pass a list of workspaces that are included in the query when querying a single query over multiple workspaces. The parameter's list items can be qualified workspace names, workspace IDs, or Azure resource IDs. A primary workspace ID must be provided when querying multiple workspaces, as in the following example:
+
+```python
+ client.query(
+    <primary_workspace_id>,
+    query,
+    additional_workspaces=['<workspace 1>', '<workspace 2>']
+    )
+```
+
+The full sample can be found [here](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_log_query_multiple_workspaces.py).
 
 ## Troubleshooting
 
