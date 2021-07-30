@@ -14,6 +14,8 @@ This version of the SDK defaults to the latest supported API version, which curr
 
 ### Other Changes
 
+- Python 3.5 is no longer supported.
+
 ## 5.1.0 (2021-07-07)
 
 This version of the SDK defaults to the latest supported API version, which currently is `v3.1`.
