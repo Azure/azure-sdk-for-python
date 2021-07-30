@@ -10,7 +10,7 @@
 FILE: sample_extract_summary.py
 
 DESCRIPTION:
-    This sample demonstrates how to submit a text document for extractive text summarization.
+    This sample demonstrates how to submit text documents for extractive text summarization.
     Extractive summarization is available as an action type through the begin_analyze_actions API.
 
 USAGE:
