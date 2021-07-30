@@ -2,21 +2,22 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import base64
 import codecs
 from dateutil import parser as date_parse
 import functools
-import time
-import logging
 import json
+import logging
+import time
 
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.keyvault.keys import ApiVersion, JsonWebKey, KeyClient
 import pytest
 from six import byte2int
 
 from _shared.test_case import KeyVaultTestCase
-from _test_case import client_setup, get_decorator, KeysTestCase
+from _test_case import client_setup, get_attestation_token, get_decorator, get_release_policy, KeysTestCase
 
 
 all_api_versions = get_decorator()
@@ -107,7 +108,7 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         self.assertEqual(sorted(key_ops), sorted(key_bundle.key_operations))
         return key_bundle
 
-    def _import_test_key(self, client, name, hardware_protected=False):
+    def _import_test_key(self, client, name, hardware_protected=False, **kwargs):
         def _to_bytes(hex):
             if len(hex) % 2:
                 hex = "0{}".format(hex)
@@ -139,7 +140,7 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
                 "009fe7ae42e92bc04fcd5780464bd21d0c8ac0c599f9af020fde6ab0a7e7d1d39902f5d8fb6c614184c4c1b103fb46e94cd10a6c8a40f9991a1f28269f326435b6c50276fda6493353c650a833f724d80c7d522ba16c79f0eb61f672736b68fb8be3243d10943c4ab7028d09e76cfb5892222e38bc4d35585bf35a88cd68c73b07"
             ),
         )
-        imported_key = client.import_key(name, key)
+        imported_key = client.import_key(name, key, **kwargs)
         self._validate_rsa_key_bundle(imported_key, client.vault_url, name, key.kty, key.key_ops)
         return imported_key
 
@@ -431,6 +432,61 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
             assert len(random_bytes) == 8
             assert all(random_bytes != rb for rb in generated_random_bytes)
             generated_random_bytes.append(random_bytes)
+
+    @only_hsm_7_3_preview()
+    @client_setup
+    def test_key_release(self, client, **kwargs):
+        attestation_uri = self._get_attestation_uri()
+        attestation = get_attestation_token(attestation_uri)
+        release_policy = get_release_policy(attestation_uri)
+
+        rsa_key_name = self.get_resource_name("rsa-key-name")
+        key = self._create_rsa_key(
+            client, rsa_key_name, hardware_protected=True, exportable=True, release_policy=release_policy
+        )
+        assert key.release_policy
+        assert key.release_policy.data
+        assert key.properties.exportable
+
+        release_result = client.release_key(rsa_key_name, attestation)
+        assert release_result.value
+
+    @only_hsm_7_3_preview()
+    @client_setup
+    def test_imported_key_release(self, client, **kwargs):
+        attestation_uri = self._get_attestation_uri()
+        attestation = get_attestation_token(attestation_uri)
+        release_policy = get_release_policy(attestation_uri)
+
+        imported_key_name = self.get_resource_name("imported-key-name")
+        key = self._import_test_key(
+            client, imported_key_name, hardware_protected=True, exportable=True, release_policy=release_policy
+        )
+        assert key.release_policy
+        assert key.release_policy.data
+        assert key.properties.exportable
+
+        release_result = client.release_key(imported_key_name, attestation)
+        assert release_result.value
+
+    @only_hsm_7_3_preview()
+    @client_setup
+    def test_exportable_without_release_policy_error(self, client, **kwargs):
+        """A key cannot be created as exportable without having a release policy"""
+        key_name = self.get_resource_name("key-name")
+        with pytest.raises(HttpResponseError):
+            client.create_ec_key(key_name, exportable=True)
+
+    @only_hsm_7_3_preview()
+    @client_setup
+    def test_release_policy_not_exportable_error(self, client, **kwargs):
+        """A key cannot have a release policy without being exportable"""
+        attestation_uri = self._get_attestation_uri()
+        release_policy = get_release_policy(attestation_uri)
+
+        key_name = self.get_resource_name("key-name")
+        with pytest.raises(HttpResponseError):
+            client.create_oct_key(key_name, release_policy=release_policy)
 
 
 def test_positive_bytes_count_required():
