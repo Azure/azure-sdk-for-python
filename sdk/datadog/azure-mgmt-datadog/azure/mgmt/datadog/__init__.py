@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._microsoft_datadog_client import MicrosoftDatadogClient
+from ._version import VERSION
+
+__version__ = VERSION
 __all__ = ['MicrosoftDatadogClient']
 
 try:
