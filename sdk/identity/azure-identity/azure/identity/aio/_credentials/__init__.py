@@ -30,3 +30,11 @@ __all__ = [
     "SharedTokenCacheCredential",
     "VisualStudioCodeCredential",
 ]
+
+
+try:
+    from .on_behalf_of import OnBehalfOfCredential  # pylint:disable=unused-import
+
+    __all__.append("OnBehalfOfCredential")
+except ImportError:
+    pass

@@ -8,6 +8,7 @@ if TYPE_CHECKING:
     from typing import Dict, Optional
     import msal
     from . import AuthenticationRecord
+    from ._internal import AadClientBase
 
 
 try:
@@ -43,6 +44,7 @@ class UserAssertion(object):
         :param str user_assertion: the user assertion. Typically an access token issued to the user.
         """
         self._assertion = user_assertion
+        self._async_clients = {}  # type: Dict[str, AadClientBase]
         self._client_applications = {}  # type: Dict[str, msal.ConfidentialClientApplication]
         self._record = None  # type: Optional[AuthenticationRecord]
 
