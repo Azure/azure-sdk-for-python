@@ -110,8 +110,10 @@ try:
             except ImportError:
                 pass  # Aiohttp not installed
     except (ImportError, SyntaxError):
+        # requests library is installed but asynchronous pipelines not supported.
         pass
 except (ImportError, SyntaxError):
+    # requests library is not installed
     try:
         from ._base_async import AsyncHttpTransport, AsyncHttpResponse
         __all__.extend([
