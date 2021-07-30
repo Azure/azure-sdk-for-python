@@ -25,9 +25,11 @@ jobs:
     - bash: |
         # verify $ISSUE_LINK and $BASE_BRANCH is not null
         if [! "$BASE_BRANCH" || ! "$ISSUE_LINK" ]; then
+          echo "$BASE_BRANCH ++ $ISSUE_LINK"
           echo "ISSUE_LINK or BASE_BRANCH do not exist, pipeline fail!!!"
           exit 1
         fi
+
         script_path=$(pwd)/scripts/auto_release
         cd ..
         git config --global user.email "PythonSdkPipelines"
