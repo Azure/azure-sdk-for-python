@@ -14,6 +14,7 @@
 - `batch_query` API now returns a list of responses.
 - `LogsBatchResults` model is now removed.
 - `LogsQueryRequest` is renamed to `LogsBatchQueryRequest`
+- `LogsQueryResults` is now renamed to `LogsQueryResult`
 
 ### Bugs Fixed
 
