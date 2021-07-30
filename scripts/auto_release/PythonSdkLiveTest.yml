@@ -72,7 +72,7 @@ jobs:
           --user "anything:$(USR_TOKEN)" \
           -d "{\
                   \"title\":\"[AutoRelease] $new_branch(Do not merge)\",\
-                  \"body\":\"$test_result Please Add the link issue \",\
+                  \"body\":\"$test_result $(ISSUE_LINK) \",\
                   \"head\":\"$(USR_NAME):$new_branch\",\
                   \"base\":\"$target_branch\"\
               }" \
