@@ -12,8 +12,8 @@ FILE: sample_analyze_actions_async.py
 DESCRIPTION:
     This sample demonstrates how to submit a collection of text documents for analysis, which consists of a variety
     of text analysis actions, such as Entity Recognition, PII Entity Recognition, Linked Entity Recognition,
-    Sentiment Analysis, Key Phrase Extraction, or Extractive Text Summarization.  The response will contain results
-    from each of the individual actions specified in the request.
+    Sentiment Analysis, Key Phrase Extraction, or Extractive Text Summarization (not shown - see sample sample_extract_summary_async.py).
+    The response will contain results from each of the individual actions specified in the request.
 
 USAGE:
     python sample_analyze_actions_async.py
@@ -38,7 +38,6 @@ async def sample_analyze_async():
         RecognizePiiEntitiesAction,
         ExtractKeyPhrasesAction,
         AnalyzeSentimentAction,
-        ExtractSummaryAction,
     )
 
     endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
@@ -71,7 +70,6 @@ async def sample_analyze_async():
                 ExtractKeyPhrasesAction(),
                 RecognizeLinkedEntitiesAction(),
                 AnalyzeSentimentAction(),
-                ExtractSummaryAction()
             ]
         )
 
@@ -155,18 +153,6 @@ async def sample_analyze_async():
                     analyze_sentiment_result.confidence_scores.negative,
                 ))
             print("------------------------------------------")
-
-            extract_summary_result = action_results[5]
-            print("...Results of Extractive Text Summarization action:")
-            if extract_summary_result.is_error:
-                print("...Is an error with code '{}' and message '{}'".format(
-                    extract_summary_result.code, extract_summary_result.message
-                ))
-            else:
-                print("Summary extracted: {}".format(
-                    " ".join([sentence.text for sentence in extract_summary_result.sentences]))
-                )
-
     # [END analyze_async]
 
 
