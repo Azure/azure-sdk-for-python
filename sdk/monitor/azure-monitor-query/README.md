@@ -131,7 +131,7 @@ client = LogsQueryClient(credential)
 query = """AppRequests |
 summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
 
-# returns LogsQueryResults
+# returns LogsQueryResult
 response = client.query(
     os.environ['LOG_WORKSPACE_ID'],
     query,
