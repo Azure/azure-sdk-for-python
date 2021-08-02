@@ -5,7 +5,6 @@
 # license information.
 # --------------------------------------------------------------------------
 import uuid
-import json
 from base64 import b64decode
 from datetime import datetime
 from .utils._utils import _convert_to_isoformat, TZ_UTC, _get_json_content
