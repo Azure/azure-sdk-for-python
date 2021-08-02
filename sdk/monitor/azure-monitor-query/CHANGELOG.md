@@ -1,16 +1,20 @@
 # Release History
 
+
 ## 1.0.0b3 (Unreleased)
 
 ### Features Added
 
-- Added enum `AggragationType` which can be used to specify aggregations in the query API.
+- Added enum `AggregationType` which can be used to specify aggregations in the query API.
+- Added `LogsBatchQueryResult` model that is returned for a logs batch query.
 
 ### Breaking Changes
 
 - `aggregation` param in the query API is renamed to `aggregations`
 - `batch_query` API now returns a list of responses.
 - `LogsBatchResults` model is now removed.
+- `LogsQueryRequest` is renamed to `LogsBatchQueryRequest`
+- `LogsQueryResults` is now renamed to `LogsQueryResult`
 
 ### Bugs Fixed
 

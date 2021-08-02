@@ -61,13 +61,14 @@ setup(
         # This means any folder structure that only consists of a __init__.py. 
         # For example, for storage, this would mean adding 'azure.storage' 
         # in addition to the default 'azure' that is seen here.
-        'azure'
+        'azure',
         'azure.ai',
         'azure.ai.language',
     ]),
     install_requires=[
         'azure-core<2.0.0,>=1.16.0',
-        "msrest>=0.6.21"
+        'msrest>=0.6.21',
+        'chardet>=3.0.2,<5'
     ],
     extras_require={
         ":python_version<'3.0'": ['futures', 'azure-ai-language-nspkg'],

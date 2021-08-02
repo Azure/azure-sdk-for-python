@@ -6,16 +6,19 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
-from azure.mgmt.core import AsyncARMPipelineClient
+from azure.mgmt.core import ARMPipelineClient
 from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials_async import AsyncTokenCredential
+    from typing import Any, Optional
 
-from ._configuration import BatchManagementConfiguration
+    from azure.core.credentials import TokenCredential
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
+
+from ._configuration import BatchManagementClientConfiguration
 from .operations import BatchAccountOperations
 from .operations import ApplicationPackageOperations
 from .operations import ApplicationOperations
@@ -25,32 +28,32 @@ from .operations import CertificateOperations
 from .operations import PrivateLinkResourceOperations
 from .operations import PrivateEndpointConnectionOperations
 from .operations import PoolOperations
-from .. import models
+from . import models
 
 
-class BatchManagement(object):
-    """BatchManagement.
+class BatchManagementClient(object):
+    """Batch Client.
 
     :ivar batch_account: BatchAccountOperations operations
-    :vartype batch_account: azure.mgmt.batch.aio.operations.BatchAccountOperations
+    :vartype batch_account: azure.mgmt.batch.operations.BatchAccountOperations
     :ivar application_package: ApplicationPackageOperations operations
-    :vartype application_package: azure.mgmt.batch.aio.operations.ApplicationPackageOperations
+    :vartype application_package: azure.mgmt.batch.operations.ApplicationPackageOperations
     :ivar application: ApplicationOperations operations
-    :vartype application: azure.mgmt.batch.aio.operations.ApplicationOperations
+    :vartype application: azure.mgmt.batch.operations.ApplicationOperations
     :ivar location: LocationOperations operations
-    :vartype location: azure.mgmt.batch.aio.operations.LocationOperations
+    :vartype location: azure.mgmt.batch.operations.LocationOperations
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.batch.aio.operations.Operations
+    :vartype operations: azure.mgmt.batch.operations.Operations
     :ivar certificate: CertificateOperations operations
-    :vartype certificate: azure.mgmt.batch.aio.operations.CertificateOperations
+    :vartype certificate: azure.mgmt.batch.operations.CertificateOperations
     :ivar private_link_resource: PrivateLinkResourceOperations operations
-    :vartype private_link_resource: azure.mgmt.batch.aio.operations.PrivateLinkResourceOperations
+    :vartype private_link_resource: azure.mgmt.batch.operations.PrivateLinkResourceOperations
     :ivar private_endpoint_connection: PrivateEndpointConnectionOperations operations
-    :vartype private_endpoint_connection: azure.mgmt.batch.aio.operations.PrivateEndpointConnectionOperations
+    :vartype private_endpoint_connection: azure.mgmt.batch.operations.PrivateEndpointConnectionOperations
     :ivar pool: PoolOperations operations
-    :vartype pool: azure.mgmt.batch.aio.operations.PoolOperations
+    :vartype pool: azure.mgmt.batch.operations.PoolOperations
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The Azure subscription ID. This is a GUID-formatted string (e.g. 00000000-0000-0000-0000-000000000000).
     :type subscription_id: str
     :param str base_url: Service URL
@@ -59,18 +62,20 @@ class BatchManagement(object):
 
     def __init__(
         self,
-        credential: "AsyncTokenCredential",
-        subscription_id: str,
-        base_url: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
+        credential,  # type: "TokenCredential"
+        subscription_id,  # type: str
+        base_url=None,  # type: Optional[str]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
         if not base_url:
             base_url = 'https://management.azure.com'
-        self._config = BatchManagementConfiguration(credential, subscription_id, **kwargs)
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._config = BatchManagementClientConfiguration(credential, subscription_id, **kwargs)
+        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
+        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
         self.batch_account = BatchAccountOperations(
@@ -92,12 +97,33 @@ class BatchManagement(object):
         self.pool = PoolOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
-    async def close(self) -> None:
-        await self._client.close()
+    def _send_request(self, http_request, **kwargs):
+        # type: (HttpRequest, Any) -> HttpResponse
+        """Runs the network request through the client's chained policies.
 
-    async def __aenter__(self) -> "BatchManagement":
-        await self._client.__aenter__()
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        """
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
+
+    def close(self):
+        # type: () -> None
+        self._client.close()
+
+    def __enter__(self):
+        # type: () -> BatchManagementClient
+        self._client.__enter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
-        await self._client.__aexit__(*exc_details)
+    def __exit__(self, *exc_details):
+        # type: (Any) -> None
+        self._client.__exit__(*exc_details)

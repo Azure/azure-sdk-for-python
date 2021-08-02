@@ -1,7 +1,9 @@
 # Release History
 
-## 0.8.0 (Unreleased)
+## 0.8.0 (2021-08-10)
 
+- Updated API version to "2020-12-01"
+- Added `NotebookOperationResultOperations`, `OperationResultOperations`, `OperationStatusOperations`
 
 ## 0.7.0 (2021-05-11)
 

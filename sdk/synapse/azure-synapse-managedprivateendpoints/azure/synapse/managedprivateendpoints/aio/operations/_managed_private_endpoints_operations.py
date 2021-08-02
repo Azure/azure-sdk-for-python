@@ -44,7 +44,7 @@ class ManagedPrivateEndpointsOperations:
         self,
         managed_private_endpoint_name: str,
         managed_virtual_network_name: str = "default",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagedPrivateEndpoint":
         """Get Managed Private Endpoints.
 
@@ -62,7 +62,7 @@ class ManagedPrivateEndpointsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -103,7 +103,7 @@ class ManagedPrivateEndpointsOperations:
         managed_private_endpoint_name: str,
         managed_virtual_network_name: str = "default",
         properties: Optional["_models.ManagedPrivateEndpointProperties"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagedPrivateEndpoint":
         """Create Managed Private Endpoints.
 
@@ -125,7 +125,7 @@ class ManagedPrivateEndpointsOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         _managed_private_endpoint = _models.ManagedPrivateEndpoint(properties=properties)
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -170,7 +170,7 @@ class ManagedPrivateEndpointsOperations:
         self,
         managed_private_endpoint_name: str,
         managed_virtual_network_name: str = "default",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete Managed Private Endpoints.
 
@@ -188,7 +188,7 @@ class ManagedPrivateEndpointsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
@@ -222,7 +222,7 @@ class ManagedPrivateEndpointsOperations:
     def list(
         self,
         managed_virtual_network_name: str = "default",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ManagedPrivateEndpointListResponse"]:
         """List Managed Private Endpoints.
 
@@ -238,7 +238,7 @@ class ManagedPrivateEndpointsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
