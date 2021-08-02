@@ -6,7 +6,6 @@
 from typing import Any
 import datetime as dt
 import uuid
-import json
 from msrest.serialization import UTC
 from ._helpers import _get_json_content
 from ._generated.models import (
