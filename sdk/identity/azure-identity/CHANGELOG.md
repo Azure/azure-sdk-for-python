@@ -3,6 +3,10 @@
 ## 1.7.0b3 (Unreleased)
 
 ### Features Added
+- `OnBehalfOfCredential` supports the on-behalf-of authentication flow for
+  accessing resources on behalf of users. The async version of this credential
+  is available only on Python 3.7+.
+  ([#19308](https://github.com/Azure/azure-sdk-for-python/issues/19308))
 
 ### Breaking Changes
 > These changes do not impact the API of stable versions such as 1.6.0.
