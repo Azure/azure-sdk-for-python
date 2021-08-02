@@ -23,6 +23,8 @@ jobs:
             -p 5001:5001 `
             -p 5000:5000 `
             azsdkengsys.azurecr.io/engsys/ubuntu_testproxy_server:latest
+
+          Invoke-WebRequest -Uri "http://localhost:5000/Info/Available"
         displayName: 'Run the docker container'
 
       - pwsh: |
