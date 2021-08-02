@@ -9,7 +9,7 @@ from ..proxy_testcase import (
     stop_record_or_playback,
 )
 
-from azure.core.pipeline.transport import AsyncioRequestsTransport
+from azure.core.pipeline.transport import AioHttpTransport
 
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 
@@ -34,7 +34,7 @@ def RecordedByProxyAsync(func):
         trimmed_kwargs = {k: v for k, v in kwargs.items()}
         trim_kwargs_from_test_function(func, trimmed_kwargs)
 
-        original_func = AsyncioRequestsTransport.send
+        original_func = AioHttpTransport.send
 
         async def combined_call(*args, **kwargs):
             adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
@@ -44,13 +44,13 @@ def RecordedByProxyAsync(func):
             print("METHOD: ", req.method)
             return await original_func(*adjusted_args, **adjusted_kwargs)
 
-        AsyncioRequestsTransport.send = combined_call
+        AioHttpTransport.send = combined_call
 
         # call the modified function.
         try:
             value = await func(*args, **trimmed_kwargs)
         finally:
-            AsyncioRequestsTransport.send = original_func
+            AioHttpTransport.send = original_func
             stop_record_or_playback(test_id, recording_id)
 
         return value
