@@ -45,7 +45,7 @@ class RedisEnterpriseManagementClientConfiguration(Configuration):
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.api_version = "2021-03-01"
+        self.api_version = "2021-08-01"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-redisenterprise/{}'.format(VERSION))
         self._configure(**kwargs)
