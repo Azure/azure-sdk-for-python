@@ -48,7 +48,7 @@ class ApplicationTypesOperations:
         resource_group_name: str,
         cluster_name: str,
         application_type_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplicationTypeResource":
         """Gets a Service Fabric managed application type name resource.
 
@@ -71,7 +71,7 @@ class ApplicationTypesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -115,7 +115,7 @@ class ApplicationTypesOperations:
         cluster_name: str,
         application_type_name: str,
         parameters: "_models.ApplicationTypeResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplicationTypeResource":
         """Creates or updates a Service Fabric managed application type name resource.
 
@@ -140,7 +140,7 @@ class ApplicationTypesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-07-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -189,7 +189,7 @@ class ApplicationTypesOperations:
         cluster_name: str,
         application_type_name: str,
         parameters: "_models.ApplicationTypeUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplicationTypeResource":
         """Updates the tags of an application type resource of a given managed cluster.
 
@@ -213,7 +213,7 @@ class ApplicationTypesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-07-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -261,14 +261,14 @@ class ApplicationTypesOperations:
         resource_group_name: str,
         cluster_name: str,
         application_type_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -308,7 +308,7 @@ class ApplicationTypesOperations:
         resource_group_name: str,
         cluster_name: str,
         application_type_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a Service Fabric managed application type name resource.
 
@@ -322,8 +322,8 @@ class ApplicationTypesOperations:
         :type application_type_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -378,7 +378,7 @@ class ApplicationTypesOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ApplicationTypeResourceList"]:
         """Gets the list of application type name resources created in the specified Service Fabric managed cluster resource.
 
@@ -399,7 +399,7 @@ class ApplicationTypesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):

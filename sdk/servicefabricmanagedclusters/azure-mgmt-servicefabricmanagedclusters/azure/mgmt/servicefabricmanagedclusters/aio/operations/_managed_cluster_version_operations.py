@@ -44,7 +44,7 @@ class ManagedClusterVersionOperations:
         self,
         location: str,
         cluster_version: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagedClusterCodeVersionResult":
         """Gets information about a Service Fabric managed cluster code version available in the specified location.
 
@@ -65,7 +65,7 @@ class ManagedClusterVersionOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -106,7 +106,7 @@ class ManagedClusterVersionOperations:
         self,
         location: str,
         cluster_version: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagedClusterCodeVersionResult":
         """Gets information about a Service Fabric cluster code version available for the specified environment.
 
@@ -128,7 +128,7 @@ class ManagedClusterVersionOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
         environment = "Windows"
-        api_version = "2021-05-01"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -169,7 +169,7 @@ class ManagedClusterVersionOperations:
     async def list(
         self,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.ManagedClusterCodeVersionResult"]:
         """Gets the list of Service Fabric cluster code versions available for the specified location.
 
@@ -188,7 +188,7 @@ class ManagedClusterVersionOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -227,7 +227,7 @@ class ManagedClusterVersionOperations:
     async def list_by_environment(
         self,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.ManagedClusterCodeVersionResult"]:
         """Gets the list of Service Fabric cluster code versions available for the specified environment.
 
@@ -247,7 +247,7 @@ class ManagedClusterVersionOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
         environment = "Windows"
-        api_version = "2021-05-01"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         # Construct URL

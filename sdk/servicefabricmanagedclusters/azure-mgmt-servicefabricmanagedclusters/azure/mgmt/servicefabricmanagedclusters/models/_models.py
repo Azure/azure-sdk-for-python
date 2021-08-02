@@ -933,6 +933,70 @@ class ErrorModelError(msrest.serialization.Model):
         self.message = kwargs.get('message', None)
 
 
+class FrontendConfiguration(msrest.serialization.Model):
+    """Describes the frontend configurations for the node type.
+
+    :param ip_address_type: The IP address type of this frontend configuration. If omitted the
+     default value is IPv4. Possible values include: "IPv4", "IPv6". Default value: "IPv4".
+    :type ip_address_type: str or
+     ~service_fabric_managed_clusters_management_client.models.IPAddressType
+    :param load_balancer_backend_address_pool_id: The resource Id of the Load Balancer backend
+     address pool that the VM instances of the node type are associated with. The format of the
+     resource Id is
+     '/subscriptions/:code:`<subscriptionId>`/resourceGroups/:code:`<resourceGroupName>`/providers/Microsoft.Network/loadBalancers/:code:`<loadBalancerName>`/backendAddressPools/:code:`<backendAddressPoolName>`'.
+    :type load_balancer_backend_address_pool_id: str
+    :param load_balancer_inbound_nat_pool_id: The resource Id of the Load Balancer inbound NAT pool
+     that the VM instances of the node type are associated with. The format of the resource Id is
+     '/subscriptions/:code:`<subscriptionId>`/resourceGroups/:code:`<resourceGroupName>`/providers/Microsoft.Network/loadBalancers/:code:`<loadBalancerName>`/inboundNatPools/:code:`<inboundNatPoolName>`'.
+    :type load_balancer_inbound_nat_pool_id: str
+    """
+
+    _attribute_map = {
+        'ip_address_type': {'key': 'ipAddressType', 'type': 'str'},
+        'load_balancer_backend_address_pool_id': {'key': 'loadBalancerBackendAddressPoolId', 'type': 'str'},
+        'load_balancer_inbound_nat_pool_id': {'key': 'loadBalancerInboundNatPoolId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(FrontendConfiguration, self).__init__(**kwargs)
+        self.ip_address_type = kwargs.get('ip_address_type', "IPv4")
+        self.load_balancer_backend_address_pool_id = kwargs.get('load_balancer_backend_address_pool_id', None)
+        self.load_balancer_inbound_nat_pool_id = kwargs.get('load_balancer_inbound_nat_pool_id', None)
+
+
+class IPTag(msrest.serialization.Model):
+    """IPTag associated with the object.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param ip_tag_type: Required. The IP tag type.
+    :type ip_tag_type: str
+    :param tag: Required. The value of the IP tag.
+    :type tag: str
+    """
+
+    _validation = {
+        'ip_tag_type': {'required': True},
+        'tag': {'required': True},
+    }
+
+    _attribute_map = {
+        'ip_tag_type': {'key': 'ipTagType', 'type': 'str'},
+        'tag': {'key': 'tag', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(IPTag, self).__init__(**kwargs)
+        self.ip_tag_type = kwargs['ip_tag_type']
+        self.tag = kwargs['tag']
+
+
 class LoadBalancingRule(msrest.serialization.Model):
     """Describes a load balancing rule.
 
@@ -1095,11 +1159,11 @@ class ManagedCluster(Resource):
     :type load_balancing_rules:
      list[~service_fabric_managed_clusters_management_client.models.LoadBalancingRule]
     :param allow_rdp_access: Setting this to true enables RDP access to the VM. The default NSG
-     rule opens RDP port to internet which can be overridden with custom Network Security Rules. The
+     rule opens RDP port to Internet which can be overridden with custom Network Security Rules. The
      default value for this setting is false.
     :type allow_rdp_access: bool
-    :param network_security_rules: Custom Network Security Rules that are applied to the virtual
-     network of the cluster.
+    :param network_security_rules: Custom Network Security Rules that are applied to the Virtual
+     Network of the cluster.
     :type network_security_rules:
      list[~service_fabric_managed_clusters_management_client.models.NetworkSecurityRule]
     :param clients: Client certificates that are allowed to manage the cluster.
@@ -1143,6 +1207,17 @@ class ManagedCluster(Resource):
     :param application_type_versions_cleanup_policy: The policy used to clean up unused versions.
     :type application_type_versions_cleanup_policy:
      ~service_fabric_managed_clusters_management_client.models.ApplicationTypeVersionsCleanupPolicy
+    :param enable_ipv6: Setting this to true creates IPv6 address space for the default VNet used
+     by the cluster. This setting cannot be changed once the cluster is created. The default value
+     for this setting is false.
+    :type enable_ipv6: bool
+    :param subnet_id: If specified, the node types for the cluster are created in this subnet
+     instead of the default VNet. The **networkSecurityRules** specified for the cluster are also
+     applied to this subnet. This setting cannot be changed once the cluster is created.
+    :type subnet_id: str
+    :param ip_tags: The list of IP tags associated with the default public IP address of the
+     cluster.
+    :type ip_tags: list[~service_fabric_managed_clusters_management_client.models.IPTag]
     """
 
     _validation = {
@@ -1193,6 +1268,9 @@ class ManagedCluster(Resource):
         'enable_auto_os_upgrade': {'key': 'properties.enableAutoOSUpgrade', 'type': 'bool'},
         'zonal_resiliency': {'key': 'properties.zonalResiliency', 'type': 'bool'},
         'application_type_versions_cleanup_policy': {'key': 'properties.applicationTypeVersionsCleanupPolicy', 'type': 'ApplicationTypeVersionsCleanupPolicy'},
+        'enable_ipv6': {'key': 'properties.enableIpv6', 'type': 'bool'},
+        'subnet_id': {'key': 'properties.subnetId', 'type': 'str'},
+        'ip_tags': {'key': 'properties.ipTags', 'type': '[IPTag]'},
     }
 
     def __init__(
@@ -1225,12 +1303,13 @@ class ManagedCluster(Resource):
         self.enable_auto_os_upgrade = kwargs.get('enable_auto_os_upgrade', None)
         self.zonal_resiliency = kwargs.get('zonal_resiliency', False)
         self.application_type_versions_cleanup_policy = kwargs.get('application_type_versions_cleanup_policy', None)
+        self.enable_ipv6 = kwargs.get('enable_ipv6', None)
+        self.subnet_id = kwargs.get('subnet_id', None)
+        self.ip_tags = kwargs.get('ip_tags', None)
 
 
 class ManagedClusterCodeVersionResult(msrest.serialization.Model):
     """The result of the Service Fabric runtime versions.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     :param id: The identification of the result.
     :type id: str
@@ -1242,13 +1321,10 @@ class ManagedClusterCodeVersionResult(msrest.serialization.Model):
     :type cluster_code_version: str
     :param support_expiry_utc: The date of expiry of support of the version.
     :type support_expiry_utc: str
-    :ivar os_type: Cluster operating system, the default will be Windows. Default value: "Windows".
-    :vartype os_type: str
+    :param os_type: Cluster operating system, the default will be Windows. The only acceptable
+     values to pass in are None and "Windows". The default value is None.
+    :type os_type: str
     """
-
-    _validation = {
-        'os_type': {'constant': True},
-    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -1258,8 +1334,6 @@ class ManagedClusterCodeVersionResult(msrest.serialization.Model):
         'support_expiry_utc': {'key': 'properties.supportExpiryUtc', 'type': 'str'},
         'os_type': {'key': 'properties.osType', 'type': 'str'},
     }
-
-    os_type = "Windows"
 
     def __init__(
         self,
@@ -1271,6 +1345,7 @@ class ManagedClusterCodeVersionResult(msrest.serialization.Model):
         self.type = kwargs.get('type', None)
         self.cluster_code_version = kwargs.get('cluster_code_version', None)
         self.support_expiry_utc = kwargs.get('support_expiry_utc', None)
+        self.os_type = kwargs.get('os_type', None)
 
 
 class ManagedClusterListResult(msrest.serialization.Model):
@@ -1557,17 +1632,19 @@ class NodeType(ManagedProxyResource):
     :type tags: dict[str, str]
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~service_fabric_managed_clusters_management_client.models.SystemData
-    :param is_primary: The node type on which system services will run. Only one node type should
-     be marked as primary. Primary node type cannot be deleted or changed for existing clusters.
+    :param sku: The node type sku.
+    :type sku: ~service_fabric_managed_clusters_management_client.models.NodeTypeSku
+    :param is_primary: Indicates the Service Fabric system services for the cluster will run on
+     this node type. This setting cannot be changed once the node type is created.
     :type is_primary: bool
-    :param vm_instance_count: The number of nodes in the node type.
+    :param vm_instance_count: The number of nodes in the node type. :code:`<br />`:code:`<br />`\
+     **Values:** :code:`<br />`-1 - Use when auto scale rules are configured or sku.capacity is
+     defined :code:`<br />` 0 - Not supported :code:`<br />` >0 - Use for manual scale.
     :type vm_instance_count: int
     :param data_disk_size_gb: Disk size for each vm in the node type in GBs.
     :type data_disk_size_gb: int
-    :param data_disk_type: Managed data disk type. IOPS and throughput are given by the disk size,
-     to see more information go to
-     https://docs.microsoft.com/en-us/azure/virtual-machines/disks-types. Possible values include:
-     "Standard_LRS", "StandardSSD_LRS", "Premium_LRS". Default value: "StandardSSD_LRS".
+    :param data_disk_type: Managed data disk type. Possible values include: "Standard_LRS",
+     "StandardSSD_LRS", "Premium_LRS". Default value: "StandardSSD_LRS".
     :type data_disk_type: str or ~service_fabric_managed_clusters_management_client.models.DiskType
     :param placement_properties: The placement tags applied to nodes in the node type, which can be
      used to indicate where certain services (workload) should run.
@@ -1605,7 +1682,8 @@ class NodeType(ManagedProxyResource):
     :param vm_extensions: Set of extensions that should be installed onto the virtual machines.
     :type vm_extensions:
      list[~service_fabric_managed_clusters_management_client.models.VMSSExtension]
-    :param vm_managed_identity: Identities for the virtual machine scale set under the node type.
+    :param vm_managed_identity: Identities to assign to the virtual machine scale set under the
+     node type.
     :type vm_managed_identity:
      ~service_fabric_managed_clusters_management_client.models.VmManagedIdentity
     :param is_stateless: Indicates if the node type can only host Stateless workloads.
@@ -1613,8 +1691,17 @@ class NodeType(ManagedProxyResource):
     :param multiple_placement_groups: Indicates if scale set associated with the node type can be
      composed of multiple placement groups.
     :type multiple_placement_groups: bool
-    :ivar provisioning_state: The provisioning state of the managed cluster resource. Possible
-     values include: "None", "Creating", "Created", "Updating", "Succeeded", "Failed", "Canceled",
+    :param frontend_configurations: Indicates the node type uses its own frontend configurations
+     instead of the default one for the cluster. This setting can only be specified for non-primary
+     node types and can not be added or removed after the node type is created.
+    :type frontend_configurations:
+     list[~service_fabric_managed_clusters_management_client.models.FrontendConfiguration]
+    :param network_security_rules: The Network Security Rules for this node type. This setting can
+     only be specified for node types that are configured with frontend configurations.
+    :type network_security_rules:
+     list[~service_fabric_managed_clusters_management_client.models.NetworkSecurityRule]
+    :ivar provisioning_state: The provisioning state of the node type resource. Possible values
+     include: "None", "Creating", "Created", "Updating", "Succeeded", "Failed", "Canceled",
      "Deleting", "Deleted", "Other".
     :vartype provisioning_state: str or
      ~service_fabric_managed_clusters_management_client.models.ManagedResourceProvisioningState
@@ -1625,7 +1712,7 @@ class NodeType(ManagedProxyResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'system_data': {'readonly': True},
-        'vm_instance_count': {'maximum': 2147483647, 'minimum': 1},
+        'vm_instance_count': {'maximum': 2147483647, 'minimum': -1},
         'provisioning_state': {'readonly': True},
     }
 
@@ -1635,6 +1722,7 @@ class NodeType(ManagedProxyResource):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'sku': {'key': 'sku', 'type': 'NodeTypeSku'},
         'is_primary': {'key': 'properties.isPrimary', 'type': 'bool'},
         'vm_instance_count': {'key': 'properties.vmInstanceCount', 'type': 'int'},
         'data_disk_size_gb': {'key': 'properties.dataDiskSizeGB', 'type': 'int'},
@@ -1653,6 +1741,8 @@ class NodeType(ManagedProxyResource):
         'vm_managed_identity': {'key': 'properties.vmManagedIdentity', 'type': 'VmManagedIdentity'},
         'is_stateless': {'key': 'properties.isStateless', 'type': 'bool'},
         'multiple_placement_groups': {'key': 'properties.multiplePlacementGroups', 'type': 'bool'},
+        'frontend_configurations': {'key': 'properties.frontendConfigurations', 'type': '[FrontendConfiguration]'},
+        'network_security_rules': {'key': 'properties.networkSecurityRules', 'type': '[NetworkSecurityRule]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
@@ -1661,6 +1751,7 @@ class NodeType(ManagedProxyResource):
         **kwargs
     ):
         super(NodeType, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
         self.is_primary = kwargs.get('is_primary', None)
         self.vm_instance_count = kwargs.get('vm_instance_count', None)
         self.data_disk_size_gb = kwargs.get('data_disk_size_gb', None)
@@ -1679,6 +1770,8 @@ class NodeType(ManagedProxyResource):
         self.vm_managed_identity = kwargs.get('vm_managed_identity', None)
         self.is_stateless = kwargs.get('is_stateless', False)
         self.multiple_placement_groups = kwargs.get('multiple_placement_groups', False)
+        self.frontend_configurations = kwargs.get('frontend_configurations', None)
+        self.network_security_rules = kwargs.get('network_security_rules', None)
         self.provisioning_state = None
 
 
@@ -1711,6 +1804,43 @@ class NodeTypeActionParameters(msrest.serialization.Model):
         self.force = kwargs.get('force', None)
 
 
+class NodeTypeAvailableSku(msrest.serialization.Model):
+    """Defines the type of sku available for a node type.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar resource_type: The type of resource the sku applies to.  :code:`<br />`:code:`<br
+     />`Value: Microsoft.ServiceFabric/managedClusters/nodeTypes.
+    :vartype resource_type: str
+    :ivar sku: The supported SKU for a for node type.
+    :vartype sku: ~service_fabric_managed_clusters_management_client.models.NodeTypeSupportedSku
+    :ivar capacity: Provides information about how the node count can be scaled.
+    :vartype capacity:
+     ~service_fabric_managed_clusters_management_client.models.NodeTypeSkuCapacity
+    """
+
+    _validation = {
+        'resource_type': {'readonly': True},
+        'sku': {'readonly': True},
+        'capacity': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'resource_type': {'key': 'resourceType', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'NodeTypeSupportedSku'},
+        'capacity': {'key': 'capacity', 'type': 'NodeTypeSkuCapacity'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(NodeTypeAvailableSku, self).__init__(**kwargs)
+        self.resource_type = None
+        self.sku = None
+        self.capacity = None
+
+
 class NodeTypeListResult(msrest.serialization.Model):
     """Node type list results.
 
@@ -1734,15 +1864,155 @@ class NodeTypeListResult(msrest.serialization.Model):
         self.next_link = kwargs.get('next_link', None)
 
 
+class NodeTypeListSkuResult(msrest.serialization.Model):
+    """Node type available sku list results.
+
+    :param value: The list of available node type SKUs.
+    :type value:
+     list[~service_fabric_managed_clusters_management_client.models.NodeTypeAvailableSku]
+    :param next_link: The URL to use for getting the next set of results.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[NodeTypeAvailableSku]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(NodeTypeListSkuResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
+
+
+class NodeTypeSku(msrest.serialization.Model):
+    """Describes a node type sku.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: The sku name. :code:`<br />`:code:`<br />`Name is internally generated and is used
+     in auto-scale scenarios.:code:`<br />` Property does not allow to be changed to other values
+     than generated.:code:`<br />` To avoid deployment errors please omit the property.
+    :type name: str
+    :param tier: Specifies the tier of the node type. :code:`<br />`:code:`<br />` Possible
+     Values::code:`<br />` **Standard**.
+    :type tier: str
+    :param capacity: Required. The number of nodes in the node type.:code:`<br />`:code:`<br />`If
+     present in request it will override properties.vmInstanceCount.
+    :type capacity: int
+    """
+
+    _validation = {
+        'capacity': {'required': True, 'maximum': 2147483647, 'minimum': 1},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'tier': {'key': 'tier', 'type': 'str'},
+        'capacity': {'key': 'capacity', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(NodeTypeSku, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.tier = kwargs.get('tier', None)
+        self.capacity = kwargs['capacity']
+
+
+class NodeTypeSkuCapacity(msrest.serialization.Model):
+    """Provides information about how node type can be scaled.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar minimum: Lowest permitted node count in a node type.
+    :vartype minimum: int
+    :ivar maximum: Highest permitted node count in a node type.
+    :vartype maximum: int
+    :ivar default: Default node count in a node type.
+    :vartype default: int
+    :ivar scale_type: Node type capacity scale type. Possible values include: "None", "Manual",
+     "Automatic". Default value: "None".
+    :vartype scale_type: str or
+     ~service_fabric_managed_clusters_management_client.models.NodeTypeSkuScaleType
+    """
+
+    _validation = {
+        'minimum': {'readonly': True},
+        'maximum': {'readonly': True},
+        'default': {'readonly': True},
+        'scale_type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'minimum': {'key': 'minimum', 'type': 'int'},
+        'maximum': {'key': 'maximum', 'type': 'int'},
+        'default': {'key': 'default', 'type': 'int'},
+        'scale_type': {'key': 'scaleType', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(NodeTypeSkuCapacity, self).__init__(**kwargs)
+        self.minimum = None
+        self.maximum = None
+        self.default = None
+        self.scale_type = None
+
+
+class NodeTypeSupportedSku(msrest.serialization.Model):
+    """Describes a node type supported sku.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: The sku name.
+    :vartype name: str
+    :ivar tier: Specifies the tier of the node type. :code:`<br />`:code:`<br />` Possible
+     Values::code:`<br />` **Standard**.
+    :vartype tier: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'tier': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'tier': {'key': 'tier', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(NodeTypeSupportedSku, self).__init__(**kwargs)
+        self.name = None
+        self.tier = None
+
+
 class NodeTypeUpdateParameters(msrest.serialization.Model):
     """Node type update request.
 
     :param tags: A set of tags. Node type update parameters.
-    :type tags: dict[str, str]
+    :type tags: any
+    :param sku: The node type sku.
+    :type sku: ~service_fabric_managed_clusters_management_client.models.NodeTypeSku
+    :param additional_properties:
+    :type additional_properties: str
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        'tags': {'key': 'tags', 'type': 'object'},
+        'sku': {'key': 'sku', 'type': 'NodeTypeSku'},
+        'additional_properties': {'key': 'additionalProperties', 'type': 'str'},
     }
 
     def __init__(
@@ -1751,6 +2021,8 @@ class NodeTypeUpdateParameters(msrest.serialization.Model):
     ):
         super(NodeTypeUpdateParameters, self).__init__(**kwargs)
         self.tags = kwargs.get('tags', None)
+        self.sku = kwargs.get('sku', None)
+        self.additional_properties = kwargs.get('additional_properties', None)
 
 
 class OperationListResult(msrest.serialization.Model):
@@ -3132,10 +3404,10 @@ class VMSSExtension(msrest.serialization.Model):
      upgrade minor versions unless redeployed, even with this property set to true.
     :type auto_upgrade_minor_version: bool
     :param settings: Json formatted public settings for the extension.
-    :type settings: object
+    :type settings: any
     :param protected_settings: The extension can contain either protectedSettings or
      protectedSettingsFromKeyVault or no protected settings at all.
-    :type protected_settings: object
+    :type protected_settings: any
     :param force_update_tag: If a value is provided and is different from the previous value, the
      extension handler will be forced to update even if the extension configuration has not changed.
     :type force_update_tag: str

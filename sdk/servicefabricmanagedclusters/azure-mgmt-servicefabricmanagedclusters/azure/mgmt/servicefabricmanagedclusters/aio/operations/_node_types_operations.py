@@ -47,7 +47,7 @@ class NodeTypesOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.NodeTypeListResult"]:
         """Gets the list of Node types of the specified managed cluster.
 
@@ -67,7 +67,7 @@ class NodeTypesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -126,14 +126,14 @@ class NodeTypesOperations:
         cluster_name: str,
         node_type_name: str,
         parameters: "_models.NodeTypeActionParameters",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-07-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -179,7 +179,7 @@ class NodeTypesOperations:
         cluster_name: str,
         node_type_name: str,
         parameters: "_models.NodeTypeActionParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Restarts one or more nodes on the node type.
 
@@ -196,8 +196,8 @@ class NodeTypesOperations:
         :type parameters: ~service_fabric_managed_clusters_management_client.models.NodeTypeActionParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -255,14 +255,14 @@ class NodeTypesOperations:
         cluster_name: str,
         node_type_name: str,
         parameters: "_models.NodeTypeActionParameters",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-07-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -308,7 +308,7 @@ class NodeTypesOperations:
         cluster_name: str,
         node_type_name: str,
         parameters: "_models.NodeTypeActionParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Reimages one or more nodes on the node type.
 
@@ -325,8 +325,8 @@ class NodeTypesOperations:
         :type parameters: ~service_fabric_managed_clusters_management_client.models.NodeTypeActionParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -384,14 +384,14 @@ class NodeTypesOperations:
         cluster_name: str,
         node_type_name: str,
         parameters: "_models.NodeTypeActionParameters",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-07-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -437,7 +437,7 @@ class NodeTypesOperations:
         cluster_name: str,
         node_type_name: str,
         parameters: "_models.NodeTypeActionParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes one or more nodes on the node type.
 
@@ -454,8 +454,8 @@ class NodeTypesOperations:
         :type parameters: ~service_fabric_managed_clusters_management_client.models.NodeTypeActionParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -512,7 +512,7 @@ class NodeTypesOperations:
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NodeType":
         """Gets a Service Fabric node type.
 
@@ -534,7 +534,7 @@ class NodeTypesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -578,14 +578,14 @@ class NodeTypesOperations:
         cluster_name: str,
         node_type_name: str,
         parameters: "_models.NodeType",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NodeType":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.NodeType"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-07-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -638,7 +638,7 @@ class NodeTypesOperations:
         cluster_name: str,
         node_type_name: str,
         parameters: "_models.NodeType",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.NodeType"]:
         """Creates or updates a Service Fabric node type.
 
@@ -654,8 +654,8 @@ class NodeTypesOperations:
         :type parameters: ~service_fabric_managed_clusters_management_client.models.NodeType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either NodeType or the result of cls(response)
@@ -716,7 +716,7 @@ class NodeTypesOperations:
         cluster_name: str,
         node_type_name: str,
         parameters: "_models.NodeTypeUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NodeType":
         """Update the tags of a node type resource of a given managed cluster.
 
@@ -740,7 +740,7 @@ class NodeTypesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-07-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -788,14 +788,14 @@ class NodeTypesOperations:
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -835,7 +835,7 @@ class NodeTypesOperations:
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a Service Fabric node type.
 
@@ -849,8 +849,8 @@ class NodeTypesOperations:
         :type node_type_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)

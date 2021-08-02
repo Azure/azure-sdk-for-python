@@ -23,8 +23,8 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class Operations(object):
-    """Operations operations.
+class NodeTypeSkusOperations(object):
+    """NodeTypeSkusOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -47,19 +47,28 @@ class Operations(object):
 
     def list(
         self,
+        resource_group_name,  # type: str
+        cluster_name,  # type: str
+        node_type_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.OperationListResult"]
-        """Lists all of the available Service Fabric resource provider API operations.
+        # type: (...) -> Iterable["_models.NodeTypeListSkuResult"]
+        """Gets a Service Fabric node type SKUs.
 
-        Get the list of available Service Fabric resource provider API operations.
+        Get a Service Fabric node type supported SKUs.
 
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource.
+        :type cluster_name: str
+        :param node_type_name: The name of the node type.
+        :type node_type_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either OperationListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~service_fabric_managed_clusters_management_client.models.OperationListResult]
+        :return: An iterator like instance of either NodeTypeListSkuResult or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~service_fabric_managed_clusters_management_client.models.NodeTypeListSkuResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NodeTypeListSkuResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -75,6 +84,13 @@ class Operations(object):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+                    'nodeTypeName': self._serialize.url("node_type_name", node_type_name, 'str'),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
@@ -87,7 +103,7 @@ class Operations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('OperationListResult', pipeline_response)
+            deserialized = self._deserialize('NodeTypeListSkuResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -109,4 +125,4 @@ class Operations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/providers/Microsoft.ServiceFabric/operations'}  # type: ignore
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/managedClusters/{clusterName}/nodeTypes/{nodeTypeName}/skus'}  # type: ignore

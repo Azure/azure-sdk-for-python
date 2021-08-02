@@ -14,6 +14,7 @@ from ._managed_clusters_operations import ManagedClustersOperations
 from ._managed_cluster_version_operations import ManagedClusterVersionOperations
 from ._operations import Operations
 from ._node_types_operations import NodeTypesOperations
+from ._node_type_skus_operations import NodeTypeSkusOperations
 
 __all__ = [
     'ApplicationTypesOperations',
@@ -24,4 +25,5 @@ __all__ = [
     'ManagedClusterVersionOperations',
     'Operations',
     'NodeTypesOperations',
+    'NodeTypeSkusOperations',
 ]

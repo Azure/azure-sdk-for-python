@@ -27,6 +27,7 @@ from .operations import ManagedClustersOperations
 from .operations import ManagedClusterVersionOperations
 from .operations import Operations
 from .operations import NodeTypesOperations
+from .operations import NodeTypeSkusOperations
 from . import models
 
 
@@ -49,6 +50,8 @@ class ServiceFabricManagedClustersManagementClient(object):
     :vartype operations: service_fabric_managed_clusters_management_client.operations.Operations
     :ivar node_types: NodeTypesOperations operations
     :vartype node_types: service_fabric_managed_clusters_management_client.operations.NodeTypesOperations
+    :ivar node_type_skus: NodeTypeSkusOperations operations
+    :vartype node_type_skus: service_fabric_managed_clusters_management_client.operations.NodeTypeSkusOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The customer subscription identifier.
@@ -90,6 +93,8 @@ class ServiceFabricManagedClustersManagementClient(object):
         self.operations = Operations(
             self._client, self._config, self._serialize, self._deserialize)
         self.node_types = NodeTypesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.node_type_skus = NodeTypeSkusOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, http_request, **kwargs):

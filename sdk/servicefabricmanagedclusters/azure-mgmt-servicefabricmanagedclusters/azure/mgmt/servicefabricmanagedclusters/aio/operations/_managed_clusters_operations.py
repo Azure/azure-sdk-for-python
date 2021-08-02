@@ -46,7 +46,7 @@ class ManagedClustersOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ManagedClusterListResult"]:
         """Gets the list of Service Fabric cluster resources created in the specified resource group.
 
@@ -65,7 +65,7 @@ class ManagedClustersOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -119,7 +119,7 @@ class ManagedClustersOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ManagedClusterListResult"]:
         """Gets the list of Service Fabric cluster resources created in the specified subscription.
 
@@ -136,7 +136,7 @@ class ManagedClustersOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -191,7 +191,7 @@ class ManagedClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagedCluster":
         """Gets a Service Fabric managed cluster resource.
 
@@ -212,7 +212,7 @@ class ManagedClustersOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -254,14 +254,14 @@ class ManagedClustersOperations:
         resource_group_name: str,
         cluster_name: str,
         parameters: "_models.ManagedCluster",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagedCluster":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedCluster"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-07-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -312,7 +312,7 @@ class ManagedClustersOperations:
         resource_group_name: str,
         cluster_name: str,
         parameters: "_models.ManagedCluster",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ManagedCluster"]:
         """Creates or updates a Service Fabric managed cluster resource.
 
@@ -326,8 +326,8 @@ class ManagedClustersOperations:
         :type parameters: ~service_fabric_managed_clusters_management_client.models.ManagedCluster
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ManagedCluster or the result of cls(response)
@@ -385,7 +385,7 @@ class ManagedClustersOperations:
         resource_group_name: str,
         cluster_name: str,
         parameters: "_models.ManagedClusterUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagedCluster":
         """Updates the tags of of a Service Fabric managed cluster resource.
 
@@ -407,7 +407,7 @@ class ManagedClustersOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-07-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -453,14 +453,14 @@ class ManagedClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-07-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -498,7 +498,7 @@ class ManagedClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a Service Fabric managed cluster resource.
 
@@ -510,8 +510,8 @@ class ManagedClustersOperations:
         :type cluster_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)

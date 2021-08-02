@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2021-05-01",
-    "total_api_version_list": ["2021-05-01"],
+    "chosen_version": "2021-07-01-preview",
+    "total_api_version_list": ["2021-07-01-preview"],
     "client": {
         "name": "ServiceFabricManagedClustersManagementClient",
         "filename": "_service_fabric_managed_clusters_management_client",
@@ -105,6 +105,7 @@
         "managed_clusters": "ManagedClustersOperations",
         "managed_cluster_version": "ManagedClusterVersionOperations",
         "operations": "Operations",
-        "node_types": "NodeTypesOperations"
+        "node_types": "NodeTypesOperations",
+        "node_type_skus": "NodeTypeSkusOperations"
     }
 }

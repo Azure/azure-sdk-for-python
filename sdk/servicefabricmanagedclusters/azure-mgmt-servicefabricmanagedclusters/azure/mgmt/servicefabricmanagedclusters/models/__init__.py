@@ -29,6 +29,8 @@ try:
     from ._models_py3 import EndpointRangeDescription
     from ._models_py3 import ErrorModel
     from ._models_py3 import ErrorModelError
+    from ._models_py3 import FrontendConfiguration
+    from ._models_py3 import IPTag
     from ._models_py3 import LoadBalancingRule
     from ._models_py3 import ManagedCluster
     from ._models_py3 import ManagedClusterCodeVersionResult
@@ -40,7 +42,12 @@ try:
     from ._models_py3 import NetworkSecurityRule
     from ._models_py3 import NodeType
     from ._models_py3 import NodeTypeActionParameters
+    from ._models_py3 import NodeTypeAvailableSku
     from ._models_py3 import NodeTypeListResult
+    from ._models_py3 import NodeTypeListSkuResult
+    from ._models_py3 import NodeTypeSku
+    from ._models_py3 import NodeTypeSkuCapacity
+    from ._models_py3 import NodeTypeSupportedSku
     from ._models_py3 import NodeTypeUpdateParameters
     from ._models_py3 import OperationListResult
     from ._models_py3 import OperationResult
@@ -103,6 +110,8 @@ except (SyntaxError, ImportError):
     from ._models import EndpointRangeDescription  # type: ignore
     from ._models import ErrorModel  # type: ignore
     from ._models import ErrorModelError  # type: ignore
+    from ._models import FrontendConfiguration  # type: ignore
+    from ._models import IPTag  # type: ignore
     from ._models import LoadBalancingRule  # type: ignore
     from ._models import ManagedCluster  # type: ignore
     from ._models import ManagedClusterCodeVersionResult  # type: ignore
@@ -114,7 +123,12 @@ except (SyntaxError, ImportError):
     from ._models import NetworkSecurityRule  # type: ignore
     from ._models import NodeType  # type: ignore
     from ._models import NodeTypeActionParameters  # type: ignore
+    from ._models import NodeTypeAvailableSku  # type: ignore
     from ._models import NodeTypeListResult  # type: ignore
+    from ._models import NodeTypeListSkuResult  # type: ignore
+    from ._models import NodeTypeSku  # type: ignore
+    from ._models import NodeTypeSkuCapacity  # type: ignore
+    from ._models import NodeTypeSupportedSku  # type: ignore
     from ._models import NodeTypeUpdateParameters  # type: ignore
     from ._models import OperationListResult  # type: ignore
     from ._models import OperationResult  # type: ignore
@@ -163,10 +177,12 @@ from ._service_fabric_managed_clusters_management_client_enums import (
     Direction,
     DiskType,
     FailureAction,
+    IPAddressType,
     ManagedClusterAddOnFeature,
     ManagedIdentityType,
     ManagedResourceProvisioningState,
     MoveCost,
+    NodeTypeSkuScaleType,
     NsgProtocol,
     PartitionScheme,
     ProbeProtocol,
@@ -205,6 +221,8 @@ __all__ = [
     'EndpointRangeDescription',
     'ErrorModel',
     'ErrorModelError',
+    'FrontendConfiguration',
+    'IPTag',
     'LoadBalancingRule',
     'ManagedCluster',
     'ManagedClusterCodeVersionResult',
@@ -216,7 +234,12 @@ __all__ = [
     'NetworkSecurityRule',
     'NodeType',
     'NodeTypeActionParameters',
+    'NodeTypeAvailableSku',
     'NodeTypeListResult',
+    'NodeTypeListSkuResult',
+    'NodeTypeSku',
+    'NodeTypeSkuCapacity',
+    'NodeTypeSupportedSku',
     'NodeTypeUpdateParameters',
     'OperationListResult',
     'OperationResult',
@@ -263,10 +286,12 @@ __all__ = [
     'Direction',
     'DiskType',
     'FailureAction',
+    'IPAddressType',
     'ManagedClusterAddOnFeature',
     'ManagedIdentityType',
     'ManagedResourceProvisioningState',
     'MoveCost',
+    'NodeTypeSkuScaleType',
     'NsgProtocol',
     'PartitionScheme',
     'ProbeProtocol',

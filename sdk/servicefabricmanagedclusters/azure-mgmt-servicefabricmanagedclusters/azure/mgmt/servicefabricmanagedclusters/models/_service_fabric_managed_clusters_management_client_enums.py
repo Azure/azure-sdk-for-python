@@ -114,6 +114,15 @@ class FailureAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: fails. Service Fabric will not proceed to the next upgrade domain automatically.
     MANUAL = "Manual"
 
+class IPAddressType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The IP address type.
+    """
+
+    #: IPv4 address type.
+    I_PV4 = "IPv4"
+    #: IPv6 address type.
+    I_PV6 = "IPv6"
+
 class ManagedClusterAddOnFeature(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Available cluster add-on features
     """
@@ -163,6 +172,17 @@ class MoveCost(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MEDIUM = "Medium"
     #: Specifies the move cost of the service as High. The value is 3.
     HIGH = "High"
+
+class NodeTypeSkuScaleType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Node type capacity scale type.
+    """
+
+    #: Node count is not adjustable in any way (e.g. it is fixed).
+    NONE = "None"
+    #: The user must manually scale out/in.
+    MANUAL = "Manual"
+    #: Automatic scale is allowed.
+    AUTOMATIC = "Automatic"
 
 class NsgProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Network protocol this rule applies to.
