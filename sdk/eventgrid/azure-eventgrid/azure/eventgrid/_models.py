@@ -103,31 +103,3 @@ class EventGridEvent(InternalEventGridEvent):
     def from_dict(cls, data, key_extractors=None, content_type=None):
         event = _get_json_content(data)
         super(EventGridEvent, cls).from_dict(event, key_extractors, content_type)
-
-    @staticmethod
-    def _get_bytes(obj):
-        """Event mixin to have methods that are common to different Event types
-        like CloudEvent, EventGridEvent etc.
-        """
-        try:
-            # storage queue
-            return json.loads(obj.content)
-        except ValueError:
-            raise ValueError(
-                "Failed to retrieve content from the object. Make sure the "
-                 + "content follows the EventGridEvent schema."
-                )
-        except AttributeError:
-            # eventhubs
-            try:
-                return json.loads(next(obj.body))[0]
-            except KeyError:
-                # servicebus
-                return json.loads(next(obj.body))
-            except ValueError:
-                raise ValueError(
-                    "Failed to retrieve body from the object. Make sure the "
-                    + "body follows the EventGridEvent schema."
-                    )
-            except: # pylint: disable=bare-except
-                return obj
