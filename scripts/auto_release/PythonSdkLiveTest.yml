@@ -72,7 +72,7 @@ jobs:
         fi
 
         echo "--- $output_path/output.txt"
-        more $output_path/output.txt
+        tail -n 300 $output_path/output.txt
         echo "---"
         # create PR
         new_branch=`sed -n '1p' $output_path/output.txt`
