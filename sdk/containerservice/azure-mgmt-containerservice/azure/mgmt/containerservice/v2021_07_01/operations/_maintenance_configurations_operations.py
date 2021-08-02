@@ -30,7 +30,7 @@ class MaintenanceConfigurationsOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.containerservice.v2021_05_01.models
+    :type models: ~azure.mgmt.containerservice.v2021_07_01.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -62,7 +62,7 @@ class MaintenanceConfigurationsOperations(object):
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either MaintenanceConfigurationListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerservice.v2021_05_01.models.MaintenanceConfigurationListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerservice.v2021_07_01.models.MaintenanceConfigurationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.MaintenanceConfigurationListResult"]
@@ -70,7 +70,7 @@ class MaintenanceConfigurationsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-07-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -142,7 +142,7 @@ class MaintenanceConfigurationsOperations(object):
         :type config_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MaintenanceConfiguration, or the result of cls(response)
-        :rtype: ~azure.mgmt.containerservice.v2021_05_01.models.MaintenanceConfiguration
+        :rtype: ~azure.mgmt.containerservice.v2021_07_01.models.MaintenanceConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.MaintenanceConfiguration"]
@@ -150,7 +150,7 @@ class MaintenanceConfigurationsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-07-01"
         accept = "application/json"
 
         # Construct URL
@@ -207,10 +207,10 @@ class MaintenanceConfigurationsOperations(object):
         :param config_name: The name of the maintenance configuration.
         :type config_name: str
         :param parameters: The maintenance configuration to create or update.
-        :type parameters: ~azure.mgmt.containerservice.v2021_05_01.models.MaintenanceConfiguration
+        :type parameters: ~azure.mgmt.containerservice.v2021_07_01.models.MaintenanceConfiguration
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MaintenanceConfiguration, or the result of cls(response)
-        :rtype: ~azure.mgmt.containerservice.v2021_05_01.models.MaintenanceConfiguration
+        :rtype: ~azure.mgmt.containerservice.v2021_07_01.models.MaintenanceConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.MaintenanceConfiguration"]
@@ -218,7 +218,7 @@ class MaintenanceConfigurationsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-07-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -288,7 +288,7 @@ class MaintenanceConfigurationsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-07-01"
         accept = "application/json"
 
         # Construct URL
