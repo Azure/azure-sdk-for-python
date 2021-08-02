@@ -72,6 +72,8 @@ jobs:
         fi
 
         echo "--- $output_path/output.txt"
+        echo $output_path/output.txt
+        echo "---"
         # create PR
         new_branch=`sed -n '1p' $output_path/output.txt`
         target_branch=`sed -n '2p' $output_path/output.txt`
@@ -86,6 +88,7 @@ jobs:
               https://api.github.com/repos/Azure/azure-sdk-for-python/pulls
 
         echo "\'[AutoRelease] $new_branch \' has been created!!!"
+        echo "+++ $target_branch"
 
         # if test fail, still push and crete PR. But pipeline would fail to remind user
         if [ -f "$output_path/live_test_fail.txt" ]; then
