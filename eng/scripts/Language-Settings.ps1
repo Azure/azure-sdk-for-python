@@ -161,18 +161,20 @@ function Get-python-GithubIoDocIndex()
   GenerateDocfxTocContent -tocContent $tocContent -lang "Python" -campaignId "UA-62780441-36"
 }
 
-function SetObjectProperty($object, $name, $value) { 
-  if ($object.$name) { 
-    $object.$name = $value
-  } else {
-    Add-Member `
-      -InputObject $object `
-      -MemberType NoteProperty `
-      -Name $name `
-      -Value $value
-  }
+function ValidatePackage($packageName, $packageVersion) {
+  $packageExpression = "$packageName$packageVersion"
+  Write-Host "Validating $packageExpression"
 
-  return $package
+  # TODO: Additional checks for package validation in docs build.
+  Write-Host "pip install $packageExpression"
+  $pipInstallOutput = pip install $packageExpression 2>&1
+
+  if ($LASTEXITCODE -ne 0) {
+    LogWarning "pip install failed for $packageExpression"
+    Write-Host $pipInstallOutput
+    return $false
+  }
+  return $true
 }
 
 $PackageExclusions = @{ 
@@ -247,13 +249,40 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata) {
       continue
     }
 
-    $packageVersion = $matchingPublishedPackage.VersionGA
+    $packageVersion = "==$($matchingPublishedPackage.VersionGA)"
+    if ($Mode -eq 'latest' -and !$matchingPublishedPackage.VersionGA.Trim()) { 
+      LogWarning "Metadata is missing GA version for GA package $packageName. Keeping existing package."
+      $outputPackages += $package
+      continue
+    }
     if ($Mode -eq 'preview') {
+      if (!$matchingPublishedPackage.VersionPreview.Trim()) { 
+        LogWarning "Metadata is missing preview version for preview package $packageName. Keeping existing package."
+        $outputPackages += $package
+        continue
+      }
       $packageVersion = ">=$($matchingPublishedPackage.VersionPreview)"
     }
 
-    $package = SetObjectProperty $package.package_info 'version' $packageVersion
-    Write-Host "Keep tracked package: $packageName"
+    # If upgrading the package, run basic sanity checks against the package
+    if ($package.package_info.version -ne $packageVersion) {
+      Write-Host "New version detected for $packageName ($packageVersion)"
+      if (!(ValidatePackage -packageName $packageName -packageVersion $packageVersion)) {
+        LogWarning "Package is not valid: $packageName. Keeping old version."
+        $outputPackages += $package
+        continue
+      }
+
+      $package.package_info = Add-Member `
+        -InputObject $package.package_info `
+        -MemberType NoteProperty `
+        -Name 'version' `
+        -Value $packageVersion `
+        -PassThru `
+        -Force 
+    }
+
+    Write-Host "Keeping tracked package: $packageName."
     $outputPackages += $package
   }
 
@@ -279,21 +308,29 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata) {
 
   # Add packages that exist in the metadata but are not onboarded in docs config
   foreach ($package in $remainingPackages) {
-    $packageVersion = $package.VersionGA
+    $packageName = $package.Package
+    $packageVersion = "==$($package.VersionGA)"
     if ($Mode -eq 'preview') {
       $packageVersion = ">=$($package.VersionPreview)"
     }
 
-    $packageName = $package.Package
+    if (!(ValidatePackage -packageName $packageName -packageVersion $packageVersion)) {
+      LogWarning "Package is not valid: $packageName. Cannot onboard."
+      continue
+    }
+
     Write-Host "Add new package from metadata: $packageName"
-    $outputPackages += [ordered]@{
+    $package = [ordered]@{
         package_info = [ordered]@{
           name = $packageName;
           install_type = 'pypi';
           prefer_source_distribution = 'true';
+          version = $packageVersion;
         };
         exclude_path = @("test*","example*","sample*","doc*");
     }
+
+    $outputPackages += $package
   }
 
   $packageConfig.packages = $outputPackages
