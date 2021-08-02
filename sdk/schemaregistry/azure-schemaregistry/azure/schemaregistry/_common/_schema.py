@@ -51,17 +51,19 @@ class SchemaProperties(object):
             :caption: SchemaProperties object.
 
     """
+
     def __init__(
         self,
         schema_id=None,
         **kwargs
     ):
         # type: (Optional[str], Any) -> None
-        self.location = kwargs.get('Location')
-        self.schema_id = schema_id or kwargs.get("X-Schema-Id")
-        self.location_by_id = kwargs.get('X-Schema-Id-Location')
-        self.serialization_type = kwargs.get('X-Schema-Type')
-        self.version = kwargs.get('X-Schema-Version')
+        self.location = kwargs.get('Location') or kwargs.get('location')
+        self.schema_id = schema_id or kwargs.get("Schema-Id") or kwargs.get('schema-id')
+        self.location_by_id = kwargs.get('Schema-Id-Location') or kwargs.get('schema-id-location')
+        self.serialization_type = kwargs.get('Serialization-Type') or kwargs.get('serialization-type')
+        # headers are always strings, should be parsed into integer
+        self.version = int(kwargs.get('Schema-Version') or kwargs.get('schema-version'))
 
 
 class Schema(object):
@@ -83,6 +85,7 @@ class Schema(object):
             :caption: Schema object.
 
     """
+
     def __init__(
         self,
         schema_content,

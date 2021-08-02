@@ -23,34 +23,25 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, Dict
+import json
 
-from azure.core.pipeline import PipelineResponse
+from azure.core.rest import HttpResponse
 
-#from .._generated.models import SchemaId as InternalSchemaId
+
 from ._schema import SchemaProperties, Schema
 
 
-def _parse_response_schema_id(pipeline_response, deserialized, response_headers):  # pylint: disable=unused-argument
-    # type: (PipelineResponse, InternalSchemaId, Dict[str, Any]) -> SchemaProperties
-    """
-
-    :param pipeline_response:
-    :param deserialized:
-    :param response_headers:
-    :return:
-    """
-    return SchemaProperties(schema_id=deserialized.id, **response_headers)
+def _parse_response_schema_id(response):
+    # type: (HttpResponse) -> SchemaProperties
+    return SchemaProperties(
+        schema_id=response.json()["id"],
+        **response.headers
+    )
 
 
-def _parse_response_schema(pipeline_response, deserialized, response_headers):  # pylint: disable=unused-argument
-    # type: (PipelineResponse, str, Dict[str, Any]) -> Schema
-    """
-
-    :param pipeline_response:
-    :param deserialized:
-    :param response_headers:
-    :return:
-    """
-
-    return Schema(schema_content=deserialized, schema_properties=SchemaProperties(**response_headers))
+def _parse_response_schema(response):
+    # type: (HttpResponse) -> Schema
+    return Schema(
+        schema_content=json.dumps(response.json()),
+        schema_properties=SchemaProperties(**response.headers)
+    )

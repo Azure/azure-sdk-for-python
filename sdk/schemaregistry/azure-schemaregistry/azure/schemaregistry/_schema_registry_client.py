@@ -27,8 +27,13 @@ from typing import Any, TYPE_CHECKING, Union
 
 from ._common._constants import SerializationType
 from ._common._schema import Schema, SchemaProperties
-from ._common._response_handlers import _parse_response_schema, _parse_response_schema_id
+from ._common._response_handlers import (
+    _parse_response_schema,
+    _parse_response_schema_id
+)
 from ._generated._azure_schema_registry import AzureSchemaRegistry
+
+
 from azure.schemaregistry._generated.rest import schema
 
 if TYPE_CHECKING:
@@ -116,7 +121,9 @@ class SchemaRegistryClient(object):
             serialization_type=serialization_type,
             **kwargs
         )
-        return self._generated_client.send_request(request)
+        response = self._generated_client.send_request(request)
+        response.raise_for_status()
+        return _parse_response_schema_id(response)
 
     def get_schema(self, schema_id, **kwargs):
         # type: (str, Any) -> Schema
@@ -138,7 +145,9 @@ class SchemaRegistryClient(object):
 
         """
         request = schema.build_get_by_id_request(schema_id=schema_id)
-        return self._generated_client.send_request(request, **kwargs)
+        response = self._generated_client.send_request(request, **kwargs)
+        response.raise_for_status()
+        return _parse_response_schema(response)
 
     def get_schema_id(self, schema_group, schema_name, serialization_type, schema_content, **kwargs):
         # type: (str, str, Union[str, SerializationType], str, Any) -> SchemaProperties
@@ -177,4 +186,6 @@ class SchemaRegistryClient(object):
             **kwargs
         )
 
-        return self._generated_client.send_request(request, **kwargs)
+        response = self._generated_client.send_request(request, **kwargs)
+        response.raise_for_status()
+        return _parse_response_schema_id(response)

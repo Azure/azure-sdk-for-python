@@ -7,25 +7,25 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING
 
-from azure.core import PipelineClient
+from azure.core import AsyncPipelineClient
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from msrest import Deserializer, Serializer
 
 from ._configuration import AzureSchemaRegistryConfiguration
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Dict
+    from typing import Dict
 
-    from azure.core.credentials import TokenCredential
-    from azure.core.rest import HttpRequest, HttpResponse
+    from azure.core.credentials_async import AsyncTokenCredential
 
-class AzureSchemaRegistry(object):
+class AzureSchemaRegistry:
     """Azure Schema Registry is as a central schema repository, complete with support for versioning, management, compatibility checking, and RBAC.
 
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param endpoint: The Schema Registry service endpoint, for example
          my-namespace.servicebus.windows.net.
     :type endpoint: str
@@ -33,14 +33,13 @@ class AzureSchemaRegistry(object):
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        endpoint,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        credential: "AsyncTokenCredential",
+        endpoint: str,
+        **kwargs: Any
+    ) -> None:
         base_url = 'https://{endpoint}'
         self._config = AzureSchemaRegistryConfiguration(credential, endpoint, **kwargs)
-        self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {}  # type: Dict[str, Any]
         self._serialize = Serializer(client_models)
@@ -50,10 +49,9 @@ class AzureSchemaRegistry(object):
 
     def send_request(
         self,
-        request,  # type: HttpRequest
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> HttpResponse
+        request: HttpRequest,
+        **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         We have helper methods to create requests specific to this service in `azure.schemaregistry._generated.rest`.
@@ -62,8 +60,8 @@ class AzureSchemaRegistry(object):
         >>> from azure.schemaregistry._generated.rest import schema
         >>> request = schema.build_get_by_id_request(schema_id, **kwargs)
         <HttpRequest [GET], url: '/$schemagroups/getSchemaById/{schema-id}'>
-        >>> response = client.send_request(request)
-        <HttpResponse: 200 OK>
+        >>> response = await client.send_request(request)
+        <AsyncHttpResponse: 200 OK>
 
         For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
 
@@ -74,7 +72,7 @@ class AzureSchemaRegistry(object):
         :type request: ~azure.core.rest.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.rest.HttpResponse
+        :rtype: ~azure.core.rest.AsyncHttpResponse
         """
 
         request_copy = deepcopy(request)
@@ -84,15 +82,12 @@ class AzureSchemaRegistry(object):
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
-        self._client.close()
+    async def close(self) -> None:
+        await self._client.close()
 
-    def __enter__(self):
-        # type: () -> AzureSchemaRegistry
-        self._client.__enter__()
+    async def __aenter__(self) -> "AzureSchemaRegistry":
+        await self._client.__aenter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
-        self._client.__exit__(*exc_details)
+    async def __aexit__(self, *exc_details) -> None:
+        await self._client.__aexit__(*exc_details)
