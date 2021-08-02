@@ -43,7 +43,7 @@ class TriggerRunOperations:
         self,
         trigger_name: str,
         run_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Rerun single trigger instance by runId.
 
@@ -61,7 +61,7 @@ class TriggerRunOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -99,7 +99,7 @@ class TriggerRunOperations:
         self,
         trigger_name: str,
         run_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Cancel single trigger instance by runId.
 
@@ -117,7 +117,7 @@ class TriggerRunOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -154,7 +154,7 @@ class TriggerRunOperations:
     async def query_trigger_runs_by_workspace(
         self,
         filter_parameters: "_models.RunFilterParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TriggerRunsQueryResponse":
         """Query trigger runs.
 
@@ -170,7 +170,7 @@ class TriggerRunOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

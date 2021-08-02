@@ -14,6 +14,7 @@ from ._generated.models import (
     BatchRequest as _BatchRequest,
     SourceInput as _SourceInput,
     TargetInput as _TargetInput,
+    DocumentFilter as _DocumentFilter,
 )
 from ._models import DocumentTranslationInput
 
@@ -44,14 +45,35 @@ def get_translation_input(args, kwargs, continuation_token):
             target_language_code = kwargs.pop("target_language_code", None)
             if not target_language_code:
                 target_language_code = args[2]
+
+            # Additional kwargs
+            source_language_code = kwargs.pop("source_language_code", None)
+            prefix = kwargs.pop("prefix", None)
+            suffix = kwargs.pop("suffix", None)
+            storage_type = kwargs.pop("storage_type", None)
+            category_id = kwargs.pop("category_id", None)
+            glossaries = kwargs.pop("glossaries", None)
+
             request = [
                 _BatchRequest(
-                    source=_SourceInput(source_url=source_url),
+                    source=_SourceInput(
+                        source_url=source_url,
+                        filter=_DocumentFilter(
+                            prefix=prefix,
+                            suffix=suffix
+                        ),
+                        language=source_language_code,
+                    ),
                     targets=[
                         _TargetInput(
-                            target_url=target_url, language=target_language_code
+                            target_url=target_url,
+                            language=target_language_code,
+                            glossaries=[g._to_generated() for g in glossaries]  # pylint: disable=protected-access
+                            if glossaries else None,
+                            category=category_id,
                         )
                     ],
+                    storage_type=storage_type
                 )
             ]
         except (AttributeError, TypeError, IndexError):

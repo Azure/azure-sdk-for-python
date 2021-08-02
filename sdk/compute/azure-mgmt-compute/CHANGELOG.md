@@ -1,5 +1,16 @@
 # Release History
 
+## 22.1.0 (2021-07-22)
+
+**Features**
+
+  - Model VirtualMachineUpdate has a new parameter capacity_reservation
+  - Model VirtualMachine has a new parameter capacity_reservation
+  - Model VirtualMachineScaleSet has a new parameter spot_restore_policy
+  - Model VirtualMachineScaleSetVMProfile has a new parameter capacity_reservation
+  - Added operation group CapacityReservationsOperations
+  - Added operation group CapacityReservationGroupsOperations
+
 ## 22.0.0 (2021-07-08)
 
 **Features**
