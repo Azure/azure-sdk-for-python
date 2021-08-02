@@ -13,7 +13,7 @@ from .utils._utils import _FixedOffset
 if TYPE_CHECKING:
     from datetime import timedelta
 
-__all__ = ["NULL", "ComplexEncoder"]
+__all__ = ["NULL", "AzureJSONEncoder"]
 
 
 class _Null(object):
@@ -91,12 +91,12 @@ except ImportError:
     TZ_UTC = _FixedOffset(0)  # type: ignore
 
 
-class ComplexEncoder(JSONEncoder):
+class AzureJSONEncoder(JSONEncoder):
     """A JSON encoder that's capable of serializing datetime objects and bytes."""
 
     def default(self, o):  # pylint: disable=too-many-return-statements
         try:
-            return super(ComplexEncoder, self).default(o)
+            return super(AzureJSONEncoder, self).default(o)
         except TypeError:
             if isinstance(o, (bytes, bytearray)):
                 return base64.b64encode(o).decode()
@@ -117,4 +117,4 @@ class ComplexEncoder(JSONEncoder):
             except AttributeError:
                 # This will be raised when it hits value.total_seconds in the method above
                 pass
-            return super(ComplexEncoder, self).default(o)
+            return super(AzureJSONEncoder, self).default(o)

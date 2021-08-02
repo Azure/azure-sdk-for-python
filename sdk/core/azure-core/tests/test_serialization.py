@@ -7,7 +7,7 @@ from datetime import date, datetime, time, timedelta, tzinfo
 from enum import Enum
 import json
 
-from azure.core.serialization import ComplexEncoder, NULL
+from azure.core.serialization import AzureJSONEncoder, NULL
 import pytest
 
 
@@ -79,7 +79,7 @@ def test_NULL_is_falsy():
 @pytest.fixture
 def json_dumps_with_encoder():
     def func(obj):
-        return json.dumps(obj, cls=ComplexEncoder)
+        return json.dumps(obj, cls=AzureJSONEncoder)
     return func
 
 def test_bytes(json_dumps_with_encoder):
