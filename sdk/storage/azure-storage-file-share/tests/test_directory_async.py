@@ -426,16 +426,77 @@ class StorageDirectoryTest(AsyncStorageTestCase):
             list_dir.append(d)
 
         # Assert
-        expected = [
-            {'name': 'subdir1', 'is_directory': True},
-            {'name': 'subdir2', 'is_directory': True},
-            {'name': 'subdir3', 'is_directory': True},
-            {'name': 'file1', 'is_directory': False, 'size': 5},
-            {'name': 'file2', 'is_directory': False, 'size': 5},
-            {'name': 'file3', 'is_directory': False, 'size': 5},
-        ]
         self.assertEqual(len(list_dir), 6)
-        self.assertEqual(list_dir, expected)
+        self.assertEqual(len(list_dir), 6)
+        self.assertEqual(list_dir[0]['name'], 'subdir1')
+        self.assertEqual(list_dir[0]['is_directory'], True)
+        self.assertEqual(list_dir[1]['name'], 'subdir2')
+        self.assertEqual(list_dir[1]['is_directory'], True)
+        self.assertEqual(list_dir[2]['name'], 'subdir3')
+        self.assertEqual(list_dir[2]['is_directory'], True)
+        self.assertEqual(list_dir[3]['name'], 'file1')
+        self.assertEqual(list_dir[3]['is_directory'], False)
+        self.assertEqual(list_dir[3]['size'], 5)
+        self.assertEqual(list_dir[4]['name'], 'file2')
+        self.assertEqual(list_dir[4]['is_directory'], False)
+        self.assertEqual(list_dir[4]['size'], 5)
+        self.assertEqual(list_dir[5]['name'], 'file3')
+        self.assertEqual(list_dir[5]['is_directory'], False)
+        self.assertEqual(list_dir[5]['size'], 5)
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_list_subdirectories_and_files_include_other_data_async(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        await self._setup(storage_account, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory = await share_client.create_directory('dir1')
+        await asyncio.gather(
+            directory.create_subdirectory("subdir1"),
+            directory.create_subdirectory("subdir2"),
+            directory.create_subdirectory("subdir3"),
+            directory.upload_file("file1", "data1"),
+            directory.upload_file("file2", "data2"),
+            directory.upload_file("file3", "data3"))
+
+        # Act
+        list_dir = []
+        async for d in directory.list_directories_and_files(include=["timestamps", "Etag", "Attributes", "PermissionKey"]):
+            list_dir.append(d)
+
+        self.assertEqual(len(list_dir), 6)
+        self.assertIsNotNone(list_dir[0].etag)
+        self.assertIsNotNone(list_dir[1].file_attributes)
+        self.assertIsNotNone(list_dir[1].last_access_time)
+        self.assertIsNotNone(list_dir[1].last_write_time)
+        self.assertIsNotNone(list_dir[2].change_time)
+        self.assertIsNotNone(list_dir[2].creation_time)
+        self.assertIsNotNone(list_dir[2].file_id)
+
+        try:
+            await share_client.delete_share()
+        except:
+            pass
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_list_subdirectories_and_files_include_extended_info_async(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        await self._setup(storage_account, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory = await share_client.create_directory('dir1')
+        await asyncio.gather(
+            directory.create_subdirectory("subdir1"))
+
+        # Act
+        list_dir = []
+        async for d in directory.list_directories_and_files(include_extended_info=True):
+            list_dir.append(d)
+
+        self.assertEqual(len(list_dir), 1)
+        self.assertIsNotNone(list_dir[0].file_id)
+        self.assertIsNone(list_dir[0].file_attributes)
+        self.assertIsNone(list_dir[0].last_access_time)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -458,13 +519,13 @@ class StorageDirectoryTest(AsyncStorageTestCase):
             list_dir.append(d)
 
         # Assert
-        expected = [
-            {'name': 'subdir1', 'is_directory': True},
-            {'name': 'subdir2', 'is_directory': True},
-            {'name': 'subdir3', 'is_directory': True},
-        ]
         self.assertEqual(len(list_dir), 3)
-        self.assertEqual(list_dir, expected)
+        self.assertEqual(list_dir[0]['name'], 'subdir1')
+        self.assertEqual(list_dir[0]['is_directory'], True)
+        self.assertEqual(list_dir[1]['name'], 'subdir2')
+        self.assertEqual(list_dir[1]['is_directory'], True)
+        self.assertEqual(list_dir[2]['name'], 'subdir3')
+        self.assertEqual(list_dir[2]['is_directory'], True)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -493,13 +554,14 @@ class StorageDirectoryTest(AsyncStorageTestCase):
             list_dir.append(d)
 
         # Assert
-        expected = [
-            {'name': 'subdir1', 'is_directory': True},
-            {'name': 'subdir2', 'is_directory': True},
-            {'name': 'file1', 'is_directory': False, 'size': 5},
-        ]
         self.assertEqual(len(list_dir), 3)
-        self.assertEqual(list_dir, expected)
+        self.assertEqual(list_dir[0]['name'], 'subdir1')
+        self.assertEqual(list_dir[0]['is_directory'], True)
+        self.assertEqual(list_dir[1]['name'], 'subdir2')
+        self.assertEqual(list_dir[1]['is_directory'], True)
+        self.assertEqual(list_dir[2]['name'], 'file1')
+        self.assertEqual(list_dir[2]['is_directory'], False)
+        self.assertEqual(list_dir[2]['size'], 5)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -522,12 +584,12 @@ class StorageDirectoryTest(AsyncStorageTestCase):
             list_dir.append(d)
 
         # Assert
-        expected = [
-            {'name': 'subdir1', 'is_directory': True},
-            {'name': 'file1', 'is_directory': False, 'size': 5},
-        ]
         self.assertEqual(len(list_dir), 2)
-        self.assertEqual(list_dir, expected)
+        self.assertEqual(list_dir[0]['name'], 'subdir1')
+        self.assertEqual(list_dir[0]['is_directory'], True)
+        self.assertEqual(list_dir[1]['name'], 'file1')
+        self.assertEqual(list_dir[1]['is_directory'], False)
+        self.assertEqual(list_dir[1]['size'], 5)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test

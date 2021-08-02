@@ -63,7 +63,7 @@ class DatasetOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -133,7 +133,7 @@ class DatasetOperations(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         _dataset = _models.DatasetResource(properties=properties)
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -274,7 +274,7 @@ class DatasetOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -325,7 +325,7 @@ class DatasetOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -432,7 +432,7 @@ class DatasetOperations(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         _request = _models.ArtifactRenameRequest(new_name=new_name)
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

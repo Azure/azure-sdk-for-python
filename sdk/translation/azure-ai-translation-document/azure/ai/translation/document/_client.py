@@ -122,9 +122,11 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
 
         :param str source_url: The source SAS URL to the Azure Blob container containing the documents
-            to be translated. Requires read and list permissions at the minimum.
+            to be translated. See the service documentation for the supported SAS permissions for accessing
+            source storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions
         :param str target_url: The target SAS URL to the Azure Blob container where the translated documents
-            should be written. Requires write and list permissions at the minimum.
+            should be written. See the service documentation for the supported SAS permissions for accessing
+            target storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions
         :param str target_language_code: This is the language you want your documents to be translated to.
             See supported language codes here:
             https://docs.microsoft.com/azure/cognitive-services/translator/language-support#translate

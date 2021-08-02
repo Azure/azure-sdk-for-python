@@ -1256,7 +1256,7 @@ class DataChangeDetectionPolicy(msrest.serialization.Model):
     """Base type for data change detection policies.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: HighWaterMarkChangeDetectionPolicy, SearchIndexerDataNoneIdentity, SearchIndexerDataUserAssignedIdentity, SqlIntegratedChangeTrackingPolicy.
+    sub-classes are: HighWaterMarkChangeDetectionPolicy, SqlIntegratedChangeTrackingPolicy.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1274,7 +1274,7 @@ class DataChangeDetectionPolicy(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'odata_type': {'#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy': 'HighWaterMarkChangeDetectionPolicy', '#Microsoft.Azure.Search.SearchIndexerDataNoneIdentity': 'SearchIndexerDataNoneIdentity', '#Microsoft.Azure.Search.SearchIndexerDataUserAssignedIdentity': 'SearchIndexerDataUserAssignedIdentity', '#Microsoft.Azure.Search.SqlIntegratedChangeTrackingPolicy': 'SqlIntegratedChangeTrackingPolicy'}
+        'odata_type': {'#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy': 'HighWaterMarkChangeDetectionPolicy', '#Microsoft.Azure.Search.SqlIntegratedChangeTrackingPolicy': 'SqlIntegratedChangeTrackingPolicy'}
     }
 
     def __init__(
@@ -4866,6 +4866,9 @@ class SearchIndexer(msrest.serialization.Model):
      unaffected. Encryption with customer-managed keys is not available for free search services,
      and is only available for paid services created on or after January 1, 2019.
     :type encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
+    :param cache: Adds caching to an enrichment pipeline to allow for incremental modification
+     steps without having to rebuild the index every time.
+    :type cache: ~azure.search.documents.indexes.models.SearchIndexerCache
     """
 
     _validation = {
@@ -4887,6 +4890,7 @@ class SearchIndexer(msrest.serialization.Model):
         'is_disabled': {'key': 'disabled', 'type': 'bool'},
         'e_tag': {'key': '@odata\\.etag', 'type': 'str'},
         'encryption_key': {'key': 'encryptionKey', 'type': 'SearchResourceEncryptionKey'},
+        'cache': {'key': 'cache', 'type': 'SearchIndexerCache'},
     }
 
     def __init__(
@@ -4904,6 +4908,7 @@ class SearchIndexer(msrest.serialization.Model):
         is_disabled: Optional[bool] = False,
         e_tag: Optional[str] = None,
         encryption_key: Optional["SearchResourceEncryptionKey"] = None,
+        cache: Optional["SearchIndexerCache"] = None,
         **kwargs
     ):
         super(SearchIndexer, self).__init__(**kwargs)
@@ -4919,6 +4924,34 @@ class SearchIndexer(msrest.serialization.Model):
         self.is_disabled = is_disabled
         self.e_tag = e_tag
         self.encryption_key = encryption_key
+        self.cache = cache
+
+
+class SearchIndexerCache(msrest.serialization.Model):
+    """SearchIndexerCache.
+
+    :param storage_connection_string: The connection string to the storage account where the cache
+     data will be persisted.
+    :type storage_connection_string: str
+    :param enable_reprocessing: Specifies whether incremental reprocessing is enabled.
+    :type enable_reprocessing: bool
+    """
+
+    _attribute_map = {
+        'storage_connection_string': {'key': 'storageConnectionString', 'type': 'str'},
+        'enable_reprocessing': {'key': 'enableReprocessing', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        storage_connection_string: Optional[str] = None,
+        enable_reprocessing: Optional[bool] = None,
+        **kwargs
+    ):
+        super(SearchIndexerCache, self).__init__(**kwargs)
+        self.storage_connection_string = storage_connection_string
+        self.enable_reprocessing = enable_reprocessing
 
 
 class SearchIndexerDataContainer(msrest.serialization.Model):
@@ -4956,10 +4989,10 @@ class SearchIndexerDataContainer(msrest.serialization.Model):
 
 
 class SearchIndexerDataIdentity(msrest.serialization.Model):
-    """Base type for data identities.
+    """Abstract base type for data identities.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: .
+    sub-classes are: SearchIndexerDataNoneIdentity, SearchIndexerDataUserAssignedIdentity.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -4977,7 +5010,7 @@ class SearchIndexerDataIdentity(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'odata_type': {}
+        'odata_type': {'#Microsoft.Azure.Search.SearchIndexerDataNoneIdentity': 'SearchIndexerDataNoneIdentity', '#Microsoft.Azure.Search.SearchIndexerDataUserAssignedIdentity': 'SearchIndexerDataUserAssignedIdentity'}
     }
 
     def __init__(
@@ -4988,13 +5021,13 @@ class SearchIndexerDataIdentity(msrest.serialization.Model):
         self.odata_type = None  # type: Optional[str]
 
 
-class SearchIndexerDataNoneIdentity(DataChangeDetectionPolicy):
+class SearchIndexerDataNoneIdentity(SearchIndexerDataIdentity):
     """Clears the identity property of a datasource.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the data change detection
-     policy.Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the identity.Constant filled by
+     server.
     :type odata_type: str
     """
 
@@ -5103,13 +5136,13 @@ class SearchIndexerDataSource(msrest.serialization.Model):
         self.encryption_key = encryption_key
 
 
-class SearchIndexerDataUserAssignedIdentity(DataChangeDetectionPolicy):
+class SearchIndexerDataUserAssignedIdentity(SearchIndexerDataIdentity):
     """Specifies the identity for a datasource to use.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the data change detection
-     policy.Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the identity.Constant filled by
+     server.
     :type odata_type: str
     :param user_assigned_identity: Required. The fully qualified Azure resource Id of a user
      assigned managed identity typically in the form

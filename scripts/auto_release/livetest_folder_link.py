@@ -123,4 +123,5 @@ FOLDER_LINK={
   'workloadmonitor' : 'workloadmonitor',
   'guestconfig' : 'machinelearning',
   'avs' : 'compute',
+  'recoveryservicessiterecovery' : 'recoveryservices',
 }
