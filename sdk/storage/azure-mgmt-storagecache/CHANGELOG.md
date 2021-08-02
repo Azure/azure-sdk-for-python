@@ -1,5 +1,17 @@
 # Release History
 
+## 1.0.0 (2021-07-29)
+
+**Features**
+
+  - Model CacheEncryptionSettings has a new parameter rotation_to_latest_key_version_enabled
+  - Model CacheIdentity has a new parameter user_assigned_identities
+  - Added operation group StorageTargetOperations
+
+**Breaking changes**
+
+  - Operation StorageTargetsOperations.begin_delete has a new signature
+
 ## 1.0.0b1 (2021-05-13)
 
 This is beta preview version.
