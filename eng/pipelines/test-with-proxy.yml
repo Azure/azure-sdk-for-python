@@ -17,7 +17,12 @@ jobs:
           versionSpec: $(PythonVersion)
 
       - pwsh: |
-          docker run -v $(Build.SourcesDirectory):/etc/testproxy -p 5001:5001 -p 5000:5000 azsdkengsys.azurecr.io/engsys/ubuntu_testproxy_server:latest
+          docker run `
+            --detach `
+            -v $(Build.SourcesDirectory):/etc/testproxy `
+            -p 5001:5001 `
+            -p 5000:5000 `
+            azsdkengsys.azurecr.io/engsys/ubuntu_testproxy_server:latest
         displayName: 'Run the docker container'
 
       - pwsh: |
