@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 
 # UserAssertion requires contextvars, added in 3.7, to operate correctly in an async context
-if sys.version >= "3.7":
+if sys.version_info >= (3, 7):
 
     class OnBehalfOfCredential:
         """Authenticates a service principal via the on-behalf-of flow.
