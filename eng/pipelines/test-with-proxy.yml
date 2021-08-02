@@ -23,11 +23,29 @@ jobs:
             -p 5001:5001 `
             -p 5000:5000 `
             azsdkengsys.azurecr.io/engsys/ubuntu_testproxy_server:latest
-
-          Invoke-WebRequest -Uri "http://localhost:5000/Info/Available"
         displayName: 'Run the docker container'
 
       - pwsh: |
-          # if online, we expect this to show up.
+          docker container ls -a
+        displayName: "View running docker containers"
+        continueOnError: true
+
+      - pwsh: |
           Invoke-WebRequest -Uri "http://localhost:5000/Info/Available"
-        displayName: 'Check Proxy Availability'
+        displayName: 'http://localhost:5000/Info/Available'
+        continueOnError: true
+
+      - pwsh: |
+          Invoke-WebRequest -Uri "https://localhost:5000/Info/Available"
+        displayName: 'https://localhost:5000/Info/Available'
+        continueOnError: true
+
+      - pwsh: |
+          Invoke-WebRequest -Uri "http://localhost:5001/Info/Available"
+        displayName: 'http://localhost:5001/Info/Available'
+        continueOnError: true
+
+      - pwsh: |
+          Invoke-WebRequest -Uri "https://localhost:5001/Info/Available"
+        displayName: 'https://localhost:5001/Info/Available'
+        continueOnError: true
