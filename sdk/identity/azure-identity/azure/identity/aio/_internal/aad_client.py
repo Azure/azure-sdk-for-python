@@ -15,7 +15,6 @@ from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
     HttpLoggingPolicy,
 )
-from azure.core.pipeline.transport import HttpRequest
 from ..._internal import AadClientBase
 from ..._internal.user_agent import USER_AGENT
 
