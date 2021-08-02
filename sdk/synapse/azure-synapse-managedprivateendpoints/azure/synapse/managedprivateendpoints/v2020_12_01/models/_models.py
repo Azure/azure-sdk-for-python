@@ -6,8 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional
-
 import msrest.serialization
 
 
@@ -26,7 +24,7 @@ class ManagedPrivateEndpoint(msrest.serialization.Model):
     :vartype type: str
     :param properties: Managed private endpoint properties.
     :type properties:
-     ~azure.synapse.managedprivateendpoints.models.ManagedPrivateEndpointProperties
+     ~azure.synapse.managedprivateendpoints.v2020_12_01.models.ManagedPrivateEndpointProperties
     """
 
     _validation = {
@@ -44,15 +42,13 @@ class ManagedPrivateEndpoint(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        properties: Optional["ManagedPrivateEndpointProperties"] = None,
         **kwargs
     ):
         super(ManagedPrivateEndpoint, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.properties = properties
+        self.properties = kwargs.get('properties', None)
 
 
 class ManagedPrivateEndpointConnectionState(msrest.serialization.Model):
@@ -80,15 +76,12 @@ class ManagedPrivateEndpointConnectionState(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        description: Optional[str] = None,
-        actions_required: Optional[str] = None,
         **kwargs
     ):
         super(ManagedPrivateEndpointConnectionState, self).__init__(**kwargs)
         self.status = None
-        self.description = description
-        self.actions_required = actions_required
+        self.description = kwargs.get('description', None)
+        self.actions_required = kwargs.get('actions_required', None)
 
 
 class ManagedPrivateEndpointListResponse(msrest.serialization.Model):
@@ -97,7 +90,8 @@ class ManagedPrivateEndpointListResponse(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :param value: List of managed private endpoints.
-    :type value: list[~azure.synapse.managedprivateendpoints.models.ManagedPrivateEndpoint]
+    :type value:
+     list[~azure.synapse.managedprivateendpoints.v2020_12_01.models.ManagedPrivateEndpoint]
     :ivar next_link: The link to the next page of results, if any remaining results exist.
     :vartype next_link: str
     """
@@ -113,12 +107,10 @@ class ManagedPrivateEndpointListResponse(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        value: Optional[List["ManagedPrivateEndpoint"]] = None,
         **kwargs
     ):
         super(ManagedPrivateEndpointListResponse, self).__init__(**kwargs)
-        self.value = value
+        self.value = kwargs.get('value', None)
         self.next_link = None
 
 
@@ -138,7 +130,7 @@ class ManagedPrivateEndpointProperties(msrest.serialization.Model):
     :vartype provisioning_state: str
     :param connection_state: The managed private endpoint connection state.
     :type connection_state:
-     ~azure.synapse.managedprivateendpoints.models.ManagedPrivateEndpointConnectionState
+     ~azure.synapse.managedprivateendpoints.v2020_12_01.models.ManagedPrivateEndpointConnectionState
     :ivar is_reserved: Denotes whether the managed private endpoint is reserved.
     :vartype is_reserved: bool
     :param fqdns: List of fully qualified domain names.
@@ -165,21 +157,14 @@ class ManagedPrivateEndpointProperties(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        name: Optional[str] = None,
-        private_link_resource_id: Optional[str] = None,
-        group_id: Optional[str] = None,
-        connection_state: Optional["ManagedPrivateEndpointConnectionState"] = None,
-        fqdns: Optional[List[str]] = None,
-        is_compliant: Optional[bool] = None,
         **kwargs
     ):
         super(ManagedPrivateEndpointProperties, self).__init__(**kwargs)
-        self.name = name
-        self.private_link_resource_id = private_link_resource_id
-        self.group_id = group_id
+        self.name = kwargs.get('name', None)
+        self.private_link_resource_id = kwargs.get('private_link_resource_id', None)
+        self.group_id = kwargs.get('group_id', None)
         self.provisioning_state = None
-        self.connection_state = connection_state
+        self.connection_state = kwargs.get('connection_state', None)
         self.is_reserved = None
-        self.fqdns = fqdns
-        self.is_compliant = is_compliant
+        self.fqdns = kwargs.get('fqdns', None)
+        self.is_compliant = kwargs.get('is_compliant', None)

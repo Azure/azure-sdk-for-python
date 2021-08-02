@@ -6,11 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._vnet_client import VnetClient
-__all__ = ['VnetClient']
+from ._managed_private_endpoints_operations import ManagedPrivateEndpointsOperations
 
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
+__all__ = [
+    'ManagedPrivateEndpointsOperations',
+]

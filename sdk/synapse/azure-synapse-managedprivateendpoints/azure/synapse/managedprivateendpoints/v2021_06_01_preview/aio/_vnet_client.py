@@ -16,16 +16,16 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-from ._configuration import ManagedPrivateEndpointsClientConfiguration
+from ._configuration import VnetClientConfiguration
 from .operations import ManagedPrivateEndpointsOperations
 from .. import models
 
 
-class ManagedPrivateEndpointsClient(object):
-    """ManagedPrivateEndpointsClient.
+class VnetClient(object):
+    """VnetClient.
 
     :ivar managed_private_endpoints: ManagedPrivateEndpointsOperations operations
-    :vartype managed_private_endpoints: azure.synapse.managedprivateendpoints.aio.operations.ManagedPrivateEndpointsOperations
+    :vartype managed_private_endpoints: azure.synapse.managedprivateendpoints.v2021_06_01_preview.aio.operations.ManagedPrivateEndpointsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param endpoint: The workspace development endpoint, for example https://myworkspace.dev.azuresynapse.net.
@@ -39,7 +39,7 @@ class ManagedPrivateEndpointsClient(object):
         **kwargs: Any
     ) -> None:
         base_url = '{endpoint}'
-        self._config = ManagedPrivateEndpointsClientConfiguration(credential, endpoint, **kwargs)
+        self._config = VnetClientConfiguration(credential, endpoint, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -70,7 +70,7 @@ class ManagedPrivateEndpointsClient(object):
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "ManagedPrivateEndpointsClient":
+    async def __aenter__(self) -> "VnetClient":
         await self._client.__aenter__()
         return self
 
