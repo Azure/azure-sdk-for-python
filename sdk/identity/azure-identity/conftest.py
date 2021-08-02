@@ -10,8 +10,11 @@ import six
 from azure.identity._constants import DEVELOPER_SIGN_ON_CLIENT_ID, EnvironmentVariables
 
 
+collect_ignore_glob = []
 if sys.version_info < (3, 5, 3):
-    collect_ignore_glob = ["*_async.py"]
+    collect_ignore_glob.append("*_async.py")
+if sys.version_info < (3, 7):
+    collect_ignore = ["tests/test_obo_async.py"]  # OBO implementation requires 3.7+
 
 
 RECORD_IMDS = "--record-imds"
