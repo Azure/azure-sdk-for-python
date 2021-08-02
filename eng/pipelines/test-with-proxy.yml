@@ -1,0 +1,22 @@
+trigger: none
+
+variables:
+  PythonVersion: '3.9'
+
+jobs:
+  - job: 'rpat'
+    displayName: 'Run Proxy and Test'
+
+    pool:
+      vmImage: 'ubuntu-20.04'
+
+    steps:
+      - task: UsePythonVersion@0
+        displayName: 'Use Python $(PythonVersion)'
+        inputs:
+          versionSpec: $(PythonVersion)
+
+      - pwsh: |
+          # if online, we expect this to show up.
+          Invoke-WebRequest -Uri "http://localhost:5000/Info/Available"
+        displayName: 'Check Proxy Availability'
