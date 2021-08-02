@@ -249,19 +249,20 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata) {
       continue
     }
 
-    $packageVersion = "==$($matchingPublishedPackage.VersionGA)"
     if ($Mode -eq 'latest' -and !$matchingPublishedPackage.VersionGA.Trim()) { 
       LogWarning "Metadata is missing GA version for GA package $packageName. Keeping existing package."
       $outputPackages += $package
       continue
     }
+
+    $packageVersion = "==$($matchingPublishedPackage.VersionGA)"
     if ($Mode -eq 'preview') {
       if (!$matchingPublishedPackage.VersionPreview.Trim()) { 
         LogWarning "Metadata is missing preview version for preview package $packageName. Keeping existing package."
         $outputPackages += $package
         continue
       }
-      $packageVersion = ">=$($matchingPublishedPackage.VersionPreview)"
+      $packageVersion = "==$($matchingPublishedPackage.VersionPreview)"
     }
 
     # If upgrading the package, run basic sanity checks against the package
@@ -311,7 +312,7 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata) {
     $packageName = $package.Package
     $packageVersion = "==$($package.VersionGA)"
     if ($Mode -eq 'preview') {
-      $packageVersion = ">=$($package.VersionPreview)"
+      $packageVersion = "==$($package.VersionPreview)"
     }
 
     if (!(ValidatePackage -packageName $packageName -packageVersion $packageVersion)) {
