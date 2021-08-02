@@ -10,7 +10,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/entities/recognition/general?showStats=false
   response:
@@ -19,16 +19,16 @@ interactions:
         Gates","category":"Person","offset":25,"length":10,"confidenceScore":1.0},{"text":"Paul
         Allen","category":"Person","offset":40,"length":10,"confidenceScore":1.0}],"warnings":[]}],"errors":[],"modelVersion":"2021-06-01"}'
     headers:
-      apim-request-id: aa583994-1324-4f15-bdbc-9c643852626a
+      apim-request-id: 7243e2ad-1d78-4fed-97ff-65dba0f126f8
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1
-      date: Wed, 23 Jun 2021 01:56:22 GMT
+      date: Mon, 02 Aug 2021 21:16:05 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '23'
+      x-envoy-upstream-service-time: '72'
     status:
       code: 200
       message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com//text/analytics/v3.0/entities/recognition/general?showStats=false
+    url: https://tacanaryjava.cognitiveservices.azure.com//text/analytics/v3.0/entities/recognition/general?showStats=false
 version: 1
