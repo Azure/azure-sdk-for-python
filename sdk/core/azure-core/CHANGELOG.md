@@ -4,11 +4,11 @@
 
 ### Features Added
 
-### Breaking Changes
+### Breaking Changes in the Provisional `azure.core.rest` package
+
+- Removed `chardet` dependency in `azure.core.rest`. Breaking because we removed the step that used `chardet` to inspect the response encoding
 
 ### Key Bugs Fixed
-
-- Removed `chardet` dependency in `azure.core.rest`.
 
 ### Fixed
 
