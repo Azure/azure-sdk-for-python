@@ -13,5 +13,11 @@ if TYPE_CHECKING:
 
 
 class TokenExchangeCredential(ClientAssertionCredential, TokenFileMixin):
-    def __init__(self, token_file_path: str, **kwargs: "Any") -> None:
-        super().__init__(get_assertion=self.get_service_account_token, token_file_path=token_file_path, **kwargs)
+    def __init__(self, tenant_id: str, client_id: str, token_file_path: str, **kwargs: "Any") -> None:
+        super().__init__(
+            tenant_id=tenant_id,
+            client_id=client_id,
+            get_assertion=self.get_service_account_token,
+            token_file_path=token_file_path,
+            **kwargs
+        )

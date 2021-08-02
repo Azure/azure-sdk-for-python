@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 class TokenFileMixin(object):
-    def __init__(self, token_file_path, **kwargs):  # pylint:disable=unused-argument
+    def __init__(self, token_file_path, **_):
         # type: (str, **Any) -> None
         super(TokenFileMixin, self).__init__()
         self._jwt = ""
@@ -31,8 +31,12 @@ class TokenFileMixin(object):
 
 
 class TokenExchangeCredential(ClientAssertionCredential, TokenFileMixin):
-    def __init__(self, token_file_path, **kwargs):
-        # type: (str, **Any) -> None
+    def __init__(self, tenant_id, client_id, token_file_path, **kwargs):
+        # type: (str, str, str, **Any) -> None
         super(TokenExchangeCredential, self).__init__(
-            get_assertion=self.get_service_account_token, token_file_path=token_file_path, **kwargs
+            tenant_id=tenant_id,
+            client_id=client_id,
+            get_assertion=self.get_service_account_token,
+            token_file_path=token_file_path,
+            **kwargs
         )
