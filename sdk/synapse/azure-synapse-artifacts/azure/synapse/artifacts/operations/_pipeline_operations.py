@@ -63,7 +63,7 @@ class PipelineOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -131,7 +131,7 @@ class PipelineOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -272,7 +272,7 @@ class PipelineOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -323,7 +323,7 @@ class PipelineOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -430,7 +430,7 @@ class PipelineOperations(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         _request = _models.ArtifactRenameRequest(new_name=new_name)
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -538,7 +538,7 @@ class PipelineOperations(object):
         reference_pipeline_run_id=None,  # type: Optional[str]
         is_recovery=None,  # type: Optional[bool]
         start_activity_name=None,  # type: Optional[str]
-        parameters=None,  # type: Optional[Dict[str, object]]
+        parameters=None,  # type: Optional[Dict[str, Any]]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.CreateRunResponse"
@@ -557,7 +557,7 @@ class PipelineOperations(object):
         :type start_activity_name: str
         :param parameters: Parameters of the pipeline run. These parameters will be used only if the
          runId is not specified.
-        :type parameters: dict[str, object]
+        :type parameters: dict[str, any]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CreateRunResponse, or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.CreateRunResponse
@@ -568,7 +568,7 @@ class PipelineOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

@@ -1,9 +1,10 @@
 # Release History
 
-## 1.17.0 (Unreleased)
+## 1.17.0 (2021-08-05)
 
 ### Features Added
 
+- Cut hard dependency on requests library
 - `CloudEvent`'s `from_dict` method now accepts objects from servicebus, eventhubs and storage directly.
 
 ### Breaking Changes

@@ -406,7 +406,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [custom_model]: https://docs.microsoft.com/azure/cognitive-services/translator/custom-translator/quickstart-build-deploy-custom-model
 [glossary]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview#supported-glossary-formats
 [sas_token]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/create-sas-tokens?tabs=Containers#create-your-sas-tokens-with-azure-storage-explorer
-[sas_token_permissions]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/get-started-with-document-translation?tabs=csharp#create-sas-access-tokens-for-document-translation
+[sas_token_permissions]: https://aka.ms/azsdk/documenttranslation/sas-permissions
 [azure_storage_blob]: https://pypi.org/project/azure-storage-blob/
 
 [azure_core_ref_docs]: https://aka.ms/azsdk/python/core/docs

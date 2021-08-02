@@ -44,7 +44,7 @@ class AccessControlClientConfiguration(Configuration):
 
         self.credential = credential
         self.endpoint = endpoint
-        self.api_version = "2020-08-01-preview"
+        self.api_version = "2020-12-01"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://dev.azuresynapse.net/.default'])
         kwargs.setdefault('sdk_moniker', 'synapse-accesscontrol/{}'.format(VERSION))
         self._configure(**kwargs)
