@@ -42,7 +42,7 @@ class AppServiceCredential(AsyncContextManager, GetTokenMixin):
 
         return await super().get_token(*scopes, **kwargs)
 
-    async def _acquire_token_silently(self, *scopes: str) -> "Optional[AccessToken]":
+    async def _acquire_token_silently(self, *scopes: str, **kwargs: "Any") -> "Optional[AccessToken]":
         return self._client.get_cached_token(*scopes)
 
     async def _request_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":

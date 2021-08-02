@@ -782,6 +782,11 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     message = ServiceBusMessage("{}".format(i))
                     await sender.send_messages(message)
 
+            # issue https://github.com/Azure/azure-sdk-for-python/issues/19642
+            empty_renewer = AutoLockRenewer()
+            async with empty_renewer:
+                pass
+
             renewer = AutoLockRenewer()
             messages = []
             async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5, receive_mode=ServiceBusReceiveMode.PEEK_LOCK, prefetch_count=10) as receiver:

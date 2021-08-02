@@ -37,7 +37,7 @@ class MgmtContainerInstanceTest(AzureMgmtTestCase):
             azure.mgmt.containerinstance.ContainerInstanceManagementClient
         )
     
-
+    @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_containerinstance(self, resource_group):
 

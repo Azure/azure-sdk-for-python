@@ -100,6 +100,7 @@ try:
     from ._models_py3 import SearchField
     from ._models_py3 import SearchIndex
     from ._models_py3 import SearchIndexer
+    from ._models_py3 import SearchIndexerCache
     from ._models_py3 import SearchIndexerDataContainer
     from ._models_py3 import SearchIndexerDataIdentity
     from ._models_py3 import SearchIndexerDataNoneIdentity
@@ -242,6 +243,7 @@ except (SyntaxError, ImportError):
     from ._models import SearchField  # type: ignore
     from ._models import SearchIndex  # type: ignore
     from ._models import SearchIndexer  # type: ignore
+    from ._models import SearchIndexerCache  # type: ignore
     from ._models import SearchIndexerDataContainer  # type: ignore
     from ._models import SearchIndexerDataIdentity  # type: ignore
     from ._models import SearchIndexerDataNoneIdentity  # type: ignore
@@ -428,6 +430,7 @@ __all__ = [
     'SearchField',
     'SearchIndex',
     'SearchIndexer',
+    'SearchIndexerCache',
     'SearchIndexerDataContainer',
     'SearchIndexerDataIdentity',
     'SearchIndexerDataNoneIdentity',

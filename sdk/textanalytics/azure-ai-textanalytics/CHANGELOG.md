@@ -1,6 +1,16 @@
 # Release History
 
-## 5.1.0 (2021-07-08)
+## 5.1.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 5.1.0 (2021-07-07)
 
 This version of the SDK defaults to the latest supported API version, which currently is `v3.1`.
 Includes all changes from `5.1.0b1` to `5.1.0b7`.

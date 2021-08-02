@@ -569,65 +569,6 @@ class ChatThreadOperations(object):
 
     delete_chat_message.metadata = {'url': '/chat/threads/{chatThreadId}/messages/{chatMessageId}'}  # type: ignore
 
-    def send_typing_notification(
-        self,
-        chat_thread_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        """Posts a typing event to a thread, on behalf of a user.
-
-        Posts a typing event to a thread, on behalf of a user.
-
-        :param chat_thread_id: Id of the thread.
-        :type chat_thread_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-05-preview6"
-        accept = "application/json"
-
-        # Construct URL
-        url = self.send_typing_notification.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'chatThreadId': self._serialize.url("chat_thread_id", chat_thread_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    send_typing_notification.metadata = {'url': '/chat/threads/{chatThreadId}/typing'}  # type: ignore
-
     def list_chat_participants(
         self,
         chat_thread_id,  # type: str
@@ -987,3 +928,73 @@ class ChatThreadOperations(object):
 
         return deserialized
     get_chat_thread_properties.metadata = {'url': '/chat/threads/{chatThreadId}'}  # type: ignore
+
+    def send_typing_notification(
+        self,
+        chat_thread_id,  # type: str
+        send_typing_notification_request=None,  # type: Optional["_models.SendTypingNotificationRequest"]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Posts a typing event to a thread, on behalf of a user.
+
+        Posts a typing event to a thread, on behalf of a user.
+
+        :param chat_thread_id: Id of the thread.
+        :type chat_thread_id: str
+        :param send_typing_notification_request: Details of the typing notification request.
+        :type send_typing_notification_request: ~azure.communication.chat.models.SendTypingNotificationRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-04-05-preview6"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.send_typing_notification.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'chatThreadId': self._serialize.url("chat_thread_id", chat_thread_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        if send_typing_notification_request is not None:
+            body_content = self._serialize.body(send_typing_notification_request, 'SendTypingNotificationRequest')
+        else:
+            body_content = None
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    send_typing_notification.metadata = {'url': '/chat/threads/{chatThreadId}/typing'}  # type: ignore

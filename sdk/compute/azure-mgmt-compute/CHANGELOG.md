@@ -1,5 +1,28 @@
 # Release History
 
+## 22.1.0 (2021-07-22)
+
+**Features**
+
+  - Model VirtualMachineUpdate has a new parameter capacity_reservation
+  - Model VirtualMachine has a new parameter capacity_reservation
+  - Model VirtualMachineScaleSet has a new parameter spot_restore_policy
+  - Model VirtualMachineScaleSetVMProfile has a new parameter capacity_reservation
+  - Added operation group CapacityReservationsOperations
+  - Added operation group CapacityReservationGroupsOperations
+
+## 22.0.0 (2021-07-08)
+
+**Features**
+
+  - Model RestorePointSourceMetadata has a new parameter location
+  - Added operation DiskRestorePointOperations.begin_revoke_access
+  - Added operation DiskRestorePointOperations.begin_grant_access
+
+**Breaking changes**
+
+  - Model PublicIPAddressSku has a new signature
+
 ## 21.0.0 (2021-05-25)
 
 **Features**

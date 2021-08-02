@@ -56,7 +56,11 @@ def test_exceptions_do_not_expose_secrets():
 
     fns = [
         functools.partial(client.obtain_token_by_authorization_code, "code", "uri", "scope"),
-        functools.partial(client.obtain_token_by_refresh_token, "refresh token", ("scope"),),
+        functools.partial(
+            client.obtain_token_by_refresh_token,
+            "refresh token",
+            ("scope"),
+        ),
     ]
 
     def assert_secrets_not_exposed():
@@ -233,3 +237,76 @@ def test_retries_token_requests():
         client.obtain_token_by_refresh_token("", "")
     assert transport.send.call_count > 1
     transport.send.reset_mock()
+
+
+def test_shared_cache():
+    """The client should return only tokens associated with its own client_id"""
+
+    client_id_a = "client-id-a"
+    client_id_b = "client-id-b"
+    scope = "scope"
+    expected_token = "***"
+    tenant_id = "tenant"
+    authority = "https://localhost/" + tenant_id
+
+    cache = TokenCache()
+    cache.add(
+        {
+            "response": build_aad_response(access_token=expected_token),
+            "client_id": client_id_a,
+            "scope": [scope],
+            "token_endpoint": "/".join((authority, tenant_id, "oauth2/v2.0/token")),
+        }
+    )
+
+    common_args = dict(authority=authority, cache=cache, tenant_id=tenant_id)
+    client_a = AadClient(client_id=client_id_a, **common_args)
+    client_b = AadClient(client_id=client_id_b, **common_args)
+
+    # A has a cached token
+    token = client_a.get_cached_access_token([scope])
+    assert token.token == expected_token
+
+    # which B shouldn't return
+    assert client_b.get_cached_access_token([scope]) is None
+
+
+def test_multitenant_cache():
+    client_id = "client-id"
+    scope = "scope"
+    expected_token = "***"
+    tenant_a = "tenant-a"
+    tenant_b = "tenant-b"
+    tenant_c = "tenant-c"
+    authority = "https://localhost/" + tenant_a
+
+    cache = TokenCache()
+    cache.add(
+        {
+            "response": build_aad_response(access_token=expected_token),
+            "client_id": client_id,
+            "scope": [scope],
+            "token_endpoint": "/".join((authority, tenant_a, "oauth2/v2.0/token")),
+        }
+    )
+
+    common_args = dict(authority=authority, cache=cache, client_id=client_id)
+    client_a = AadClient(tenant_id=tenant_a, **common_args)
+    client_b = AadClient(tenant_id=tenant_b, **common_args)
+
+    # A has a cached token
+    token = client_a.get_cached_access_token([scope])
+    assert token.token == expected_token
+
+    # which B shouldn't return
+    assert client_b.get_cached_access_token([scope]) is None
+
+    # but C allows multitenant auth and should therefore return the token from tenant_a when appropriate
+    client_c = AadClient(tenant_id=tenant_c, allow_multitenant_authentication=True, **common_args)
+    assert client_c.get_cached_access_token([scope]) is None
+    token = client_c.get_cached_access_token([scope], tenant_id=tenant_a)
+    assert token.token == expected_token
+    with patch.dict(
+        "os.environ", {EnvironmentVariables.AZURE_IDENTITY_ENABLE_LEGACY_TENANT_SELECTION: "true"}, clear=True
+    ):
+        assert client_c.get_cached_access_token([scope], tenant_id=tenant_a) is None

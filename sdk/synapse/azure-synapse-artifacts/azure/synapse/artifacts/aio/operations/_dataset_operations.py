@@ -44,7 +44,7 @@ class DatasetOperations:
 
     def get_datasets_by_workspace(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DatasetListResponse"]:
         """Lists datasets.
 
@@ -58,7 +58,7 @@ class DatasetOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -118,7 +118,7 @@ class DatasetOperations:
         dataset_name: str,
         properties: "_models.Dataset",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.DatasetResource"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.DatasetResource"]]
         error_map = {
@@ -127,7 +127,7 @@ class DatasetOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         _dataset = _models.DatasetResource(properties=properties)
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -177,7 +177,7 @@ class DatasetOperations:
         dataset_name: str,
         properties: "_models.Dataset",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DatasetResource"]:
         """Creates or updates a dataset.
 
@@ -247,7 +247,7 @@ class DatasetOperations:
         self,
         dataset_name: str,
         if_none_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.DatasetResource"]:
         """Gets a dataset.
 
@@ -266,7 +266,7 @@ class DatasetOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -309,14 +309,14 @@ class DatasetOperations:
     async def _delete_dataset_initial(
         self,
         dataset_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -352,7 +352,7 @@ class DatasetOperations:
     async def begin_delete_dataset(
         self,
         dataset_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a dataset.
 
@@ -412,7 +412,7 @@ class DatasetOperations:
         self,
         dataset_name: str,
         new_name: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -421,7 +421,7 @@ class DatasetOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         _request = _models.ArtifactRenameRequest(new_name=new_name)
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -463,7 +463,7 @@ class DatasetOperations:
         self,
         dataset_name: str,
         new_name: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Renames a dataset.
 

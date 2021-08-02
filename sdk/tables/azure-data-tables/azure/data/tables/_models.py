@@ -209,7 +209,7 @@ class TableRetentionPolicy(GeneratedRetentionPolicy):
             days=generated.days,
         )
     def __repr__(self):
-        # type; () -> str
+        # type: () -> str
         return "TableRetentionPolicy(enabled={}, days={})".format(self.enabled, self.days)[1024:]
 
 
@@ -582,9 +582,8 @@ class ResourceTypes(object):
         self.object = kwargs.get('object', False)
         self._str = ("s" if self.service else "") + ("o" if self.object else "")
 
-    def __repr__(self):
-        # type: () -> str
-        return "ResourceTypes(service={}, object={})".format(self.service, self.object)[1024:]
+    def __str__(self):
+        return self._str
 
     @classmethod
     def from_string(cls, string):
@@ -654,11 +653,8 @@ class AccountSasPermissions(object):
             + ("p" if self.process else "")
         )
 
-    def __repr__(self):
-        # type: () -> str
-        return "AccountSasPermissions(read={}, write={}, delete={}, list={}, add={}, create={}, update={}, process={})".format(  # pylint: disable=line-too-long
-            self.read, self.write, self.delete, self.list, self.add, self.create, self.update, self.process
-        )[1024:]
+    def __str__(self):
+        return self._str
 
     @classmethod
     def from_string(cls, permission, **kwargs):

@@ -42,7 +42,7 @@ class PipelineRunOperations:
     async def query_pipeline_runs_by_workspace(
         self,
         filter_parameters: "_models.RunFilterParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PipelineRunsQueryResponse":
         """Query pipeline runs in the workspace based on input filter conditions.
 
@@ -58,7 +58,7 @@ class PipelineRunOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -101,7 +101,7 @@ class PipelineRunOperations:
     async def get_pipeline_run(
         self,
         run_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PipelineRun":
         """Get a pipeline run by its run ID.
 
@@ -117,7 +117,7 @@ class PipelineRunOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -158,7 +158,7 @@ class PipelineRunOperations:
         pipeline_name: str,
         run_id: str,
         filter_parameters: "_models.RunFilterParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ActivityRunsQueryResponse":
         """Query activity runs based on input filter conditions.
 
@@ -178,7 +178,7 @@ class PipelineRunOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -224,7 +224,7 @@ class PipelineRunOperations:
         self,
         run_id: str,
         is_recursive: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Cancel a pipeline run by its run ID.
 
@@ -243,7 +243,7 @@ class PipelineRunOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL

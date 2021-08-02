@@ -2,7 +2,7 @@ import pytest
 import os
 from datetime import datetime, timedelta
 from azure.identity import ClientSecretCredential
-from azure.monitor.query import MetricsQueryClient
+from azure.monitor.query import MetricsQueryClient, AggregationType
 
 def _credential():
     credential  = ClientSecretCredential(
@@ -21,7 +21,7 @@ def test_metrics_auth():
         metric_names=["MatchedEventCount"],
         start_time=datetime(2021, 6, 21),
         duration=timedelta(days=1),
-        aggregation=['Count']
+        aggregations=[AggregationType.COUNT]
         )
     assert response
     assert response.metrics
