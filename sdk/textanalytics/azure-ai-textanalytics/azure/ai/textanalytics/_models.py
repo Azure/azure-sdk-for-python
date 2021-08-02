@@ -2133,7 +2133,7 @@ class ExtractSummaryAction(DictMixin):
             )[:1024]
         )
 
-    def _to_generated(self):
+    def _to_generated(self, api_version):  # pylint: disable=unused-argument
         return _v3_2_preview_1_models.ExtractiveSummarizationTask(
             parameters=_v3_2_preview_1_models.ExtractiveSummarizationTaskParameters(
                 model_version=self.model_version,
@@ -2186,7 +2186,10 @@ class ExtractSummaryResult(DictMixin):
     def _from_generated(cls, summary):
         return cls(
             id=summary.id,
-            sentences=[SummarySentence._from_generated(sentence) for sentence in summary.sentences],
+            sentences=[
+                SummarySentence._from_generated(sentence)  # pylint: disable=protected-access
+                for sentence in summary.sentences
+            ],
             warnings=[
                 TextAnalyticsWarning._from_generated(w)  # pylint: disable=protected-access
                 for w in summary.warnings

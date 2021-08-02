@@ -995,7 +995,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     ]
                 ],
                 extractive_summarization_tasks=[
-                    t._to_generated()  # pylint: disable=protected-access
+                    t._to_generated(self._api_version)  # pylint: disable=protected-access
                     for t in [
                         a
                         for a in actions
