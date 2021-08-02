@@ -39,7 +39,6 @@ from .pipeline.policies import (
     RequestIdPolicy,
     RetryPolicy,
 )
-from .pipeline.transport import RequestsTransport
 from .pipeline._tools import to_rest_response as _to_rest_response
 
 try:
@@ -181,6 +180,7 @@ class PipelineClient(PipelineClientBase):
                 policies = policies_1
 
         if not transport:
+            from .pipeline.transport import RequestsTransport
             transport = RequestsTransport(**kwargs)
 
         return Pipeline(transport, policies)
