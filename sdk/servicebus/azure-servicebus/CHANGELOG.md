@@ -10,7 +10,7 @@
 
 ### Other Changes
 
-- Improved memory usage of `ServiceBusClient` to automatically de-registered spawned `ServiceBusSender` and `ServiceBusReceiver` which are closed.
+- Improved memory usage of `ServiceBusClient` by automatically de-registering spawned `ServiceBusSender` and `ServiceBusReceiver` that are closed.
 
 ## 7.3.1 (2021-07-07)
 
