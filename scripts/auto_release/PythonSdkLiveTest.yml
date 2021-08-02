@@ -71,6 +71,7 @@ jobs:
           test_result="Live test fail, detailed info is in pipeline log(search keyword FAILED)!!!\n"
         fi
 
+        echo "--- $output_path/output.txt"
         # create PR
         new_branch=`sed -n '1p' $output_path/output.txt`
         target_branch=`sed -n '2p' $output_path/output.txt`
