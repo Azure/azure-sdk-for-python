@@ -9,8 +9,7 @@ except ImportError:
     import mock
 from azure.core import PipelineClient
 from azure.core.pipeline.policies import CustomHookPolicy, UserAgentPolicy
-from azure.core.pipeline.transport import HttpRequest, HttpTransport
-from azure.core.pipeline import PipelineRequest, PipelineContext
+from azure.core.pipeline.transport import  HttpTransport
 import pytest
 
 def test_response_hook_policy_in_init():

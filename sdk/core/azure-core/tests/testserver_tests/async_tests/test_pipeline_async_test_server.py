@@ -27,29 +27,15 @@ import sys
 
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import (
-    SansIOHTTPPolicy,
     UserAgentPolicy,
-    DistributedTracingPolicy,
-    AsyncRetryPolicy,
     AsyncRedirectPolicy,
-    AsyncHTTPPolicy,
-    AsyncRetryPolicy,
-    HttpLoggingPolicy,
 )
 from azure.core.pipeline.transport import (
-    AsyncHttpTransport,
     HttpRequest,
     AsyncioRequestsTransport,
     TrioRequestsTransport,
     AioHttpTransport
 )
-
-from azure.core.polling.async_base_polling import AsyncLROBasePolling
-from azure.core.polling.base_polling import LocationPolling
-
-from azure.core.configuration import Configuration
-from azure.core import AsyncPipelineClient
-from azure.core.exceptions import AzureError
 
 import aiohttp
 import trio

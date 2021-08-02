@@ -50,8 +50,6 @@ from azure.core.pipeline.transport import (
 from azure.core.pipeline.policies import (
     NetworkTraceLoggingPolicy,
     ContentDecodePolicy,
-    UserAgentPolicy,
-    HttpLoggingPolicy,
     RequestHistory,
     RetryPolicy,
     HTTPPolicy,

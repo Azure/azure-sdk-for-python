@@ -9,7 +9,6 @@ try:
 except ImportError:
     import mock
 
-import sys
 import time
 
 import pytest

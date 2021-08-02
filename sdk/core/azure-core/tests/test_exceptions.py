@@ -24,11 +24,6 @@
 #
 # --------------------------------------------------------------------------
 import json
-import logging
-import os
-
-import requests
-import pytest
 try:
     from unittest.mock import Mock
 except ImportError:
@@ -37,7 +32,6 @@ except ImportError:
 
 # module under test
 from azure.core.exceptions import HttpResponseError, ODataV4Error, ODataV4Format
-from azure.core.pipeline.transport import RequestsTransportResponse
 from azure.core.pipeline.transport._base import _HttpResponseBase
 
 

@@ -28,12 +28,10 @@ import sys
 from azure.core.pipeline.transport import (
     HttpRequest,
     AioHttpTransport,
-    AioHttpTransportResponse,
-    AsyncHttpTransport,
     AsyncioRequestsTransport,
-    TrioRequestsTransport)
+    TrioRequestsTransport
+)
 
-import aiohttp
 import trio
 
 import pytest

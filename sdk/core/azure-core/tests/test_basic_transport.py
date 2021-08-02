@@ -3,11 +3,8 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from six.moves.http_client import HTTPConnection
 from collections import OrderedDict
-import time
 import sys
-import json
 
 try:
     from unittest import mock
@@ -15,11 +12,10 @@ except ImportError:
     import mock
 
 from azure.core.pipeline.transport import HttpRequest, HttpResponse, RequestsTransport
-from azure.core.pipeline.transport._base import HttpClientTransportResponse, HttpTransport, _deserialize_response, _urljoin
+from azure.core.pipeline.transport._base import HttpTransport, _deserialize_response, _urljoin
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.pipeline import Pipeline
 from azure.core.exceptions import HttpResponseError
-import logging
 import pytest
 
 

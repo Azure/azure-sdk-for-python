@@ -11,7 +11,6 @@ from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.core.settings import settings
 from tracing_common import FakeSpan
 import time
-import pytest
 
 try:
     from unittest import mock

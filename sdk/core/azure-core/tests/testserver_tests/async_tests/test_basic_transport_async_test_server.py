@@ -6,11 +6,6 @@
 from six.moves.http_client import HTTPConnection
 import time
 
-try:
-    from unittest import mock
-except ImportError:
-    import mock
-
 from azure.core.pipeline.transport import HttpRequest, AioHttpTransport
 from azure.core.pipeline import AsyncPipeline
 

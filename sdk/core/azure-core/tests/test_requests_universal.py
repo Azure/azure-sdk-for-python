@@ -27,8 +27,7 @@ import concurrent.futures
 import pytest
 import requests.utils
 
-from azure.core.pipeline.transport import HttpRequest, RequestsTransport, RequestsTransportResponse
-from azure.core.configuration import Configuration
+from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
 
 
 def test_threading_basic_requests():

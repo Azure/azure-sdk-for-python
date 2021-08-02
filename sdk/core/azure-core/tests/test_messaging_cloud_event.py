@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import pytest
-import json
 import datetime
 
 from azure.core.messaging import CloudEvent
