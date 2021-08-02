@@ -38,7 +38,8 @@ jobs:
 
       - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
         parameters:
-          BaseRepoBranch: $(DefaultBranch)
+          # Should be $(DefaultBranch)
+          BaseRepoBranch: djurek/validate-docs-onboarding-from-docindex
           BaseRepoOwner: $(DocRepoOwner)
           CommitMsg: "Update docs CI configuration"
           TargetRepoName: $(DocRepoName)
