@@ -32,7 +32,7 @@ class ClientAssertionCredential(GetTokenMixin):
         """
         self._get_assertion = get_assertion
         self._client = AadClient(tenant_id, client_id, **kwargs)
-        super(ClientAssertionCredential, self).__init__()
+        super(ClientAssertionCredential, self).__init__(**kwargs)
 
     def __enter__(self):
         self._client.__enter__()

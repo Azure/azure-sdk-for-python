@@ -69,7 +69,12 @@ class ManagedIdentityCredential(object):
             _LOGGER.info("%s will use token exchange", self.__class__.__name__)
             from .token_exchange import TokenExchangeCredential
 
-            self._credential = TokenExchangeCredential(**kwargs)
+            self._credential = TokenExchangeCredential(
+                tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
+                client_id=os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
+                token_file_path=os.environ[EnvironmentVariables.TOKEN_FILE_PATH],
+                **kwargs
+            )
         else:
             from .imds import ImdsCredential
 

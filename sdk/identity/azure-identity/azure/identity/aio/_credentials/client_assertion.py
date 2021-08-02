@@ -31,7 +31,7 @@ class ClientAssertionCredential(AsyncContextManager, GetTokenMixin):
         """
         self._get_assertion = get_assertion
         self._client = AadClient(tenant_id, client_id, **kwargs)
-        super().__init__()
+        super().__init__(**kwargs)
 
     async def __aenter__(self):
         await self._client.__aenter__()
