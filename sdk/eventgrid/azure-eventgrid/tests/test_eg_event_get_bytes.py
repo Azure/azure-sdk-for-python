@@ -5,6 +5,7 @@
 import datetime
 import pytest
 import uuid
+from azure.eventgrid._helpers import _get_json_content
 from azure.eventgrid import EventGridEvent
 
 class MockQueueMessage(object):
@@ -109,7 +110,7 @@ def test_get_bytes_storage_queue():
     }"""
     obj = MockQueueMessage(content=cloud_storage_dict)
 
-    dict = EventGridEvent._get_bytes(obj)
+    dict = _get_json_content(obj)
     assert dict.get('data') == {
             "api":"PutBlockList",
             "client_request_id":"6d79dbfb-0e37-4fc4-981f-442c9ca65760",
@@ -144,7 +145,7 @@ def test_get_bytes_servicebus():
         sequence_number=11219,
         lock_token='233146e3-d5a6-45eb-826f-691d82fb8b13'
     )
-    dict = EventGridEvent._get_bytes(obj)
+    dict = _get_json_content(obj)
     assert dict.get('data') == "ServiceBus"
     assert dict.get('data_version') == '1.0'
 
@@ -162,14 +163,14 @@ def test_get_bytes_servicebus_wrong_content():
         lock_token='233146e3-d5a6-45eb-826f-691d82fb8b13'
     )
     with pytest.raises(ValueError, match="Failed to retrieve body from the object. Make sure the body follows the EventGridEvent schema."):
-        dict = EventGridEvent._get_bytes(obj)
+        dict = _get_json_content(obj)
 
 
 def test_get_bytes_eventhubs():
     obj = MockEventhubData(
         body=MockEhBody()
     )
-    dict = EventGridEvent._get_bytes(obj)
+    dict = _get_json_content(obj)
     assert dict.get('data') == 'Eventhub'
     assert dict.get('data_version') == '1.0'
 
@@ -179,7 +180,7 @@ def test_get_bytes_eventhubs_wrong_content():
     )
 
     with pytest.raises(ValueError, match="Failed to retrieve body from the object. Make sure the body follows the EventGridEvent schema."):
-        dict = EventGridEvent._get_bytes(obj)
+        dict = _get_json_content(obj)
 
 
 def test_get_bytes_random_obj():
@@ -192,4 +193,4 @@ def test_get_bytes_random_obj():
         "data_version":"1.0",
     }
 
-    assert EventGridEvent._get_bytes(random_obj) is random_obj
+    assert _get_json_content(random_obj) is random_obj

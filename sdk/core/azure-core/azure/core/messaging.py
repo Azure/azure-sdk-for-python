@@ -8,7 +8,7 @@ import uuid
 import json
 from base64 import b64decode
 from datetime import datetime
-from .utils._utils import _convert_to_isoformat, TZ_UTC
+from .utils._utils import _convert_to_isoformat, TZ_UTC, _get_json_content
 from .serialization import NULL
 
 try:
@@ -123,7 +123,7 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
         :type event: dict
         :rtype: CloudEvent
         """
-        event = CloudEvent._get_bytes(event)
+        event = _get_json_content(event)
         kwargs = {}  # type: Dict[Any, Any]
         reserved_attr = [
             "data",
@@ -183,31 +183,3 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
                     " The `source` and `type` params are required."
                     )
         return event_obj
-
-    @staticmethod
-    def _get_bytes(obj):
-        """Event mixin to have methods that are common to different Event types
-        like CloudEvent, EventGridEvent etc.
-        """
-        try:
-            # storage queue
-            return json.loads(obj.content)
-        except ValueError:
-            raise ValueError(
-                "Failed to retrieve content from the object. Make sure the "
-                 + "content follows the CloudEvent schema."
-                )
-        except AttributeError:
-            # eventhubs
-            try:
-                return json.loads(next(obj.body))[0]
-            except KeyError:
-                # servicebus
-                return json.loads(next(obj.body))
-            except ValueError:
-                raise ValueError(
-                    "Failed to retrieve body from the object. Make sure the "
-                    + "body follows the CloudEvent schema."
-                    )
-            except: # pylint: disable=bare-except
-                return obj

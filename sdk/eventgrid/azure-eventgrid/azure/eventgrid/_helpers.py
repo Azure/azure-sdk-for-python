@@ -165,3 +165,30 @@ def _build_request(endpoint, content_type, events):
     )
     request.format_parameters(query_parameters)
     return request
+
+def _get_json_content(obj):
+    """Event mixin to have methods that are common to different Event types
+    like CloudEvent, EventGridEvent etc.
+    """
+    try:
+        # storage queue
+        return json.loads(obj.content)
+    except ValueError:
+        raise ValueError(
+            "Failed to retrieve content from the object. Make sure the "
+                + "content follows the EventGridEvent schema."
+            )
+    except AttributeError:
+        # eventhubs
+        try:
+            return json.loads(next(obj.body))[0]
+        except KeyError:
+            # servicebus
+            return json.loads(next(obj.body))
+        except ValueError:
+            raise ValueError(
+                "Failed to retrieve body from the object. Make sure the "
+                + "body follows the EventGridEvent schema."
+                )
+        except: # pylint: disable=bare-except
+            return obj

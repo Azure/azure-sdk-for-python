@@ -8,7 +8,7 @@ import uuid
 import datetime
 
 from azure.core.messaging import CloudEvent
-from azure.core.utils._utils import _convert_to_isoformat
+from azure.core.utils._utils import _convert_to_isoformat, _get_json_content
 from azure.core.serialization import NULL
 
 class MockQueueMessage(object):
@@ -574,7 +574,7 @@ def test_get_bytes_storage_queue():
     }"""
     obj = MockQueueMessage(content=cloud_storage_dict)
 
-    dict = CloudEvent._get_bytes(obj)
+    dict = _get_json_content(obj)
     assert dict.get('data') == {
             "api":"PutBlockList",
             "client_request_id":"6d79dbfb-0e37-4fc4-981f-442c9ca65760",
@@ -609,7 +609,7 @@ def test_get_bytes_servicebus():
         sequence_number=11219,
         lock_token='233146e3-d5a6-45eb-826f-691d82fb8b13'
     )
-    dict = CloudEvent._get_bytes(obj)
+    dict = _get_json_content(obj)
     assert dict.get('data') == "ServiceBus"
     assert dict.get('specversion') == '1.0'
 
@@ -628,13 +628,13 @@ def test_get_bytes_servicebus_wrong_content():
     )
 
     with pytest.raises(ValueError, match="Failed to retrieve body from the object. Make sure the body follows the CloudEvent schema."):
-        CloudEvent._get_bytes(obj)
+        _get_json_content(obj)
 
 def test_get_bytes_eventhubs():
     obj = MockEventhubData(
         body=MockEhBody()
     )
-    dict = CloudEvent._get_bytes(obj)
+    dict = _get_json_content(obj)
     assert dict.get('data') == 'Eventhub'
     assert dict.get('specversion') == '1.0'
 
@@ -644,7 +644,7 @@ def test_get_bytes_eventhubs_wrong_content():
     )
 
     with pytest.raises(ValueError, match="Failed to retrieve body from the object. Make sure the body follows the CloudEvent schema."):
-        dict = CloudEvent._get_bytes(obj)
+        dict = _get_json_content(obj)
 
 def test_get_bytes_random_obj():
     random_obj =  {
@@ -658,4 +658,4 @@ def test_get_bytes_random_obj():
         "BADext2": "example2"
     }
 
-    assert CloudEvent._get_bytes(random_obj) is random_obj
+    assert _get_json_content(random_obj) is random_obj

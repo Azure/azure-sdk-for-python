@@ -8,6 +8,7 @@ import datetime as dt
 import uuid
 import json
 from msrest.serialization import UTC
+from ._helpers import _get_json_content
 from ._generated.models import (
     EventGridEvent as InternalEventGridEvent,
 )
@@ -100,7 +101,7 @@ class EventGridEvent(InternalEventGridEvent):
 
     @classmethod
     def from_dict(cls, data, key_extractors=None, content_type=None):
-        event = EventGridEvent._get_bytes(data)
+        event = _get_json_content(data)
         super(EventGridEvent, cls).from_dict(event, key_extractors, content_type)
 
     @staticmethod
