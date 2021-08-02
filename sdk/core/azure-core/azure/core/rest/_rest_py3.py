@@ -245,8 +245,12 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
 
     @property
     def encoding(self) -> Optional[str]:
-        """Returns the response encoding. By default, is specified
-        by the response Content-Type header.
+        """Returns the response encoding.
+
+        :return: The response encoding. We either return the encoding set by the user,
+         or try extracting the encoding from the response's content type. If all fails,
+         we return `None`.
+        :rtype: optional[str]
         """
         try:
             return self._encoding
