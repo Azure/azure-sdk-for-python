@@ -9,7 +9,7 @@ jobs:
     variables:
       DocRepoLocation: $(Pipeline.Workspace)/docs
       DocRepoOwner: MicrosoftDocs
-      DocRepoName: azure-docs-sdk-node
+      DocRepoName: azure-docs-sdk-python
     steps:
       # Sync docs repo (this can be sparse)
       - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
