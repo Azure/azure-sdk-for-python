@@ -24,7 +24,7 @@ jobs:
         architecture: 'x64'
     - bash: |
         # verify $ISSUE_LINK and $BASE_BRANCH is not null
-        if [[!"$BASE_BRANCH"] || [!"$ISSUE_LINK"]]; then
+        if [[! -n "$BASE_BRANCH"] || [! -n "$ISSUE_LINK"]]; then
           echo "$BASE_BRANCH ++ $ISSUE_LINK"
           echo "ISSUE_LINK or BASE_BRANCH do not exist, pipeline fail!!!"
           exit 1
