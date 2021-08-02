@@ -5,6 +5,11 @@
 ### Features Added
 
 ### Breaking Changes
+> These changes do not impact the API of stable versions such as 1.6.0.
+> Only code written against a beta version such as 1.7.0b1 may be affected.
+- Renamed `AZURE_POD_IDENTITY_TOKEN_URL` to `AZURE_POD_IDENTITY_AUTHORITY_HOST`.
+  The value should now be a host, for example "http://169.254.169.254" (the
+  default).
 
 ### Bugs Fixed
 - Fixed import of `azure.identity.aio.AzureApplicationCredential`
