@@ -199,7 +199,7 @@ class BlobCheckpointStore(CheckpointStore):
                 - `consumer_group` (str): The name of the consumer group the ownership are associated with.
                 - `partition_id` (str): The partition ID which the checkpoint is created for.
                 - `owner_id` (str): A UUID representing the current owner of this partition.
-                - `last_modified_time` (UTC datetime.datetime): The last time this ownership was claimed.
+                - `last_modified_time` (float): The last time this ownership was claimed as a timestamp.
                 - `etag` (str): The Etag value for the last time this ownership was modified. Optional depending
                   on storage implementation.
         """
@@ -249,7 +249,7 @@ class BlobCheckpointStore(CheckpointStore):
                 - `consumer_group` (str): The name of the consumer group the ownership are associated with.
                 - `partition_id` (str): The partition ID which the checkpoint is created for.
                 - `owner_id` (str): A UUID representing the owner attempting to claim this partition.
-                - `last_modified_time` (UTC datetime.datetime): The last time this ownership was claimed.
+                - `last_modified_time` (float): The last time this ownership was claimed as a timestamp.
                 - `etag` (str): The Etag value for the last time this ownership was modified. Optional depending
                   on storage implementation.
         """
