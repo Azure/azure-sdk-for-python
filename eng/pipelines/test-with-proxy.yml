@@ -31,11 +31,11 @@ jobs:
         continueOnError: true
 
       - pwsh: |
-          choco install docker-cli
+          choco install docker-desktop
         displayName: 'Install docker-cli only'
 
       - pwsh: |
-          C:\ProgramData\chocolatey\lib\docker-cli\tools\docker.exe -SwitchDaemon
+          C:\ProgramData\chocolatey\lib\docker-desktop\tools\dockercli.exe -SwitchDaemon
         displayName: 'Install docker-cli only'
 
       - pwsh: |
