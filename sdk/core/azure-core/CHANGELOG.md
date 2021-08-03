@@ -6,15 +6,13 @@
 
 - Cut hard dependency on requests library
 
-### Breaking Changes in the Provisional `azure.core.rest` package
-
-- `azure.core.rest` will not try to guess the `charset` anymore if it was impossible to extract it from `HttpResponse` analysis. This removes our dependency on `charset`.
-
-### Key Bugs Fixed
-
 ### Fixed
 
 - Not override "x-ms-client-request-id" if it already exists in the header.    #17757
+
+### Breaking Changes in the Provisional `azure.core.rest` package
+
+- `azure.core.rest` will not try to guess the `charset` anymore if it was impossible to extract it from `HttpResponse` analysis. This removes our dependency on `charset`.
 
 ## 1.16.0 (2021-07-01)
 
@@ -40,7 +38,6 @@ are thrown if you mishandle streamed responses from the provisional `azure.core.
 
 - Retry policies don't sleep after operations time out
 - The `from_dict` methhod in the `CloudEvent` can now convert a datetime string to datetime object when microsecond exceeds the python limitation
-
 
 ## 1.14.0 (2021-05-13)
 
