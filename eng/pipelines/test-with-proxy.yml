@@ -22,8 +22,14 @@ jobs:
         continueOnError: true
 
       - pwsh: |
-          Get-ChildItem -Recurse C:/
-        displayName: "Dump the contents of disk"
+          dir env:
+        displayName: "Dump Env"
+
+      - pwsh: |
+          cd "C:\Program Files\Docker\Docker"
+          ls
+        displayName: 'Ensure appropriate image type'
+        continueOnError: true
 
       - pwsh: |
           docker run `
