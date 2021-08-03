@@ -74,7 +74,7 @@ class LogsQueryResult(object):
     :keyword render: Any object.
     :paramtype render: object
     :keyword error: Any object.
-    :paramtype error: object 
+    :paramtype error: object
     """
     def __init__(self, **kwargs):
         # type: (Any) -> None
@@ -224,7 +224,7 @@ class LogsBatchQueryResult(object):
     :keyword render: Any object.
     :paramtype render: object
     :keyword error: Any object.
-    :paramtype error: object 
+    :paramtype error: object
     """
     def __init__(
         self,
