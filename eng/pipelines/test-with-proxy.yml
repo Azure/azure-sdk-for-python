@@ -26,7 +26,7 @@ jobs:
         displayName: "Dump Env"
 
       - pwsh: |
-          Get-ChildItem -Recurse C:\Program Files\Docker
+          Get-ChildItem -Recurse "C:/Program Files/Docker"
         displayName: 'Dump Details of Docker Install'
         continueOnError: true
 
