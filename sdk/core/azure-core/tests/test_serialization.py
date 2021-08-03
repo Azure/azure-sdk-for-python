@@ -125,6 +125,7 @@ def test_model_basic(json_dumps_with_encoder):
             self.boolean = True
             self.list_of_ints = [1, 2, 3]
             self.dictionary_of_number = {"pi": 3.14}
+            self.bytes_data = b"data as bytes"
 
     expected = BasicModel()
     expected_dict = {
@@ -133,6 +134,7 @@ def test_model_basic(json_dumps_with_encoder):
         "boolean": True,
         "list_of_ints": [1, 2, 3],
         "dictionary_of_number": {"pi": 3.14},
+        "bytes_data": "ZGF0YSBhcyBieXRlcw==",
     }
     assert json.loads(json_dumps_with_encoder(expected.to_dict())) == expected_dict
 
@@ -165,6 +167,57 @@ def test_model_datetime(json_dumps_with_encoder):
         "date": "2021-05-12",
         "datetime": '2012-02-24T00:53:52.780000+00:00',
         'time': '11:12:13',
+    }
+    assert json.loads(json_dumps_with_encoder(expected.to_dict())) == expected_dict
+
+def test_model_key_vault(json_dumps_with_encoder):
+    class Attributes(SerializerMixin):
+        def __init__(self):
+            self.enabled = True
+            self.not_before = datetime.strptime('2012-02-24T00:53:52.780Z', "%Y-%m-%dT%H:%M:%S.%fZ")
+            self.expires = datetime.strptime('2032-02-24T00:53:52.780Z', "%Y-%m-%dT%H:%M:%S.%fZ")
+            self.created = datetime.strptime('2020-02-24T00:53:52.780Z', "%Y-%m-%dT%H:%M:%S.%fZ")
+            self.updated = datetime.strptime('2021-02-24T00:53:52.780Z', "%Y-%m-%dT%H:%M:%S.%fZ")
+
+    class ResourceId(SerializerMixin):
+        def __init__(self):
+            self.source_id = "source-id"
+            self.vault_url = "vault-url"
+            self.name = "name"
+            self.version = None
+
+    class Identifier(SerializerMixin):
+        def __init__(self):
+            self._resource_id = ResourceId()
+
+    class Properties(SerializerMixin):
+        def __init__(self):
+            self._attributes = Attributes()
+            self._id = "id"
+            self._vault_id = Identifier()
+            self._thumbprint = b"thumbprint bytes"
+            self._tags = None
+
+    expected = Properties()
+    expected_dict = {
+        "_attributes": {
+            "enabled": True,
+            "not_before": "2012-02-24T00:53:52.780000+00:00",
+            "expires": "2032-02-24T00:53:52.780000+00:00",
+            "created": "2020-02-24T00:53:52.780000+00:00",
+            "updated": "2021-02-24T00:53:52.780000+00:00",
+        },
+        "_id": "id",
+        "_vault_id": {
+            "_resource_id": {
+                "source_id": "source-id",
+                "vault_url": "vault-url",
+                "name": "name",
+                "version": None,
+            },
+        },
+        "_thumbprint": "dGh1bWJwcmludCBieXRlcw==",
+        "_tags": None,
     }
     assert json.loads(json_dumps_with_encoder(expected.to_dict())) == expected_dict
 
@@ -294,8 +347,6 @@ def test_dictionary_empty_collections(json_dumps_with_encoder):
     test_obj = {
         "dictionary": {},
         "list": [],
-        # "tuple": (),  json represents tuples as lists, so this won't round-trip with json.loads
-        # "set": set(),  json can't serialize sets. should we?
     }
 
     assert json.dumps(test_obj) == json_dumps_with_encoder(test_obj)
@@ -306,8 +357,6 @@ def test_model_empty_collections(json_dumps_with_encoder):
         def __init__(self):
             self.dictionary = {}
             self.list = []
-            # self.tuple = (),  json represents tuples as lists, so this won't round-trip with json.loads
-            # self.set = set(),  json can't serialize sets. should we?
 
     expected = EmptyCollectionsModel()
     expected_dict = {
