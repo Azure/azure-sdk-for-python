@@ -5,7 +5,8 @@
 import datetime
 import pytest
 import uuid
-from azure.eventgrid._helpers import _get_json_content
+from msrest.serialization import UTC
+from azure.eventgrid._messaging_shared import _get_json_content
 from azure.eventgrid import EventGridEvent
 
 class MockQueueMessage(object):
@@ -129,7 +130,7 @@ def test_get_bytes_storage_queue_wrong_content():
     string = u'This is a random string which must fail'
     obj = MockQueueMessage(content=string)
 
-    with pytest.raises(ValueError, match="Failed to retrieve content from the object. Make sure the content follows the EventGridEvent schema."):
+    with pytest.raises(ValueError, match="Failed to load JSON content from the object."):
         _get_json_content(obj)
 
 def test_get_bytes_servicebus():
@@ -162,7 +163,7 @@ def test_get_bytes_servicebus_wrong_content():
         sequence_number=11219,
         lock_token='233146e3-d5a6-45eb-826f-691d82fb8b13'
     )
-    with pytest.raises(ValueError, match="Failed to retrieve body from the object. Make sure the body follows the EventGridEvent schema."):
+    with pytest.raises(ValueError, match="Failed to load JSON content from the object."):
         dict = _get_json_content(obj)
 
 
@@ -179,7 +180,7 @@ def test_get_bytes_eventhubs_wrong_content():
         body=MockEhBody(data='random string')
     )
 
-    with pytest.raises(ValueError, match="Failed to retrieve body from the object. Make sure the body follows the EventGridEvent schema."):
+    with pytest.raises(ValueError, match="Failed to load JSON content from the object."):
         dict = _get_json_content(obj)
 
 
@@ -262,3 +263,4 @@ def test_from_json():
     json_str = '{"id": "de0fd76c-4ef4-4dfb-ab3a-8f24a307e033", "subject": "https://egtest.dev/cloudcustomevent", "data": {"team": "event grid squad"}, "event_type": "Azure.Sdk.Sample", "event_time": "2020-08-07T02:06:08.11969Z", "data_version": "1.0"}'
     event = EventGridEvent.from_json(json_str)
     assert event.data == {"team": "event grid squad"}
+    assert event.event_time == datetime.datetime(2020, 8, 7, 2, 6, 8, 119690, UTC())

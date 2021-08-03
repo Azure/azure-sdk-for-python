@@ -7,7 +7,8 @@
 import uuid
 from base64 import b64decode
 from datetime import datetime
-from .utils._utils import _convert_to_isoformat, TZ_UTC, _get_json_content
+from .utils._utils import _convert_to_isoformat, TZ_UTC
+from .utils._messaging_shared import _get_json_content
 from .serialization import NULL
 
 try:
@@ -186,11 +187,12 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
     def from_json(cls, json):
         # type: (Any) -> CloudEvent
         """
-        Returns the deserialized CloudEvent object when a json is provided.
+        Returns the deserialized CloudEvent object when a json payload is provided.
         :param json: The json string that should be converted into a CloudEvent. This can also be
          a storage QueueMessage, eventhub's EventData or ServiceBusMessage
         :type json: object
         :rtype: CloudEvent
+        :raises ValueError: If the provided JSON is invalid.
         """
         event = _get_json_content(json)
         return CloudEvent.from_dict(event)

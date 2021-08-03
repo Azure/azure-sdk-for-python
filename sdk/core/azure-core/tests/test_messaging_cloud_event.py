@@ -3,12 +3,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import pytest
-import json
 import uuid
 import datetime
 
 from azure.core.messaging import CloudEvent
-from azure.core.utils._utils import _convert_to_isoformat, _get_json_content
+from azure.core.utils._utils import _convert_to_isoformat
+from azure.core.utils._messaging_shared import _get_json_content
 from azure.core.serialization import NULL
 
 class MockQueueMessage(object):
@@ -593,7 +593,7 @@ def test_get_bytes_storage_queue_wrong_content():
     cloud_storage_string = u'This is a random string which must fail'
     obj = MockQueueMessage(content=cloud_storage_string)
 
-    with pytest.raises(ValueError, match="Failed to retrieve content from the object. Make sure the content follows the CloudEvent schema."):
+    with pytest.raises(ValueError, match="Failed to load JSON content from the object."):
         _get_json_content(obj)
 
 def test_get_bytes_servicebus():
@@ -627,7 +627,7 @@ def test_get_bytes_servicebus_wrong_content():
         lock_token='233146e3-d5a6-45eb-826f-691d82fb8b13'
     )
 
-    with pytest.raises(ValueError, match="Failed to retrieve body from the object. Make sure the body follows the CloudEvent schema."):
+    with pytest.raises(ValueError, match="Failed to load JSON content from the object."):
         _get_json_content(obj)
 
 def test_get_bytes_eventhubs():
@@ -643,7 +643,7 @@ def test_get_bytes_eventhubs_wrong_content():
         body=MockEhBody(data='random string')
     )
 
-    with pytest.raises(ValueError, match="Failed to retrieve body from the object. Make sure the body follows the CloudEvent schema."):
+    with pytest.raises(ValueError, match="Failed to load JSON content from the object."):
         dict = _get_json_content(obj)
 
 def test_get_bytes_random_obj():
@@ -726,3 +726,7 @@ def test_from_json():
     event = CloudEvent.from_json(json_str)
 
     assert event.data == {"team": "event grid squad"}
+    assert event.time.year == 2020
+    assert event.time.month == 8
+    assert event.time.day == 7
+    assert event.time.hour == 2

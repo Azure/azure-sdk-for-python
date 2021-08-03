@@ -30,7 +30,7 @@ with QueueServiceClient.from_connection_string(connection_str) as qsc:
         ).peek_messages(max_messages=32)
 
     ## deserialize payload into a list of typed Events
-    events = [CloudEvent.from_dict(msg) for msg in payload]
+    events = [CloudEvent.from_json(msg) for msg in payload]
 
     for event in events:
         print(type(event)) ## CloudEvent

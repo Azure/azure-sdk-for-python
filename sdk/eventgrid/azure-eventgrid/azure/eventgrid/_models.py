@@ -7,7 +7,7 @@ from typing import Any
 import datetime as dt
 import uuid
 from msrest.serialization import UTC
-from ._helpers import _get_json_content
+from ._messaging_shared import _get_json_content
 from ._generated.models import (
     EventGridEvent as InternalEventGridEvent,
 )
@@ -100,5 +100,14 @@ class EventGridEvent(InternalEventGridEvent):
 
     @classmethod
     def from_json(cls, json):
+        # type: (Any) -> EventGridEvent
+        """
+        Returns the deserialized EventGridEvent object when a json payload is provided.
+        :param json: The json string that should be converted into a EventGridEvent. This can also be
+         a storage QueueMessage, eventhub's EventData or ServiceBusMessage
+        :type json: object
+        :rtype: EventGridEvent
+        :raises ValueError: If the provided JSON is invalid.
+        """
         event = _get_json_content(json)
         return EventGridEvent.from_dict(event)

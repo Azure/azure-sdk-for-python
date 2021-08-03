@@ -5,7 +5,6 @@
 # license information.
 # --------------------------------------------------------------------------
 import datetime
-import json
 
 
 class _FixedOffset(datetime.tzinfo):
@@ -107,30 +106,3 @@ def _case_insensitive_dict(*args, **kwargs):
         raise ValueError(
             "Neither 'requests' or 'multidict' are installed and no case-insensitive dict impl have been found"
         )
-
-def _get_json_content(obj):
-    """Event mixin to have methods that are common to different Event types
-    like CloudEvent, EventGridEvent etc.
-    """
-    try:
-        # storage queue
-        return json.loads(obj.content)
-    except ValueError:
-        raise ValueError(
-            "Failed to retrieve content from the object. Make sure the "
-                + "content follows the CloudEvent schema."
-            )
-    except AttributeError:
-        # eventhubs
-        try:
-            return json.loads(next(obj.body))[0]
-        except KeyError:
-            # servicebus
-            return json.loads(next(obj.body))
-        except ValueError:
-            raise ValueError(
-                "Failed to retrieve body from the object. Make sure the "
-                + "body follows the CloudEvent schema."
-                )
-        except: # pylint: disable=bare-except
-            return json.loads(obj)
