@@ -38,6 +38,12 @@ jobs:
           cd "C:\Program Files\Docker\Docker\"
           ./DockerCli.exe -SwitchDaemon
         displayName: 'Install docker-cli only'
+        continueOnError: true
+      
+      - pwsh: |
+          cd "C:\Program Files\Docker\Docker\"
+          ./DockerCli.exe -SwitchLinuxEngine
+        displayName: 'Install docker-cli only'
 
       - pwsh: |
           docker run `
