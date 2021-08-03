@@ -6,7 +6,9 @@
 
 - Cut hard dependency on requests library
 
-### Breaking Changes
+### Breaking Changes in the Provisional `azure.core.rest` package
+
+- `azure.core.rest` will not try to guess the `charset` anymore if it was impossible to extract it from `HttpResponse` analysis. This removes our dependency on `charset`.
 
 ### Key Bugs Fixed
 

@@ -55,7 +55,8 @@ from ._helpers import (
     format_parameters,
     to_pipeline_transport_request_helper,
     from_pipeline_transport_request_helper,
-    get_charset_encoding
+    get_charset_encoding,
+    decode_to_text,
 )
 from ._helpers_py3 import set_content_body
 from ..exceptions import ResponseNotReadError
@@ -235,6 +236,7 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
         self._connection_data_block_size = None
         self._json = None  # this is filled in ContentDecodePolicy, when we deserialize
         self._content = None  # type: Optional[bytes]
+        self._text = None  # type: Optional[str]
 
     @property
     def url(self) -> str:
@@ -243,13 +245,18 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
 
     @property
     def encoding(self) -> Optional[str]:
-        """Returns the response encoding. By default, is specified
-        by the response Content-Type header.
+        """Returns the response encoding.
+
+        :return: The response encoding. We either return the encoding set by the user,
+         or try extracting the encoding from the response's content type. If all fails,
+         we return `None`.
+        :rtype: optional[str]
         """
         try:
             return self._encoding
         except AttributeError:
-            return get_charset_encoding(self)
+            self._encoding: Optional[str] = get_charset_encoding(self)
+            return self._encoding
 
     @encoding.setter
     def encoding(self, value: str) -> None:
@@ -259,10 +266,13 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
     @property
     def text(self) -> str:
         """Returns the response body as a string"""
-        encoding = self.encoding
-        if encoding == "utf-8" or encoding is None:
-            encoding = "utf-8-sig"
-        return self.content.decode(encoding)
+        if self._text is None:
+            content = self.content
+            if not content:
+                self._text = ""
+            else:
+                self._text = decode_to_text(self.encoding, self.content)
+        return self._text
 
     def json(self) -> Any:
         """Returns the whole body as a json object.
