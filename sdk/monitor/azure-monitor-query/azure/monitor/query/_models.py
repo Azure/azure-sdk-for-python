@@ -73,12 +73,15 @@ class LogsQueryResult(object):
     :paramtype statistics: object
     :keyword render: Any object.
     :paramtype render: object
+    :keyword error: Any object.
+    :paramtype error: object 
     """
     def __init__(self, **kwargs):
         # type: (Any) -> None
         self.tables = kwargs.get("tables", None)
         self.statistics = kwargs.get("statistics", None)
         self.render = kwargs.get("render", None)
+        self.error = kwargs.get("error", None)
 
     @classmethod
     def _from_generated(cls, generated):
@@ -94,7 +97,8 @@ class LogsQueryResult(object):
         return cls(
             tables=tables,
             statistics=generated.statistics,
-            render=generated.render
+            render=generated.render,
+            error=generated.error
         )
 
 
@@ -209,29 +213,48 @@ class LogsBatchQueryRequest(InternalLogQueryRequest):
 class LogsBatchQueryResult(object):
     """The LogsBatchQueryResult.
 
-    :param id:
-    :type id: str
-    :param status:
+    :param request_id: the request id of the request that was sent.
+    :type request_id: str
+    :param status: status code of the response.
     :type status: int
-    :param body: Contains the tables, columns & rows resulting from a query.
-    :type body: ~azure.monitor.query.LogsQueryResult
+    :keyword tables: The list of tables, columns and rows.
+    :paramtype tables: list[~azure.monitor.query.LogsQueryResultTable]
+    :keyword statistics: Any object.
+    :paramtype statistics: object
+    :keyword render: Any object.
+    :paramtype render: object
+    :keyword error: Any object.
+    :paramtype error: object 
     """
     def __init__(
         self,
         **kwargs
     ):
-        self.id = kwargs.get('id', None)
+        self.request_id = kwargs.get('id', None)
         self.status = kwargs.get('status', None)
-        self.body = kwargs.get('body', None)
+        self.tables = kwargs.get('tables', None)
+        self.error = kwargs.get('error', None)
+        self.statistics = kwargs.get('statistics', None)
+        self.render = kwargs.get('render', None)
 
     @classmethod
     def _from_generated(cls, generated):
         if not generated:
             return cls()
+        tables = None
+        if generated.body.tables is not None:
+            tables = [
+                LogsQueryResultTable._from_generated( # pylint: disable=protected-access
+                    table
+                    ) for table in generated.body.tables
+                ]
         return cls(
-            id=generated.id,
+            request_id=generated.id,
             status=generated.status,
-            body=LogsQueryResult._from_generated(generated.body) # pylint: disable=protected-access
+            tables=tables,
+            statistics=generated.body.statistics,
+            render=generated.body.render,
+            error=generated.body.error
         )
 
 

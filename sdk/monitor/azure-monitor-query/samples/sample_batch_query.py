@@ -27,7 +27,7 @@ requests = [
         workspace_id= os.environ['LOG_WORKSPACE_ID']
     ),
     LogsBatchQueryRequest(
-        query= "AppRequests | take 5",
+        query= "AppRequestss | take 5",
         workspace_id= os.environ['LOG_WORKSPACE_ID'],
         include_statistics=True
     ),
@@ -35,13 +35,11 @@ requests = [
 responses = client.batch_query(requests)
 
 for response in responses:
-    body = response.body
-    print(response.id)
-    if not body.tables:
-        print("Something is wrong")
-    else:
-        for table in body.tables:
-            df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
-            print(df)
+    try:
+        table = response.tables[0]
+        df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
+        print(df)
+    except TypeError:
+        print(response.error)
 
 # [END send_batch_query]

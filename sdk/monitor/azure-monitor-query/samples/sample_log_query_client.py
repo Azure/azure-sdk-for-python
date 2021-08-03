@@ -28,9 +28,12 @@ response = client.query(os.environ['LOG_WORKSPACE_ID'], query, duration=timedelt
 if not response.tables:
     print("No results for the query")
 
-for table in response.tables:
+try:
+    table = response.tables[0]
     df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
     print(df)
+except TypeError:
+    print(response.error)
 # [END send_logs_query]
 """
     TimeGenerated                                        _ResourceId          avgRequestDuration
