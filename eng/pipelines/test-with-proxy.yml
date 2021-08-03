@@ -26,8 +26,7 @@ jobs:
         displayName: "Dump Env"
 
       - pwsh: |
-          cd "C:\Program Files\Docker\Docker"
-          ls
+          Write-Host "$env:PATH"
         displayName: 'Ensure appropriate image type'
         continueOnError: true
 
