@@ -95,6 +95,7 @@ async def test_caching():
     tenant = "tenant-id"
 
     async def send(request, **_):
+        assert request.headers["User-Agent"].startswith(USER_AGENT)
         parsed = urlparse(request.url)
         authority = "https://{}/{}".format(parsed.netloc, tenant)
         return mock_response(
@@ -169,18 +170,3 @@ async def test_policies_configurable():
     with UserAssertion("..."):
         await credential.get_token("scope")
     assert policy.on_request.called
-
-
-@pytest.mark.asyncio
-async def test_user_agent():
-    async def send(request, **_):
-        assert request.headers["User-Agent"] == USER_AGENT
-        parsed = urlparse(request.url)
-        tenant = parsed.path.split("/")[1]
-        if "/oauth2/v2.0/token" not in parsed.path:
-            return get_discovery_response("https://{}/{}".format(parsed.netloc, tenant))
-        return mock_response(json_payload=build_aad_response(access_token="***"))
-
-    credential = OnBehalfOfCredential("tenant-id", "client-id", "client-secret", transport=Mock(send=send))
-    with UserAssertion("..."):
-        await credential.get_token("scope")

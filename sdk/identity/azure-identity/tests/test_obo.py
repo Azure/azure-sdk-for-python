@@ -102,7 +102,7 @@ def test_caching():
     tenant = "tenant-id"
 
     def send(request, **_):
-        assert request.headers["User-Agent"] == USER_AGENT
+        assert request.headers["User-Agent"].startswith(USER_AGENT)
         parsed = urlparse(request.url)
         authority = "https://{}/{}".format(parsed.netloc, tenant)
         if "/oauth2/v2.0/token" not in parsed.path:
