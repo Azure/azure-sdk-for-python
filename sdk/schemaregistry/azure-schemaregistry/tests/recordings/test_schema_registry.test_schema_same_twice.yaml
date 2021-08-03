@@ -1,8 +1,6 @@
 interactions:
 - request:
-    body: '{"namespace": "example.avro", "type": "record", "name": "User", "fields":
-      [{"name": "name", "type": "string"}, {"name": "age", "type": ["int", "null"]},
-      {"name": "city", "type": ["string", "null"]}]}'
+    body: '{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"age","type":["int","null"]},{"name":"city","type":["string","null"]}]}'
     headers:
       Accept:
       - application/json
@@ -11,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '199'
+      - '179'
       Content-Type:
       - text/plain
       Serialization-Type:
@@ -27,7 +25,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 02 Aug 2021 22:58:22 GMT
+      - Mon, 02 Aug 2021 23:58:45 GMT
       location:
       - https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7/versions/1?api-version=2020-09-01-preview
       schema-id:
@@ -50,9 +48,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"namespace": "example.avro", "type": "record", "name": "User", "fields":
-      [{"name": "name", "type": "string"}, {"name": "age", "type": ["int", "null"]},
-      {"name": "city", "type": ["string", "null"]}]}'
+    body: '{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"age","type":["int","null"]},{"name":"city","type":["string","null"]}]}'
     headers:
       Accept:
       - application/json
@@ -61,7 +57,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '199'
+      - '179'
       Content-Type:
       - text/plain
       Serialization-Type:
@@ -77,7 +73,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 02 Aug 2021 22:58:22 GMT
+      - Mon, 02 Aug 2021 23:58:45 GMT
       location:
       - https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7/versions/1?api-version=2020-09-01-preview
       schema-id:

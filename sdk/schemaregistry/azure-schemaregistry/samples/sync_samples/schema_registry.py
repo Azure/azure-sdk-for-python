@@ -66,7 +66,7 @@ SCHEMA_JSON = {
     ]
 }
 
-SCHEMA_STRING = json.dumps(SCHEMA_JSON)
+SCHEMA_STRING = json.dumps(SCHEMA_JSON, separators=(',', ':'))
 
 
 def register_schema(client, schema_group, schema_name, serialization_type, schema_string):
@@ -104,3 +104,4 @@ if __name__ == '__main__':
         schema_id = register_schema(schema_registry_client, SCHEMA_GROUP, SCHEMA_NAME, SERIALIZATION_TYPE, SCHEMA_STRING)
         schema_str = get_schema_by_id(schema_registry_client, schema_id=schema_id)
         schema_id = get_schema_id(schema_registry_client, SCHEMA_GROUP, SCHEMA_NAME, SERIALIZATION_TYPE, SCHEMA_STRING)
+

@@ -1,8 +1,6 @@
 interactions:
 - request:
-    body: '{"namespace": "example.avro", "type": "record", "name": "User", "fields":
-      [{"name": "name", "type": "string"}, {"name": "favorite_number", "type": ["int",
-      "null"]}, {"name": "favorite_color", "type": ["string", "null"]}]}'
+    body: '{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}'
     headers:
       Accept:
       - application/json
@@ -11,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '221'
+      - '201'
       Content-Type:
       - text/plain
       Serialization-Type:
@@ -27,7 +25,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 02 Aug 2021 22:58:09 GMT
+      - Mon, 02 Aug 2021 23:58:32 GMT
       location:
       - https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-basic31c70f88/versions/1?api-version=2020-09-01-preview
       schema-id:
@@ -69,7 +67,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 02 Aug 2021 22:58:09 GMT
+      - Mon, 02 Aug 2021 23:58:32 GMT
       location:
       - https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-basic31c70f88/versions/1?api-version=2020-09-01-preview
       schema-id:
@@ -92,9 +90,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"namespace": "example.avro", "type": "record", "name": "User", "fields":
-      [{"name": "name", "type": "string"}, {"name": "favorite_number", "type": ["int",
-      "null"]}, {"name": "favorite_color", "type": ["string", "null"]}]}'
+    body: '{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}'
     headers:
       Accept:
       - application/json
@@ -103,7 +99,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '221'
+      - '201'
       Content-Type:
       - text/plain
       Serialization-Type:
@@ -119,7 +115,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 02 Aug 2021 22:58:10 GMT
+      - Mon, 02 Aug 2021 23:58:34 GMT
       location:
       - https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-basic31c70f88/versions/1?api-version=2020-09-01-preview
       schema-id:

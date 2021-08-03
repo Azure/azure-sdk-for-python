@@ -42,6 +42,6 @@ def _parse_response_schema_id(response):
 def _parse_response_schema(response):
     # type: (HttpResponse) -> Schema
     return Schema(
-        schema_content=json.dumps(response.json()),
+        schema_content=response.text,
         schema_properties=SchemaProperties(**response.headers)
     )

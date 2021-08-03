@@ -60,7 +60,7 @@ class SchemaRegistryTests(AzureTestCase):
             ]
         }
 
-        schema_str = json.dumps(schema_json)
+        schema_str = json.dumps(schema_json, separators=(',', ':'))
         serialization_type = "Avro"
         schema_properties = client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
 
@@ -111,7 +111,7 @@ class SchemaRegistryTests(AzureTestCase):
             ]
         }
 
-        schema_str = json.dumps(schema_json)
+        schema_str = json.dumps(schema_json, separators=(',', ':'))
 
         serialization_type = "Avro"
         schema_properties = client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
@@ -141,7 +141,7 @@ class SchemaRegistryTests(AzureTestCase):
             ]
         }
 
-        schema_str_new = json.dumps(schema_json_new)
+        schema_str_new = json.dumps(schema_json_new, separators=(',', ':'))
 
         new_schema_properties = client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str_new)
 
@@ -185,7 +185,7 @@ class SchemaRegistryTests(AzureTestCase):
             ]
         }
 
-        schema_str = json.dumps(schema_json)
+        schema_str = json.dumps(schema_json, separators=(',', ':'))
 
         serialization_type = "Avro"
         schema_properties = client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
@@ -217,7 +217,7 @@ class SchemaRegistryTests(AzureTestCase):
             ]
         }
 
-        schema_str = json.dumps(schema_json)
+        schema_str = json.dumps(schema_json, separators=(',', ':'))
 
         serialization_type = "Avro"
         with pytest.raises(ClientAuthenticationError):
@@ -247,7 +247,7 @@ class SchemaRegistryTests(AzureTestCase):
             ]
         }
 
-        schema_str = json.dumps(schema_json)
+        schema_str = json.dumps(schema_json, separators=(',', ':'))
 
         serialization_type = "Avro"
         with pytest.raises(ServiceRequestError):
