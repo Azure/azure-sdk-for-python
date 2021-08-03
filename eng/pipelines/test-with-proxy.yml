@@ -17,6 +17,15 @@ jobs:
           versionSpec: $(PythonVersion)
 
       - pwsh: |
+          choco --version
+        displayName: "Is Choco available?"
+        continueOnError: true
+
+      - pwsh: |
+          Get-ChildItem -Recurse C:/
+        displayName: "Dump the contents of disk"
+
+      - pwsh: |
           docker run `
             --detach `
             -v $(Build.SourcesDirectory):/etc/testproxy `
