@@ -15,7 +15,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -27,14 +27,14 @@ class AliasOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~subscription_client.models
+    :type models: ~azure.mgmt.subscription.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,10 +45,10 @@ class AliasOperations:
     async def _create_initial(
         self,
         alias_name: str,
-        body: "models.PutAliasRequest",
-        **kwargs
-    ) -> "models.PutAliasResponse":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PutAliasResponse"]
+        body: "_models.PutAliasRequest",
+        **kwargs: Any
+    ) -> "_models.PutAliasResponse":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PutAliasResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -82,7 +82,7 @@ class AliasOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponseBody, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponseBody, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -100,27 +100,29 @@ class AliasOperations:
     async def begin_create(
         self,
         alias_name: str,
-        body: "models.PutAliasRequest",
-        **kwargs
-    ) -> AsyncLROPoller["models.PutAliasResponse"]:
+        body: "_models.PutAliasRequest",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.PutAliasResponse"]:
         """Create Alias Subscription.
 
-        :param alias_name: Alias Name.
+        :param alias_name: Name for this subscription creation request also known as alias. Note that
+         this is not the same as subscription name and this doesn’t have any other lifecycle need beyond
+         the request for subscription creation.
         :type alias_name: str
         :param body:
-        :type body: ~subscription_client.models.PutAliasRequest
+        :type body: ~azure.mgmt.subscription.models.PutAliasRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either PutAliasResponse or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~subscription_client.models.PutAliasResponse]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.subscription.models.PutAliasResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PutAliasResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PutAliasResponse"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -144,7 +146,11 @@ class AliasOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'aliasName': self._serialize.url("alias_name", alias_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -161,18 +167,20 @@ class AliasOperations:
     async def get(
         self,
         alias_name: str,
-        **kwargs
-    ) -> "models.PutAliasResponse":
+        **kwargs: Any
+    ) -> "_models.PutAliasResponse":
         """Get Alias Subscription.
 
-        :param alias_name: Alias Name.
+        :param alias_name: Name for this subscription creation request also known as alias. Note that
+         this is not the same as subscription name and this doesn’t have any other lifecycle need beyond
+         the request for subscription creation.
         :type alias_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PutAliasResponse, or the result of cls(response)
-        :rtype: ~subscription_client.models.PutAliasResponse
+        :rtype: ~azure.mgmt.subscription.models.PutAliasResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PutAliasResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PutAliasResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -201,7 +209,7 @@ class AliasOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponseBody, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponseBody, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PutAliasResponse', pipeline_response)
@@ -215,11 +223,13 @@ class AliasOperations:
     async def delete(
         self,
         alias_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete Alias.
 
-        :param alias_name: Alias Name.
+        :param alias_name: Name for this subscription creation request also known as alias. Note that
+         this is not the same as subscription name and this doesn’t have any other lifecycle need beyond
+         the request for subscription creation.
         :type alias_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -255,7 +265,7 @@ class AliasOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponseBody, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponseBody, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -265,16 +275,16 @@ class AliasOperations:
 
     async def list(
         self,
-        **kwargs
-    ) -> "models.PutAliasListResult":
+        **kwargs: Any
+    ) -> "_models.PutAliasListResult":
         """Get Alias Subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PutAliasListResult, or the result of cls(response)
-        :rtype: ~subscription_client.models.PutAliasListResult
+        :rtype: ~azure.mgmt.subscription.models.PutAliasListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PutAliasListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PutAliasListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -299,7 +309,7 @@ class AliasOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponseBody, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponseBody, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PutAliasListResult', pipeline_response)

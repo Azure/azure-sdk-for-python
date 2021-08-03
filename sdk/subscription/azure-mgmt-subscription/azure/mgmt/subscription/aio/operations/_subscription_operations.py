@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -25,14 +25,14 @@ class SubscriptionOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~subscription_client.models
+    :type models: ~azure.mgmt.subscription.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -43,18 +43,18 @@ class SubscriptionOperations:
     async def cancel(
         self,
         subscription_id: str,
-        **kwargs
-    ) -> "models.CanceledSubscriptionId":
+        **kwargs: Any
+    ) -> "_models.CanceledSubscriptionId":
         """The operation to cancel a subscription.
 
         :param subscription_id: Subscription Id.
         :type subscription_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CanceledSubscriptionId, or the result of cls(response)
-        :rtype: ~subscription_client.models.CanceledSubscriptionId
+        :rtype: ~azure.mgmt.subscription.models.CanceledSubscriptionId
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CanceledSubscriptionId"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CanceledSubscriptionId"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -83,7 +83,7 @@ class SubscriptionOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CanceledSubscriptionId', pipeline_response)
@@ -97,21 +97,21 @@ class SubscriptionOperations:
     async def rename(
         self,
         subscription_id: str,
-        body: "models.SubscriptionName",
-        **kwargs
-    ) -> "models.RenamedSubscriptionId":
+        body: "_models.SubscriptionName",
+        **kwargs: Any
+    ) -> "_models.RenamedSubscriptionId":
         """The operation to rename a subscription.
 
         :param subscription_id: Subscription Id.
         :type subscription_id: str
         :param body: Subscription Name.
-        :type body: ~subscription_client.models.SubscriptionName
+        :type body: ~azure.mgmt.subscription.models.SubscriptionName
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RenamedSubscriptionId, or the result of cls(response)
-        :rtype: ~subscription_client.models.RenamedSubscriptionId
+        :rtype: ~azure.mgmt.subscription.models.RenamedSubscriptionId
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RenamedSubscriptionId"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RenamedSubscriptionId"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -145,7 +145,7 @@ class SubscriptionOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RenamedSubscriptionId', pipeline_response)
@@ -159,18 +159,18 @@ class SubscriptionOperations:
     async def enable(
         self,
         subscription_id: str,
-        **kwargs
-    ) -> "models.EnabledSubscriptionId":
+        **kwargs: Any
+    ) -> "_models.EnabledSubscriptionId":
         """The operation to enable a subscription.
 
         :param subscription_id: Subscription Id.
         :type subscription_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: EnabledSubscriptionId, or the result of cls(response)
-        :rtype: ~subscription_client.models.EnabledSubscriptionId
+        :rtype: ~azure.mgmt.subscription.models.EnabledSubscriptionId
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EnabledSubscriptionId"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EnabledSubscriptionId"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -199,7 +199,7 @@ class SubscriptionOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('EnabledSubscriptionId', pipeline_response)

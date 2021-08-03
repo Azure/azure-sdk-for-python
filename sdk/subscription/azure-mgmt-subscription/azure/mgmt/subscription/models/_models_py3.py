@@ -94,7 +94,7 @@ class ErrorResponseBody(msrest.serialization.Model):
     """Error response indicates that the service is not able to process the incoming request. The reason is provided in the error message.
 
     :param error: The details of the error.
-    :type error: ~subscription_client.models.ErrorResponse
+    :type error: ~azure.mgmt.subscription.models.ErrorResponse
     """
 
     _attribute_map = {
@@ -166,7 +166,7 @@ class LocationListResult(msrest.serialization.Model):
     """Location list operation response.
 
     :param value: An array of locations.
-    :type value: list[~subscription_client.models.Location]
+    :type value: list[~azure.mgmt.subscription.models.Location]
     """
 
     _attribute_map = {
@@ -189,7 +189,7 @@ class Operation(msrest.serialization.Model):
     :param name: Operation name: {provider}/{resource}/{operation}.
     :type name: str
     :param display: The object that represents the operation.
-    :type display: ~subscription_client.models.OperationDisplay
+    :type display: ~azure.mgmt.subscription.models.OperationDisplay
     """
 
     _attribute_map = {
@@ -244,7 +244,7 @@ class OperationListResult(msrest.serialization.Model):
     """Result of the request to list operations. It contains a list of operations and a URL link to get the next set of results.
 
     :param value: List of operations.
-    :type value: list[~subscription_client.models.Operation]
+    :type value: list[~azure.mgmt.subscription.models.Operation]
     :param next_link: URL to get the next set of operation list results if there are any.
     :type next_link: str
     """
@@ -272,7 +272,7 @@ class PutAliasListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: The list of alias.
-    :vartype value: list[~subscription_client.models.PutAliasResponse]
+    :vartype value: list[~azure.mgmt.subscription.models.PutAliasResponse]
     :ivar next_link: The link (url) to the next page of results.
     :vartype next_link: str
     """
@@ -302,7 +302,7 @@ class PutAliasRequest(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param properties: Required. Put alias request properties.
-    :type properties: ~subscription_client.models.PutAliasRequestProperties
+    :type properties: ~azure.mgmt.subscription.models.PutAliasRequestProperties
     """
 
     _validation = {
@@ -330,7 +330,7 @@ class PutAliasRequestProperties(msrest.serialization.Model):
     :type display_name: str
     :param workload: The workload type of the subscription. It can be either Production or DevTest.
      Possible values include: "Production", "DevTest".
-    :type workload: str or ~subscription_client.models.Workload
+    :type workload: str or ~azure.mgmt.subscription.models.Workload
     :param billing_scope: Determines whether subscription is fieldLed, partnerLed or LegacyEA.
     :type billing_scope: str
     :param subscription_id: This parameter can be used to create alias for existing subscription
@@ -378,7 +378,7 @@ class PutAliasResponse(msrest.serialization.Model):
     :ivar type: Resource type, Microsoft.Subscription/aliases.
     :vartype type: str
     :param properties: Put Alias response properties.
-    :type properties: ~subscription_client.models.PutAliasResponseProperties
+    :type properties: ~azure.mgmt.subscription.models.PutAliasResponseProperties
     """
 
     _validation = {
@@ -416,7 +416,7 @@ class PutAliasResponseProperties(msrest.serialization.Model):
     :vartype subscription_id: str
     :param provisioning_state: The provisioning state of the resource. Possible values include:
      "Accepted", "Succeeded", "Failed".
-    :type provisioning_state: str or ~subscription_client.models.ProvisioningState
+    :type provisioning_state: str or ~azure.mgmt.subscription.models.ProvisioningState
     """
 
     _validation = {
@@ -478,9 +478,9 @@ class Subscription(msrest.serialization.Model):
     :vartype display_name: str
     :ivar state: The subscription state. Possible values are Enabled, Warned, PastDue, Disabled,
      and Deleted. Possible values include: "Enabled", "Warned", "PastDue", "Disabled", "Deleted".
-    :vartype state: str or ~subscription_client.models.SubscriptionState
+    :vartype state: str or ~azure.mgmt.subscription.models.SubscriptionState
     :param subscription_policies: The subscription policies.
-    :type subscription_policies: ~subscription_client.models.SubscriptionPolicies
+    :type subscription_policies: ~azure.mgmt.subscription.models.SubscriptionPolicies
     :param authorization_source: The authorization source of the request. Valid values are one or
      more combinations of Legacy, RoleBased, Bypassed, Direct and Management. For example, 'Legacy,
      RoleBased'.
@@ -525,7 +525,7 @@ class SubscriptionListResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param value: An array of subscriptions.
-    :type value: list[~subscription_client.models.Subscription]
+    :type value: list[~azure.mgmt.subscription.models.Subscription]
     :param next_link: Required. The URL to get the next set of results.
     :type next_link: str
     """
@@ -585,7 +585,7 @@ class SubscriptionPolicies(msrest.serialization.Model):
     :vartype quota_id: str
     :ivar spending_limit: The subscription spending limit. Possible values include: "On", "Off",
      "CurrentPeriodOff".
-    :vartype spending_limit: str or ~subscription_client.models.SpendingLimit
+    :vartype spending_limit: str or ~azure.mgmt.subscription.models.SpendingLimit
     """
 
     _validation = {
@@ -647,7 +647,7 @@ class TenantListResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param value: An array of tenants.
-    :type value: list[~subscription_client.models.TenantIdDescription]
+    :type value: list[~azure.mgmt.subscription.models.TenantIdDescription]
     :param next_link: Required. The URL to use for getting the next set of results.
     :type next_link: str
     """
