@@ -161,19 +161,30 @@ function Get-python-GithubIoDocIndex()
   GenerateDocfxTocContent -tocContent $tocContent -lang "Python" -campaignId "UA-62780441-36"
 }
 
-function ValidatePackage($packageName, $packageVersion) {
+function ValidatePackage($packageName, $packageVersion, $workingDirectory) {
   $packageExpression = "$packageName$packageVersion"
   Write-Host "Validating $packageExpression"
 
-  # TODO: Additional checks for package validation in docs build.
-  Write-Host "pip install $packageExpression"
-  $pipInstallOutput = pip install $packageExpression 2>&1
+  $installTargetFolder = Join-Path $workingDirectory $packageName
+  New-Item -ItemType Directory -Force -Path $installTargetFolder | Out-Null
 
-  if ($LASTEXITCODE -ne 0) {
+  # TODO: Additional checks for package validation in docs build.
+  try {
+    Write-Host "pip install $packageExpression --target $installTargetFolder"
+    $pipInstallOutput = pip `
+      install `
+      $packageExpression `
+      --target $installTargetFolder 2>&1
+    if ($LASTEXITCODE -ne 0) {
+      LogWarning "pip install failed for $packageExpression"
+      Write-Host $pipInstallOutput
+      return $false
+    }
+  } catch {
     LogWarning "pip install failed for $packageExpression"
-    Write-Host $pipInstallOutput
     return $false
   }
+
   return $true
 }
 
@@ -207,6 +218,10 @@ function Update-python-DocsMsPackages($DocsRepoLocation, $DocsMetadata) {
 function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata) {
   Write-Host "Updating configuration: $DocConfigFile with mode: $Mode"
   $packageConfig = Get-Content $DocConfigFile -Raw | ConvertFrom-Json
+
+  $installValidationFolder = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
+  New-Item -ItemType Directory -Force -Path $installValidationFolder | Out-Null
+
 
   $outputPackages = @()
   foreach ($package in $packageConfig.packages) {
@@ -268,7 +283,7 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata) {
     # If upgrading the package, run basic sanity checks against the package
     if ($package.package_info.version -ne $packageVersion) {
       Write-Host "New version detected for $packageName ($packageVersion)"
-      if (!(ValidatePackage -packageName $packageName -packageVersion $packageVersion)) {
+      if (!(ValidatePackage -packageName $packageName -packageVersion $packageVersion -workingDirectory $installValidationFolder)) {
         LogWarning "Package is not valid: $packageName. Keeping old version."
         $outputPackages += $package
         continue
@@ -315,7 +330,7 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata) {
       $packageVersion = "==$($package.VersionPreview)"
     }
 
-    if (!(ValidatePackage -packageName $packageName -packageVersion $packageVersion)) {
+    if (!(ValidatePackage -packageName $packageName -packageVersion $packageVersion -workingDirectory $installValidationFolder)) {
       LogWarning "Package is not valid: $packageName. Cannot onboard."
       continue
     }

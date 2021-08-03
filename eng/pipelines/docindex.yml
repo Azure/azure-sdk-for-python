@@ -11,7 +11,12 @@ jobs:
       DocRepoOwner: MicrosoftDocs
       DocRepoName: azure-docs-sdk-python
     steps:
-      # Sync docs repo (this can be sparse)
+      - task: UsePythonVersion@0
+        displayName: 'Use Python 3.6'
+        inputs:
+          versionSpec: '3.6'
+
+      # Sync docs repo onboarding files/folders
       - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
         parameters:
           SkipDefaultCheckout: true
