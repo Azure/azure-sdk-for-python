@@ -94,11 +94,16 @@ class TestLogging(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     async def test_mock_quota_exceeded_403(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
 
-        response = mock.Mock(status_code=403, headers={"Retry-After": 186688}, reason="Bad Request")
+        response = mock.Mock(
+            status_code=403,
+            headers={"Retry-After": 186688, "Content-Type": "application/json"},
+            reason="Bad Request"
+        )
         response.text = lambda encoding=None: json.dumps(
             {"error": {"code": "403", "message": "Out of call volume quota for FormRecognizer F0 pricing tier. "
             "Please retry after 1 day. To increase your call volume switch to a paid tier."}}
         )
+        response.content_type = "application/json"
         transport = mock.Mock(send=wrap_in_future(lambda request, **kwargs: response))
 
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key), transport=transport)
@@ -110,11 +115,16 @@ class TestLogging(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     async def test_mock_quota_exceeded_429(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
-        response = mock.Mock(status_code=429, headers={"Retry-After": 186688}, reason="Bad Request")
+        response = mock.Mock(
+            status_code=429,
+            headers={"Retry-After": 186688, "Content-Type": "application/json"},
+            reason="Bad Request"
+        )
         response.text = lambda encoding=None: json.dumps(
             {"error": {"code": "429", "message": "Out of call volume quota for FormRecognizer F0 pricing tier. "
             "Please retry after 1 day. To increase your call volume switch to a paid tier."}}
         )
+        response.content_type = "application/json"
         transport = mock.Mock(send=wrap_in_future(lambda request, **kwargs: response))
 
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key), transport=transport)
