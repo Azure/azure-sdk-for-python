@@ -8,7 +8,7 @@ jobs:
     displayName: 'Run Proxy and Test'
 
     pool:
-      vmImage: 'ubuntu-20.04'
+      vmImage: 'windows-2019'
 
     steps:
       - task: UsePythonVersion@0
