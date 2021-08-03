@@ -64,3 +64,13 @@ def complicated_json():
     assert request.json["None"] == None
 
     return Response(status=200)
+
+@basic_api.route("/headers", methods=['GET'])
+def headers():
+    return Response(
+        headers={
+            "lowercase-header": "lowercase",
+            "ALLCAPS-HEADER": "ALLCAPS",
+            "CamelCase-Header": "camelCase",
+        }
+    )
