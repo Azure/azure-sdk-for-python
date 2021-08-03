@@ -32,23 +32,6 @@ steps:
         autorest --help
       displayName: "Install autorest"
 
-    - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
-      parameters:
-        Paths:
-          - "/*"
-        Repositories:
-          - Name: "Azure/autorest.python"
-            Commitish: "autorestv3"
-            WorkingDirectory: "$(Build.SourcesDirectory)/autorest.python"
-        SkipDefaultCheckout: true
-
-    - script: |
-        python --version
-        pip install -r eng/autorest_req.txt
-        cd autorest.python
-        npm install
-      displayName: 'Prepare Environment'
-
     - task: PythonScript@0
       displayName: 'Verify autorest'
       inputs:

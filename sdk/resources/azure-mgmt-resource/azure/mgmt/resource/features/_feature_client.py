@@ -48,8 +48,6 @@ class FeatureClient(FeatureClientOperationsMixin, MultiApiClientMixin, _SDKClien
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The Azure subscription ID.
     :type subscription_id: str
-    :param provider_namespace: The provider namespace.
-    :type provider_namespace: str
     :param api_version: API version to use if no profile is provided, or if missing in profile.
     :type api_version: str
     :param base_url: Service URL
@@ -71,7 +69,6 @@ class FeatureClient(FeatureClientOperationsMixin, MultiApiClientMixin, _SDKClien
         self,
         credential,  # type: "TokenCredential"
         subscription_id,  # type: str
-        provider_namespace,  # type: str
         api_version=None, # type: Optional[str]
         base_url=None,  # type: Optional[str]
         profile=KnownProfiles.default, # type: KnownProfiles
@@ -79,7 +76,7 @@ class FeatureClient(FeatureClientOperationsMixin, MultiApiClientMixin, _SDKClien
     ):
         if not base_url:
             base_url = 'https://management.azure.com'
-        self._config = FeatureClientConfiguration(credential, subscription_id, provider_namespace, **kwargs)
+        self._config = FeatureClientConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(FeatureClient, self).__init__(
             api_version=api_version,

@@ -42,7 +42,7 @@ class Operations:
 
     async def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OperationListResult":
         """Lists all of the available REST API operations.
 
@@ -84,4 +84,4 @@ class Operations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.DBForMySQL/operations'}  # type: ignore
+    list.metadata = {'url': '/providers/Microsoft.DBforMySQL/operations'}  # type: ignore

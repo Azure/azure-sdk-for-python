@@ -38,6 +38,34 @@ az eventgrid domain --create --location <location> --resource-group <resource-gr
 In order to interact with the Event Grid service, you will need to create an instance of a client.
 An **endpoint** and **credential** are necessary to instantiate the client object.
 
+#### Using Azure Active Directory (AAD)
+
+Azure Event Grid provides integration with Azure Active Directory (Azure AD) for identity-based authentication of requests. With Azure AD, you can use role-based access control (RBAC) to grant access to your Azure Event Grid resources to users, groups, or applications.
+
+To send events to a topic or domain with a `TokenCredential`, the authenticated identity should have the "EventGrid Data Sender" role assigned.
+
+With the `azure-identity` package, you can seamlessly authorize requests in both development and production environments. To learn more about Azure Active Directory, see the [`azure-identity` README](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md).
+
+For example, you can use `DefaultAzureCredential` to construct a client which will authenticate using Azure Active Directory:
+
+```Python
+from azure.identity import DefaultAzureCredential
+from azure.eventgrid import EventGridPublisherClient, EventGridEvent
+
+event = EventGridEvent(
+    data={"team": "azure-sdk"},
+    subject="Door1",
+    event_type="Azure.Sdk.Demo",
+    data_version="2.0"
+)
+
+credential = DefaultAzureCredential()
+endpoint = os.environ["EG_TOPIC_HOSTNAME"]
+client = EventGridPublisherClient(endpoint, credential)
+
+client.send(event)
+```
+
 #### Looking up the endpoint
 You can find the topic endpoint within the Event Grid Topic resource on the Azure portal. This will look like:
 `"https://<event-grid-topic-name>.<topic-location>.eventgrid.azure.net/api/events"`

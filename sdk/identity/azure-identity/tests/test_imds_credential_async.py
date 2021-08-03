@@ -10,7 +10,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import CredentialUnavailableError
 from azure.identity._constants import EnvironmentVariables
-from azure.identity._credentials.imds import IMDS_URL
+from azure.identity._credentials.imds import IMDS_AUTHORITY, IMDS_TOKEN_PATH
 from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio._credentials.imds import ImdsCredential, PIPELINE_SETTINGS
 import pytest
@@ -182,9 +182,9 @@ async def test_identity_config():
 
     transport = async_validating_transport(
         requests=[
-            Request(base_url=IMDS_URL),
+            Request(base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH),
             Request(
-                base_url=IMDS_URL,
+                base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH,
                 method="GET",
                 required_headers={"Metadata": "true", "User-Agent": USER_AGENT},
                 required_params={"api-version": "2018-02-01", "resource": scope, param_name: param_value},
@@ -212,8 +212,8 @@ async def test_identity_config():
     assert token == expected_token
 
 
-async def test_imds_url_override():
-    url = "https://localhost/token"
+async def test_imds_authority_override():
+    authority = "https://localhost"
     expected_token = "***"
     scope = "scope"
     now = int(time.time())
@@ -221,7 +221,7 @@ async def test_imds_url_override():
     transport = async_validating_transport(
         requests=[
             Request(
-                base_url=url,
+                base_url=authority + IMDS_TOKEN_PATH,
                 method="GET",
                 required_headers={"Metadata": "true", "User-Agent": USER_AGENT},
                 required_params={"api-version": "2018-02-01", "resource": scope},
@@ -242,7 +242,7 @@ async def test_imds_url_override():
         ],
     )
 
-    with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_POD_IDENTITY_TOKEN_URL: url}, clear=True):
+    with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_POD_IDENTITY_AUTHORITY_HOST: authority}, clear=True):
         credential = ImdsCredential(transport=transport)
         token = await credential.get_token(scope)
 

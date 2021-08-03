@@ -169,6 +169,7 @@ class ListBlobsIncludeItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     TAGS = "tags"
     IMMUTABILITYPOLICY = "immutabilitypolicy"
     LEGALHOLD = "legalhold"
+    DELETEDWITHVERSIONS = "deletedwithversions"
 
 class ListContainersIncludeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -282,6 +283,7 @@ class StorageErrorCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     BLOB_NOT_FOUND = "BlobNotFound"
     BLOB_OVERWRITTEN = "BlobOverwritten"
     BLOB_TIER_INADEQUATE_FOR_CONTENT_LENGTH = "BlobTierInadequateForContentLength"
+    BLOB_USES_CUSTOMER_SPECIFIED_ENCRYPTION = "BlobUsesCustomerSpecifiedEncryption"
     BLOCK_COUNT_EXCEEDS_LIMIT = "BlockCountExceedsLimit"
     BLOCK_LIST_TOO_LONG = "BlockListTooLong"
     CANNOT_CHANGE_TO_LOWER_TIER = "CannotChangeToLowerTier"
