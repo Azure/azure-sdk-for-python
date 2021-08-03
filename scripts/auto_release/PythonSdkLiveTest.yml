@@ -81,7 +81,8 @@ jobs:
           --user "anything:$(USR_TOKEN)" \
           -d "{\
                   \"title\":\"[AutoRelease] $new_branch(Do not merge)\",\
-                  \"body\":\"$test_result $(ISSUE_LINK) \",\
+                  # \"body\":\"$test_result $(ISSUE_LINK) \",\
+                  \"body\":\"$(ISSUE_LINK)\",\
                   \"head\":\"$(USR_NAME):$new_branch\",\
                   \"base\":\"$target_branch\"\
               }" \
