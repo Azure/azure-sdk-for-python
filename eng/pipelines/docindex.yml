@@ -11,12 +11,14 @@ jobs:
       DocRepoOwner: MicrosoftDocs
       DocRepoName: azure-docs-sdk-python
     steps:
+      # Docs CI uses Python 3.6.8
       - task: UsePythonVersion@0
-        displayName: 'Use Python 3.6'
+        displayName: 'Use Python 3.6.8'
         inputs:
-          versionSpec: '3.6'
+          versionSpec: '3.6.8'
 
-      - pwsh: pip install --upgrade setuptools pip
+      # Docs CI upgrades pip, wheel, and setuptools
+      - pwsh: pip install --upgrade pip wheel setuptools
         displayName: Update python tools for package verification
 
       # Sync docs repo onboarding files/folders
