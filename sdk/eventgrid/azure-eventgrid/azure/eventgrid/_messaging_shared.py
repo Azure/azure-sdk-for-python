@@ -23,7 +23,7 @@ def _get_json_content(obj):
     try:
         # storage queue
         return json.loads(obj.content)
-    except ValueError as err:
+    except (ValueError, TypeError) as err:
         raise_with_traceback(ValueError, msg, err)
     except AttributeError:
         # eventhubs
@@ -32,10 +32,10 @@ def _get_json_content(obj):
         except KeyError:
             # servicebus
             return json.loads(next(obj.body))
-        except ValueError as err:
+        except (ValueError, TypeError) as err:
             raise_with_traceback(ValueError, msg, err)
         except: # pylint: disable=bare-except
             try:
                 return json.loads(obj)
-            except ValueError as err:
+            except (ValueError, TypeError) as err:
                 raise_with_traceback(ValueError, msg, err)

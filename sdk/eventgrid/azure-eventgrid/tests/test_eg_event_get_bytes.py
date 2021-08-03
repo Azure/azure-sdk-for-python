@@ -19,6 +19,20 @@ class MockQueueMessage(object):
         self.pop_receipt = None
         self.next_visible_on = None
 
+class MockTypeErrorBody(object):
+    def __init__(self, data=None):
+        self.data = data
+
+    def __iter__(self):
+        return self
+    
+    def __next__(self):
+        if not self.data:
+            return {"id":"f208feff-099b-4bda-a341-4afd0fa02fef","source":"https://egsample.dev/sampleevent","data":"ServiceBus","type":"Azure.Sdk.Sample","time":"2021-07-22T22:27:38.960209Z","specversion":"1.0"}
+        return self.data
+    
+    next = __next__
+
 class MockServiceBusReceivedMessage(object):
     def __init__(self, body=None, **kwargs):
         self.body=body
@@ -264,3 +278,19 @@ def test_from_json():
     event = EventGridEvent.from_json(json_str)
     assert event.data == {"team": "event grid squad"}
     assert event.event_time == datetime.datetime(2020, 8, 7, 2, 6, 8, 119690, UTC())
+
+def test_from_json_sb_type_error():
+    obj = MockServiceBusReceivedMessage(
+        body=MockTypeErrorBody(),
+        message_id='3f6c5441-5be5-4f33-80c3-3ffeb6a090ce',
+        content_type='application/cloudevents+json; charset=utf-8',
+        time_to_live=datetime.timedelta(days=14),
+        delivery_count=13,
+        enqueued_sequence_number=0,
+        enqueued_time_utc=datetime.datetime(2021, 7, 22, 22, 27, 41, 236000),
+        expires_at_utc=datetime.datetime(2021, 8, 5, 22, 27, 41, 236000),
+        sequence_number=11219,
+        lock_token='233146e3-d5a6-45eb-826f-691d82fb8b13'
+    )
+    with pytest.raises(ValueError):
+        _get_json_content(obj)
