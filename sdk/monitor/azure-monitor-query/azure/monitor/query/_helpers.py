@@ -45,7 +45,7 @@ def process_error(exception):
     raise raise_error(message=exception.message, response=exception.response)
 
 def order_results(request_order, responses):
-    mapping = {item.request_id: item for item in responses}
+    mapping = {item.id: item for item in responses}
     ordered = [mapping[id] for id in request_order]
     return ordered
 

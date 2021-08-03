@@ -213,8 +213,8 @@ class LogsBatchQueryRequest(InternalLogQueryRequest):
 class LogsBatchQueryResult(object):
     """The LogsBatchQueryResult.
 
-    :param request_id: the request id of the request that was sent.
-    :type request_id: str
+    :param id: the request id of the request that was sent.
+    :type id: str
     :param status: status code of the response.
     :type status: int
     :keyword tables: The list of tables, columns and rows.
@@ -230,7 +230,7 @@ class LogsBatchQueryResult(object):
         self,
         **kwargs
     ):
-        self.request_id = kwargs.get('id', None)
+        self.id = kwargs.get('id', None)
         self.status = kwargs.get('status', None)
         self.tables = kwargs.get('tables', None)
         self.error = kwargs.get('error', None)
@@ -249,7 +249,7 @@ class LogsBatchQueryResult(object):
                     ) for table in generated.body.tables
                 ]
         return cls(
-            request_id=generated.id,
+            id=generated.id,
             status=generated.status,
             tables=tables,
             statistics=generated.body.statistics,
