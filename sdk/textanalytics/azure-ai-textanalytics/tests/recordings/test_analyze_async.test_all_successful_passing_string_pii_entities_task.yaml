@@ -1,119 +1,53 @@
 interactions:
 - request:
     body: '{"tasks": {"entityRecognitionTasks": [], "entityRecognitionPiiTasks": [{"parameters":
-      {"model-version": "latest", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}}],
+      {"model-version": "latest", "loggingOptOut": true, "stringIndexType": "UnicodeCodePoint"}}],
       "keyPhraseExtractionTasks": [], "entityLinkingTasks": [], "sentimentAnalysisTasks":
-      []}, "analysisInput": {"documents": [{"id": "0", "text": "My SSN is 859-98-0987.",
-      "language": "en"}, {"id": "1", "text": "Your ABA number - 111000025 - is the
-      first 9 digits in the lower left hand corner of your personal check.", "language":
-      "en"}, {"id": "2", "text": "Is 998.214.865-68 your Brazilian CPF number?", "language":
-      "en"}]}}'
+      [], "extractiveSummarizationTasks": []}, "analysisInput": {"documents": [{"id":
+      "0", "text": "My SSN is 859-98-0987.", "language": "en"}, {"id": "1", "text":
+      "Your ABA number - 111000025 - is the first 9 digits in the lower left hand
+      corner of your personal check.", "language": "en"}, {"id": "2", "text": "Is
+      998.214.865-68 your Brazilian CPF number?", "language": "en"}]}}'
     headers:
       Accept:
       - application/json, text/json
       Content-Length:
-      - '602'
+      - '637'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/analyze
   response:
     body:
       string: ''
     headers:
-      apim-request-id: fc80bba0-d6f4-4fd9-aeb7-777385621744
-      date: Wed, 23 Jun 2021 01:35:51 GMT
-      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/c36fd6e7-9bb1-41ce-81ce-d7f2a56e0ffc
+      apim-request-id: ec2e4dc2-e192-40e9-9e9d-0c4b48dc4ea5
+      date: Mon, 02 Aug 2021 21:45:14 GMT
+      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/analyze/jobs/dac98643-9da2-427e-9ec2-5cf5d78f5482
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '7774'
+      x-envoy-upstream-service-time: '123'
     status:
       code: 202
       message: Accepted
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com//text/analytics/v3.1/analyze
+    url: https://tacanaryjava.cognitiveservices.azure.com//text/analytics/v3.2-preview.1/analyze
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/c36fd6e7-9bb1-41ce-81ce-d7f2a56e0ffc?showStats=True
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/analyze/jobs/dac98643-9da2-427e-9ec2-5cf5d78f5482?showStats=True
   response:
     body:
-      string: '{"jobId":"c36fd6e7-9bb1-41ce-81ce-d7f2a56e0ffc","lastUpdateDateTime":"2021-06-23T01:35:51Z","createdDateTime":"2021-06-23T01:35:43Z","expirationDateTime":"2021-06-24T01:35:43Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":0,"failed":0,"inProgress":1,"total":1}}'
+      string: '{"jobId":"dac98643-9da2-427e-9ec2-5cf5d78f5482","lastUpdateDateTime":"2021-08-02T21:45:14Z","createdDateTime":"2021-08-02T21:45:14Z","expirationDateTime":"2021-08-03T21:45:14Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":0,"failed":0,"inProgress":1,"total":1}}'
     headers:
-      apim-request-id: 9a94a7f7-40f1-47ad-be19-44e0540ec1ab
+      apim-request-id: c444482f-e325-46af-8a22-3ee76189990a
       content-type: application/json; charset=utf-8
-      date: Wed, 23 Jun 2021 01:35:57 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '1773'
-    status:
-      code: 200
-      message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/c36fd6e7-9bb1-41ce-81ce-d7f2a56e0ffc?showStats=True
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/c36fd6e7-9bb1-41ce-81ce-d7f2a56e0ffc?showStats=True
-  response:
-    body:
-      string: '{"jobId":"c36fd6e7-9bb1-41ce-81ce-d7f2a56e0ffc","lastUpdateDateTime":"2021-06-23T01:35:51Z","createdDateTime":"2021-06-23T01:35:43Z","expirationDateTime":"2021-06-24T01:35:43Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":0,"failed":0,"inProgress":1,"total":1}}'
-    headers:
-      apim-request-id: 96834ccc-cd43-47e6-954a-a44c632fe758
-      content-type: application/json; charset=utf-8
-      date: Wed, 23 Jun 2021 01:36:02 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '9'
-    status:
-      code: 200
-      message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/c36fd6e7-9bb1-41ce-81ce-d7f2a56e0ffc?showStats=True
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/c36fd6e7-9bb1-41ce-81ce-d7f2a56e0ffc?showStats=True
-  response:
-    body:
-      string: '{"jobId":"c36fd6e7-9bb1-41ce-81ce-d7f2a56e0ffc","lastUpdateDateTime":"2021-06-23T01:35:51Z","createdDateTime":"2021-06-23T01:35:43Z","expirationDateTime":"2021-06-24T01:35:43Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":0,"failed":0,"inProgress":1,"total":1}}'
-    headers:
-      apim-request-id: 323646db-e5ef-4203-88d0-f809f021e38d
-      content-type: application/json; charset=utf-8
-      date: Wed, 23 Jun 2021 01:36:08 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '14'
-    status:
-      code: 200
-      message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/c36fd6e7-9bb1-41ce-81ce-d7f2a56e0ffc?showStats=True
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/c36fd6e7-9bb1-41ce-81ce-d7f2a56e0ffc?showStats=True
-  response:
-    body:
-      string: '{"jobId":"c36fd6e7-9bb1-41ce-81ce-d7f2a56e0ffc","lastUpdateDateTime":"2021-06-23T01:35:51Z","createdDateTime":"2021-06-23T01:35:43Z","expirationDateTime":"2021-06-24T01:35:43Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":0,"failed":0,"inProgress":1,"total":1}}'
-    headers:
-      apim-request-id: 9ce9a1e8-5222-4cb5-9535-0359d3685408
-      content-type: application/json; charset=utf-8
-      date: Wed, 23 Jun 2021 01:36:12 GMT
+      date: Mon, 02 Aug 2021 21:45:20 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -121,31 +55,31 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/c36fd6e7-9bb1-41ce-81ce-d7f2a56e0ffc?showStats=True
+    url: https://tacanaryjava.cognitiveservices.azure.com/text/analytics/v3.2-preview.1/analyze/jobs/dac98643-9da2-427e-9ec2-5cf5d78f5482?showStats=True
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/c36fd6e7-9bb1-41ce-81ce-d7f2a56e0ffc?showStats=True
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/analyze/jobs/dac98643-9da2-427e-9ec2-5cf5d78f5482?showStats=True
   response:
     body:
-      string: '{"jobId":"c36fd6e7-9bb1-41ce-81ce-d7f2a56e0ffc","lastUpdateDateTime":"2021-06-23T01:36:15Z","createdDateTime":"2021-06-23T01:35:43Z","expirationDateTime":"2021-06-24T01:35:43Z","status":"succeeded","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-06-23T01:36:15.1124345Z","taskName":"PersonallyIdentifiableInformation_latest","state":"succeeded","results":{"statistics":{"documentsCount":3,"validDocumentsCount":3,"erroneousDocumentsCount":0,"transactionsCount":3},"documents":[{"redactedText":"My
+      string: '{"jobId":"dac98643-9da2-427e-9ec2-5cf5d78f5482","lastUpdateDateTime":"2021-08-02T21:45:22Z","createdDateTime":"2021-08-02T21:45:14Z","expirationDateTime":"2021-08-03T21:45:14Z","status":"succeeded","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-08-02T21:45:22.0953999Z","taskName":"PersonallyIdentifiableInformation_latest","state":"succeeded","results":{"statistics":{"documentsCount":3,"validDocumentsCount":3,"erroneousDocumentsCount":0,"transactionsCount":3},"documents":[{"redactedText":"My
         SSN is ***********.","id":"0","statistics":{"charactersCount":22,"transactionsCount":1},"entities":[{"text":"859-98-0987","category":"USSocialSecurityNumber","offset":10,"length":11,"confidenceScore":0.65}],"warnings":[]},{"redactedText":"Your
         ABA number - ********* - is the first 9 digits in the lower left hand corner
         of your personal check.","id":"1","statistics":{"charactersCount":105,"transactionsCount":1},"entities":[{"text":"111000025","category":"PhoneNumber","offset":18,"length":9,"confidenceScore":0.8},{"text":"111000025","category":"ABARoutingNumber","offset":18,"length":9,"confidenceScore":0.75},{"text":"111000025","category":"NZSocialWelfareNumber","offset":18,"length":9,"confidenceScore":0.65}],"warnings":[]},{"redactedText":"Is
         998.214.865-68 your Brazilian CPF number?","id":"2","statistics":{"charactersCount":44,"transactionsCount":1},"entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}}]}}'
     headers:
-      apim-request-id: 72d69b7c-718a-45e8-9753-10d5dafe240d
+      apim-request-id: a6fffa3a-655d-475e-91dc-8b30159cb90f
       content-type: application/json; charset=utf-8
-      date: Wed, 23 Jun 2021 01:36:18 GMT
+      date: Mon, 02 Aug 2021 21:45:24 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '78'
+      x-envoy-upstream-service-time: '46'
     status:
       code: 200
       message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/c36fd6e7-9bb1-41ce-81ce-d7f2a56e0ffc?showStats=True
+    url: https://tacanaryjava.cognitiveservices.azure.com/text/analytics/v3.2-preview.1/analyze/jobs/dac98643-9da2-427e-9ec2-5cf5d78f5482?showStats=True
 version: 1

@@ -286,7 +286,8 @@ class TestAnalyze(TextAnalyticsTest):
                     ExtractKeyPhrasesAction(),
                     RecognizePiiEntitiesAction(),
                     RecognizeLinkedEntitiesAction(),
-                    AnalyzeSentimentAction()
+                    AnalyzeSentimentAction(),
+                    ExtractSummaryAction()
                 ],
                 polling_interval=self._interval(),
             )
@@ -304,7 +305,8 @@ class TestAnalyze(TextAnalyticsTest):
                     ExtractKeyPhrasesAction(),
                     RecognizePiiEntitiesAction(),
                     RecognizeLinkedEntitiesAction(),
-                    AnalyzeSentimentAction()
+                    AnalyzeSentimentAction(),
+                    ExtractSummaryAction()
                 ],
                 polling_interval=self._interval(),
             )
@@ -324,7 +326,8 @@ class TestAnalyze(TextAnalyticsTest):
                 ExtractKeyPhrasesAction(),
                 RecognizePiiEntitiesAction(),
                 RecognizeLinkedEntitiesAction(),
-                AnalyzeSentimentAction()
+                AnalyzeSentimentAction(),
+                ExtractSummaryAction()
             ],
             polling_interval=self._interval(),
         ).result()
@@ -339,9 +342,10 @@ class TestAnalyze(TextAnalyticsTest):
             _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES,
             _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES,
             _AnalyzeActionsType.ANALYZE_SENTIMENT,
+            _AnalyzeActionsType.EXTRACT_SUMMARY
         ]
         for doc_idx, document_results in enumerate(results):
-            assert len(document_results) == 5
+            assert len(document_results) == 6
             for action_idx, document_result in enumerate(document_results):
                 self.assertEqual(document_result.id, document_order[doc_idx])
                 self.assertEqual(self.document_result_to_action_type(document_result), action_order[action_idx])
@@ -353,10 +357,10 @@ class TestAnalyze(TextAnalyticsTest):
         def callback(resp):
             assert resp.raw_response
             tasks = resp.raw_response['tasks']
-            assert tasks['completed'] == 5
+            assert tasks['completed'] == 6
             assert tasks['inProgress'] == 0
             assert tasks['failed'] == 0
-            assert tasks['total'] == 5
+            assert tasks['total'] == 6
             num_tasks = 0
             for key, task in tasks.items():
                 if "Tasks" in key:
@@ -367,7 +371,7 @@ class TestAnalyze(TextAnalyticsTest):
                     assert task_stats['validDocumentsCount'] == 4
                     assert task_stats['erroneousDocumentsCount'] == 0
                     assert task_stats['transactionsCount'] == 4
-            assert num_tasks == 5
+            assert num_tasks == 6
 
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
@@ -381,7 +385,8 @@ class TestAnalyze(TextAnalyticsTest):
                 ExtractKeyPhrasesAction(model_version="latest"),
                 RecognizePiiEntitiesAction(model_version="latest"),
                 RecognizeLinkedEntitiesAction(model_version="latest"),
-                AnalyzeSentimentAction(model_version="latest")
+                AnalyzeSentimentAction(model_version="latest"),
+                ExtractSummaryAction(model_version="latest")
             ],
             show_stats=True,
             polling_interval=self._interval(),
@@ -398,6 +403,7 @@ class TestAnalyze(TextAnalyticsTest):
             _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES,
             _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES,
             _AnalyzeActionsType.ANALYZE_SENTIMENT,
+            _AnalyzeActionsType.EXTRACT_SUMMARY
         ]
         for document_results in pages:
             assert len(document_results) == len(action_order)
@@ -423,7 +429,7 @@ class TestAnalyze(TextAnalyticsTest):
         poller.result()
 
         assert isinstance(poller.created_on, datetime.datetime)
-        poller._polling_method.display_name
+        assert poller.display_name
         assert isinstance(poller.expires_on, datetime.datetime)
         assert poller.actions_failed_count == 0
         assert poller.actions_in_progress_count == 0
@@ -511,7 +517,8 @@ class TestAnalyze(TextAnalyticsTest):
                 ExtractKeyPhrasesAction(),
                 RecognizePiiEntitiesAction(),
                 RecognizeLinkedEntitiesAction(),
-                AnalyzeSentimentAction()
+                AnalyzeSentimentAction(),
+                ExtractSummaryAction()
             ],
             polling_interval=self._interval(),
         ).result())
@@ -533,7 +540,8 @@ class TestAnalyze(TextAnalyticsTest):
                     ExtractKeyPhrasesAction(model_version="bad"),
                     RecognizePiiEntitiesAction(model_version="bad"),
                     RecognizeLinkedEntitiesAction(model_version="bad"),
-                    AnalyzeSentimentAction(model_version="bad")
+                    AnalyzeSentimentAction(model_version="bad"),
+                    ExtractSummaryAction(model_version="bad")
                 ],
                 polling_interval=self._interval(),
             ).result()
@@ -551,7 +559,8 @@ class TestAnalyze(TextAnalyticsTest):
                     ExtractKeyPhrasesAction(model_version="bad"),
                     RecognizePiiEntitiesAction(model_version="bad"),
                     RecognizeLinkedEntitiesAction(model_version="bad"),
-                    AnalyzeSentimentAction(model_version="bad")
+                    AnalyzeSentimentAction(model_version="bad"),
+                    ExtractSummaryAction(model_version="bad")
                 ],
                 polling_interval=self._interval(),
             ).result()
@@ -568,7 +577,8 @@ class TestAnalyze(TextAnalyticsTest):
                     ExtractKeyPhrasesAction(),
                     RecognizePiiEntitiesAction(),
                     RecognizeLinkedEntitiesAction(),
-                    AnalyzeSentimentAction()
+                    AnalyzeSentimentAction(),
+                    ExtractSummaryAction()
                 ],
                 polling_interval=self._interval(),
             )
@@ -609,7 +619,8 @@ class TestAnalyze(TextAnalyticsTest):
                 ExtractKeyPhrasesAction(),
                 RecognizePiiEntitiesAction(),
                 RecognizeLinkedEntitiesAction(),
-                AnalyzeSentimentAction()
+                AnalyzeSentimentAction(),
+                ExtractSummaryAction()
             ],
             show_stats=True,
             polling_interval=self._interval(),
@@ -623,6 +634,7 @@ class TestAnalyze(TextAnalyticsTest):
             _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES,
             _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES,
             _AnalyzeActionsType.ANALYZE_SENTIMENT,
+            _AnalyzeActionsType.EXTRACT_SUMMARY
         ]
         action_type_to_document_results = defaultdict(list)
 
@@ -650,7 +662,8 @@ class TestAnalyze(TextAnalyticsTest):
                     ExtractKeyPhrasesAction(),
                     RecognizePiiEntitiesAction(),
                     RecognizeLinkedEntitiesAction(),
-                    AnalyzeSentimentAction()
+                    AnalyzeSentimentAction(),
+                    ExtractSummaryAction()
                 ],
                 polling_interval=self._interval(),
             )
@@ -665,6 +678,7 @@ class TestAnalyze(TextAnalyticsTest):
             RecognizePiiEntitiesAction(disable_service_logs=True),
             RecognizeLinkedEntitiesAction(disable_service_logs=True),
             AnalyzeSentimentAction(disable_service_logs=True),
+            ExtractSummaryAction(disable_service_logs=True),
         ]
 
         for action in actions:
@@ -813,8 +827,7 @@ class TestAnalyze(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_extract_summary_action_with_options(self, client):
-        docs = [{"id": "1", "language": "en", "text":
-            "The government of British Prime Minster Theresa May has been plunged into turmoil with the resignation"
+        docs = ["The government of British Prime Minster Theresa May has been plunged into turmoil with the resignation"
             " of two senior Cabinet ministers in a deep split over her Brexit strategy. The Foreign Secretary Boris "
             "Johnson, quit on Monday, hours after the resignation late on Sunday night of the minister in charge of "
             "Brexit negotiations, David Davis. Their decision to leave the government came three days after May "
@@ -829,7 +842,7 @@ class TestAnalyze(TextAnalyticsTest):
             "much away, too easily, and that's a dangerous strategy at this time, Davis said in a BBC radio "
             "interview Monday morning. Johnson's resignation came Monday afternoon local time, just before the "
             "Prime Minister was due to make a scheduled statement in Parliament. This afternoon, the Prime Minister "
-            "accepted the resignation of Boris Johnson as Foreign Secretary, a statement from Downing Street said."}]
+            "accepted the resignation of Boris Johnson as Foreign Secretary, a statement from Downing Street said."]
 
         response = client.begin_analyze_actions(
             docs,
