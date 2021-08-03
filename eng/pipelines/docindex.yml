@@ -16,6 +16,9 @@ jobs:
         inputs:
           versionSpec: '3.6'
 
+      - pwsh: pip install --upgrade setuptools pip
+        displayName: Update python tools for package verification
+
       # Sync docs repo onboarding files/folders
       - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
         parameters:
