@@ -48,8 +48,6 @@ class SchemaRegistryAvroSerializer(object):
         self._schema_group = schema_group
         self._avro_serializer = AvroObjectSerializer(codec=kwargs.get("codec"))
         self._schema_registry_client = schema_registry  # type: "SchemaRegistryClient"
-        self._id_to_schema = {}
-        self._schema_to_id = {}
         self._user_input_schema_cache = {}
 
     def __enter__(self):
@@ -82,8 +80,9 @@ class SchemaRegistryAvroSerializer(object):
         :rtype: str
         """
         schema_str = str(schema)
+        # pylint:disable=protected-access
         try:
-            return self._schema_to_id[schema_str]
+            return self._schema_registry_client._schema_to_id[schema_str]
         except KeyError:
             schema_id = self._schema_registry_client.register_schema(
                 self._schema_group,
@@ -92,8 +91,8 @@ class SchemaRegistryAvroSerializer(object):
                 schema_str,
                 **kwargs
             ).schema_id
-            self._schema_to_id[schema_str] = schema_id
-            self._id_to_schema[schema_id] = schema_str
+            self._schema_registry_client._schema_to_id[schema_str] = schema_id
+            self._schema_registry_client._id_to_schema[schema_id] = schema_str
             return schema_id
 
     def _get_schema(self, schema_id, **kwargs):
@@ -105,12 +104,13 @@ class SchemaRegistryAvroSerializer(object):
         :param str schema_id: Schema id
         :return: Schema content
         """
+        # pylint:disable=protected-access
         try:
-            return self._id_to_schema[schema_id]
+            return self._schema_registry_client._id_to_schema[schema_id]
         except KeyError:
             schema_str = self._schema_registry_client.get_schema(schema_id, **kwargs).schema_content
-            self._id_to_schema[schema_id] = schema_str
-            self._schema_to_id[schema_str] = schema_id
+            self._schema_registry_client._id_to_schema[schema_id] = schema_str
+            self._schema_registry_client._schema_to_id[schema_str] = schema_id
             return schema_str
 
     def serialize(self, data, schema, **kwargs):
@@ -157,6 +157,7 @@ class SchemaRegistryAvroSerializer(object):
         :rtype: Dict[str, Any]
         """
         # record_format_identifier = data[0:4]  # The first 4 bytes are retained for future record format identifier.
+        # TODO: ask Adam if right? I don't think so? the thing stored below is the first 4 letters of the body
         schema_id = data[SCHEMA_ID_START_INDEX:(SCHEMA_ID_START_INDEX + SCHEMA_ID_LENGTH)].decode('utf-8')
         schema_content = self._get_schema(schema_id, **kwargs)
 

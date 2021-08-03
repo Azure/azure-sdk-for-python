@@ -65,7 +65,7 @@ setup(
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
     install_requires=[
-        'azure-schemaregistry==1.0.0b1',
+        'azure-schemaregistry==1.0.0b2',
         'avro<2.0.0,>=1.10.0'
     ]
 )

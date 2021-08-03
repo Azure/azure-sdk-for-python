@@ -29,6 +29,7 @@ from ._common._constants import SerializationType
 from ._common._schema import Schema, SchemaProperties
 from ._common._response_handlers import _parse_response_schema, _parse_response_schema_id
 from ._generated._azure_schema_registry import AzureSchemaRegistry
+from ._policies import CachePolicy
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -42,7 +43,8 @@ class SchemaRegistryClient(object):
     :param str endpoint: The Schema Registry service endpoint, for example my-namespace.servicebus.windows.net.
     :param credential: To authenticate to manage the entities of the SchemaRegistry namespace.
     :type credential: TokenCredential
-
+    :keyword CachePolicy cache_policy: Mode for caching policy, with "least" being least recently used, "most" being most recently
+        used, and default of None being no caching.
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/sync_samples/sample_code_schemaregistry.py
@@ -61,6 +63,8 @@ class SchemaRegistryClient(object):
     ):
         # type: (str, TokenCredential, Any) -> None
         self._generated_client = AzureSchemaRegistry(credential=credential, endpoint=endpoint, **kwargs)
+        self._id_to_schema = {}
+        self._schema_to_id = {}
 
     def __enter__(self):
         # type: () -> SchemaRegistryClient

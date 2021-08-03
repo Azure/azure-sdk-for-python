@@ -86,13 +86,13 @@ class SchemaRegistryAvroSerializerTests(AzureTestCase):
         encoded_data = sr_avro_serializer.serialize(dict_data, schema_str)
 
         assert schema_str in sr_avro_serializer._user_input_schema_cache
-        assert str(avro.schema.parse(schema_str)) in sr_avro_serializer._schema_to_id
+        assert str(avro.schema.parse(schema_str)) in sr_avro_serializer._schema_registry_client._schema_to_id
 
         assert encoded_data[0:4] == b'\0\0\0\0'
         schema_id = sr_client.get_schema_id(schemaregistry_group, schema.fullname, "Avro", str(schema)).schema_id
         assert encoded_data[4:36] == schema_id.encode("utf-8")
 
-        assert schema_id in sr_avro_serializer._id_to_schema
+        assert schema_id in sr_avro_serializer._schema_registry_client._id_to_schema
 
         decoded_data = sr_avro_serializer.deserialize(encoded_data)
         assert decoded_data["name"] == u"Ben"
