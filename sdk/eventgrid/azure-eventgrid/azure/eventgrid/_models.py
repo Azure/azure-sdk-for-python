@@ -99,6 +99,6 @@ class EventGridEvent(InternalEventGridEvent):
         )[:1024]
 
     @classmethod
-    def from_dict(cls, data, key_extractors=None, content_type=None):
-        event = _get_json_content(data)
-        super(EventGridEvent, cls).from_dict(event, key_extractors, content_type)
+    def from_json(cls, json):
+        event = _get_json_content(json)
+        return EventGridEvent.from_dict(event)

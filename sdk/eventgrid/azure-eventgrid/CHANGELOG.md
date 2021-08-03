@@ -5,6 +5,8 @@
 ### Features Added
 
 - `EventGridEvent`'s `from_dict` method now accepts objects from servicebus, eventhubs and storage directly.
+- Added a `from_json` method which now accepts storage QueueMessage, eventhub's EventData or ServiceBusMessage or simply json bytes to return an `EventGridEvent`
+
 
 ## 4.4.0 (2021-07-19)
 

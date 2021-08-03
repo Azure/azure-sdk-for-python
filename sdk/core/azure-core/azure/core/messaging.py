@@ -122,7 +122,6 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
         :type event: dict
         :rtype: CloudEvent
         """
-        event = _get_json_content(event)
         kwargs = {}  # type: Dict[Any, Any]
         reserved_attr = [
             "data",
@@ -182,3 +181,16 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
                     " The `source` and `type` params are required."
                     )
         return event_obj
+
+    @classmethod
+    def from_json(cls, json):
+        # type: (Any) -> CloudEvent
+        """
+        Returns the deserialized CloudEvent object when a json is provided.
+        :param json: The json string that should be converted into a CloudEvent. This can also be
+         a storage QueueMessage, eventhub's EventData or ServiceBusMessage
+        :type json: object
+        :rtype: CloudEvent
+        """
+        event = _get_json_content(json)
+        return CloudEvent.from_dict(event)

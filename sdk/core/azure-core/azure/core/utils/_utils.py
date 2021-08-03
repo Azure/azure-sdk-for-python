@@ -133,4 +133,4 @@ def _get_json_content(obj):
                 + "body follows the CloudEvent schema."
                 )
         except: # pylint: disable=bare-except
-            return obj
+            return json.loads(obj)

@@ -5,7 +5,7 @@
 ### Features Added
 
 - Cut hard dependency on requests library
-- `CloudEvent`'s `from_dict` method now accepts objects from servicebus, eventhubs and storage directly.
+- Added a `from_json` method which now accepts storage QueueMessage, eventhub's EventData or ServiceBusMessage or simply json bytes to return a `CloudEvent`
 
 ### Breaking Changes
 

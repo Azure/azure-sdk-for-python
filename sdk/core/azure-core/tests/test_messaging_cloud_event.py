@@ -594,7 +594,7 @@ def test_get_bytes_storage_queue_wrong_content():
     obj = MockQueueMessage(content=cloud_storage_string)
 
     with pytest.raises(ValueError, match="Failed to retrieve content from the object. Make sure the content follows the CloudEvent schema."):
-        CloudEvent.from_dict(obj)
+        _get_json_content(obj)
 
 def test_get_bytes_servicebus():
     obj = MockServiceBusReceivedMessage(
@@ -647,15 +647,82 @@ def test_get_bytes_eventhubs_wrong_content():
         dict = _get_json_content(obj)
 
 def test_get_bytes_random_obj():
+    json_str = '{"id": "de0fd76c-4ef4-4dfb-ab3a-8f24a307e033", "source": "https://egtest.dev/cloudcustomevent", "data": {"team": "event grid squad"}, "type": "Azure.Sdk.Sample", "time": "2020-08-07T02:06:08.11969Z", "specversion": "1.0"}'
     random_obj =  {
         "id":"de0fd76c-4ef4-4dfb-ab3a-8f24a307e033",
         "source":"https://egtest.dev/cloudcustomevent",
         "data":{"team": "event grid squad"},
         "type":"Azure.Sdk.Sample",
         "time":"2020-08-07T02:06:08.11969Z",
-        "specversion":"1.0",
-        "ext1": "example",
-        "BADext2": "example2"
+        "specversion":"1.0"
     }
 
-    assert _get_json_content(random_obj) is random_obj
+    assert _get_json_content(json_str) == random_obj
+
+def test_from_json_sb():
+    obj = MockServiceBusReceivedMessage(
+        body=MockBody(),
+        message_id='3f6c5441-5be5-4f33-80c3-3ffeb6a090ce',
+        content_type='application/cloudevents+json; charset=utf-8',
+        time_to_live=datetime.timedelta(days=14),
+        delivery_count=13,
+        enqueued_sequence_number=0,
+        enqueued_time_utc=datetime.datetime(2021, 7, 22, 22, 27, 41, 236000),
+        expires_at_utc=datetime.datetime(2021, 8, 5, 22, 27, 41, 236000),
+        sequence_number=11219,
+        lock_token='233146e3-d5a6-45eb-826f-691d82fb8b13'
+    )
+    event = CloudEvent.from_json(obj)
+
+    assert event.id == "f208feff-099b-4bda-a341-4afd0fa02fef"
+    assert event.data == "ServiceBus"
+
+def test_from_json_eh():
+    obj = MockEventhubData(
+        body=MockEhBody()
+    )
+    event = CloudEvent.from_json(obj)
+    assert event.id == "f208feff-099b-4bda-a341-4afd0fa02fef"
+    assert event.data == "Eventhub"
+
+def test_from_json_storage():
+    cloud_storage_dict = """{
+        "id":"a0517898-9fa4-4e70-b4a3-afda1dd68672",
+        "source":"/subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.Storage/storageAccounts/{storage-account}",
+        "data":{
+            "api":"PutBlockList",
+            "client_request_id":"6d79dbfb-0e37-4fc4-981f-442c9ca65760",
+            "request_id":"831e1650-001e-001b-66ab-eeb76e000000",
+            "e_tag":"0x8D4BCC2E4835CD0",
+            "content_type":"application/octet-stream",
+            "content_length":524288,
+            "blob_type":"BlockBlob",
+            "url":"https://oc2d2817345i60006.blob.core.windows.net/oc2d2817345i200097container/oc2d2817345i20002296blob",
+            "sequencer":"00000000000004420000000000028963",
+            "storage_diagnostics":{"batchId":"b68529f3-68cd-4744-baa4-3c0498ec19f0"}
+        },
+        "type":"Microsoft.Storage.BlobCreated",
+        "time":"2021-02-18T20:18:10.581147898Z",
+        "specversion":"1.0"
+    }"""
+    obj = MockQueueMessage(content=cloud_storage_dict)
+    event = CloudEvent.from_json(obj)
+    assert event.data == {
+            "api":"PutBlockList",
+            "client_request_id":"6d79dbfb-0e37-4fc4-981f-442c9ca65760",
+            "request_id":"831e1650-001e-001b-66ab-eeb76e000000",
+            "e_tag":"0x8D4BCC2E4835CD0",
+            "content_type":"application/octet-stream",
+            "content_length":524288,
+            "blob_type":"BlockBlob",
+            "url":"https://oc2d2817345i60006.blob.core.windows.net/oc2d2817345i200097container/oc2d2817345i20002296blob",
+            "sequencer":"00000000000004420000000000028963",
+            "storage_diagnostics":{"batchId":"b68529f3-68cd-4744-baa4-3c0498ec19f0"}
+        }
+
+
+def test_from_json():
+    json_str = '{"id": "de0fd76c-4ef4-4dfb-ab3a-8f24a307e033", "source": "https://egtest.dev/cloudcustomevent", "data": {"team": "event grid squad"}, "type": "Azure.Sdk.Sample", "time": "2020-08-07T02:06:08.11969Z", "specversion": "1.0"}'
+    event = CloudEvent.from_json(json_str)
+
+    assert event.data == {"team": "event grid squad"}
