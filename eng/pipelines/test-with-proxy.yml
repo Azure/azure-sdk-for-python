@@ -35,7 +35,7 @@ jobs:
         displayName: 'Install docker-cli only'
 
       - pwsh: |
-          Get-ChildItem -Recurse "C:\Program Files\Docker\Docker"
+          C:\Program Files\Docker\Docker\DockerCli.exe -SwitchLinuxEngine
         displayName: 'Install docker-cli only'
 
       - pwsh: |
