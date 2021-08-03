@@ -9,5 +9,5 @@
 from ._resource_skus_operations import ResourceSkusOperations
 
 __all__ = [
-    'ResourceSkusOperations',
+    "ResourceSkusOperations",
 ]

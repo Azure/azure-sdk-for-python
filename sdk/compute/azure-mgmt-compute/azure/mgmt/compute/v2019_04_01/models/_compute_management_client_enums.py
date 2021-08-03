@@ -9,6 +9,7 @@
 from enum import Enum, EnumMeta
 from six import with_metaclass
 
+
 class _CaseInsensitiveEnumMeta(EnumMeta):
     def __getitem__(self, name):
         return super().__getitem__(name.upper())
@@ -27,23 +28,22 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
 
 
 class ResourceSkuCapacityScaleType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The scale type applicable to the sku.
-    """
+    """The scale type applicable to the sku."""
 
     AUTOMATIC = "Automatic"
     MANUAL = "Manual"
     NONE = "None"
 
+
 class ResourceSkuRestrictionsReasonCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The reason for restriction.
-    """
+    """The reason for restriction."""
 
     QUOTA_ID = "QuotaId"
     NOT_AVAILABLE_FOR_SUBSCRIPTION = "NotAvailableForSubscription"
 
+
 class ResourceSkuRestrictionsType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of restrictions.
-    """
+    """The type of restrictions."""
 
     LOCATION = "Location"
     ZONE = "Zone"

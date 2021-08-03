@@ -9,6 +9,7 @@
 from enum import Enum, EnumMeta
 from six import with_metaclass
 
+
 class _CaseInsensitiveEnumMeta(EnumMeta):
     def __getitem__(self, name):
         return super().__getitem__(name.upper())
@@ -34,6 +35,7 @@ class AvailabilitySetSkuTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     CLASSIC = "Classic"
     ALIGNED = "Aligned"
 
+
 class CachingTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values are:
     :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
@@ -44,6 +46,7 @@ class CachingTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NONE = "None"
     READ_ONLY = "ReadOnly"
     READ_WRITE = "ReadWrite"
+
 
 class DedicatedHostLicenseTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the software license type that will be applied to the VMs deployed on the dedicated
@@ -56,11 +59,12 @@ class DedicatedHostLicenseTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     WINDOWS_SERVER_HYBRID = "Windows_Server_Hybrid"
     WINDOWS_SERVER_PERPETUAL = "Windows_Server_Perpetual"
 
+
 class DiffDiskOptions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Specifies the ephemeral disk option for operating system disk.
-    """
+    """Specifies the ephemeral disk option for operating system disk."""
 
     LOCAL = "Local"
+
 
 class DiffDiskPlacement(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the ephemeral disk placement for operating system disk. This property can be used by
@@ -75,6 +79,7 @@ class DiffDiskPlacement(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     CACHE_DISK = "CacheDisk"
     RESOURCE_DISK = "ResourceDisk"
 
+
 class DiskCreateOptionTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies how the virtual machine should be created.:code:`<br>`:code:`<br>` Possible values
     are::code:`<br>`:code:`<br>` **Attach** \u2013 This value is used when you are using a
@@ -88,9 +93,9 @@ class DiskCreateOptionTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     EMPTY = "Empty"
     ATTACH = "Attach"
 
+
 class ExecutionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Script execution status.
-    """
+    """Script execution status."""
 
     UNKNOWN = "Unknown"
     PENDING = "Pending"
@@ -100,19 +105,20 @@ class ExecutionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     TIMED_OUT = "TimedOut"
     CANCELED = "Canceled"
 
+
 class HyperVGenerationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Specifies the HyperVGeneration Type associated with a resource
-    """
+    """Specifies the HyperVGeneration Type associated with a resource"""
 
     V1 = "V1"
     V2 = "V2"
+
 
 class HyperVGenerationTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Specifies the HyperVGeneration Type
-    """
+    """Specifies the HyperVGeneration Type"""
 
     V1 = "V1"
     V2 = "V2"
+
 
 class InGuestPatchMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the mode of in-guest patching to IaaS virtual machine.:code:`<br />`:code:`<br />`
@@ -130,14 +136,15 @@ class InGuestPatchMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     AUTOMATIC_BY_OS = "AutomaticByOS"
     AUTOMATIC_BY_PLATFORM = "AutomaticByPlatform"
 
+
 class IntervalInMins(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Interval value in minutes used to create LogAnalytics call rate logs.
-    """
+    """Interval value in minutes used to create LogAnalytics call rate logs."""
 
     THREE_MINS = "ThreeMins"
     FIVE_MINS = "FiveMins"
     THIRTY_MINS = "ThirtyMins"
     SIXTY_MINS = "SixtyMins"
+
 
 class IPVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Available from Api-Version 2017-03-30 onwards, it represents whether the specific
@@ -148,56 +155,56 @@ class IPVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     I_PV4 = "IPv4"
     I_PV6 = "IPv6"
 
+
 class MaintenanceOperationResultCodeTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The Last Maintenance Operation Result Code.
-    """
+    """The Last Maintenance Operation Result Code."""
 
     NONE = "None"
     RETRY_LATER = "RetryLater"
     MAINTENANCE_ABORTED = "MaintenanceAborted"
     MAINTENANCE_COMPLETED = "MaintenanceCompleted"
 
+
 class OperatingSystemStateTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The OS State.
-    """
+    """The OS State."""
 
     #: Generalized image. Needs to be provisioned during deployment time.
     GENERALIZED = "Generalized"
     #: Specialized image. Contains already provisioned OS Disk.
     SPECIALIZED = "Specialized"
 
+
 class OperatingSystemTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The operating system of the osDiskImage.
-    """
+    """The operating system of the osDiskImage."""
 
     WINDOWS = "Windows"
     LINUX = "Linux"
 
+
 class OrchestrationServiceNames(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The name of the service.
-    """
+    """The name of the service."""
 
     AUTOMATIC_REPAIRS = "AutomaticRepairs"
     DUMMY_ORCHESTRATION_SERVICE_NAME = "DummyOrchestrationServiceName"
 
+
 class OrchestrationServiceState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The current state of the service.
-    """
+    """The current state of the service."""
 
     NOT_RUNNING = "NotRunning"
     RUNNING = "Running"
     SUSPENDED = "Suspended"
 
+
 class OrchestrationServiceStateAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The action to be performed.
-    """
+    """The action to be performed."""
 
     RESUME = "Resume"
     SUSPEND = "Suspend"
 
+
 class PatchAssessmentState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Describes the outcome of an install operation for a given patch.
-    """
+    """Describes the outcome of an install operation for a given patch."""
 
     INSTALLED = "Installed"
     FAILED = "Failed"
@@ -205,6 +212,7 @@ class PatchAssessmentState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NOT_SELECTED = "NotSelected"
     PENDING = "Pending"
     AVAILABLE = "Available"
+
 
 class PatchOperationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The overall success or failure status of the operation. It remains "InProgress" until the
@@ -217,6 +225,7 @@ class PatchOperationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SUCCEEDED = "Succeeded"
     COMPLETED_WITH_WARNINGS = "CompletedWithWarnings"
 
+
 class ProtocolTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the protocol of WinRM listener. :code:`<br>`:code:`<br>` Possible values are:
     :code:`<br>`\ **http** :code:`<br>`:code:`<br>` **https**
@@ -224,6 +233,7 @@ class ProtocolTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     HTTP = "Http"
     HTTPS = "Https"
+
 
 class ProximityPlacementGroupType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the type of the proximity placement group. :code:`<br>`:code:`<br>` Possible values
@@ -233,6 +243,7 @@ class ProximityPlacementGroupType(with_metaclass(_CaseInsensitiveEnumMeta, str, 
 
     STANDARD = "Standard"
     ULTRA = "Ultra"
+
 
 class RebootStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The reboot status of the machine after the patch operation. It will be in "NotNeeded" status if
@@ -248,6 +259,7 @@ class RebootStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "Failed"
     COMPLETED = "Completed"
 
+
 class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of identity used for the virtual machine. The type 'SystemAssigned, UserAssigned'
     includes both an implicitly created identity and a set of user assigned identities. The type
@@ -259,21 +271,22 @@ class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
     NONE = "None"
 
+
 class RollingUpgradeActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The last action performed on the rolling upgrade.
-    """
+    """The last action performed on the rolling upgrade."""
 
     START = "Start"
     CANCEL = "Cancel"
 
+
 class RollingUpgradeStatusCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Code indicating the current status of the upgrade.
-    """
+    """Code indicating the current status of the upgrade."""
 
     ROLLING_FORWARD = "RollingForward"
     CANCELLED = "Cancelled"
     COMPLETED = "Completed"
     FAULTED = "Faulted"
+
 
 class SettingNames(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the name of the setting to which the content applies. Possible values are:
@@ -283,21 +296,22 @@ class SettingNames(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     AUTO_LOGON = "AutoLogon"
     FIRST_LOGON_COMMANDS = "FirstLogonCommands"
 
+
 class SoftwareUpdateRebootBehavior(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Describes the reboot requirements of the patch.
-    """
+    """Describes the reboot requirements of the patch."""
 
     NEVER_REBOOTS = "NeverReboots"
     ALWAYS_REQUIRES_REBOOT = "AlwaysRequiresReboot"
     CAN_REQUEST_REBOOT = "CanRequestReboot"
 
+
 class StatusLevelTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The level code.
-    """
+    """The level code."""
 
     INFO = "Info"
     WARNING = "Warning"
     ERROR = "Error"
+
 
 class StorageAccountTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the storage account type for the managed disk. NOTE: UltraSSD_LRS can only be used
@@ -314,6 +328,7 @@ class StorageAccountTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     STANDARD_SSD_LRS = "StandardSSD_LRS"
     ULTRA_SSD_LRS = "UltraSSD_LRS"
 
+
 class UpgradeMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the mode of an upgrade to virtual machines in the scale set.:code:`<br />`:code:`<br
     />` Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control the application
@@ -326,29 +341,30 @@ class UpgradeMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MANUAL = "Manual"
     ROLLING = "Rolling"
 
+
 class UpgradeOperationInvoker(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Invoker of the Upgrade Operation
-    """
+    """Invoker of the Upgrade Operation"""
 
     UNKNOWN = "Unknown"
     USER = "User"
     PLATFORM = "Platform"
 
+
 class UpgradeState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Code indicating the current status of the upgrade.
-    """
+    """Code indicating the current status of the upgrade."""
 
     ROLLING_FORWARD = "RollingForward"
     CANCELLED = "Cancelled"
     COMPLETED = "Completed"
     FAULTED = "Faulted"
 
+
 class VirtualMachineEvictionPolicyTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Specifies the eviction policy for the Azure Spot VM/VMSS
-    """
+    """Specifies the eviction policy for the Azure Spot VM/VMSS"""
 
     DEALLOCATE = "Deallocate"
     DELETE = "Delete"
+
 
 class VirtualMachinePriorityTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the priority for a standalone virtual machine or the virtual machines in the scale
@@ -360,18 +376,20 @@ class VirtualMachinePriorityTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, 
     LOW = "Low"
     SPOT = "Spot"
 
+
 class VirtualMachineScaleSetScaleInRules(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     DEFAULT = "Default"
     OLDEST_VM = "OldestVM"
     NEWEST_VM = "NewestVM"
 
+
 class VirtualMachineScaleSetSkuScaleType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The scale type applicable to the sku.
-    """
+    """The scale type applicable to the sku."""
 
     AUTOMATIC = "Automatic"
     NONE = "None"
+
 
 class VirtualMachineSizeTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the size of the virtual machine. For more information about virtual machine sizes,
@@ -559,9 +577,9 @@ class VirtualMachineSizeTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     STANDARD_NV12 = "Standard_NV12"
     STANDARD_NV24 = "Standard_NV24"
 
+
 class VmDiskTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """VM disk types which are disallowed.
-    """
+    """VM disk types which are disallowed."""
 
     NONE = "None"
     UNMANAGED = "Unmanaged"

@@ -17,13 +17,13 @@ from ._virtual_machine_scale_sets_operations import VirtualMachineScaleSetsOpera
 from ._virtual_machine_scale_set_vms_operations import VirtualMachineScaleSetVMsOperations
 
 __all__ = [
-    'AvailabilitySetsOperations',
-    'VirtualMachineExtensionImagesOperations',
-    'VirtualMachineExtensionsOperations',
-    'VirtualMachinesOperations',
-    'VirtualMachineImagesOperations',
-    'UsageOperations',
-    'VirtualMachineSizesOperations',
-    'VirtualMachineScaleSetsOperations',
-    'VirtualMachineScaleSetVMsOperations',
+    "AvailabilitySetsOperations",
+    "VirtualMachineExtensionImagesOperations",
+    "VirtualMachineExtensionsOperations",
+    "VirtualMachinesOperations",
+    "VirtualMachineImagesOperations",
+    "UsageOperations",
+    "VirtualMachineSizesOperations",
+    "VirtualMachineScaleSetsOperations",
+    "VirtualMachineScaleSetVMsOperations",
 ]

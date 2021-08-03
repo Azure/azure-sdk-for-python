@@ -34,16 +34,16 @@ from ._compute_management_client_enums import (
 )
 
 __all__ = [
-    'ResourceSku',
-    'ResourceSkuCapabilities',
-    'ResourceSkuCapacity',
-    'ResourceSkuCosts',
-    'ResourceSkuLocationInfo',
-    'ResourceSkuRestrictionInfo',
-    'ResourceSkuRestrictions',
-    'ResourceSkuZoneDetails',
-    'ResourceSkusResult',
-    'ResourceSkuCapacityScaleType',
-    'ResourceSkuRestrictionsReasonCode',
-    'ResourceSkuRestrictionsType',
+    "ResourceSku",
+    "ResourceSkuCapabilities",
+    "ResourceSkuCapacity",
+    "ResourceSkuCosts",
+    "ResourceSkuLocationInfo",
+    "ResourceSkuRestrictionInfo",
+    "ResourceSkuRestrictions",
+    "ResourceSkuZoneDetails",
+    "ResourceSkusResult",
+    "ResourceSkuCapacityScaleType",
+    "ResourceSkuRestrictionsReasonCode",
+    "ResourceSkuRestrictionsType",
 ]

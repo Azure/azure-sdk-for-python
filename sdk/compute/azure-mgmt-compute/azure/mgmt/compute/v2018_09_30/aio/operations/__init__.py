@@ -10,6 +10,6 @@ from ._disks_operations import DisksOperations
 from ._snapshots_operations import SnapshotsOperations
 
 __all__ = [
-    'DisksOperations',
-    'SnapshotsOperations',
+    "DisksOperations",
+    "SnapshotsOperations",
 ]

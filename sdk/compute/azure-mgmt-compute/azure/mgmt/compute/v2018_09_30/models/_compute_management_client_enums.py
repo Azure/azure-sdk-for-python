@@ -9,6 +9,7 @@
 from enum import Enum, EnumMeta
 from six import with_metaclass
 
+
 class _CaseInsensitiveEnumMeta(EnumMeta):
     def __getitem__(self, name):
         return super().__getitem__(name.upper())
@@ -32,9 +33,9 @@ class AccessLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     READ = "Read"
     WRITE = "Write"
 
+
 class DiskCreateOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """This enumerates the possible sources of a disk's creation.
-    """
+    """This enumerates the possible sources of a disk's creation."""
 
     EMPTY = "Empty"
     ATTACH = "Attach"
@@ -44,9 +45,9 @@ class DiskCreateOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     RESTORE = "Restore"
     UPLOAD = "Upload"
 
+
 class DiskState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The state of the disk.
-    """
+    """The state of the disk."""
 
     UNATTACHED = "Unattached"
     ATTACHED = "Attached"
@@ -55,32 +56,32 @@ class DiskState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     READY_TO_UPLOAD = "ReadyToUpload"
     ACTIVE_UPLOAD = "ActiveUpload"
 
+
 class DiskStorageAccountTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The sku name.
-    """
+    """The sku name."""
 
     STANDARD_LRS = "Standard_LRS"
     PREMIUM_LRS = "Premium_LRS"
     STANDARD_SSD_LRS = "StandardSSD_LRS"
     ULTRA_SSD_LRS = "UltraSSD_LRS"
 
+
 class HyperVGeneration(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The hypervisor generation of the Virtual Machine. Applicable to OS disks only.
-    """
+    """The hypervisor generation of the Virtual Machine. Applicable to OS disks only."""
 
     V1 = "V1"
     V2 = "V2"
 
+
 class OperatingSystemTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The Operating System type.
-    """
+    """The Operating System type."""
 
     WINDOWS = "Windows"
     LINUX = "Linux"
 
+
 class SnapshotStorageAccountTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The sku name.
-    """
+    """The sku name."""
 
     STANDARD_LRS = "Standard_LRS"
     PREMIUM_LRS = "Premium_LRS"

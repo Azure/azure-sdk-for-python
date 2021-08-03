@@ -9,6 +9,7 @@
 from enum import Enum, EnumMeta
 from six import with_metaclass
 
+
 class _CaseInsensitiveEnumMeta(EnumMeta):
     def __getitem__(self, name):
         return super().__getitem__(name.upper())
@@ -41,9 +42,9 @@ class CloudServiceUpgradeMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     MANUAL = "Manual"
     SIMULTANEOUS = "Simultaneous"
 
+
 class StatusLevelTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The level code.
-    """
+    """The level code."""
 
     INFO = "Info"
     WARNING = "Warning"

@@ -7,10 +7,12 @@
 # --------------------------------------------------------------------------
 
 from ._compute_management_client import ComputeManagementClient
-__all__ = ['ComputeManagementClient']
+
+__all__ = ["ComputeManagementClient"]
 
 try:
     from ._patch import patch_sdk  # type: ignore
+
     patch_sdk()
 except ImportError:
     pass

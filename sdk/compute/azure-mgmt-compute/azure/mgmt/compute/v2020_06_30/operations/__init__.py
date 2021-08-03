@@ -12,8 +12,8 @@ from ._disk_encryption_sets_operations import DiskEncryptionSetsOperations
 from ._disk_accesses_operations import DiskAccessesOperations
 
 __all__ = [
-    'DisksOperations',
-    'SnapshotsOperations',
-    'DiskEncryptionSetsOperations',
-    'DiskAccessesOperations',
+    "DisksOperations",
+    "SnapshotsOperations",
+    "DiskEncryptionSetsOperations",
+    "DiskAccessesOperations",
 ]

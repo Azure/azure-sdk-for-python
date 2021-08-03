@@ -29,11 +29,11 @@ class ApiError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'details': {'key': 'details', 'type': '[ApiErrorBase]'},
-        'innererror': {'key': 'innererror', 'type': 'InnerError'},
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
+        "details": {"key": "details", "type": "[ApiErrorBase]"},
+        "innererror": {"key": "innererror", "type": "InnerError"},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
     }
 
     def __init__(
@@ -66,18 +66,13 @@ class ApiErrorBase(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        target: Optional[str] = None,
-        **kwargs
+        self, *, code: Optional[str] = None, message: Optional[str] = None, target: Optional[str] = None, **kwargs
     ):
         super(ApiErrorBase, self).__init__(**kwargs)
         self.code = code
@@ -107,19 +102,19 @@ class CloudService(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'CloudServiceProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "properties": {"key": "properties", "type": "CloudServiceProperties"},
     }
 
     def __init__(
@@ -147,15 +142,10 @@ class CloudServiceExtensionProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'extensions': {'key': 'extensions', 'type': '[Extension]'},
+        "extensions": {"key": "extensions", "type": "[Extension]"},
     }
 
-    def __init__(
-        self,
-        *,
-        extensions: Optional[List["Extension"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, extensions: Optional[List["Extension"]] = None, **kwargs):
         super(CloudServiceExtensionProfile, self).__init__(**kwargs)
         self.extensions = extensions
 
@@ -207,20 +197,23 @@ class CloudServiceExtensionProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'type_handler_version': {'key': 'typeHandlerVersion', 'type': 'str'},
-        'auto_upgrade_minor_version': {'key': 'autoUpgradeMinorVersion', 'type': 'bool'},
-        'settings': {'key': 'settings', 'type': 'str'},
-        'protected_settings': {'key': 'protectedSettings', 'type': 'str'},
-        'protected_settings_from_key_vault': {'key': 'protectedSettingsFromKeyVault', 'type': 'CloudServiceVaultAndSecretReference'},
-        'force_update_tag': {'key': 'forceUpdateTag', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'roles_applied_to': {'key': 'rolesAppliedTo', 'type': '[str]'},
+        "publisher": {"key": "publisher", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "type_handler_version": {"key": "typeHandlerVersion", "type": "str"},
+        "auto_upgrade_minor_version": {"key": "autoUpgradeMinorVersion", "type": "bool"},
+        "settings": {"key": "settings", "type": "str"},
+        "protected_settings": {"key": "protectedSettings", "type": "str"},
+        "protected_settings_from_key_vault": {
+            "key": "protectedSettingsFromKeyVault",
+            "type": "CloudServiceVaultAndSecretReference",
+        },
+        "force_update_tag": {"key": "forceUpdateTag", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "roles_applied_to": {"key": "rolesAppliedTo", "type": "[str]"},
     }
 
     def __init__(
@@ -266,22 +259,17 @@ class CloudServiceInstanceView(msrest.serialization.Model):
     """
 
     _validation = {
-        'sdk_version': {'readonly': True},
-        'statuses': {'readonly': True},
+        "sdk_version": {"readonly": True},
+        "statuses": {"readonly": True},
     }
 
     _attribute_map = {
-        'role_instance': {'key': 'roleInstance', 'type': 'InstanceViewStatusesSummary'},
-        'sdk_version': {'key': 'sdkVersion', 'type': 'str'},
-        'statuses': {'key': 'statuses', 'type': '[ResourceInstanceViewStatus]'},
+        "role_instance": {"key": "roleInstance", "type": "InstanceViewStatusesSummary"},
+        "sdk_version": {"key": "sdkVersion", "type": "str"},
+        "statuses": {"key": "statuses", "type": "[ResourceInstanceViewStatus]"},
     }
 
-    def __init__(
-        self,
-        *,
-        role_instance: Optional["InstanceViewStatusesSummary"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, role_instance: Optional["InstanceViewStatusesSummary"] = None, **kwargs):
         super(CloudServiceInstanceView, self).__init__(**kwargs)
         self.role_instance = role_instance
         self.sdk_version = None
@@ -300,21 +288,15 @@ class CloudServiceListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CloudService]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[CloudService]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["CloudService"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["CloudService"], next_link: Optional[str] = None, **kwargs):
         super(CloudServiceListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -332,8 +314,8 @@ class CloudServiceNetworkProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'load_balancer_configurations': {'key': 'loadBalancerConfigurations', 'type': '[LoadBalancerConfiguration]'},
-        'swappable_cloud_service': {'key': 'swappableCloudService', 'type': 'SubResource'},
+        "load_balancer_configurations": {"key": "loadBalancerConfigurations", "type": "[LoadBalancerConfiguration]"},
+        "swappable_cloud_service": {"key": "swappableCloudService", "type": "SubResource"},
     }
 
     def __init__(
@@ -357,15 +339,10 @@ class CloudServiceOsProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'secrets': {'key': 'secrets', 'type': '[CloudServiceVaultSecretGroup]'},
+        "secrets": {"key": "secrets", "type": "[CloudServiceVaultSecretGroup]"},
     }
 
-    def __init__(
-        self,
-        *,
-        secrets: Optional[List["CloudServiceVaultSecretGroup"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, secrets: Optional[List["CloudServiceVaultSecretGroup"]] = None, **kwargs):
         super(CloudServiceOsProfile, self).__init__(**kwargs)
         self.secrets = secrets
 
@@ -420,22 +397,22 @@ class CloudServiceProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'unique_id': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "unique_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'package_url': {'key': 'packageUrl', 'type': 'str'},
-        'configuration': {'key': 'configuration', 'type': 'str'},
-        'configuration_url': {'key': 'configurationUrl', 'type': 'str'},
-        'start_cloud_service': {'key': 'startCloudService', 'type': 'bool'},
-        'upgrade_mode': {'key': 'upgradeMode', 'type': 'str'},
-        'role_profile': {'key': 'roleProfile', 'type': 'CloudServiceRoleProfile'},
-        'os_profile': {'key': 'osProfile', 'type': 'CloudServiceOsProfile'},
-        'network_profile': {'key': 'networkProfile', 'type': 'CloudServiceNetworkProfile'},
-        'extension_profile': {'key': 'extensionProfile', 'type': 'CloudServiceExtensionProfile'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'unique_id': {'key': 'uniqueId', 'type': 'str'},
+        "package_url": {"key": "packageUrl", "type": "str"},
+        "configuration": {"key": "configuration", "type": "str"},
+        "configuration_url": {"key": "configurationUrl", "type": "str"},
+        "start_cloud_service": {"key": "startCloudService", "type": "bool"},
+        "upgrade_mode": {"key": "upgradeMode", "type": "str"},
+        "role_profile": {"key": "roleProfile", "type": "CloudServiceRoleProfile"},
+        "os_profile": {"key": "osProfile", "type": "CloudServiceOsProfile"},
+        "network_profile": {"key": "networkProfile", "type": "CloudServiceNetworkProfile"},
+        "extension_profile": {"key": "extensionProfile", "type": "CloudServiceExtensionProfile"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "unique_id": {"key": "uniqueId", "type": "str"},
     }
 
     def __init__(
@@ -486,19 +463,19 @@ class CloudServiceRole(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'CloudServiceRoleSku'},
-        'properties': {'key': 'properties', 'type': 'CloudServiceRoleProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "sku": {"key": "sku", "type": "CloudServiceRoleSku"},
+        "properties": {"key": "properties", "type": "CloudServiceRoleProperties"},
     }
 
     def __init__(
@@ -529,21 +506,15 @@ class CloudServiceRoleListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CloudServiceRole]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[CloudServiceRole]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["CloudServiceRole"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["CloudServiceRole"], next_link: Optional[str] = None, **kwargs):
         super(CloudServiceRoleListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -558,15 +529,10 @@ class CloudServiceRoleProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'roles': {'key': 'roles', 'type': '[CloudServiceRoleProfileProperties]'},
+        "roles": {"key": "roles", "type": "[CloudServiceRoleProfileProperties]"},
     }
 
-    def __init__(
-        self,
-        *,
-        roles: Optional[List["CloudServiceRoleProfileProperties"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, roles: Optional[List["CloudServiceRoleProfileProperties"]] = None, **kwargs):
         super(CloudServiceRoleProfile, self).__init__(**kwargs)
         self.roles = roles
 
@@ -581,17 +547,11 @@ class CloudServiceRoleProfileProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'CloudServiceRoleSku'},
+        "name": {"key": "name", "type": "str"},
+        "sku": {"key": "sku", "type": "CloudServiceRoleSku"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        sku: Optional["CloudServiceRoleSku"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, sku: Optional["CloudServiceRoleSku"] = None, **kwargs):
         super(CloudServiceRoleProfileProperties, self).__init__(**kwargs)
         self.name = name
         self.sku = sku
@@ -607,17 +567,14 @@ class CloudServiceRoleProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'unique_id': {'readonly': True},
+        "unique_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'unique_id': {'key': 'uniqueId', 'type': 'str'},
+        "unique_id": {"key": "uniqueId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CloudServiceRoleProperties, self).__init__(**kwargs)
         self.unique_id = None
 
@@ -637,18 +594,13 @@ class CloudServiceRoleSku(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'long'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "capacity": {"key": "capacity", "type": "long"},
     }
 
     def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        tier: Optional[str] = None,
-        capacity: Optional[int] = None,
-        **kwargs
+        self, *, name: Optional[str] = None, tier: Optional[str] = None, capacity: Optional[int] = None, **kwargs
     ):
         super(CloudServiceRoleSku, self).__init__(**kwargs)
         self.name = name
@@ -664,15 +616,10 @@ class CloudServiceUpdate(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
         super(CloudServiceUpdate, self).__init__(**kwargs)
         self.tags = tags
 
@@ -687,17 +634,11 @@ class CloudServiceVaultAndSecretReference(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'source_vault': {'key': 'sourceVault', 'type': 'SubResource'},
-        'secret_url': {'key': 'secretUrl', 'type': 'str'},
+        "source_vault": {"key": "sourceVault", "type": "SubResource"},
+        "secret_url": {"key": "secretUrl", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        source_vault: Optional["SubResource"] = None,
-        secret_url: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, source_vault: Optional["SubResource"] = None, secret_url: Optional[str] = None, **kwargs):
         super(CloudServiceVaultAndSecretReference, self).__init__(**kwargs)
         self.source_vault = source_vault
         self.secret_url = secret_url
@@ -712,15 +653,10 @@ class CloudServiceVaultCertificate(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'certificate_url': {'key': 'certificateUrl', 'type': 'str'},
+        "certificate_url": {"key": "certificateUrl", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        certificate_url: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, certificate_url: Optional[str] = None, **kwargs):
         super(CloudServiceVaultCertificate, self).__init__(**kwargs)
         self.certificate_url = certificate_url
 
@@ -738,8 +674,8 @@ class CloudServiceVaultSecretGroup(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'source_vault': {'key': 'sourceVault', 'type': 'SubResource'},
-        'vault_certificates': {'key': 'vaultCertificates', 'type': '[CloudServiceVaultCertificate]'},
+        "source_vault": {"key": "sourceVault", "type": "SubResource"},
+        "vault_certificates": {"key": "vaultCertificates", "type": "[CloudServiceVaultCertificate]"},
     }
 
     def __init__(
@@ -765,16 +701,12 @@ class Extension(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'CloudServiceExtensionProperties'},
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "CloudServiceExtensionProperties"},
     }
 
     def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        properties: Optional["CloudServiceExtensionProperties"] = None,
-        **kwargs
+        self, *, name: Optional[str] = None, properties: Optional["CloudServiceExtensionProperties"] = None, **kwargs
     ):
         super(Extension, self).__init__(**kwargs)
         self.name = name
@@ -791,17 +723,11 @@ class InnerError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'exceptiontype': {'key': 'exceptiontype', 'type': 'str'},
-        'errordetail': {'key': 'errordetail', 'type': 'str'},
+        "exceptiontype": {"key": "exceptiontype", "type": "str"},
+        "errordetail": {"key": "errordetail", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        exceptiontype: Optional[str] = None,
-        errordetail: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, exceptiontype: Optional[str] = None, errordetail: Optional[str] = None, **kwargs):
         super(InnerError, self).__init__(**kwargs)
         self.exceptiontype = exceptiontype
         self.errordetail = errordetail
@@ -819,19 +745,16 @@ class InstanceSku(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'tier': {'readonly': True},
+        "name": {"readonly": True},
+        "tier": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(InstanceSku, self).__init__(**kwargs)
         self.name = None
         self.tier = None
@@ -847,17 +770,14 @@ class InstanceViewStatusesSummary(msrest.serialization.Model):
     """
 
     _validation = {
-        'statuses_summary': {'readonly': True},
+        "statuses_summary": {"readonly": True},
     }
 
     _attribute_map = {
-        'statuses_summary': {'key': 'statusesSummary', 'type': '[StatusCodeCount]'},
+        "statuses_summary": {"key": "statusesSummary", "type": "[StatusCodeCount]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(InstanceViewStatusesSummary, self).__init__(**kwargs)
         self.statuses_summary = None
 
@@ -873,8 +793,8 @@ class LoadBalancerConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'LoadBalancerConfigurationProperties'},
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "LoadBalancerConfigurationProperties"},
     }
 
     def __init__(
@@ -898,14 +818,14 @@ class LoadBalancerConfigurationProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'frontend_ip_configurations': {'key': 'frontendIPConfigurations', 'type': '[LoadBalancerFrontendIPConfiguration]'},
+        "frontend_ip_configurations": {
+            "key": "frontendIPConfigurations",
+            "type": "[LoadBalancerFrontendIPConfiguration]",
+        },
     }
 
     def __init__(
-        self,
-        *,
-        frontend_ip_configurations: Optional[List["LoadBalancerFrontendIPConfiguration"]] = None,
-        **kwargs
+        self, *, frontend_ip_configurations: Optional[List["LoadBalancerFrontendIPConfiguration"]] = None, **kwargs
     ):
         super(LoadBalancerConfigurationProperties, self).__init__(**kwargs)
         self.frontend_ip_configurations = frontend_ip_configurations
@@ -922,8 +842,8 @@ class LoadBalancerFrontendIPConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'LoadBalancerFrontendIPConfigurationProperties'},
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "LoadBalancerFrontendIPConfigurationProperties"},
     }
 
     def __init__(
@@ -950,9 +870,9 @@ class LoadBalancerFrontendIPConfigurationProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'public_ip_address': {'key': 'publicIPAddress', 'type': 'SubResource'},
-        'subnet': {'key': 'subnet', 'type': 'SubResource'},
-        'private_ip_address': {'key': 'privateIPAddress', 'type': 'str'},
+        "public_ip_address": {"key": "publicIPAddress", "type": "SubResource"},
+        "subnet": {"key": "subnet", "type": "SubResource"},
+        "private_ip_address": {"key": "privateIPAddress", "type": "str"},
     }
 
     def __init__(
@@ -987,26 +907,21 @@ class ResourceInstanceViewStatus(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'display_status': {'readonly': True},
-        'message': {'readonly': True},
-        'time': {'readonly': True},
+        "code": {"readonly": True},
+        "display_status": {"readonly": True},
+        "message": {"readonly": True},
+        "time": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'display_status': {'key': 'displayStatus', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'time': {'key': 'time', 'type': 'iso-8601'},
-        'level': {'key': 'level', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "display_status": {"key": "displayStatus", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "time": {"key": "time", "type": "iso-8601"},
+        "level": {"key": "level", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        level: Optional[Union[str, "StatusLevelTypes"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, level: Optional[Union[str, "StatusLevelTypes"]] = None, **kwargs):
         super(ResourceInstanceViewStatus, self).__init__(**kwargs)
         self.code = None
         self.display_status = None
@@ -1037,29 +952,25 @@ class RoleInstance(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
-        'tags': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"readonly": True},
+        "tags": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'InstanceSku'},
-        'properties': {'key': 'properties', 'type': 'RoleInstanceProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "InstanceSku"},
+        "properties": {"key": "properties", "type": "RoleInstanceProperties"},
     }
 
     def __init__(
-        self,
-        *,
-        sku: Optional["InstanceSku"] = None,
-        properties: Optional["RoleInstanceProperties"] = None,
-        **kwargs
+        self, *, sku: Optional["InstanceSku"] = None, properties: Optional["RoleInstanceProperties"] = None, **kwargs
     ):
         super(RoleInstance, self).__init__(**kwargs)
         self.id = None
@@ -1083,21 +994,15 @@ class RoleInstanceListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[RoleInstance]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[RoleInstance]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["RoleInstance"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["RoleInstance"], next_link: Optional[str] = None, **kwargs):
         super(RoleInstanceListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -1114,17 +1019,14 @@ class RoleInstanceNetworkProfile(msrest.serialization.Model):
     """
 
     _validation = {
-        'network_interfaces': {'readonly': True},
+        "network_interfaces": {"readonly": True},
     }
 
     _attribute_map = {
-        'network_interfaces': {'key': 'networkInterfaces', 'type': '[SubResource]'},
+        "network_interfaces": {"key": "networkInterfaces", "type": "[SubResource]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(RoleInstanceNetworkProfile, self).__init__(**kwargs)
         self.network_interfaces = None
 
@@ -1140,8 +1042,8 @@ class RoleInstanceProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'network_profile': {'key': 'networkProfile', 'type': 'RoleInstanceNetworkProfile'},
-        'instance_view': {'key': 'instanceView', 'type': 'RoleInstanceView'},
+        "network_profile": {"key": "networkProfile", "type": "RoleInstanceNetworkProfile"},
+        "instance_view": {"key": "instanceView", "type": "RoleInstanceView"},
     }
 
     def __init__(
@@ -1167,19 +1069,14 @@ class RoleInstances(msrest.serialization.Model):
     """
 
     _validation = {
-        'role_instances': {'required': True},
+        "role_instances": {"required": True},
     }
 
     _attribute_map = {
-        'role_instances': {'key': 'roleInstances', 'type': '[str]'},
+        "role_instances": {"key": "roleInstances", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        role_instances: List[str],
-        **kwargs
-    ):
+    def __init__(self, *, role_instances: List[str], **kwargs):
         super(RoleInstances, self).__init__(**kwargs)
         self.role_instances = role_instances
 
@@ -1203,23 +1100,20 @@ class RoleInstanceView(msrest.serialization.Model):
     """
 
     _validation = {
-        'platform_update_domain': {'readonly': True},
-        'platform_fault_domain': {'readonly': True},
-        'private_id': {'readonly': True},
-        'statuses': {'readonly': True},
+        "platform_update_domain": {"readonly": True},
+        "platform_fault_domain": {"readonly": True},
+        "private_id": {"readonly": True},
+        "statuses": {"readonly": True},
     }
 
     _attribute_map = {
-        'platform_update_domain': {'key': 'platformUpdateDomain', 'type': 'int'},
-        'platform_fault_domain': {'key': 'platformFaultDomain', 'type': 'int'},
-        'private_id': {'key': 'privateId', 'type': 'str'},
-        'statuses': {'key': 'statuses', 'type': '[ResourceInstanceViewStatus]'},
+        "platform_update_domain": {"key": "platformUpdateDomain", "type": "int"},
+        "platform_fault_domain": {"key": "platformFaultDomain", "type": "int"},
+        "private_id": {"key": "privateId", "type": "str"},
+        "statuses": {"key": "statuses", "type": "[ResourceInstanceViewStatus]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(RoleInstanceView, self).__init__(**kwargs)
         self.platform_update_domain = None
         self.platform_fault_domain = None
@@ -1239,19 +1133,16 @@ class StatusCodeCount(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'count': {'readonly': True},
+        "code": {"readonly": True},
+        "count": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'count': {'key': 'count', 'type': 'int'},
+        "code": {"key": "code", "type": "str"},
+        "count": {"key": "count", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(StatusCodeCount, self).__init__(**kwargs)
         self.code = None
         self.count = None
@@ -1265,15 +1156,10 @@ class SubResource(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs):
         super(SubResource, self).__init__(**kwargs)
         self.id = id
 
@@ -1290,19 +1176,16 @@ class UpdateDomain(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(UpdateDomain, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -1320,21 +1203,15 @@ class UpdateDomainListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[UpdateDomain]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[UpdateDomain]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["UpdateDomain"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["UpdateDomain"], next_link: Optional[str] = None, **kwargs):
         super(UpdateDomainListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link

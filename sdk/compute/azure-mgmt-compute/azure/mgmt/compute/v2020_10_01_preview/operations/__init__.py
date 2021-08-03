@@ -12,8 +12,8 @@ from ._cloud_services_operations import CloudServicesOperations
 from ._cloud_services_update_domain_operations import CloudServicesUpdateDomainOperations
 
 __all__ = [
-    'CloudServiceRoleInstancesOperations',
-    'CloudServiceRolesOperations',
-    'CloudServicesOperations',
-    'CloudServicesUpdateDomainOperations',
+    "CloudServiceRoleInstancesOperations",
+    "CloudServiceRolesOperations",
+    "CloudServicesOperations",
+    "CloudServicesUpdateDomainOperations",
 ]

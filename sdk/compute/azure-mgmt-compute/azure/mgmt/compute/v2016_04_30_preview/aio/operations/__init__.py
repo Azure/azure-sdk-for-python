@@ -20,16 +20,16 @@ from ._disks_operations import DisksOperations
 from ._snapshots_operations import SnapshotsOperations
 
 __all__ = [
-    'AvailabilitySetsOperations',
-    'VirtualMachineExtensionImagesOperations',
-    'VirtualMachineExtensionsOperations',
-    'VirtualMachinesOperations',
-    'VirtualMachineImagesOperations',
-    'UsageOperations',
-    'VirtualMachineSizesOperations',
-    'ImagesOperations',
-    'VirtualMachineScaleSetsOperations',
-    'VirtualMachineScaleSetVMsOperations',
-    'DisksOperations',
-    'SnapshotsOperations',
+    "AvailabilitySetsOperations",
+    "VirtualMachineExtensionImagesOperations",
+    "VirtualMachineExtensionsOperations",
+    "VirtualMachinesOperations",
+    "VirtualMachineImagesOperations",
+    "UsageOperations",
+    "VirtualMachineSizesOperations",
+    "ImagesOperations",
+    "VirtualMachineScaleSetsOperations",
+    "VirtualMachineScaleSetVMsOperations",
+    "DisksOperations",
+    "SnapshotsOperations",
 ]

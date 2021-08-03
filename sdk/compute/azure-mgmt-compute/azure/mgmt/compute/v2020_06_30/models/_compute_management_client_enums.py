@@ -9,6 +9,7 @@
 from enum import Enum, EnumMeta
 from six import with_metaclass
 
+
 class _CaseInsensitiveEnumMeta(EnumMeta):
     def __getitem__(self, name):
         return super().__getitem__(name.upper())
@@ -32,9 +33,9 @@ class AccessLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     READ = "Read"
     WRITE = "Write"
 
+
 class DiskCreateOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """This enumerates the possible sources of a disk's creation.
-    """
+    """This enumerates the possible sources of a disk's creation."""
 
     #: Create an empty data disk of a size given by diskSizeGB.
     EMPTY = "Empty"
@@ -55,15 +56,15 @@ class DiskCreateOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: the disk.
     UPLOAD = "Upload"
 
+
 class DiskEncryptionSetIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of Managed Identity used by the DiskEncryptionSet. Only SystemAssigned is supported.
-    """
+    """The type of Managed Identity used by the DiskEncryptionSet. Only SystemAssigned is supported."""
 
     SYSTEM_ASSIGNED = "SystemAssigned"
 
+
 class DiskEncryptionSetType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of key used to encrypt the data of the disk.
-    """
+    """The type of key used to encrypt the data of the disk."""
 
     #: Resource using diskEncryptionSet would be encrypted at rest with Customer managed key that can
     #: be changed and revoked by a customer.
@@ -72,9 +73,9 @@ class DiskEncryptionSetType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     #: of the keys is Customer managed and the other key is Platform managed.
     ENCRYPTION_AT_REST_WITH_PLATFORM_AND_CUSTOMER_KEYS = "EncryptionAtRestWithPlatformAndCustomerKeys"
 
+
 class DiskState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """This enumerates the possible state of the disk.
-    """
+    """This enumerates the possible state of the disk."""
 
     #: The disk is not being used and can be attached to a VM.
     UNATTACHED = "Unattached"
@@ -89,9 +90,9 @@ class DiskState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: A disk is created for upload and a write token has been issued for uploading to it.
     ACTIVE_UPLOAD = "ActiveUpload"
 
+
 class DiskStorageAccountTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The sku name.
-    """
+    """The sku name."""
 
     #: Standard HDD locally redundant storage. Best for backup, non-critical, and infrequent access.
     STANDARD_LRS = "Standard_LRS"
@@ -104,9 +105,9 @@ class DiskStorageAccountTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     #: databases (for example, SQL, Oracle), and other transaction-heavy workloads.
     ULTRA_SSD_LRS = "UltraSSD_LRS"
 
+
 class EncryptionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of key used to encrypt the data of the disk.
-    """
+    """The type of key used to encrypt the data of the disk."""
 
     #: Disk is encrypted at rest with Platform managed key. It is the default encryption type. This is
     #: not a valid encryption type for disk encryption sets.
@@ -118,16 +119,16 @@ class EncryptionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: the other key is Platform managed.
     ENCRYPTION_AT_REST_WITH_PLATFORM_AND_CUSTOMER_KEYS = "EncryptionAtRestWithPlatformAndCustomerKeys"
 
+
 class HyperVGeneration(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The hypervisor generation of the Virtual Machine. Applicable to OS disks only.
-    """
+    """The hypervisor generation of the Virtual Machine. Applicable to OS disks only."""
 
     V1 = "V1"
     V2 = "V2"
 
+
 class NetworkAccessPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Policy for accessing the disk via network.
-    """
+    """Policy for accessing the disk via network."""
 
     #: The disk can be exported or uploaded to from any network.
     ALLOW_ALL = "AllowAll"
@@ -136,33 +137,33 @@ class NetworkAccessPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: The disk cannot be exported.
     DENY_ALL = "DenyAll"
 
+
 class OperatingSystemTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The Operating System type.
-    """
+    """The Operating System type."""
 
     WINDOWS = "Windows"
     LINUX = "Linux"
 
+
 class PrivateEndpointConnectionProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The current provisioning state.
-    """
+    """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
     CREATING = "Creating"
     DELETING = "Deleting"
     FAILED = "Failed"
 
+
 class PrivateEndpointServiceConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The private endpoint connection status.
-    """
+    """The private endpoint connection status."""
 
     PENDING = "Pending"
     APPROVED = "Approved"
     REJECTED = "Rejected"
 
+
 class SnapshotStorageAccountTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The sku name.
-    """
+    """The sku name."""
 
     #: Standard HDD locally redundant storage.
     STANDARD_LRS = "Standard_LRS"

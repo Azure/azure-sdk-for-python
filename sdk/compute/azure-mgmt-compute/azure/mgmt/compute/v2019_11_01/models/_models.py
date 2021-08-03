@@ -19,17 +19,14 @@ class AccessUri(msrest.serialization.Model):
     """
 
     _validation = {
-        'access_sas': {'readonly': True},
+        "access_sas": {"readonly": True},
     }
 
     _attribute_map = {
-        'access_sas': {'key': 'accessSAS', 'type': 'str'},
+        "access_sas": {"key": "accessSAS", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AccessUri, self).__init__(**kwargs)
         self.access_sas = None
 
@@ -50,23 +47,20 @@ class ApiError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'details': {'key': 'details', 'type': '[ApiErrorBase]'},
-        'innererror': {'key': 'innererror', 'type': 'InnerError'},
-        'code': {'key': 'code', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "details": {"key": "details", "type": "[ApiErrorBase]"},
+        "innererror": {"key": "innererror", "type": "InnerError"},
+        "code": {"key": "code", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ApiError, self).__init__(**kwargs)
-        self.details = kwargs.get('details', None)
-        self.innererror = kwargs.get('innererror', None)
-        self.code = kwargs.get('code', None)
-        self.target = kwargs.get('target', None)
-        self.message = kwargs.get('message', None)
+        self.details = kwargs.get("details", None)
+        self.innererror = kwargs.get("innererror", None)
+        self.code = kwargs.get("code", None)
+        self.target = kwargs.get("target", None)
+        self.message = kwargs.get("message", None)
 
 
 class ApiErrorBase(msrest.serialization.Model):
@@ -81,19 +75,16 @@ class ApiErrorBase(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ApiErrorBase, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.target = kwargs.get('target', None)
-        self.message = kwargs.get('message', None)
+        self.code = kwargs.get("code", None)
+        self.target = kwargs.get("target", None)
+        self.message = kwargs.get("message", None)
 
 
 class CreationData(msrest.serialization.Model):
@@ -131,34 +122,31 @@ class CreationData(msrest.serialization.Model):
     """
 
     _validation = {
-        'create_option': {'required': True},
-        'source_unique_id': {'readonly': True},
+        "create_option": {"required": True},
+        "source_unique_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'create_option': {'key': 'createOption', 'type': 'str'},
-        'storage_account_id': {'key': 'storageAccountId', 'type': 'str'},
-        'image_reference': {'key': 'imageReference', 'type': 'ImageDiskReference'},
-        'gallery_image_reference': {'key': 'galleryImageReference', 'type': 'ImageDiskReference'},
-        'source_uri': {'key': 'sourceUri', 'type': 'str'},
-        'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
-        'source_unique_id': {'key': 'sourceUniqueId', 'type': 'str'},
-        'upload_size_bytes': {'key': 'uploadSizeBytes', 'type': 'long'},
+        "create_option": {"key": "createOption", "type": "str"},
+        "storage_account_id": {"key": "storageAccountId", "type": "str"},
+        "image_reference": {"key": "imageReference", "type": "ImageDiskReference"},
+        "gallery_image_reference": {"key": "galleryImageReference", "type": "ImageDiskReference"},
+        "source_uri": {"key": "sourceUri", "type": "str"},
+        "source_resource_id": {"key": "sourceResourceId", "type": "str"},
+        "source_unique_id": {"key": "sourceUniqueId", "type": "str"},
+        "upload_size_bytes": {"key": "uploadSizeBytes", "type": "long"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CreationData, self).__init__(**kwargs)
-        self.create_option = kwargs['create_option']
-        self.storage_account_id = kwargs.get('storage_account_id', None)
-        self.image_reference = kwargs.get('image_reference', None)
-        self.gallery_image_reference = kwargs.get('gallery_image_reference', None)
-        self.source_uri = kwargs.get('source_uri', None)
-        self.source_resource_id = kwargs.get('source_resource_id', None)
+        self.create_option = kwargs["create_option"]
+        self.storage_account_id = kwargs.get("storage_account_id", None)
+        self.image_reference = kwargs.get("image_reference", None)
+        self.gallery_image_reference = kwargs.get("gallery_image_reference", None)
+        self.source_uri = kwargs.get("source_uri", None)
+        self.source_resource_id = kwargs.get("source_resource_id", None)
         self.source_unique_id = None
-        self.upload_size_bytes = kwargs.get('upload_size_bytes', None)
+        self.upload_size_bytes = kwargs.get("upload_size_bytes", None)
 
 
 class Resource(msrest.serialization.Model):
@@ -181,30 +169,27 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.location = kwargs['location']
-        self.tags = kwargs.get('tags', None)
+        self.location = kwargs["location"]
+        self.tags = kwargs.get("tags", None)
 
 
 class Disk(Resource):
@@ -289,74 +274,74 @@ class Disk(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'managed_by': {'readonly': True},
-        'managed_by_extended': {'readonly': True},
-        'time_created': {'readonly': True},
-        'disk_size_bytes': {'readonly': True},
-        'unique_id': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'disk_state': {'readonly': True},
-        'share_info': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "managed_by": {"readonly": True},
+        "managed_by_extended": {"readonly": True},
+        "time_created": {"readonly": True},
+        "disk_size_bytes": {"readonly": True},
+        "unique_id": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "disk_state": {"readonly": True},
+        "share_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'managed_by': {'key': 'managedBy', 'type': 'str'},
-        'managed_by_extended': {'key': 'managedByExtended', 'type': '[str]'},
-        'sku': {'key': 'sku', 'type': 'DiskSku'},
-        'zones': {'key': 'zones', 'type': '[str]'},
-        'time_created': {'key': 'properties.timeCreated', 'type': 'iso-8601'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'hyper_v_generation': {'key': 'properties.hyperVGeneration', 'type': 'str'},
-        'creation_data': {'key': 'properties.creationData', 'type': 'CreationData'},
-        'disk_size_gb': {'key': 'properties.diskSizeGB', 'type': 'int'},
-        'disk_size_bytes': {'key': 'properties.diskSizeBytes', 'type': 'long'},
-        'unique_id': {'key': 'properties.uniqueId', 'type': 'str'},
-        'encryption_settings_collection': {'key': 'properties.encryptionSettingsCollection', 'type': 'EncryptionSettingsCollection'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'disk_iops_read_write': {'key': 'properties.diskIOPSReadWrite', 'type': 'long'},
-        'disk_m_bps_read_write': {'key': 'properties.diskMBpsReadWrite', 'type': 'long'},
-        'disk_iops_read_only': {'key': 'properties.diskIOPSReadOnly', 'type': 'long'},
-        'disk_m_bps_read_only': {'key': 'properties.diskMBpsReadOnly', 'type': 'long'},
-        'disk_state': {'key': 'properties.diskState', 'type': 'str'},
-        'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
-        'max_shares': {'key': 'properties.maxShares', 'type': 'int'},
-        'share_info': {'key': 'properties.shareInfo', 'type': '[ShareInfoElement]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "managed_by": {"key": "managedBy", "type": "str"},
+        "managed_by_extended": {"key": "managedByExtended", "type": "[str]"},
+        "sku": {"key": "sku", "type": "DiskSku"},
+        "zones": {"key": "zones", "type": "[str]"},
+        "time_created": {"key": "properties.timeCreated", "type": "iso-8601"},
+        "os_type": {"key": "properties.osType", "type": "str"},
+        "hyper_v_generation": {"key": "properties.hyperVGeneration", "type": "str"},
+        "creation_data": {"key": "properties.creationData", "type": "CreationData"},
+        "disk_size_gb": {"key": "properties.diskSizeGB", "type": "int"},
+        "disk_size_bytes": {"key": "properties.diskSizeBytes", "type": "long"},
+        "unique_id": {"key": "properties.uniqueId", "type": "str"},
+        "encryption_settings_collection": {
+            "key": "properties.encryptionSettingsCollection",
+            "type": "EncryptionSettingsCollection",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "disk_iops_read_write": {"key": "properties.diskIOPSReadWrite", "type": "long"},
+        "disk_m_bps_read_write": {"key": "properties.diskMBpsReadWrite", "type": "long"},
+        "disk_iops_read_only": {"key": "properties.diskIOPSReadOnly", "type": "long"},
+        "disk_m_bps_read_only": {"key": "properties.diskMBpsReadOnly", "type": "long"},
+        "disk_state": {"key": "properties.diskState", "type": "str"},
+        "encryption": {"key": "properties.encryption", "type": "Encryption"},
+        "max_shares": {"key": "properties.maxShares", "type": "int"},
+        "share_info": {"key": "properties.shareInfo", "type": "[ShareInfoElement]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Disk, self).__init__(**kwargs)
         self.managed_by = None
         self.managed_by_extended = None
-        self.sku = kwargs.get('sku', None)
-        self.zones = kwargs.get('zones', None)
+        self.sku = kwargs.get("sku", None)
+        self.zones = kwargs.get("zones", None)
         self.time_created = None
-        self.os_type = kwargs.get('os_type', None)
-        self.hyper_v_generation = kwargs.get('hyper_v_generation', None)
-        self.creation_data = kwargs.get('creation_data', None)
-        self.disk_size_gb = kwargs.get('disk_size_gb', None)
+        self.os_type = kwargs.get("os_type", None)
+        self.hyper_v_generation = kwargs.get("hyper_v_generation", None)
+        self.creation_data = kwargs.get("creation_data", None)
+        self.disk_size_gb = kwargs.get("disk_size_gb", None)
         self.disk_size_bytes = None
         self.unique_id = None
-        self.encryption_settings_collection = kwargs.get('encryption_settings_collection', None)
+        self.encryption_settings_collection = kwargs.get("encryption_settings_collection", None)
         self.provisioning_state = None
-        self.disk_iops_read_write = kwargs.get('disk_iops_read_write', None)
-        self.disk_m_bps_read_write = kwargs.get('disk_m_bps_read_write', None)
-        self.disk_iops_read_only = kwargs.get('disk_iops_read_only', None)
-        self.disk_m_bps_read_only = kwargs.get('disk_m_bps_read_only', None)
+        self.disk_iops_read_write = kwargs.get("disk_iops_read_write", None)
+        self.disk_m_bps_read_write = kwargs.get("disk_m_bps_read_write", None)
+        self.disk_iops_read_only = kwargs.get("disk_iops_read_only", None)
+        self.disk_m_bps_read_only = kwargs.get("disk_m_bps_read_only", None)
         self.disk_state = None
-        self.encryption = kwargs.get('encryption', None)
-        self.max_shares = kwargs.get('max_shares', None)
+        self.encryption = kwargs.get("encryption", None)
+        self.max_shares = kwargs.get("max_shares", None)
         self.share_info = None
 
 
@@ -391,33 +376,30 @@ class DiskEncryptionSet(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'previous_keys': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "previous_keys": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'EncryptionSetIdentity'},
-        'active_key': {'key': 'properties.activeKey', 'type': 'KeyVaultAndKeyReference'},
-        'previous_keys': {'key': 'properties.previousKeys', 'type': '[KeyVaultAndKeyReference]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "identity": {"key": "identity", "type": "EncryptionSetIdentity"},
+        "active_key": {"key": "properties.activeKey", "type": "KeyVaultAndKeyReference"},
+        "previous_keys": {"key": "properties.previousKeys", "type": "[KeyVaultAndKeyReference]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(DiskEncryptionSet, self).__init__(**kwargs)
-        self.identity = kwargs.get('identity', None)
-        self.active_key = kwargs.get('active_key', None)
+        self.identity = kwargs.get("identity", None)
+        self.active_key = kwargs.get("active_key", None)
         self.previous_keys = None
         self.provisioning_state = None
 
@@ -435,21 +417,18 @@ class DiskEncryptionSetList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[DiskEncryptionSet]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[DiskEncryptionSet]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(DiskEncryptionSetList, self).__init__(**kwargs)
-        self.value = kwargs['value']
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs["value"]
+        self.next_link = kwargs.get("next_link", None)
 
 
 class DiskEncryptionSetUpdate(msrest.serialization.Model):
@@ -463,17 +442,14 @@ class DiskEncryptionSetUpdate(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'active_key': {'key': 'properties.activeKey', 'type': 'KeyVaultAndKeyReference'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "active_key": {"key": "properties.activeKey", "type": "KeyVaultAndKeyReference"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(DiskEncryptionSetUpdate, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
-        self.active_key = kwargs.get('active_key', None)
+        self.tags = kwargs.get("tags", None)
+        self.active_key = kwargs.get("active_key", None)
 
 
 class DiskList(msrest.serialization.Model):
@@ -489,21 +465,18 @@ class DiskList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Disk]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Disk]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(DiskList, self).__init__(**kwargs)
-        self.value = kwargs['value']
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs["value"]
+        self.next_link = kwargs.get("next_link", None)
 
 
 class DiskSku(msrest.serialization.Model):
@@ -519,20 +492,17 @@ class DiskSku(msrest.serialization.Model):
     """
 
     _validation = {
-        'tier': {'readonly': True},
+        "tier": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(DiskSku, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = kwargs.get("name", None)
         self.tier = None
 
 
@@ -578,35 +548,35 @@ class DiskUpdate(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'DiskSku'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'disk_size_gb': {'key': 'properties.diskSizeGB', 'type': 'int'},
-        'encryption_settings_collection': {'key': 'properties.encryptionSettingsCollection', 'type': 'EncryptionSettingsCollection'},
-        'disk_iops_read_write': {'key': 'properties.diskIOPSReadWrite', 'type': 'long'},
-        'disk_m_bps_read_write': {'key': 'properties.diskMBpsReadWrite', 'type': 'long'},
-        'disk_iops_read_only': {'key': 'properties.diskIOPSReadOnly', 'type': 'long'},
-        'disk_m_bps_read_only': {'key': 'properties.diskMBpsReadOnly', 'type': 'long'},
-        'max_shares': {'key': 'properties.maxShares', 'type': 'int'},
-        'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "DiskSku"},
+        "os_type": {"key": "properties.osType", "type": "str"},
+        "disk_size_gb": {"key": "properties.diskSizeGB", "type": "int"},
+        "encryption_settings_collection": {
+            "key": "properties.encryptionSettingsCollection",
+            "type": "EncryptionSettingsCollection",
+        },
+        "disk_iops_read_write": {"key": "properties.diskIOPSReadWrite", "type": "long"},
+        "disk_m_bps_read_write": {"key": "properties.diskMBpsReadWrite", "type": "long"},
+        "disk_iops_read_only": {"key": "properties.diskIOPSReadOnly", "type": "long"},
+        "disk_m_bps_read_only": {"key": "properties.diskMBpsReadOnly", "type": "long"},
+        "max_shares": {"key": "properties.maxShares", "type": "int"},
+        "encryption": {"key": "properties.encryption", "type": "Encryption"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(DiskUpdate, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
-        self.sku = kwargs.get('sku', None)
-        self.os_type = kwargs.get('os_type', None)
-        self.disk_size_gb = kwargs.get('disk_size_gb', None)
-        self.encryption_settings_collection = kwargs.get('encryption_settings_collection', None)
-        self.disk_iops_read_write = kwargs.get('disk_iops_read_write', None)
-        self.disk_m_bps_read_write = kwargs.get('disk_m_bps_read_write', None)
-        self.disk_iops_read_only = kwargs.get('disk_iops_read_only', None)
-        self.disk_m_bps_read_only = kwargs.get('disk_m_bps_read_only', None)
-        self.max_shares = kwargs.get('max_shares', None)
-        self.encryption = kwargs.get('encryption', None)
+        self.tags = kwargs.get("tags", None)
+        self.sku = kwargs.get("sku", None)
+        self.os_type = kwargs.get("os_type", None)
+        self.disk_size_gb = kwargs.get("disk_size_gb", None)
+        self.encryption_settings_collection = kwargs.get("encryption_settings_collection", None)
+        self.disk_iops_read_write = kwargs.get("disk_iops_read_write", None)
+        self.disk_m_bps_read_write = kwargs.get("disk_m_bps_read_write", None)
+        self.disk_iops_read_only = kwargs.get("disk_iops_read_only", None)
+        self.disk_m_bps_read_only = kwargs.get("disk_m_bps_read_only", None)
+        self.max_shares = kwargs.get("max_shares", None)
+        self.encryption = kwargs.get("encryption", None)
 
 
 class Encryption(msrest.serialization.Model):
@@ -621,17 +591,14 @@ class Encryption(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'disk_encryption_set_id': {'key': 'diskEncryptionSetId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "disk_encryption_set_id": {"key": "diskEncryptionSetId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Encryption, self).__init__(**kwargs)
-        self.disk_encryption_set_id = kwargs.get('disk_encryption_set_id', None)
-        self.type = kwargs.get('type', None)
+        self.disk_encryption_set_id = kwargs.get("disk_encryption_set_id", None)
+        self.type = kwargs.get("type", None)
 
 
 class EncryptionSetIdentity(msrest.serialization.Model):
@@ -653,22 +620,19 @@ class EncryptionSetIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(EncryptionSetIdentity, self).__init__(**kwargs)
-        self.type = kwargs.get('type', None)
+        self.type = kwargs.get("type", None)
         self.principal_id = None
         self.tenant_id = None
 
@@ -693,23 +657,20 @@ class EncryptionSettingsCollection(msrest.serialization.Model):
     """
 
     _validation = {
-        'enabled': {'required': True},
+        "enabled": {"required": True},
     }
 
     _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'encryption_settings': {'key': 'encryptionSettings', 'type': '[EncryptionSettingsElement]'},
-        'encryption_settings_version': {'key': 'encryptionSettingsVersion', 'type': 'str'},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "encryption_settings": {"key": "encryptionSettings", "type": "[EncryptionSettingsElement]"},
+        "encryption_settings_version": {"key": "encryptionSettingsVersion", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(EncryptionSettingsCollection, self).__init__(**kwargs)
-        self.enabled = kwargs['enabled']
-        self.encryption_settings = kwargs.get('encryption_settings', None)
-        self.encryption_settings_version = kwargs.get('encryption_settings_version', None)
+        self.enabled = kwargs["enabled"]
+        self.encryption_settings = kwargs.get("encryption_settings", None)
+        self.encryption_settings_version = kwargs.get("encryption_settings_version", None)
 
 
 class EncryptionSettingsElement(msrest.serialization.Model):
@@ -723,17 +684,14 @@ class EncryptionSettingsElement(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'disk_encryption_key': {'key': 'diskEncryptionKey', 'type': 'KeyVaultAndSecretReference'},
-        'key_encryption_key': {'key': 'keyEncryptionKey', 'type': 'KeyVaultAndKeyReference'},
+        "disk_encryption_key": {"key": "diskEncryptionKey", "type": "KeyVaultAndSecretReference"},
+        "key_encryption_key": {"key": "keyEncryptionKey", "type": "KeyVaultAndKeyReference"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(EncryptionSettingsElement, self).__init__(**kwargs)
-        self.disk_encryption_key = kwargs.get('disk_encryption_key', None)
-        self.key_encryption_key = kwargs.get('key_encryption_key', None)
+        self.disk_encryption_key = kwargs.get("disk_encryption_key", None)
+        self.key_encryption_key = kwargs.get("key_encryption_key", None)
 
 
 class GrantAccessData(msrest.serialization.Model):
@@ -748,22 +706,19 @@ class GrantAccessData(msrest.serialization.Model):
     """
 
     _validation = {
-        'access': {'required': True},
-        'duration_in_seconds': {'required': True},
+        "access": {"required": True},
+        "duration_in_seconds": {"required": True},
     }
 
     _attribute_map = {
-        'access': {'key': 'access', 'type': 'str'},
-        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'int'},
+        "access": {"key": "access", "type": "str"},
+        "duration_in_seconds": {"key": "durationInSeconds", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(GrantAccessData, self).__init__(**kwargs)
-        self.access = kwargs['access']
-        self.duration_in_seconds = kwargs['duration_in_seconds']
+        self.access = kwargs["access"]
+        self.duration_in_seconds = kwargs["duration_in_seconds"]
 
 
 class ImageDiskReference(msrest.serialization.Model):
@@ -780,21 +735,18 @@ class ImageDiskReference(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
+        "id": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'lun': {'key': 'lun', 'type': 'int'},
+        "id": {"key": "id", "type": "str"},
+        "lun": {"key": "lun", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ImageDiskReference, self).__init__(**kwargs)
-        self.id = kwargs['id']
-        self.lun = kwargs.get('lun', None)
+        self.id = kwargs["id"]
+        self.lun = kwargs.get("lun", None)
 
 
 class InnerError(msrest.serialization.Model):
@@ -807,17 +759,14 @@ class InnerError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'exceptiontype': {'key': 'exceptiontype', 'type': 'str'},
-        'errordetail': {'key': 'errordetail', 'type': 'str'},
+        "exceptiontype": {"key": "exceptiontype", "type": "str"},
+        "errordetail": {"key": "errordetail", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(InnerError, self).__init__(**kwargs)
-        self.exceptiontype = kwargs.get('exceptiontype', None)
-        self.errordetail = kwargs.get('errordetail', None)
+        self.exceptiontype = kwargs.get("exceptiontype", None)
+        self.errordetail = kwargs.get("errordetail", None)
 
 
 class KeyVaultAndKeyReference(msrest.serialization.Model):
@@ -832,22 +781,19 @@ class KeyVaultAndKeyReference(msrest.serialization.Model):
     """
 
     _validation = {
-        'source_vault': {'required': True},
-        'key_url': {'required': True},
+        "source_vault": {"required": True},
+        "key_url": {"required": True},
     }
 
     _attribute_map = {
-        'source_vault': {'key': 'sourceVault', 'type': 'SourceVault'},
-        'key_url': {'key': 'keyUrl', 'type': 'str'},
+        "source_vault": {"key": "sourceVault", "type": "SourceVault"},
+        "key_url": {"key": "keyUrl", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(KeyVaultAndKeyReference, self).__init__(**kwargs)
-        self.source_vault = kwargs['source_vault']
-        self.key_url = kwargs['key_url']
+        self.source_vault = kwargs["source_vault"]
+        self.key_url = kwargs["key_url"]
 
 
 class KeyVaultAndSecretReference(msrest.serialization.Model):
@@ -862,22 +808,19 @@ class KeyVaultAndSecretReference(msrest.serialization.Model):
     """
 
     _validation = {
-        'source_vault': {'required': True},
-        'secret_url': {'required': True},
+        "source_vault": {"required": True},
+        "secret_url": {"required": True},
     }
 
     _attribute_map = {
-        'source_vault': {'key': 'sourceVault', 'type': 'SourceVault'},
-        'secret_url': {'key': 'secretUrl', 'type': 'str'},
+        "source_vault": {"key": "sourceVault", "type": "SourceVault"},
+        "secret_url": {"key": "secretUrl", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(KeyVaultAndSecretReference, self).__init__(**kwargs)
-        self.source_vault = kwargs['source_vault']
-        self.secret_url = kwargs['secret_url']
+        self.source_vault = kwargs["source_vault"]
+        self.secret_url = kwargs["secret_url"]
 
 
 class ShareInfoElement(msrest.serialization.Model):
@@ -890,17 +833,14 @@ class ShareInfoElement(msrest.serialization.Model):
     """
 
     _validation = {
-        'vm_uri': {'readonly': True},
+        "vm_uri": {"readonly": True},
     }
 
     _attribute_map = {
-        'vm_uri': {'key': 'vmUri', 'type': 'str'},
+        "vm_uri": {"key": "vmUri", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ShareInfoElement, self).__init__(**kwargs)
         self.vm_uri = None
 
@@ -960,56 +900,56 @@ class Snapshot(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'managed_by': {'readonly': True},
-        'time_created': {'readonly': True},
-        'disk_size_bytes': {'readonly': True},
-        'unique_id': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "managed_by": {"readonly": True},
+        "time_created": {"readonly": True},
+        "disk_size_bytes": {"readonly": True},
+        "unique_id": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'managed_by': {'key': 'managedBy', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'SnapshotSku'},
-        'time_created': {'key': 'properties.timeCreated', 'type': 'iso-8601'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'hyper_v_generation': {'key': 'properties.hyperVGeneration', 'type': 'str'},
-        'creation_data': {'key': 'properties.creationData', 'type': 'CreationData'},
-        'disk_size_gb': {'key': 'properties.diskSizeGB', 'type': 'int'},
-        'disk_size_bytes': {'key': 'properties.diskSizeBytes', 'type': 'long'},
-        'unique_id': {'key': 'properties.uniqueId', 'type': 'str'},
-        'encryption_settings_collection': {'key': 'properties.encryptionSettingsCollection', 'type': 'EncryptionSettingsCollection'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'incremental': {'key': 'properties.incremental', 'type': 'bool'},
-        'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "managed_by": {"key": "managedBy", "type": "str"},
+        "sku": {"key": "sku", "type": "SnapshotSku"},
+        "time_created": {"key": "properties.timeCreated", "type": "iso-8601"},
+        "os_type": {"key": "properties.osType", "type": "str"},
+        "hyper_v_generation": {"key": "properties.hyperVGeneration", "type": "str"},
+        "creation_data": {"key": "properties.creationData", "type": "CreationData"},
+        "disk_size_gb": {"key": "properties.diskSizeGB", "type": "int"},
+        "disk_size_bytes": {"key": "properties.diskSizeBytes", "type": "long"},
+        "unique_id": {"key": "properties.uniqueId", "type": "str"},
+        "encryption_settings_collection": {
+            "key": "properties.encryptionSettingsCollection",
+            "type": "EncryptionSettingsCollection",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "incremental": {"key": "properties.incremental", "type": "bool"},
+        "encryption": {"key": "properties.encryption", "type": "Encryption"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Snapshot, self).__init__(**kwargs)
         self.managed_by = None
-        self.sku = kwargs.get('sku', None)
+        self.sku = kwargs.get("sku", None)
         self.time_created = None
-        self.os_type = kwargs.get('os_type', None)
-        self.hyper_v_generation = kwargs.get('hyper_v_generation', None)
-        self.creation_data = kwargs.get('creation_data', None)
-        self.disk_size_gb = kwargs.get('disk_size_gb', None)
+        self.os_type = kwargs.get("os_type", None)
+        self.hyper_v_generation = kwargs.get("hyper_v_generation", None)
+        self.creation_data = kwargs.get("creation_data", None)
+        self.disk_size_gb = kwargs.get("disk_size_gb", None)
         self.disk_size_bytes = None
         self.unique_id = None
-        self.encryption_settings_collection = kwargs.get('encryption_settings_collection', None)
+        self.encryption_settings_collection = kwargs.get("encryption_settings_collection", None)
         self.provisioning_state = None
-        self.incremental = kwargs.get('incremental', None)
-        self.encryption = kwargs.get('encryption', None)
+        self.incremental = kwargs.get("incremental", None)
+        self.encryption = kwargs.get("encryption", None)
 
 
 class SnapshotList(msrest.serialization.Model):
@@ -1025,21 +965,18 @@ class SnapshotList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Snapshot]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Snapshot]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SnapshotList, self).__init__(**kwargs)
-        self.value = kwargs['value']
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs["value"]
+        self.next_link = kwargs.get("next_link", None)
 
 
 class SnapshotSku(msrest.serialization.Model):
@@ -1055,20 +992,17 @@ class SnapshotSku(msrest.serialization.Model):
     """
 
     _validation = {
-        'tier': {'readonly': True},
+        "tier": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SnapshotSku, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = kwargs.get("name", None)
         self.tier = None
 
 
@@ -1096,25 +1030,25 @@ class SnapshotUpdate(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'SnapshotSku'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'disk_size_gb': {'key': 'properties.diskSizeGB', 'type': 'int'},
-        'encryption_settings_collection': {'key': 'properties.encryptionSettingsCollection', 'type': 'EncryptionSettingsCollection'},
-        'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "SnapshotSku"},
+        "os_type": {"key": "properties.osType", "type": "str"},
+        "disk_size_gb": {"key": "properties.diskSizeGB", "type": "int"},
+        "encryption_settings_collection": {
+            "key": "properties.encryptionSettingsCollection",
+            "type": "EncryptionSettingsCollection",
+        },
+        "encryption": {"key": "properties.encryption", "type": "Encryption"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SnapshotUpdate, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
-        self.sku = kwargs.get('sku', None)
-        self.os_type = kwargs.get('os_type', None)
-        self.disk_size_gb = kwargs.get('disk_size_gb', None)
-        self.encryption_settings_collection = kwargs.get('encryption_settings_collection', None)
-        self.encryption = kwargs.get('encryption', None)
+        self.tags = kwargs.get("tags", None)
+        self.sku = kwargs.get("sku", None)
+        self.os_type = kwargs.get("os_type", None)
+        self.disk_size_gb = kwargs.get("disk_size_gb", None)
+        self.encryption_settings_collection = kwargs.get("encryption_settings_collection", None)
+        self.encryption = kwargs.get("encryption", None)
 
 
 class SourceVault(msrest.serialization.Model):
@@ -1125,12 +1059,9 @@ class SourceVault(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SourceVault, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
+        self.id = kwargs.get("id", None)

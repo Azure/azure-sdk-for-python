@@ -7,4 +7,5 @@
 # --------------------------------------------------------------------------
 
 from ._compute_management_client import ComputeManagementClient
-__all__ = ['ComputeManagementClient']
+
+__all__ = ["ComputeManagementClient"]

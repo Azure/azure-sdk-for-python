@@ -30,21 +30,18 @@ class AdditionalUnattendContent(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'pass_name': {'key': 'passName', 'type': 'str'},
-        'component_name': {'key': 'componentName', 'type': 'str'},
-        'setting_name': {'key': 'settingName', 'type': 'str'},
-        'content': {'key': 'content', 'type': 'str'},
+        "pass_name": {"key": "passName", "type": "str"},
+        "component_name": {"key": "componentName", "type": "str"},
+        "setting_name": {"key": "settingName", "type": "str"},
+        "content": {"key": "content", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AdditionalUnattendContent, self).__init__(**kwargs)
-        self.pass_name = kwargs.get('pass_name', None)
-        self.component_name = kwargs.get('component_name', None)
-        self.setting_name = kwargs.get('setting_name', None)
-        self.content = kwargs.get('content', None)
+        self.pass_name = kwargs.get("pass_name", None)
+        self.component_name = kwargs.get("component_name", None)
+        self.setting_name = kwargs.get("setting_name", None)
+        self.content = kwargs.get("content", None)
 
 
 class ApiEntityReference(msrest.serialization.Model):
@@ -56,15 +53,12 @@ class ApiEntityReference(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ApiEntityReference, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
+        self.id = kwargs.get("id", None)
 
 
 class ApiError(msrest.serialization.Model):
@@ -83,23 +77,20 @@ class ApiError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'details': {'key': 'details', 'type': '[ApiErrorBase]'},
-        'innererror': {'key': 'innererror', 'type': 'InnerError'},
-        'code': {'key': 'code', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "details": {"key": "details", "type": "[ApiErrorBase]"},
+        "innererror": {"key": "innererror", "type": "InnerError"},
+        "code": {"key": "code", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ApiError, self).__init__(**kwargs)
-        self.details = kwargs.get('details', None)
-        self.innererror = kwargs.get('innererror', None)
-        self.code = kwargs.get('code', None)
-        self.target = kwargs.get('target', None)
-        self.message = kwargs.get('message', None)
+        self.details = kwargs.get("details", None)
+        self.innererror = kwargs.get("innererror", None)
+        self.code = kwargs.get("code", None)
+        self.target = kwargs.get("target", None)
+        self.message = kwargs.get("message", None)
 
 
 class ApiErrorBase(msrest.serialization.Model):
@@ -114,19 +105,16 @@ class ApiErrorBase(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ApiErrorBase, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.target = kwargs.get('target', None)
-        self.message = kwargs.get('message', None)
+        self.code = kwargs.get("code", None)
+        self.target = kwargs.get("target", None)
+        self.message = kwargs.get("message", None)
 
 
 class Resource(msrest.serialization.Model):
@@ -149,30 +137,27 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.location = kwargs['location']
-        self.tags = kwargs.get('tags', None)
+        self.location = kwargs["location"]
+        self.tags = kwargs.get("tags", None)
 
 
 class AvailabilitySet(Resource):
@@ -203,33 +188,30 @@ class AvailabilitySet(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'statuses': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "statuses": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'platform_update_domain_count': {'key': 'properties.platformUpdateDomainCount', 'type': 'int'},
-        'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int'},
-        'virtual_machines': {'key': 'properties.virtualMachines', 'type': '[SubResource]'},
-        'statuses': {'key': 'properties.statuses', 'type': '[InstanceViewStatus]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "platform_update_domain_count": {"key": "properties.platformUpdateDomainCount", "type": "int"},
+        "platform_fault_domain_count": {"key": "properties.platformFaultDomainCount", "type": "int"},
+        "virtual_machines": {"key": "properties.virtualMachines", "type": "[SubResource]"},
+        "statuses": {"key": "properties.statuses", "type": "[InstanceViewStatus]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AvailabilitySet, self).__init__(**kwargs)
-        self.platform_update_domain_count = kwargs.get('platform_update_domain_count', None)
-        self.platform_fault_domain_count = kwargs.get('platform_fault_domain_count', None)
-        self.virtual_machines = kwargs.get('virtual_machines', None)
+        self.platform_update_domain_count = kwargs.get("platform_update_domain_count", None)
+        self.platform_fault_domain_count = kwargs.get("platform_fault_domain_count", None)
+        self.virtual_machines = kwargs.get("virtual_machines", None)
         self.statuses = None
 
 
@@ -246,21 +228,18 @@ class AvailabilitySetListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AvailabilitySet]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[AvailabilitySet]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AvailabilitySetListResult, self).__init__(**kwargs)
-        self.value = kwargs['value']
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs["value"]
+        self.next_link = kwargs.get("next_link", None)
 
 
 class BootDiagnostics(msrest.serialization.Model):
@@ -274,17 +253,14 @@ class BootDiagnostics(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'storage_uri': {'key': 'storageUri', 'type': 'str'},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "storage_uri": {"key": "storageUri", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(BootDiagnostics, self).__init__(**kwargs)
-        self.enabled = kwargs.get('enabled', None)
-        self.storage_uri = kwargs.get('storage_uri', None)
+        self.enabled = kwargs.get("enabled", None)
+        self.storage_uri = kwargs.get("storage_uri", None)
 
 
 class BootDiagnosticsInstanceView(msrest.serialization.Model):
@@ -299,19 +275,16 @@ class BootDiagnosticsInstanceView(msrest.serialization.Model):
     """
 
     _validation = {
-        'console_screenshot_blob_uri': {'readonly': True},
-        'serial_console_log_blob_uri': {'readonly': True},
+        "console_screenshot_blob_uri": {"readonly": True},
+        "serial_console_log_blob_uri": {"readonly": True},
     }
 
     _attribute_map = {
-        'console_screenshot_blob_uri': {'key': 'consoleScreenshotBlobUri', 'type': 'str'},
-        'serial_console_log_blob_uri': {'key': 'serialConsoleLogBlobUri', 'type': 'str'},
+        "console_screenshot_blob_uri": {"key": "consoleScreenshotBlobUri", "type": "str"},
+        "serial_console_log_blob_uri": {"key": "serialConsoleLogBlobUri", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(BootDiagnosticsInstanceView, self).__init__(**kwargs)
         self.console_screenshot_blob_uri = None
         self.serial_console_log_blob_uri = None
@@ -325,15 +298,12 @@ class ComputeLongRunningOperationProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'output': {'key': 'output', 'type': 'object'},
+        "output": {"key": "output", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ComputeLongRunningOperationProperties, self).__init__(**kwargs)
-        self.output = kwargs.get('output', None)
+        self.output = kwargs.get("output", None)
 
 
 class DataDisk(msrest.serialization.Model):
@@ -374,34 +344,31 @@ class DataDisk(msrest.serialization.Model):
     """
 
     _validation = {
-        'lun': {'required': True},
-        'name': {'required': True},
-        'vhd': {'required': True},
-        'create_option': {'required': True},
+        "lun": {"required": True},
+        "name": {"required": True},
+        "vhd": {"required": True},
+        "create_option": {"required": True},
     }
 
     _attribute_map = {
-        'lun': {'key': 'lun', 'type': 'int'},
-        'name': {'key': 'name', 'type': 'str'},
-        'vhd': {'key': 'vhd', 'type': 'VirtualHardDisk'},
-        'image': {'key': 'image', 'type': 'VirtualHardDisk'},
-        'caching': {'key': 'caching', 'type': 'str'},
-        'create_option': {'key': 'createOption', 'type': 'str'},
-        'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
+        "lun": {"key": "lun", "type": "int"},
+        "name": {"key": "name", "type": "str"},
+        "vhd": {"key": "vhd", "type": "VirtualHardDisk"},
+        "image": {"key": "image", "type": "VirtualHardDisk"},
+        "caching": {"key": "caching", "type": "str"},
+        "create_option": {"key": "createOption", "type": "str"},
+        "disk_size_gb": {"key": "diskSizeGB", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(DataDisk, self).__init__(**kwargs)
-        self.lun = kwargs['lun']
-        self.name = kwargs['name']
-        self.vhd = kwargs['vhd']
-        self.image = kwargs.get('image', None)
-        self.caching = kwargs.get('caching', None)
-        self.create_option = kwargs['create_option']
-        self.disk_size_gb = kwargs.get('disk_size_gb', None)
+        self.lun = kwargs["lun"]
+        self.name = kwargs["name"]
+        self.vhd = kwargs["vhd"]
+        self.image = kwargs.get("image", None)
+        self.caching = kwargs.get("caching", None)
+        self.create_option = kwargs["create_option"]
+        self.disk_size_gb = kwargs.get("disk_size_gb", None)
 
 
 class DataDiskImage(msrest.serialization.Model):
@@ -415,17 +382,14 @@ class DataDiskImage(msrest.serialization.Model):
     """
 
     _validation = {
-        'lun': {'readonly': True},
+        "lun": {"readonly": True},
     }
 
     _attribute_map = {
-        'lun': {'key': 'lun', 'type': 'int'},
+        "lun": {"key": "lun", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(DataDiskImage, self).__init__(**kwargs)
         self.lun = None
 
@@ -441,15 +405,12 @@ class DiagnosticsProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'boot_diagnostics': {'key': 'bootDiagnostics', 'type': 'BootDiagnostics'},
+        "boot_diagnostics": {"key": "bootDiagnostics", "type": "BootDiagnostics"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(DiagnosticsProfile, self).__init__(**kwargs)
-        self.boot_diagnostics = kwargs.get('boot_diagnostics', None)
+        self.boot_diagnostics = kwargs.get("boot_diagnostics", None)
 
 
 class DiskEncryptionSettings(msrest.serialization.Model):
@@ -465,19 +426,16 @@ class DiskEncryptionSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'disk_encryption_key': {'key': 'diskEncryptionKey', 'type': 'KeyVaultSecretReference'},
-        'key_encryption_key': {'key': 'keyEncryptionKey', 'type': 'KeyVaultKeyReference'},
-        'enabled': {'key': 'enabled', 'type': 'bool'},
+        "disk_encryption_key": {"key": "diskEncryptionKey", "type": "KeyVaultSecretReference"},
+        "key_encryption_key": {"key": "keyEncryptionKey", "type": "KeyVaultKeyReference"},
+        "enabled": {"key": "enabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(DiskEncryptionSettings, self).__init__(**kwargs)
-        self.disk_encryption_key = kwargs.get('disk_encryption_key', None)
-        self.key_encryption_key = kwargs.get('key_encryption_key', None)
-        self.enabled = kwargs.get('enabled', None)
+        self.disk_encryption_key = kwargs.get("disk_encryption_key", None)
+        self.key_encryption_key = kwargs.get("key_encryption_key", None)
+        self.enabled = kwargs.get("enabled", None)
 
 
 class DiskInstanceView(msrest.serialization.Model):
@@ -490,17 +448,14 @@ class DiskInstanceView(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
+        "name": {"key": "name", "type": "str"},
+        "statuses": {"key": "statuses", "type": "[InstanceViewStatus]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(DiskInstanceView, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.statuses = kwargs.get('statuses', None)
+        self.name = kwargs.get("name", None)
+        self.statuses = kwargs.get("statuses", None)
 
 
 class HardwareProfile(msrest.serialization.Model):
@@ -533,15 +488,12 @@ class HardwareProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'vm_size': {'key': 'vmSize', 'type': 'str'},
+        "vm_size": {"key": "vmSize", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(HardwareProfile, self).__init__(**kwargs)
-        self.vm_size = kwargs.get('vm_size', None)
+        self.vm_size = kwargs.get("vm_size", None)
 
 
 class ImageReference(msrest.serialization.Model):
@@ -563,21 +515,18 @@ class ImageReference(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'offer': {'key': 'offer', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
+        "publisher": {"key": "publisher", "type": "str"},
+        "offer": {"key": "offer", "type": "str"},
+        "sku": {"key": "sku", "type": "str"},
+        "version": {"key": "version", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ImageReference, self).__init__(**kwargs)
-        self.publisher = kwargs.get('publisher', None)
-        self.offer = kwargs.get('offer', None)
-        self.sku = kwargs.get('sku', None)
-        self.version = kwargs.get('version', None)
+        self.publisher = kwargs.get("publisher", None)
+        self.offer = kwargs.get("offer", None)
+        self.sku = kwargs.get("sku", None)
+        self.version = kwargs.get("version", None)
 
 
 class InnerError(msrest.serialization.Model):
@@ -590,17 +539,14 @@ class InnerError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'exceptiontype': {'key': 'exceptiontype', 'type': 'str'},
-        'errordetail': {'key': 'errordetail', 'type': 'str'},
+        "exceptiontype": {"key": "exceptiontype", "type": "str"},
+        "errordetail": {"key": "errordetail", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(InnerError, self).__init__(**kwargs)
-        self.exceptiontype = kwargs.get('exceptiontype', None)
-        self.errordetail = kwargs.get('errordetail', None)
+        self.exceptiontype = kwargs.get("exceptiontype", None)
+        self.errordetail = kwargs.get("errordetail", None)
 
 
 class InstanceViewStatus(msrest.serialization.Model):
@@ -619,23 +565,20 @@ class InstanceViewStatus(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'level': {'key': 'level', 'type': 'str'},
-        'display_status': {'key': 'displayStatus', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'time': {'key': 'time', 'type': 'iso-8601'},
+        "code": {"key": "code", "type": "str"},
+        "level": {"key": "level", "type": "str"},
+        "display_status": {"key": "displayStatus", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "time": {"key": "time", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(InstanceViewStatus, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.level = kwargs.get('level', None)
-        self.display_status = kwargs.get('display_status', None)
-        self.message = kwargs.get('message', None)
-        self.time = kwargs.get('time', None)
+        self.code = kwargs.get("code", None)
+        self.level = kwargs.get("level", None)
+        self.display_status = kwargs.get("display_status", None)
+        self.message = kwargs.get("message", None)
+        self.time = kwargs.get("time", None)
 
 
 class KeyVaultKeyReference(msrest.serialization.Model):
@@ -650,22 +593,19 @@ class KeyVaultKeyReference(msrest.serialization.Model):
     """
 
     _validation = {
-        'key_url': {'required': True},
-        'source_vault': {'required': True},
+        "key_url": {"required": True},
+        "source_vault": {"required": True},
     }
 
     _attribute_map = {
-        'key_url': {'key': 'keyUrl', 'type': 'str'},
-        'source_vault': {'key': 'sourceVault', 'type': 'SubResource'},
+        "key_url": {"key": "keyUrl", "type": "str"},
+        "source_vault": {"key": "sourceVault", "type": "SubResource"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(KeyVaultKeyReference, self).__init__(**kwargs)
-        self.key_url = kwargs['key_url']
-        self.source_vault = kwargs['source_vault']
+        self.key_url = kwargs["key_url"]
+        self.source_vault = kwargs["source_vault"]
 
 
 class KeyVaultSecretReference(msrest.serialization.Model):
@@ -680,22 +620,19 @@ class KeyVaultSecretReference(msrest.serialization.Model):
     """
 
     _validation = {
-        'secret_url': {'required': True},
-        'source_vault': {'required': True},
+        "secret_url": {"required": True},
+        "source_vault": {"required": True},
     }
 
     _attribute_map = {
-        'secret_url': {'key': 'secretUrl', 'type': 'str'},
-        'source_vault': {'key': 'sourceVault', 'type': 'SubResource'},
+        "secret_url": {"key": "secretUrl", "type": "str"},
+        "source_vault": {"key": "sourceVault", "type": "SubResource"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(KeyVaultSecretReference, self).__init__(**kwargs)
-        self.secret_url = kwargs['secret_url']
-        self.source_vault = kwargs['source_vault']
+        self.secret_url = kwargs["secret_url"]
+        self.source_vault = kwargs["source_vault"]
 
 
 class LinuxConfiguration(msrest.serialization.Model):
@@ -709,17 +646,14 @@ class LinuxConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'disable_password_authentication': {'key': 'disablePasswordAuthentication', 'type': 'bool'},
-        'ssh': {'key': 'ssh', 'type': 'SshConfiguration'},
+        "disable_password_authentication": {"key": "disablePasswordAuthentication", "type": "bool"},
+        "ssh": {"key": "ssh", "type": "SshConfiguration"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(LinuxConfiguration, self).__init__(**kwargs)
-        self.disable_password_authentication = kwargs.get('disable_password_authentication', None)
-        self.ssh = kwargs.get('ssh', None)
+        self.disable_password_authentication = kwargs.get("disable_password_authentication", None)
+        self.ssh = kwargs.get("ssh", None)
 
 
 class ListUsagesResult(msrest.serialization.Model):
@@ -735,21 +669,18 @@ class ListUsagesResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Usage]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Usage]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ListUsagesResult, self).__init__(**kwargs)
-        self.value = kwargs['value']
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs["value"]
+        self.next_link = kwargs.get("next_link", None)
 
 
 class SubResource(msrest.serialization.Model):
@@ -760,15 +691,12 @@ class SubResource(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SubResource, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
+        self.id = kwargs.get("id", None)
 
 
 class NetworkInterfaceReference(SubResource):
@@ -782,16 +710,13 @@ class NetworkInterfaceReference(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'primary': {'key': 'properties.primary', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "primary": {"key": "properties.primary", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(NetworkInterfaceReference, self).__init__(**kwargs)
-        self.primary = kwargs.get('primary', None)
+        self.primary = kwargs.get("primary", None)
 
 
 class NetworkProfile(msrest.serialization.Model):
@@ -804,15 +729,12 @@ class NetworkProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'network_interfaces': {'key': 'networkInterfaces', 'type': '[NetworkInterfaceReference]'},
+        "network_interfaces": {"key": "networkInterfaces", "type": "[NetworkInterfaceReference]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(NetworkProfile, self).__init__(**kwargs)
-        self.network_interfaces = kwargs.get('network_interfaces', None)
+        self.network_interfaces = kwargs.get("network_interfaces", None)
 
 
 class OperationStatusResponse(msrest.serialization.Model):
@@ -833,25 +755,22 @@ class OperationStatusResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'status': {'readonly': True},
-        'start_time': {'readonly': True},
-        'end_time': {'readonly': True},
-        'error': {'readonly': True},
+        "name": {"readonly": True},
+        "status": {"readonly": True},
+        "start_time": {"readonly": True},
+        "end_time": {"readonly": True},
+        "error": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'error': {'key': 'error', 'type': 'ApiError'},
+        "name": {"key": "name", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "error": {"key": "error", "type": "ApiError"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(OperationStatusResponse, self).__init__(**kwargs)
         self.name = None
         self.status = None
@@ -902,35 +821,32 @@ class OSDisk(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'vhd': {'required': True},
-        'create_option': {'required': True},
+        "name": {"required": True},
+        "vhd": {"required": True},
+        "create_option": {"required": True},
     }
 
     _attribute_map = {
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'encryption_settings': {'key': 'encryptionSettings', 'type': 'DiskEncryptionSettings'},
-        'name': {'key': 'name', 'type': 'str'},
-        'vhd': {'key': 'vhd', 'type': 'VirtualHardDisk'},
-        'image': {'key': 'image', 'type': 'VirtualHardDisk'},
-        'caching': {'key': 'caching', 'type': 'str'},
-        'create_option': {'key': 'createOption', 'type': 'str'},
-        'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
+        "os_type": {"key": "osType", "type": "str"},
+        "encryption_settings": {"key": "encryptionSettings", "type": "DiskEncryptionSettings"},
+        "name": {"key": "name", "type": "str"},
+        "vhd": {"key": "vhd", "type": "VirtualHardDisk"},
+        "image": {"key": "image", "type": "VirtualHardDisk"},
+        "caching": {"key": "caching", "type": "str"},
+        "create_option": {"key": "createOption", "type": "str"},
+        "disk_size_gb": {"key": "diskSizeGB", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(OSDisk, self).__init__(**kwargs)
-        self.os_type = kwargs.get('os_type', None)
-        self.encryption_settings = kwargs.get('encryption_settings', None)
-        self.name = kwargs['name']
-        self.vhd = kwargs['vhd']
-        self.image = kwargs.get('image', None)
-        self.caching = kwargs.get('caching', None)
-        self.create_option = kwargs['create_option']
-        self.disk_size_gb = kwargs.get('disk_size_gb', None)
+        self.os_type = kwargs.get("os_type", None)
+        self.encryption_settings = kwargs.get("encryption_settings", None)
+        self.name = kwargs["name"]
+        self.vhd = kwargs["vhd"]
+        self.image = kwargs.get("image", None)
+        self.caching = kwargs.get("caching", None)
+        self.create_option = kwargs["create_option"]
+        self.disk_size_gb = kwargs.get("disk_size_gb", None)
 
 
 class OSDiskImage(msrest.serialization.Model):
@@ -944,19 +860,16 @@ class OSDiskImage(msrest.serialization.Model):
     """
 
     _validation = {
-        'operating_system': {'required': True},
+        "operating_system": {"required": True},
     }
 
     _attribute_map = {
-        'operating_system': {'key': 'operatingSystem', 'type': 'str'},
+        "operating_system": {"key": "operatingSystem", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(OSDiskImage, self).__init__(**kwargs)
-        self.operating_system = kwargs['operating_system']
+        self.operating_system = kwargs["operating_system"]
 
 
 class OSProfile(msrest.serialization.Model):
@@ -1023,27 +936,24 @@ class OSProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'computer_name': {'key': 'computerName', 'type': 'str'},
-        'admin_username': {'key': 'adminUsername', 'type': 'str'},
-        'admin_password': {'key': 'adminPassword', 'type': 'str'},
-        'custom_data': {'key': 'customData', 'type': 'str'},
-        'windows_configuration': {'key': 'windowsConfiguration', 'type': 'WindowsConfiguration'},
-        'linux_configuration': {'key': 'linuxConfiguration', 'type': 'LinuxConfiguration'},
-        'secrets': {'key': 'secrets', 'type': '[VaultSecretGroup]'},
+        "computer_name": {"key": "computerName", "type": "str"},
+        "admin_username": {"key": "adminUsername", "type": "str"},
+        "admin_password": {"key": "adminPassword", "type": "str"},
+        "custom_data": {"key": "customData", "type": "str"},
+        "windows_configuration": {"key": "windowsConfiguration", "type": "WindowsConfiguration"},
+        "linux_configuration": {"key": "linuxConfiguration", "type": "LinuxConfiguration"},
+        "secrets": {"key": "secrets", "type": "[VaultSecretGroup]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(OSProfile, self).__init__(**kwargs)
-        self.computer_name = kwargs.get('computer_name', None)
-        self.admin_username = kwargs.get('admin_username', None)
-        self.admin_password = kwargs.get('admin_password', None)
-        self.custom_data = kwargs.get('custom_data', None)
-        self.windows_configuration = kwargs.get('windows_configuration', None)
-        self.linux_configuration = kwargs.get('linux_configuration', None)
-        self.secrets = kwargs.get('secrets', None)
+        self.computer_name = kwargs.get("computer_name", None)
+        self.admin_username = kwargs.get("admin_username", None)
+        self.admin_password = kwargs.get("admin_password", None)
+        self.custom_data = kwargs.get("custom_data", None)
+        self.windows_configuration = kwargs.get("windows_configuration", None)
+        self.linux_configuration = kwargs.get("linux_configuration", None)
+        self.secrets = kwargs.get("secrets", None)
 
 
 class Plan(msrest.serialization.Model):
@@ -1061,21 +971,18 @@ class Plan(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'product': {'key': 'product', 'type': 'str'},
-        'promotion_code': {'key': 'promotionCode', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "publisher": {"key": "publisher", "type": "str"},
+        "product": {"key": "product", "type": "str"},
+        "promotion_code": {"key": "promotionCode", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Plan, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.publisher = kwargs.get('publisher', None)
-        self.product = kwargs.get('product', None)
-        self.promotion_code = kwargs.get('promotion_code', None)
+        self.name = kwargs.get("name", None)
+        self.publisher = kwargs.get("publisher", None)
+        self.product = kwargs.get("product", None)
+        self.promotion_code = kwargs.get("promotion_code", None)
 
 
 class PurchasePlan(msrest.serialization.Model):
@@ -1093,25 +1000,22 @@ class PurchasePlan(msrest.serialization.Model):
     """
 
     _validation = {
-        'publisher': {'required': True},
-        'name': {'required': True},
-        'product': {'required': True},
+        "publisher": {"required": True},
+        "name": {"required": True},
+        "product": {"required": True},
     }
 
     _attribute_map = {
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'product': {'key': 'product', 'type': 'str'},
+        "publisher": {"key": "publisher", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "product": {"key": "product", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(PurchasePlan, self).__init__(**kwargs)
-        self.publisher = kwargs['publisher']
-        self.name = kwargs['name']
-        self.product = kwargs['product']
+        self.publisher = kwargs["publisher"]
+        self.name = kwargs["name"]
+        self.product = kwargs["product"]
 
 
 class Sku(msrest.serialization.Model):
@@ -1128,19 +1032,16 @@ class Sku(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'long'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "capacity": {"key": "capacity", "type": "long"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Sku, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.tier = kwargs.get('tier', None)
-        self.capacity = kwargs.get('capacity', None)
+        self.name = kwargs.get("name", None)
+        self.tier = kwargs.get("tier", None)
+        self.capacity = kwargs.get("capacity", None)
 
 
 class SshConfiguration(msrest.serialization.Model):
@@ -1151,15 +1052,12 @@ class SshConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'public_keys': {'key': 'publicKeys', 'type': '[SshPublicKey]'},
+        "public_keys": {"key": "publicKeys", "type": "[SshPublicKey]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SshConfiguration, self).__init__(**kwargs)
-        self.public_keys = kwargs.get('public_keys', None)
+        self.public_keys = kwargs.get("public_keys", None)
 
 
 class SshPublicKey(msrest.serialization.Model):
@@ -1177,17 +1075,14 @@ class SshPublicKey(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'path': {'key': 'path', 'type': 'str'},
-        'key_data': {'key': 'keyData', 'type': 'str'},
+        "path": {"key": "path", "type": "str"},
+        "key_data": {"key": "keyData", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SshPublicKey, self).__init__(**kwargs)
-        self.path = kwargs.get('path', None)
-        self.key_data = kwargs.get('key_data', None)
+        self.path = kwargs.get("path", None)
+        self.key_data = kwargs.get("key_data", None)
 
 
 class StorageProfile(msrest.serialization.Model):
@@ -1211,19 +1106,16 @@ class StorageProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'image_reference': {'key': 'imageReference', 'type': 'ImageReference'},
-        'os_disk': {'key': 'osDisk', 'type': 'OSDisk'},
-        'data_disks': {'key': 'dataDisks', 'type': '[DataDisk]'},
+        "image_reference": {"key": "imageReference", "type": "ImageReference"},
+        "os_disk": {"key": "osDisk", "type": "OSDisk"},
+        "data_disks": {"key": "dataDisks", "type": "[DataDisk]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(StorageProfile, self).__init__(**kwargs)
-        self.image_reference = kwargs.get('image_reference', None)
-        self.os_disk = kwargs.get('os_disk', None)
-        self.data_disks = kwargs.get('data_disks', None)
+        self.image_reference = kwargs.get("image_reference", None)
+        self.os_disk = kwargs.get("os_disk", None)
+        self.data_disks = kwargs.get("data_disks", None)
 
 
 class UpdateResource(msrest.serialization.Model):
@@ -1234,15 +1126,12 @@ class UpdateResource(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(UpdateResource, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
+        self.tags = kwargs.get("tags", None)
 
 
 class UpgradePolicy(msrest.serialization.Model):
@@ -1258,15 +1147,12 @@ class UpgradePolicy(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(UpgradePolicy, self).__init__(**kwargs)
-        self.mode = kwargs.get('mode', None)
+        self.mode = kwargs.get("mode", None)
 
 
 class Usage(msrest.serialization.Model):
@@ -1287,29 +1173,26 @@ class Usage(msrest.serialization.Model):
     """
 
     _validation = {
-        'unit': {'required': True, 'constant': True},
-        'current_value': {'required': True},
-        'limit': {'required': True},
-        'name': {'required': True},
+        "unit": {"required": True, "constant": True},
+        "current_value": {"required": True},
+        "limit": {"required": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'unit': {'key': 'unit', 'type': 'str'},
-        'current_value': {'key': 'currentValue', 'type': 'int'},
-        'limit': {'key': 'limit', 'type': 'long'},
-        'name': {'key': 'name', 'type': 'UsageName'},
+        "unit": {"key": "unit", "type": "str"},
+        "current_value": {"key": "currentValue", "type": "int"},
+        "limit": {"key": "limit", "type": "long"},
+        "name": {"key": "name", "type": "UsageName"},
     }
 
     unit = "Count"
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Usage, self).__init__(**kwargs)
-        self.current_value = kwargs['current_value']
-        self.limit = kwargs['limit']
-        self.name = kwargs['name']
+        self.current_value = kwargs["current_value"]
+        self.limit = kwargs["limit"]
+        self.name = kwargs["name"]
 
 
 class UsageName(msrest.serialization.Model):
@@ -1322,17 +1205,14 @@ class UsageName(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+        "value": {"key": "value", "type": "str"},
+        "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(UsageName, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.localized_value = kwargs.get('localized_value', None)
+        self.value = kwargs.get("value", None)
+        self.localized_value = kwargs.get("localized_value", None)
 
 
 class VaultCertificate(msrest.serialization.Model):
@@ -1356,17 +1236,14 @@ class VaultCertificate(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'certificate_url': {'key': 'certificateUrl', 'type': 'str'},
-        'certificate_store': {'key': 'certificateStore', 'type': 'str'},
+        "certificate_url": {"key": "certificateUrl", "type": "str"},
+        "certificate_store": {"key": "certificateStore", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VaultCertificate, self).__init__(**kwargs)
-        self.certificate_url = kwargs.get('certificate_url', None)
-        self.certificate_store = kwargs.get('certificate_store', None)
+        self.certificate_url = kwargs.get("certificate_url", None)
+        self.certificate_store = kwargs.get("certificate_store", None)
 
 
 class VaultSecretGroup(msrest.serialization.Model):
@@ -1381,17 +1258,14 @@ class VaultSecretGroup(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'source_vault': {'key': 'sourceVault', 'type': 'SubResource'},
-        'vault_certificates': {'key': 'vaultCertificates', 'type': '[VaultCertificate]'},
+        "source_vault": {"key": "sourceVault", "type": "SubResource"},
+        "vault_certificates": {"key": "vaultCertificates", "type": "[VaultCertificate]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VaultSecretGroup, self).__init__(**kwargs)
-        self.source_vault = kwargs.get('source_vault', None)
-        self.vault_certificates = kwargs.get('vault_certificates', None)
+        self.source_vault = kwargs.get("source_vault", None)
+        self.vault_certificates = kwargs.get("vault_certificates", None)
 
 
 class VirtualHardDisk(msrest.serialization.Model):
@@ -1402,15 +1276,12 @@ class VirtualHardDisk(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'uri': {'key': 'uri', 'type': 'str'},
+        "uri": {"key": "uri", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualHardDisk, self).__init__(**kwargs)
-        self.uri = kwargs.get('uri', None)
+        self.uri = kwargs.get("uri", None)
 
 
 class VirtualMachine(Resource):
@@ -1481,54 +1352,51 @@ class VirtualMachine(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'resources': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'instance_view': {'readonly': True},
-        'vm_id': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "resources": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "instance_view": {"readonly": True},
+        "vm_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'plan': {'key': 'plan', 'type': 'Plan'},
-        'resources': {'key': 'resources', 'type': '[VirtualMachineExtension]'},
-        'identity': {'key': 'identity', 'type': 'VirtualMachineIdentity'},
-        'hardware_profile': {'key': 'properties.hardwareProfile', 'type': 'HardwareProfile'},
-        'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
-        'os_profile': {'key': 'properties.osProfile', 'type': 'OSProfile'},
-        'network_profile': {'key': 'properties.networkProfile', 'type': 'NetworkProfile'},
-        'diagnostics_profile': {'key': 'properties.diagnosticsProfile', 'type': 'DiagnosticsProfile'},
-        'availability_set': {'key': 'properties.availabilitySet', 'type': 'SubResource'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineInstanceView'},
-        'license_type': {'key': 'properties.licenseType', 'type': 'str'},
-        'vm_id': {'key': 'properties.vmId', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "plan": {"key": "plan", "type": "Plan"},
+        "resources": {"key": "resources", "type": "[VirtualMachineExtension]"},
+        "identity": {"key": "identity", "type": "VirtualMachineIdentity"},
+        "hardware_profile": {"key": "properties.hardwareProfile", "type": "HardwareProfile"},
+        "storage_profile": {"key": "properties.storageProfile", "type": "StorageProfile"},
+        "os_profile": {"key": "properties.osProfile", "type": "OSProfile"},
+        "network_profile": {"key": "properties.networkProfile", "type": "NetworkProfile"},
+        "diagnostics_profile": {"key": "properties.diagnosticsProfile", "type": "DiagnosticsProfile"},
+        "availability_set": {"key": "properties.availabilitySet", "type": "SubResource"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "instance_view": {"key": "properties.instanceView", "type": "VirtualMachineInstanceView"},
+        "license_type": {"key": "properties.licenseType", "type": "str"},
+        "vm_id": {"key": "properties.vmId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachine, self).__init__(**kwargs)
-        self.plan = kwargs.get('plan', None)
+        self.plan = kwargs.get("plan", None)
         self.resources = None
-        self.identity = kwargs.get('identity', None)
-        self.hardware_profile = kwargs.get('hardware_profile', None)
-        self.storage_profile = kwargs.get('storage_profile', None)
-        self.os_profile = kwargs.get('os_profile', None)
-        self.network_profile = kwargs.get('network_profile', None)
-        self.diagnostics_profile = kwargs.get('diagnostics_profile', None)
-        self.availability_set = kwargs.get('availability_set', None)
+        self.identity = kwargs.get("identity", None)
+        self.hardware_profile = kwargs.get("hardware_profile", None)
+        self.storage_profile = kwargs.get("storage_profile", None)
+        self.os_profile = kwargs.get("os_profile", None)
+        self.network_profile = kwargs.get("network_profile", None)
+        self.diagnostics_profile = kwargs.get("diagnostics_profile", None)
+        self.availability_set = kwargs.get("availability_set", None)
         self.provisioning_state = None
         self.instance_view = None
-        self.license_type = kwargs.get('license_type', None)
+        self.license_type = kwargs.get("license_type", None)
         self.vm_id = None
 
 
@@ -1545,19 +1413,16 @@ class VirtualMachineAgentInstanceView(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'vm_agent_version': {'key': 'vmAgentVersion', 'type': 'str'},
-        'extension_handlers': {'key': 'extensionHandlers', 'type': '[VirtualMachineExtensionHandlerInstanceView]'},
-        'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
+        "vm_agent_version": {"key": "vmAgentVersion", "type": "str"},
+        "extension_handlers": {"key": "extensionHandlers", "type": "[VirtualMachineExtensionHandlerInstanceView]"},
+        "statuses": {"key": "statuses", "type": "[InstanceViewStatus]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineAgentInstanceView, self).__init__(**kwargs)
-        self.vm_agent_version = kwargs.get('vm_agent_version', None)
-        self.extension_handlers = kwargs.get('extension_handlers', None)
-        self.statuses = kwargs.get('statuses', None)
+        self.vm_agent_version = kwargs.get("vm_agent_version", None)
+        self.extension_handlers = kwargs.get("extension_handlers", None)
+        self.statuses = kwargs.get("statuses", None)
 
 
 class VirtualMachineCaptureParameters(msrest.serialization.Model):
@@ -1575,25 +1440,22 @@ class VirtualMachineCaptureParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'vhd_prefix': {'required': True},
-        'destination_container_name': {'required': True},
-        'overwrite_vhds': {'required': True},
+        "vhd_prefix": {"required": True},
+        "destination_container_name": {"required": True},
+        "overwrite_vhds": {"required": True},
     }
 
     _attribute_map = {
-        'vhd_prefix': {'key': 'vhdPrefix', 'type': 'str'},
-        'destination_container_name': {'key': 'destinationContainerName', 'type': 'str'},
-        'overwrite_vhds': {'key': 'overwriteVhds', 'type': 'bool'},
+        "vhd_prefix": {"key": "vhdPrefix", "type": "str"},
+        "destination_container_name": {"key": "destinationContainerName", "type": "str"},
+        "overwrite_vhds": {"key": "overwriteVhds", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineCaptureParameters, self).__init__(**kwargs)
-        self.vhd_prefix = kwargs['vhd_prefix']
-        self.destination_container_name = kwargs['destination_container_name']
-        self.overwrite_vhds = kwargs['overwrite_vhds']
+        self.vhd_prefix = kwargs["vhd_prefix"]
+        self.destination_container_name = kwargs["destination_container_name"]
+        self.overwrite_vhds = kwargs["overwrite_vhds"]
 
 
 class VirtualMachineCaptureResult(SubResource):
@@ -1606,16 +1468,13 @@ class VirtualMachineCaptureResult(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'output': {'key': 'properties.output', 'type': 'object'},
+        "id": {"key": "id", "type": "str"},
+        "output": {"key": "properties.output", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineCaptureResult, self).__init__(**kwargs)
-        self.output = kwargs.get('output', None)
+        self.output = kwargs.get("output", None)
 
 
 class VirtualMachineExtension(Resource):
@@ -1661,44 +1520,41 @@ class VirtualMachineExtension(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
-        'publisher': {'key': 'properties.publisher', 'type': 'str'},
-        'type_properties_type': {'key': 'properties.type', 'type': 'str'},
-        'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str'},
-        'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
-        'settings': {'key': 'properties.settings', 'type': 'object'},
-        'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineExtensionInstanceView'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "force_update_tag": {"key": "properties.forceUpdateTag", "type": "str"},
+        "publisher": {"key": "properties.publisher", "type": "str"},
+        "type_properties_type": {"key": "properties.type", "type": "str"},
+        "type_handler_version": {"key": "properties.typeHandlerVersion", "type": "str"},
+        "auto_upgrade_minor_version": {"key": "properties.autoUpgradeMinorVersion", "type": "bool"},
+        "settings": {"key": "properties.settings", "type": "object"},
+        "protected_settings": {"key": "properties.protectedSettings", "type": "object"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "instance_view": {"key": "properties.instanceView", "type": "VirtualMachineExtensionInstanceView"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineExtension, self).__init__(**kwargs)
-        self.force_update_tag = kwargs.get('force_update_tag', None)
-        self.publisher = kwargs.get('publisher', None)
-        self.type_properties_type = kwargs.get('type_properties_type', None)
-        self.type_handler_version = kwargs.get('type_handler_version', None)
-        self.auto_upgrade_minor_version = kwargs.get('auto_upgrade_minor_version', None)
-        self.settings = kwargs.get('settings', None)
-        self.protected_settings = kwargs.get('protected_settings', None)
+        self.force_update_tag = kwargs.get("force_update_tag", None)
+        self.publisher = kwargs.get("publisher", None)
+        self.type_properties_type = kwargs.get("type_properties_type", None)
+        self.type_handler_version = kwargs.get("type_handler_version", None)
+        self.auto_upgrade_minor_version = kwargs.get("auto_upgrade_minor_version", None)
+        self.settings = kwargs.get("settings", None)
+        self.protected_settings = kwargs.get("protected_settings", None)
         self.provisioning_state = None
-        self.instance_view = kwargs.get('instance_view', None)
+        self.instance_view = kwargs.get("instance_view", None)
 
 
 class VirtualMachineExtensionHandlerInstanceView(msrest.serialization.Model):
@@ -1713,19 +1569,16 @@ class VirtualMachineExtensionHandlerInstanceView(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'type_handler_version': {'key': 'typeHandlerVersion', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'InstanceViewStatus'},
+        "type": {"key": "type", "type": "str"},
+        "type_handler_version": {"key": "typeHandlerVersion", "type": "str"},
+        "status": {"key": "status", "type": "InstanceViewStatus"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineExtensionHandlerInstanceView, self).__init__(**kwargs)
-        self.type = kwargs.get('type', None)
-        self.type_handler_version = kwargs.get('type_handler_version', None)
-        self.status = kwargs.get('status', None)
+        self.type = kwargs.get("type", None)
+        self.type_handler_version = kwargs.get("type_handler_version", None)
+        self.status = kwargs.get("status", None)
 
 
 class VirtualMachineExtensionImage(Resource):
@@ -1761,35 +1614,32 @@ class VirtualMachineExtensionImage(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'operating_system': {'key': 'properties.operatingSystem', 'type': 'str'},
-        'compute_role': {'key': 'properties.computeRole', 'type': 'str'},
-        'handler_schema': {'key': 'properties.handlerSchema', 'type': 'str'},
-        'vm_scale_set_enabled': {'key': 'properties.vmScaleSetEnabled', 'type': 'bool'},
-        'supports_multiple_extensions': {'key': 'properties.supportsMultipleExtensions', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "operating_system": {"key": "properties.operatingSystem", "type": "str"},
+        "compute_role": {"key": "properties.computeRole", "type": "str"},
+        "handler_schema": {"key": "properties.handlerSchema", "type": "str"},
+        "vm_scale_set_enabled": {"key": "properties.vmScaleSetEnabled", "type": "bool"},
+        "supports_multiple_extensions": {"key": "properties.supportsMultipleExtensions", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineExtensionImage, self).__init__(**kwargs)
-        self.operating_system = kwargs.get('operating_system', None)
-        self.compute_role = kwargs.get('compute_role', None)
-        self.handler_schema = kwargs.get('handler_schema', None)
-        self.vm_scale_set_enabled = kwargs.get('vm_scale_set_enabled', None)
-        self.supports_multiple_extensions = kwargs.get('supports_multiple_extensions', None)
+        self.operating_system = kwargs.get("operating_system", None)
+        self.compute_role = kwargs.get("compute_role", None)
+        self.handler_schema = kwargs.get("handler_schema", None)
+        self.vm_scale_set_enabled = kwargs.get("vm_scale_set_enabled", None)
+        self.supports_multiple_extensions = kwargs.get("supports_multiple_extensions", None)
 
 
 class VirtualMachineExtensionInstanceView(msrest.serialization.Model):
@@ -1808,23 +1658,20 @@ class VirtualMachineExtensionInstanceView(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'type_handler_version': {'key': 'typeHandlerVersion', 'type': 'str'},
-        'substatuses': {'key': 'substatuses', 'type': '[InstanceViewStatus]'},
-        'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "type_handler_version": {"key": "typeHandlerVersion", "type": "str"},
+        "substatuses": {"key": "substatuses", "type": "[InstanceViewStatus]"},
+        "statuses": {"key": "statuses", "type": "[InstanceViewStatus]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineExtensionInstanceView, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.type = kwargs.get('type', None)
-        self.type_handler_version = kwargs.get('type_handler_version', None)
-        self.substatuses = kwargs.get('substatuses', None)
-        self.statuses = kwargs.get('statuses', None)
+        self.name = kwargs.get("name", None)
+        self.type = kwargs.get("type", None)
+        self.type_handler_version = kwargs.get("type_handler_version", None)
+        self.substatuses = kwargs.get("substatuses", None)
+        self.statuses = kwargs.get("statuses", None)
 
 
 class VirtualMachineExtensionsListResult(msrest.serialization.Model):
@@ -1835,15 +1682,12 @@ class VirtualMachineExtensionsListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualMachineExtension]'},
+        "value": {"key": "value", "type": "[VirtualMachineExtension]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineExtensionsListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs.get("value", None)
 
 
 class VirtualMachineExtensionUpdate(UpdateResource):
@@ -1872,28 +1716,25 @@ class VirtualMachineExtensionUpdate(UpdateResource):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
-        'publisher': {'key': 'properties.publisher', 'type': 'str'},
-        'type': {'key': 'properties.type', 'type': 'str'},
-        'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str'},
-        'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
-        'settings': {'key': 'properties.settings', 'type': 'object'},
-        'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "force_update_tag": {"key": "properties.forceUpdateTag", "type": "str"},
+        "publisher": {"key": "properties.publisher", "type": "str"},
+        "type": {"key": "properties.type", "type": "str"},
+        "type_handler_version": {"key": "properties.typeHandlerVersion", "type": "str"},
+        "auto_upgrade_minor_version": {"key": "properties.autoUpgradeMinorVersion", "type": "bool"},
+        "settings": {"key": "properties.settings", "type": "object"},
+        "protected_settings": {"key": "properties.protectedSettings", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineExtensionUpdate, self).__init__(**kwargs)
-        self.force_update_tag = kwargs.get('force_update_tag', None)
-        self.publisher = kwargs.get('publisher', None)
-        self.type = kwargs.get('type', None)
-        self.type_handler_version = kwargs.get('type_handler_version', None)
-        self.auto_upgrade_minor_version = kwargs.get('auto_upgrade_minor_version', None)
-        self.settings = kwargs.get('settings', None)
-        self.protected_settings = kwargs.get('protected_settings', None)
+        self.force_update_tag = kwargs.get("force_update_tag", None)
+        self.publisher = kwargs.get("publisher", None)
+        self.type = kwargs.get("type", None)
+        self.type_handler_version = kwargs.get("type_handler_version", None)
+        self.auto_upgrade_minor_version = kwargs.get("auto_upgrade_minor_version", None)
+        self.settings = kwargs.get("settings", None)
+        self.protected_settings = kwargs.get("protected_settings", None)
 
 
 class VirtualMachineIdentity(msrest.serialization.Model):
@@ -1912,24 +1753,21 @@ class VirtualMachineIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
-        self.type = kwargs.get('type', None)
+        self.type = kwargs.get("type", None)
 
 
 class VirtualMachineImageResource(SubResource):
@@ -1950,25 +1788,22 @@ class VirtualMachineImageResource(SubResource):
     """
 
     _validation = {
-        'name': {'required': True},
-        'location': {'required': True},
+        "name": {"required": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineImageResource, self).__init__(**kwargs)
-        self.name = kwargs['name']
-        self.location = kwargs['location']
-        self.tags = kwargs.get('tags', None)
+        self.name = kwargs["name"]
+        self.location = kwargs["location"]
+        self.tags = kwargs.get("tags", None)
 
 
 class VirtualMachineImage(VirtualMachineImageResource):
@@ -1996,28 +1831,25 @@ class VirtualMachineImage(VirtualMachineImageResource):
     """
 
     _validation = {
-        'name': {'required': True},
-        'location': {'required': True},
+        "name": {"required": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'plan': {'key': 'properties.plan', 'type': 'PurchasePlan'},
-        'os_disk_image': {'key': 'properties.osDiskImage', 'type': 'OSDiskImage'},
-        'data_disk_images': {'key': 'properties.dataDiskImages', 'type': '[DataDiskImage]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "plan": {"key": "properties.plan", "type": "PurchasePlan"},
+        "os_disk_image": {"key": "properties.osDiskImage", "type": "OSDiskImage"},
+        "data_disk_images": {"key": "properties.dataDiskImages", "type": "[DataDiskImage]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineImage, self).__init__(**kwargs)
-        self.plan = kwargs.get('plan', None)
-        self.os_disk_image = kwargs.get('os_disk_image', None)
-        self.data_disk_images = kwargs.get('data_disk_images', None)
+        self.plan = kwargs.get("plan", None)
+        self.os_disk_image = kwargs.get("os_disk_image", None)
+        self.data_disk_images = kwargs.get("data_disk_images", None)
 
 
 class VirtualMachineInstanceView(msrest.serialization.Model):
@@ -2046,29 +1878,26 @@ class VirtualMachineInstanceView(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'platform_update_domain': {'key': 'platformUpdateDomain', 'type': 'int'},
-        'platform_fault_domain': {'key': 'platformFaultDomain', 'type': 'int'},
-        'rdp_thumb_print': {'key': 'rdpThumbPrint', 'type': 'str'},
-        'vm_agent': {'key': 'vmAgent', 'type': 'VirtualMachineAgentInstanceView'},
-        'disks': {'key': 'disks', 'type': '[DiskInstanceView]'},
-        'extensions': {'key': 'extensions', 'type': '[VirtualMachineExtensionInstanceView]'},
-        'boot_diagnostics': {'key': 'bootDiagnostics', 'type': 'BootDiagnosticsInstanceView'},
-        'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
+        "platform_update_domain": {"key": "platformUpdateDomain", "type": "int"},
+        "platform_fault_domain": {"key": "platformFaultDomain", "type": "int"},
+        "rdp_thumb_print": {"key": "rdpThumbPrint", "type": "str"},
+        "vm_agent": {"key": "vmAgent", "type": "VirtualMachineAgentInstanceView"},
+        "disks": {"key": "disks", "type": "[DiskInstanceView]"},
+        "extensions": {"key": "extensions", "type": "[VirtualMachineExtensionInstanceView]"},
+        "boot_diagnostics": {"key": "bootDiagnostics", "type": "BootDiagnosticsInstanceView"},
+        "statuses": {"key": "statuses", "type": "[InstanceViewStatus]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineInstanceView, self).__init__(**kwargs)
-        self.platform_update_domain = kwargs.get('platform_update_domain', None)
-        self.platform_fault_domain = kwargs.get('platform_fault_domain', None)
-        self.rdp_thumb_print = kwargs.get('rdp_thumb_print', None)
-        self.vm_agent = kwargs.get('vm_agent', None)
-        self.disks = kwargs.get('disks', None)
-        self.extensions = kwargs.get('extensions', None)
-        self.boot_diagnostics = kwargs.get('boot_diagnostics', None)
-        self.statuses = kwargs.get('statuses', None)
+        self.platform_update_domain = kwargs.get("platform_update_domain", None)
+        self.platform_fault_domain = kwargs.get("platform_fault_domain", None)
+        self.rdp_thumb_print = kwargs.get("rdp_thumb_print", None)
+        self.vm_agent = kwargs.get("vm_agent", None)
+        self.disks = kwargs.get("disks", None)
+        self.extensions = kwargs.get("extensions", None)
+        self.boot_diagnostics = kwargs.get("boot_diagnostics", None)
+        self.statuses = kwargs.get("statuses", None)
 
 
 class VirtualMachineListResult(msrest.serialization.Model):
@@ -2084,21 +1913,18 @@ class VirtualMachineListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualMachine]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualMachine]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineListResult, self).__init__(**kwargs)
-        self.value = kwargs['value']
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs["value"]
+        self.next_link = kwargs.get("next_link", None)
 
 
 class VirtualMachineScaleSet(Resource):
@@ -2135,38 +1961,38 @@ class VirtualMachineScaleSet(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'identity': {'key': 'identity', 'type': 'VirtualMachineScaleSetIdentity'},
-        'upgrade_policy': {'key': 'properties.upgradePolicy', 'type': 'UpgradePolicy'},
-        'virtual_machine_profile': {'key': 'properties.virtualMachineProfile', 'type': 'VirtualMachineScaleSetVMProfile'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'over_provision': {'key': 'properties.overProvision', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "identity": {"key": "identity", "type": "VirtualMachineScaleSetIdentity"},
+        "upgrade_policy": {"key": "properties.upgradePolicy", "type": "UpgradePolicy"},
+        "virtual_machine_profile": {
+            "key": "properties.virtualMachineProfile",
+            "type": "VirtualMachineScaleSetVMProfile",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "over_provision": {"key": "properties.overProvision", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineScaleSet, self).__init__(**kwargs)
-        self.sku = kwargs.get('sku', None)
-        self.identity = kwargs.get('identity', None)
-        self.upgrade_policy = kwargs.get('upgrade_policy', None)
-        self.virtual_machine_profile = kwargs.get('virtual_machine_profile', None)
+        self.sku = kwargs.get("sku", None)
+        self.identity = kwargs.get("identity", None)
+        self.upgrade_policy = kwargs.get("upgrade_policy", None)
+        self.virtual_machine_profile = kwargs.get("virtual_machine_profile", None)
         self.provisioning_state = None
-        self.over_provision = kwargs.get('over_provision', None)
+        self.over_provision = kwargs.get("over_provision", None)
 
 
 class VirtualMachineScaleSetExtension(SubResource):
@@ -2196,33 +2022,30 @@ class VirtualMachineScaleSetExtension(SubResource):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'publisher': {'key': 'properties.publisher', 'type': 'str'},
-        'type': {'key': 'properties.type', 'type': 'str'},
-        'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str'},
-        'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
-        'settings': {'key': 'properties.settings', 'type': 'object'},
-        'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "publisher": {"key": "properties.publisher", "type": "str"},
+        "type": {"key": "properties.type", "type": "str"},
+        "type_handler_version": {"key": "properties.typeHandlerVersion", "type": "str"},
+        "auto_upgrade_minor_version": {"key": "properties.autoUpgradeMinorVersion", "type": "bool"},
+        "settings": {"key": "properties.settings", "type": "object"},
+        "protected_settings": {"key": "properties.protectedSettings", "type": "object"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineScaleSetExtension, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.publisher = kwargs.get('publisher', None)
-        self.type = kwargs.get('type', None)
-        self.type_handler_version = kwargs.get('type_handler_version', None)
-        self.auto_upgrade_minor_version = kwargs.get('auto_upgrade_minor_version', None)
-        self.settings = kwargs.get('settings', None)
-        self.protected_settings = kwargs.get('protected_settings', None)
+        self.name = kwargs.get("name", None)
+        self.publisher = kwargs.get("publisher", None)
+        self.type = kwargs.get("type", None)
+        self.type_handler_version = kwargs.get("type_handler_version", None)
+        self.auto_upgrade_minor_version = kwargs.get("auto_upgrade_minor_version", None)
+        self.settings = kwargs.get("settings", None)
+        self.protected_settings = kwargs.get("protected_settings", None)
         self.provisioning_state = None
 
 
@@ -2234,15 +2057,12 @@ class VirtualMachineScaleSetExtensionProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'extensions': {'key': 'extensions', 'type': '[VirtualMachineScaleSetExtension]'},
+        "extensions": {"key": "extensions", "type": "[VirtualMachineScaleSetExtension]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineScaleSetExtensionProfile, self).__init__(**kwargs)
-        self.extensions = kwargs.get('extensions', None)
+        self.extensions = kwargs.get("extensions", None)
 
 
 class VirtualMachineScaleSetIdentity(msrest.serialization.Model):
@@ -2261,24 +2081,21 @@ class VirtualMachineScaleSetIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineScaleSetIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
-        self.type = kwargs.get('type', None)
+        self.type = kwargs.get("type", None)
 
 
 class VirtualMachineScaleSetInstanceView(msrest.serialization.Model):
@@ -2297,24 +2114,21 @@ class VirtualMachineScaleSetInstanceView(msrest.serialization.Model):
     """
 
     _validation = {
-        'virtual_machine': {'readonly': True},
-        'extensions': {'readonly': True},
+        "virtual_machine": {"readonly": True},
+        "extensions": {"readonly": True},
     }
 
     _attribute_map = {
-        'virtual_machine': {'key': 'virtualMachine', 'type': 'VirtualMachineScaleSetInstanceViewStatusesSummary'},
-        'extensions': {'key': 'extensions', 'type': '[VirtualMachineScaleSetVMExtensionsSummary]'},
-        'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
+        "virtual_machine": {"key": "virtualMachine", "type": "VirtualMachineScaleSetInstanceViewStatusesSummary"},
+        "extensions": {"key": "extensions", "type": "[VirtualMachineScaleSetVMExtensionsSummary]"},
+        "statuses": {"key": "statuses", "type": "[InstanceViewStatus]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineScaleSetInstanceView, self).__init__(**kwargs)
         self.virtual_machine = None
         self.extensions = None
-        self.statuses = kwargs.get('statuses', None)
+        self.statuses = kwargs.get("statuses", None)
 
 
 class VirtualMachineScaleSetInstanceViewStatusesSummary(msrest.serialization.Model):
@@ -2328,17 +2142,14 @@ class VirtualMachineScaleSetInstanceViewStatusesSummary(msrest.serialization.Mod
     """
 
     _validation = {
-        'statuses_summary': {'readonly': True},
+        "statuses_summary": {"readonly": True},
     }
 
     _attribute_map = {
-        'statuses_summary': {'key': 'statusesSummary', 'type': '[VirtualMachineStatusCodeCount]'},
+        "statuses_summary": {"key": "statusesSummary", "type": "[VirtualMachineStatusCodeCount]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineScaleSetInstanceViewStatusesSummary, self).__init__(**kwargs)
         self.statuses_summary = None
 
@@ -2366,28 +2177,31 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'ApiEntityReference'},
-        'application_gateway_backend_address_pools': {'key': 'properties.applicationGatewayBackendAddressPools', 'type': '[SubResource]'},
-        'load_balancer_backend_address_pools': {'key': 'properties.loadBalancerBackendAddressPools', 'type': '[SubResource]'},
-        'load_balancer_inbound_nat_pools': {'key': 'properties.loadBalancerInboundNatPools', 'type': '[SubResource]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "ApiEntityReference"},
+        "application_gateway_backend_address_pools": {
+            "key": "properties.applicationGatewayBackendAddressPools",
+            "type": "[SubResource]",
+        },
+        "load_balancer_backend_address_pools": {
+            "key": "properties.loadBalancerBackendAddressPools",
+            "type": "[SubResource]",
+        },
+        "load_balancer_inbound_nat_pools": {"key": "properties.loadBalancerInboundNatPools", "type": "[SubResource]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineScaleSetIPConfiguration, self).__init__(**kwargs)
-        self.name = kwargs['name']
-        self.subnet = kwargs.get('subnet', None)
-        self.application_gateway_backend_address_pools = kwargs.get('application_gateway_backend_address_pools', None)
-        self.load_balancer_backend_address_pools = kwargs.get('load_balancer_backend_address_pools', None)
-        self.load_balancer_inbound_nat_pools = kwargs.get('load_balancer_inbound_nat_pools', None)
+        self.name = kwargs["name"]
+        self.subnet = kwargs.get("subnet", None)
+        self.application_gateway_backend_address_pools = kwargs.get("application_gateway_backend_address_pools", None)
+        self.load_balancer_backend_address_pools = kwargs.get("load_balancer_backend_address_pools", None)
+        self.load_balancer_inbound_nat_pools = kwargs.get("load_balancer_inbound_nat_pools", None)
 
 
 class VirtualMachineScaleSetListResult(msrest.serialization.Model):
@@ -2403,21 +2217,18 @@ class VirtualMachineScaleSetListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualMachineScaleSet]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualMachineScaleSet]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineScaleSetListResult, self).__init__(**kwargs)
-        self.value = kwargs['value']
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs["value"]
+        self.next_link = kwargs.get("next_link", None)
 
 
 class VirtualMachineScaleSetListSkusResult(msrest.serialization.Model):
@@ -2433,21 +2244,18 @@ class VirtualMachineScaleSetListSkusResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualMachineScaleSetSku]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualMachineScaleSetSku]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineScaleSetListSkusResult, self).__init__(**kwargs)
-        self.value = kwargs['value']
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs["value"]
+        self.next_link = kwargs.get("next_link", None)
 
 
 class VirtualMachineScaleSetListWithLinkResult(msrest.serialization.Model):
@@ -2463,21 +2271,18 @@ class VirtualMachineScaleSetListWithLinkResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualMachineScaleSet]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualMachineScaleSet]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineScaleSetListWithLinkResult, self).__init__(**kwargs)
-        self.value = kwargs['value']
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs["value"]
+        self.next_link = kwargs.get("next_link", None)
 
 
 class VirtualMachineScaleSetNetworkConfiguration(SubResource):
@@ -2497,24 +2302,21 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'primary': {'key': 'properties.primary', 'type': 'bool'},
-        'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[VirtualMachineScaleSetIPConfiguration]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "primary": {"key": "properties.primary", "type": "bool"},
+        "ip_configurations": {"key": "properties.ipConfigurations", "type": "[VirtualMachineScaleSetIPConfiguration]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineScaleSetNetworkConfiguration, self).__init__(**kwargs)
-        self.name = kwargs['name']
-        self.primary = kwargs.get('primary', None)
-        self.ip_configurations = kwargs.get('ip_configurations', None)
+        self.name = kwargs["name"]
+        self.primary = kwargs.get("primary", None)
+        self.ip_configurations = kwargs.get("ip_configurations", None)
 
 
 class VirtualMachineScaleSetNetworkProfile(msrest.serialization.Model):
@@ -2526,15 +2328,15 @@ class VirtualMachineScaleSetNetworkProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'network_interface_configurations': {'key': 'networkInterfaceConfigurations', 'type': '[VirtualMachineScaleSetNetworkConfiguration]'},
+        "network_interface_configurations": {
+            "key": "networkInterfaceConfigurations",
+            "type": "[VirtualMachineScaleSetNetworkConfiguration]",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineScaleSetNetworkProfile, self).__init__(**kwargs)
-        self.network_interface_configurations = kwargs.get('network_interface_configurations', None)
+        self.network_interface_configurations = kwargs.get("network_interface_configurations", None)
 
 
 class VirtualMachineScaleSetOSDisk(msrest.serialization.Model):
@@ -2571,30 +2373,27 @@ class VirtualMachineScaleSetOSDisk(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'create_option': {'required': True},
+        "name": {"required": True},
+        "create_option": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'caching': {'key': 'caching', 'type': 'str'},
-        'create_option': {'key': 'createOption', 'type': 'str'},
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'image': {'key': 'image', 'type': 'VirtualHardDisk'},
-        'vhd_containers': {'key': 'vhdContainers', 'type': '[str]'},
+        "name": {"key": "name", "type": "str"},
+        "caching": {"key": "caching", "type": "str"},
+        "create_option": {"key": "createOption", "type": "str"},
+        "os_type": {"key": "osType", "type": "str"},
+        "image": {"key": "image", "type": "VirtualHardDisk"},
+        "vhd_containers": {"key": "vhdContainers", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineScaleSetOSDisk, self).__init__(**kwargs)
-        self.name = kwargs['name']
-        self.caching = kwargs.get('caching', None)
-        self.create_option = kwargs['create_option']
-        self.os_type = kwargs.get('os_type', None)
-        self.image = kwargs.get('image', None)
-        self.vhd_containers = kwargs.get('vhd_containers', None)
+        self.name = kwargs["name"]
+        self.caching = kwargs.get("caching", None)
+        self.create_option = kwargs["create_option"]
+        self.os_type = kwargs.get("os_type", None)
+        self.image = kwargs.get("image", None)
+        self.vhd_containers = kwargs.get("vhd_containers", None)
 
 
 class VirtualMachineScaleSetOSProfile(msrest.serialization.Model):
@@ -2645,27 +2444,24 @@ class VirtualMachineScaleSetOSProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'computer_name_prefix': {'key': 'computerNamePrefix', 'type': 'str'},
-        'admin_username': {'key': 'adminUsername', 'type': 'str'},
-        'admin_password': {'key': 'adminPassword', 'type': 'str'},
-        'custom_data': {'key': 'customData', 'type': 'str'},
-        'windows_configuration': {'key': 'windowsConfiguration', 'type': 'WindowsConfiguration'},
-        'linux_configuration': {'key': 'linuxConfiguration', 'type': 'LinuxConfiguration'},
-        'secrets': {'key': 'secrets', 'type': '[VaultSecretGroup]'},
+        "computer_name_prefix": {"key": "computerNamePrefix", "type": "str"},
+        "admin_username": {"key": "adminUsername", "type": "str"},
+        "admin_password": {"key": "adminPassword", "type": "str"},
+        "custom_data": {"key": "customData", "type": "str"},
+        "windows_configuration": {"key": "windowsConfiguration", "type": "WindowsConfiguration"},
+        "linux_configuration": {"key": "linuxConfiguration", "type": "LinuxConfiguration"},
+        "secrets": {"key": "secrets", "type": "[VaultSecretGroup]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineScaleSetOSProfile, self).__init__(**kwargs)
-        self.computer_name_prefix = kwargs.get('computer_name_prefix', None)
-        self.admin_username = kwargs.get('admin_username', None)
-        self.admin_password = kwargs.get('admin_password', None)
-        self.custom_data = kwargs.get('custom_data', None)
-        self.windows_configuration = kwargs.get('windows_configuration', None)
-        self.linux_configuration = kwargs.get('linux_configuration', None)
-        self.secrets = kwargs.get('secrets', None)
+        self.computer_name_prefix = kwargs.get("computer_name_prefix", None)
+        self.admin_username = kwargs.get("admin_username", None)
+        self.admin_password = kwargs.get("admin_password", None)
+        self.custom_data = kwargs.get("custom_data", None)
+        self.windows_configuration = kwargs.get("windows_configuration", None)
+        self.linux_configuration = kwargs.get("linux_configuration", None)
+        self.secrets = kwargs.get("secrets", None)
 
 
 class VirtualMachineScaleSetSku(msrest.serialization.Model):
@@ -2682,21 +2478,18 @@ class VirtualMachineScaleSetSku(msrest.serialization.Model):
     """
 
     _validation = {
-        'resource_type': {'readonly': True},
-        'sku': {'readonly': True},
-        'capacity': {'readonly': True},
+        "resource_type": {"readonly": True},
+        "sku": {"readonly": True},
+        "capacity": {"readonly": True},
     }
 
     _attribute_map = {
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'capacity': {'key': 'capacity', 'type': 'VirtualMachineScaleSetSkuCapacity'},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "capacity": {"key": "capacity", "type": "VirtualMachineScaleSetSkuCapacity"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineScaleSetSku, self).__init__(**kwargs)
         self.resource_type = None
         self.sku = None
@@ -2721,23 +2514,20 @@ class VirtualMachineScaleSetSkuCapacity(msrest.serialization.Model):
     """
 
     _validation = {
-        'minimum': {'readonly': True},
-        'maximum': {'readonly': True},
-        'default_capacity': {'readonly': True},
-        'scale_type': {'readonly': True},
+        "minimum": {"readonly": True},
+        "maximum": {"readonly": True},
+        "default_capacity": {"readonly": True},
+        "scale_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'minimum': {'key': 'minimum', 'type': 'long'},
-        'maximum': {'key': 'maximum', 'type': 'long'},
-        'default_capacity': {'key': 'defaultCapacity', 'type': 'long'},
-        'scale_type': {'key': 'scaleType', 'type': 'str'},
+        "minimum": {"key": "minimum", "type": "long"},
+        "maximum": {"key": "maximum", "type": "long"},
+        "default_capacity": {"key": "defaultCapacity", "type": "long"},
+        "scale_type": {"key": "scaleType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineScaleSetSkuCapacity, self).__init__(**kwargs)
         self.minimum = None
         self.maximum = None
@@ -2755,17 +2545,14 @@ class VirtualMachineScaleSetStorageProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'image_reference': {'key': 'imageReference', 'type': 'ImageReference'},
-        'os_disk': {'key': 'osDisk', 'type': 'VirtualMachineScaleSetOSDisk'},
+        "image_reference": {"key": "imageReference", "type": "ImageReference"},
+        "os_disk": {"key": "osDisk", "type": "VirtualMachineScaleSetOSDisk"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineScaleSetStorageProfile, self).__init__(**kwargs)
-        self.image_reference = kwargs.get('image_reference', None)
-        self.os_disk = kwargs.get('os_disk', None)
+        self.image_reference = kwargs.get("image_reference", None)
+        self.os_disk = kwargs.get("os_disk", None)
 
 
 class VirtualMachineScaleSetVM(Resource):
@@ -2841,62 +2628,59 @@ class VirtualMachineScaleSetVM(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'instance_id': {'readonly': True},
-        'sku': {'readonly': True},
-        'resources': {'readonly': True},
-        'latest_model_applied': {'readonly': True},
-        'vm_id': {'readonly': True},
-        'instance_view': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "instance_id": {"readonly": True},
+        "sku": {"readonly": True},
+        "resources": {"readonly": True},
+        "latest_model_applied": {"readonly": True},
+        "vm_id": {"readonly": True},
+        "instance_view": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'instance_id': {'key': 'instanceId', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'plan': {'key': 'plan', 'type': 'Plan'},
-        'resources': {'key': 'resources', 'type': '[VirtualMachineExtension]'},
-        'latest_model_applied': {'key': 'properties.latestModelApplied', 'type': 'bool'},
-        'vm_id': {'key': 'properties.vmId', 'type': 'str'},
-        'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineScaleSetVMInstanceView'},
-        'hardware_profile': {'key': 'properties.hardwareProfile', 'type': 'HardwareProfile'},
-        'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
-        'os_profile': {'key': 'properties.osProfile', 'type': 'OSProfile'},
-        'network_profile': {'key': 'properties.networkProfile', 'type': 'NetworkProfile'},
-        'diagnostics_profile': {'key': 'properties.diagnosticsProfile', 'type': 'DiagnosticsProfile'},
-        'availability_set': {'key': 'properties.availabilitySet', 'type': 'SubResource'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'license_type': {'key': 'properties.licenseType', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "instance_id": {"key": "instanceId", "type": "str"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "plan": {"key": "plan", "type": "Plan"},
+        "resources": {"key": "resources", "type": "[VirtualMachineExtension]"},
+        "latest_model_applied": {"key": "properties.latestModelApplied", "type": "bool"},
+        "vm_id": {"key": "properties.vmId", "type": "str"},
+        "instance_view": {"key": "properties.instanceView", "type": "VirtualMachineScaleSetVMInstanceView"},
+        "hardware_profile": {"key": "properties.hardwareProfile", "type": "HardwareProfile"},
+        "storage_profile": {"key": "properties.storageProfile", "type": "StorageProfile"},
+        "os_profile": {"key": "properties.osProfile", "type": "OSProfile"},
+        "network_profile": {"key": "properties.networkProfile", "type": "NetworkProfile"},
+        "diagnostics_profile": {"key": "properties.diagnosticsProfile", "type": "DiagnosticsProfile"},
+        "availability_set": {"key": "properties.availabilitySet", "type": "SubResource"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "license_type": {"key": "properties.licenseType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineScaleSetVM, self).__init__(**kwargs)
         self.instance_id = None
         self.sku = None
-        self.plan = kwargs.get('plan', None)
+        self.plan = kwargs.get("plan", None)
         self.resources = None
         self.latest_model_applied = None
         self.vm_id = None
         self.instance_view = None
-        self.hardware_profile = kwargs.get('hardware_profile', None)
-        self.storage_profile = kwargs.get('storage_profile', None)
-        self.os_profile = kwargs.get('os_profile', None)
-        self.network_profile = kwargs.get('network_profile', None)
-        self.diagnostics_profile = kwargs.get('diagnostics_profile', None)
-        self.availability_set = kwargs.get('availability_set', None)
+        self.hardware_profile = kwargs.get("hardware_profile", None)
+        self.storage_profile = kwargs.get("storage_profile", None)
+        self.os_profile = kwargs.get("os_profile", None)
+        self.network_profile = kwargs.get("network_profile", None)
+        self.diagnostics_profile = kwargs.get("diagnostics_profile", None)
+        self.availability_set = kwargs.get("availability_set", None)
         self.provisioning_state = None
-        self.license_type = kwargs.get('license_type', None)
+        self.license_type = kwargs.get("license_type", None)
 
 
 class VirtualMachineScaleSetVMExtensionsSummary(msrest.serialization.Model):
@@ -2912,19 +2696,16 @@ class VirtualMachineScaleSetVMExtensionsSummary(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'statuses_summary': {'readonly': True},
+        "name": {"readonly": True},
+        "statuses_summary": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'statuses_summary': {'key': 'statusesSummary', 'type': '[VirtualMachineStatusCodeCount]'},
+        "name": {"key": "name", "type": "str"},
+        "statuses_summary": {"key": "statusesSummary", "type": "[VirtualMachineStatusCodeCount]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineScaleSetVMExtensionsSummary, self).__init__(**kwargs)
         self.name = None
         self.statuses_summary = None
@@ -2940,15 +2721,12 @@ class VirtualMachineScaleSetVMInstanceIDs(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'instance_ids': {'key': 'instanceIds', 'type': '[str]'},
+        "instance_ids": {"key": "instanceIds", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineScaleSetVMInstanceIDs, self).__init__(**kwargs)
-        self.instance_ids = kwargs.get('instance_ids', None)
+        self.instance_ids = kwargs.get("instance_ids", None)
 
 
 class VirtualMachineScaleSetVMInstanceRequiredIDs(msrest.serialization.Model):
@@ -2961,19 +2739,16 @@ class VirtualMachineScaleSetVMInstanceRequiredIDs(msrest.serialization.Model):
     """
 
     _validation = {
-        'instance_ids': {'required': True},
+        "instance_ids": {"required": True},
     }
 
     _attribute_map = {
-        'instance_ids': {'key': 'instanceIds', 'type': '[str]'},
+        "instance_ids": {"key": "instanceIds", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineScaleSetVMInstanceRequiredIDs, self).__init__(**kwargs)
-        self.instance_ids = kwargs['instance_ids']
+        self.instance_ids = kwargs["instance_ids"]
 
 
 class VirtualMachineScaleSetVMInstanceView(msrest.serialization.Model):
@@ -3002,29 +2777,26 @@ class VirtualMachineScaleSetVMInstanceView(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'platform_update_domain': {'key': 'platformUpdateDomain', 'type': 'int'},
-        'platform_fault_domain': {'key': 'platformFaultDomain', 'type': 'int'},
-        'rdp_thumb_print': {'key': 'rdpThumbPrint', 'type': 'str'},
-        'vm_agent': {'key': 'vmAgent', 'type': 'VirtualMachineAgentInstanceView'},
-        'disks': {'key': 'disks', 'type': '[DiskInstanceView]'},
-        'extensions': {'key': 'extensions', 'type': '[VirtualMachineExtensionInstanceView]'},
-        'boot_diagnostics': {'key': 'bootDiagnostics', 'type': 'BootDiagnosticsInstanceView'},
-        'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
+        "platform_update_domain": {"key": "platformUpdateDomain", "type": "int"},
+        "platform_fault_domain": {"key": "platformFaultDomain", "type": "int"},
+        "rdp_thumb_print": {"key": "rdpThumbPrint", "type": "str"},
+        "vm_agent": {"key": "vmAgent", "type": "VirtualMachineAgentInstanceView"},
+        "disks": {"key": "disks", "type": "[DiskInstanceView]"},
+        "extensions": {"key": "extensions", "type": "[VirtualMachineExtensionInstanceView]"},
+        "boot_diagnostics": {"key": "bootDiagnostics", "type": "BootDiagnosticsInstanceView"},
+        "statuses": {"key": "statuses", "type": "[InstanceViewStatus]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineScaleSetVMInstanceView, self).__init__(**kwargs)
-        self.platform_update_domain = kwargs.get('platform_update_domain', None)
-        self.platform_fault_domain = kwargs.get('platform_fault_domain', None)
-        self.rdp_thumb_print = kwargs.get('rdp_thumb_print', None)
-        self.vm_agent = kwargs.get('vm_agent', None)
-        self.disks = kwargs.get('disks', None)
-        self.extensions = kwargs.get('extensions', None)
-        self.boot_diagnostics = kwargs.get('boot_diagnostics', None)
-        self.statuses = kwargs.get('statuses', None)
+        self.platform_update_domain = kwargs.get("platform_update_domain", None)
+        self.platform_fault_domain = kwargs.get("platform_fault_domain", None)
+        self.rdp_thumb_print = kwargs.get("rdp_thumb_print", None)
+        self.vm_agent = kwargs.get("vm_agent", None)
+        self.disks = kwargs.get("disks", None)
+        self.extensions = kwargs.get("extensions", None)
+        self.boot_diagnostics = kwargs.get("boot_diagnostics", None)
+        self.statuses = kwargs.get("statuses", None)
 
 
 class VirtualMachineScaleSetVMListResult(msrest.serialization.Model):
@@ -3040,21 +2812,18 @@ class VirtualMachineScaleSetVMListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualMachineScaleSetVM]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualMachineScaleSetVM]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineScaleSetVMListResult, self).__init__(**kwargs)
-        self.value = kwargs['value']
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs["value"]
+        self.next_link = kwargs.get("next_link", None)
 
 
 class VirtualMachineScaleSetVMProfile(msrest.serialization.Model):
@@ -3074,21 +2843,18 @@ class VirtualMachineScaleSetVMProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'os_profile': {'key': 'osProfile', 'type': 'VirtualMachineScaleSetOSProfile'},
-        'storage_profile': {'key': 'storageProfile', 'type': 'VirtualMachineScaleSetStorageProfile'},
-        'network_profile': {'key': 'networkProfile', 'type': 'VirtualMachineScaleSetNetworkProfile'},
-        'extension_profile': {'key': 'extensionProfile', 'type': 'VirtualMachineScaleSetExtensionProfile'},
+        "os_profile": {"key": "osProfile", "type": "VirtualMachineScaleSetOSProfile"},
+        "storage_profile": {"key": "storageProfile", "type": "VirtualMachineScaleSetStorageProfile"},
+        "network_profile": {"key": "networkProfile", "type": "VirtualMachineScaleSetNetworkProfile"},
+        "extension_profile": {"key": "extensionProfile", "type": "VirtualMachineScaleSetExtensionProfile"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineScaleSetVMProfile, self).__init__(**kwargs)
-        self.os_profile = kwargs.get('os_profile', None)
-        self.storage_profile = kwargs.get('storage_profile', None)
-        self.network_profile = kwargs.get('network_profile', None)
-        self.extension_profile = kwargs.get('extension_profile', None)
+        self.os_profile = kwargs.get("os_profile", None)
+        self.storage_profile = kwargs.get("storage_profile", None)
+        self.network_profile = kwargs.get("network_profile", None)
+        self.extension_profile = kwargs.get("extension_profile", None)
 
 
 class VirtualMachineSize(msrest.serialization.Model):
@@ -3111,25 +2877,22 @@ class VirtualMachineSize(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'number_of_cores': {'key': 'numberOfCores', 'type': 'int'},
-        'os_disk_size_in_mb': {'key': 'osDiskSizeInMB', 'type': 'int'},
-        'resource_disk_size_in_mb': {'key': 'resourceDiskSizeInMB', 'type': 'int'},
-        'memory_in_mb': {'key': 'memoryInMB', 'type': 'int'},
-        'max_data_disk_count': {'key': 'maxDataDiskCount', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "number_of_cores": {"key": "numberOfCores", "type": "int"},
+        "os_disk_size_in_mb": {"key": "osDiskSizeInMB", "type": "int"},
+        "resource_disk_size_in_mb": {"key": "resourceDiskSizeInMB", "type": "int"},
+        "memory_in_mb": {"key": "memoryInMB", "type": "int"},
+        "max_data_disk_count": {"key": "maxDataDiskCount", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineSize, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.number_of_cores = kwargs.get('number_of_cores', None)
-        self.os_disk_size_in_mb = kwargs.get('os_disk_size_in_mb', None)
-        self.resource_disk_size_in_mb = kwargs.get('resource_disk_size_in_mb', None)
-        self.memory_in_mb = kwargs.get('memory_in_mb', None)
-        self.max_data_disk_count = kwargs.get('max_data_disk_count', None)
+        self.name = kwargs.get("name", None)
+        self.number_of_cores = kwargs.get("number_of_cores", None)
+        self.os_disk_size_in_mb = kwargs.get("os_disk_size_in_mb", None)
+        self.resource_disk_size_in_mb = kwargs.get("resource_disk_size_in_mb", None)
+        self.memory_in_mb = kwargs.get("memory_in_mb", None)
+        self.max_data_disk_count = kwargs.get("max_data_disk_count", None)
 
 
 class VirtualMachineSizeListResult(msrest.serialization.Model):
@@ -3140,15 +2903,12 @@ class VirtualMachineSizeListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualMachineSize]'},
+        "value": {"key": "value", "type": "[VirtualMachineSize]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineSizeListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs.get("value", None)
 
 
 class VirtualMachineStatusCodeCount(msrest.serialization.Model):
@@ -3163,19 +2923,16 @@ class VirtualMachineStatusCodeCount(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'count': {'readonly': True},
+        "code": {"readonly": True},
+        "count": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'count': {'key': 'count', 'type': 'int'},
+        "code": {"key": "code", "type": "str"},
+        "count": {"key": "count", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualMachineStatusCodeCount, self).__init__(**kwargs)
         self.code = None
         self.count = None
@@ -3204,23 +2961,20 @@ class WindowsConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provision_vm_agent': {'key': 'provisionVMAgent', 'type': 'bool'},
-        'enable_automatic_updates': {'key': 'enableAutomaticUpdates', 'type': 'bool'},
-        'time_zone': {'key': 'timeZone', 'type': 'str'},
-        'additional_unattend_content': {'key': 'additionalUnattendContent', 'type': '[AdditionalUnattendContent]'},
-        'win_rm': {'key': 'winRM', 'type': 'WinRMConfiguration'},
+        "provision_vm_agent": {"key": "provisionVMAgent", "type": "bool"},
+        "enable_automatic_updates": {"key": "enableAutomaticUpdates", "type": "bool"},
+        "time_zone": {"key": "timeZone", "type": "str"},
+        "additional_unattend_content": {"key": "additionalUnattendContent", "type": "[AdditionalUnattendContent]"},
+        "win_rm": {"key": "winRM", "type": "WinRMConfiguration"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(WindowsConfiguration, self).__init__(**kwargs)
-        self.provision_vm_agent = kwargs.get('provision_vm_agent', None)
-        self.enable_automatic_updates = kwargs.get('enable_automatic_updates', None)
-        self.time_zone = kwargs.get('time_zone', None)
-        self.additional_unattend_content = kwargs.get('additional_unattend_content', None)
-        self.win_rm = kwargs.get('win_rm', None)
+        self.provision_vm_agent = kwargs.get("provision_vm_agent", None)
+        self.enable_automatic_updates = kwargs.get("enable_automatic_updates", None)
+        self.time_zone = kwargs.get("time_zone", None)
+        self.additional_unattend_content = kwargs.get("additional_unattend_content", None)
+        self.win_rm = kwargs.get("win_rm", None)
 
 
 class WinRMConfiguration(msrest.serialization.Model):
@@ -3231,15 +2985,12 @@ class WinRMConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'listeners': {'key': 'listeners', 'type': '[WinRMListener]'},
+        "listeners": {"key": "listeners", "type": "[WinRMListener]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(WinRMConfiguration, self).__init__(**kwargs)
-        self.listeners = kwargs.get('listeners', None)
+        self.listeners = kwargs.get("listeners", None)
 
 
 class WinRMListener(msrest.serialization.Model):
@@ -3260,14 +3011,11 @@ class WinRMListener(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'protocol': {'key': 'protocol', 'type': 'str'},
-        'certificate_url': {'key': 'certificateUrl', 'type': 'str'},
+        "protocol": {"key": "protocol", "type": "str"},
+        "certificate_url": {"key": "certificateUrl", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(WinRMListener, self).__init__(**kwargs)
-        self.protocol = kwargs.get('protocol', None)
-        self.certificate_url = kwargs.get('certificate_url', None)
+        self.protocol = kwargs.get("protocol", None)
+        self.certificate_url = kwargs.get("certificate_url", None)

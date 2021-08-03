@@ -9,6 +9,7 @@
 from enum import Enum, EnumMeta
 from six import with_metaclass
 
+
 class _CaseInsensitiveEnumMeta(EnumMeta):
     def __getitem__(self, name):
         return super().__getitem__(name.upper())
@@ -32,9 +33,9 @@ class AccessLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     READ = "Read"
     WRITE = "Write"
 
+
 class DiskCreateOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """This enumerates the possible sources of a disk's creation.
-    """
+    """This enumerates the possible sources of a disk's creation."""
 
     #: Create an empty data disk of a size given by diskSizeGB.
     EMPTY = "Empty"
@@ -55,15 +56,15 @@ class DiskCreateOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: the disk.
     UPLOAD = "Upload"
 
+
 class DiskEncryptionSetIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of Managed Identity used by the DiskEncryptionSet. Only SystemAssigned is supported.
-    """
+    """The type of Managed Identity used by the DiskEncryptionSet. Only SystemAssigned is supported."""
 
     SYSTEM_ASSIGNED = "SystemAssigned"
 
+
 class DiskState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The state of the disk.
-    """
+    """The state of the disk."""
 
     #: The disk is not being used and can be attached to a VM.
     UNATTACHED = "Unattached"
@@ -78,9 +79,9 @@ class DiskState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: A disk is created for upload and a write token has been issued for uploading to it.
     ACTIVE_UPLOAD = "ActiveUpload"
 
+
 class DiskStorageAccountTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The sku name.
-    """
+    """The sku name."""
 
     #: Standard HDD locally redundant storage. Best for backup, non-critical, and infrequent access.
     STANDARD_LRS = "Standard_LRS"
@@ -93,32 +94,32 @@ class DiskStorageAccountTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     #: databases (for example, SQL, Oracle), and other transaction-heavy workloads.
     ULTRA_SSD_LRS = "UltraSSD_LRS"
 
+
 class EncryptionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of key used to encrypt the data of the disk.
-    """
+    """The type of key used to encrypt the data of the disk."""
 
     #: Disk is encrypted with XStore managed key at rest. It is the default encryption type.
     ENCRYPTION_AT_REST_WITH_PLATFORM_KEY = "EncryptionAtRestWithPlatformKey"
     #: Disk is encrypted with Customer managed key at rest.
     ENCRYPTION_AT_REST_WITH_CUSTOMER_KEY = "EncryptionAtRestWithCustomerKey"
 
+
 class HyperVGeneration(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The hypervisor generation of the Virtual Machine. Applicable to OS disks only.
-    """
+    """The hypervisor generation of the Virtual Machine. Applicable to OS disks only."""
 
     V1 = "V1"
     V2 = "V2"
 
+
 class OperatingSystemTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The Operating System type.
-    """
+    """The Operating System type."""
 
     WINDOWS = "Windows"
     LINUX = "Linux"
 
+
 class SnapshotStorageAccountTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The sku name.
-    """
+    """The sku name."""
 
     #: Standard HDD locally redundant storage.
     STANDARD_LRS = "Standard_LRS"

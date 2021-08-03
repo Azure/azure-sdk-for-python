@@ -9,6 +9,7 @@
 from enum import Enum, EnumMeta
 from six import with_metaclass
 
+
 class _CaseInsensitiveEnumMeta(EnumMeta):
     def __getitem__(self, name):
         return super().__getitem__(name.upper())
@@ -31,6 +32,7 @@ class AccessLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NONE = "None"
     READ = "Read"
 
+
 class CachingTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values are:
     :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
@@ -42,15 +44,16 @@ class CachingTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     READ_ONLY = "ReadOnly"
     READ_WRITE = "ReadWrite"
 
+
 class DiskCreateOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """This enumerates the possible sources of a disk's creation.
-    """
+    """This enumerates the possible sources of a disk's creation."""
 
     EMPTY = "Empty"
     ATTACH = "Attach"
     FROM_IMAGE = "FromImage"
     IMPORT_ENUM = "Import"
     COPY = "Copy"
+
 
 class DiskCreateOptionTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies how the virtual machine should be created.:code:`<br>`:code:`<br>` Possible values
@@ -65,6 +68,7 @@ class DiskCreateOptionTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     EMPTY = "Empty"
     ATTACH = "Attach"
 
+
 class IPVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Available from Api-Version 2017-03-30 onwards, it represents whether the specific
     ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible values are: 'IPv4' and
@@ -74,28 +78,29 @@ class IPVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     I_PV4 = "IPv4"
     I_PV6 = "IPv6"
 
+
 class MaintenanceOperationResultCodeTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The Last Maintenance Operation Result Code.
-    """
+    """The Last Maintenance Operation Result Code."""
 
     NONE = "None"
     RETRY_LATER = "RetryLater"
     MAINTENANCE_ABORTED = "MaintenanceAborted"
     MAINTENANCE_COMPLETED = "MaintenanceCompleted"
 
+
 class OperatingSystemStateTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The OS State.
-    """
+    """The OS State."""
 
     GENERALIZED = "Generalized"
     SPECIALIZED = "Specialized"
 
+
 class OperatingSystemTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The operating system of the osDiskImage.
-    """
+    """The operating system of the osDiskImage."""
 
     WINDOWS = "Windows"
     LINUX = "Linux"
+
 
 class ProtocolTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the protocol of listener. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`\
@@ -105,36 +110,37 @@ class ProtocolTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     HTTP = "Http"
     HTTPS = "Https"
 
+
 class ResourceSkuCapacityScaleType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The scale type applicable to the sku.
-    """
+    """The scale type applicable to the sku."""
 
     AUTOMATIC = "Automatic"
     MANUAL = "Manual"
     NONE = "None"
 
+
 class ResourceSkuRestrictionsReasonCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The reason for restriction.
-    """
+    """The reason for restriction."""
 
     QUOTA_ID = "QuotaId"
     NOT_AVAILABLE_FOR_SUBSCRIPTION = "NotAvailableForSubscription"
 
+
 class RollingUpgradeActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The last action performed on the rolling upgrade.
-    """
+    """The last action performed on the rolling upgrade."""
 
     START = "Start"
     CANCEL = "Cancel"
 
+
 class RollingUpgradeStatusCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Code indicating the current status of the upgrade.
-    """
+    """Code indicating the current status of the upgrade."""
 
     ROLLING_FORWARD = "RollingForward"
     CANCELLED = "Cancelled"
     COMPLETED = "Completed"
     FAULTED = "Faulted"
+
 
 class SettingNames(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the name of the setting to which the content applies. Possible values are:
@@ -144,13 +150,14 @@ class SettingNames(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     AUTO_LOGON = "AutoLogon"
     FIRST_LOGON_COMMANDS = "FirstLogonCommands"
 
+
 class StatusLevelTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The level code.
-    """
+    """The level code."""
 
     INFO = "Info"
     WARNING = "Warning"
     ERROR = "Error"
+
 
 class StorageAccountTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the storage account type for the managed disk. Possible values are: Standard_LRS or
@@ -159,6 +166,7 @@ class StorageAccountTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     STANDARD_LRS = "Standard_LRS"
     PREMIUM_LRS = "Premium_LRS"
+
 
 class UpgradeMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the mode of an upgrade to virtual machines in the scale set.:code:`<br />`:code:`<br
@@ -172,12 +180,13 @@ class UpgradeMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MANUAL = "Manual"
     ROLLING = "Rolling"
 
+
 class VirtualMachineScaleSetSkuScaleType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The scale type applicable to the sku.
-    """
+    """The scale type applicable to the sku."""
 
     AUTOMATIC = "Automatic"
     NONE = "None"
+
 
 class VirtualMachineSizeTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the size of the virtual machine. For more information about virtual machine sizes,
