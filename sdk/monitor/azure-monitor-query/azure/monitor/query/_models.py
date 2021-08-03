@@ -67,18 +67,23 @@ class LogsQueryResultColumn(InternalColumn):
 class LogsQueryResult(object):
     """Contains the tables, columns & rows resulting from a query.
 
-    :keyword tables: The list of tables, columns and rows.
-    :paramtype tables: list[~azure.monitor.query.LogsQueryResultTable]
-    :keyword statistics: Any object.
-    :paramtype statistics: object
-    :keyword render: Any object.
-    :paramtype render: object
+    :ivar tables: The list of tables, columns and rows.
+    :vartype tables: list[~azure.monitor.query.LogsQueryResultTable]
+    :ivar statistics: This will include a statistics property in the response that describes various
+     performance statistics such as query execution time and resource usage.
+    :vartype statistics: object
+    :ivar render: This will include a render property in the response that specifies the type of
+     visualization selected by the query and any properties for that visualization.
+    :vartype render: object
+    :ivar error: Any error info.
+    :vartype error: object
     """
     def __init__(self, **kwargs):
         # type: (Any) -> None
         self.tables = kwargs.get("tables", None)
         self.statistics = kwargs.get("statistics", None)
         self.render = kwargs.get("render", None)
+        self.error = kwargs.get("error", None)
 
     @classmethod
     def _from_generated(cls, generated):
@@ -94,7 +99,8 @@ class LogsQueryResult(object):
         return cls(
             tables=tables,
             statistics=generated.statistics,
-            render=generated.render
+            render=generated.render,
+            error=generated.error
         )
 
 
@@ -209,12 +215,20 @@ class LogsBatchQueryRequest(InternalLogQueryRequest):
 class LogsBatchQueryResult(object):
     """The LogsBatchQueryResult.
 
-    :param id:
-    :type id: str
-    :param status:
-    :type status: int
-    :param body: Contains the tables, columns & rows resulting from a query.
-    :type body: ~azure.monitor.query.LogsQueryResult
+    :ivar id: the request id of the request that was sent.
+    :vartype id: str
+    :ivar status: status code of the response.
+    :vartype status: int
+    :ivar tables: The list of tables, columns and rows.
+    :vartype tables: list[~azure.monitor.query.LogsQueryResultTable]
+    :ivar statistics: This will include a statistics property in the response that describes various
+     performance statistics such as query execution time and resource usage.
+    :vartype statistics: object
+    :ivar render: This will include a render property in the response that specifies the type of
+     visualization selected by the query and any properties for that visualization.
+    :vartype render: object
+    :ivar error: Any error info.
+    :vartype error: object
     """
     def __init__(
         self,
@@ -222,16 +236,29 @@ class LogsBatchQueryResult(object):
     ):
         self.id = kwargs.get('id', None)
         self.status = kwargs.get('status', None)
-        self.body = kwargs.get('body', None)
+        self.tables = kwargs.get('tables', None)
+        self.error = kwargs.get('error', None)
+        self.statistics = kwargs.get('statistics', None)
+        self.render = kwargs.get('render', None)
 
     @classmethod
     def _from_generated(cls, generated):
         if not generated:
             return cls()
+        tables = None
+        if generated.body.tables is not None:
+            tables = [
+                LogsQueryResultTable._from_generated( # pylint: disable=protected-access
+                    table
+                    ) for table in generated.body.tables
+                ]
         return cls(
             id=generated.id,
             status=generated.status,
-            body=LogsQueryResult._from_generated(generated.body) # pylint: disable=protected-access
+            tables=tables,
+            statistics=generated.body.statistics,
+            render=generated.body.render,
+            error=generated.body.error
         )
 
 

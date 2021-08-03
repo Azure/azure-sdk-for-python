@@ -123,8 +123,8 @@ def test_logs_batch_query_with_statistics_in_some():
     response = client.batch_query(requests)
 
     assert len(response) == 3
-    assert response[0].body.statistics is None
-    assert response[2].body.statistics is not None
+    assert response[0].statistics is None
+    assert response[2].statistics is not None
 
 @pytest.mark.skip('https://github.com/Azure/azure-sdk-for-python/issues/19382')
 @pytest.mark.live_test_only
@@ -171,4 +171,4 @@ def test_logs_batch_query_additional_workspaces():
     response = client.batch_query(requests)
 
     for resp in response:
-        assert len(resp.body.tables[0].rows) == 2
+        assert len(resp.tables[0].rows) == 2

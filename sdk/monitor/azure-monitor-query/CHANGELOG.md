@@ -7,6 +7,7 @@
 
 - Added enum `AggregationType` which can be used to specify aggregations in the query API.
 - Added `LogsBatchQueryResult` model that is returned for a logs batch query.
+- Added `error` attribute to `LogsQueryResult`.
 
 ### Breaking Changes
 
@@ -15,6 +16,7 @@
 - `LogsBatchResults` model is now removed.
 - `LogsQueryRequest` is renamed to `LogsBatchQueryRequest`
 - `LogsQueryResults` is now renamed to `LogsQueryResult`
+- `LogsBatchQueryResult` now has 4 additional attributes - `tables`, `error`, `statistics` and `render` instead of `body` attribute.
 
 ### Bugs Fixed
 
