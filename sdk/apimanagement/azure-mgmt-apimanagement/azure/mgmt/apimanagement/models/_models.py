@@ -737,8 +737,8 @@ class ApiCreateOrUpdateParameter(msrest.serialization.Model):
     :param value: Content value when Importing an API.
     :type value: str
     :param format: Format of the Content in which the API is getting imported. Possible values
-     include: "wadl-xml", "wadl-link-json", "swagger-json", "swagger-link-json", "wsdl", "wsdl-
-     link", "openapi", "openapi+json", "openapi-link", "openapi+json-link".
+     include: "wadl-xml", "wadl-link-json", "swagger-json", "swagger-link-json", "wsdl",
+     "wsdl-link", "openapi", "openapi+json", "openapi-link", "openapi+json-link".
     :type format: str or ~azure.mgmt.apimanagement.models.ContentFormat
     :param wsdl_selector: Criteria to limit import of WSDL to a subset of the document.
     :type wsdl_selector: ~azure.mgmt.apimanagement.models.ApiCreateOrUpdatePropertiesWsdlSelector
@@ -867,8 +867,8 @@ class ApiCreateOrUpdateProperties(ApiContractProperties):
     :param value: Content value when Importing an API.
     :type value: str
     :param format: Format of the Content in which the API is getting imported. Possible values
-     include: "wadl-xml", "wadl-link-json", "swagger-json", "swagger-link-json", "wsdl", "wsdl-
-     link", "openapi", "openapi+json", "openapi-link", "openapi+json-link".
+     include: "wadl-xml", "wadl-link-json", "swagger-json", "swagger-link-json", "wsdl",
+     "wsdl-link", "openapi", "openapi+json", "openapi-link", "openapi+json-link".
     :type format: str or ~azure.mgmt.apimanagement.models.ContentFormat
     :param wsdl_selector: Criteria to limit import of WSDL to a subset of the document.
     :type wsdl_selector: ~azure.mgmt.apimanagement.models.ApiCreateOrUpdatePropertiesWsdlSelector
@@ -956,8 +956,8 @@ class ApiExportResult(msrest.serialization.Model):
     :param id: ResourceId of the API which was exported.
     :type id: str
     :param export_result_format: Format in which the Api Details are exported to the Storage Blob
-     with Sas Key valid for 5 minutes. Possible values include: "swagger-link-json", "wsdl-
-     link+xml", "wadl-link-json", "openapi-link".
+     with Sas Key valid for 5 minutes. Possible values include: "swagger-link-json",
+     "wsdl-link+xml", "wadl-link-json", "openapi-link".
     :type export_result_format: str or ~azure.mgmt.apimanagement.models.ExportResultFormat
     :param value: The object defining the schema of the exported Api Detail.
     :type value: ~azure.mgmt.apimanagement.models.ApiExportResultValue
@@ -3311,15 +3311,15 @@ class AssociationContract(Resource):
     :vartype name: str
     :ivar type: Resource type for API Management resource.
     :vartype type: str
-    :ivar provisioning_state: Provisioning state. Default value: "created".
-    :vartype provisioning_state: str
+    :param provisioning_state: Provisioning state. The only acceptable values to pass in are None
+     and "created". The default value is None.
+    :type provisioning_state: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'provisioning_state': {'constant': True},
     }
 
     _attribute_map = {
@@ -3329,13 +3329,12 @@ class AssociationContract(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    provisioning_state = "created"
-
     def __init__(
         self,
         **kwargs
     ):
         super(AssociationContract, self).__init__(**kwargs)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
 
 
 class AuthenticationSettingsContract(msrest.serialization.Model):
@@ -3421,8 +3420,8 @@ class AuthorizationServerContract(Resource):
      security.
     :type support_state: bool
     :param default_scope: Access token scope that is going to be requested by default. Can be
-     overridden at the API level. Should be provided in the form of a string containing space-
-     delimited values.
+     overridden at the API level. Should be provided in the form of a string containing
+     space-delimited values.
     :type default_scope: str
     :param bearer_token_sending_methods: Specifies the mechanism by which access token is passed to
      the API.
@@ -3531,8 +3530,8 @@ class AuthorizationServerContractBaseProperties(msrest.serialization.Model):
      security.
     :type support_state: bool
     :param default_scope: Access token scope that is going to be requested by default. Can be
-     overridden at the API level. Should be provided in the form of a string containing space-
-     delimited values.
+     overridden at the API level. Should be provided in the form of a string containing
+     space-delimited values.
     :type default_scope: str
     :param bearer_token_sending_methods: Specifies the mechanism by which access token is passed to
      the API.
@@ -3603,8 +3602,8 @@ class AuthorizationServerContractProperties(AuthorizationServerContractBasePrope
      security.
     :type support_state: bool
     :param default_scope: Access token scope that is going to be requested by default. Can be
-     overridden at the API level. Should be provided in the form of a string containing space-
-     delimited values.
+     overridden at the API level. Should be provided in the form of a string containing
+     space-delimited values.
     :type default_scope: str
     :param bearer_token_sending_methods: Specifies the mechanism by which access token is passed to
      the API.
@@ -3738,8 +3737,8 @@ class AuthorizationServerUpdateContract(Resource):
      security.
     :type support_state: bool
     :param default_scope: Access token scope that is going to be requested by default. Can be
-     overridden at the API level. Should be provided in the form of a string containing space-
-     delimited values.
+     overridden at the API level. Should be provided in the form of a string containing
+     space-delimited values.
     :type default_scope: str
     :param bearer_token_sending_methods: Specifies the mechanism by which access token is passed to
      the API.
@@ -3848,8 +3847,8 @@ class AuthorizationServerUpdateContractProperties(AuthorizationServerContractBas
      security.
     :type support_state: bool
     :param default_scope: Access token scope that is going to be requested by default. Can be
-     overridden at the API level. Should be provided in the form of a string containing space-
-     delimited values.
+     overridden at the API level. Should be provided in the form of a string containing
+     space-delimited values.
     :type default_scope: str
     :param bearer_token_sending_methods: Specifies the mechanism by which access token is passed to
      the API.
@@ -4912,7 +4911,7 @@ class ContentItemContract(Resource):
     :ivar type: Resource type for API Management resource.
     :vartype type: str
     :param properties: Properties of the content item.
-    :type properties: dict[str, object]
+    :type properties: dict[str, any]
     """
 
     _validation = {
@@ -4984,7 +4983,7 @@ class ContentTypeContract(Resource):
     :param description: Content type description.
     :type description: str
     :param schema: Content type schema.
-    :type schema: object
+    :type schema: any
     :param version: Content type version.
     :type version: str
     """
@@ -7969,7 +7968,7 @@ class Operation(msrest.serialization.Model):
     :param origin: The operation origin.
     :type origin: str
     :param properties: The operation properties.
-    :type properties: object
+    :type properties: any
     """
 
     _attribute_map = {
@@ -8239,13 +8238,19 @@ class OperationListResult(msrest.serialization.Model):
         self.next_link = kwargs.get('next_link', None)
 
 
-class OperationResultContract(msrest.serialization.Model):
-    """Operation Result.
+class OperationResultContract(Resource):
+    """Long Running Git Operation Results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param id: Operation result identifier.
-    :type id: str
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type for API Management resource.
+    :vartype type: str
+    :param id_properties_id: Operation result identifier.
+    :type id_properties_id: str
     :param status: Status of an async operation. Possible values include: "Started", "InProgress",
      "Succeeded", "Failed".
     :type status: str or ~azure.mgmt.apimanagement.models.AsyncOperationStatus
@@ -8266,17 +8271,23 @@ class OperationResultContract(msrest.serialization.Model):
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'action_log': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'started': {'key': 'started', 'type': 'iso-8601'},
-        'updated': {'key': 'updated', 'type': 'iso-8601'},
-        'result_info': {'key': 'resultInfo', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'ErrorResponseBody'},
-        'action_log': {'key': 'actionLog', 'type': '[OperationResultLogItemContract]'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'id_properties_id': {'key': 'properties.id', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'str'},
+        'started': {'key': 'properties.started', 'type': 'iso-8601'},
+        'updated': {'key': 'properties.updated', 'type': 'iso-8601'},
+        'result_info': {'key': 'properties.resultInfo', 'type': 'str'},
+        'error': {'key': 'properties.error', 'type': 'ErrorResponseBody'},
+        'action_log': {'key': 'properties.actionLog', 'type': '[OperationResultLogItemContract]'},
     }
 
     def __init__(
@@ -8284,7 +8295,7 @@ class OperationResultContract(msrest.serialization.Model):
         **kwargs
     ):
         super(OperationResultContract, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
+        self.id_properties_id = kwargs.get('id_properties_id', None)
         self.status = kwargs.get('status', None)
         self.started = kwargs.get('started', None)
         self.updated = kwargs.get('updated', None)
@@ -10446,7 +10457,7 @@ class SchemaContract(Resource):
      schemas other than Swagger/OpenAPI.
     :type value: str
     :param definitions: Types definitions. Used for Swagger/OpenAPI schemas only, null otherwise.
-    :type definitions: object
+    :type definitions: any
     """
 
     _validation = {
@@ -10538,8 +10549,8 @@ class SubscriptionContract(Resource):
     :type start_date: ~datetime.datetime
     :param expiration_date: Subscription expiration date. The setting is for audit purposes only
      and the subscription is not automatically expired. The subscription lifecycle can be managed by
-     using the ``state`` property. The date conforms to the following format: ``yyyy-MM-
-     ddTHH:mm:ssZ`` as specified by the ISO 8601 standard.
+     using the ``state`` property. The date conforms to the following format:
+     ``yyyy-MM-ddTHH:mm:ssZ`` as specified by the ISO 8601 standard.
     :type expiration_date: ~datetime.datetime
     :param end_date: Date when subscription was cancelled or expired. The setting is for audit
      purposes only and the subscription is not automatically cancelled. The subscription lifecycle
@@ -10750,8 +10761,8 @@ class SubscriptionUpdateParameters(msrest.serialization.Model):
     :type scope: str
     :param expiration_date: Subscription expiration date. The setting is for audit purposes only
      and the subscription is not automatically expired. The subscription lifecycle can be managed by
-     using the ``state`` property. The date conforms to the following format: ``yyyy-MM-
-     ddTHH:mm:ssZ`` as specified by the ISO 8601 standard.
+     using the ``state`` property. The date conforms to the following format:
+     ``yyyy-MM-ddTHH:mm:ssZ`` as specified by the ISO 8601 standard.
     :type expiration_date: ~datetime.datetime
     :param display_name: Subscription name.
     :type display_name: str
@@ -11167,7 +11178,7 @@ class TagResourceContractProperties(msrest.serialization.Model):
 
 
 class TenantConfigurationSyncStateContract(msrest.serialization.Model):
-    """Tenant Configuration Synchronization State.
+    """Result of Tenant Configuration Sync State.
 
     :param branch: The name of Git branch.
     :type branch: str
@@ -11187,16 +11198,19 @@ class TenantConfigurationSyncStateContract(msrest.serialization.Model):
      conforms to the following format: ``yyyy-MM-ddTHH:mm:ssZ`` as specified by the ISO 8601
      standard.
     :type configuration_change_date: ~datetime.datetime
+    :param last_operation_id: Most recent tenant configuration operation identifier.
+    :type last_operation_id: str
     """
 
     _attribute_map = {
-        'branch': {'key': 'branch', 'type': 'str'},
-        'commit_id': {'key': 'commitId', 'type': 'str'},
-        'is_export': {'key': 'isExport', 'type': 'bool'},
-        'is_synced': {'key': 'isSynced', 'type': 'bool'},
-        'is_git_enabled': {'key': 'isGitEnabled', 'type': 'bool'},
-        'sync_date': {'key': 'syncDate', 'type': 'iso-8601'},
-        'configuration_change_date': {'key': 'configurationChangeDate', 'type': 'iso-8601'},
+        'branch': {'key': 'properties.branch', 'type': 'str'},
+        'commit_id': {'key': 'properties.commitId', 'type': 'str'},
+        'is_export': {'key': 'properties.isExport', 'type': 'bool'},
+        'is_synced': {'key': 'properties.isSynced', 'type': 'bool'},
+        'is_git_enabled': {'key': 'properties.isGitEnabled', 'type': 'bool'},
+        'sync_date': {'key': 'properties.syncDate', 'type': 'iso-8601'},
+        'configuration_change_date': {'key': 'properties.configurationChangeDate', 'type': 'iso-8601'},
+        'last_operation_id': {'key': 'properties.lastOperationId', 'type': 'str'},
     }
 
     def __init__(
@@ -11211,6 +11225,7 @@ class TenantConfigurationSyncStateContract(msrest.serialization.Model):
         self.is_git_enabled = kwargs.get('is_git_enabled', None)
         self.sync_date = kwargs.get('sync_date', None)
         self.configuration_change_date = kwargs.get('configuration_change_date', None)
+        self.last_operation_id = kwargs.get('last_operation_id', None)
 
 
 class TenantSettingsCollection(msrest.serialization.Model):
