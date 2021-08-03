@@ -22,7 +22,6 @@ import six
 
 from uamqp import BatchMessage, Message, constants
 
-from ._mixin import DictMixin
 from ._utils import (
     set_message_partition_key,
     trace_message,
