@@ -10,6 +10,10 @@ import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 from typing import TYPE_CHECKING
+try:
+    import queue
+except ImportError:
+    import Queue as queue
 
 from .._servicebus_receiver import ServiceBusReceiver
 from .._servicebus_session import ServiceBusSession
@@ -96,6 +100,8 @@ class AutoLockRenewer(object):
         self._renew_period = 10
         self._max_lock_renewal_duration = max_lock_renewal_duration
         self._on_lock_renew_failure = on_lock_renew_failure
+        self._renew_tasks = queue.Queue()
+        self._running = False
 
     def __enter__(self):
         if self._shutdown.is_set():
@@ -103,6 +109,11 @@ class AutoLockRenewer(object):
                 "The AutoLockRenewer has already been shutdown. Please create a new instance for"
                 " auto lock renewing."
             )
+
+        if not self._running:
+            self._executor.submit(self._main_worker)
+            self._running = True
+
         return self
 
     def __exit__(self, *args):
@@ -120,7 +131,14 @@ class AutoLockRenewer(object):
             return False
         return True
 
-    def _auto_lock_renew(
+    def _main_worker(self):
+        while not self._shutdown.is_set():
+            while not self._renew_tasks.empty():
+                renew_task = self._renew_tasks.get()
+                self._executor.submit(self._auto_lock_renew_task, *renew_task)
+                self._renew_tasks.task_done()
+
+    def _auto_lock_renew_task(
         self,
         receiver,
         renewable,
@@ -130,14 +148,11 @@ class AutoLockRenewer(object):
         renew_period_override=None,
     ):
         # pylint: disable=protected-access
-        _log.debug(
-            "Running lock auto-renew thread for %r seconds", max_lock_renewal_duration
-        )
         error = None
         clean_shutdown = False  # Only trigger the on_lock_renew_failure if halting was not expected (shutdown, etc)
         renew_period = renew_period_override or self._renew_period
         try:
-            while self._renewable(renewable):
+            if self._renewable(renewable):
                 if (utc_now() - starttime) >= datetime.timedelta(
                     seconds=max_lock_renewal_duration
                 ):
@@ -163,6 +178,16 @@ class AutoLockRenewer(object):
                         # Renewable is a message
                         receiver.renew_message_lock(renewable)  # type: ignore
                 time.sleep(self._sleep_time)
+                self._renew_tasks.put(
+                    (
+                        receiver,
+                        renewable,
+                        starttime,
+                        max_lock_renewal_duration,
+                        on_lock_renew_failure,
+                        renew_period_override
+                    )
+                )
             clean_shutdown = not renewable._lock_expired
         except AutoLockRenewTimeout as e:
             error = e
@@ -218,6 +243,10 @@ class AutoLockRenewer(object):
                 "not using RECEIVE_AND_DELETE receive mode, and not returned from Peek)"
             )
 
+        if not self._running:
+            self._executor.submit(self._main_worker)
+            self._running = True
+
         starttime = get_renewable_start_time(renewable)
 
         # This is a heuristic to compensate if it appears the user has a lock duration less than our base renew period
@@ -231,14 +260,19 @@ class AutoLockRenewer(object):
                 time_until_expiry.seconds * SHORT_RENEW_SCALING_FACTOR
             )
 
-        self._executor.submit(
-            self._auto_lock_renew,
-            receiver,
-            renewable,
-            starttime,
-            max_lock_renewal_duration or self._max_lock_renewal_duration,
-            on_lock_renew_failure or self._on_lock_renew_failure,
-            renew_period_override,
+        _log.debug(
+            "Running lock auto-renew for %r for %r seconds", renewable, max_lock_renewal_duration
+        )
+
+        self._renew_tasks.put(
+            (
+                receiver,
+                renewable,
+                starttime,
+                max_lock_renewal_duration or self._max_lock_renewal_duration,
+                on_lock_renew_failure or self._on_lock_renew_failure,
+                renew_period_override
+            )
         )
 
     def close(self, wait=True):
@@ -249,5 +283,6 @@ class AutoLockRenewer(object):
 
         :rtype: None
         """
+        self._running = False
         self._shutdown.set()
         self._executor.shutdown(wait=wait)
