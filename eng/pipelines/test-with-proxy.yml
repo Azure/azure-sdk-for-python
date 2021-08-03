@@ -35,7 +35,7 @@ jobs:
         displayName: 'Install docker-cli only'
 
       - pwsh: |
-          C:\ProgramData\chocolatey\lib\docker-desktop\tools\dockercli.exe -SwitchDaemon
+          Get-ChildItem -Recurse "C:\Program Files\Docker\Docker"
         displayName: 'Install docker-cli only'
 
       - pwsh: |
