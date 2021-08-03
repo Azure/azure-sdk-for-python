@@ -27,7 +27,7 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
-class CompoundOperationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CompoundOperationKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """(Optional) Set to 'OR' for joining metadata using 'OR' operation."""
 
     AND_ENUM = "AND"

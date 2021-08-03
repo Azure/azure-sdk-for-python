@@ -29,7 +29,7 @@ class VirtualNetworkSubnetUsageOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~postgre_sql_management_client.models
+    :type models: ~azure.mgmt.rdbms.postgresql_flexibleservers.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -56,10 +56,10 @@ class VirtualNetworkSubnetUsageOperations(object):
         :param location_name: The name of the location.
         :type location_name: str
         :param parameters: The required parameters for creating or updating a server.
-        :type parameters: ~postgre_sql_management_client.models.VirtualNetworkSubnetUsageParameter
+        :type parameters: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.VirtualNetworkSubnetUsageParameter
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualNetworkSubnetUsageResult, or the result of cls(response)
-        :rtype: ~postgre_sql_management_client.models.VirtualNetworkSubnetUsageResult
+        :rtype: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.VirtualNetworkSubnetUsageResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetworkSubnetUsageResult"]
@@ -105,4 +105,4 @@ class VirtualNetworkSubnetUsageOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    execute.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBForPostgreSql/locations/{locationName}/checkVirtualNetworkSubnetUsage'}  # type: ignore
+    execute.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBforPostgreSQL/locations/{locationName}/checkVirtualNetworkSubnetUsage'}  # type: ignore

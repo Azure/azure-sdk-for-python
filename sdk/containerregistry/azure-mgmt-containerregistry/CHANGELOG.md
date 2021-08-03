@@ -1,5 +1,12 @@
 # Release History
 
+## 8.1.0 (2021-07-22)
+
+**Features**
+
+  - Model Policies has a new parameter export_policy
+  - Model OperationDefinition has a new parameter is_data_action
+
 ## 8.0.0 (2021-05-25)
 
 **Features**

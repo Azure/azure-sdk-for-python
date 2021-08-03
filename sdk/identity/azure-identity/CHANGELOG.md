@@ -5,8 +5,15 @@
 ### Features Added
 
 ### Breaking Changes
+> These changes do not impact the API of stable versions such as 1.6.0.
+> Only code written against a beta version such as 1.7.0b1 may be affected.
+- Renamed `AZURE_POD_IDENTITY_TOKEN_URL` to `AZURE_POD_IDENTITY_AUTHORITY_HOST`.
+  The value should now be a host, for example "http://169.254.169.254" (the
+  default).
 
 ### Bugs Fixed
+- Fixed import of `azure.identity.aio.AzureApplicationCredential`
+  ([#19943](https://github.com/Azure/azure-sdk-for-python/issues/19943))
 
 ### Other Changes
 - Added `CustomHookPolicy` to credential HTTP pipelines. This allows applications
@@ -14,6 +21,11 @@
   keyword arguments. The value of these arguments should be a callback taking a
   `PipelineRequest` and `PipelineResponse`, respectively. For example:
   `ManagedIdentityCredential(raw_request_hook=lambda request: print(request.http_request.url))`
+- Reduced redundant `ChainedTokenCredential` and `DefaultAzureCredential`
+  logging. On Python 3.7+, credentials invoked by these classes now log debug
+  rather than info messages.
+  ([#18972](https://github.com/Azure/azure-sdk-for-python/issues/18972))
+
 
 ## 1.7.0b2 (2021-07-08)
 ### Features Added

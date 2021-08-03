@@ -44,7 +44,7 @@ class SparkBatchOperations:
         from_parameter: Optional[int] = None,
         size: Optional[int] = None,
         detailed: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SparkBatchJobCollection":
         """List all spark batch jobs which are running under a particular spark pool.
 
@@ -104,13 +104,13 @@ class SparkBatchOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_spark_batch_jobs.metadata = {'url': '/batches'}  # type: ignore
+    get_spark_batch_jobs.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/batches'}  # type: ignore
 
     async def create_spark_batch_job(
         self,
         spark_batch_job_options: "_models.SparkBatchJobOptions",
         detailed: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SparkBatchJob":
         """Create new spark batch job.
 
@@ -168,13 +168,13 @@ class SparkBatchOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_spark_batch_job.metadata = {'url': '/batches'}  # type: ignore
+    create_spark_batch_job.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/batches'}  # type: ignore
 
     async def get_spark_batch_job(
         self,
         batch_id: int,
         detailed: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SparkBatchJob":
         """Gets a single spark batch job.
 
@@ -228,12 +228,12 @@ class SparkBatchOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_spark_batch_job.metadata = {'url': '/batches/{batchId}'}  # type: ignore
+    get_spark_batch_job.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/batches/{batchId}'}  # type: ignore
 
     async def cancel_spark_batch_job(
         self,
         batch_id: int,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Cancels a running spark batch job.
 
@@ -277,4 +277,4 @@ class SparkBatchOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    cancel_spark_batch_job.metadata = {'url': '/batches/{batchId}'}  # type: ignore
+    cancel_spark_batch_job.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/batches/{batchId}'}  # type: ignore

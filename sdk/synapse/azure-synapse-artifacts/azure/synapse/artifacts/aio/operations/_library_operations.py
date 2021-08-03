@@ -44,7 +44,7 @@ class LibraryOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.LibraryListResponse"]:
         """Lists Library.
 
@@ -58,7 +58,7 @@ class LibraryOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -116,14 +116,14 @@ class LibraryOperations:
     async def _flush_initial(
         self,
         library_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.LibraryResourceInfo"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.LibraryResourceInfo"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -164,7 +164,7 @@ class LibraryOperations:
     async def begin_flush(
         self,
         library_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.LibraryResourceInfo"]:
         """Flush Library.
 
@@ -227,7 +227,7 @@ class LibraryOperations:
     async def get_operation_result(
         self,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> Union["_models.LibraryResource", "_models.OperationResult"]:
         """Get Operation result for Library.
 
@@ -243,7 +243,7 @@ class LibraryOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -286,14 +286,14 @@ class LibraryOperations:
     async def _delete_initial(
         self,
         library_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.LibraryResourceInfo"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.LibraryResourceInfo"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -334,7 +334,7 @@ class LibraryOperations:
     async def begin_delete(
         self,
         library_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.LibraryResourceInfo"]:
         """Delete Library.
 
@@ -397,7 +397,7 @@ class LibraryOperations:
     async def get(
         self,
         library_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.LibraryResource"]:
         """Get Library.
 
@@ -414,7 +414,7 @@ class LibraryOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -455,14 +455,14 @@ class LibraryOperations:
     async def _create_initial(
         self,
         library_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.LibraryResourceInfo"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.LibraryResourceInfo"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -503,7 +503,7 @@ class LibraryOperations:
     async def begin_create(
         self,
         library_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.LibraryResourceInfo"]:
         """Creates a library with the library name.
 
@@ -568,7 +568,7 @@ class LibraryOperations:
         library_name: str,
         content: IO,
         blob_condition_append_position: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Append the content to the library resource created using the create operation. The maximum
         content size is 4MiB. Content larger than 4MiB must be appended in 4MiB chunks.
@@ -594,7 +594,7 @@ class LibraryOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
         comp = "appendblock"
-        api_version = "2019-06-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/octet-stream")
         accept = "application/json"
 

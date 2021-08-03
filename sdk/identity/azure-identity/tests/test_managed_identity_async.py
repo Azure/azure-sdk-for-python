@@ -11,7 +11,7 @@ from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
 from azure.core.pipeline.transport import HttpRequest
 from azure.identity.aio import ManagedIdentityCredential
 from azure.identity.aio._internal.managed_identity_client import AsyncManagedIdentityClient
-from azure.identity._credentials.imds import IMDS_URL
+from azure.identity._credentials.imds import IMDS_AUTHORITY, IMDS_TOKEN_PATH
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 
@@ -529,9 +529,9 @@ async def test_imds():
     scope = "scope"
     transport = async_validating_transport(
         requests=[
-            Request(base_url=IMDS_URL),  # first request should be availability probe => match only the URL
+            Request(base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH),
             Request(
-                base_url=IMDS_URL,
+                base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH,
                 method="GET",
                 required_headers={"Metadata": "true", "User-Agent": USER_AGENT},
                 required_params={"api-version": "2018-02-01", "resource": scope},
@@ -569,9 +569,9 @@ async def test_imds_user_assigned_identity():
     client_id = "some-guid"
     transport = async_validating_transport(
         requests=[
-            Request(base_url=IMDS_URL),  # first request should be availability probe => match only the URL
+            Request(base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH),
             Request(
-                base_url=IMDS_URL,
+                base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH,
                 method="GET",
                 required_headers={"Metadata": "true", "User-Agent": USER_AGENT},
                 required_params={"api-version": "2018-02-01", "client_id": client_id, "resource": scope},

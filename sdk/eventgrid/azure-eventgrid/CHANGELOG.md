@@ -1,17 +1,12 @@
 # Release History
 
-## 4.3.1 (Unreleased)
+## 4.4.0 (2021-07-19)
 
 - Bumped `msrest` dependency to `0.6.21` to align with mgmt package.
 
 ### Features Added
 
-### Breaking Changes
-
-### Key Bugs Fixed
-
-### Fixed
-
+- `EventGridPublisherClient` now supports Azure Active Directory (AAD) for authentication.
 
 ## 4.3.0 (2021-06-09)
 

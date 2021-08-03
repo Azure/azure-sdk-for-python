@@ -14,6 +14,23 @@ from .._constants import EnvironmentVariables, KnownAuthorities
 if TYPE_CHECKING:
     from typing import Any, Optional
 
+try:
+    from contextvars import ContextVar
+
+    within_credential_chain = ContextVar("within_credential_chain", default=False)
+except ImportError:
+    # No ContextVar on Python < 3.7. Credentials will behave as if they're never in a chain i.e. they will log fully.
+
+    class AlwaysFalse:
+        # pylint:disable=no-self-use
+        def get(self):
+            return False
+
+        def set(self, _):
+            pass
+
+    within_credential_chain = AlwaysFalse()  # type: ignore
+
 
 def normalize_authority(authority):
     # type: (str) -> str

@@ -15,6 +15,25 @@ try:
 except ImportError:  # python < 3.3
     from mock import Mock, patch  # type: ignore
 
+from helpers import build_aad_response, get_discovery_response, mock_response
+
+
+def test_get_token():
+    expected_token = "***"
+
+    def send(request, **_):
+        parsed = urlparse(request.url)
+        tenant_id = parsed.path.split("/")[1]
+        if "/oauth2/v2.0/token" in request.url:
+            return mock_response(json_payload=build_aad_response(access_token=expected_token))
+        return get_discovery_response("https://{}/{}".format(parsed.netloc, tenant_id))
+
+    with patch.dict("os.environ", {var: "..." for var in EnvironmentVariables.CLIENT_SECRET_VARS}, clear=True):
+        credential = AzureApplicationCredential(transport=Mock(send=send))
+
+    token = credential.get_token("scope")
+    assert token.token == expected_token
+
 
 def test_iterates_only_once():
     """When a credential succeeds, AzureApplicationCredential should use that credential thereafter"""

@@ -50,7 +50,7 @@ class CertificateOperations:
         maxresults: Optional[int] = None,
         select: Optional[str] = None,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListCertificatesResult"]:
         """Lists all of the certificates in the specified account.
 
@@ -77,7 +77,7 @@ class CertificateOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -143,7 +143,7 @@ class CertificateOperations:
         parameters: "_models.CertificateCreateOrUpdateParameters",
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Certificate":
         """Creates a new certificate inside the specified account.
 
@@ -174,7 +174,7 @@ class CertificateOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -229,7 +229,7 @@ class CertificateOperations:
         certificate_name: str,
         parameters: "_models.CertificateCreateOrUpdateParameters",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Certificate":
         """Updates the properties of an existing certificate.
 
@@ -256,7 +256,7 @@ class CertificateOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -307,14 +307,14 @@ class CertificateOperations:
         resource_group_name: str,
         account_name: str,
         certificate_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -358,7 +358,7 @@ class CertificateOperations:
         resource_group_name: str,
         account_name: str,
         certificate_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified certificate.
 
@@ -372,8 +372,8 @@ class CertificateOperations:
         :type certificate_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -429,7 +429,7 @@ class CertificateOperations:
         resource_group_name: str,
         account_name: str,
         certificate_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Certificate":
         """Gets information about the specified certificate.
 
@@ -451,7 +451,7 @@ class CertificateOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -495,7 +495,7 @@ class CertificateOperations:
         resource_group_name: str,
         account_name: str,
         certificate_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Certificate":
         """Cancels a failed deletion of a certificate from the specified account.
 
@@ -524,7 +524,7 @@ class CertificateOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL

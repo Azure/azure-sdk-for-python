@@ -7,22 +7,23 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any
+from typing import Any, Awaitable
 
 from azure.core import AsyncPipelineClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from msrest import Deserializer, Serializer
 
+from .. import models
 from ._configuration import QuestionAnsweringClientConfiguration
 from .operations import QuestionAnsweringClientOperationsMixin
-from .. import models
 
 
 class QuestionAnsweringClient(QuestionAnsweringClientOperationsMixin):
-    """The language service API is a suite of natural language processing (NLP) skills built with best-in-class Microsoft machine learning algorithms.  The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction, language detection and question answering. Further documentation can be found in :code:`<a href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview">https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview</a>`.
+    """The language service API is a suite of natural language processing (NLP) skills built with best-in-class Microsoft machine learning algorithms.  The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction, language detection and question answering. Further documentation can be found in https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview.
 
-    :param endpoint: Supported Cognitive Services endpoint (e.g., https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
+    :param endpoint: Supported Cognitive Services endpoint (e.g.,
+         https://<resource-name>.api.cognitiveservices.azure.com).
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.AzureKeyCredential
@@ -38,22 +39,9 @@ class QuestionAnsweringClient(QuestionAnsweringClientOperationsMixin):
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
 
-    def send_request(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
-
-        We have helper methods to create requests specific to this service in `azure.ai.language.questionanswering.rest`.
-        Use these helper methods to create the request you pass to this method. See our example below:
-
-        >>> from azure.ai.language.questionanswering.rest import build_query_knowledgebase_request
-        >>> request = build_query_knowledgebase_request(project_name, json, content, deployment_name)
-        <HttpRequest [POST], url: '/:query-knowledgebases'>
-        >>> response = await client.send_request(request)
-        <AsyncHttpResponse: 200 OK>
-
         For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
-
-        For advanced cases, you can also create your own :class:`~azure.core.rest.HttpRequest`
-        and pass it in.
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -61,6 +49,7 @@ class QuestionAnsweringClient(QuestionAnsweringClientOperationsMixin):
         :return: The response of your network call. Does not do error handling on your response.
         :rtype: ~azure.core.rest.AsyncHttpResponse
         """
+
         request_copy = deepcopy(request)
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
