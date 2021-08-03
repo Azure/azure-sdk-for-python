@@ -18,15 +18,12 @@ class AddressSpace(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'address_prefixes': {'key': 'addressPrefixes', 'type': '[str]'},
+        "address_prefixes": {"key": "addressPrefixes", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AddressSpace, self).__init__(**kwargs)
-        self.address_prefixes = kwargs.get('address_prefixes', None)
+        self.address_prefixes = kwargs.get("address_prefixes", None)
 
 
 class Resource(msrest.serialization.Model):
@@ -47,28 +44,25 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Resource, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
+        self.id = kwargs.get("id", None)
         self.name = None
         self.type = None
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
+        self.location = kwargs.get("location", None)
+        self.tags = kwargs.get("tags", None)
 
 
 class ApplicationGateway(Resource):
@@ -132,54 +126,66 @@ class ApplicationGateway(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'operational_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "operational_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'sku': {'key': 'properties.sku', 'type': 'ApplicationGatewaySku'},
-        'operational_state': {'key': 'properties.operationalState', 'type': 'str'},
-        'gateway_ip_configurations': {'key': 'properties.gatewayIPConfigurations', 'type': '[ApplicationGatewayIPConfiguration]'},
-        'ssl_certificates': {'key': 'properties.sslCertificates', 'type': '[ApplicationGatewaySslCertificate]'},
-        'frontend_ip_configurations': {'key': 'properties.frontendIPConfigurations', 'type': '[ApplicationGatewayFrontendIPConfiguration]'},
-        'frontend_ports': {'key': 'properties.frontendPorts', 'type': '[ApplicationGatewayFrontendPort]'},
-        'probes': {'key': 'properties.probes', 'type': '[ApplicationGatewayProbe]'},
-        'backend_address_pools': {'key': 'properties.backendAddressPools', 'type': '[ApplicationGatewayBackendAddressPool]'},
-        'backend_http_settings_collection': {'key': 'properties.backendHttpSettingsCollection', 'type': '[ApplicationGatewayBackendHttpSettings]'},
-        'http_listeners': {'key': 'properties.httpListeners', 'type': '[ApplicationGatewayHttpListener]'},
-        'url_path_maps': {'key': 'properties.urlPathMaps', 'type': '[ApplicationGatewayUrlPathMap]'},
-        'request_routing_rules': {'key': 'properties.requestRoutingRules', 'type': '[ApplicationGatewayRequestRoutingRule]'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "sku": {"key": "properties.sku", "type": "ApplicationGatewaySku"},
+        "operational_state": {"key": "properties.operationalState", "type": "str"},
+        "gateway_ip_configurations": {
+            "key": "properties.gatewayIPConfigurations",
+            "type": "[ApplicationGatewayIPConfiguration]",
+        },
+        "ssl_certificates": {"key": "properties.sslCertificates", "type": "[ApplicationGatewaySslCertificate]"},
+        "frontend_ip_configurations": {
+            "key": "properties.frontendIPConfigurations",
+            "type": "[ApplicationGatewayFrontendIPConfiguration]",
+        },
+        "frontend_ports": {"key": "properties.frontendPorts", "type": "[ApplicationGatewayFrontendPort]"},
+        "probes": {"key": "properties.probes", "type": "[ApplicationGatewayProbe]"},
+        "backend_address_pools": {
+            "key": "properties.backendAddressPools",
+            "type": "[ApplicationGatewayBackendAddressPool]",
+        },
+        "backend_http_settings_collection": {
+            "key": "properties.backendHttpSettingsCollection",
+            "type": "[ApplicationGatewayBackendHttpSettings]",
+        },
+        "http_listeners": {"key": "properties.httpListeners", "type": "[ApplicationGatewayHttpListener]"},
+        "url_path_maps": {"key": "properties.urlPathMaps", "type": "[ApplicationGatewayUrlPathMap]"},
+        "request_routing_rules": {
+            "key": "properties.requestRoutingRules",
+            "type": "[ApplicationGatewayRequestRoutingRule]",
+        },
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ApplicationGateway, self).__init__(**kwargs)
-        self.etag = kwargs.get('etag', None)
-        self.sku = kwargs.get('sku', None)
+        self.etag = kwargs.get("etag", None)
+        self.sku = kwargs.get("sku", None)
         self.operational_state = None
-        self.gateway_ip_configurations = kwargs.get('gateway_ip_configurations', None)
-        self.ssl_certificates = kwargs.get('ssl_certificates', None)
-        self.frontend_ip_configurations = kwargs.get('frontend_ip_configurations', None)
-        self.frontend_ports = kwargs.get('frontend_ports', None)
-        self.probes = kwargs.get('probes', None)
-        self.backend_address_pools = kwargs.get('backend_address_pools', None)
-        self.backend_http_settings_collection = kwargs.get('backend_http_settings_collection', None)
-        self.http_listeners = kwargs.get('http_listeners', None)
-        self.url_path_maps = kwargs.get('url_path_maps', None)
-        self.request_routing_rules = kwargs.get('request_routing_rules', None)
-        self.resource_guid = kwargs.get('resource_guid', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.gateway_ip_configurations = kwargs.get("gateway_ip_configurations", None)
+        self.ssl_certificates = kwargs.get("ssl_certificates", None)
+        self.frontend_ip_configurations = kwargs.get("frontend_ip_configurations", None)
+        self.frontend_ports = kwargs.get("frontend_ports", None)
+        self.probes = kwargs.get("probes", None)
+        self.backend_address_pools = kwargs.get("backend_address_pools", None)
+        self.backend_http_settings_collection = kwargs.get("backend_http_settings_collection", None)
+        self.http_listeners = kwargs.get("http_listeners", None)
+        self.url_path_maps = kwargs.get("url_path_maps", None)
+        self.request_routing_rules = kwargs.get("request_routing_rules", None)
+        self.resource_guid = kwargs.get("resource_guid", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class ApplicationGatewayBackendAddress(msrest.serialization.Model):
@@ -192,17 +198,14 @@ class ApplicationGatewayBackendAddress(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'fqdn': {'key': 'fqdn', 'type': 'str'},
-        'ip_address': {'key': 'ipAddress', 'type': 'str'},
+        "fqdn": {"key": "fqdn", "type": "str"},
+        "ip_address": {"key": "ipAddress", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ApplicationGatewayBackendAddress, self).__init__(**kwargs)
-        self.fqdn = kwargs.get('fqdn', None)
-        self.ip_address = kwargs.get('ip_address', None)
+        self.fqdn = kwargs.get("fqdn", None)
+        self.ip_address = kwargs.get("ip_address", None)
 
 
 class SubResource(msrest.serialization.Model):
@@ -213,15 +216,12 @@ class SubResource(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SubResource, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
+        self.id = kwargs.get("id", None)
 
 
 class ApplicationGatewayBackendAddressPool(SubResource):
@@ -247,24 +247,24 @@ class ApplicationGatewayBackendAddressPool(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'backend_ip_configurations': {'key': 'properties.backendIPConfigurations', 'type': '[NetworkInterfaceIPConfiguration]'},
-        'backend_addresses': {'key': 'properties.backendAddresses', 'type': '[ApplicationGatewayBackendAddress]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "backend_ip_configurations": {
+            "key": "properties.backendIPConfigurations",
+            "type": "[NetworkInterfaceIPConfiguration]",
+        },
+        "backend_addresses": {"key": "properties.backendAddresses", "type": "[ApplicationGatewayBackendAddress]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ApplicationGatewayBackendAddressPool, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.etag = kwargs.get('etag', None)
-        self.backend_ip_configurations = kwargs.get('backend_ip_configurations', None)
-        self.backend_addresses = kwargs.get('backend_addresses', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get("name", None)
+        self.etag = kwargs.get("etag", None)
+        self.backend_ip_configurations = kwargs.get("backend_ip_configurations", None)
+        self.backend_addresses = kwargs.get("backend_addresses", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class ApplicationGatewayBackendHttpSettings(SubResource):
@@ -298,30 +298,27 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'port': {'key': 'properties.port', 'type': 'int'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'cookie_based_affinity': {'key': 'properties.cookieBasedAffinity', 'type': 'str'},
-        'request_timeout': {'key': 'properties.requestTimeout', 'type': 'int'},
-        'probe': {'key': 'properties.probe', 'type': 'SubResource'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "port": {"key": "properties.port", "type": "int"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "cookie_based_affinity": {"key": "properties.cookieBasedAffinity", "type": "str"},
+        "request_timeout": {"key": "properties.requestTimeout", "type": "int"},
+        "probe": {"key": "properties.probe", "type": "SubResource"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ApplicationGatewayBackendHttpSettings, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.etag = kwargs.get('etag', None)
-        self.port = kwargs.get('port', None)
-        self.protocol = kwargs.get('protocol', None)
-        self.cookie_based_affinity = kwargs.get('cookie_based_affinity', None)
-        self.request_timeout = kwargs.get('request_timeout', None)
-        self.probe = kwargs.get('probe', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get("name", None)
+        self.etag = kwargs.get("etag", None)
+        self.port = kwargs.get("port", None)
+        self.protocol = kwargs.get("protocol", None)
+        self.cookie_based_affinity = kwargs.get("cookie_based_affinity", None)
+        self.request_timeout = kwargs.get("request_timeout", None)
+        self.probe = kwargs.get("probe", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class ApplicationGatewayFrontendIPConfiguration(SubResource):
@@ -350,28 +347,25 @@ class ApplicationGatewayFrontendIPConfiguration(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'private_ip_address': {'key': 'properties.privateIPAddress', 'type': 'str'},
-        'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'SubResource'},
-        'public_ip_address': {'key': 'properties.publicIPAddress', 'type': 'SubResource'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "private_ip_address": {"key": "properties.privateIPAddress", "type": "str"},
+        "private_ip_allocation_method": {"key": "properties.privateIPAllocationMethod", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "SubResource"},
+        "public_ip_address": {"key": "properties.publicIPAddress", "type": "SubResource"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ApplicationGatewayFrontendIPConfiguration, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.etag = kwargs.get('etag', None)
-        self.private_ip_address = kwargs.get('private_ip_address', None)
-        self.private_ip_allocation_method = kwargs.get('private_ip_allocation_method', None)
-        self.subnet = kwargs.get('subnet', None)
-        self.public_ip_address = kwargs.get('public_ip_address', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get("name", None)
+        self.etag = kwargs.get("etag", None)
+        self.private_ip_address = kwargs.get("private_ip_address", None)
+        self.private_ip_allocation_method = kwargs.get("private_ip_allocation_method", None)
+        self.subnet = kwargs.get("subnet", None)
+        self.public_ip_address = kwargs.get("public_ip_address", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class ApplicationGatewayFrontendPort(SubResource):
@@ -392,22 +386,19 @@ class ApplicationGatewayFrontendPort(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'port': {'key': 'properties.port', 'type': 'int'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "port": {"key": "properties.port", "type": "int"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ApplicationGatewayFrontendPort, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.etag = kwargs.get('etag', None)
-        self.port = kwargs.get('port', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get("name", None)
+        self.etag = kwargs.get("etag", None)
+        self.port = kwargs.get("port", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class ApplicationGatewayHttpListener(SubResource):
@@ -440,32 +431,29 @@ class ApplicationGatewayHttpListener(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'frontend_ip_configuration': {'key': 'properties.frontendIPConfiguration', 'type': 'SubResource'},
-        'frontend_port': {'key': 'properties.frontendPort', 'type': 'SubResource'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'host_name': {'key': 'properties.hostName', 'type': 'str'},
-        'ssl_certificate': {'key': 'properties.sslCertificate', 'type': 'SubResource'},
-        'require_server_name_indication': {'key': 'properties.requireServerNameIndication', 'type': 'bool'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "frontend_ip_configuration": {"key": "properties.frontendIPConfiguration", "type": "SubResource"},
+        "frontend_port": {"key": "properties.frontendPort", "type": "SubResource"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "host_name": {"key": "properties.hostName", "type": "str"},
+        "ssl_certificate": {"key": "properties.sslCertificate", "type": "SubResource"},
+        "require_server_name_indication": {"key": "properties.requireServerNameIndication", "type": "bool"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ApplicationGatewayHttpListener, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.etag = kwargs.get('etag', None)
-        self.frontend_ip_configuration = kwargs.get('frontend_ip_configuration', None)
-        self.frontend_port = kwargs.get('frontend_port', None)
-        self.protocol = kwargs.get('protocol', None)
-        self.host_name = kwargs.get('host_name', None)
-        self.ssl_certificate = kwargs.get('ssl_certificate', None)
-        self.require_server_name_indication = kwargs.get('require_server_name_indication', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get("name", None)
+        self.etag = kwargs.get("etag", None)
+        self.frontend_ip_configuration = kwargs.get("frontend_ip_configuration", None)
+        self.frontend_port = kwargs.get("frontend_port", None)
+        self.protocol = kwargs.get("protocol", None)
+        self.host_name = kwargs.get("host_name", None)
+        self.ssl_certificate = kwargs.get("ssl_certificate", None)
+        self.require_server_name_indication = kwargs.get("require_server_name_indication", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class ApplicationGatewayIPConfiguration(SubResource):
@@ -487,22 +475,19 @@ class ApplicationGatewayIPConfiguration(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'SubResource'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "SubResource"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ApplicationGatewayIPConfiguration, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.etag = kwargs.get('etag', None)
-        self.subnet = kwargs.get('subnet', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get("name", None)
+        self.etag = kwargs.get("etag", None)
+        self.subnet = kwargs.get("subnet", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class ApplicationGatewayListResult(msrest.serialization.Model):
@@ -515,17 +500,14 @@ class ApplicationGatewayListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ApplicationGateway]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ApplicationGateway]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ApplicationGatewayListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class ApplicationGatewayPathRule(SubResource):
@@ -550,26 +532,23 @@ class ApplicationGatewayPathRule(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'paths': {'key': 'properties.paths', 'type': '[str]'},
-        'backend_address_pool': {'key': 'properties.backendAddressPool', 'type': 'SubResource'},
-        'backend_http_settings': {'key': 'properties.backendHttpSettings', 'type': 'SubResource'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "paths": {"key": "properties.paths", "type": "[str]"},
+        "backend_address_pool": {"key": "properties.backendAddressPool", "type": "SubResource"},
+        "backend_http_settings": {"key": "properties.backendHttpSettings", "type": "SubResource"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ApplicationGatewayPathRule, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.etag = kwargs.get('etag', None)
-        self.paths = kwargs.get('paths', None)
-        self.backend_address_pool = kwargs.get('backend_address_pool', None)
-        self.backend_http_settings = kwargs.get('backend_http_settings', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get("name", None)
+        self.etag = kwargs.get("etag", None)
+        self.paths = kwargs.get("paths", None)
+        self.backend_address_pool = kwargs.get("backend_address_pool", None)
+        self.backend_http_settings = kwargs.get("backend_http_settings", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class ApplicationGatewayProbe(SubResource):
@@ -606,32 +585,29 @@ class ApplicationGatewayProbe(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'host': {'key': 'properties.host', 'type': 'str'},
-        'path': {'key': 'properties.path', 'type': 'str'},
-        'interval': {'key': 'properties.interval', 'type': 'int'},
-        'timeout': {'key': 'properties.timeout', 'type': 'int'},
-        'unhealthy_threshold': {'key': 'properties.unhealthyThreshold', 'type': 'int'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "host": {"key": "properties.host", "type": "str"},
+        "path": {"key": "properties.path", "type": "str"},
+        "interval": {"key": "properties.interval", "type": "int"},
+        "timeout": {"key": "properties.timeout", "type": "int"},
+        "unhealthy_threshold": {"key": "properties.unhealthyThreshold", "type": "int"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ApplicationGatewayProbe, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.etag = kwargs.get('etag', None)
-        self.protocol = kwargs.get('protocol', None)
-        self.host = kwargs.get('host', None)
-        self.path = kwargs.get('path', None)
-        self.interval = kwargs.get('interval', None)
-        self.timeout = kwargs.get('timeout', None)
-        self.unhealthy_threshold = kwargs.get('unhealthy_threshold', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get("name", None)
+        self.etag = kwargs.get("etag", None)
+        self.protocol = kwargs.get("protocol", None)
+        self.host = kwargs.get("host", None)
+        self.path = kwargs.get("path", None)
+        self.interval = kwargs.get("interval", None)
+        self.timeout = kwargs.get("timeout", None)
+        self.unhealthy_threshold = kwargs.get("unhealthy_threshold", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class ApplicationGatewayRequestRoutingRule(SubResource):
@@ -662,30 +638,27 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'rule_type': {'key': 'properties.ruleType', 'type': 'str'},
-        'backend_address_pool': {'key': 'properties.backendAddressPool', 'type': 'SubResource'},
-        'backend_http_settings': {'key': 'properties.backendHttpSettings', 'type': 'SubResource'},
-        'http_listener': {'key': 'properties.httpListener', 'type': 'SubResource'},
-        'url_path_map': {'key': 'properties.urlPathMap', 'type': 'SubResource'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "rule_type": {"key": "properties.ruleType", "type": "str"},
+        "backend_address_pool": {"key": "properties.backendAddressPool", "type": "SubResource"},
+        "backend_http_settings": {"key": "properties.backendHttpSettings", "type": "SubResource"},
+        "http_listener": {"key": "properties.httpListener", "type": "SubResource"},
+        "url_path_map": {"key": "properties.urlPathMap", "type": "SubResource"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ApplicationGatewayRequestRoutingRule, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.etag = kwargs.get('etag', None)
-        self.rule_type = kwargs.get('rule_type', None)
-        self.backend_address_pool = kwargs.get('backend_address_pool', None)
-        self.backend_http_settings = kwargs.get('backend_http_settings', None)
-        self.http_listener = kwargs.get('http_listener', None)
-        self.url_path_map = kwargs.get('url_path_map', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get("name", None)
+        self.etag = kwargs.get("etag", None)
+        self.rule_type = kwargs.get("rule_type", None)
+        self.backend_address_pool = kwargs.get("backend_address_pool", None)
+        self.backend_http_settings = kwargs.get("backend_http_settings", None)
+        self.http_listener = kwargs.get("http_listener", None)
+        self.url_path_map = kwargs.get("url_path_map", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class ApplicationGatewaySku(msrest.serialization.Model):
@@ -702,19 +675,16 @@ class ApplicationGatewaySku(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "capacity": {"key": "capacity", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ApplicationGatewaySku, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.tier = kwargs.get('tier', None)
-        self.capacity = kwargs.get('capacity', None)
+        self.name = kwargs.get("name", None)
+        self.tier = kwargs.get("tier", None)
+        self.capacity = kwargs.get("capacity", None)
 
 
 class ApplicationGatewaySslCertificate(SubResource):
@@ -740,26 +710,23 @@ class ApplicationGatewaySslCertificate(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'data': {'key': 'properties.data', 'type': 'str'},
-        'password': {'key': 'properties.password', 'type': 'str'},
-        'public_cert_data': {'key': 'properties.publicCertData', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "data": {"key": "properties.data", "type": "str"},
+        "password": {"key": "properties.password", "type": "str"},
+        "public_cert_data": {"key": "properties.publicCertData", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ApplicationGatewaySslCertificate, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.etag = kwargs.get('etag', None)
-        self.data = kwargs.get('data', None)
-        self.password = kwargs.get('password', None)
-        self.public_cert_data = kwargs.get('public_cert_data', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get("name", None)
+        self.etag = kwargs.get("etag", None)
+        self.data = kwargs.get("data", None)
+        self.password = kwargs.get("password", None)
+        self.public_cert_data = kwargs.get("public_cert_data", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class ApplicationGatewayUrlPathMap(SubResource):
@@ -784,26 +751,23 @@ class ApplicationGatewayUrlPathMap(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'default_backend_address_pool': {'key': 'properties.defaultBackendAddressPool', 'type': 'SubResource'},
-        'default_backend_http_settings': {'key': 'properties.defaultBackendHttpSettings', 'type': 'SubResource'},
-        'path_rules': {'key': 'properties.pathRules', 'type': '[ApplicationGatewayPathRule]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "default_backend_address_pool": {"key": "properties.defaultBackendAddressPool", "type": "SubResource"},
+        "default_backend_http_settings": {"key": "properties.defaultBackendHttpSettings", "type": "SubResource"},
+        "path_rules": {"key": "properties.pathRules", "type": "[ApplicationGatewayPathRule]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ApplicationGatewayUrlPathMap, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.etag = kwargs.get('etag', None)
-        self.default_backend_address_pool = kwargs.get('default_backend_address_pool', None)
-        self.default_backend_http_settings = kwargs.get('default_backend_http_settings', None)
-        self.path_rules = kwargs.get('path_rules', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get("name", None)
+        self.etag = kwargs.get("etag", None)
+        self.default_backend_address_pool = kwargs.get("default_backend_address_pool", None)
+        self.default_backend_http_settings = kwargs.get("default_backend_http_settings", None)
+        self.path_rules = kwargs.get("path_rules", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class AuthorizationListResult(msrest.serialization.Model):
@@ -816,17 +780,14 @@ class AuthorizationListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExpressRouteCircuitAuthorization]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ExpressRouteCircuitAuthorization]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AuthorizationListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class AzureAsyncOperationResult(msrest.serialization.Model):
@@ -840,17 +801,14 @@ class AzureAsyncOperationResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'Error'},
+        "status": {"key": "status", "type": "str"},
+        "error": {"key": "error", "type": "Error"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AzureAsyncOperationResult, self).__init__(**kwargs)
-        self.status = kwargs.get('status', None)
-        self.error = kwargs.get('error', None)
+        self.status = kwargs.get("status", None)
+        self.error = kwargs.get("error", None)
 
 
 class BackendAddressPool(SubResource):
@@ -879,30 +837,30 @@ class BackendAddressPool(SubResource):
     """
 
     _validation = {
-        'load_balancing_rules': {'readonly': True},
+        "load_balancing_rules": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'backend_ip_configurations': {'key': 'properties.backendIPConfigurations', 'type': '[NetworkInterfaceIPConfiguration]'},
-        'load_balancing_rules': {'key': 'properties.loadBalancingRules', 'type': '[SubResource]'},
-        'outbound_nat_rule': {'key': 'properties.outboundNatRule', 'type': 'SubResource'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "backend_ip_configurations": {
+            "key": "properties.backendIPConfigurations",
+            "type": "[NetworkInterfaceIPConfiguration]",
+        },
+        "load_balancing_rules": {"key": "properties.loadBalancingRules", "type": "[SubResource]"},
+        "outbound_nat_rule": {"key": "properties.outboundNatRule", "type": "SubResource"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(BackendAddressPool, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.etag = kwargs.get('etag', None)
-        self.backend_ip_configurations = kwargs.get('backend_ip_configurations', None)
+        self.name = kwargs.get("name", None)
+        self.etag = kwargs.get("etag", None)
+        self.backend_ip_configurations = kwargs.get("backend_ip_configurations", None)
         self.load_balancing_rules = None
-        self.outbound_nat_rule = kwargs.get('outbound_nat_rule', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.outbound_nat_rule = kwargs.get("outbound_nat_rule", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class BgpSettings(msrest.serialization.Model):
@@ -918,19 +876,16 @@ class BgpSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'asn': {'key': 'asn', 'type': 'long'},
-        'bgp_peering_address': {'key': 'bgpPeeringAddress', 'type': 'str'},
-        'peer_weight': {'key': 'peerWeight', 'type': 'int'},
+        "asn": {"key": "asn", "type": "long"},
+        "bgp_peering_address": {"key": "bgpPeeringAddress", "type": "str"},
+        "peer_weight": {"key": "peerWeight", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(BgpSettings, self).__init__(**kwargs)
-        self.asn = kwargs.get('asn', None)
-        self.bgp_peering_address = kwargs.get('bgp_peering_address', None)
-        self.peer_weight = kwargs.get('peer_weight', None)
+        self.asn = kwargs.get("asn", None)
+        self.bgp_peering_address = kwargs.get("bgp_peering_address", None)
+        self.peer_weight = kwargs.get("peer_weight", None)
 
 
 class ConnectionResetSharedKey(msrest.serialization.Model):
@@ -941,15 +896,12 @@ class ConnectionResetSharedKey(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'key_length': {'key': 'keyLength', 'type': 'long'},
+        "key_length": {"key": "keyLength", "type": "long"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ConnectionResetSharedKey, self).__init__(**kwargs)
-        self.key_length = kwargs.get('key_length', None)
+        self.key_length = kwargs.get("key_length", None)
 
 
 class ConnectionSharedKey(msrest.serialization.Model):
@@ -960,15 +912,12 @@ class ConnectionSharedKey(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ConnectionSharedKey, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs.get("value", None)
 
 
 class ConnectionSharedKeyResult(msrest.serialization.Model):
@@ -979,15 +928,12 @@ class ConnectionSharedKeyResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ConnectionSharedKeyResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs.get("value", None)
 
 
 class DhcpOptions(msrest.serialization.Model):
@@ -998,15 +944,12 @@ class DhcpOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'dns_servers': {'key': 'dnsServers', 'type': '[str]'},
+        "dns_servers": {"key": "dnsServers", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(DhcpOptions, self).__init__(**kwargs)
-        self.dns_servers = kwargs.get('dns_servers', None)
+        self.dns_servers = kwargs.get("dns_servers", None)
 
 
 class DnsNameAvailabilityResult(msrest.serialization.Model):
@@ -1017,15 +960,12 @@ class DnsNameAvailabilityResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'available': {'key': 'available', 'type': 'bool'},
+        "available": {"key": "available", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(DnsNameAvailabilityResult, self).__init__(**kwargs)
-        self.available = kwargs.get('available', None)
+        self.available = kwargs.get("available", None)
 
 
 class Error(msrest.serialization.Model):
@@ -1044,23 +984,20 @@ class Error(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetails]'},
-        'inner_error': {'key': 'innerError', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetails]"},
+        "inner_error": {"key": "innerError", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Error, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
-        self.target = kwargs.get('target', None)
-        self.details = kwargs.get('details', None)
-        self.inner_error = kwargs.get('inner_error', None)
+        self.code = kwargs.get("code", None)
+        self.message = kwargs.get("message", None)
+        self.target = kwargs.get("target", None)
+        self.details = kwargs.get("details", None)
+        self.inner_error = kwargs.get("inner_error", None)
 
 
 class ErrorDetails(msrest.serialization.Model):
@@ -1075,19 +1012,16 @@ class ErrorDetails(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ErrorDetails, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.target = kwargs.get('target', None)
-        self.message = kwargs.get('message', None)
+        self.code = kwargs.get("code", None)
+        self.target = kwargs.get("target", None)
+        self.message = kwargs.get("message", None)
 
 
 class ExpressRouteCircuit(Resource):
@@ -1135,43 +1069,43 @@ class ExpressRouteCircuit(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'ExpressRouteCircuitSku'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'circuit_provisioning_state': {'key': 'properties.circuitProvisioningState', 'type': 'str'},
-        'service_provider_provisioning_state': {'key': 'properties.serviceProviderProvisioningState', 'type': 'str'},
-        'authorizations': {'key': 'properties.authorizations', 'type': '[ExpressRouteCircuitAuthorization]'},
-        'peerings': {'key': 'properties.peerings', 'type': '[ExpressRouteCircuitPeering]'},
-        'service_key': {'key': 'properties.serviceKey', 'type': 'str'},
-        'service_provider_notes': {'key': 'properties.serviceProviderNotes', 'type': 'str'},
-        'service_provider_properties': {'key': 'properties.serviceProviderProperties', 'type': 'ExpressRouteCircuitServiceProviderProperties'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "ExpressRouteCircuitSku"},
+        "etag": {"key": "etag", "type": "str"},
+        "circuit_provisioning_state": {"key": "properties.circuitProvisioningState", "type": "str"},
+        "service_provider_provisioning_state": {"key": "properties.serviceProviderProvisioningState", "type": "str"},
+        "authorizations": {"key": "properties.authorizations", "type": "[ExpressRouteCircuitAuthorization]"},
+        "peerings": {"key": "properties.peerings", "type": "[ExpressRouteCircuitPeering]"},
+        "service_key": {"key": "properties.serviceKey", "type": "str"},
+        "service_provider_notes": {"key": "properties.serviceProviderNotes", "type": "str"},
+        "service_provider_properties": {
+            "key": "properties.serviceProviderProperties",
+            "type": "ExpressRouteCircuitServiceProviderProperties",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ExpressRouteCircuit, self).__init__(**kwargs)
-        self.sku = kwargs.get('sku', None)
-        self.etag = kwargs.get('etag', None)
-        self.circuit_provisioning_state = kwargs.get('circuit_provisioning_state', None)
-        self.service_provider_provisioning_state = kwargs.get('service_provider_provisioning_state', None)
-        self.authorizations = kwargs.get('authorizations', None)
-        self.peerings = kwargs.get('peerings', None)
-        self.service_key = kwargs.get('service_key', None)
-        self.service_provider_notes = kwargs.get('service_provider_notes', None)
-        self.service_provider_properties = kwargs.get('service_provider_properties', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.sku = kwargs.get("sku", None)
+        self.etag = kwargs.get("etag", None)
+        self.circuit_provisioning_state = kwargs.get("circuit_provisioning_state", None)
+        self.service_provider_provisioning_state = kwargs.get("service_provider_provisioning_state", None)
+        self.authorizations = kwargs.get("authorizations", None)
+        self.peerings = kwargs.get("peerings", None)
+        self.service_key = kwargs.get("service_key", None)
+        self.service_provider_notes = kwargs.get("service_provider_notes", None)
+        self.service_provider_properties = kwargs.get("service_provider_properties", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class ExpressRouteCircuitArpTable(msrest.serialization.Model):
@@ -1184,17 +1118,14 @@ class ExpressRouteCircuitArpTable(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'ip_address': {'key': 'ipAddress', 'type': 'str'},
-        'mac_address': {'key': 'macAddress', 'type': 'str'},
+        "ip_address": {"key": "ipAddress", "type": "str"},
+        "mac_address": {"key": "macAddress", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ExpressRouteCircuitArpTable, self).__init__(**kwargs)
-        self.ip_address = kwargs.get('ip_address', None)
-        self.mac_address = kwargs.get('mac_address', None)
+        self.ip_address = kwargs.get("ip_address", None)
+        self.mac_address = kwargs.get("mac_address", None)
 
 
 class ExpressRouteCircuitAuthorization(SubResource):
@@ -1219,24 +1150,21 @@ class ExpressRouteCircuitAuthorization(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'authorization_key': {'key': 'properties.authorizationKey', 'type': 'str'},
-        'authorization_use_status': {'key': 'properties.authorizationUseStatus', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "authorization_key": {"key": "properties.authorizationKey", "type": "str"},
+        "authorization_use_status": {"key": "properties.authorizationUseStatus", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ExpressRouteCircuitAuthorization, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.etag = kwargs.get('etag', None)
-        self.authorization_key = kwargs.get('authorization_key', None)
-        self.authorization_use_status = kwargs.get('authorization_use_status', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get("name", None)
+        self.etag = kwargs.get("etag", None)
+        self.authorization_key = kwargs.get("authorization_key", None)
+        self.authorization_use_status = kwargs.get("authorization_use_status", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class ExpressRouteCircuitListResult(msrest.serialization.Model):
@@ -1249,17 +1177,14 @@ class ExpressRouteCircuitListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExpressRouteCircuit]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ExpressRouteCircuit]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ExpressRouteCircuitListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class ExpressRouteCircuitPeering(SubResource):
@@ -1307,44 +1232,44 @@ class ExpressRouteCircuitPeering(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'peering_type': {'key': 'properties.peeringType', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'azure_asn': {'key': 'properties.azureASN', 'type': 'int'},
-        'peer_asn': {'key': 'properties.peerASN', 'type': 'int'},
-        'primary_peer_address_prefix': {'key': 'properties.primaryPeerAddressPrefix', 'type': 'str'},
-        'secondary_peer_address_prefix': {'key': 'properties.secondaryPeerAddressPrefix', 'type': 'str'},
-        'primary_azure_port': {'key': 'properties.primaryAzurePort', 'type': 'str'},
-        'secondary_azure_port': {'key': 'properties.secondaryAzurePort', 'type': 'str'},
-        'shared_key': {'key': 'properties.sharedKey', 'type': 'str'},
-        'vlan_id': {'key': 'properties.vlanId', 'type': 'int'},
-        'microsoft_peering_config': {'key': 'properties.microsoftPeeringConfig', 'type': 'ExpressRouteCircuitPeeringConfig'},
-        'stats': {'key': 'properties.stats', 'type': 'ExpressRouteCircuitStats'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "peering_type": {"key": "properties.peeringType", "type": "str"},
+        "state": {"key": "properties.state", "type": "str"},
+        "azure_asn": {"key": "properties.azureASN", "type": "int"},
+        "peer_asn": {"key": "properties.peerASN", "type": "int"},
+        "primary_peer_address_prefix": {"key": "properties.primaryPeerAddressPrefix", "type": "str"},
+        "secondary_peer_address_prefix": {"key": "properties.secondaryPeerAddressPrefix", "type": "str"},
+        "primary_azure_port": {"key": "properties.primaryAzurePort", "type": "str"},
+        "secondary_azure_port": {"key": "properties.secondaryAzurePort", "type": "str"},
+        "shared_key": {"key": "properties.sharedKey", "type": "str"},
+        "vlan_id": {"key": "properties.vlanId", "type": "int"},
+        "microsoft_peering_config": {
+            "key": "properties.microsoftPeeringConfig",
+            "type": "ExpressRouteCircuitPeeringConfig",
+        },
+        "stats": {"key": "properties.stats", "type": "ExpressRouteCircuitStats"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ExpressRouteCircuitPeering, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.etag = kwargs.get('etag', None)
-        self.peering_type = kwargs.get('peering_type', None)
-        self.state = kwargs.get('state', None)
-        self.azure_asn = kwargs.get('azure_asn', None)
-        self.peer_asn = kwargs.get('peer_asn', None)
-        self.primary_peer_address_prefix = kwargs.get('primary_peer_address_prefix', None)
-        self.secondary_peer_address_prefix = kwargs.get('secondary_peer_address_prefix', None)
-        self.primary_azure_port = kwargs.get('primary_azure_port', None)
-        self.secondary_azure_port = kwargs.get('secondary_azure_port', None)
-        self.shared_key = kwargs.get('shared_key', None)
-        self.vlan_id = kwargs.get('vlan_id', None)
-        self.microsoft_peering_config = kwargs.get('microsoft_peering_config', None)
-        self.stats = kwargs.get('stats', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get("name", None)
+        self.etag = kwargs.get("etag", None)
+        self.peering_type = kwargs.get("peering_type", None)
+        self.state = kwargs.get("state", None)
+        self.azure_asn = kwargs.get("azure_asn", None)
+        self.peer_asn = kwargs.get("peer_asn", None)
+        self.primary_peer_address_prefix = kwargs.get("primary_peer_address_prefix", None)
+        self.secondary_peer_address_prefix = kwargs.get("secondary_peer_address_prefix", None)
+        self.primary_azure_port = kwargs.get("primary_azure_port", None)
+        self.secondary_azure_port = kwargs.get("secondary_azure_port", None)
+        self.shared_key = kwargs.get("shared_key", None)
+        self.vlan_id = kwargs.get("vlan_id", None)
+        self.microsoft_peering_config = kwargs.get("microsoft_peering_config", None)
+        self.stats = kwargs.get("stats", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class ExpressRouteCircuitPeeringConfig(msrest.serialization.Model):
@@ -1364,21 +1289,18 @@ class ExpressRouteCircuitPeeringConfig(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'advertised_public_prefixes': {'key': 'advertisedPublicPrefixes', 'type': '[str]'},
-        'advertised_public_prefixes_state': {'key': 'advertisedPublicPrefixesState', 'type': 'str'},
-        'customer_asn': {'key': 'customerASN', 'type': 'int'},
-        'routing_registry_name': {'key': 'routingRegistryName', 'type': 'str'},
+        "advertised_public_prefixes": {"key": "advertisedPublicPrefixes", "type": "[str]"},
+        "advertised_public_prefixes_state": {"key": "advertisedPublicPrefixesState", "type": "str"},
+        "customer_asn": {"key": "customerASN", "type": "int"},
+        "routing_registry_name": {"key": "routingRegistryName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ExpressRouteCircuitPeeringConfig, self).__init__(**kwargs)
-        self.advertised_public_prefixes = kwargs.get('advertised_public_prefixes', None)
-        self.advertised_public_prefixes_state = kwargs.get('advertised_public_prefixes_state', None)
-        self.customer_asn = kwargs.get('customer_asn', None)
-        self.routing_registry_name = kwargs.get('routing_registry_name', None)
+        self.advertised_public_prefixes = kwargs.get("advertised_public_prefixes", None)
+        self.advertised_public_prefixes_state = kwargs.get("advertised_public_prefixes_state", None)
+        self.customer_asn = kwargs.get("customer_asn", None)
+        self.routing_registry_name = kwargs.get("routing_registry_name", None)
 
 
 class ExpressRouteCircuitPeeringListResult(msrest.serialization.Model):
@@ -1391,17 +1313,14 @@ class ExpressRouteCircuitPeeringListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExpressRouteCircuitPeering]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ExpressRouteCircuitPeering]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ExpressRouteCircuitPeeringListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class ExpressRouteCircuitRoutesTable(msrest.serialization.Model):
@@ -1421,25 +1340,22 @@ class ExpressRouteCircuitRoutesTable(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_hop_type': {'required': True},
+        "next_hop_type": {"required": True},
     }
 
     _attribute_map = {
-        'address_prefix': {'key': 'addressPrefix', 'type': 'str'},
-        'next_hop_type': {'key': 'nextHopType', 'type': 'str'},
-        'next_hop_ip': {'key': 'nextHopIP', 'type': 'str'},
-        'as_path': {'key': 'asPath', 'type': 'str'},
+        "address_prefix": {"key": "addressPrefix", "type": "str"},
+        "next_hop_type": {"key": "nextHopType", "type": "str"},
+        "next_hop_ip": {"key": "nextHopIP", "type": "str"},
+        "as_path": {"key": "asPath", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ExpressRouteCircuitRoutesTable, self).__init__(**kwargs)
-        self.address_prefix = kwargs.get('address_prefix', None)
-        self.next_hop_type = kwargs['next_hop_type']
-        self.next_hop_ip = kwargs.get('next_hop_ip', None)
-        self.as_path = kwargs.get('as_path', None)
+        self.address_prefix = kwargs.get("address_prefix", None)
+        self.next_hop_type = kwargs["next_hop_type"]
+        self.next_hop_ip = kwargs.get("next_hop_ip", None)
+        self.as_path = kwargs.get("as_path", None)
 
 
 class ExpressRouteCircuitsArpTableListResult(msrest.serialization.Model):
@@ -1452,17 +1368,14 @@ class ExpressRouteCircuitsArpTableListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExpressRouteCircuitArpTable]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ExpressRouteCircuitArpTable]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ExpressRouteCircuitsArpTableListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class ExpressRouteCircuitServiceProviderProperties(msrest.serialization.Model):
@@ -1477,19 +1390,16 @@ class ExpressRouteCircuitServiceProviderProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'service_provider_name': {'key': 'serviceProviderName', 'type': 'str'},
-        'peering_location': {'key': 'peeringLocation', 'type': 'str'},
-        'bandwidth_in_mbps': {'key': 'bandwidthInMbps', 'type': 'int'},
+        "service_provider_name": {"key": "serviceProviderName", "type": "str"},
+        "peering_location": {"key": "peeringLocation", "type": "str"},
+        "bandwidth_in_mbps": {"key": "bandwidthInMbps", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ExpressRouteCircuitServiceProviderProperties, self).__init__(**kwargs)
-        self.service_provider_name = kwargs.get('service_provider_name', None)
-        self.peering_location = kwargs.get('peering_location', None)
-        self.bandwidth_in_mbps = kwargs.get('bandwidth_in_mbps', None)
+        self.service_provider_name = kwargs.get("service_provider_name", None)
+        self.peering_location = kwargs.get("peering_location", None)
+        self.bandwidth_in_mbps = kwargs.get("bandwidth_in_mbps", None)
 
 
 class ExpressRouteCircuitSku(msrest.serialization.Model):
@@ -1506,19 +1416,16 @@ class ExpressRouteCircuitSku(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'family': {'key': 'family', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "family": {"key": "family", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ExpressRouteCircuitSku, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.tier = kwargs.get('tier', None)
-        self.family = kwargs.get('family', None)
+        self.name = kwargs.get("name", None)
+        self.tier = kwargs.get("tier", None)
+        self.family = kwargs.get("family", None)
 
 
 class ExpressRouteCircuitsRoutesTableListResult(msrest.serialization.Model):
@@ -1531,17 +1438,14 @@ class ExpressRouteCircuitsRoutesTableListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExpressRouteCircuitRoutesTable]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ExpressRouteCircuitRoutesTable]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ExpressRouteCircuitsRoutesTableListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class ExpressRouteCircuitsStatsListResult(msrest.serialization.Model):
@@ -1554,17 +1458,14 @@ class ExpressRouteCircuitsStatsListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExpressRouteCircuitStats]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ExpressRouteCircuitStats]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ExpressRouteCircuitsStatsListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class ExpressRouteCircuitStats(msrest.serialization.Model):
@@ -1577,17 +1478,14 @@ class ExpressRouteCircuitStats(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'bytes_in': {'key': 'bytesIn', 'type': 'int'},
-        'bytes_out': {'key': 'bytesOut', 'type': 'int'},
+        "bytes_in": {"key": "bytesIn", "type": "int"},
+        "bytes_out": {"key": "bytesOut", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ExpressRouteCircuitStats, self).__init__(**kwargs)
-        self.bytes_in = kwargs.get('bytes_in', None)
-        self.bytes_out = kwargs.get('bytes_out', None)
+        self.bytes_in = kwargs.get("bytes_in", None)
+        self.bytes_out = kwargs.get("bytes_out", None)
 
 
 class ExpressRouteServiceProvider(Resource):
@@ -1615,29 +1513,29 @@ class ExpressRouteServiceProvider(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'peering_locations': {'key': 'properties.peeringLocations', 'type': '[str]'},
-        'bandwidths_offered': {'key': 'properties.bandwidthsOffered', 'type': '[ExpressRouteServiceProviderBandwidthsOffered]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "peering_locations": {"key": "properties.peeringLocations", "type": "[str]"},
+        "bandwidths_offered": {
+            "key": "properties.bandwidthsOffered",
+            "type": "[ExpressRouteServiceProviderBandwidthsOffered]",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ExpressRouteServiceProvider, self).__init__(**kwargs)
-        self.peering_locations = kwargs.get('peering_locations', None)
-        self.bandwidths_offered = kwargs.get('bandwidths_offered', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.peering_locations = kwargs.get("peering_locations", None)
+        self.bandwidths_offered = kwargs.get("bandwidths_offered", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class ExpressRouteServiceProviderBandwidthsOffered(msrest.serialization.Model):
@@ -1650,17 +1548,14 @@ class ExpressRouteServiceProviderBandwidthsOffered(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'offer_name': {'key': 'offerName', 'type': 'str'},
-        'value_in_mbps': {'key': 'valueInMbps', 'type': 'int'},
+        "offer_name": {"key": "offerName", "type": "str"},
+        "value_in_mbps": {"key": "valueInMbps", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ExpressRouteServiceProviderBandwidthsOffered, self).__init__(**kwargs)
-        self.offer_name = kwargs.get('offer_name', None)
-        self.value_in_mbps = kwargs.get('value_in_mbps', None)
+        self.offer_name = kwargs.get("offer_name", None)
+        self.value_in_mbps = kwargs.get("value_in_mbps", None)
 
 
 class ExpressRouteServiceProviderListResult(msrest.serialization.Model):
@@ -1673,17 +1568,14 @@ class ExpressRouteServiceProviderListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExpressRouteServiceProvider]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ExpressRouteServiceProvider]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ExpressRouteServiceProviderListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class FrontendIPConfiguration(SubResource):
@@ -1720,36 +1612,33 @@ class FrontendIPConfiguration(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'inbound_nat_rules': {'key': 'properties.inboundNatRules', 'type': '[SubResource]'},
-        'inbound_nat_pools': {'key': 'properties.inboundNatPools', 'type': '[SubResource]'},
-        'outbound_nat_rules': {'key': 'properties.outboundNatRules', 'type': '[SubResource]'},
-        'load_balancing_rules': {'key': 'properties.loadBalancingRules', 'type': '[SubResource]'},
-        'private_ip_address': {'key': 'properties.privateIPAddress', 'type': 'str'},
-        'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'Subnet'},
-        'public_ip_address': {'key': 'properties.publicIPAddress', 'type': 'PublicIPAddress'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "inbound_nat_rules": {"key": "properties.inboundNatRules", "type": "[SubResource]"},
+        "inbound_nat_pools": {"key": "properties.inboundNatPools", "type": "[SubResource]"},
+        "outbound_nat_rules": {"key": "properties.outboundNatRules", "type": "[SubResource]"},
+        "load_balancing_rules": {"key": "properties.loadBalancingRules", "type": "[SubResource]"},
+        "private_ip_address": {"key": "properties.privateIPAddress", "type": "str"},
+        "private_ip_allocation_method": {"key": "properties.privateIPAllocationMethod", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "Subnet"},
+        "public_ip_address": {"key": "properties.publicIPAddress", "type": "PublicIPAddress"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(FrontendIPConfiguration, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.etag = kwargs.get('etag', None)
-        self.inbound_nat_rules = kwargs.get('inbound_nat_rules', None)
-        self.inbound_nat_pools = kwargs.get('inbound_nat_pools', None)
-        self.outbound_nat_rules = kwargs.get('outbound_nat_rules', None)
-        self.load_balancing_rules = kwargs.get('load_balancing_rules', None)
-        self.private_ip_address = kwargs.get('private_ip_address', None)
-        self.private_ip_allocation_method = kwargs.get('private_ip_allocation_method', None)
-        self.subnet = kwargs.get('subnet', None)
-        self.public_ip_address = kwargs.get('public_ip_address', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get("name", None)
+        self.etag = kwargs.get("etag", None)
+        self.inbound_nat_rules = kwargs.get("inbound_nat_rules", None)
+        self.inbound_nat_pools = kwargs.get("inbound_nat_pools", None)
+        self.outbound_nat_rules = kwargs.get("outbound_nat_rules", None)
+        self.load_balancing_rules = kwargs.get("load_balancing_rules", None)
+        self.private_ip_address = kwargs.get("private_ip_address", None)
+        self.private_ip_allocation_method = kwargs.get("private_ip_allocation_method", None)
+        self.subnet = kwargs.get("subnet", None)
+        self.public_ip_address = kwargs.get("public_ip_address", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class InboundNatPool(SubResource):
@@ -1784,30 +1673,27 @@ class InboundNatPool(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'frontend_ip_configuration': {'key': 'properties.frontendIPConfiguration', 'type': 'SubResource'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'frontend_port_range_start': {'key': 'properties.frontendPortRangeStart', 'type': 'int'},
-        'frontend_port_range_end': {'key': 'properties.frontendPortRangeEnd', 'type': 'int'},
-        'backend_port': {'key': 'properties.backendPort', 'type': 'int'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "frontend_ip_configuration": {"key": "properties.frontendIPConfiguration", "type": "SubResource"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "frontend_port_range_start": {"key": "properties.frontendPortRangeStart", "type": "int"},
+        "frontend_port_range_end": {"key": "properties.frontendPortRangeEnd", "type": "int"},
+        "backend_port": {"key": "properties.backendPort", "type": "int"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(InboundNatPool, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.etag = kwargs.get('etag', None)
-        self.frontend_ip_configuration = kwargs.get('frontend_ip_configuration', None)
-        self.protocol = kwargs.get('protocol', None)
-        self.frontend_port_range_start = kwargs.get('frontend_port_range_start', None)
-        self.frontend_port_range_end = kwargs.get('frontend_port_range_end', None)
-        self.backend_port = kwargs.get('backend_port', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get("name", None)
+        self.etag = kwargs.get("etag", None)
+        self.frontend_ip_configuration = kwargs.get("frontend_ip_configuration", None)
+        self.protocol = kwargs.get("protocol", None)
+        self.frontend_port_range_start = kwargs.get("frontend_port_range_start", None)
+        self.frontend_port_range_end = kwargs.get("frontend_port_range_end", None)
+        self.backend_port = kwargs.get("backend_port", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class InboundNatRule(SubResource):
@@ -1851,34 +1737,34 @@ class InboundNatRule(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'frontend_ip_configuration': {'key': 'properties.frontendIPConfiguration', 'type': 'SubResource'},
-        'backend_ip_configuration': {'key': 'properties.backendIPConfiguration', 'type': 'NetworkInterfaceIPConfiguration'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'frontend_port': {'key': 'properties.frontendPort', 'type': 'int'},
-        'backend_port': {'key': 'properties.backendPort', 'type': 'int'},
-        'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},
-        'enable_floating_ip': {'key': 'properties.enableFloatingIP', 'type': 'bool'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "frontend_ip_configuration": {"key": "properties.frontendIPConfiguration", "type": "SubResource"},
+        "backend_ip_configuration": {
+            "key": "properties.backendIPConfiguration",
+            "type": "NetworkInterfaceIPConfiguration",
+        },
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "frontend_port": {"key": "properties.frontendPort", "type": "int"},
+        "backend_port": {"key": "properties.backendPort", "type": "int"},
+        "idle_timeout_in_minutes": {"key": "properties.idleTimeoutInMinutes", "type": "int"},
+        "enable_floating_ip": {"key": "properties.enableFloatingIP", "type": "bool"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(InboundNatRule, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.etag = kwargs.get('etag', None)
-        self.frontend_ip_configuration = kwargs.get('frontend_ip_configuration', None)
-        self.backend_ip_configuration = kwargs.get('backend_ip_configuration', None)
-        self.protocol = kwargs.get('protocol', None)
-        self.frontend_port = kwargs.get('frontend_port', None)
-        self.backend_port = kwargs.get('backend_port', None)
-        self.idle_timeout_in_minutes = kwargs.get('idle_timeout_in_minutes', None)
-        self.enable_floating_ip = kwargs.get('enable_floating_ip', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get("name", None)
+        self.etag = kwargs.get("etag", None)
+        self.frontend_ip_configuration = kwargs.get("frontend_ip_configuration", None)
+        self.backend_ip_configuration = kwargs.get("backend_ip_configuration", None)
+        self.protocol = kwargs.get("protocol", None)
+        self.frontend_port = kwargs.get("frontend_port", None)
+        self.backend_port = kwargs.get("backend_port", None)
+        self.idle_timeout_in_minutes = kwargs.get("idle_timeout_in_minutes", None)
+        self.enable_floating_ip = kwargs.get("enable_floating_ip", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class IPConfiguration(SubResource):
@@ -1907,28 +1793,25 @@ class IPConfiguration(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'private_ip_address': {'key': 'properties.privateIPAddress', 'type': 'str'},
-        'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'Subnet'},
-        'public_ip_address': {'key': 'properties.publicIPAddress', 'type': 'PublicIPAddress'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "private_ip_address": {"key": "properties.privateIPAddress", "type": "str"},
+        "private_ip_allocation_method": {"key": "properties.privateIPAllocationMethod", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "Subnet"},
+        "public_ip_address": {"key": "properties.publicIPAddress", "type": "PublicIPAddress"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(IPConfiguration, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.etag = kwargs.get('etag', None)
-        self.private_ip_address = kwargs.get('private_ip_address', None)
-        self.private_ip_allocation_method = kwargs.get('private_ip_allocation_method', None)
-        self.subnet = kwargs.get('subnet', None)
-        self.public_ip_address = kwargs.get('public_ip_address', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get("name", None)
+        self.etag = kwargs.get("etag", None)
+        self.private_ip_address = kwargs.get("private_ip_address", None)
+        self.private_ip_allocation_method = kwargs.get("private_ip_allocation_method", None)
+        self.subnet = kwargs.get("subnet", None)
+        self.public_ip_address = kwargs.get("public_ip_address", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class LoadBalancer(Resource):
@@ -1983,43 +1866,43 @@ class LoadBalancer(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'frontend_ip_configurations': {'key': 'properties.frontendIPConfigurations', 'type': '[FrontendIPConfiguration]'},
-        'backend_address_pools': {'key': 'properties.backendAddressPools', 'type': '[BackendAddressPool]'},
-        'load_balancing_rules': {'key': 'properties.loadBalancingRules', 'type': '[LoadBalancingRule]'},
-        'probes': {'key': 'properties.probes', 'type': '[Probe]'},
-        'inbound_nat_rules': {'key': 'properties.inboundNatRules', 'type': '[InboundNatRule]'},
-        'inbound_nat_pools': {'key': 'properties.inboundNatPools', 'type': '[InboundNatPool]'},
-        'outbound_nat_rules': {'key': 'properties.outboundNatRules', 'type': '[OutboundNatRule]'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "frontend_ip_configurations": {
+            "key": "properties.frontendIPConfigurations",
+            "type": "[FrontendIPConfiguration]",
+        },
+        "backend_address_pools": {"key": "properties.backendAddressPools", "type": "[BackendAddressPool]"},
+        "load_balancing_rules": {"key": "properties.loadBalancingRules", "type": "[LoadBalancingRule]"},
+        "probes": {"key": "properties.probes", "type": "[Probe]"},
+        "inbound_nat_rules": {"key": "properties.inboundNatRules", "type": "[InboundNatRule]"},
+        "inbound_nat_pools": {"key": "properties.inboundNatPools", "type": "[InboundNatPool]"},
+        "outbound_nat_rules": {"key": "properties.outboundNatRules", "type": "[OutboundNatRule]"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(LoadBalancer, self).__init__(**kwargs)
-        self.etag = kwargs.get('etag', None)
-        self.frontend_ip_configurations = kwargs.get('frontend_ip_configurations', None)
-        self.backend_address_pools = kwargs.get('backend_address_pools', None)
-        self.load_balancing_rules = kwargs.get('load_balancing_rules', None)
-        self.probes = kwargs.get('probes', None)
-        self.inbound_nat_rules = kwargs.get('inbound_nat_rules', None)
-        self.inbound_nat_pools = kwargs.get('inbound_nat_pools', None)
-        self.outbound_nat_rules = kwargs.get('outbound_nat_rules', None)
-        self.resource_guid = kwargs.get('resource_guid', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.etag = kwargs.get("etag", None)
+        self.frontend_ip_configurations = kwargs.get("frontend_ip_configurations", None)
+        self.backend_address_pools = kwargs.get("backend_address_pools", None)
+        self.load_balancing_rules = kwargs.get("load_balancing_rules", None)
+        self.probes = kwargs.get("probes", None)
+        self.inbound_nat_rules = kwargs.get("inbound_nat_rules", None)
+        self.inbound_nat_pools = kwargs.get("inbound_nat_pools", None)
+        self.outbound_nat_rules = kwargs.get("outbound_nat_rules", None)
+        self.resource_guid = kwargs.get("resource_guid", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class LoadBalancerListResult(msrest.serialization.Model):
@@ -2032,17 +1915,14 @@ class LoadBalancerListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[LoadBalancer]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[LoadBalancer]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(LoadBalancerListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class LoadBalancingRule(SubResource):
@@ -2090,38 +1970,35 @@ class LoadBalancingRule(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'frontend_ip_configuration': {'key': 'properties.frontendIPConfiguration', 'type': 'SubResource'},
-        'backend_address_pool': {'key': 'properties.backendAddressPool', 'type': 'SubResource'},
-        'probe': {'key': 'properties.probe', 'type': 'SubResource'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'load_distribution': {'key': 'properties.loadDistribution', 'type': 'str'},
-        'frontend_port': {'key': 'properties.frontendPort', 'type': 'int'},
-        'backend_port': {'key': 'properties.backendPort', 'type': 'int'},
-        'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},
-        'enable_floating_ip': {'key': 'properties.enableFloatingIP', 'type': 'bool'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "frontend_ip_configuration": {"key": "properties.frontendIPConfiguration", "type": "SubResource"},
+        "backend_address_pool": {"key": "properties.backendAddressPool", "type": "SubResource"},
+        "probe": {"key": "properties.probe", "type": "SubResource"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "load_distribution": {"key": "properties.loadDistribution", "type": "str"},
+        "frontend_port": {"key": "properties.frontendPort", "type": "int"},
+        "backend_port": {"key": "properties.backendPort", "type": "int"},
+        "idle_timeout_in_minutes": {"key": "properties.idleTimeoutInMinutes", "type": "int"},
+        "enable_floating_ip": {"key": "properties.enableFloatingIP", "type": "bool"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(LoadBalancingRule, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.etag = kwargs.get('etag', None)
-        self.frontend_ip_configuration = kwargs.get('frontend_ip_configuration', None)
-        self.backend_address_pool = kwargs.get('backend_address_pool', None)
-        self.probe = kwargs.get('probe', None)
-        self.protocol = kwargs.get('protocol', None)
-        self.load_distribution = kwargs.get('load_distribution', None)
-        self.frontend_port = kwargs.get('frontend_port', None)
-        self.backend_port = kwargs.get('backend_port', None)
-        self.idle_timeout_in_minutes = kwargs.get('idle_timeout_in_minutes', None)
-        self.enable_floating_ip = kwargs.get('enable_floating_ip', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get("name", None)
+        self.etag = kwargs.get("etag", None)
+        self.frontend_ip_configuration = kwargs.get("frontend_ip_configuration", None)
+        self.backend_address_pool = kwargs.get("backend_address_pool", None)
+        self.probe = kwargs.get("probe", None)
+        self.protocol = kwargs.get("protocol", None)
+        self.load_distribution = kwargs.get("load_distribution", None)
+        self.frontend_port = kwargs.get("frontend_port", None)
+        self.backend_port = kwargs.get("backend_port", None)
+        self.idle_timeout_in_minutes = kwargs.get("idle_timeout_in_minutes", None)
+        self.enable_floating_ip = kwargs.get("enable_floating_ip", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class LocalNetworkGateway(Resource):
@@ -2155,35 +2032,32 @@ class LocalNetworkGateway(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'local_network_address_space': {'key': 'properties.localNetworkAddressSpace', 'type': 'AddressSpace'},
-        'gateway_ip_address': {'key': 'properties.gatewayIpAddress', 'type': 'str'},
-        'bgp_settings': {'key': 'properties.bgpSettings', 'type': 'BgpSettings'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "local_network_address_space": {"key": "properties.localNetworkAddressSpace", "type": "AddressSpace"},
+        "gateway_ip_address": {"key": "properties.gatewayIpAddress", "type": "str"},
+        "bgp_settings": {"key": "properties.bgpSettings", "type": "BgpSettings"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(LocalNetworkGateway, self).__init__(**kwargs)
-        self.etag = kwargs.get('etag', None)
-        self.local_network_address_space = kwargs.get('local_network_address_space', None)
-        self.gateway_ip_address = kwargs.get('gateway_ip_address', None)
-        self.bgp_settings = kwargs.get('bgp_settings', None)
-        self.resource_guid = kwargs.get('resource_guid', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.etag = kwargs.get("etag", None)
+        self.local_network_address_space = kwargs.get("local_network_address_space", None)
+        self.gateway_ip_address = kwargs.get("gateway_ip_address", None)
+        self.bgp_settings = kwargs.get("bgp_settings", None)
+        self.resource_guid = kwargs.get("resource_guid", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class LocalNetworkGatewayListResult(msrest.serialization.Model):
@@ -2196,17 +2070,14 @@ class LocalNetworkGatewayListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[LocalNetworkGateway]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[LocalNetworkGateway]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(LocalNetworkGatewayListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class NetworkInterface(Resource):
@@ -2250,43 +2121,40 @@ class NetworkInterface(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'virtual_machine': {'key': 'properties.virtualMachine', 'type': 'SubResource'},
-        'network_security_group': {'key': 'properties.networkSecurityGroup', 'type': 'NetworkSecurityGroup'},
-        'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[NetworkInterfaceIPConfiguration]'},
-        'dns_settings': {'key': 'properties.dnsSettings', 'type': 'NetworkInterfaceDnsSettings'},
-        'mac_address': {'key': 'properties.macAddress', 'type': 'str'},
-        'primary': {'key': 'properties.primary', 'type': 'bool'},
-        'enable_ip_forwarding': {'key': 'properties.enableIPForwarding', 'type': 'bool'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "virtual_machine": {"key": "properties.virtualMachine", "type": "SubResource"},
+        "network_security_group": {"key": "properties.networkSecurityGroup", "type": "NetworkSecurityGroup"},
+        "ip_configurations": {"key": "properties.ipConfigurations", "type": "[NetworkInterfaceIPConfiguration]"},
+        "dns_settings": {"key": "properties.dnsSettings", "type": "NetworkInterfaceDnsSettings"},
+        "mac_address": {"key": "properties.macAddress", "type": "str"},
+        "primary": {"key": "properties.primary", "type": "bool"},
+        "enable_ip_forwarding": {"key": "properties.enableIPForwarding", "type": "bool"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(NetworkInterface, self).__init__(**kwargs)
-        self.etag = kwargs.get('etag', None)
-        self.virtual_machine = kwargs.get('virtual_machine', None)
-        self.network_security_group = kwargs.get('network_security_group', None)
-        self.ip_configurations = kwargs.get('ip_configurations', None)
-        self.dns_settings = kwargs.get('dns_settings', None)
-        self.mac_address = kwargs.get('mac_address', None)
-        self.primary = kwargs.get('primary', None)
-        self.enable_ip_forwarding = kwargs.get('enable_ip_forwarding', None)
-        self.resource_guid = kwargs.get('resource_guid', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.etag = kwargs.get("etag", None)
+        self.virtual_machine = kwargs.get("virtual_machine", None)
+        self.network_security_group = kwargs.get("network_security_group", None)
+        self.ip_configurations = kwargs.get("ip_configurations", None)
+        self.dns_settings = kwargs.get("dns_settings", None)
+        self.mac_address = kwargs.get("mac_address", None)
+        self.primary = kwargs.get("primary", None)
+        self.enable_ip_forwarding = kwargs.get("enable_ip_forwarding", None)
+        self.resource_guid = kwargs.get("resource_guid", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class NetworkInterfaceDnsSettings(msrest.serialization.Model):
@@ -2309,21 +2177,18 @@ class NetworkInterfaceDnsSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'dns_servers': {'key': 'dnsServers', 'type': '[str]'},
-        'applied_dns_servers': {'key': 'appliedDnsServers', 'type': '[str]'},
-        'internal_dns_name_label': {'key': 'internalDnsNameLabel', 'type': 'str'},
-        'internal_fqdn': {'key': 'internalFqdn', 'type': 'str'},
+        "dns_servers": {"key": "dnsServers", "type": "[str]"},
+        "applied_dns_servers": {"key": "appliedDnsServers", "type": "[str]"},
+        "internal_dns_name_label": {"key": "internalDnsNameLabel", "type": "str"},
+        "internal_fqdn": {"key": "internalFqdn", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(NetworkInterfaceDnsSettings, self).__init__(**kwargs)
-        self.dns_servers = kwargs.get('dns_servers', None)
-        self.applied_dns_servers = kwargs.get('applied_dns_servers', None)
-        self.internal_dns_name_label = kwargs.get('internal_dns_name_label', None)
-        self.internal_fqdn = kwargs.get('internal_fqdn', None)
+        self.dns_servers = kwargs.get("dns_servers", None)
+        self.applied_dns_servers = kwargs.get("applied_dns_servers", None)
+        self.internal_dns_name_label = kwargs.get("internal_dns_name_label", None)
+        self.internal_fqdn = kwargs.get("internal_fqdn", None)
 
 
 class NetworkInterfaceIPConfiguration(SubResource):
@@ -2360,34 +2225,37 @@ class NetworkInterfaceIPConfiguration(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'load_balancer_backend_address_pools': {'key': 'properties.loadBalancerBackendAddressPools', 'type': '[BackendAddressPool]'},
-        'load_balancer_inbound_nat_rules': {'key': 'properties.loadBalancerInboundNatRules', 'type': '[InboundNatRule]'},
-        'private_ip_address': {'key': 'properties.privateIPAddress', 'type': 'str'},
-        'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'Subnet'},
-        'primary': {'key': 'properties.primary', 'type': 'bool'},
-        'public_ip_address': {'key': 'properties.publicIPAddress', 'type': 'PublicIPAddress'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "load_balancer_backend_address_pools": {
+            "key": "properties.loadBalancerBackendAddressPools",
+            "type": "[BackendAddressPool]",
+        },
+        "load_balancer_inbound_nat_rules": {
+            "key": "properties.loadBalancerInboundNatRules",
+            "type": "[InboundNatRule]",
+        },
+        "private_ip_address": {"key": "properties.privateIPAddress", "type": "str"},
+        "private_ip_allocation_method": {"key": "properties.privateIPAllocationMethod", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "Subnet"},
+        "primary": {"key": "properties.primary", "type": "bool"},
+        "public_ip_address": {"key": "properties.publicIPAddress", "type": "PublicIPAddress"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(NetworkInterfaceIPConfiguration, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.etag = kwargs.get('etag', None)
-        self.load_balancer_backend_address_pools = kwargs.get('load_balancer_backend_address_pools', None)
-        self.load_balancer_inbound_nat_rules = kwargs.get('load_balancer_inbound_nat_rules', None)
-        self.private_ip_address = kwargs.get('private_ip_address', None)
-        self.private_ip_allocation_method = kwargs.get('private_ip_allocation_method', None)
-        self.subnet = kwargs.get('subnet', None)
-        self.primary = kwargs.get('primary', None)
-        self.public_ip_address = kwargs.get('public_ip_address', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get("name", None)
+        self.etag = kwargs.get("etag", None)
+        self.load_balancer_backend_address_pools = kwargs.get("load_balancer_backend_address_pools", None)
+        self.load_balancer_inbound_nat_rules = kwargs.get("load_balancer_inbound_nat_rules", None)
+        self.private_ip_address = kwargs.get("private_ip_address", None)
+        self.private_ip_allocation_method = kwargs.get("private_ip_allocation_method", None)
+        self.subnet = kwargs.get("subnet", None)
+        self.primary = kwargs.get("primary", None)
+        self.public_ip_address = kwargs.get("public_ip_address", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class NetworkInterfaceListResult(msrest.serialization.Model):
@@ -2400,17 +2268,14 @@ class NetworkInterfaceListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[NetworkInterface]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[NetworkInterface]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(NetworkInterfaceListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class NetworkSecurityGroup(Resource):
@@ -2446,37 +2311,34 @@ class NetworkSecurityGroup(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'security_rules': {'key': 'properties.securityRules', 'type': '[SecurityRule]'},
-        'default_security_rules': {'key': 'properties.defaultSecurityRules', 'type': '[SecurityRule]'},
-        'network_interfaces': {'key': 'properties.networkInterfaces', 'type': '[NetworkInterface]'},
-        'subnets': {'key': 'properties.subnets', 'type': '[Subnet]'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "security_rules": {"key": "properties.securityRules", "type": "[SecurityRule]"},
+        "default_security_rules": {"key": "properties.defaultSecurityRules", "type": "[SecurityRule]"},
+        "network_interfaces": {"key": "properties.networkInterfaces", "type": "[NetworkInterface]"},
+        "subnets": {"key": "properties.subnets", "type": "[Subnet]"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(NetworkSecurityGroup, self).__init__(**kwargs)
-        self.etag = kwargs.get('etag', None)
-        self.security_rules = kwargs.get('security_rules', None)
-        self.default_security_rules = kwargs.get('default_security_rules', None)
-        self.network_interfaces = kwargs.get('network_interfaces', None)
-        self.subnets = kwargs.get('subnets', None)
-        self.resource_guid = kwargs.get('resource_guid', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.etag = kwargs.get("etag", None)
+        self.security_rules = kwargs.get("security_rules", None)
+        self.default_security_rules = kwargs.get("default_security_rules", None)
+        self.network_interfaces = kwargs.get("network_interfaces", None)
+        self.subnets = kwargs.get("subnets", None)
+        self.resource_guid = kwargs.get("resource_guid", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class NetworkSecurityGroupListResult(msrest.serialization.Model):
@@ -2489,17 +2351,14 @@ class NetworkSecurityGroupListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[NetworkSecurityGroup]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[NetworkSecurityGroup]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(NetworkSecurityGroupListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class OutboundNatRule(SubResource):
@@ -2525,26 +2384,23 @@ class OutboundNatRule(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'allocated_outbound_ports': {'key': 'properties.allocatedOutboundPorts', 'type': 'int'},
-        'frontend_ip_configurations': {'key': 'properties.frontendIPConfigurations', 'type': '[SubResource]'},
-        'backend_address_pool': {'key': 'properties.backendAddressPool', 'type': 'SubResource'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "allocated_outbound_ports": {"key": "properties.allocatedOutboundPorts", "type": "int"},
+        "frontend_ip_configurations": {"key": "properties.frontendIPConfigurations", "type": "[SubResource]"},
+        "backend_address_pool": {"key": "properties.backendAddressPool", "type": "SubResource"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(OutboundNatRule, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.etag = kwargs.get('etag', None)
-        self.allocated_outbound_ports = kwargs.get('allocated_outbound_ports', None)
-        self.frontend_ip_configurations = kwargs.get('frontend_ip_configurations', None)
-        self.backend_address_pool = kwargs.get('backend_address_pool', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get("name", None)
+        self.etag = kwargs.get("etag", None)
+        self.allocated_outbound_ports = kwargs.get("allocated_outbound_ports", None)
+        self.frontend_ip_configurations = kwargs.get("frontend_ip_configurations", None)
+        self.backend_address_pool = kwargs.get("backend_address_pool", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class Probe(SubResource):
@@ -2585,32 +2441,29 @@ class Probe(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'load_balancing_rules': {'key': 'properties.loadBalancingRules', 'type': '[SubResource]'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'port': {'key': 'properties.port', 'type': 'int'},
-        'interval_in_seconds': {'key': 'properties.intervalInSeconds', 'type': 'int'},
-        'number_of_probes': {'key': 'properties.numberOfProbes', 'type': 'int'},
-        'request_path': {'key': 'properties.requestPath', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "load_balancing_rules": {"key": "properties.loadBalancingRules", "type": "[SubResource]"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "port": {"key": "properties.port", "type": "int"},
+        "interval_in_seconds": {"key": "properties.intervalInSeconds", "type": "int"},
+        "number_of_probes": {"key": "properties.numberOfProbes", "type": "int"},
+        "request_path": {"key": "properties.requestPath", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Probe, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.etag = kwargs.get('etag', None)
-        self.load_balancing_rules = kwargs.get('load_balancing_rules', None)
-        self.protocol = kwargs.get('protocol', None)
-        self.port = kwargs.get('port', None)
-        self.interval_in_seconds = kwargs.get('interval_in_seconds', None)
-        self.number_of_probes = kwargs.get('number_of_probes', None)
-        self.request_path = kwargs.get('request_path', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get("name", None)
+        self.etag = kwargs.get("etag", None)
+        self.load_balancing_rules = kwargs.get("load_balancing_rules", None)
+        self.protocol = kwargs.get("protocol", None)
+        self.port = kwargs.get("port", None)
+        self.interval_in_seconds = kwargs.get("interval_in_seconds", None)
+        self.number_of_probes = kwargs.get("number_of_probes", None)
+        self.request_path = kwargs.get("request_path", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class PublicIPAddress(Resource):
@@ -2650,39 +2503,36 @@ class PublicIPAddress(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'public_ip_allocation_method': {'key': 'properties.publicIPAllocationMethod', 'type': 'str'},
-        'ip_configuration': {'key': 'properties.ipConfiguration', 'type': 'IPConfiguration'},
-        'dns_settings': {'key': 'properties.dnsSettings', 'type': 'PublicIPAddressDnsSettings'},
-        'ip_address': {'key': 'properties.ipAddress', 'type': 'str'},
-        'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "public_ip_allocation_method": {"key": "properties.publicIPAllocationMethod", "type": "str"},
+        "ip_configuration": {"key": "properties.ipConfiguration", "type": "IPConfiguration"},
+        "dns_settings": {"key": "properties.dnsSettings", "type": "PublicIPAddressDnsSettings"},
+        "ip_address": {"key": "properties.ipAddress", "type": "str"},
+        "idle_timeout_in_minutes": {"key": "properties.idleTimeoutInMinutes", "type": "int"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(PublicIPAddress, self).__init__(**kwargs)
-        self.etag = kwargs.get('etag', None)
-        self.public_ip_allocation_method = kwargs.get('public_ip_allocation_method', None)
-        self.ip_configuration = kwargs.get('ip_configuration', None)
-        self.dns_settings = kwargs.get('dns_settings', None)
-        self.ip_address = kwargs.get('ip_address', None)
-        self.idle_timeout_in_minutes = kwargs.get('idle_timeout_in_minutes', None)
-        self.resource_guid = kwargs.get('resource_guid', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.etag = kwargs.get("etag", None)
+        self.public_ip_allocation_method = kwargs.get("public_ip_allocation_method", None)
+        self.ip_configuration = kwargs.get("ip_configuration", None)
+        self.dns_settings = kwargs.get("dns_settings", None)
+        self.ip_address = kwargs.get("ip_address", None)
+        self.idle_timeout_in_minutes = kwargs.get("idle_timeout_in_minutes", None)
+        self.resource_guid = kwargs.get("resource_guid", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class PublicIPAddressDnsSettings(msrest.serialization.Model):
@@ -2703,19 +2553,16 @@ class PublicIPAddressDnsSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'domain_name_label': {'key': 'domainNameLabel', 'type': 'str'},
-        'fqdn': {'key': 'fqdn', 'type': 'str'},
-        'reverse_fqdn': {'key': 'reverseFqdn', 'type': 'str'},
+        "domain_name_label": {"key": "domainNameLabel", "type": "str"},
+        "fqdn": {"key": "fqdn", "type": "str"},
+        "reverse_fqdn": {"key": "reverseFqdn", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(PublicIPAddressDnsSettings, self).__init__(**kwargs)
-        self.domain_name_label = kwargs.get('domain_name_label', None)
-        self.fqdn = kwargs.get('fqdn', None)
-        self.reverse_fqdn = kwargs.get('reverse_fqdn', None)
+        self.domain_name_label = kwargs.get("domain_name_label", None)
+        self.fqdn = kwargs.get("fqdn", None)
+        self.reverse_fqdn = kwargs.get("reverse_fqdn", None)
 
 
 class PublicIPAddressListResult(msrest.serialization.Model):
@@ -2728,17 +2575,14 @@ class PublicIPAddressListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PublicIPAddress]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PublicIPAddress]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(PublicIPAddressListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class Route(SubResource):
@@ -2766,26 +2610,23 @@ class Route(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'address_prefix': {'key': 'properties.addressPrefix', 'type': 'str'},
-        'next_hop_type': {'key': 'properties.nextHopType', 'type': 'str'},
-        'next_hop_ip_address': {'key': 'properties.nextHopIpAddress', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "address_prefix": {"key": "properties.addressPrefix", "type": "str"},
+        "next_hop_type": {"key": "properties.nextHopType", "type": "str"},
+        "next_hop_ip_address": {"key": "properties.nextHopIpAddress", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Route, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.etag = kwargs.get('etag', None)
-        self.address_prefix = kwargs.get('address_prefix', None)
-        self.next_hop_type = kwargs.get('next_hop_type', None)
-        self.next_hop_ip_address = kwargs.get('next_hop_ip_address', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get("name", None)
+        self.etag = kwargs.get("etag", None)
+        self.address_prefix = kwargs.get("address_prefix", None)
+        self.next_hop_type = kwargs.get("next_hop_type", None)
+        self.next_hop_ip_address = kwargs.get("next_hop_ip_address", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class RouteListResult(msrest.serialization.Model):
@@ -2798,17 +2639,14 @@ class RouteListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Route]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Route]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(RouteListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class RouteTable(Resource):
@@ -2838,31 +2676,28 @@ class RouteTable(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'routes': {'key': 'properties.routes', 'type': '[Route]'},
-        'subnets': {'key': 'properties.subnets', 'type': '[Subnet]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "routes": {"key": "properties.routes", "type": "[Route]"},
+        "subnets": {"key": "properties.subnets", "type": "[Subnet]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(RouteTable, self).__init__(**kwargs)
-        self.etag = kwargs.get('etag', None)
-        self.routes = kwargs.get('routes', None)
-        self.subnets = kwargs.get('subnets', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.etag = kwargs.get("etag", None)
+        self.routes = kwargs.get("routes", None)
+        self.subnets = kwargs.get("subnets", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class RouteTableListResult(msrest.serialization.Model):
@@ -2875,17 +2710,14 @@ class RouteTableListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[RouteTable]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[RouteTable]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(RouteTableListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class SecurityRule(SubResource):
@@ -2934,38 +2766,35 @@ class SecurityRule(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'source_port_range': {'key': 'properties.sourcePortRange', 'type': 'str'},
-        'destination_port_range': {'key': 'properties.destinationPortRange', 'type': 'str'},
-        'source_address_prefix': {'key': 'properties.sourceAddressPrefix', 'type': 'str'},
-        'destination_address_prefix': {'key': 'properties.destinationAddressPrefix', 'type': 'str'},
-        'access': {'key': 'properties.access', 'type': 'str'},
-        'priority': {'key': 'properties.priority', 'type': 'int'},
-        'direction': {'key': 'properties.direction', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "source_port_range": {"key": "properties.sourcePortRange", "type": "str"},
+        "destination_port_range": {"key": "properties.destinationPortRange", "type": "str"},
+        "source_address_prefix": {"key": "properties.sourceAddressPrefix", "type": "str"},
+        "destination_address_prefix": {"key": "properties.destinationAddressPrefix", "type": "str"},
+        "access": {"key": "properties.access", "type": "str"},
+        "priority": {"key": "properties.priority", "type": "int"},
+        "direction": {"key": "properties.direction", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SecurityRule, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.etag = kwargs.get('etag', None)
-        self.description = kwargs.get('description', None)
-        self.protocol = kwargs.get('protocol', None)
-        self.source_port_range = kwargs.get('source_port_range', None)
-        self.destination_port_range = kwargs.get('destination_port_range', None)
-        self.source_address_prefix = kwargs.get('source_address_prefix', None)
-        self.destination_address_prefix = kwargs.get('destination_address_prefix', None)
-        self.access = kwargs.get('access', None)
-        self.priority = kwargs.get('priority', None)
-        self.direction = kwargs.get('direction', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get("name", None)
+        self.etag = kwargs.get("etag", None)
+        self.description = kwargs.get("description", None)
+        self.protocol = kwargs.get("protocol", None)
+        self.source_port_range = kwargs.get("source_port_range", None)
+        self.destination_port_range = kwargs.get("destination_port_range", None)
+        self.source_address_prefix = kwargs.get("source_address_prefix", None)
+        self.destination_address_prefix = kwargs.get("destination_address_prefix", None)
+        self.access = kwargs.get("access", None)
+        self.priority = kwargs.get("priority", None)
+        self.direction = kwargs.get("direction", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class SecurityRuleListResult(msrest.serialization.Model):
@@ -2978,17 +2807,14 @@ class SecurityRuleListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SecurityRule]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SecurityRule]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SecurityRuleListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class Subnet(SubResource):
@@ -3015,28 +2841,25 @@ class Subnet(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'address_prefix': {'key': 'properties.addressPrefix', 'type': 'str'},
-        'network_security_group': {'key': 'properties.networkSecurityGroup', 'type': 'NetworkSecurityGroup'},
-        'route_table': {'key': 'properties.routeTable', 'type': 'RouteTable'},
-        'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[IPConfiguration]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "address_prefix": {"key": "properties.addressPrefix", "type": "str"},
+        "network_security_group": {"key": "properties.networkSecurityGroup", "type": "NetworkSecurityGroup"},
+        "route_table": {"key": "properties.routeTable", "type": "RouteTable"},
+        "ip_configurations": {"key": "properties.ipConfigurations", "type": "[IPConfiguration]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Subnet, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.etag = kwargs.get('etag', None)
-        self.address_prefix = kwargs.get('address_prefix', None)
-        self.network_security_group = kwargs.get('network_security_group', None)
-        self.route_table = kwargs.get('route_table', None)
-        self.ip_configurations = kwargs.get('ip_configurations', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get("name", None)
+        self.etag = kwargs.get("etag", None)
+        self.address_prefix = kwargs.get("address_prefix", None)
+        self.network_security_group = kwargs.get("network_security_group", None)
+        self.route_table = kwargs.get("route_table", None)
+        self.ip_configurations = kwargs.get("ip_configurations", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class SubnetListResult(msrest.serialization.Model):
@@ -3049,17 +2872,14 @@ class SubnetListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Subnet]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Subnet]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SubnetListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class Usage(msrest.serialization.Model):
@@ -3079,28 +2899,25 @@ class Usage(msrest.serialization.Model):
     """
 
     _validation = {
-        'unit': {'required': True},
-        'current_value': {'required': True},
-        'limit': {'required': True},
-        'name': {'required': True},
+        "unit": {"required": True},
+        "current_value": {"required": True},
+        "limit": {"required": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'unit': {'key': 'unit', 'type': 'str'},
-        'current_value': {'key': 'currentValue', 'type': 'long'},
-        'limit': {'key': 'limit', 'type': 'long'},
-        'name': {'key': 'name', 'type': 'UsageName'},
+        "unit": {"key": "unit", "type": "str"},
+        "current_value": {"key": "currentValue", "type": "long"},
+        "limit": {"key": "limit", "type": "long"},
+        "name": {"key": "name", "type": "UsageName"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Usage, self).__init__(**kwargs)
-        self.unit = kwargs['unit']
-        self.current_value = kwargs['current_value']
-        self.limit = kwargs['limit']
-        self.name = kwargs['name']
+        self.unit = kwargs["unit"]
+        self.current_value = kwargs["current_value"]
+        self.limit = kwargs["limit"]
+        self.name = kwargs["name"]
 
 
 class UsageName(msrest.serialization.Model):
@@ -3113,17 +2930,14 @@ class UsageName(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+        "value": {"key": "value", "type": "str"},
+        "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(UsageName, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.localized_value = kwargs.get('localized_value', None)
+        self.value = kwargs.get("value", None)
+        self.localized_value = kwargs.get("localized_value", None)
 
 
 class UsagesListResult(msrest.serialization.Model):
@@ -3136,17 +2950,14 @@ class UsagesListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Usage]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Usage]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(UsagesListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class VirtualNetwork(Resource):
@@ -3182,35 +2993,32 @@ class VirtualNetwork(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'address_space': {'key': 'properties.addressSpace', 'type': 'AddressSpace'},
-        'dhcp_options': {'key': 'properties.dhcpOptions', 'type': 'DhcpOptions'},
-        'subnets': {'key': 'properties.subnets', 'type': '[Subnet]'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "address_space": {"key": "properties.addressSpace", "type": "AddressSpace"},
+        "dhcp_options": {"key": "properties.dhcpOptions", "type": "DhcpOptions"},
+        "subnets": {"key": "properties.subnets", "type": "[Subnet]"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualNetwork, self).__init__(**kwargs)
-        self.etag = kwargs.get('etag', None)
-        self.address_space = kwargs.get('address_space', None)
-        self.dhcp_options = kwargs.get('dhcp_options', None)
-        self.subnets = kwargs.get('subnets', None)
-        self.resource_guid = kwargs.get('resource_guid', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.etag = kwargs.get("etag", None)
+        self.address_space = kwargs.get("address_space", None)
+        self.dhcp_options = kwargs.get("dhcp_options", None)
+        self.subnets = kwargs.get("subnets", None)
+        self.resource_guid = kwargs.get("resource_guid", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class VirtualNetworkGateway(Resource):
@@ -3261,45 +3069,42 @@ class VirtualNetworkGateway(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[VirtualNetworkGatewayIPConfiguration]'},
-        'gateway_type': {'key': 'properties.gatewayType', 'type': 'str'},
-        'vpn_type': {'key': 'properties.vpnType', 'type': 'str'},
-        'enable_bgp': {'key': 'properties.enableBgp', 'type': 'bool'},
-        'gateway_default_site': {'key': 'properties.gatewayDefaultSite', 'type': 'SubResource'},
-        'sku': {'key': 'properties.sku', 'type': 'VirtualNetworkGatewaySku'},
-        'vpn_client_configuration': {'key': 'properties.vpnClientConfiguration', 'type': 'VpnClientConfiguration'},
-        'bgp_settings': {'key': 'properties.bgpSettings', 'type': 'BgpSettings'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "ip_configurations": {"key": "properties.ipConfigurations", "type": "[VirtualNetworkGatewayIPConfiguration]"},
+        "gateway_type": {"key": "properties.gatewayType", "type": "str"},
+        "vpn_type": {"key": "properties.vpnType", "type": "str"},
+        "enable_bgp": {"key": "properties.enableBgp", "type": "bool"},
+        "gateway_default_site": {"key": "properties.gatewayDefaultSite", "type": "SubResource"},
+        "sku": {"key": "properties.sku", "type": "VirtualNetworkGatewaySku"},
+        "vpn_client_configuration": {"key": "properties.vpnClientConfiguration", "type": "VpnClientConfiguration"},
+        "bgp_settings": {"key": "properties.bgpSettings", "type": "BgpSettings"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualNetworkGateway, self).__init__(**kwargs)
-        self.etag = kwargs.get('etag', None)
-        self.ip_configurations = kwargs.get('ip_configurations', None)
-        self.gateway_type = kwargs.get('gateway_type', None)
-        self.vpn_type = kwargs.get('vpn_type', None)
-        self.enable_bgp = kwargs.get('enable_bgp', None)
-        self.gateway_default_site = kwargs.get('gateway_default_site', None)
-        self.sku = kwargs.get('sku', None)
-        self.vpn_client_configuration = kwargs.get('vpn_client_configuration', None)
-        self.bgp_settings = kwargs.get('bgp_settings', None)
-        self.resource_guid = kwargs.get('resource_guid', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.etag = kwargs.get("etag", None)
+        self.ip_configurations = kwargs.get("ip_configurations", None)
+        self.gateway_type = kwargs.get("gateway_type", None)
+        self.vpn_type = kwargs.get("vpn_type", None)
+        self.enable_bgp = kwargs.get("enable_bgp", None)
+        self.gateway_default_site = kwargs.get("gateway_default_site", None)
+        self.sku = kwargs.get("sku", None)
+        self.vpn_client_configuration = kwargs.get("vpn_client_configuration", None)
+        self.bgp_settings = kwargs.get("bgp_settings", None)
+        self.resource_guid = kwargs.get("resource_guid", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class VirtualNetworkGatewayConnection(Resource):
@@ -3358,53 +3163,50 @@ class VirtualNetworkGatewayConnection(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'authorization_key': {'key': 'properties.authorizationKey', 'type': 'str'},
-        'virtual_network_gateway1': {'key': 'properties.virtualNetworkGateway1', 'type': 'VirtualNetworkGateway'},
-        'virtual_network_gateway2': {'key': 'properties.virtualNetworkGateway2', 'type': 'VirtualNetworkGateway'},
-        'local_network_gateway2': {'key': 'properties.localNetworkGateway2', 'type': 'LocalNetworkGateway'},
-        'connection_type': {'key': 'properties.connectionType', 'type': 'str'},
-        'routing_weight': {'key': 'properties.routingWeight', 'type': 'int'},
-        'shared_key': {'key': 'properties.sharedKey', 'type': 'str'},
-        'connection_status': {'key': 'properties.connectionStatus', 'type': 'str'},
-        'egress_bytes_transferred': {'key': 'properties.egressBytesTransferred', 'type': 'long'},
-        'ingress_bytes_transferred': {'key': 'properties.ingressBytesTransferred', 'type': 'long'},
-        'peer': {'key': 'properties.peer', 'type': 'SubResource'},
-        'enable_bgp': {'key': 'properties.enableBgp', 'type': 'bool'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "authorization_key": {"key": "properties.authorizationKey", "type": "str"},
+        "virtual_network_gateway1": {"key": "properties.virtualNetworkGateway1", "type": "VirtualNetworkGateway"},
+        "virtual_network_gateway2": {"key": "properties.virtualNetworkGateway2", "type": "VirtualNetworkGateway"},
+        "local_network_gateway2": {"key": "properties.localNetworkGateway2", "type": "LocalNetworkGateway"},
+        "connection_type": {"key": "properties.connectionType", "type": "str"},
+        "routing_weight": {"key": "properties.routingWeight", "type": "int"},
+        "shared_key": {"key": "properties.sharedKey", "type": "str"},
+        "connection_status": {"key": "properties.connectionStatus", "type": "str"},
+        "egress_bytes_transferred": {"key": "properties.egressBytesTransferred", "type": "long"},
+        "ingress_bytes_transferred": {"key": "properties.ingressBytesTransferred", "type": "long"},
+        "peer": {"key": "properties.peer", "type": "SubResource"},
+        "enable_bgp": {"key": "properties.enableBgp", "type": "bool"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualNetworkGatewayConnection, self).__init__(**kwargs)
-        self.etag = kwargs.get('etag', None)
-        self.authorization_key = kwargs.get('authorization_key', None)
-        self.virtual_network_gateway1 = kwargs.get('virtual_network_gateway1', None)
-        self.virtual_network_gateway2 = kwargs.get('virtual_network_gateway2', None)
-        self.local_network_gateway2 = kwargs.get('local_network_gateway2', None)
-        self.connection_type = kwargs.get('connection_type', None)
-        self.routing_weight = kwargs.get('routing_weight', None)
-        self.shared_key = kwargs.get('shared_key', None)
-        self.connection_status = kwargs.get('connection_status', None)
-        self.egress_bytes_transferred = kwargs.get('egress_bytes_transferred', None)
-        self.ingress_bytes_transferred = kwargs.get('ingress_bytes_transferred', None)
-        self.peer = kwargs.get('peer', None)
-        self.enable_bgp = kwargs.get('enable_bgp', None)
-        self.resource_guid = kwargs.get('resource_guid', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.etag = kwargs.get("etag", None)
+        self.authorization_key = kwargs.get("authorization_key", None)
+        self.virtual_network_gateway1 = kwargs.get("virtual_network_gateway1", None)
+        self.virtual_network_gateway2 = kwargs.get("virtual_network_gateway2", None)
+        self.local_network_gateway2 = kwargs.get("local_network_gateway2", None)
+        self.connection_type = kwargs.get("connection_type", None)
+        self.routing_weight = kwargs.get("routing_weight", None)
+        self.shared_key = kwargs.get("shared_key", None)
+        self.connection_status = kwargs.get("connection_status", None)
+        self.egress_bytes_transferred = kwargs.get("egress_bytes_transferred", None)
+        self.ingress_bytes_transferred = kwargs.get("ingress_bytes_transferred", None)
+        self.peer = kwargs.get("peer", None)
+        self.enable_bgp = kwargs.get("enable_bgp", None)
+        self.resource_guid = kwargs.get("resource_guid", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class VirtualNetworkGatewayConnectionListResult(msrest.serialization.Model):
@@ -3418,17 +3220,14 @@ class VirtualNetworkGatewayConnectionListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualNetworkGatewayConnection]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualNetworkGatewayConnection]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualNetworkGatewayConnectionListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class VirtualNetworkGatewayIPConfiguration(SubResource):
@@ -3457,28 +3256,25 @@ class VirtualNetworkGatewayIPConfiguration(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'private_ip_address': {'key': 'properties.privateIPAddress', 'type': 'str'},
-        'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'SubResource'},
-        'public_ip_address': {'key': 'properties.publicIPAddress', 'type': 'SubResource'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "private_ip_address": {"key": "properties.privateIPAddress", "type": "str"},
+        "private_ip_allocation_method": {"key": "properties.privateIPAllocationMethod", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "SubResource"},
+        "public_ip_address": {"key": "properties.publicIPAddress", "type": "SubResource"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualNetworkGatewayIPConfiguration, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.etag = kwargs.get('etag', None)
-        self.private_ip_address = kwargs.get('private_ip_address', None)
-        self.private_ip_allocation_method = kwargs.get('private_ip_allocation_method', None)
-        self.subnet = kwargs.get('subnet', None)
-        self.public_ip_address = kwargs.get('public_ip_address', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get("name", None)
+        self.etag = kwargs.get("etag", None)
+        self.private_ip_address = kwargs.get("private_ip_address", None)
+        self.private_ip_allocation_method = kwargs.get("private_ip_allocation_method", None)
+        self.subnet = kwargs.get("subnet", None)
+        self.public_ip_address = kwargs.get("public_ip_address", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class VirtualNetworkGatewayListResult(msrest.serialization.Model):
@@ -3491,17 +3287,14 @@ class VirtualNetworkGatewayListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualNetworkGateway]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualNetworkGateway]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualNetworkGatewayListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class VirtualNetworkGatewaySku(msrest.serialization.Model):
@@ -3518,19 +3311,16 @@ class VirtualNetworkGatewaySku(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "capacity": {"key": "capacity", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualNetworkGatewaySku, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.tier = kwargs.get('tier', None)
-        self.capacity = kwargs.get('capacity', None)
+        self.name = kwargs.get("name", None)
+        self.tier = kwargs.get("tier", None)
+        self.capacity = kwargs.get("capacity", None)
 
 
 class VirtualNetworkListResult(msrest.serialization.Model):
@@ -3543,17 +3333,14 @@ class VirtualNetworkListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualNetwork]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualNetwork]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualNetworkListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class VpnClientConfiguration(msrest.serialization.Model):
@@ -3572,19 +3359,19 @@ class VpnClientConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'vpn_client_address_pool': {'key': 'vpnClientAddressPool', 'type': 'AddressSpace'},
-        'vpn_client_root_certificates': {'key': 'vpnClientRootCertificates', 'type': '[VpnClientRootCertificate]'},
-        'vpn_client_revoked_certificates': {'key': 'vpnClientRevokedCertificates', 'type': '[VpnClientRevokedCertificate]'},
+        "vpn_client_address_pool": {"key": "vpnClientAddressPool", "type": "AddressSpace"},
+        "vpn_client_root_certificates": {"key": "vpnClientRootCertificates", "type": "[VpnClientRootCertificate]"},
+        "vpn_client_revoked_certificates": {
+            "key": "vpnClientRevokedCertificates",
+            "type": "[VpnClientRevokedCertificate]",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VpnClientConfiguration, self).__init__(**kwargs)
-        self.vpn_client_address_pool = kwargs.get('vpn_client_address_pool', None)
-        self.vpn_client_root_certificates = kwargs.get('vpn_client_root_certificates', None)
-        self.vpn_client_revoked_certificates = kwargs.get('vpn_client_revoked_certificates', None)
+        self.vpn_client_address_pool = kwargs.get("vpn_client_address_pool", None)
+        self.vpn_client_root_certificates = kwargs.get("vpn_client_root_certificates", None)
+        self.vpn_client_revoked_certificates = kwargs.get("vpn_client_revoked_certificates", None)
 
 
 class VpnClientParameters(msrest.serialization.Model):
@@ -3597,15 +3384,12 @@ class VpnClientParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'processor_architecture': {'key': 'ProcessorArchitecture', 'type': 'str'},
+        "processor_architecture": {"key": "ProcessorArchitecture", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VpnClientParameters, self).__init__(**kwargs)
-        self.processor_architecture = kwargs.get('processor_architecture', None)
+        self.processor_architecture = kwargs.get("processor_architecture", None)
 
 
 class VpnClientRevokedCertificate(SubResource):
@@ -3626,22 +3410,19 @@ class VpnClientRevokedCertificate(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'thumbprint': {'key': 'properties.thumbprint', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "thumbprint": {"key": "properties.thumbprint", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VpnClientRevokedCertificate, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.etag = kwargs.get('etag', None)
-        self.thumbprint = kwargs.get('thumbprint', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get("name", None)
+        self.etag = kwargs.get("etag", None)
+        self.thumbprint = kwargs.get("thumbprint", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)
 
 
 class VpnClientRootCertificate(SubResource):
@@ -3662,19 +3443,16 @@ class VpnClientRootCertificate(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'public_cert_data': {'key': 'properties.publicCertData', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "public_cert_data": {"key": "properties.publicCertData", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VpnClientRootCertificate, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.etag = kwargs.get('etag', None)
-        self.public_cert_data = kwargs.get('public_cert_data', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get("name", None)
+        self.etag = kwargs.get("etag", None)
+        self.public_cert_data = kwargs.get("public_cert_data", None)
+        self.provisioning_state = kwargs.get("provisioning_state", None)

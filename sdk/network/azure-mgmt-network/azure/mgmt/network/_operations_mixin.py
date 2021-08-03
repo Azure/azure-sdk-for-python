@@ -10,23 +10,16 @@
 # --------------------------------------------------------------------------
 from msrest import Serializer, Deserializer
 from typing import TYPE_CHECKING
-import warnings
-
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
-from azure.core.paging import ItemPaged
-from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
-from azure.core.polling import LROPoller, NoPolling, PollingMethod
-from azure.mgmt.core.exceptions import ARMErrorFormat
-from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
+    from typing import Any, Iterable, Optional
+
+    from azure.core.paging import ItemPaged
+    from azure.core.polling import LROPoller
 
 
 class NetworkManagementClientOperationsMixin(object):
-
     def begin_delete_bastion_shareable_link(
         self,
         resource_group_name,  # type: str
@@ -34,6 +27,7 @@ class NetworkManagementClientOperationsMixin(object):
         bsl_request,  # type: "_models.BastionShareableLinkListRequest"
         **kwargs  # type: Any
     ):
+        # type: (...) -> LROPoller[None]
         """Deletes the Bastion Shareable Links for all the VMs specified in the request.
 
         :param resource_group_name: The name of the resource group.
@@ -44,46 +38,52 @@ class NetworkManagementClientOperationsMixin(object):
         :type bsl_request: ~azure.mgmt.network.v2021_02_01.models.BastionShareableLinkListRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('begin_delete_bastion_shareable_link')
-        if api_version == '2019-09-01':
+        api_version = self._get_api_version("begin_delete_bastion_shareable_link")
+        if api_version == "2019-09-01":
             from .v2019_09_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-11-01':
+        elif api_version == "2019-11-01":
             from .v2019_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-12-01':
+        elif api_version == "2019-12-01":
             from .v2019_12_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-03-01':
+        elif api_version == "2020-03-01":
             from .v2020_03_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-04-01':
+        elif api_version == "2020-04-01":
             from .v2020_04_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-05-01':
+        elif api_version == "2020-05-01":
             from .v2020_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-06-01':
+        elif api_version == "2020-06-01":
             from .v2020_06_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-07-01':
+        elif api_version == "2020-07-01":
             from .v2020_07_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-08-01':
+        elif api_version == "2020-08-01":
             from .v2020_08_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-11-01':
+        elif api_version == "2020-11-01":
             from .v2020_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-02-01':
+        elif api_version == "2021-02-01":
             from .v2021_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
-            raise ValueError("API version {} does not have operation 'begin_delete_bastion_shareable_link'".format(api_version))
+            raise ValueError(
+                "API version {} does not have operation 'begin_delete_bastion_shareable_link'".format(api_version)
+            )
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.begin_delete_bastion_shareable_link(resource_group_name, bastion_host_name, bsl_request, **kwargs)
+        return mixin_instance.begin_delete_bastion_shareable_link(
+            resource_group_name, bastion_host_name, bsl_request, **kwargs
+        )
 
     def begin_generatevirtualwanvpnserverconfigurationvpnprofile(
         self,
@@ -92,6 +92,7 @@ class NetworkManagementClientOperationsMixin(object):
         vpn_client_params,  # type: "_models.VirtualWanVpnProfileParameters"
         **kwargs  # type: Any
     ):
+        # type: (...) -> LROPoller["_models.VpnProfileResponse"]
         """Generates a unique VPN profile for P2S clients for VirtualWan and associated
         VpnServerConfiguration combination in the specified resource group.
 
@@ -105,48 +106,58 @@ class NetworkManagementClientOperationsMixin(object):
         :type vpn_client_params: ~azure.mgmt.network.v2021_02_01.models.VirtualWanVpnProfileParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either VpnProfileResponse or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.network.v2021_02_01.models.VpnProfileResponse]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns either VpnProfileResponse or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.network.v2021_02_01.models.VpnProfileResponse]
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('begin_generatevirtualwanvpnserverconfigurationvpnprofile')
-        if api_version == '2019-08-01':
+        api_version = self._get_api_version("begin_generatevirtualwanvpnserverconfigurationvpnprofile")
+        if api_version == "2019-08-01":
             from .v2019_08_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-09-01':
+        elif api_version == "2019-09-01":
             from .v2019_09_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-11-01':
+        elif api_version == "2019-11-01":
             from .v2019_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-12-01':
+        elif api_version == "2019-12-01":
             from .v2019_12_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-03-01':
+        elif api_version == "2020-03-01":
             from .v2020_03_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-04-01':
+        elif api_version == "2020-04-01":
             from .v2020_04_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-05-01':
+        elif api_version == "2020-05-01":
             from .v2020_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-06-01':
+        elif api_version == "2020-06-01":
             from .v2020_06_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-07-01':
+        elif api_version == "2020-07-01":
             from .v2020_07_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-08-01':
+        elif api_version == "2020-08-01":
             from .v2020_08_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-11-01':
+        elif api_version == "2020-11-01":
             from .v2020_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-02-01':
+        elif api_version == "2021-02-01":
             from .v2021_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
-            raise ValueError("API version {} does not have operation 'begin_generatevirtualwanvpnserverconfigurationvpnprofile'".format(api_version))
+            raise ValueError(
+                "API version {} does not have operation 'begin_generatevirtualwanvpnserverconfigurationvpnprofile'".format(
+                    api_version
+                )
+            )
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.begin_generatevirtualwanvpnserverconfigurationvpnprofile(resource_group_name, virtual_wan_name, vpn_client_params, **kwargs)
+        return mixin_instance.begin_generatevirtualwanvpnserverconfigurationvpnprofile(
+            resource_group_name, virtual_wan_name, vpn_client_params, **kwargs
+        )
 
     def begin_get_active_sessions(
         self,
@@ -154,6 +165,7 @@ class NetworkManagementClientOperationsMixin(object):
         bastion_host_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> LROPoller[ItemPaged["_models.BastionActiveSessionListResult"]]
         """Returns the list of currently active sessions on the Bastion.
 
         :param resource_group_name: The name of the resource group.
@@ -162,36 +174,40 @@ class NetworkManagementClientOperationsMixin(object):
         :type bastion_host_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns an iterator like instance of either BastionActiveSessionListResult or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[~azure.mgmt.network.v2021_02_01.models.BastionActiveSessionListResult]]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns an iterator like instance of either
+         BastionActiveSessionListResult or the result of cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[~azure.mgmt.network.v2021_02_01.models.BastionActiveSessionListResult]]
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('begin_get_active_sessions')
-        if api_version == '2019-09-01':
+        api_version = self._get_api_version("begin_get_active_sessions")
+        if api_version == "2019-09-01":
             from .v2019_09_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-11-01':
+        elif api_version == "2019-11-01":
             from .v2019_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-12-01':
+        elif api_version == "2019-12-01":
             from .v2019_12_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-03-01':
+        elif api_version == "2020-03-01":
             from .v2020_03_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-04-01':
+        elif api_version == "2020-04-01":
             from .v2020_04_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-05-01':
+        elif api_version == "2020-05-01":
             from .v2020_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-06-01':
+        elif api_version == "2020-06-01":
             from .v2020_06_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-07-01':
+        elif api_version == "2020-07-01":
             from .v2020_07_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-08-01':
+        elif api_version == "2020-08-01":
             from .v2020_08_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-11-01':
+        elif api_version == "2020-11-01":
             from .v2020_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-02-01':
+        elif api_version == "2021-02-01":
             from .v2021_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_get_active_sessions'".format(api_version))
@@ -210,6 +226,7 @@ class NetworkManagementClientOperationsMixin(object):
         bsl_request,  # type: "_models.BastionShareableLinkListRequest"
         **kwargs  # type: Any
     ):
+        # type: (...) -> LROPoller[ItemPaged["_models.BastionShareableLinkListResult"]]
         """Creates a Bastion Shareable Links for all the VMs specified in the request.
 
         :param resource_group_name: The name of the resource group.
@@ -220,46 +237,54 @@ class NetworkManagementClientOperationsMixin(object):
         :type bsl_request: ~azure.mgmt.network.v2021_02_01.models.BastionShareableLinkListRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns an iterator like instance of either BastionShareableLinkListResult or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[~azure.mgmt.network.v2021_02_01.models.BastionShareableLinkListResult]]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns an iterator like instance of either
+         BastionShareableLinkListResult or the result of cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[~azure.mgmt.network.v2021_02_01.models.BastionShareableLinkListResult]]
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('begin_put_bastion_shareable_link')
-        if api_version == '2019-09-01':
+        api_version = self._get_api_version("begin_put_bastion_shareable_link")
+        if api_version == "2019-09-01":
             from .v2019_09_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-11-01':
+        elif api_version == "2019-11-01":
             from .v2019_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-12-01':
+        elif api_version == "2019-12-01":
             from .v2019_12_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-03-01':
+        elif api_version == "2020-03-01":
             from .v2020_03_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-04-01':
+        elif api_version == "2020-04-01":
             from .v2020_04_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-05-01':
+        elif api_version == "2020-05-01":
             from .v2020_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-06-01':
+        elif api_version == "2020-06-01":
             from .v2020_06_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-07-01':
+        elif api_version == "2020-07-01":
             from .v2020_07_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-08-01':
+        elif api_version == "2020-08-01":
             from .v2020_08_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-11-01':
+        elif api_version == "2020-11-01":
             from .v2020_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-02-01':
+        elif api_version == "2021-02-01":
             from .v2021_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
-            raise ValueError("API version {} does not have operation 'begin_put_bastion_shareable_link'".format(api_version))
+            raise ValueError(
+                "API version {} does not have operation 'begin_put_bastion_shareable_link'".format(api_version)
+            )
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.begin_put_bastion_shareable_link(resource_group_name, bastion_host_name, bsl_request, **kwargs)
+        return mixin_instance.begin_put_bastion_shareable_link(
+            resource_group_name, bastion_host_name, bsl_request, **kwargs
+        )
 
     def check_dns_name_availability(
         self,
@@ -267,6 +292,7 @@ class NetworkManagementClientOperationsMixin(object):
         domain_name_label,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.DnsNameAvailabilityResult"
         """Checks whether a domain name in the cloudapp.azure.com zone is available for use.
 
         :param location: The location of the domain name.
@@ -279,74 +305,74 @@ class NetworkManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.network.v2021_02_01.models.DnsNameAvailabilityResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('check_dns_name_availability')
-        if api_version == '2015-06-15':
+        api_version = self._get_api_version("check_dns_name_availability")
+        if api_version == "2015-06-15":
             from .v2015_06_15.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2016-09-01':
+        elif api_version == "2016-09-01":
             from .v2016_09_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2016-12-01':
+        elif api_version == "2016-12-01":
             from .v2016_12_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2017-03-01':
+        elif api_version == "2017-03-01":
             from .v2017_03_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2017-06-01':
+        elif api_version == "2017-06-01":
             from .v2017_06_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2017-08-01':
+        elif api_version == "2017-08-01":
             from .v2017_08_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2017-09-01':
+        elif api_version == "2017-09-01":
             from .v2017_09_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2017-10-01':
+        elif api_version == "2017-10-01":
             from .v2017_10_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2017-11-01':
+        elif api_version == "2017-11-01":
             from .v2017_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2018-01-01':
+        elif api_version == "2018-01-01":
             from .v2018_01_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2018-02-01':
+        elif api_version == "2018-02-01":
             from .v2018_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2018-04-01':
+        elif api_version == "2018-04-01":
             from .v2018_04_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2018-06-01':
+        elif api_version == "2018-06-01":
             from .v2018_06_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2018-07-01':
+        elif api_version == "2018-07-01":
             from .v2018_07_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2018-08-01':
+        elif api_version == "2018-08-01":
             from .v2018_08_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2018-10-01':
+        elif api_version == "2018-10-01":
             from .v2018_10_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2018-11-01':
+        elif api_version == "2018-11-01":
             from .v2018_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2018-12-01':
+        elif api_version == "2018-12-01":
             from .v2018_12_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-02-01':
+        elif api_version == "2019-02-01":
             from .v2019_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-04-01':
+        elif api_version == "2019-04-01":
             from .v2019_04_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-06-01':
+        elif api_version == "2019-06-01":
             from .v2019_06_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-07-01':
+        elif api_version == "2019-07-01":
             from .v2019_07_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-08-01':
+        elif api_version == "2019-08-01":
             from .v2019_08_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-09-01':
+        elif api_version == "2019-09-01":
             from .v2019_09_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-11-01':
+        elif api_version == "2019-11-01":
             from .v2019_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-12-01':
+        elif api_version == "2019-12-01":
             from .v2019_12_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-03-01':
+        elif api_version == "2020-03-01":
             from .v2020_03_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-04-01':
+        elif api_version == "2020-04-01":
             from .v2020_04_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-05-01':
+        elif api_version == "2020-05-01":
             from .v2020_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-06-01':
+        elif api_version == "2020-06-01":
             from .v2020_06_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-07-01':
+        elif api_version == "2020-07-01":
             from .v2020_07_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-08-01':
+        elif api_version == "2020-08-01":
             from .v2020_08_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-11-01':
+        elif api_version == "2020-11-01":
             from .v2020_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-02-01':
+        elif api_version == "2021-02-01":
             from .v2021_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'check_dns_name_availability'".format(api_version))
@@ -365,6 +391,7 @@ class NetworkManagementClientOperationsMixin(object):
         session_ids,  # type: "_models.SessionIds"
         **kwargs  # type: Any
     ):
+        # type: (...) -> Iterable["_models.BastionSessionDeleteResult"]
         """Returns the list of currently active sessions on the Bastion.
 
         :param resource_group_name: The name of the resource group.
@@ -374,32 +401,34 @@ class NetworkManagementClientOperationsMixin(object):
         :param session_ids: The list of sessionids to disconnect.
         :type session_ids: ~azure.mgmt.network.v2021_02_01.models.SessionIds
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either BastionSessionDeleteResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2021_02_01.models.BastionSessionDeleteResult]
+        :return: An iterator like instance of either BastionSessionDeleteResult or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2021_02_01.models.BastionSessionDeleteResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('disconnect_active_sessions')
-        if api_version == '2019-09-01':
+        api_version = self._get_api_version("disconnect_active_sessions")
+        if api_version == "2019-09-01":
             from .v2019_09_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-11-01':
+        elif api_version == "2019-11-01":
             from .v2019_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-12-01':
+        elif api_version == "2019-12-01":
             from .v2019_12_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-03-01':
+        elif api_version == "2020-03-01":
             from .v2020_03_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-04-01':
+        elif api_version == "2020-04-01":
             from .v2020_04_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-05-01':
+        elif api_version == "2020-05-01":
             from .v2020_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-06-01':
+        elif api_version == "2020-06-01":
             from .v2020_06_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-07-01':
+        elif api_version == "2020-07-01":
             from .v2020_07_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-08-01':
+        elif api_version == "2020-08-01":
             from .v2020_08_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-11-01':
+        elif api_version == "2020-11-01":
             from .v2020_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-02-01':
+        elif api_version == "2021-02-01":
             from .v2021_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'disconnect_active_sessions'".format(api_version))
@@ -418,6 +447,7 @@ class NetworkManagementClientOperationsMixin(object):
         bsl_request,  # type: "_models.BastionShareableLinkListRequest"
         **kwargs  # type: Any
     ):
+        # type: (...) -> Iterable["_models.BastionShareableLinkListResult"]
         """Return the Bastion Shareable Links for all the VMs specified in the request.
 
         :param resource_group_name: The name of the resource group.
@@ -427,32 +457,34 @@ class NetworkManagementClientOperationsMixin(object):
         :param bsl_request: Post request for all the Bastion Shareable Link endpoints.
         :type bsl_request: ~azure.mgmt.network.v2021_02_01.models.BastionShareableLinkListRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either BastionShareableLinkListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2021_02_01.models.BastionShareableLinkListResult]
+        :return: An iterator like instance of either BastionShareableLinkListResult or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2021_02_01.models.BastionShareableLinkListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('get_bastion_shareable_link')
-        if api_version == '2019-09-01':
+        api_version = self._get_api_version("get_bastion_shareable_link")
+        if api_version == "2019-09-01":
             from .v2019_09_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-11-01':
+        elif api_version == "2019-11-01":
             from .v2019_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-12-01':
+        elif api_version == "2019-12-01":
             from .v2019_12_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-03-01':
+        elif api_version == "2020-03-01":
             from .v2020_03_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-04-01':
+        elif api_version == "2020-04-01":
             from .v2020_04_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-05-01':
+        elif api_version == "2020-05-01":
             from .v2020_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-06-01':
+        elif api_version == "2020-06-01":
             from .v2020_06_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-07-01':
+        elif api_version == "2020-07-01":
             from .v2020_07_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-08-01':
+        elif api_version == "2020-08-01":
             from .v2020_08_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-11-01':
+        elif api_version == "2020-11-01":
             from .v2020_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-02-01':
+        elif api_version == "2021-02-01":
             from .v2021_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_bastion_shareable_link'".format(api_version))
@@ -470,6 +502,7 @@ class NetworkManagementClientOperationsMixin(object):
         virtual_wan_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.VirtualWanSecurityProviders"
         """Gives the supported security providers for the virtual wan.
 
         :param resource_group_name: The resource group name.
@@ -482,49 +515,51 @@ class NetworkManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.network.v2021_02_01.models.VirtualWanSecurityProviders
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('supported_security_providers')
-        if api_version == '2018-08-01':
+        api_version = self._get_api_version("supported_security_providers")
+        if api_version == "2018-08-01":
             from .v2018_08_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2018-10-01':
+        elif api_version == "2018-10-01":
             from .v2018_10_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2018-11-01':
+        elif api_version == "2018-11-01":
             from .v2018_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2018-12-01':
+        elif api_version == "2018-12-01":
             from .v2018_12_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-02-01':
+        elif api_version == "2019-02-01":
             from .v2019_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-04-01':
+        elif api_version == "2019-04-01":
             from .v2019_04_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-06-01':
+        elif api_version == "2019-06-01":
             from .v2019_06_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-07-01':
+        elif api_version == "2019-07-01":
             from .v2019_07_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-08-01':
+        elif api_version == "2019-08-01":
             from .v2019_08_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-09-01':
+        elif api_version == "2019-09-01":
             from .v2019_09_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-11-01':
+        elif api_version == "2019-11-01":
             from .v2019_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-12-01':
+        elif api_version == "2019-12-01":
             from .v2019_12_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-03-01':
+        elif api_version == "2020-03-01":
             from .v2020_03_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-04-01':
+        elif api_version == "2020-04-01":
             from .v2020_04_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-05-01':
+        elif api_version == "2020-05-01":
             from .v2020_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-06-01':
+        elif api_version == "2020-06-01":
             from .v2020_06_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-07-01':
+        elif api_version == "2020-07-01":
             from .v2020_07_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-08-01':
+        elif api_version == "2020-08-01":
             from .v2020_08_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-11-01':
+        elif api_version == "2020-11-01":
             from .v2020_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-02-01':
+        elif api_version == "2021-02-01":
             from .v2021_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
-            raise ValueError("API version {} does not have operation 'supported_security_providers'".format(api_version))
+            raise ValueError(
+                "API version {} does not have operation 'supported_security_providers'".format(api_version)
+            )
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config

@@ -27,9 +27,9 @@ class AadAuthenticationParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'aad_tenant': {'key': 'aadTenant', 'type': 'str'},
-        'aad_audience': {'key': 'aadAudience', 'type': 'str'},
-        'aad_issuer': {'key': 'aadIssuer', 'type': 'str'},
+        "aad_tenant": {"key": "aadTenant", "type": "str"},
+        "aad_audience": {"key": "aadAudience", "type": "str"},
+        "aad_issuer": {"key": "aadIssuer", "type": "str"},
     }
 
     def __init__(
@@ -55,15 +55,10 @@ class AddressSpace(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'address_prefixes': {'key': 'addressPrefixes', 'type': '[str]'},
+        "address_prefixes": {"key": "addressPrefixes", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        address_prefixes: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, address_prefixes: Optional[List[str]] = None, **kwargs):
         super(AddressSpace, self).__init__(**kwargs)
         self.address_prefixes = address_prefixes
 
@@ -86,16 +81,16 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
@@ -232,49 +227,82 @@ class ApplicationGateway(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'operational_state': {'readonly': True},
-        'resource_guid': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "operational_state": {"readonly": True},
+        "resource_guid": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'zones': {'key': 'zones', 'type': '[str]'},
-        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
-        'sku': {'key': 'properties.sku', 'type': 'ApplicationGatewaySku'},
-        'ssl_policy': {'key': 'properties.sslPolicy', 'type': 'ApplicationGatewaySslPolicy'},
-        'operational_state': {'key': 'properties.operationalState', 'type': 'str'},
-        'gateway_ip_configurations': {'key': 'properties.gatewayIPConfigurations', 'type': '[ApplicationGatewayIPConfiguration]'},
-        'authentication_certificates': {'key': 'properties.authenticationCertificates', 'type': '[ApplicationGatewayAuthenticationCertificate]'},
-        'trusted_root_certificates': {'key': 'properties.trustedRootCertificates', 'type': '[ApplicationGatewayTrustedRootCertificate]'},
-        'ssl_certificates': {'key': 'properties.sslCertificates', 'type': '[ApplicationGatewaySslCertificate]'},
-        'frontend_ip_configurations': {'key': 'properties.frontendIPConfigurations', 'type': '[ApplicationGatewayFrontendIPConfiguration]'},
-        'frontend_ports': {'key': 'properties.frontendPorts', 'type': '[ApplicationGatewayFrontendPort]'},
-        'probes': {'key': 'properties.probes', 'type': '[ApplicationGatewayProbe]'},
-        'backend_address_pools': {'key': 'properties.backendAddressPools', 'type': '[ApplicationGatewayBackendAddressPool]'},
-        'backend_http_settings_collection': {'key': 'properties.backendHttpSettingsCollection', 'type': '[ApplicationGatewayBackendHttpSettings]'},
-        'http_listeners': {'key': 'properties.httpListeners', 'type': '[ApplicationGatewayHttpListener]'},
-        'url_path_maps': {'key': 'properties.urlPathMaps', 'type': '[ApplicationGatewayUrlPathMap]'},
-        'request_routing_rules': {'key': 'properties.requestRoutingRules', 'type': '[ApplicationGatewayRequestRoutingRule]'},
-        'rewrite_rule_sets': {'key': 'properties.rewriteRuleSets', 'type': '[ApplicationGatewayRewriteRuleSet]'},
-        'redirect_configurations': {'key': 'properties.redirectConfigurations', 'type': '[ApplicationGatewayRedirectConfiguration]'},
-        'web_application_firewall_configuration': {'key': 'properties.webApplicationFirewallConfiguration', 'type': 'ApplicationGatewayWebApplicationFirewallConfiguration'},
-        'firewall_policy': {'key': 'properties.firewallPolicy', 'type': 'SubResource'},
-        'enable_http2': {'key': 'properties.enableHttp2', 'type': 'bool'},
-        'enable_fips': {'key': 'properties.enableFips', 'type': 'bool'},
-        'autoscale_configuration': {'key': 'properties.autoscaleConfiguration', 'type': 'ApplicationGatewayAutoscaleConfiguration'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'custom_error_configurations': {'key': 'properties.customErrorConfigurations', 'type': '[ApplicationGatewayCustomError]'},
-        'force_firewall_policy_association': {'key': 'properties.forceFirewallPolicyAssociation', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "zones": {"key": "zones", "type": "[str]"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
+        "sku": {"key": "properties.sku", "type": "ApplicationGatewaySku"},
+        "ssl_policy": {"key": "properties.sslPolicy", "type": "ApplicationGatewaySslPolicy"},
+        "operational_state": {"key": "properties.operationalState", "type": "str"},
+        "gateway_ip_configurations": {
+            "key": "properties.gatewayIPConfigurations",
+            "type": "[ApplicationGatewayIPConfiguration]",
+        },
+        "authentication_certificates": {
+            "key": "properties.authenticationCertificates",
+            "type": "[ApplicationGatewayAuthenticationCertificate]",
+        },
+        "trusted_root_certificates": {
+            "key": "properties.trustedRootCertificates",
+            "type": "[ApplicationGatewayTrustedRootCertificate]",
+        },
+        "ssl_certificates": {"key": "properties.sslCertificates", "type": "[ApplicationGatewaySslCertificate]"},
+        "frontend_ip_configurations": {
+            "key": "properties.frontendIPConfigurations",
+            "type": "[ApplicationGatewayFrontendIPConfiguration]",
+        },
+        "frontend_ports": {"key": "properties.frontendPorts", "type": "[ApplicationGatewayFrontendPort]"},
+        "probes": {"key": "properties.probes", "type": "[ApplicationGatewayProbe]"},
+        "backend_address_pools": {
+            "key": "properties.backendAddressPools",
+            "type": "[ApplicationGatewayBackendAddressPool]",
+        },
+        "backend_http_settings_collection": {
+            "key": "properties.backendHttpSettingsCollection",
+            "type": "[ApplicationGatewayBackendHttpSettings]",
+        },
+        "http_listeners": {"key": "properties.httpListeners", "type": "[ApplicationGatewayHttpListener]"},
+        "url_path_maps": {"key": "properties.urlPathMaps", "type": "[ApplicationGatewayUrlPathMap]"},
+        "request_routing_rules": {
+            "key": "properties.requestRoutingRules",
+            "type": "[ApplicationGatewayRequestRoutingRule]",
+        },
+        "rewrite_rule_sets": {"key": "properties.rewriteRuleSets", "type": "[ApplicationGatewayRewriteRuleSet]"},
+        "redirect_configurations": {
+            "key": "properties.redirectConfigurations",
+            "type": "[ApplicationGatewayRedirectConfiguration]",
+        },
+        "web_application_firewall_configuration": {
+            "key": "properties.webApplicationFirewallConfiguration",
+            "type": "ApplicationGatewayWebApplicationFirewallConfiguration",
+        },
+        "firewall_policy": {"key": "properties.firewallPolicy", "type": "SubResource"},
+        "enable_http2": {"key": "properties.enableHttp2", "type": "bool"},
+        "enable_fips": {"key": "properties.enableFips", "type": "bool"},
+        "autoscale_configuration": {
+            "key": "properties.autoscaleConfiguration",
+            "type": "ApplicationGatewayAutoscaleConfiguration",
+        },
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "custom_error_configurations": {
+            "key": "properties.customErrorConfigurations",
+            "type": "[ApplicationGatewayCustomError]",
+        },
+        "force_firewall_policy_association": {"key": "properties.forceFirewallPolicyAssociation", "type": "bool"},
     }
 
     def __init__(
@@ -301,7 +329,9 @@ class ApplicationGateway(Resource):
         request_routing_rules: Optional[List["ApplicationGatewayRequestRoutingRule"]] = None,
         rewrite_rule_sets: Optional[List["ApplicationGatewayRewriteRuleSet"]] = None,
         redirect_configurations: Optional[List["ApplicationGatewayRedirectConfiguration"]] = None,
-        web_application_firewall_configuration: Optional["ApplicationGatewayWebApplicationFirewallConfiguration"] = None,
+        web_application_firewall_configuration: Optional[
+            "ApplicationGatewayWebApplicationFirewallConfiguration"
+        ] = None,
         firewall_policy: Optional["SubResource"] = None,
         enable_http2: Optional[bool] = None,
         enable_fips: Optional[bool] = None,
@@ -350,15 +380,10 @@ class SubResource(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs):
         super(SubResource, self).__init__(**kwargs)
         self.id = id
 
@@ -385,28 +410,21 @@ class ApplicationGatewayAuthenticationCertificate(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'data': {'key': 'properties.data', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "data": {"key": "properties.data", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        name: Optional[str] = None,
-        data: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, name: Optional[str] = None, data: Optional[str] = None, **kwargs):
         super(ApplicationGatewayAuthenticationCertificate, self).__init__(id=id, **kwargs)
         self.name = name
         self.etag = None
@@ -427,22 +445,16 @@ class ApplicationGatewayAutoscaleConfiguration(msrest.serialization.Model):
     """
 
     _validation = {
-        'min_capacity': {'required': True, 'minimum': 0},
-        'max_capacity': {'minimum': 2},
+        "min_capacity": {"required": True, "minimum": 0},
+        "max_capacity": {"minimum": 2},
     }
 
     _attribute_map = {
-        'min_capacity': {'key': 'minCapacity', 'type': 'int'},
-        'max_capacity': {'key': 'maxCapacity', 'type': 'int'},
+        "min_capacity": {"key": "minCapacity", "type": "int"},
+        "max_capacity": {"key": "maxCapacity", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        min_capacity: int,
-        max_capacity: Optional[int] = None,
-        **kwargs
-    ):
+    def __init__(self, *, min_capacity: int, max_capacity: Optional[int] = None, **kwargs):
         super(ApplicationGatewayAutoscaleConfiguration, self).__init__(**kwargs)
         self.min_capacity = min_capacity
         self.max_capacity = max_capacity
@@ -479,20 +491,20 @@ class ApplicationGatewayAvailableSslOptions(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'predefined_policies': {'key': 'properties.predefinedPolicies', 'type': '[SubResource]'},
-        'default_policy': {'key': 'properties.defaultPolicy', 'type': 'str'},
-        'available_cipher_suites': {'key': 'properties.availableCipherSuites', 'type': '[str]'},
-        'available_protocols': {'key': 'properties.availableProtocols', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "predefined_policies": {"key": "properties.predefinedPolicies", "type": "[SubResource]"},
+        "default_policy": {"key": "properties.defaultPolicy", "type": "str"},
+        "available_cipher_suites": {"key": "properties.availableCipherSuites", "type": "[str]"},
+        "available_protocols": {"key": "properties.availableProtocols", "type": "[str]"},
     }
 
     def __init__(
@@ -524,8 +536,8 @@ class ApplicationGatewayAvailableSslPredefinedPolicies(msrest.serialization.Mode
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ApplicationGatewaySslPredefinedPolicy]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ApplicationGatewaySslPredefinedPolicy]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
@@ -548,15 +560,10 @@ class ApplicationGatewayAvailableWafRuleSetsResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ApplicationGatewayFirewallRuleSet]'},
+        "value": {"key": "value", "type": "[ApplicationGatewayFirewallRuleSet]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["ApplicationGatewayFirewallRuleSet"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["ApplicationGatewayFirewallRuleSet"]] = None, **kwargs):
         super(ApplicationGatewayAvailableWafRuleSetsResult, self).__init__(**kwargs)
         self.value = value
 
@@ -571,17 +578,11 @@ class ApplicationGatewayBackendAddress(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'fqdn': {'key': 'fqdn', 'type': 'str'},
-        'ip_address': {'key': 'ipAddress', 'type': 'str'},
+        "fqdn": {"key": "fqdn", "type": "str"},
+        "ip_address": {"key": "ipAddress", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        fqdn: Optional[str] = None,
-        ip_address: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, fqdn: Optional[str] = None, ip_address: Optional[str] = None, **kwargs):
         super(ApplicationGatewayBackendAddress, self).__init__(**kwargs)
         self.fqdn = fqdn
         self.ip_address = ip_address
@@ -612,20 +613,23 @@ class ApplicationGatewayBackendAddressPool(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'backend_ip_configurations': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "backend_ip_configurations": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'backend_ip_configurations': {'key': 'properties.backendIPConfigurations', 'type': '[NetworkInterfaceIPConfiguration]'},
-        'backend_addresses': {'key': 'properties.backendAddresses', 'type': '[ApplicationGatewayBackendAddress]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "backend_ip_configurations": {
+            "key": "properties.backendIPConfigurations",
+            "type": "[NetworkInterfaceIPConfiguration]",
+        },
+        "backend_addresses": {"key": "properties.backendAddresses", "type": "[ApplicationGatewayBackendAddress]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -654,14 +658,11 @@ class ApplicationGatewayBackendHealth(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'backend_address_pools': {'key': 'backendAddressPools', 'type': '[ApplicationGatewayBackendHealthPool]'},
+        "backend_address_pools": {"key": "backendAddressPools", "type": "[ApplicationGatewayBackendHealthPool]"},
     }
 
     def __init__(
-        self,
-        *,
-        backend_address_pools: Optional[List["ApplicationGatewayBackendHealthPool"]] = None,
-        **kwargs
+        self, *, backend_address_pools: Optional[List["ApplicationGatewayBackendHealthPool"]] = None, **kwargs
     ):
         super(ApplicationGatewayBackendHealth, self).__init__(**kwargs)
         self.backend_address_pools = backend_address_pools
@@ -679,8 +680,8 @@ class ApplicationGatewayBackendHealthHttpSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'backend_http_settings': {'key': 'backendHttpSettings', 'type': 'ApplicationGatewayBackendHttpSettings'},
-        'servers': {'key': 'servers', 'type': '[ApplicationGatewayBackendHealthServer]'},
+        "backend_http_settings": {"key": "backendHttpSettings", "type": "ApplicationGatewayBackendHttpSettings"},
+        "servers": {"key": "servers", "type": "[ApplicationGatewayBackendHealthServer]"},
     }
 
     def __init__(
@@ -707,8 +708,11 @@ class ApplicationGatewayBackendHealthOnDemand(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'backend_address_pool': {'key': 'backendAddressPool', 'type': 'ApplicationGatewayBackendAddressPool'},
-        'backend_health_http_settings': {'key': 'backendHealthHttpSettings', 'type': 'ApplicationGatewayBackendHealthHttpSettings'},
+        "backend_address_pool": {"key": "backendAddressPool", "type": "ApplicationGatewayBackendAddressPool"},
+        "backend_health_http_settings": {
+            "key": "backendHealthHttpSettings",
+            "type": "ApplicationGatewayBackendHealthHttpSettings",
+        },
     }
 
     def __init__(
@@ -736,8 +740,11 @@ class ApplicationGatewayBackendHealthPool(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'backend_address_pool': {'key': 'backendAddressPool', 'type': 'ApplicationGatewayBackendAddressPool'},
-        'backend_http_settings_collection': {'key': 'backendHttpSettingsCollection', 'type': '[ApplicationGatewayBackendHealthHttpSettings]'},
+        "backend_address_pool": {"key": "backendAddressPool", "type": "ApplicationGatewayBackendAddressPool"},
+        "backend_http_settings_collection": {
+            "key": "backendHttpSettingsCollection",
+            "type": "[ApplicationGatewayBackendHealthHttpSettings]",
+        },
     }
 
     def __init__(
@@ -768,10 +775,10 @@ class ApplicationGatewayBackendHealthServer(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'address': {'key': 'address', 'type': 'str'},
-        'ip_configuration': {'key': 'ipConfiguration', 'type': 'NetworkInterfaceIPConfiguration'},
-        'health': {'key': 'health', 'type': 'str'},
-        'health_probe_log': {'key': 'healthProbeLog', 'type': 'str'},
+        "address": {"key": "address", "type": "str"},
+        "ip_configuration": {"key": "ipConfiguration", "type": "NetworkInterfaceIPConfiguration"},
+        "health": {"key": "health", "type": "str"},
+        "health_probe_log": {"key": "healthProbeLog", "type": "str"},
     }
 
     def __init__(
@@ -845,30 +852,30 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'port': {'key': 'properties.port', 'type': 'int'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'cookie_based_affinity': {'key': 'properties.cookieBasedAffinity', 'type': 'str'},
-        'request_timeout': {'key': 'properties.requestTimeout', 'type': 'int'},
-        'probe': {'key': 'properties.probe', 'type': 'SubResource'},
-        'authentication_certificates': {'key': 'properties.authenticationCertificates', 'type': '[SubResource]'},
-        'trusted_root_certificates': {'key': 'properties.trustedRootCertificates', 'type': '[SubResource]'},
-        'connection_draining': {'key': 'properties.connectionDraining', 'type': 'ApplicationGatewayConnectionDraining'},
-        'host_name': {'key': 'properties.hostName', 'type': 'str'},
-        'pick_host_name_from_backend_address': {'key': 'properties.pickHostNameFromBackendAddress', 'type': 'bool'},
-        'affinity_cookie_name': {'key': 'properties.affinityCookieName', 'type': 'str'},
-        'probe_enabled': {'key': 'properties.probeEnabled', 'type': 'bool'},
-        'path': {'key': 'properties.path', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "port": {"key": "properties.port", "type": "int"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "cookie_based_affinity": {"key": "properties.cookieBasedAffinity", "type": "str"},
+        "request_timeout": {"key": "properties.requestTimeout", "type": "int"},
+        "probe": {"key": "properties.probe", "type": "SubResource"},
+        "authentication_certificates": {"key": "properties.authenticationCertificates", "type": "[SubResource]"},
+        "trusted_root_certificates": {"key": "properties.trustedRootCertificates", "type": "[SubResource]"},
+        "connection_draining": {"key": "properties.connectionDraining", "type": "ApplicationGatewayConnectionDraining"},
+        "host_name": {"key": "properties.hostName", "type": "str"},
+        "pick_host_name_from_backend_address": {"key": "properties.pickHostNameFromBackendAddress", "type": "bool"},
+        "affinity_cookie_name": {"key": "properties.affinityCookieName", "type": "str"},
+        "probe_enabled": {"key": "properties.probeEnabled", "type": "bool"},
+        "path": {"key": "properties.path", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -924,22 +931,16 @@ class ApplicationGatewayConnectionDraining(msrest.serialization.Model):
     """
 
     _validation = {
-        'enabled': {'required': True},
-        'drain_timeout_in_sec': {'required': True, 'maximum': 3600, 'minimum': 1},
+        "enabled": {"required": True},
+        "drain_timeout_in_sec": {"required": True, "maximum": 3600, "minimum": 1},
     }
 
     _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'drain_timeout_in_sec': {'key': 'drainTimeoutInSec', 'type': 'int'},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "drain_timeout_in_sec": {"key": "drainTimeoutInSec", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        enabled: bool,
-        drain_timeout_in_sec: int,
-        **kwargs
-    ):
+    def __init__(self, *, enabled: bool, drain_timeout_in_sec: int, **kwargs):
         super(ApplicationGatewayConnectionDraining, self).__init__(**kwargs)
         self.enabled = enabled
         self.drain_timeout_in_sec = drain_timeout_in_sec
@@ -957,8 +958,8 @@ class ApplicationGatewayCustomError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'status_code': {'key': 'statusCode', 'type': 'str'},
-        'custom_error_page_url': {'key': 'customErrorPageUrl', 'type': 'str'},
+        "status_code": {"key": "statusCode", "type": "str"},
+        "custom_error_page_url": {"key": "customErrorPageUrl", "type": "str"},
     }
 
     def __init__(
@@ -986,21 +987,15 @@ class ApplicationGatewayFirewallDisabledRuleGroup(msrest.serialization.Model):
     """
 
     _validation = {
-        'rule_group_name': {'required': True},
+        "rule_group_name": {"required": True},
     }
 
     _attribute_map = {
-        'rule_group_name': {'key': 'ruleGroupName', 'type': 'str'},
-        'rules': {'key': 'rules', 'type': '[int]'},
+        "rule_group_name": {"key": "ruleGroupName", "type": "str"},
+        "rules": {"key": "rules", "type": "[int]"},
     }
 
-    def __init__(
-        self,
-        *,
-        rule_group_name: str,
-        rules: Optional[List[int]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, rule_group_name: str, rules: Optional[List[int]] = None, **kwargs):
         super(ApplicationGatewayFirewallDisabledRuleGroup, self).__init__(**kwargs)
         self.rule_group_name = rule_group_name
         self.rules = rules
@@ -1022,25 +1017,18 @@ class ApplicationGatewayFirewallExclusion(msrest.serialization.Model):
     """
 
     _validation = {
-        'match_variable': {'required': True},
-        'selector_match_operator': {'required': True},
-        'selector': {'required': True},
+        "match_variable": {"required": True},
+        "selector_match_operator": {"required": True},
+        "selector": {"required": True},
     }
 
     _attribute_map = {
-        'match_variable': {'key': 'matchVariable', 'type': 'str'},
-        'selector_match_operator': {'key': 'selectorMatchOperator', 'type': 'str'},
-        'selector': {'key': 'selector', 'type': 'str'},
+        "match_variable": {"key": "matchVariable", "type": "str"},
+        "selector_match_operator": {"key": "selectorMatchOperator", "type": "str"},
+        "selector": {"key": "selector", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        match_variable: str,
-        selector_match_operator: str,
-        selector: str,
-        **kwargs
-    ):
+    def __init__(self, *, match_variable: str, selector_match_operator: str, selector: str, **kwargs):
         super(ApplicationGatewayFirewallExclusion, self).__init__(**kwargs)
         self.match_variable = match_variable
         self.selector_match_operator = selector_match_operator
@@ -1059,21 +1047,15 @@ class ApplicationGatewayFirewallRule(msrest.serialization.Model):
     """
 
     _validation = {
-        'rule_id': {'required': True},
+        "rule_id": {"required": True},
     }
 
     _attribute_map = {
-        'rule_id': {'key': 'ruleId', 'type': 'int'},
-        'description': {'key': 'description', 'type': 'str'},
+        "rule_id": {"key": "ruleId", "type": "int"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        rule_id: int,
-        description: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, rule_id: int, description: Optional[str] = None, **kwargs):
         super(ApplicationGatewayFirewallRule, self).__init__(**kwargs)
         self.rule_id = rule_id
         self.description = description
@@ -1093,14 +1075,14 @@ class ApplicationGatewayFirewallRuleGroup(msrest.serialization.Model):
     """
 
     _validation = {
-        'rule_group_name': {'required': True},
-        'rules': {'required': True},
+        "rule_group_name": {"required": True},
+        "rules": {"required": True},
     }
 
     _attribute_map = {
-        'rule_group_name': {'key': 'ruleGroupName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'rules': {'key': 'rules', 'type': '[ApplicationGatewayFirewallRule]'},
+        "rule_group_name": {"key": "ruleGroupName", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "rules": {"key": "rules", "type": "[ApplicationGatewayFirewallRule]"},
     }
 
     def __init__(
@@ -1145,21 +1127,21 @@ class ApplicationGatewayFirewallRuleSet(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'rule_set_type': {'key': 'properties.ruleSetType', 'type': 'str'},
-        'rule_set_version': {'key': 'properties.ruleSetVersion', 'type': 'str'},
-        'rule_groups': {'key': 'properties.ruleGroups', 'type': '[ApplicationGatewayFirewallRuleGroup]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "rule_set_type": {"key": "properties.ruleSetType", "type": "str"},
+        "rule_set_version": {"key": "properties.ruleSetVersion", "type": "str"},
+        "rule_groups": {"key": "properties.ruleGroups", "type": "[ApplicationGatewayFirewallRuleGroup]"},
     }
 
     def __init__(
@@ -1210,21 +1192,21 @@ class ApplicationGatewayFrontendIPConfiguration(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'private_ip_address': {'key': 'properties.privateIPAddress', 'type': 'str'},
-        'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'SubResource'},
-        'public_ip_address': {'key': 'properties.publicIPAddress', 'type': 'SubResource'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "private_ip_address": {"key": "properties.privateIPAddress", "type": "str"},
+        "private_ip_allocation_method": {"key": "properties.privateIPAllocationMethod", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "SubResource"},
+        "public_ip_address": {"key": "properties.publicIPAddress", "type": "SubResource"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -1270,28 +1252,21 @@ class ApplicationGatewayFrontendPort(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'port': {'key': 'properties.port', 'type': 'int'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "port": {"key": "properties.port", "type": "int"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        name: Optional[str] = None,
-        port: Optional[int] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, name: Optional[str] = None, port: Optional[int] = None, **kwargs):
         super(ApplicationGatewayFrontendPort, self).__init__(id=id, **kwargs)
         self.name = name
         self.etag = None
@@ -1310,17 +1285,11 @@ class ApplicationGatewayHeaderConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'header_name': {'key': 'headerName', 'type': 'str'},
-        'header_value': {'key': 'headerValue', 'type': 'str'},
+        "header_name": {"key": "headerName", "type": "str"},
+        "header_value": {"key": "headerValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        header_name: Optional[str] = None,
-        header_value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, header_name: Optional[str] = None, header_value: Optional[str] = None, **kwargs):
         super(ApplicationGatewayHeaderConfiguration, self).__init__(**kwargs)
         self.header_name = header_name
         self.header_value = header_value
@@ -1366,26 +1335,29 @@ class ApplicationGatewayHttpListener(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'frontend_ip_configuration': {'key': 'properties.frontendIPConfiguration', 'type': 'SubResource'},
-        'frontend_port': {'key': 'properties.frontendPort', 'type': 'SubResource'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'host_name': {'key': 'properties.hostName', 'type': 'str'},
-        'ssl_certificate': {'key': 'properties.sslCertificate', 'type': 'SubResource'},
-        'require_server_name_indication': {'key': 'properties.requireServerNameIndication', 'type': 'bool'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'custom_error_configurations': {'key': 'properties.customErrorConfigurations', 'type': '[ApplicationGatewayCustomError]'},
-        'firewall_policy': {'key': 'properties.firewallPolicy', 'type': 'SubResource'},
-        'host_names': {'key': 'properties.hostNames', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "frontend_ip_configuration": {"key": "properties.frontendIPConfiguration", "type": "SubResource"},
+        "frontend_port": {"key": "properties.frontendPort", "type": "SubResource"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "host_name": {"key": "properties.hostName", "type": "str"},
+        "ssl_certificate": {"key": "properties.sslCertificate", "type": "SubResource"},
+        "require_server_name_indication": {"key": "properties.requireServerNameIndication", "type": "bool"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "custom_error_configurations": {
+            "key": "properties.customErrorConfigurations",
+            "type": "[ApplicationGatewayCustomError]",
+        },
+        "firewall_policy": {"key": "properties.firewallPolicy", "type": "SubResource"},
+        "host_names": {"key": "properties.hostNames", "type": "[str]"},
     }
 
     def __init__(
@@ -1442,27 +1414,22 @@ class ApplicationGatewayIPConfiguration(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'SubResource'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "SubResource"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        name: Optional[str] = None,
-        subnet: Optional["SubResource"] = None,
-        **kwargs
+        self, *, id: Optional[str] = None, name: Optional[str] = None, subnet: Optional["SubResource"] = None, **kwargs
     ):
         super(ApplicationGatewayIPConfiguration, self).__init__(id=id, **kwargs)
         self.name = name
@@ -1482,16 +1449,12 @@ class ApplicationGatewayListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ApplicationGateway]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ApplicationGateway]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["ApplicationGateway"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["ApplicationGateway"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         super(ApplicationGatewayListResult, self).__init__(**kwargs)
         self.value = value
@@ -1525,14 +1488,14 @@ class ApplicationGatewayOnDemandProbe(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'protocol': {'key': 'protocol', 'type': 'str'},
-        'host': {'key': 'host', 'type': 'str'},
-        'path': {'key': 'path', 'type': 'str'},
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'pick_host_name_from_backend_http_settings': {'key': 'pickHostNameFromBackendHttpSettings', 'type': 'bool'},
-        'match': {'key': 'match', 'type': 'ApplicationGatewayProbeHealthResponseMatch'},
-        'backend_address_pool': {'key': 'backendAddressPool', 'type': 'SubResource'},
-        'backend_http_settings': {'key': 'backendHttpSettings', 'type': 'SubResource'},
+        "protocol": {"key": "protocol", "type": "str"},
+        "host": {"key": "host", "type": "str"},
+        "path": {"key": "path", "type": "str"},
+        "timeout": {"key": "timeout", "type": "int"},
+        "pick_host_name_from_backend_http_settings": {"key": "pickHostNameFromBackendHttpSettings", "type": "bool"},
+        "match": {"key": "match", "type": "ApplicationGatewayProbeHealthResponseMatch"},
+        "backend_address_pool": {"key": "backendAddressPool", "type": "SubResource"},
+        "backend_http_settings": {"key": "backendHttpSettings", "type": "SubResource"},
     }
 
     def __init__(
@@ -1590,23 +1553,23 @@ class ApplicationGatewayPathRule(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'paths': {'key': 'properties.paths', 'type': '[str]'},
-        'backend_address_pool': {'key': 'properties.backendAddressPool', 'type': 'SubResource'},
-        'backend_http_settings': {'key': 'properties.backendHttpSettings', 'type': 'SubResource'},
-        'redirect_configuration': {'key': 'properties.redirectConfiguration', 'type': 'SubResource'},
-        'rewrite_rule_set': {'key': 'properties.rewriteRuleSet', 'type': 'SubResource'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'firewall_policy': {'key': 'properties.firewallPolicy', 'type': 'SubResource'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "paths": {"key": "properties.paths", "type": "[str]"},
+        "backend_address_pool": {"key": "properties.backendAddressPool", "type": "SubResource"},
+        "backend_http_settings": {"key": "properties.backendHttpSettings", "type": "SubResource"},
+        "redirect_configuration": {"key": "properties.redirectConfiguration", "type": "SubResource"},
+        "rewrite_rule_set": {"key": "properties.rewriteRuleSet", "type": "SubResource"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "firewall_policy": {"key": "properties.firewallPolicy", "type": "SubResource"},
     }
 
     def __init__(
@@ -1683,28 +1646,31 @@ class ApplicationGatewayProbe(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'port': {'maximum': 65535, 'minimum': 1},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "port": {"maximum": 65535, "minimum": 1},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'host': {'key': 'properties.host', 'type': 'str'},
-        'path': {'key': 'properties.path', 'type': 'str'},
-        'interval': {'key': 'properties.interval', 'type': 'int'},
-        'timeout': {'key': 'properties.timeout', 'type': 'int'},
-        'unhealthy_threshold': {'key': 'properties.unhealthyThreshold', 'type': 'int'},
-        'pick_host_name_from_backend_http_settings': {'key': 'properties.pickHostNameFromBackendHttpSettings', 'type': 'bool'},
-        'min_servers': {'key': 'properties.minServers', 'type': 'int'},
-        'match': {'key': 'properties.match', 'type': 'ApplicationGatewayProbeHealthResponseMatch'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'port': {'key': 'properties.port', 'type': 'int'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "host": {"key": "properties.host", "type": "str"},
+        "path": {"key": "properties.path", "type": "str"},
+        "interval": {"key": "properties.interval", "type": "int"},
+        "timeout": {"key": "properties.timeout", "type": "int"},
+        "unhealthy_threshold": {"key": "properties.unhealthyThreshold", "type": "int"},
+        "pick_host_name_from_backend_http_settings": {
+            "key": "properties.pickHostNameFromBackendHttpSettings",
+            "type": "bool",
+        },
+        "min_servers": {"key": "properties.minServers", "type": "int"},
+        "match": {"key": "properties.match", "type": "ApplicationGatewayProbeHealthResponseMatch"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "port": {"key": "properties.port", "type": "int"},
     }
 
     def __init__(
@@ -1752,17 +1718,11 @@ class ApplicationGatewayProbeHealthResponseMatch(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'body': {'key': 'body', 'type': 'str'},
-        'status_codes': {'key': 'statusCodes', 'type': '[str]'},
+        "body": {"key": "body", "type": "str"},
+        "status_codes": {"key": "statusCodes", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        body: Optional[str] = None,
-        status_codes: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, body: Optional[str] = None, status_codes: Optional[List[str]] = None, **kwargs):
         super(ApplicationGatewayProbeHealthResponseMatch, self).__init__(**kwargs)
         self.body = body
         self.status_codes = status_codes
@@ -1802,23 +1762,23 @@ class ApplicationGatewayRedirectConfiguration(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'redirect_type': {'key': 'properties.redirectType', 'type': 'str'},
-        'target_listener': {'key': 'properties.targetListener', 'type': 'SubResource'},
-        'target_url': {'key': 'properties.targetUrl', 'type': 'str'},
-        'include_path': {'key': 'properties.includePath', 'type': 'bool'},
-        'include_query_string': {'key': 'properties.includeQueryString', 'type': 'bool'},
-        'request_routing_rules': {'key': 'properties.requestRoutingRules', 'type': '[SubResource]'},
-        'url_path_maps': {'key': 'properties.urlPathMaps', 'type': '[SubResource]'},
-        'path_rules': {'key': 'properties.pathRules', 'type': '[SubResource]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "redirect_type": {"key": "properties.redirectType", "type": "str"},
+        "target_listener": {"key": "properties.targetListener", "type": "SubResource"},
+        "target_url": {"key": "properties.targetUrl", "type": "str"},
+        "include_path": {"key": "properties.includePath", "type": "bool"},
+        "include_query_string": {"key": "properties.includeQueryString", "type": "bool"},
+        "request_routing_rules": {"key": "properties.requestRoutingRules", "type": "[SubResource]"},
+        "url_path_maps": {"key": "properties.urlPathMaps", "type": "[SubResource]"},
+        "path_rules": {"key": "properties.pathRules", "type": "[SubResource]"},
     }
 
     def __init__(
@@ -1886,26 +1846,26 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'priority': {'maximum': 20000, 'minimum': 1},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "priority": {"maximum": 20000, "minimum": 1},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'rule_type': {'key': 'properties.ruleType', 'type': 'str'},
-        'priority': {'key': 'properties.priority', 'type': 'int'},
-        'backend_address_pool': {'key': 'properties.backendAddressPool', 'type': 'SubResource'},
-        'backend_http_settings': {'key': 'properties.backendHttpSettings', 'type': 'SubResource'},
-        'http_listener': {'key': 'properties.httpListener', 'type': 'SubResource'},
-        'url_path_map': {'key': 'properties.urlPathMap', 'type': 'SubResource'},
-        'rewrite_rule_set': {'key': 'properties.rewriteRuleSet', 'type': 'SubResource'},
-        'redirect_configuration': {'key': 'properties.redirectConfiguration', 'type': 'SubResource'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "rule_type": {"key": "properties.ruleType", "type": "str"},
+        "priority": {"key": "properties.priority", "type": "int"},
+        "backend_address_pool": {"key": "properties.backendAddressPool", "type": "SubResource"},
+        "backend_http_settings": {"key": "properties.backendHttpSettings", "type": "SubResource"},
+        "http_listener": {"key": "properties.httpListener", "type": "SubResource"},
+        "url_path_map": {"key": "properties.urlPathMap", "type": "SubResource"},
+        "rewrite_rule_set": {"key": "properties.rewriteRuleSet", "type": "SubResource"},
+        "redirect_configuration": {"key": "properties.redirectConfiguration", "type": "SubResource"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -1954,10 +1914,10 @@ class ApplicationGatewayRewriteRule(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'rule_sequence': {'key': 'ruleSequence', 'type': 'int'},
-        'conditions': {'key': 'conditions', 'type': '[ApplicationGatewayRewriteRuleCondition]'},
-        'action_set': {'key': 'actionSet', 'type': 'ApplicationGatewayRewriteRuleActionSet'},
+        "name": {"key": "name", "type": "str"},
+        "rule_sequence": {"key": "ruleSequence", "type": "int"},
+        "conditions": {"key": "conditions", "type": "[ApplicationGatewayRewriteRuleCondition]"},
+        "action_set": {"key": "actionSet", "type": "ApplicationGatewayRewriteRuleActionSet"},
     }
 
     def __init__(
@@ -1991,9 +1951,15 @@ class ApplicationGatewayRewriteRuleActionSet(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'request_header_configurations': {'key': 'requestHeaderConfigurations', 'type': '[ApplicationGatewayHeaderConfiguration]'},
-        'response_header_configurations': {'key': 'responseHeaderConfigurations', 'type': '[ApplicationGatewayHeaderConfiguration]'},
-        'url_configuration': {'key': 'urlConfiguration', 'type': 'ApplicationGatewayUrlConfiguration'},
+        "request_header_configurations": {
+            "key": "requestHeaderConfigurations",
+            "type": "[ApplicationGatewayHeaderConfiguration]",
+        },
+        "response_header_configurations": {
+            "key": "responseHeaderConfigurations",
+            "type": "[ApplicationGatewayHeaderConfiguration]",
+        },
+        "url_configuration": {"key": "urlConfiguration", "type": "ApplicationGatewayUrlConfiguration"},
     }
 
     def __init__(
@@ -2027,10 +1993,10 @@ class ApplicationGatewayRewriteRuleCondition(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'variable': {'key': 'variable', 'type': 'str'},
-        'pattern': {'key': 'pattern', 'type': 'str'},
-        'ignore_case': {'key': 'ignoreCase', 'type': 'bool'},
-        'negate': {'key': 'negate', 'type': 'bool'},
+        "variable": {"key": "variable", "type": "str"},
+        "pattern": {"key": "pattern", "type": "str"},
+        "ignore_case": {"key": "ignoreCase", "type": "bool"},
+        "negate": {"key": "negate", "type": "bool"},
     }
 
     def __init__(
@@ -2068,16 +2034,16 @@ class ApplicationGatewayRewriteRuleSet(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'rewrite_rules': {'key': 'properties.rewriteRules', 'type': '[ApplicationGatewayRewriteRule]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "rewrite_rules": {"key": "properties.rewriteRules", "type": "[ApplicationGatewayRewriteRule]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -2109,9 +2075,9 @@ class ApplicationGatewaySku(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "capacity": {"key": "capacity", "type": "int"},
     }
 
     def __init__(
@@ -2157,22 +2123,22 @@ class ApplicationGatewaySslCertificate(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'public_cert_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "public_cert_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'data': {'key': 'properties.data', 'type': 'str'},
-        'password': {'key': 'properties.password', 'type': 'str'},
-        'public_cert_data': {'key': 'properties.publicCertData', 'type': 'str'},
-        'key_vault_secret_id': {'key': 'properties.keyVaultSecretId', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "data": {"key": "properties.data", "type": "str"},
+        "password": {"key": "properties.password", "type": "str"},
+        "public_cert_data": {"key": "properties.publicCertData", "type": "str"},
+        "key_vault_secret_id": {"key": "properties.keyVaultSecretId", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -2220,11 +2186,11 @@ class ApplicationGatewaySslPolicy(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'disabled_ssl_protocols': {'key': 'disabledSslProtocols', 'type': '[str]'},
-        'policy_type': {'key': 'policyType', 'type': 'str'},
-        'policy_name': {'key': 'policyName', 'type': 'str'},
-        'cipher_suites': {'key': 'cipherSuites', 'type': '[str]'},
-        'min_protocol_version': {'key': 'minProtocolVersion', 'type': 'str'},
+        "disabled_ssl_protocols": {"key": "disabledSslProtocols", "type": "[str]"},
+        "policy_type": {"key": "policyType", "type": "str"},
+        "policy_name": {"key": "policyName", "type": "str"},
+        "cipher_suites": {"key": "cipherSuites", "type": "[str]"},
+        "min_protocol_version": {"key": "minProtocolVersion", "type": "str"},
     }
 
     def __init__(
@@ -2263,10 +2229,10 @@ class ApplicationGatewaySslPredefinedPolicy(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'cipher_suites': {'key': 'properties.cipherSuites', 'type': '[str]'},
-        'min_protocol_version': {'key': 'properties.minProtocolVersion', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "cipher_suites": {"key": "properties.cipherSuites", "type": "[str]"},
+        "min_protocol_version": {"key": "properties.minProtocolVersion", "type": "str"},
     }
 
     def __init__(
@@ -2308,19 +2274,19 @@ class ApplicationGatewayTrustedRootCertificate(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'data': {'key': 'properties.data', 'type': 'str'},
-        'key_vault_secret_id': {'key': 'properties.keyVaultSecretId', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "data": {"key": "properties.data", "type": "str"},
+        "key_vault_secret_id": {"key": "properties.keyVaultSecretId", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -2356,9 +2322,9 @@ class ApplicationGatewayUrlConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'modified_path': {'key': 'modifiedPath', 'type': 'str'},
-        'modified_query_string': {'key': 'modifiedQueryString', 'type': 'str'},
-        'reroute': {'key': 'reroute', 'type': 'bool'},
+        "modified_path": {"key": "modifiedPath", "type": "str"},
+        "modified_query_string": {"key": "modifiedQueryString", "type": "str"},
+        "reroute": {"key": "reroute", "type": "bool"},
     }
 
     def __init__(
@@ -2404,22 +2370,22 @@ class ApplicationGatewayUrlPathMap(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'default_backend_address_pool': {'key': 'properties.defaultBackendAddressPool', 'type': 'SubResource'},
-        'default_backend_http_settings': {'key': 'properties.defaultBackendHttpSettings', 'type': 'SubResource'},
-        'default_rewrite_rule_set': {'key': 'properties.defaultRewriteRuleSet', 'type': 'SubResource'},
-        'default_redirect_configuration': {'key': 'properties.defaultRedirectConfiguration', 'type': 'SubResource'},
-        'path_rules': {'key': 'properties.pathRules', 'type': '[ApplicationGatewayPathRule]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "default_backend_address_pool": {"key": "properties.defaultBackendAddressPool", "type": "SubResource"},
+        "default_backend_http_settings": {"key": "properties.defaultBackendHttpSettings", "type": "SubResource"},
+        "default_rewrite_rule_set": {"key": "properties.defaultRewriteRuleSet", "type": "SubResource"},
+        "default_redirect_configuration": {"key": "properties.defaultRedirectConfiguration", "type": "SubResource"},
+        "path_rules": {"key": "properties.pathRules", "type": "[ApplicationGatewayPathRule]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -2479,26 +2445,26 @@ class ApplicationGatewayWebApplicationFirewallConfiguration(msrest.serialization
     """
 
     _validation = {
-        'enabled': {'required': True},
-        'firewall_mode': {'required': True},
-        'rule_set_type': {'required': True},
-        'rule_set_version': {'required': True},
-        'max_request_body_size': {'maximum': 128, 'minimum': 8},
-        'max_request_body_size_in_kb': {'maximum': 128, 'minimum': 8},
-        'file_upload_limit_in_mb': {'minimum': 0},
+        "enabled": {"required": True},
+        "firewall_mode": {"required": True},
+        "rule_set_type": {"required": True},
+        "rule_set_version": {"required": True},
+        "max_request_body_size": {"maximum": 128, "minimum": 8},
+        "max_request_body_size_in_kb": {"maximum": 128, "minimum": 8},
+        "file_upload_limit_in_mb": {"minimum": 0},
     }
 
     _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'firewall_mode': {'key': 'firewallMode', 'type': 'str'},
-        'rule_set_type': {'key': 'ruleSetType', 'type': 'str'},
-        'rule_set_version': {'key': 'ruleSetVersion', 'type': 'str'},
-        'disabled_rule_groups': {'key': 'disabledRuleGroups', 'type': '[ApplicationGatewayFirewallDisabledRuleGroup]'},
-        'request_body_check': {'key': 'requestBodyCheck', 'type': 'bool'},
-        'max_request_body_size': {'key': 'maxRequestBodySize', 'type': 'int'},
-        'max_request_body_size_in_kb': {'key': 'maxRequestBodySizeInKb', 'type': 'int'},
-        'file_upload_limit_in_mb': {'key': 'fileUploadLimitInMb', 'type': 'int'},
-        'exclusions': {'key': 'exclusions', 'type': '[ApplicationGatewayFirewallExclusion]'},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "firewall_mode": {"key": "firewallMode", "type": "str"},
+        "rule_set_type": {"key": "ruleSetType", "type": "str"},
+        "rule_set_version": {"key": "ruleSetVersion", "type": "str"},
+        "disabled_rule_groups": {"key": "disabledRuleGroups", "type": "[ApplicationGatewayFirewallDisabledRuleGroup]"},
+        "request_body_check": {"key": "requestBodyCheck", "type": "bool"},
+        "max_request_body_size": {"key": "maxRequestBodySize", "type": "int"},
+        "max_request_body_size_in_kb": {"key": "maxRequestBodySizeInKb", "type": "int"},
+        "file_upload_limit_in_mb": {"key": "fileUploadLimitInMb", "type": "int"},
+        "exclusions": {"key": "exclusions", "type": "[ApplicationGatewayFirewallExclusion]"},
     }
 
     def __init__(
@@ -2548,26 +2514,24 @@ class FirewallPolicyRuleCondition(msrest.serialization.Model):
     """
 
     _validation = {
-        'rule_condition_type': {'required': True},
+        "rule_condition_type": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'rule_condition_type': {'key': 'ruleConditionType', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "rule_condition_type": {"key": "ruleConditionType", "type": "str"},
     }
 
     _subtype_map = {
-        'rule_condition_type': {'ApplicationRuleCondition': 'ApplicationRuleCondition', 'NatRuleCondition': 'NatRuleCondition', 'NetworkRuleCondition': 'NetworkRuleCondition'}
+        "rule_condition_type": {
+            "ApplicationRuleCondition": "ApplicationRuleCondition",
+            "NatRuleCondition": "NatRuleCondition",
+            "NetworkRuleCondition": "NetworkRuleCondition",
+        }
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, description: Optional[str] = None, **kwargs):
         super(FirewallPolicyRuleCondition, self).__init__(**kwargs)
         self.name = name
         self.description = description
@@ -2603,19 +2567,19 @@ class ApplicationRuleCondition(FirewallPolicyRuleCondition):
     """
 
     _validation = {
-        'rule_condition_type': {'required': True},
+        "rule_condition_type": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'rule_condition_type': {'key': 'ruleConditionType', 'type': 'str'},
-        'source_addresses': {'key': 'sourceAddresses', 'type': '[str]'},
-        'destination_addresses': {'key': 'destinationAddresses', 'type': '[str]'},
-        'protocols': {'key': 'protocols', 'type': '[FirewallPolicyRuleConditionApplicationProtocol]'},
-        'target_fqdns': {'key': 'targetFqdns', 'type': '[str]'},
-        'fqdn_tags': {'key': 'fqdnTags', 'type': '[str]'},
-        'source_ip_groups': {'key': 'sourceIpGroups', 'type': '[str]'},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "rule_condition_type": {"key": "ruleConditionType", "type": "str"},
+        "source_addresses": {"key": "sourceAddresses", "type": "[str]"},
+        "destination_addresses": {"key": "destinationAddresses", "type": "[str]"},
+        "protocols": {"key": "protocols", "type": "[FirewallPolicyRuleConditionApplicationProtocol]"},
+        "target_fqdns": {"key": "targetFqdns", "type": "[str]"},
+        "fqdn_tags": {"key": "fqdnTags", "type": "[str]"},
+        "source_ip_groups": {"key": "sourceIpGroups", "type": "[str]"},
     }
 
     def __init__(
@@ -2632,7 +2596,7 @@ class ApplicationRuleCondition(FirewallPolicyRuleCondition):
         **kwargs
     ):
         super(ApplicationRuleCondition, self).__init__(name=name, description=description, **kwargs)
-        self.rule_condition_type = 'ApplicationRuleCondition'  # type: str
+        self.rule_condition_type = "ApplicationRuleCondition"  # type: str
         self.source_addresses = source_addresses
         self.destination_addresses = destination_addresses
         self.protocols = protocols
@@ -2668,22 +2632,22 @@ class ApplicationSecurityGroup(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'resource_guid': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "resource_guid": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -2712,20 +2676,15 @@ class ApplicationSecurityGroupListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ApplicationSecurityGroup]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ApplicationSecurityGroup]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["ApplicationSecurityGroup"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["ApplicationSecurityGroup"]] = None, **kwargs):
         super(ApplicationSecurityGroupListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -2741,8 +2700,8 @@ class AuthorizationListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExpressRouteCircuitAuthorization]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ExpressRouteCircuitAuthorization]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
@@ -2765,15 +2724,10 @@ class AutoApprovedPrivateLinkService(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'private_link_service': {'key': 'privateLinkService', 'type': 'str'},
+        "private_link_service": {"key": "privateLinkService", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        private_link_service: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, private_link_service: Optional[str] = None, **kwargs):
         super(AutoApprovedPrivateLinkService, self).__init__(**kwargs)
         self.private_link_service = private_link_service
 
@@ -2790,20 +2744,15 @@ class AutoApprovedPrivateLinkServicesResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AutoApprovedPrivateLinkService]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[AutoApprovedPrivateLinkService]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["AutoApprovedPrivateLinkService"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["AutoApprovedPrivateLinkService"]] = None, **kwargs):
         super(AutoApprovedPrivateLinkServicesResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -2821,9 +2770,9 @@ class Availability(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'time_grain': {'key': 'timeGrain', 'type': 'str'},
-        'retention': {'key': 'retention', 'type': 'str'},
-        'blob_duration': {'key': 'blobDuration', 'type': 'str'},
+        "time_grain": {"key": "timeGrain", "type": "str"},
+        "retention": {"key": "retention", "type": "str"},
+        "blob_duration": {"key": "blobDuration", "type": "str"},
     }
 
     def __init__(
@@ -2856,11 +2805,11 @@ class AvailableDelegation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'service_name': {'key': 'serviceName', 'type': 'str'},
-        'actions': {'key': 'actions', 'type': '[str]'},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "service_name": {"key": "serviceName", "type": "str"},
+        "actions": {"key": "actions", "type": "[str]"},
     }
 
     def __init__(
@@ -2893,20 +2842,15 @@ class AvailableDelegationsResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AvailableDelegation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[AvailableDelegation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["AvailableDelegation"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["AvailableDelegation"]] = None, **kwargs):
         super(AvailableDelegationsResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -2926,10 +2870,10 @@ class AvailablePrivateEndpointType(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'resource_name': {'key': 'resourceName', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "resource_name": {"key": "resourceName", "type": "str"},
     }
 
     def __init__(
@@ -2960,20 +2904,15 @@ class AvailablePrivateEndpointTypesResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AvailablePrivateEndpointType]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[AvailablePrivateEndpointType]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["AvailablePrivateEndpointType"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["AvailablePrivateEndpointType"]] = None, **kwargs):
         super(AvailablePrivateEndpointTypesResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -2989,19 +2928,14 @@ class AvailableProvidersList(msrest.serialization.Model):
     """
 
     _validation = {
-        'countries': {'required': True},
+        "countries": {"required": True},
     }
 
     _attribute_map = {
-        'countries': {'key': 'countries', 'type': '[AvailableProvidersListCountry]'},
+        "countries": {"key": "countries", "type": "[AvailableProvidersListCountry]"},
     }
 
-    def __init__(
-        self,
-        *,
-        countries: List["AvailableProvidersListCountry"],
-        **kwargs
-    ):
+    def __init__(self, *, countries: List["AvailableProvidersListCountry"], **kwargs):
         super(AvailableProvidersList, self).__init__(**kwargs)
         self.countries = countries
 
@@ -3016,17 +2950,11 @@ class AvailableProvidersListCity(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'city_name': {'key': 'cityName', 'type': 'str'},
-        'providers': {'key': 'providers', 'type': '[str]'},
+        "city_name": {"key": "cityName", "type": "str"},
+        "providers": {"key": "providers", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        city_name: Optional[str] = None,
-        providers: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, city_name: Optional[str] = None, providers: Optional[List[str]] = None, **kwargs):
         super(AvailableProvidersListCity, self).__init__(**kwargs)
         self.city_name = city_name
         self.providers = providers
@@ -3044,9 +2972,9 @@ class AvailableProvidersListCountry(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'country_name': {'key': 'countryName', 'type': 'str'},
-        'providers': {'key': 'providers', 'type': '[str]'},
-        'states': {'key': 'states', 'type': '[AvailableProvidersListState]'},
+        "country_name": {"key": "countryName", "type": "str"},
+        "providers": {"key": "providers", "type": "[str]"},
+        "states": {"key": "states", "type": "[AvailableProvidersListState]"},
     }
 
     def __init__(
@@ -3077,10 +3005,10 @@ class AvailableProvidersListParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'azure_locations': {'key': 'azureLocations', 'type': '[str]'},
-        'country': {'key': 'country', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'city': {'key': 'city', 'type': 'str'},
+        "azure_locations": {"key": "azureLocations", "type": "[str]"},
+        "country": {"key": "country", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "city": {"key": "city", "type": "str"},
     }
 
     def __init__(
@@ -3111,9 +3039,9 @@ class AvailableProvidersListState(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'state_name': {'key': 'stateName', 'type': 'str'},
-        'providers': {'key': 'providers', 'type': '[str]'},
-        'cities': {'key': 'cities', 'type': '[AvailableProvidersListCity]'},
+        "state_name": {"key": "stateName", "type": "str"},
+        "providers": {"key": "providers", "type": "[str]"},
+        "cities": {"key": "cities", "type": "[AvailableProvidersListCity]"},
     }
 
     def __init__(
@@ -3144,10 +3072,10 @@ class AvailableServiceAlias(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'resource_name': {'key': 'resourceName', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "resource_name": {"key": "resourceName", "type": "str"},
     }
 
     def __init__(
@@ -3178,20 +3106,15 @@ class AvailableServiceAliasesResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AvailableServiceAlias]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[AvailableServiceAlias]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["AvailableServiceAlias"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["AvailableServiceAlias"]] = None, **kwargs):
         super(AvailableServiceAliasesResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -3208,8 +3131,8 @@ class AzureAsyncOperationResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'Error'},
+        "status": {"key": "status", "type": "str"},
+        "error": {"key": "error", "type": "Error"},
     }
 
     def __init__(
@@ -3283,35 +3206,44 @@ class AzureFirewall(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'hub_ip_addresses': {'readonly': True},
-        'ip_groups': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "hub_ip_addresses": {"readonly": True},
+        "ip_groups": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'zones': {'key': 'zones', 'type': '[str]'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'application_rule_collections': {'key': 'properties.applicationRuleCollections', 'type': '[AzureFirewallApplicationRuleCollection]'},
-        'nat_rule_collections': {'key': 'properties.natRuleCollections', 'type': '[AzureFirewallNatRuleCollection]'},
-        'network_rule_collections': {'key': 'properties.networkRuleCollections', 'type': '[AzureFirewallNetworkRuleCollection]'},
-        'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[AzureFirewallIPConfiguration]'},
-        'management_ip_configuration': {'key': 'properties.managementIpConfiguration', 'type': 'AzureFirewallIPConfiguration'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'threat_intel_mode': {'key': 'properties.threatIntelMode', 'type': 'str'},
-        'virtual_hub': {'key': 'properties.virtualHub', 'type': 'SubResource'},
-        'firewall_policy': {'key': 'properties.firewallPolicy', 'type': 'SubResource'},
-        'hub_ip_addresses': {'key': 'properties.hubIpAddresses', 'type': 'HubIPAddresses'},
-        'ip_groups': {'key': 'properties.ipGroups', 'type': '[AzureFirewallIpGroups]'},
-        'sku': {'key': 'properties.sku', 'type': 'AzureFirewallSku'},
-        'additional_properties': {'key': 'properties.additionalProperties', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "zones": {"key": "zones", "type": "[str]"},
+        "etag": {"key": "etag", "type": "str"},
+        "application_rule_collections": {
+            "key": "properties.applicationRuleCollections",
+            "type": "[AzureFirewallApplicationRuleCollection]",
+        },
+        "nat_rule_collections": {"key": "properties.natRuleCollections", "type": "[AzureFirewallNatRuleCollection]"},
+        "network_rule_collections": {
+            "key": "properties.networkRuleCollections",
+            "type": "[AzureFirewallNetworkRuleCollection]",
+        },
+        "ip_configurations": {"key": "properties.ipConfigurations", "type": "[AzureFirewallIPConfiguration]"},
+        "management_ip_configuration": {
+            "key": "properties.managementIpConfiguration",
+            "type": "AzureFirewallIPConfiguration",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "threat_intel_mode": {"key": "properties.threatIntelMode", "type": "str"},
+        "virtual_hub": {"key": "properties.virtualHub", "type": "SubResource"},
+        "firewall_policy": {"key": "properties.firewallPolicy", "type": "SubResource"},
+        "hub_ip_addresses": {"key": "properties.hubIpAddresses", "type": "HubIPAddresses"},
+        "ip_groups": {"key": "properties.ipGroups", "type": "[AzureFirewallIpGroups]"},
+        "sku": {"key": "properties.sku", "type": "AzureFirewallSku"},
+        "additional_properties": {"key": "properties.additionalProperties", "type": "{str}"},
     }
 
     def __init__(
@@ -3372,13 +3304,13 @@ class AzureFirewallApplicationRule(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'source_addresses': {'key': 'sourceAddresses', 'type': '[str]'},
-        'protocols': {'key': 'protocols', 'type': '[AzureFirewallApplicationRuleProtocol]'},
-        'target_fqdns': {'key': 'targetFqdns', 'type': '[str]'},
-        'fqdn_tags': {'key': 'fqdnTags', 'type': '[str]'},
-        'source_ip_groups': {'key': 'sourceIpGroups', 'type': '[str]'},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "source_addresses": {"key": "sourceAddresses", "type": "[str]"},
+        "protocols": {"key": "protocols", "type": "[AzureFirewallApplicationRuleProtocol]"},
+        "target_fqdns": {"key": "targetFqdns", "type": "[str]"},
+        "fqdn_tags": {"key": "fqdnTags", "type": "[str]"},
+        "source_ip_groups": {"key": "sourceIpGroups", "type": "[str]"},
     }
 
     def __init__(
@@ -3427,19 +3359,19 @@ class AzureFirewallApplicationRuleCollection(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'priority': {'maximum': 65000, 'minimum': 100},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "priority": {"maximum": 65000, "minimum": 100},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'priority': {'key': 'properties.priority', 'type': 'int'},
-        'action': {'key': 'properties.action', 'type': 'AzureFirewallRCAction'},
-        'rules': {'key': 'properties.rules', 'type': '[AzureFirewallApplicationRule]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "priority": {"key": "properties.priority", "type": "int"},
+        "action": {"key": "properties.action", "type": "AzureFirewallRCAction"},
+        "rules": {"key": "properties.rules", "type": "[AzureFirewallApplicationRule]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -3473,12 +3405,12 @@ class AzureFirewallApplicationRuleProtocol(msrest.serialization.Model):
     """
 
     _validation = {
-        'port': {'maximum': 64000, 'minimum': 0},
+        "port": {"maximum": 64000, "minimum": 0},
     }
 
     _attribute_map = {
-        'protocol_type': {'key': 'protocolType', 'type': 'str'},
-        'port': {'key': 'port', 'type': 'int'},
+        "protocol_type": {"key": "protocolType", "type": "str"},
+        "port": {"key": "port", "type": "int"},
     }
 
     def __init__(
@@ -3518,22 +3450,22 @@ class AzureFirewallFqdnTag(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'fqdn_tag_name': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "fqdn_tag_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'fqdn_tag_name': {'key': 'properties.fqdnTagName', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "fqdn_tag_name": {"key": "properties.fqdnTagName", "type": "str"},
     }
 
     def __init__(
@@ -3560,16 +3492,12 @@ class AzureFirewallFqdnTagListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AzureFirewallFqdnTag]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[AzureFirewallFqdnTag]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["AzureFirewallFqdnTag"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["AzureFirewallFqdnTag"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         super(AzureFirewallFqdnTagListResult, self).__init__(**kwargs)
         self.value = value
@@ -3605,21 +3533,21 @@ class AzureFirewallIPConfiguration(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'private_ip_address': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "private_ip_address": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'private_ip_address': {'key': 'properties.privateIPAddress', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'SubResource'},
-        'public_ip_address': {'key': 'properties.publicIPAddress', 'type': 'SubResource'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "private_ip_address": {"key": "properties.privateIPAddress", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "SubResource"},
+        "public_ip_address": {"key": "properties.publicIPAddress", "type": "SubResource"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -3653,19 +3581,16 @@ class AzureFirewallIpGroups(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'change_number': {'readonly': True},
+        "id": {"readonly": True},
+        "change_number": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'change_number': {'key': 'changeNumber', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "change_number": {"key": "changeNumber", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AzureFirewallIpGroups, self).__init__(**kwargs)
         self.id = None
         self.change_number = None
@@ -3681,17 +3606,11 @@ class AzureFirewallListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AzureFirewall]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[AzureFirewall]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["AzureFirewall"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["AzureFirewall"]] = None, next_link: Optional[str] = None, **kwargs):
         super(AzureFirewallListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -3705,15 +3624,10 @@ class AzureFirewallNatRCAction(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: Optional[Union[str, "AzureFirewallNatRCActionType"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, type: Optional[Union[str, "AzureFirewallNatRCActionType"]] = None, **kwargs):
         super(AzureFirewallNatRCAction, self).__init__(**kwargs)
         self.type = type
 
@@ -3746,16 +3660,16 @@ class AzureFirewallNatRule(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'source_addresses': {'key': 'sourceAddresses', 'type': '[str]'},
-        'destination_addresses': {'key': 'destinationAddresses', 'type': '[str]'},
-        'destination_ports': {'key': 'destinationPorts', 'type': '[str]'},
-        'protocols': {'key': 'protocols', 'type': '[str]'},
-        'translated_address': {'key': 'translatedAddress', 'type': 'str'},
-        'translated_port': {'key': 'translatedPort', 'type': 'str'},
-        'translated_fqdn': {'key': 'translatedFqdn', 'type': 'str'},
-        'source_ip_groups': {'key': 'sourceIpGroups', 'type': '[str]'},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "source_addresses": {"key": "sourceAddresses", "type": "[str]"},
+        "destination_addresses": {"key": "destinationAddresses", "type": "[str]"},
+        "destination_ports": {"key": "destinationPorts", "type": "[str]"},
+        "protocols": {"key": "protocols", "type": "[str]"},
+        "translated_address": {"key": "translatedAddress", "type": "str"},
+        "translated_port": {"key": "translatedPort", "type": "str"},
+        "translated_fqdn": {"key": "translatedFqdn", "type": "str"},
+        "source_ip_groups": {"key": "sourceIpGroups", "type": "[str]"},
     }
 
     def __init__(
@@ -3810,19 +3724,19 @@ class AzureFirewallNatRuleCollection(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'priority': {'maximum': 65000, 'minimum': 100},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "priority": {"maximum": 65000, "minimum": 100},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'priority': {'key': 'properties.priority', 'type': 'int'},
-        'action': {'key': 'properties.action', 'type': 'AzureFirewallNatRCAction'},
-        'rules': {'key': 'properties.rules', 'type': '[AzureFirewallNatRule]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "priority": {"key": "properties.priority", "type": "int"},
+        "action": {"key": "properties.action", "type": "AzureFirewallNatRCAction"},
+        "rules": {"key": "properties.rules", "type": "[AzureFirewallNatRule]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -3869,15 +3783,15 @@ class AzureFirewallNetworkRule(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'protocols': {'key': 'protocols', 'type': '[str]'},
-        'source_addresses': {'key': 'sourceAddresses', 'type': '[str]'},
-        'destination_addresses': {'key': 'destinationAddresses', 'type': '[str]'},
-        'destination_ports': {'key': 'destinationPorts', 'type': '[str]'},
-        'destination_fqdns': {'key': 'destinationFqdns', 'type': '[str]'},
-        'source_ip_groups': {'key': 'sourceIpGroups', 'type': '[str]'},
-        'destination_ip_groups': {'key': 'destinationIpGroups', 'type': '[str]'},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "protocols": {"key": "protocols", "type": "[str]"},
+        "source_addresses": {"key": "sourceAddresses", "type": "[str]"},
+        "destination_addresses": {"key": "destinationAddresses", "type": "[str]"},
+        "destination_ports": {"key": "destinationPorts", "type": "[str]"},
+        "destination_fqdns": {"key": "destinationFqdns", "type": "[str]"},
+        "source_ip_groups": {"key": "sourceIpGroups", "type": "[str]"},
+        "destination_ip_groups": {"key": "destinationIpGroups", "type": "[str]"},
     }
 
     def __init__(
@@ -3930,19 +3844,19 @@ class AzureFirewallNetworkRuleCollection(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'priority': {'maximum': 65000, 'minimum': 100},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "priority": {"maximum": 65000, "minimum": 100},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'priority': {'key': 'properties.priority', 'type': 'int'},
-        'action': {'key': 'properties.action', 'type': 'AzureFirewallRCAction'},
-        'rules': {'key': 'properties.rules', 'type': '[AzureFirewallNetworkRule]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "priority": {"key": "properties.priority", "type": "int"},
+        "action": {"key": "properties.action", "type": "AzureFirewallRCAction"},
+        "rules": {"key": "properties.rules", "type": "[AzureFirewallNetworkRule]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -3972,15 +3886,10 @@ class AzureFirewallPublicIPAddress(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'address': {'key': 'address', 'type': 'str'},
+        "address": {"key": "address", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        address: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, address: Optional[str] = None, **kwargs):
         super(AzureFirewallPublicIPAddress, self).__init__(**kwargs)
         self.address = address
 
@@ -3993,15 +3902,10 @@ class AzureFirewallRCAction(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: Optional[Union[str, "AzureFirewallRCActionType"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, type: Optional[Union[str, "AzureFirewallRCActionType"]] = None, **kwargs):
         super(AzureFirewallRCAction, self).__init__(**kwargs)
         self.type = type
 
@@ -4016,8 +3920,8 @@ class AzureFirewallSku(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
     }
 
     def __init__(
@@ -4048,15 +3952,15 @@ class AzureReachabilityReport(msrest.serialization.Model):
     """
 
     _validation = {
-        'aggregation_level': {'required': True},
-        'provider_location': {'required': True},
-        'reachability_report': {'required': True},
+        "aggregation_level": {"required": True},
+        "provider_location": {"required": True},
+        "reachability_report": {"required": True},
     }
 
     _attribute_map = {
-        'aggregation_level': {'key': 'aggregationLevel', 'type': 'str'},
-        'provider_location': {'key': 'providerLocation', 'type': 'AzureReachabilityReportLocation'},
-        'reachability_report': {'key': 'reachabilityReport', 'type': '[AzureReachabilityReportItem]'},
+        "aggregation_level": {"key": "aggregationLevel", "type": "str"},
+        "provider_location": {"key": "providerLocation", "type": "AzureReachabilityReportLocation"},
+        "reachability_report": {"key": "reachabilityReport", "type": "[AzureReachabilityReportItem]"},
     }
 
     def __init__(
@@ -4086,9 +3990,9 @@ class AzureReachabilityReportItem(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'azure_location': {'key': 'azureLocation', 'type': 'str'},
-        'latencies': {'key': 'latencies', 'type': '[AzureReachabilityReportLatencyInfo]'},
+        "provider": {"key": "provider", "type": "str"},
+        "azure_location": {"key": "azureLocation", "type": "str"},
+        "latencies": {"key": "latencies", "type": "[AzureReachabilityReportLatencyInfo]"},
     }
 
     def __init__(
@@ -4116,21 +4020,15 @@ class AzureReachabilityReportLatencyInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        'score': {'maximum': 100, 'minimum': 1},
+        "score": {"maximum": 100, "minimum": 1},
     }
 
     _attribute_map = {
-        'time_stamp': {'key': 'timeStamp', 'type': 'iso-8601'},
-        'score': {'key': 'score', 'type': 'int'},
+        "time_stamp": {"key": "timeStamp", "type": "iso-8601"},
+        "score": {"key": "score", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        time_stamp: Optional[datetime.datetime] = None,
-        score: Optional[int] = None,
-        **kwargs
-    ):
+    def __init__(self, *, time_stamp: Optional[datetime.datetime] = None, score: Optional[int] = None, **kwargs):
         super(AzureReachabilityReportLatencyInfo, self).__init__(**kwargs)
         self.time_stamp = time_stamp
         self.score = score
@@ -4150,23 +4048,16 @@ class AzureReachabilityReportLocation(msrest.serialization.Model):
     """
 
     _validation = {
-        'country': {'required': True},
+        "country": {"required": True},
     }
 
     _attribute_map = {
-        'country': {'key': 'country', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'city': {'key': 'city', 'type': 'str'},
+        "country": {"key": "country", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "city": {"key": "city", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        country: str,
-        state: Optional[str] = None,
-        city: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, country: str, state: Optional[str] = None, city: Optional[str] = None, **kwargs):
         super(AzureReachabilityReportLocation, self).__init__(**kwargs)
         self.country = country
         self.state = state
@@ -4191,17 +4082,17 @@ class AzureReachabilityReportParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'provider_location': {'required': True},
-        'start_time': {'required': True},
-        'end_time': {'required': True},
+        "provider_location": {"required": True},
+        "start_time": {"required": True},
+        "end_time": {"required": True},
     }
 
     _attribute_map = {
-        'provider_location': {'key': 'providerLocation', 'type': 'AzureReachabilityReportLocation'},
-        'providers': {'key': 'providers', 'type': '[str]'},
-        'azure_locations': {'key': 'azureLocations', 'type': '[str]'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
+        "provider_location": {"key": "providerLocation", "type": "AzureReachabilityReportLocation"},
+        "providers": {"key": "providers", "type": "[str]"},
+        "azure_locations": {"key": "azureLocations", "type": "[str]"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
     }
 
     def __init__(
@@ -4257,26 +4148,32 @@ class BackendAddressPool(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'backend_ip_configurations': {'readonly': True},
-        'load_balancing_rules': {'readonly': True},
-        'outbound_rule': {'readonly': True},
-        'outbound_rules': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "backend_ip_configurations": {"readonly": True},
+        "load_balancing_rules": {"readonly": True},
+        "outbound_rule": {"readonly": True},
+        "outbound_rules": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'load_balancer_backend_addresses': {'key': 'properties.loadBalancerBackendAddresses', 'type': '[LoadBalancerBackendAddress]'},
-        'backend_ip_configurations': {'key': 'properties.backendIPConfigurations', 'type': '[NetworkInterfaceIPConfiguration]'},
-        'load_balancing_rules': {'key': 'properties.loadBalancingRules', 'type': '[SubResource]'},
-        'outbound_rule': {'key': 'properties.outboundRule', 'type': 'SubResource'},
-        'outbound_rules': {'key': 'properties.outboundRules', 'type': '[SubResource]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "load_balancer_backend_addresses": {
+            "key": "properties.loadBalancerBackendAddresses",
+            "type": "[LoadBalancerBackendAddress]",
+        },
+        "backend_ip_configurations": {
+            "key": "properties.backendIPConfigurations",
+            "type": "[NetworkInterfaceIPConfiguration]",
+        },
+        "load_balancing_rules": {"key": "properties.loadBalancingRules", "type": "[SubResource]"},
+        "outbound_rule": {"key": "properties.outboundRule", "type": "SubResource"},
+        "outbound_rules": {"key": "properties.outboundRules", "type": "[SubResource]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -4307,7 +4204,7 @@ class BastionActiveSession(msrest.serialization.Model):
     :ivar session_id: A unique id for the session.
     :vartype session_id: str
     :ivar start_time: The time when the session started.
-    :vartype start_time: str
+    :vartype start_time: any
     :ivar target_subscription_id: The subscription id for the target virtual machine.
     :vartype target_subscription_id: str
     :ivar resource_type: The type of the resource.
@@ -4330,37 +4227,34 @@ class BastionActiveSession(msrest.serialization.Model):
     """
 
     _validation = {
-        'session_id': {'readonly': True},
-        'start_time': {'readonly': True},
-        'target_subscription_id': {'readonly': True},
-        'resource_type': {'readonly': True},
-        'target_host_name': {'readonly': True},
-        'target_resource_group': {'readonly': True},
-        'user_name': {'readonly': True},
-        'target_ip_address': {'readonly': True},
-        'protocol': {'readonly': True},
-        'target_resource_id': {'readonly': True},
-        'session_duration_in_mins': {'readonly': True},
+        "session_id": {"readonly": True},
+        "start_time": {"readonly": True},
+        "target_subscription_id": {"readonly": True},
+        "resource_type": {"readonly": True},
+        "target_host_name": {"readonly": True},
+        "target_resource_group": {"readonly": True},
+        "user_name": {"readonly": True},
+        "target_ip_address": {"readonly": True},
+        "protocol": {"readonly": True},
+        "target_resource_id": {"readonly": True},
+        "session_duration_in_mins": {"readonly": True},
     }
 
     _attribute_map = {
-        'session_id': {'key': 'sessionId', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'str'},
-        'target_subscription_id': {'key': 'targetSubscriptionId', 'type': 'str'},
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'target_host_name': {'key': 'targetHostName', 'type': 'str'},
-        'target_resource_group': {'key': 'targetResourceGroup', 'type': 'str'},
-        'user_name': {'key': 'userName', 'type': 'str'},
-        'target_ip_address': {'key': 'targetIpAddress', 'type': 'str'},
-        'protocol': {'key': 'protocol', 'type': 'str'},
-        'target_resource_id': {'key': 'targetResourceId', 'type': 'str'},
-        'session_duration_in_mins': {'key': 'sessionDurationInMins', 'type': 'float'},
+        "session_id": {"key": "sessionId", "type": "str"},
+        "start_time": {"key": "startTime", "type": "object"},
+        "target_subscription_id": {"key": "targetSubscriptionId", "type": "str"},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "target_host_name": {"key": "targetHostName", "type": "str"},
+        "target_resource_group": {"key": "targetResourceGroup", "type": "str"},
+        "user_name": {"key": "userName", "type": "str"},
+        "target_ip_address": {"key": "targetIpAddress", "type": "str"},
+        "protocol": {"key": "protocol", "type": "str"},
+        "target_resource_id": {"key": "targetResourceId", "type": "str"},
+        "session_duration_in_mins": {"key": "sessionDurationInMins", "type": "float"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(BastionActiveSession, self).__init__(**kwargs)
         self.session_id = None
         self.start_time = None
@@ -4385,16 +4279,12 @@ class BastionActiveSessionListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[BastionActiveSession]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[BastionActiveSession]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["BastionActiveSession"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["BastionActiveSession"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         super(BastionActiveSessionListResult, self).__init__(**kwargs)
         self.value = value
@@ -4429,22 +4319,22 @@ class BastionHost(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[BastionHostIPConfiguration]'},
-        'dns_name': {'key': 'properties.dnsName', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "ip_configurations": {"key": "properties.ipConfigurations", "type": "[BastionHostIPConfiguration]"},
+        "dns_name": {"key": "properties.dnsName", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -4492,20 +4382,20 @@ class BastionHostIPConfiguration(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'SubResource'},
-        'public_ip_address': {'key': 'properties.publicIPAddress', 'type': 'SubResource'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "SubResource"},
+        "public_ip_address": {"key": "properties.publicIPAddress", "type": "SubResource"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "private_ip_allocation_method": {"key": "properties.privateIPAllocationMethod", "type": "str"},
     }
 
     def __init__(
@@ -4538,17 +4428,11 @@ class BastionHostListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[BastionHost]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[BastionHost]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["BastionHost"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["BastionHost"]] = None, next_link: Optional[str] = None, **kwargs):
         super(BastionHostListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -4564,16 +4448,12 @@ class BastionSessionDeleteResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[BastionSessionState]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[BastionSessionState]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["BastionSessionState"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["BastionSessionState"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         super(BastionSessionDeleteResult, self).__init__(**kwargs)
         self.value = value
@@ -4594,21 +4474,18 @@ class BastionSessionState(msrest.serialization.Model):
     """
 
     _validation = {
-        'session_id': {'readonly': True},
-        'message': {'readonly': True},
-        'state': {'readonly': True},
+        "session_id": {"readonly": True},
+        "message": {"readonly": True},
+        "state": {"readonly": True},
     }
 
     _attribute_map = {
-        'session_id': {'key': 'sessionId', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
+        "session_id": {"key": "sessionId", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "state": {"key": "state", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(BastionSessionState, self).__init__(**kwargs)
         self.session_id = None
         self.message = None
@@ -4634,25 +4511,20 @@ class BastionShareableLink(msrest.serialization.Model):
     """
 
     _validation = {
-        'vm': {'required': True},
-        'bsl': {'readonly': True},
-        'created_at': {'readonly': True},
-        'message': {'readonly': True},
+        "vm": {"required": True},
+        "bsl": {"readonly": True},
+        "created_at": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'vm': {'key': 'vm', 'type': 'VM'},
-        'bsl': {'key': 'bsl', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "vm": {"key": "vm", "type": "VM"},
+        "bsl": {"key": "bsl", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        vm: "VM",
-        **kwargs
-    ):
+    def __init__(self, *, vm: "VM", **kwargs):
         super(BastionShareableLink, self).__init__(**kwargs)
         self.vm = vm
         self.bsl = None
@@ -4668,15 +4540,10 @@ class BastionShareableLinkListRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'vms': {'key': 'vms', 'type': '[BastionShareableLink]'},
+        "vms": {"key": "vms", "type": "[BastionShareableLink]"},
     }
 
-    def __init__(
-        self,
-        *,
-        vms: Optional[List["BastionShareableLink"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, vms: Optional[List["BastionShareableLink"]] = None, **kwargs):
         super(BastionShareableLinkListRequest, self).__init__(**kwargs)
         self.vms = vms
 
@@ -4691,16 +4558,12 @@ class BastionShareableLinkListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[BastionShareableLink]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[BastionShareableLink]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["BastionShareableLink"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["BastionShareableLink"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         super(BastionShareableLinkListResult, self).__init__(**kwargs)
         self.value = value
@@ -4727,12 +4590,12 @@ class BGPCommunity(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'service_supported_region': {'key': 'serviceSupportedRegion', 'type': 'str'},
-        'community_name': {'key': 'communityName', 'type': 'str'},
-        'community_value': {'key': 'communityValue', 'type': 'str'},
-        'community_prefixes': {'key': 'communityPrefixes', 'type': '[str]'},
-        'is_authorized_to_use': {'key': 'isAuthorizedToUse', 'type': 'bool'},
-        'service_group': {'key': 'serviceGroup', 'type': 'str'},
+        "service_supported_region": {"key": "serviceSupportedRegion", "type": "str"},
+        "community_name": {"key": "communityName", "type": "str"},
+        "community_value": {"key": "communityValue", "type": "str"},
+        "community_prefixes": {"key": "communityPrefixes", "type": "[str]"},
+        "is_authorized_to_use": {"key": "isAuthorizedToUse", "type": "bool"},
+        "service_group": {"key": "serviceGroup", "type": "str"},
     }
 
     def __init__(
@@ -4780,31 +4643,28 @@ class BgpPeerStatus(msrest.serialization.Model):
     """
 
     _validation = {
-        'local_address': {'readonly': True},
-        'neighbor': {'readonly': True},
-        'asn': {'readonly': True, 'maximum': 4294967295, 'minimum': 0},
-        'state': {'readonly': True},
-        'connected_duration': {'readonly': True},
-        'routes_received': {'readonly': True},
-        'messages_sent': {'readonly': True},
-        'messages_received': {'readonly': True},
+        "local_address": {"readonly": True},
+        "neighbor": {"readonly": True},
+        "asn": {"readonly": True, "maximum": 4294967295, "minimum": 0},
+        "state": {"readonly": True},
+        "connected_duration": {"readonly": True},
+        "routes_received": {"readonly": True},
+        "messages_sent": {"readonly": True},
+        "messages_received": {"readonly": True},
     }
 
     _attribute_map = {
-        'local_address': {'key': 'localAddress', 'type': 'str'},
-        'neighbor': {'key': 'neighbor', 'type': 'str'},
-        'asn': {'key': 'asn', 'type': 'long'},
-        'state': {'key': 'state', 'type': 'str'},
-        'connected_duration': {'key': 'connectedDuration', 'type': 'str'},
-        'routes_received': {'key': 'routesReceived', 'type': 'long'},
-        'messages_sent': {'key': 'messagesSent', 'type': 'long'},
-        'messages_received': {'key': 'messagesReceived', 'type': 'long'},
+        "local_address": {"key": "localAddress", "type": "str"},
+        "neighbor": {"key": "neighbor", "type": "str"},
+        "asn": {"key": "asn", "type": "long"},
+        "state": {"key": "state", "type": "str"},
+        "connected_duration": {"key": "connectedDuration", "type": "str"},
+        "routes_received": {"key": "routesReceived", "type": "long"},
+        "messages_sent": {"key": "messagesSent", "type": "long"},
+        "messages_received": {"key": "messagesReceived", "type": "long"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(BgpPeerStatus, self).__init__(**kwargs)
         self.local_address = None
         self.neighbor = None
@@ -4824,15 +4684,10 @@ class BgpPeerStatusListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[BgpPeerStatus]'},
+        "value": {"key": "value", "type": "[BgpPeerStatus]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["BgpPeerStatus"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["BgpPeerStatus"]] = None, **kwargs):
         super(BgpPeerStatusListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -4859,18 +4714,18 @@ class BgpServiceCommunity(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'service_name': {'key': 'properties.serviceName', 'type': 'str'},
-        'bgp_communities': {'key': 'properties.bgpCommunities', 'type': '[BGPCommunity]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "service_name": {"key": "properties.serviceName", "type": "str"},
+        "bgp_communities": {"key": "properties.bgpCommunities", "type": "[BGPCommunity]"},
     }
 
     def __init__(
@@ -4898,16 +4753,12 @@ class BgpServiceCommunityListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[BgpServiceCommunity]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[BgpServiceCommunity]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["BgpServiceCommunity"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["BgpServiceCommunity"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         super(BgpServiceCommunityListResult, self).__init__(**kwargs)
         self.value = value
@@ -4930,14 +4781,14 @@ class BgpSettings(msrest.serialization.Model):
     """
 
     _validation = {
-        'asn': {'maximum': 4294967295, 'minimum': 0},
+        "asn": {"maximum": 4294967295, "minimum": 0},
     }
 
     _attribute_map = {
-        'asn': {'key': 'asn', 'type': 'long'},
-        'bgp_peering_address': {'key': 'bgpPeeringAddress', 'type': 'str'},
-        'peer_weight': {'key': 'peerWeight', 'type': 'int'},
-        'bgp_peering_addresses': {'key': 'bgpPeeringAddresses', 'type': '[IPConfigurationBgpPeeringAddress]'},
+        "asn": {"key": "asn", "type": "long"},
+        "bgp_peering_address": {"key": "bgpPeeringAddress", "type": "str"},
+        "peer_weight": {"key": "peerWeight", "type": "int"},
+        "bgp_peering_addresses": {"key": "bgpPeeringAddresses", "type": "[IPConfigurationBgpPeeringAddress]"},
     }
 
     def __init__(
@@ -4964,15 +4815,10 @@ class CheckPrivateLinkServiceVisibilityRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'private_link_service_alias': {'key': 'privateLinkServiceAlias', 'type': 'str'},
+        "private_link_service_alias": {"key": "privateLinkServiceAlias", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        private_link_service_alias: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, private_link_service_alias: Optional[str] = None, **kwargs):
         super(CheckPrivateLinkServiceVisibilityRequest, self).__init__(**kwargs)
         self.private_link_service_alias = private_link_service_alias
 
@@ -4994,10 +4840,10 @@ class CloudErrorBody(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[CloudErrorBody]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[CloudErrorBody]"},
     }
 
     def __init__(
@@ -5016,7 +4862,9 @@ class CloudErrorBody(msrest.serialization.Model):
         self.details = details
 
 
-class Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties(msrest.serialization.Model):
+class Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties(
+    msrest.serialization.Model
+):
     """Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5028,20 +4876,19 @@ class Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidenti
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'client_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        super(
+            Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties, self
+        ).__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
 
@@ -5075,17 +4922,17 @@ class ConnectionMonitor(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'source': {'key': 'properties.source', 'type': 'ConnectionMonitorSource'},
-        'destination': {'key': 'properties.destination', 'type': 'ConnectionMonitorDestination'},
-        'auto_start': {'key': 'properties.autoStart', 'type': 'bool'},
-        'monitoring_interval_in_seconds': {'key': 'properties.monitoringIntervalInSeconds', 'type': 'int'},
-        'endpoints': {'key': 'properties.endpoints', 'type': '[ConnectionMonitorEndpoint]'},
-        'test_configurations': {'key': 'properties.testConfigurations', 'type': '[ConnectionMonitorTestConfiguration]'},
-        'test_groups': {'key': 'properties.testGroups', 'type': '[ConnectionMonitorTestGroup]'},
-        'outputs': {'key': 'properties.outputs', 'type': '[ConnectionMonitorOutput]'},
-        'notes': {'key': 'properties.notes', 'type': 'str'},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "source": {"key": "properties.source", "type": "ConnectionMonitorSource"},
+        "destination": {"key": "properties.destination", "type": "ConnectionMonitorDestination"},
+        "auto_start": {"key": "properties.autoStart", "type": "bool"},
+        "monitoring_interval_in_seconds": {"key": "properties.monitoringIntervalInSeconds", "type": "int"},
+        "endpoints": {"key": "properties.endpoints", "type": "[ConnectionMonitorEndpoint]"},
+        "test_configurations": {"key": "properties.testConfigurations", "type": "[ConnectionMonitorTestConfiguration]"},
+        "test_groups": {"key": "properties.testGroups", "type": "[ConnectionMonitorTestGroup]"},
+        "outputs": {"key": "properties.outputs", "type": "[ConnectionMonitorOutput]"},
+        "notes": {"key": "properties.notes", "type": "str"},
     }
 
     def __init__(
@@ -5130,18 +4977,13 @@ class ConnectionMonitorDestination(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'address': {'key': 'address', 'type': 'str'},
-        'port': {'key': 'port', 'type': 'int'},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "address": {"key": "address", "type": "str"},
+        "port": {"key": "port", "type": "int"},
     }
 
     def __init__(
-        self,
-        *,
-        resource_id: Optional[str] = None,
-        address: Optional[str] = None,
-        port: Optional[int] = None,
-        **kwargs
+        self, *, resource_id: Optional[str] = None, address: Optional[str] = None, port: Optional[int] = None, **kwargs
     ):
         super(ConnectionMonitorDestination, self).__init__(**kwargs)
         self.resource_id = resource_id
@@ -5165,14 +5007,14 @@ class ConnectionMonitorEndpoint(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'address': {'key': 'address', 'type': 'str'},
-        'filter': {'key': 'filter', 'type': 'ConnectionMonitorEndpointFilter'},
+        "name": {"key": "name", "type": "str"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "address": {"key": "address", "type": "str"},
+        "filter": {"key": "filter", "type": "ConnectionMonitorEndpointFilter"},
     }
 
     def __init__(
@@ -5202,8 +5044,8 @@ class ConnectionMonitorEndpointFilter(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'items': {'key': 'items', 'type': '[ConnectionMonitorEndpointFilterItem]'},
+        "type": {"key": "type", "type": "str"},
+        "items": {"key": "items", "type": "[ConnectionMonitorEndpointFilterItem]"},
     }
 
     def __init__(
@@ -5230,8 +5072,8 @@ class ConnectionMonitorEndpointFilterItem(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'address': {'key': 'address', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "address": {"key": "address", "type": "str"},
     }
 
     def __init__(
@@ -5266,12 +5108,12 @@ class ConnectionMonitorHttpConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'port': {'key': 'port', 'type': 'int'},
-        'method': {'key': 'method', 'type': 'str'},
-        'path': {'key': 'path', 'type': 'str'},
-        'request_headers': {'key': 'requestHeaders', 'type': '[HTTPHeader]'},
-        'valid_status_code_ranges': {'key': 'validStatusCodeRanges', 'type': '[str]'},
-        'prefer_https': {'key': 'preferHTTPS', 'type': 'bool'},
+        "port": {"key": "port", "type": "int"},
+        "method": {"key": "method", "type": "str"},
+        "path": {"key": "path", "type": "str"},
+        "request_headers": {"key": "requestHeaders", "type": "[HTTPHeader]"},
+        "valid_status_code_ranges": {"key": "validStatusCodeRanges", "type": "[str]"},
+        "prefer_https": {"key": "preferHTTPS", "type": "bool"},
     }
 
     def __init__(
@@ -5303,15 +5145,10 @@ class ConnectionMonitorIcmpConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'disable_trace_route': {'key': 'disableTraceRoute', 'type': 'bool'},
+        "disable_trace_route": {"key": "disableTraceRoute", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        disable_trace_route: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, disable_trace_route: Optional[bool] = None, **kwargs):
         super(ConnectionMonitorIcmpConfiguration, self).__init__(**kwargs)
         self.disable_trace_route = disable_trace_route
 
@@ -5324,15 +5161,10 @@ class ConnectionMonitorListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ConnectionMonitorResult]'},
+        "value": {"key": "value", "type": "[ConnectionMonitorResult]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["ConnectionMonitorResult"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["ConnectionMonitorResult"]] = None, **kwargs):
         super(ConnectionMonitorListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -5350,8 +5182,8 @@ class ConnectionMonitorOutput(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'workspace_settings': {'key': 'workspaceSettings', 'type': 'ConnectionMonitorWorkspaceSettings'},
+        "type": {"key": "type", "type": "str"},
+        "workspace_settings": {"key": "workspaceSettings", "type": "ConnectionMonitorWorkspaceSettings"},
     }
 
     def __init__(
@@ -5391,15 +5223,15 @@ class ConnectionMonitorParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'source': {'key': 'source', 'type': 'ConnectionMonitorSource'},
-        'destination': {'key': 'destination', 'type': 'ConnectionMonitorDestination'},
-        'auto_start': {'key': 'autoStart', 'type': 'bool'},
-        'monitoring_interval_in_seconds': {'key': 'monitoringIntervalInSeconds', 'type': 'int'},
-        'endpoints': {'key': 'endpoints', 'type': '[ConnectionMonitorEndpoint]'},
-        'test_configurations': {'key': 'testConfigurations', 'type': '[ConnectionMonitorTestConfiguration]'},
-        'test_groups': {'key': 'testGroups', 'type': '[ConnectionMonitorTestGroup]'},
-        'outputs': {'key': 'outputs', 'type': '[ConnectionMonitorOutput]'},
-        'notes': {'key': 'notes', 'type': 'str'},
+        "source": {"key": "source", "type": "ConnectionMonitorSource"},
+        "destination": {"key": "destination", "type": "ConnectionMonitorDestination"},
+        "auto_start": {"key": "autoStart", "type": "bool"},
+        "monitoring_interval_in_seconds": {"key": "monitoringIntervalInSeconds", "type": "int"},
+        "endpoints": {"key": "endpoints", "type": "[ConnectionMonitorEndpoint]"},
+        "test_configurations": {"key": "testConfigurations", "type": "[ConnectionMonitorTestConfiguration]"},
+        "test_groups": {"key": "testGroups", "type": "[ConnectionMonitorTestGroup]"},
+        "outputs": {"key": "outputs", "type": "[ConnectionMonitorOutput]"},
+        "notes": {"key": "notes", "type": "str"},
     }
 
     def __init__(
@@ -5440,8 +5272,8 @@ class ConnectionMonitorQueryResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'source_status': {'key': 'sourceStatus', 'type': 'str'},
-        'states': {'key': 'states', 'type': '[ConnectionStateSnapshot]'},
+        "source_status": {"key": "sourceStatus", "type": "str"},
+        "states": {"key": "states", "type": "[ConnectionStateSnapshot]"},
     }
 
     def __init__(
@@ -5506,36 +5338,36 @@ class ConnectionMonitorResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'id': {'readonly': True},
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'start_time': {'readonly': True},
-        'monitoring_status': {'readonly': True},
-        'connection_monitor_type': {'readonly': True},
+        "name": {"readonly": True},
+        "id": {"readonly": True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "start_time": {"readonly": True},
+        "monitoring_status": {"readonly": True},
+        "connection_monitor_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'source': {'key': 'properties.source', 'type': 'ConnectionMonitorSource'},
-        'destination': {'key': 'properties.destination', 'type': 'ConnectionMonitorDestination'},
-        'auto_start': {'key': 'properties.autoStart', 'type': 'bool'},
-        'monitoring_interval_in_seconds': {'key': 'properties.monitoringIntervalInSeconds', 'type': 'int'},
-        'endpoints': {'key': 'properties.endpoints', 'type': '[ConnectionMonitorEndpoint]'},
-        'test_configurations': {'key': 'properties.testConfigurations', 'type': '[ConnectionMonitorTestConfiguration]'},
-        'test_groups': {'key': 'properties.testGroups', 'type': '[ConnectionMonitorTestGroup]'},
-        'outputs': {'key': 'properties.outputs', 'type': '[ConnectionMonitorOutput]'},
-        'notes': {'key': 'properties.notes', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
-        'monitoring_status': {'key': 'properties.monitoringStatus', 'type': 'str'},
-        'connection_monitor_type': {'key': 'properties.connectionMonitorType', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "source": {"key": "properties.source", "type": "ConnectionMonitorSource"},
+        "destination": {"key": "properties.destination", "type": "ConnectionMonitorDestination"},
+        "auto_start": {"key": "properties.autoStart", "type": "bool"},
+        "monitoring_interval_in_seconds": {"key": "properties.monitoringIntervalInSeconds", "type": "int"},
+        "endpoints": {"key": "properties.endpoints", "type": "[ConnectionMonitorEndpoint]"},
+        "test_configurations": {"key": "properties.testConfigurations", "type": "[ConnectionMonitorTestConfiguration]"},
+        "test_groups": {"key": "properties.testGroups", "type": "[ConnectionMonitorTestGroup]"},
+        "outputs": {"key": "properties.outputs", "type": "[ConnectionMonitorOutput]"},
+        "notes": {"key": "properties.notes", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "start_time": {"key": "properties.startTime", "type": "iso-8601"},
+        "monitoring_status": {"key": "properties.monitoringStatus", "type": "str"},
+        "connection_monitor_type": {"key": "properties.connectionMonitorType", "type": "str"},
     }
 
     def __init__(
@@ -5614,26 +5446,26 @@ class ConnectionMonitorResultProperties(ConnectionMonitorParameters):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'start_time': {'readonly': True},
-        'monitoring_status': {'readonly': True},
-        'connection_monitor_type': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "start_time": {"readonly": True},
+        "monitoring_status": {"readonly": True},
+        "connection_monitor_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'source': {'key': 'source', 'type': 'ConnectionMonitorSource'},
-        'destination': {'key': 'destination', 'type': 'ConnectionMonitorDestination'},
-        'auto_start': {'key': 'autoStart', 'type': 'bool'},
-        'monitoring_interval_in_seconds': {'key': 'monitoringIntervalInSeconds', 'type': 'int'},
-        'endpoints': {'key': 'endpoints', 'type': '[ConnectionMonitorEndpoint]'},
-        'test_configurations': {'key': 'testConfigurations', 'type': '[ConnectionMonitorTestConfiguration]'},
-        'test_groups': {'key': 'testGroups', 'type': '[ConnectionMonitorTestGroup]'},
-        'outputs': {'key': 'outputs', 'type': '[ConnectionMonitorOutput]'},
-        'notes': {'key': 'notes', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'monitoring_status': {'key': 'monitoringStatus', 'type': 'str'},
-        'connection_monitor_type': {'key': 'connectionMonitorType', 'type': 'str'},
+        "source": {"key": "source", "type": "ConnectionMonitorSource"},
+        "destination": {"key": "destination", "type": "ConnectionMonitorDestination"},
+        "auto_start": {"key": "autoStart", "type": "bool"},
+        "monitoring_interval_in_seconds": {"key": "monitoringIntervalInSeconds", "type": "int"},
+        "endpoints": {"key": "endpoints", "type": "[ConnectionMonitorEndpoint]"},
+        "test_configurations": {"key": "testConfigurations", "type": "[ConnectionMonitorTestConfiguration]"},
+        "test_groups": {"key": "testGroups", "type": "[ConnectionMonitorTestGroup]"},
+        "outputs": {"key": "outputs", "type": "[ConnectionMonitorOutput]"},
+        "notes": {"key": "notes", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "monitoring_status": {"key": "monitoringStatus", "type": "str"},
+        "connection_monitor_type": {"key": "connectionMonitorType", "type": "str"},
     }
 
     def __init__(
@@ -5650,7 +5482,18 @@ class ConnectionMonitorResultProperties(ConnectionMonitorParameters):
         notes: Optional[str] = None,
         **kwargs
     ):
-        super(ConnectionMonitorResultProperties, self).__init__(source=source, destination=destination, auto_start=auto_start, monitoring_interval_in_seconds=monitoring_interval_in_seconds, endpoints=endpoints, test_configurations=test_configurations, test_groups=test_groups, outputs=outputs, notes=notes, **kwargs)
+        super(ConnectionMonitorResultProperties, self).__init__(
+            source=source,
+            destination=destination,
+            auto_start=auto_start,
+            monitoring_interval_in_seconds=monitoring_interval_in_seconds,
+            endpoints=endpoints,
+            test_configurations=test_configurations,
+            test_groups=test_groups,
+            outputs=outputs,
+            notes=notes,
+            **kwargs
+        )
         self.provisioning_state = None
         self.start_time = None
         self.monitoring_status = None
@@ -5669,21 +5512,15 @@ class ConnectionMonitorSource(msrest.serialization.Model):
     """
 
     _validation = {
-        'resource_id': {'required': True},
+        "resource_id": {"required": True},
     }
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'port': {'key': 'port', 'type': 'int'},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "port": {"key": "port", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        resource_id: str,
-        port: Optional[int] = None,
-        **kwargs
-    ):
+    def __init__(self, *, resource_id: str, port: Optional[int] = None, **kwargs):
         super(ConnectionMonitorSource, self).__init__(**kwargs)
         self.resource_id = resource_id
         self.port = port
@@ -5701,16 +5538,12 @@ class ConnectionMonitorSuccessThreshold(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'checks_failed_percent': {'key': 'checksFailedPercent', 'type': 'int'},
-        'round_trip_time_ms': {'key': 'roundTripTimeMs', 'type': 'float'},
+        "checks_failed_percent": {"key": "checksFailedPercent", "type": "int"},
+        "round_trip_time_ms": {"key": "roundTripTimeMs", "type": "float"},
     }
 
     def __init__(
-        self,
-        *,
-        checks_failed_percent: Optional[int] = None,
-        round_trip_time_ms: Optional[float] = None,
-        **kwargs
+        self, *, checks_failed_percent: Optional[int] = None, round_trip_time_ms: Optional[float] = None, **kwargs
     ):
         super(ConnectionMonitorSuccessThreshold, self).__init__(**kwargs)
         self.checks_failed_percent = checks_failed_percent
@@ -5728,17 +5561,11 @@ class ConnectionMonitorTcpConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'port': {'key': 'port', 'type': 'int'},
-        'disable_trace_route': {'key': 'disableTraceRoute', 'type': 'bool'},
+        "port": {"key": "port", "type": "int"},
+        "disable_trace_route": {"key": "disableTraceRoute", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        port: Optional[int] = None,
-        disable_trace_route: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, port: Optional[int] = None, disable_trace_route: Optional[bool] = None, **kwargs):
         super(ConnectionMonitorTcpConfiguration, self).__init__(**kwargs)
         self.port = port
         self.disable_trace_route = disable_trace_route
@@ -5776,19 +5603,19 @@ class ConnectionMonitorTestConfiguration(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'protocol': {'required': True},
+        "name": {"required": True},
+        "protocol": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'test_frequency_sec': {'key': 'testFrequencySec', 'type': 'int'},
-        'protocol': {'key': 'protocol', 'type': 'str'},
-        'preferred_ip_version': {'key': 'preferredIPVersion', 'type': 'str'},
-        'http_configuration': {'key': 'httpConfiguration', 'type': 'ConnectionMonitorHttpConfiguration'},
-        'tcp_configuration': {'key': 'tcpConfiguration', 'type': 'ConnectionMonitorTcpConfiguration'},
-        'icmp_configuration': {'key': 'icmpConfiguration', 'type': 'ConnectionMonitorIcmpConfiguration'},
-        'success_threshold': {'key': 'successThreshold', 'type': 'ConnectionMonitorSuccessThreshold'},
+        "name": {"key": "name", "type": "str"},
+        "test_frequency_sec": {"key": "testFrequencySec", "type": "int"},
+        "protocol": {"key": "protocol", "type": "str"},
+        "preferred_ip_version": {"key": "preferredIPVersion", "type": "str"},
+        "http_configuration": {"key": "httpConfiguration", "type": "ConnectionMonitorHttpConfiguration"},
+        "tcp_configuration": {"key": "tcpConfiguration", "type": "ConnectionMonitorTcpConfiguration"},
+        "icmp_configuration": {"key": "icmpConfiguration", "type": "ConnectionMonitorIcmpConfiguration"},
+        "success_threshold": {"key": "successThreshold", "type": "ConnectionMonitorSuccessThreshold"},
     }
 
     def __init__(
@@ -5833,18 +5660,18 @@ class ConnectionMonitorTestGroup(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'test_configurations': {'required': True},
-        'sources': {'required': True},
-        'destinations': {'required': True},
+        "name": {"required": True},
+        "test_configurations": {"required": True},
+        "sources": {"required": True},
+        "destinations": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'disable': {'key': 'disable', 'type': 'bool'},
-        'test_configurations': {'key': 'testConfigurations', 'type': '[str]'},
-        'sources': {'key': 'sources', 'type': '[str]'},
-        'destinations': {'key': 'destinations', 'type': '[str]'},
+        "name": {"key": "name", "type": "str"},
+        "disable": {"key": "disable", "type": "bool"},
+        "test_configurations": {"key": "testConfigurations", "type": "[str]"},
+        "sources": {"key": "sources", "type": "[str]"},
+        "destinations": {"key": "destinations", "type": "[str]"},
     }
 
     def __init__(
@@ -5873,15 +5700,10 @@ class ConnectionMonitorWorkspaceSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'workspace_resource_id': {'key': 'workspaceResourceId', 'type': 'str'},
+        "workspace_resource_id": {"key": "workspaceResourceId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        workspace_resource_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, workspace_resource_id: Optional[str] = None, **kwargs):
         super(ConnectionMonitorWorkspaceSettings, self).__init__(**kwargs)
         self.workspace_resource_id = workspace_resource_id
 
@@ -5897,19 +5719,14 @@ class ConnectionResetSharedKey(msrest.serialization.Model):
     """
 
     _validation = {
-        'key_length': {'required': True, 'maximum': 128, 'minimum': 1},
+        "key_length": {"required": True, "maximum": 128, "minimum": 1},
     }
 
     _attribute_map = {
-        'key_length': {'key': 'keyLength', 'type': 'int'},
+        "key_length": {"key": "keyLength", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        key_length: int,
-        **kwargs
-    ):
+    def __init__(self, *, key_length: int, **kwargs):
         super(ConnectionResetSharedKey, self).__init__(**kwargs)
         self.key_length = key_length
 
@@ -5926,21 +5743,15 @@ class ConnectionSharedKey(SubResource):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: str,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: str, id: Optional[str] = None, **kwargs):
         super(ConnectionSharedKey, self).__init__(id=id, **kwargs)
         self.value = value
 
@@ -5975,20 +5786,20 @@ class ConnectionStateSnapshot(msrest.serialization.Model):
     """
 
     _validation = {
-        'hops': {'readonly': True},
+        "hops": {"readonly": True},
     }
 
     _attribute_map = {
-        'connection_state': {'key': 'connectionState', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'evaluation_state': {'key': 'evaluationState', 'type': 'str'},
-        'avg_latency_in_ms': {'key': 'avgLatencyInMs', 'type': 'int'},
-        'min_latency_in_ms': {'key': 'minLatencyInMs', 'type': 'int'},
-        'max_latency_in_ms': {'key': 'maxLatencyInMs', 'type': 'int'},
-        'probes_sent': {'key': 'probesSent', 'type': 'int'},
-        'probes_failed': {'key': 'probesFailed', 'type': 'int'},
-        'hops': {'key': 'hops', 'type': '[ConnectivityHop]'},
+        "connection_state": {"key": "connectionState", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "evaluation_state": {"key": "evaluationState", "type": "str"},
+        "avg_latency_in_ms": {"key": "avgLatencyInMs", "type": "int"},
+        "min_latency_in_ms": {"key": "minLatencyInMs", "type": "int"},
+        "max_latency_in_ms": {"key": "maxLatencyInMs", "type": "int"},
+        "probes_sent": {"key": "probesSent", "type": "int"},
+        "probes_failed": {"key": "probesFailed", "type": "int"},
+        "hops": {"key": "hops", "type": "[ConnectivityHop]"},
     }
 
     def __init__(
@@ -6030,18 +5841,13 @@ class ConnectivityDestination(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'address': {'key': 'address', 'type': 'str'},
-        'port': {'key': 'port', 'type': 'int'},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "address": {"key": "address", "type": "str"},
+        "port": {"key": "port", "type": "int"},
     }
 
     def __init__(
-        self,
-        *,
-        resource_id: Optional[str] = None,
-        address: Optional[str] = None,
-        port: Optional[int] = None,
-        **kwargs
+        self, *, resource_id: Optional[str] = None, address: Optional[str] = None, port: Optional[int] = None, **kwargs
     ):
         super(ConnectivityDestination, self).__init__(**kwargs)
         self.resource_id = resource_id
@@ -6069,27 +5875,24 @@ class ConnectivityHop(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'id': {'readonly': True},
-        'address': {'readonly': True},
-        'resource_id': {'readonly': True},
-        'next_hop_ids': {'readonly': True},
-        'issues': {'readonly': True},
+        "type": {"readonly": True},
+        "id": {"readonly": True},
+        "address": {"readonly": True},
+        "resource_id": {"readonly": True},
+        "next_hop_ids": {"readonly": True},
+        "issues": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'address': {'key': 'address', 'type': 'str'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'next_hop_ids': {'key': 'nextHopIds', 'type': '[str]'},
-        'issues': {'key': 'issues', 'type': '[ConnectivityIssue]'},
+        "type": {"key": "type", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "address": {"key": "address", "type": "str"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "next_hop_ids": {"key": "nextHopIds", "type": "[str]"},
+        "issues": {"key": "issues", "type": "[ConnectivityIssue]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ConnectivityHop, self).__init__(**kwargs)
         self.type = None
         self.id = None
@@ -6122,29 +5925,26 @@ class ConnectivityInformation(msrest.serialization.Model):
     """
 
     _validation = {
-        'hops': {'readonly': True},
-        'connection_status': {'readonly': True},
-        'avg_latency_in_ms': {'readonly': True},
-        'min_latency_in_ms': {'readonly': True},
-        'max_latency_in_ms': {'readonly': True},
-        'probes_sent': {'readonly': True},
-        'probes_failed': {'readonly': True},
+        "hops": {"readonly": True},
+        "connection_status": {"readonly": True},
+        "avg_latency_in_ms": {"readonly": True},
+        "min_latency_in_ms": {"readonly": True},
+        "max_latency_in_ms": {"readonly": True},
+        "probes_sent": {"readonly": True},
+        "probes_failed": {"readonly": True},
     }
 
     _attribute_map = {
-        'hops': {'key': 'hops', 'type': '[ConnectivityHop]'},
-        'connection_status': {'key': 'connectionStatus', 'type': 'str'},
-        'avg_latency_in_ms': {'key': 'avgLatencyInMs', 'type': 'int'},
-        'min_latency_in_ms': {'key': 'minLatencyInMs', 'type': 'int'},
-        'max_latency_in_ms': {'key': 'maxLatencyInMs', 'type': 'int'},
-        'probes_sent': {'key': 'probesSent', 'type': 'int'},
-        'probes_failed': {'key': 'probesFailed', 'type': 'int'},
+        "hops": {"key": "hops", "type": "[ConnectivityHop]"},
+        "connection_status": {"key": "connectionStatus", "type": "str"},
+        "avg_latency_in_ms": {"key": "avgLatencyInMs", "type": "int"},
+        "min_latency_in_ms": {"key": "minLatencyInMs", "type": "int"},
+        "max_latency_in_ms": {"key": "maxLatencyInMs", "type": "int"},
+        "probes_sent": {"key": "probesSent", "type": "int"},
+        "probes_failed": {"key": "probesFailed", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ConnectivityInformation, self).__init__(**kwargs)
         self.hops = None
         self.connection_status = None
@@ -6173,23 +5973,20 @@ class ConnectivityIssue(msrest.serialization.Model):
     """
 
     _validation = {
-        'origin': {'readonly': True},
-        'severity': {'readonly': True},
-        'type': {'readonly': True},
-        'context': {'readonly': True},
+        "origin": {"readonly": True},
+        "severity": {"readonly": True},
+        "type": {"readonly": True},
+        "context": {"readonly": True},
     }
 
     _attribute_map = {
-        'origin': {'key': 'origin', 'type': 'str'},
-        'severity': {'key': 'severity', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'context': {'key': 'context', 'type': '[{str}]'},
+        "origin": {"key": "origin", "type": "str"},
+        "severity": {"key": "severity", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "context": {"key": "context", "type": "[{str}]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ConnectivityIssue, self).__init__(**kwargs)
         self.origin = None
         self.severity = None
@@ -6216,16 +6013,16 @@ class ConnectivityParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'source': {'required': True},
-        'destination': {'required': True},
+        "source": {"required": True},
+        "destination": {"required": True},
     }
 
     _attribute_map = {
-        'source': {'key': 'source', 'type': 'ConnectivitySource'},
-        'destination': {'key': 'destination', 'type': 'ConnectivityDestination'},
-        'protocol': {'key': 'protocol', 'type': 'str'},
-        'protocol_configuration': {'key': 'protocolConfiguration', 'type': 'ProtocolConfiguration'},
-        'preferred_ip_version': {'key': 'preferredIPVersion', 'type': 'str'},
+        "source": {"key": "source", "type": "ConnectivitySource"},
+        "destination": {"key": "destination", "type": "ConnectivityDestination"},
+        "protocol": {"key": "protocol", "type": "str"},
+        "protocol_configuration": {"key": "protocolConfiguration", "type": "ProtocolConfiguration"},
+        "preferred_ip_version": {"key": "preferredIPVersion", "type": "str"},
     }
 
     def __init__(
@@ -6259,21 +6056,15 @@ class ConnectivitySource(msrest.serialization.Model):
     """
 
     _validation = {
-        'resource_id': {'required': True},
+        "resource_id": {"required": True},
     }
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'port': {'key': 'port', 'type': 'int'},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "port": {"key": "port", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        resource_id: str,
-        port: Optional[int] = None,
-        **kwargs
-    ):
+    def __init__(self, *, resource_id: str, port: Optional[int] = None, **kwargs):
         super(ConnectivitySource, self).__init__(**kwargs)
         self.resource_id = resource_id
         self.port = port
@@ -6287,15 +6078,10 @@ class Container(SubResource):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs):
         super(Container, self).__init__(id=id, **kwargs)
 
 
@@ -6328,31 +6114,32 @@ class ContainerNetworkInterface(SubResource):
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'container_network_interface_configuration': {'readonly': True},
-        'ip_configurations': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "container_network_interface_configuration": {"readonly": True},
+        "ip_configurations": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'container_network_interface_configuration': {'key': 'properties.containerNetworkInterfaceConfiguration', 'type': 'ContainerNetworkInterfaceConfiguration'},
-        'container': {'key': 'properties.container', 'type': 'Container'},
-        'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[ContainerNetworkInterfaceIpConfiguration]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "container_network_interface_configuration": {
+            "key": "properties.containerNetworkInterfaceConfiguration",
+            "type": "ContainerNetworkInterfaceConfiguration",
+        },
+        "container": {"key": "properties.container", "type": "Container"},
+        "ip_configurations": {
+            "key": "properties.ipConfigurations",
+            "type": "[ContainerNetworkInterfaceIpConfiguration]",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        name: Optional[str] = None,
-        container: Optional["Container"] = None,
-        **kwargs
+        self, *, id: Optional[str] = None, name: Optional[str] = None, container: Optional["Container"] = None, **kwargs
     ):
         super(ContainerNetworkInterface, self).__init__(id=id, **kwargs)
         self.name = name
@@ -6389,19 +6176,19 @@ class ContainerNetworkInterfaceConfiguration(SubResource):
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[IPConfigurationProfile]'},
-        'container_network_interfaces': {'key': 'properties.containerNetworkInterfaces', 'type': '[SubResource]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "ip_configurations": {"key": "properties.ipConfigurations", "type": "[IPConfigurationProfile]"},
+        "container_network_interfaces": {"key": "properties.containerNetworkInterfaces", "type": "[SubResource]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -6439,24 +6226,19 @@ class ContainerNetworkInterfaceIpConfiguration(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, **kwargs):
         super(ContainerNetworkInterfaceIpConfiguration, self).__init__(**kwargs)
         self.name = name
         self.type = None
@@ -6474,17 +6256,11 @@ class CustomDnsConfigPropertiesFormat(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'fqdn': {'key': 'fqdn', 'type': 'str'},
-        'ip_addresses': {'key': 'ipAddresses', 'type': '[str]'},
+        "fqdn": {"key": "fqdn", "type": "str"},
+        "ip_addresses": {"key": "ipAddresses", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        fqdn: Optional[str] = None,
-        ip_addresses: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, fqdn: Optional[str] = None, ip_addresses: Optional[List[str]] = None, **kwargs):
         super(CustomDnsConfigPropertiesFormat, self).__init__(**kwargs)
         self.fqdn = fqdn
         self.ip_addresses = ip_addresses
@@ -6523,25 +6299,28 @@ class DdosCustomPolicy(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'resource_guid': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'public_ip_addresses': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "resource_guid": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "public_ip_addresses": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'public_ip_addresses': {'key': 'properties.publicIPAddresses', 'type': '[SubResource]'},
-        'protocol_custom_settings': {'key': 'properties.protocolCustomSettings', 'type': '[ProtocolCustomSettingsFormat]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "public_ip_addresses": {"key": "properties.publicIPAddresses", "type": "[SubResource]"},
+        "protocol_custom_settings": {
+            "key": "properties.protocolCustomSettings",
+            "type": "[ProtocolCustomSettingsFormat]",
+        },
     }
 
     def __init__(
@@ -6591,34 +6370,28 @@ class DdosProtectionPlan(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'resource_guid': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'virtual_networks': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "resource_guid": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "virtual_networks": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'virtual_networks': {'key': 'properties.virtualNetworks', 'type': '[SubResource]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "virtual_networks": {"key": "properties.virtualNetworks", "type": "[SubResource]"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs):
         super(DdosProtectionPlan, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -6643,20 +6416,15 @@ class DdosProtectionPlanListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[DdosProtectionPlan]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[DdosProtectionPlan]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["DdosProtectionPlan"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["DdosProtectionPlan"]] = None, **kwargs):
         super(DdosProtectionPlanListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -6677,9 +6445,9 @@ class DdosSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'ddos_custom_policy': {'key': 'ddosCustomPolicy', 'type': 'SubResource'},
-        'protection_coverage': {'key': 'protectionCoverage', 'type': 'str'},
-        'protected_ip': {'key': 'protectedIP', 'type': 'bool'},
+        "ddos_custom_policy": {"key": "ddosCustomPolicy", "type": "SubResource"},
+        "protection_coverage": {"key": "protectionCoverage", "type": "str"},
+        "protected_ip": {"key": "protectedIP", "type": "bool"},
     }
 
     def __init__(
@@ -6719,27 +6487,22 @@ class Delegation(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'actions': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "actions": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'service_name': {'key': 'properties.serviceName', 'type': 'str'},
-        'actions': {'key': 'properties.actions', 'type': '[str]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "service_name": {"key": "properties.serviceName", "type": "str"},
+        "actions": {"key": "properties.actions", "type": "[str]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        name: Optional[str] = None,
-        service_name: Optional[str] = None,
-        **kwargs
+        self, *, id: Optional[str] = None, name: Optional[str] = None, service_name: Optional[str] = None, **kwargs
     ):
         super(Delegation, self).__init__(id=id, **kwargs)
         self.name = name
@@ -6761,9 +6524,9 @@ class DeviceProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'device_vendor': {'key': 'deviceVendor', 'type': 'str'},
-        'device_model': {'key': 'deviceModel', 'type': 'str'},
-        'link_speed_in_mbps': {'key': 'linkSpeedInMbps', 'type': 'int'},
+        "device_vendor": {"key": "deviceVendor", "type": "str"},
+        "device_model": {"key": "deviceModel", "type": "str"},
+        "link_speed_in_mbps": {"key": "linkSpeedInMbps", "type": "int"},
     }
 
     def __init__(
@@ -6788,15 +6551,10 @@ class DhcpOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'dns_servers': {'key': 'dnsServers', 'type': '[str]'},
+        "dns_servers": {"key": "dnsServers", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        dns_servers: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, dns_servers: Optional[List[str]] = None, **kwargs):
         super(DhcpOptions, self).__init__(**kwargs)
         self.dns_servers = dns_servers
 
@@ -6813,9 +6571,9 @@ class Dimension(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'internal_name': {'key': 'internalName', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "internal_name": {"key": "internalName", "type": "str"},
     }
 
     def __init__(
@@ -6840,15 +6598,10 @@ class DnsNameAvailabilityResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'available': {'key': 'available', 'type': 'bool'},
+        "available": {"key": "available", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        available: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, available: Optional[bool] = None, **kwargs):
         super(DnsNameAvailabilityResult, self).__init__(**kwargs)
         self.available = available
 
@@ -6869,10 +6622,10 @@ class EffectiveNetworkSecurityGroup(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'network_security_group': {'key': 'networkSecurityGroup', 'type': 'SubResource'},
-        'association': {'key': 'association', 'type': 'EffectiveNetworkSecurityGroupAssociation'},
-        'effective_security_rules': {'key': 'effectiveSecurityRules', 'type': '[EffectiveNetworkSecurityRule]'},
-        'tag_map': {'key': 'tagMap', 'type': 'str'},
+        "network_security_group": {"key": "networkSecurityGroup", "type": "SubResource"},
+        "association": {"key": "association", "type": "EffectiveNetworkSecurityGroupAssociation"},
+        "effective_security_rules": {"key": "effectiveSecurityRules", "type": "[EffectiveNetworkSecurityRule]"},
+        "tag_map": {"key": "tagMap", "type": "str"},
     }
 
     def __init__(
@@ -6901,16 +6654,12 @@ class EffectiveNetworkSecurityGroupAssociation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'subnet': {'key': 'subnet', 'type': 'SubResource'},
-        'network_interface': {'key': 'networkInterface', 'type': 'SubResource'},
+        "subnet": {"key": "subnet", "type": "SubResource"},
+        "network_interface": {"key": "networkInterface", "type": "SubResource"},
     }
 
     def __init__(
-        self,
-        *,
-        subnet: Optional["SubResource"] = None,
-        network_interface: Optional["SubResource"] = None,
-        **kwargs
+        self, *, subnet: Optional["SubResource"] = None, network_interface: Optional["SubResource"] = None, **kwargs
     ):
         super(EffectiveNetworkSecurityGroupAssociation, self).__init__(**kwargs)
         self.subnet = subnet
@@ -6929,20 +6678,15 @@ class EffectiveNetworkSecurityGroupListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[EffectiveNetworkSecurityGroup]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[EffectiveNetworkSecurityGroup]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["EffectiveNetworkSecurityGroup"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["EffectiveNetworkSecurityGroup"]] = None, **kwargs):
         super(EffectiveNetworkSecurityGroupListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -6992,21 +6736,21 @@ class EffectiveNetworkSecurityRule(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'protocol': {'key': 'protocol', 'type': 'str'},
-        'source_port_range': {'key': 'sourcePortRange', 'type': 'str'},
-        'destination_port_range': {'key': 'destinationPortRange', 'type': 'str'},
-        'source_port_ranges': {'key': 'sourcePortRanges', 'type': '[str]'},
-        'destination_port_ranges': {'key': 'destinationPortRanges', 'type': '[str]'},
-        'source_address_prefix': {'key': 'sourceAddressPrefix', 'type': 'str'},
-        'destination_address_prefix': {'key': 'destinationAddressPrefix', 'type': 'str'},
-        'source_address_prefixes': {'key': 'sourceAddressPrefixes', 'type': '[str]'},
-        'destination_address_prefixes': {'key': 'destinationAddressPrefixes', 'type': '[str]'},
-        'expanded_source_address_prefix': {'key': 'expandedSourceAddressPrefix', 'type': '[str]'},
-        'expanded_destination_address_prefix': {'key': 'expandedDestinationAddressPrefix', 'type': '[str]'},
-        'access': {'key': 'access', 'type': 'str'},
-        'priority': {'key': 'priority', 'type': 'int'},
-        'direction': {'key': 'direction', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "protocol": {"key": "protocol", "type": "str"},
+        "source_port_range": {"key": "sourcePortRange", "type": "str"},
+        "destination_port_range": {"key": "destinationPortRange", "type": "str"},
+        "source_port_ranges": {"key": "sourcePortRanges", "type": "[str]"},
+        "destination_port_ranges": {"key": "destinationPortRanges", "type": "[str]"},
+        "source_address_prefix": {"key": "sourceAddressPrefix", "type": "str"},
+        "destination_address_prefix": {"key": "destinationAddressPrefix", "type": "str"},
+        "source_address_prefixes": {"key": "sourceAddressPrefixes", "type": "[str]"},
+        "destination_address_prefixes": {"key": "destinationAddressPrefixes", "type": "[str]"},
+        "expanded_source_address_prefix": {"key": "expandedSourceAddressPrefix", "type": "[str]"},
+        "expanded_destination_address_prefix": {"key": "expandedDestinationAddressPrefix", "type": "[str]"},
+        "access": {"key": "access", "type": "str"},
+        "priority": {"key": "priority", "type": "int"},
+        "direction": {"key": "direction", "type": "str"},
     }
 
     def __init__(
@@ -7070,13 +6814,13 @@ class EffectiveRoute(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'disable_bgp_route_propagation': {'key': 'disableBgpRoutePropagation', 'type': 'bool'},
-        'source': {'key': 'source', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'address_prefix': {'key': 'addressPrefix', 'type': '[str]'},
-        'next_hop_ip_address': {'key': 'nextHopIpAddress', 'type': '[str]'},
-        'next_hop_type': {'key': 'nextHopType', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "disable_bgp_route_propagation": {"key": "disableBgpRoutePropagation", "type": "bool"},
+        "source": {"key": "source", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "address_prefix": {"key": "addressPrefix", "type": "[str]"},
+        "next_hop_ip_address": {"key": "nextHopIpAddress", "type": "[str]"},
+        "next_hop_type": {"key": "nextHopType", "type": "str"},
     }
 
     def __init__(
@@ -7113,20 +6857,15 @@ class EffectiveRouteListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[EffectiveRoute]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[EffectiveRoute]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["EffectiveRoute"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["EffectiveRoute"]] = None, **kwargs):
         super(EffectiveRouteListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -7146,22 +6885,17 @@ class EndpointServiceResult(SubResource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs):
         super(EndpointServiceResult, self).__init__(id=id, **kwargs)
         self.name = None
         self.type = None
@@ -7177,16 +6911,12 @@ class EndpointServicesListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[EndpointServiceResult]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[EndpointServiceResult]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["EndpointServiceResult"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["EndpointServiceResult"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         super(EndpointServicesListResult, self).__init__(**kwargs)
         self.value = value
@@ -7209,11 +6939,11 @@ class Error(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetails]'},
-        'inner_error': {'key': 'innerError', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetails]"},
+        "inner_error": {"key": "innerError", "type": "str"},
     }
 
     def __init__(
@@ -7246,18 +6976,13 @@ class ErrorDetails(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        target: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
+        self, *, code: Optional[str] = None, target: Optional[str] = None, message: Optional[str] = None, **kwargs
     ):
         super(ErrorDetails, self).__init__(**kwargs)
         self.code = code
@@ -7273,15 +6998,10 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetails'},
+        "error": {"key": "error", "type": "ErrorDetails"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorDetails"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["ErrorDetails"] = None, **kwargs):
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
 
@@ -7303,14 +7023,14 @@ class EvaluatedNetworkSecurityGroup(msrest.serialization.Model):
     """
 
     _validation = {
-        'rules_evaluation_result': {'readonly': True},
+        "rules_evaluation_result": {"readonly": True},
     }
 
     _attribute_map = {
-        'network_security_group_id': {'key': 'networkSecurityGroupId', 'type': 'str'},
-        'applied_to': {'key': 'appliedTo', 'type': 'str'},
-        'matched_rule': {'key': 'matchedRule', 'type': 'MatchedRule'},
-        'rules_evaluation_result': {'key': 'rulesEvaluationResult', 'type': '[NetworkSecurityRulesEvaluationResult]'},
+        "network_security_group_id": {"key": "networkSecurityGroupId", "type": "str"},
+        "applied_to": {"key": "appliedTo", "type": "str"},
+        "matched_rule": {"key": "matchedRule", "type": "MatchedRule"},
+        "rules_evaluation_result": {"key": "rulesEvaluationResult", "type": "[NetworkSecurityRulesEvaluationResult]"},
     }
 
     def __init__(
@@ -7386,35 +7106,38 @@ class ExpressRouteCircuit(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'stag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "stag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'ExpressRouteCircuitSku'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'allow_classic_operations': {'key': 'properties.allowClassicOperations', 'type': 'bool'},
-        'circuit_provisioning_state': {'key': 'properties.circuitProvisioningState', 'type': 'str'},
-        'service_provider_provisioning_state': {'key': 'properties.serviceProviderProvisioningState', 'type': 'str'},
-        'authorizations': {'key': 'properties.authorizations', 'type': '[ExpressRouteCircuitAuthorization]'},
-        'peerings': {'key': 'properties.peerings', 'type': '[ExpressRouteCircuitPeering]'},
-        'service_key': {'key': 'properties.serviceKey', 'type': 'str'},
-        'service_provider_notes': {'key': 'properties.serviceProviderNotes', 'type': 'str'},
-        'service_provider_properties': {'key': 'properties.serviceProviderProperties', 'type': 'ExpressRouteCircuitServiceProviderProperties'},
-        'express_route_port': {'key': 'properties.expressRoutePort', 'type': 'SubResource'},
-        'bandwidth_in_gbps': {'key': 'properties.bandwidthInGbps', 'type': 'float'},
-        'stag': {'key': 'properties.stag', 'type': 'int'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'gateway_manager_etag': {'key': 'properties.gatewayManagerEtag', 'type': 'str'},
-        'global_reach_enabled': {'key': 'properties.globalReachEnabled', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "ExpressRouteCircuitSku"},
+        "etag": {"key": "etag", "type": "str"},
+        "allow_classic_operations": {"key": "properties.allowClassicOperations", "type": "bool"},
+        "circuit_provisioning_state": {"key": "properties.circuitProvisioningState", "type": "str"},
+        "service_provider_provisioning_state": {"key": "properties.serviceProviderProvisioningState", "type": "str"},
+        "authorizations": {"key": "properties.authorizations", "type": "[ExpressRouteCircuitAuthorization]"},
+        "peerings": {"key": "properties.peerings", "type": "[ExpressRouteCircuitPeering]"},
+        "service_key": {"key": "properties.serviceKey", "type": "str"},
+        "service_provider_notes": {"key": "properties.serviceProviderNotes", "type": "str"},
+        "service_provider_properties": {
+            "key": "properties.serviceProviderProperties",
+            "type": "ExpressRouteCircuitServiceProviderProperties",
+        },
+        "express_route_port": {"key": "properties.expressRoutePort", "type": "SubResource"},
+        "bandwidth_in_gbps": {"key": "properties.bandwidthInGbps", "type": "float"},
+        "stag": {"key": "properties.stag", "type": "int"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "gateway_manager_etag": {"key": "properties.gatewayManagerEtag", "type": "str"},
+        "global_reach_enabled": {"key": "properties.globalReachEnabled", "type": "bool"},
     }
 
     def __init__(
@@ -7471,10 +7194,10 @@ class ExpressRouteCircuitArpTable(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'age': {'key': 'age', 'type': 'int'},
-        'interface': {'key': 'interface', 'type': 'str'},
-        'ip_address': {'key': 'ipAddress', 'type': 'str'},
-        'mac_address': {'key': 'macAddress', 'type': 'str'},
+        "age": {"key": "age", "type": "int"},
+        "interface": {"key": "interface", "type": "str"},
+        "ip_address": {"key": "ipAddress", "type": "str"},
+        "mac_address": {"key": "macAddress", "type": "str"},
     }
 
     def __init__(
@@ -7519,19 +7242,19 @@ class ExpressRouteCircuitAuthorization(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'authorization_key': {'key': 'properties.authorizationKey', 'type': 'str'},
-        'authorization_use_status': {'key': 'properties.authorizationUseStatus', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "authorization_key": {"key": "properties.authorizationKey", "type": "str"},
+        "authorization_use_status": {"key": "properties.authorizationUseStatus", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -7590,24 +7313,30 @@ class ExpressRouteCircuitConnection(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'circuit_connection_status': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "circuit_connection_status": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'express_route_circuit_peering': {'key': 'properties.expressRouteCircuitPeering', 'type': 'SubResource'},
-        'peer_express_route_circuit_peering': {'key': 'properties.peerExpressRouteCircuitPeering', 'type': 'SubResource'},
-        'address_prefix': {'key': 'properties.addressPrefix', 'type': 'str'},
-        'authorization_key': {'key': 'properties.authorizationKey', 'type': 'str'},
-        'ipv6_circuit_connection_config': {'key': 'properties.ipv6CircuitConnectionConfig', 'type': 'Ipv6CircuitConnectionConfig'},
-        'circuit_connection_status': {'key': 'properties.circuitConnectionStatus', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "express_route_circuit_peering": {"key": "properties.expressRouteCircuitPeering", "type": "SubResource"},
+        "peer_express_route_circuit_peering": {
+            "key": "properties.peerExpressRouteCircuitPeering",
+            "type": "SubResource",
+        },
+        "address_prefix": {"key": "properties.addressPrefix", "type": "str"},
+        "authorization_key": {"key": "properties.authorizationKey", "type": "str"},
+        "ipv6_circuit_connection_config": {
+            "key": "properties.ipv6CircuitConnectionConfig",
+            "type": "Ipv6CircuitConnectionConfig",
+        },
+        "circuit_connection_status": {"key": "properties.circuitConnectionStatus", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -7646,8 +7375,8 @@ class ExpressRouteCircuitConnectionListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExpressRouteCircuitConnection]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ExpressRouteCircuitConnection]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
@@ -7672,16 +7401,12 @@ class ExpressRouteCircuitListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExpressRouteCircuit]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ExpressRouteCircuit]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["ExpressRouteCircuit"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["ExpressRouteCircuit"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         super(ExpressRouteCircuitListResult, self).__init__(**kwargs)
         self.value = value
@@ -7752,39 +7477,42 @@ class ExpressRouteCircuitPeering(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'peer_asn': {'maximum': 4294967295, 'minimum': 1},
-        'provisioning_state': {'readonly': True},
-        'last_modified_by': {'readonly': True},
-        'peered_connections': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "peer_asn": {"maximum": 4294967295, "minimum": 1},
+        "provisioning_state": {"readonly": True},
+        "last_modified_by": {"readonly": True},
+        "peered_connections": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'peering_type': {'key': 'properties.peeringType', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'azure_asn': {'key': 'properties.azureASN', 'type': 'int'},
-        'peer_asn': {'key': 'properties.peerASN', 'type': 'long'},
-        'primary_peer_address_prefix': {'key': 'properties.primaryPeerAddressPrefix', 'type': 'str'},
-        'secondary_peer_address_prefix': {'key': 'properties.secondaryPeerAddressPrefix', 'type': 'str'},
-        'primary_azure_port': {'key': 'properties.primaryAzurePort', 'type': 'str'},
-        'secondary_azure_port': {'key': 'properties.secondaryAzurePort', 'type': 'str'},
-        'shared_key': {'key': 'properties.sharedKey', 'type': 'str'},
-        'vlan_id': {'key': 'properties.vlanId', 'type': 'int'},
-        'microsoft_peering_config': {'key': 'properties.microsoftPeeringConfig', 'type': 'ExpressRouteCircuitPeeringConfig'},
-        'stats': {'key': 'properties.stats', 'type': 'ExpressRouteCircuitStats'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'gateway_manager_etag': {'key': 'properties.gatewayManagerEtag', 'type': 'str'},
-        'last_modified_by': {'key': 'properties.lastModifiedBy', 'type': 'str'},
-        'route_filter': {'key': 'properties.routeFilter', 'type': 'SubResource'},
-        'ipv6_peering_config': {'key': 'properties.ipv6PeeringConfig', 'type': 'Ipv6ExpressRouteCircuitPeeringConfig'},
-        'express_route_connection': {'key': 'properties.expressRouteConnection', 'type': 'ExpressRouteConnectionId'},
-        'connections': {'key': 'properties.connections', 'type': '[ExpressRouteCircuitConnection]'},
-        'peered_connections': {'key': 'properties.peeredConnections', 'type': '[PeerExpressRouteCircuitConnection]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "peering_type": {"key": "properties.peeringType", "type": "str"},
+        "state": {"key": "properties.state", "type": "str"},
+        "azure_asn": {"key": "properties.azureASN", "type": "int"},
+        "peer_asn": {"key": "properties.peerASN", "type": "long"},
+        "primary_peer_address_prefix": {"key": "properties.primaryPeerAddressPrefix", "type": "str"},
+        "secondary_peer_address_prefix": {"key": "properties.secondaryPeerAddressPrefix", "type": "str"},
+        "primary_azure_port": {"key": "properties.primaryAzurePort", "type": "str"},
+        "secondary_azure_port": {"key": "properties.secondaryAzurePort", "type": "str"},
+        "shared_key": {"key": "properties.sharedKey", "type": "str"},
+        "vlan_id": {"key": "properties.vlanId", "type": "int"},
+        "microsoft_peering_config": {
+            "key": "properties.microsoftPeeringConfig",
+            "type": "ExpressRouteCircuitPeeringConfig",
+        },
+        "stats": {"key": "properties.stats", "type": "ExpressRouteCircuitStats"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "gateway_manager_etag": {"key": "properties.gatewayManagerEtag", "type": "str"},
+        "last_modified_by": {"key": "properties.lastModifiedBy", "type": "str"},
+        "route_filter": {"key": "properties.routeFilter", "type": "SubResource"},
+        "ipv6_peering_config": {"key": "properties.ipv6PeeringConfig", "type": "Ipv6ExpressRouteCircuitPeeringConfig"},
+        "express_route_connection": {"key": "properties.expressRouteConnection", "type": "ExpressRouteConnectionId"},
+        "connections": {"key": "properties.connections", "type": "[ExpressRouteCircuitConnection]"},
+        "peered_connections": {"key": "properties.peeredConnections", "type": "[PeerExpressRouteCircuitConnection]"},
     }
 
     def __init__(
@@ -7860,16 +7588,16 @@ class ExpressRouteCircuitPeeringConfig(msrest.serialization.Model):
     """
 
     _validation = {
-        'advertised_public_prefixes_state': {'readonly': True},
+        "advertised_public_prefixes_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'advertised_public_prefixes': {'key': 'advertisedPublicPrefixes', 'type': '[str]'},
-        'advertised_communities': {'key': 'advertisedCommunities', 'type': '[str]'},
-        'advertised_public_prefixes_state': {'key': 'advertisedPublicPrefixesState', 'type': 'str'},
-        'legacy_mode': {'key': 'legacyMode', 'type': 'int'},
-        'customer_asn': {'key': 'customerASN', 'type': 'int'},
-        'routing_registry_name': {'key': 'routingRegistryName', 'type': 'str'},
+        "advertised_public_prefixes": {"key": "advertisedPublicPrefixes", "type": "[str]"},
+        "advertised_communities": {"key": "advertisedCommunities", "type": "[str]"},
+        "advertised_public_prefixes_state": {"key": "advertisedPublicPrefixesState", "type": "str"},
+        "legacy_mode": {"key": "legacyMode", "type": "int"},
+        "customer_asn": {"key": "customerASN", "type": "int"},
+        "routing_registry_name": {"key": "routingRegistryName", "type": "str"},
     }
 
     def __init__(
@@ -7899,15 +7627,10 @@ class ExpressRouteCircuitPeeringId(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs):
         super(ExpressRouteCircuitPeeringId, self).__init__(**kwargs)
         self.id = id
 
@@ -7922,16 +7645,12 @@ class ExpressRouteCircuitPeeringListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExpressRouteCircuitPeering]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ExpressRouteCircuitPeering]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["ExpressRouteCircuitPeering"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["ExpressRouteCircuitPeering"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         super(ExpressRouteCircuitPeeringListResult, self).__init__(**kwargs)
         self.value = value
@@ -7946,15 +7665,10 @@ class ExpressRouteCircuitReference(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs):
         super(ExpressRouteCircuitReference, self).__init__(**kwargs)
         self.id = id
 
@@ -7976,11 +7690,11 @@ class ExpressRouteCircuitRoutesTable(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'network': {'key': 'network', 'type': 'str'},
-        'next_hop': {'key': 'nextHop', 'type': 'str'},
-        'loc_prf': {'key': 'locPrf', 'type': 'str'},
-        'weight': {'key': 'weight', 'type': 'int'},
-        'path': {'key': 'path', 'type': 'str'},
+        "network": {"key": "network", "type": "str"},
+        "next_hop": {"key": "nextHop", "type": "str"},
+        "loc_prf": {"key": "locPrf", "type": "str"},
+        "weight": {"key": "weight", "type": "int"},
+        "path": {"key": "path", "type": "str"},
     }
 
     def __init__(
@@ -8019,11 +7733,11 @@ class ExpressRouteCircuitRoutesTableSummary(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'neighbor': {'key': 'neighbor', 'type': 'str'},
-        'v': {'key': 'v', 'type': 'int'},
-        'as_property': {'key': 'as', 'type': 'int'},
-        'up_down': {'key': 'upDown', 'type': 'str'},
-        'state_pfx_rcd': {'key': 'statePfxRcd', 'type': 'str'},
+        "neighbor": {"key": "neighbor", "type": "str"},
+        "v": {"key": "v", "type": "int"},
+        "as_property": {"key": "as", "type": "int"},
+        "up_down": {"key": "upDown", "type": "str"},
+        "state_pfx_rcd": {"key": "statePfxRcd", "type": "str"},
     }
 
     def __init__(
@@ -8054,16 +7768,12 @@ class ExpressRouteCircuitsArpTableListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExpressRouteCircuitArpTable]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ExpressRouteCircuitArpTable]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["ExpressRouteCircuitArpTable"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["ExpressRouteCircuitArpTable"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         super(ExpressRouteCircuitsArpTableListResult, self).__init__(**kwargs)
         self.value = value
@@ -8082,9 +7792,9 @@ class ExpressRouteCircuitServiceProviderProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'service_provider_name': {'key': 'serviceProviderName', 'type': 'str'},
-        'peering_location': {'key': 'peeringLocation', 'type': 'str'},
-        'bandwidth_in_mbps': {'key': 'bandwidthInMbps', 'type': 'int'},
+        "service_provider_name": {"key": "serviceProviderName", "type": "str"},
+        "peering_location": {"key": "peeringLocation", "type": "str"},
+        "bandwidth_in_mbps": {"key": "bandwidthInMbps", "type": "int"},
     }
 
     def __init__(
@@ -8114,9 +7824,9 @@ class ExpressRouteCircuitSku(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'family': {'key': 'family', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "family": {"key": "family", "type": "str"},
     }
 
     def __init__(
@@ -8143,8 +7853,8 @@ class ExpressRouteCircuitsRoutesTableListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExpressRouteCircuitRoutesTable]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ExpressRouteCircuitRoutesTable]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
@@ -8169,8 +7879,8 @@ class ExpressRouteCircuitsRoutesTableSummaryListResult(msrest.serialization.Mode
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExpressRouteCircuitRoutesTableSummary]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ExpressRouteCircuitRoutesTableSummary]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
@@ -8199,10 +7909,10 @@ class ExpressRouteCircuitStats(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'primarybytes_in': {'key': 'primarybytesIn', 'type': 'long'},
-        'primarybytes_out': {'key': 'primarybytesOut', 'type': 'long'},
-        'secondarybytes_in': {'key': 'secondarybytesIn', 'type': 'long'},
-        'secondarybytes_out': {'key': 'secondarybytesOut', 'type': 'long'},
+        "primarybytes_in": {"key": "primarybytesIn", "type": "long"},
+        "primarybytes_out": {"key": "primarybytesOut", "type": "long"},
+        "secondarybytes_in": {"key": "secondarybytesIn", "type": "long"},
+        "secondarybytes_out": {"key": "secondarybytesOut", "type": "long"},
     }
 
     def __init__(
@@ -8250,19 +7960,22 @@ class ExpressRouteConnection(SubResource):
     """
 
     _validation = {
-        'name': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'express_route_circuit_peering': {'key': 'properties.expressRouteCircuitPeering', 'type': 'ExpressRouteCircuitPeeringId'},
-        'authorization_key': {'key': 'properties.authorizationKey', 'type': 'str'},
-        'routing_weight': {'key': 'properties.routingWeight', 'type': 'int'},
-        'enable_internet_security': {'key': 'properties.enableInternetSecurity', 'type': 'bool'},
-        'routing_configuration': {'key': 'properties.routingConfiguration', 'type': 'RoutingConfiguration'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "express_route_circuit_peering": {
+            "key": "properties.expressRouteCircuitPeering",
+            "type": "ExpressRouteCircuitPeeringId",
+        },
+        "authorization_key": {"key": "properties.authorizationKey", "type": "str"},
+        "routing_weight": {"key": "properties.routingWeight", "type": "int"},
+        "enable_internet_security": {"key": "properties.enableInternetSecurity", "type": "bool"},
+        "routing_configuration": {"key": "properties.routingConfiguration", "type": "RoutingConfiguration"},
     }
 
     def __init__(
@@ -8297,17 +8010,14 @@ class ExpressRouteConnectionId(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
+        "id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ExpressRouteConnectionId, self).__init__(**kwargs)
         self.id = None
 
@@ -8320,15 +8030,10 @@ class ExpressRouteConnectionList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExpressRouteConnection]'},
+        "value": {"key": "value", "type": "[ExpressRouteConnection]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["ExpressRouteConnection"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["ExpressRouteConnection"]] = None, **kwargs):
         super(ExpressRouteConnectionList, self).__init__(**kwargs)
         self.value = value
 
@@ -8378,32 +8083,32 @@ class ExpressRouteCrossConnection(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'primary_azure_port': {'readonly': True},
-        'secondary_azure_port': {'readonly': True},
-        's_tag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "primary_azure_port": {"readonly": True},
+        "secondary_azure_port": {"readonly": True},
+        "s_tag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'primary_azure_port': {'key': 'properties.primaryAzurePort', 'type': 'str'},
-        'secondary_azure_port': {'key': 'properties.secondaryAzurePort', 'type': 'str'},
-        's_tag': {'key': 'properties.sTag', 'type': 'int'},
-        'peering_location': {'key': 'properties.peeringLocation', 'type': 'str'},
-        'bandwidth_in_mbps': {'key': 'properties.bandwidthInMbps', 'type': 'int'},
-        'express_route_circuit': {'key': 'properties.expressRouteCircuit', 'type': 'ExpressRouteCircuitReference'},
-        'service_provider_provisioning_state': {'key': 'properties.serviceProviderProvisioningState', 'type': 'str'},
-        'service_provider_notes': {'key': 'properties.serviceProviderNotes', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'peerings': {'key': 'properties.peerings', 'type': '[ExpressRouteCrossConnectionPeering]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "primary_azure_port": {"key": "properties.primaryAzurePort", "type": "str"},
+        "secondary_azure_port": {"key": "properties.secondaryAzurePort", "type": "str"},
+        "s_tag": {"key": "properties.sTag", "type": "int"},
+        "peering_location": {"key": "properties.peeringLocation", "type": "str"},
+        "bandwidth_in_mbps": {"key": "properties.bandwidthInMbps", "type": "int"},
+        "express_route_circuit": {"key": "properties.expressRouteCircuit", "type": "ExpressRouteCircuitReference"},
+        "service_provider_provisioning_state": {"key": "properties.serviceProviderProvisioningState", "type": "str"},
+        "service_provider_notes": {"key": "properties.serviceProviderNotes", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "peerings": {"key": "properties.peerings", "type": "[ExpressRouteCrossConnectionPeering]"},
     }
 
     def __init__(
@@ -8446,20 +8151,15 @@ class ExpressRouteCrossConnectionListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExpressRouteCrossConnection]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ExpressRouteCrossConnection]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["ExpressRouteCrossConnection"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["ExpressRouteCrossConnection"]] = None, **kwargs):
         super(ExpressRouteCrossConnectionListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -8514,34 +8214,37 @@ class ExpressRouteCrossConnectionPeering(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'azure_asn': {'readonly': True},
-        'peer_asn': {'maximum': 4294967295, 'minimum': 1},
-        'primary_azure_port': {'readonly': True},
-        'secondary_azure_port': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'last_modified_by': {'readonly': True},
+        "etag": {"readonly": True},
+        "azure_asn": {"readonly": True},
+        "peer_asn": {"maximum": 4294967295, "minimum": 1},
+        "primary_azure_port": {"readonly": True},
+        "secondary_azure_port": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "last_modified_by": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'peering_type': {'key': 'properties.peeringType', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'azure_asn': {'key': 'properties.azureASN', 'type': 'int'},
-        'peer_asn': {'key': 'properties.peerASN', 'type': 'long'},
-        'primary_peer_address_prefix': {'key': 'properties.primaryPeerAddressPrefix', 'type': 'str'},
-        'secondary_peer_address_prefix': {'key': 'properties.secondaryPeerAddressPrefix', 'type': 'str'},
-        'primary_azure_port': {'key': 'properties.primaryAzurePort', 'type': 'str'},
-        'secondary_azure_port': {'key': 'properties.secondaryAzurePort', 'type': 'str'},
-        'shared_key': {'key': 'properties.sharedKey', 'type': 'str'},
-        'vlan_id': {'key': 'properties.vlanId', 'type': 'int'},
-        'microsoft_peering_config': {'key': 'properties.microsoftPeeringConfig', 'type': 'ExpressRouteCircuitPeeringConfig'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'gateway_manager_etag': {'key': 'properties.gatewayManagerEtag', 'type': 'str'},
-        'last_modified_by': {'key': 'properties.lastModifiedBy', 'type': 'str'},
-        'ipv6_peering_config': {'key': 'properties.ipv6PeeringConfig', 'type': 'Ipv6ExpressRouteCircuitPeeringConfig'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "peering_type": {"key": "properties.peeringType", "type": "str"},
+        "state": {"key": "properties.state", "type": "str"},
+        "azure_asn": {"key": "properties.azureASN", "type": "int"},
+        "peer_asn": {"key": "properties.peerASN", "type": "long"},
+        "primary_peer_address_prefix": {"key": "properties.primaryPeerAddressPrefix", "type": "str"},
+        "secondary_peer_address_prefix": {"key": "properties.secondaryPeerAddressPrefix", "type": "str"},
+        "primary_azure_port": {"key": "properties.primaryAzurePort", "type": "str"},
+        "secondary_azure_port": {"key": "properties.secondaryAzurePort", "type": "str"},
+        "shared_key": {"key": "properties.sharedKey", "type": "str"},
+        "vlan_id": {"key": "properties.vlanId", "type": "int"},
+        "microsoft_peering_config": {
+            "key": "properties.microsoftPeeringConfig",
+            "type": "ExpressRouteCircuitPeeringConfig",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "gateway_manager_etag": {"key": "properties.gatewayManagerEtag", "type": "str"},
+        "last_modified_by": {"key": "properties.lastModifiedBy", "type": "str"},
+        "ipv6_peering_config": {"key": "properties.ipv6PeeringConfig", "type": "Ipv6ExpressRouteCircuitPeeringConfig"},
     }
 
     def __init__(
@@ -8593,20 +8296,15 @@ class ExpressRouteCrossConnectionPeeringList(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExpressRouteCrossConnectionPeering]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ExpressRouteCrossConnectionPeering]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["ExpressRouteCrossConnectionPeering"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["ExpressRouteCrossConnectionPeering"]] = None, **kwargs):
         super(ExpressRouteCrossConnectionPeeringList, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -8628,10 +8326,10 @@ class ExpressRouteCrossConnectionRoutesTableSummary(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'neighbor': {'key': 'neighbor', 'type': 'str'},
-        'asn': {'key': 'asn', 'type': 'int'},
-        'up_down': {'key': 'upDown', 'type': 'str'},
-        'state_or_prefixes_received': {'key': 'stateOrPrefixesReceived', 'type': 'str'},
+        "neighbor": {"key": "neighbor", "type": "str"},
+        "asn": {"key": "asn", "type": "int"},
+        "up_down": {"key": "upDown", "type": "str"},
+        "state_or_prefixes_received": {"key": "stateOrPrefixesReceived", "type": "str"},
     }
 
     def __init__(
@@ -8663,20 +8361,15 @@ class ExpressRouteCrossConnectionsRoutesTableSummaryListResult(msrest.serializat
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExpressRouteCrossConnectionRoutesTableSummary]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ExpressRouteCrossConnectionRoutesTableSummary]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["ExpressRouteCrossConnectionRoutesTableSummary"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["ExpressRouteCrossConnectionRoutesTableSummary"]] = None, **kwargs):
         super(ExpressRouteCrossConnectionsRoutesTableSummaryListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -8713,24 +8406,27 @@ class ExpressRouteGateway(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'express_route_connections': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "express_route_connections": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'auto_scale_configuration': {'key': 'properties.autoScaleConfiguration', 'type': 'ExpressRouteGatewayPropertiesAutoScaleConfiguration'},
-        'express_route_connections': {'key': 'properties.expressRouteConnections', 'type': '[ExpressRouteConnection]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'virtual_hub': {'key': 'properties.virtualHub', 'type': 'VirtualHubId'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "auto_scale_configuration": {
+            "key": "properties.autoScaleConfiguration",
+            "type": "ExpressRouteGatewayPropertiesAutoScaleConfiguration",
+        },
+        "express_route_connections": {"key": "properties.expressRouteConnections", "type": "[ExpressRouteConnection]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "virtual_hub": {"key": "properties.virtualHub", "type": "VirtualHubId"},
     }
 
     def __init__(
@@ -8759,15 +8455,10 @@ class ExpressRouteGatewayList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExpressRouteGateway]'},
+        "value": {"key": "value", "type": "[ExpressRouteGateway]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["ExpressRouteGateway"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["ExpressRouteGateway"]] = None, **kwargs):
         super(ExpressRouteGatewayList, self).__init__(**kwargs)
         self.value = value
 
@@ -8781,14 +8472,11 @@ class ExpressRouteGatewayPropertiesAutoScaleConfiguration(msrest.serialization.M
     """
 
     _attribute_map = {
-        'bounds': {'key': 'bounds', 'type': 'ExpressRouteGatewayPropertiesAutoScaleConfigurationBounds'},
+        "bounds": {"key": "bounds", "type": "ExpressRouteGatewayPropertiesAutoScaleConfigurationBounds"},
     }
 
     def __init__(
-        self,
-        *,
-        bounds: Optional["ExpressRouteGatewayPropertiesAutoScaleConfigurationBounds"] = None,
-        **kwargs
+        self, *, bounds: Optional["ExpressRouteGatewayPropertiesAutoScaleConfigurationBounds"] = None, **kwargs
     ):
         super(ExpressRouteGatewayPropertiesAutoScaleConfiguration, self).__init__(**kwargs)
         self.bounds = bounds
@@ -8804,17 +8492,11 @@ class ExpressRouteGatewayPropertiesAutoScaleConfigurationBounds(msrest.serializa
     """
 
     _attribute_map = {
-        'min': {'key': 'min', 'type': 'int'},
-        'max': {'key': 'max', 'type': 'int'},
+        "min": {"key": "min", "type": "int"},
+        "max": {"key": "max", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        min: Optional[int] = None,
-        max: Optional[int] = None,
-        **kwargs
-    ):
+    def __init__(self, *, min: Optional[int] = None, max: Optional[int] = None, **kwargs):
         super(ExpressRouteGatewayPropertiesAutoScaleConfigurationBounds, self).__init__(**kwargs)
         self.min = min
         self.max = max
@@ -8854,27 +8536,27 @@ class ExpressRouteLink(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'router_name': {'readonly': True},
-        'interface_name': {'readonly': True},
-        'patch_panel_id': {'readonly': True},
-        'rack_id': {'readonly': True},
-        'connector_type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "router_name": {"readonly": True},
+        "interface_name": {"readonly": True},
+        "patch_panel_id": {"readonly": True},
+        "rack_id": {"readonly": True},
+        "connector_type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'router_name': {'key': 'properties.routerName', 'type': 'str'},
-        'interface_name': {'key': 'properties.interfaceName', 'type': 'str'},
-        'patch_panel_id': {'key': 'properties.patchPanelId', 'type': 'str'},
-        'rack_id': {'key': 'properties.rackId', 'type': 'str'},
-        'connector_type': {'key': 'properties.connectorType', 'type': 'str'},
-        'admin_state': {'key': 'properties.adminState', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'mac_sec_config': {'key': 'properties.macSecConfig', 'type': 'ExpressRouteLinkMacSecConfig'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "router_name": {"key": "properties.routerName", "type": "str"},
+        "interface_name": {"key": "properties.interfaceName", "type": "str"},
+        "patch_panel_id": {"key": "properties.patchPanelId", "type": "str"},
+        "rack_id": {"key": "properties.rackId", "type": "str"},
+        "connector_type": {"key": "properties.connectorType", "type": "str"},
+        "admin_state": {"key": "properties.adminState", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "mac_sec_config": {"key": "properties.macSecConfig", "type": "ExpressRouteLinkMacSecConfig"},
     }
 
     def __init__(
@@ -8909,17 +8591,11 @@ class ExpressRouteLinkListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExpressRouteLink]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ExpressRouteLink]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["ExpressRouteLink"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["ExpressRouteLink"]] = None, next_link: Optional[str] = None, **kwargs):
         super(ExpressRouteLinkListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -8937,9 +8613,9 @@ class ExpressRouteLinkMacSecConfig(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'ckn_secret_identifier': {'key': 'cknSecretIdentifier', 'type': 'str'},
-        'cak_secret_identifier': {'key': 'cakSecretIdentifier', 'type': 'str'},
-        'cipher': {'key': 'cipher', 'type': 'str'},
+        "ckn_secret_identifier": {"key": "cknSecretIdentifier", "type": "str"},
+        "cak_secret_identifier": {"key": "cakSecretIdentifier", "type": "str"},
+        "cipher": {"key": "cipher", "type": "str"},
     }
 
     def __init__(
@@ -9006,37 +8682,37 @@ class ExpressRoutePort(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'provisioned_bandwidth_in_gbps': {'readonly': True},
-        'mtu': {'readonly': True},
-        'ether_type': {'readonly': True},
-        'allocation_date': {'readonly': True},
-        'circuits': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'resource_guid': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "provisioned_bandwidth_in_gbps": {"readonly": True},
+        "mtu": {"readonly": True},
+        "ether_type": {"readonly": True},
+        "allocation_date": {"readonly": True},
+        "circuits": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "resource_guid": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
-        'peering_location': {'key': 'properties.peeringLocation', 'type': 'str'},
-        'bandwidth_in_gbps': {'key': 'properties.bandwidthInGbps', 'type': 'int'},
-        'provisioned_bandwidth_in_gbps': {'key': 'properties.provisionedBandwidthInGbps', 'type': 'float'},
-        'mtu': {'key': 'properties.mtu', 'type': 'str'},
-        'encapsulation': {'key': 'properties.encapsulation', 'type': 'str'},
-        'ether_type': {'key': 'properties.etherType', 'type': 'str'},
-        'allocation_date': {'key': 'properties.allocationDate', 'type': 'str'},
-        'links': {'key': 'properties.links', 'type': '[ExpressRouteLink]'},
-        'circuits': {'key': 'properties.circuits', 'type': '[SubResource]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
+        "peering_location": {"key": "properties.peeringLocation", "type": "str"},
+        "bandwidth_in_gbps": {"key": "properties.bandwidthInGbps", "type": "int"},
+        "provisioned_bandwidth_in_gbps": {"key": "properties.provisionedBandwidthInGbps", "type": "float"},
+        "mtu": {"key": "properties.mtu", "type": "str"},
+        "encapsulation": {"key": "properties.encapsulation", "type": "str"},
+        "ether_type": {"key": "properties.etherType", "type": "str"},
+        "allocation_date": {"key": "properties.allocationDate", "type": "str"},
+        "links": {"key": "properties.links", "type": "[ExpressRouteLink]"},
+        "circuits": {"key": "properties.circuits", "type": "[SubResource]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
     }
 
     def __init__(
@@ -9078,17 +8754,11 @@ class ExpressRoutePortListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExpressRoutePort]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ExpressRoutePort]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["ExpressRoutePort"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["ExpressRoutePort"]] = None, next_link: Optional[str] = None, **kwargs):
         super(ExpressRoutePortListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -9122,23 +8792,26 @@ class ExpressRoutePortsLocation(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'address': {'readonly': True},
-        'contact': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "address": {"readonly": True},
+        "contact": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'address': {'key': 'properties.address', 'type': 'str'},
-        'contact': {'key': 'properties.contact', 'type': 'str'},
-        'available_bandwidths': {'key': 'properties.availableBandwidths', 'type': '[ExpressRoutePortsLocationBandwidths]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "address": {"key": "properties.address", "type": "str"},
+        "contact": {"key": "properties.contact", "type": "str"},
+        "available_bandwidths": {
+            "key": "properties.availableBandwidths",
+            "type": "[ExpressRoutePortsLocationBandwidths]",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -9169,19 +8842,16 @@ class ExpressRoutePortsLocationBandwidths(msrest.serialization.Model):
     """
 
     _validation = {
-        'offer_name': {'readonly': True},
-        'value_in_gbps': {'readonly': True},
+        "offer_name": {"readonly": True},
+        "value_in_gbps": {"readonly": True},
     }
 
     _attribute_map = {
-        'offer_name': {'key': 'offerName', 'type': 'str'},
-        'value_in_gbps': {'key': 'valueInGbps', 'type': 'int'},
+        "offer_name": {"key": "offerName", "type": "str"},
+        "value_in_gbps": {"key": "valueInGbps", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ExpressRoutePortsLocationBandwidths, self).__init__(**kwargs)
         self.offer_name = None
         self.value_in_gbps = None
@@ -9197,16 +8867,12 @@ class ExpressRoutePortsLocationListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExpressRoutePortsLocation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ExpressRoutePortsLocation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["ExpressRoutePortsLocation"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["ExpressRoutePortsLocation"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         super(ExpressRoutePortsLocationListResult, self).__init__(**kwargs)
         self.value = value
@@ -9239,20 +8905,23 @@ class ExpressRouteServiceProvider(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'peering_locations': {'key': 'properties.peeringLocations', 'type': '[str]'},
-        'bandwidths_offered': {'key': 'properties.bandwidthsOffered', 'type': '[ExpressRouteServiceProviderBandwidthsOffered]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "peering_locations": {"key": "properties.peeringLocations", "type": "[str]"},
+        "bandwidths_offered": {
+            "key": "properties.bandwidthsOffered",
+            "type": "[ExpressRouteServiceProviderBandwidthsOffered]",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -9281,17 +8950,11 @@ class ExpressRouteServiceProviderBandwidthsOffered(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'offer_name': {'key': 'offerName', 'type': 'str'},
-        'value_in_mbps': {'key': 'valueInMbps', 'type': 'int'},
+        "offer_name": {"key": "offerName", "type": "str"},
+        "value_in_mbps": {"key": "valueInMbps", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        offer_name: Optional[str] = None,
-        value_in_mbps: Optional[int] = None,
-        **kwargs
-    ):
+    def __init__(self, *, offer_name: Optional[str] = None, value_in_mbps: Optional[int] = None, **kwargs):
         super(ExpressRouteServiceProviderBandwidthsOffered, self).__init__(**kwargs)
         self.offer_name = offer_name
         self.value_in_mbps = value_in_mbps
@@ -9307,16 +8970,12 @@ class ExpressRouteServiceProviderListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExpressRouteServiceProvider]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ExpressRouteServiceProvider]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["ExpressRouteServiceProvider"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["ExpressRouteServiceProvider"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         super(ExpressRouteServiceProviderListResult, self).__init__(**kwargs)
         self.value = value
@@ -9362,29 +9021,32 @@ class FirewallPolicy(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'rule_groups': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'firewalls': {'readonly': True},
-        'child_policies': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "rule_groups": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "firewalls": {"readonly": True},
+        "child_policies": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'rule_groups': {'key': 'properties.ruleGroups', 'type': '[SubResource]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'base_policy': {'key': 'properties.basePolicy', 'type': 'SubResource'},
-        'firewalls': {'key': 'properties.firewalls', 'type': '[SubResource]'},
-        'child_policies': {'key': 'properties.childPolicies', 'type': '[SubResource]'},
-        'threat_intel_mode': {'key': 'properties.threatIntelMode', 'type': 'str'},
-        'threat_intel_whitelist': {'key': 'properties.threatIntelWhitelist', 'type': 'FirewallPolicyThreatIntelWhitelist'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "rule_groups": {"key": "properties.ruleGroups", "type": "[SubResource]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "base_policy": {"key": "properties.basePolicy", "type": "SubResource"},
+        "firewalls": {"key": "properties.firewalls", "type": "[SubResource]"},
+        "child_policies": {"key": "properties.childPolicies", "type": "[SubResource]"},
+        "threat_intel_mode": {"key": "properties.threatIntelMode", "type": "str"},
+        "threat_intel_whitelist": {
+            "key": "properties.threatIntelWhitelist",
+            "type": "FirewallPolicyThreatIntelWhitelist",
+        },
     }
 
     def __init__(
@@ -9427,27 +9089,24 @@ class FirewallPolicyRule(msrest.serialization.Model):
     """
 
     _validation = {
-        'rule_type': {'required': True},
-        'priority': {'maximum': 65000, 'minimum': 100},
+        "rule_type": {"required": True},
+        "priority": {"maximum": 65000, "minimum": 100},
     }
 
     _attribute_map = {
-        'rule_type': {'key': 'ruleType', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'priority': {'key': 'priority', 'type': 'int'},
+        "rule_type": {"key": "ruleType", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "priority": {"key": "priority", "type": "int"},
     }
 
     _subtype_map = {
-        'rule_type': {'FirewallPolicyFilterRule': 'FirewallPolicyFilterRule', 'FirewallPolicyNatRule': 'FirewallPolicyNatRule'}
+        "rule_type": {
+            "FirewallPolicyFilterRule": "FirewallPolicyFilterRule",
+            "FirewallPolicyNatRule": "FirewallPolicyNatRule",
+        }
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        priority: Optional[int] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, priority: Optional[int] = None, **kwargs):
         super(FirewallPolicyRule, self).__init__(**kwargs)
         self.rule_type = None  # type: Optional[str]
         self.name = name
@@ -9473,16 +9132,16 @@ class FirewallPolicyFilterRule(FirewallPolicyRule):
     """
 
     _validation = {
-        'rule_type': {'required': True},
-        'priority': {'maximum': 65000, 'minimum': 100},
+        "rule_type": {"required": True},
+        "priority": {"maximum": 65000, "minimum": 100},
     }
 
     _attribute_map = {
-        'rule_type': {'key': 'ruleType', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'priority': {'key': 'priority', 'type': 'int'},
-        'action': {'key': 'action', 'type': 'FirewallPolicyFilterRuleAction'},
-        'rule_conditions': {'key': 'ruleConditions', 'type': '[FirewallPolicyRuleCondition]'},
+        "rule_type": {"key": "ruleType", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "priority": {"key": "priority", "type": "int"},
+        "action": {"key": "action", "type": "FirewallPolicyFilterRuleAction"},
+        "rule_conditions": {"key": "ruleConditions", "type": "[FirewallPolicyRuleCondition]"},
     }
 
     def __init__(
@@ -9495,7 +9154,7 @@ class FirewallPolicyFilterRule(FirewallPolicyRule):
         **kwargs
     ):
         super(FirewallPolicyFilterRule, self).__init__(name=name, priority=priority, **kwargs)
-        self.rule_type = 'FirewallPolicyFilterRule'  # type: str
+        self.rule_type = "FirewallPolicyFilterRule"  # type: str
         self.action = action
         self.rule_conditions = rule_conditions
 
@@ -9508,15 +9167,10 @@ class FirewallPolicyFilterRuleAction(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: Optional[Union[str, "FirewallPolicyFilterRuleActionType"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, type: Optional[Union[str, "FirewallPolicyFilterRuleActionType"]] = None, **kwargs):
         super(FirewallPolicyFilterRuleAction, self).__init__(**kwargs)
         self.type = type
 
@@ -9531,17 +9185,11 @@ class FirewallPolicyListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[FirewallPolicy]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[FirewallPolicy]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["FirewallPolicy"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["FirewallPolicy"]] = None, next_link: Optional[str] = None, **kwargs):
         super(FirewallPolicyListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -9570,18 +9218,18 @@ class FirewallPolicyNatRule(FirewallPolicyRule):
     """
 
     _validation = {
-        'rule_type': {'required': True},
-        'priority': {'maximum': 65000, 'minimum': 100},
+        "rule_type": {"required": True},
+        "priority": {"maximum": 65000, "minimum": 100},
     }
 
     _attribute_map = {
-        'rule_type': {'key': 'ruleType', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'priority': {'key': 'priority', 'type': 'int'},
-        'action': {'key': 'action', 'type': 'FirewallPolicyNatRuleAction'},
-        'translated_address': {'key': 'translatedAddress', 'type': 'str'},
-        'translated_port': {'key': 'translatedPort', 'type': 'str'},
-        'rule_condition': {'key': 'ruleCondition', 'type': 'FirewallPolicyRuleCondition'},
+        "rule_type": {"key": "ruleType", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "priority": {"key": "priority", "type": "int"},
+        "action": {"key": "action", "type": "FirewallPolicyNatRuleAction"},
+        "translated_address": {"key": "translatedAddress", "type": "str"},
+        "translated_port": {"key": "translatedPort", "type": "str"},
+        "rule_condition": {"key": "ruleCondition", "type": "FirewallPolicyRuleCondition"},
     }
 
     def __init__(
@@ -9596,7 +9244,7 @@ class FirewallPolicyNatRule(FirewallPolicyRule):
         **kwargs
     ):
         super(FirewallPolicyNatRule, self).__init__(name=name, priority=priority, **kwargs)
-        self.rule_type = 'FirewallPolicyNatRule'  # type: str
+        self.rule_type = "FirewallPolicyNatRule"  # type: str
         self.action = action
         self.translated_address = translated_address
         self.translated_port = translated_port
@@ -9611,15 +9259,10 @@ class FirewallPolicyNatRuleAction(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: Optional[Union[str, "FirewallPolicyNatRuleActionType"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, type: Optional[Union[str, "FirewallPolicyNatRuleActionType"]] = None, **kwargs):
         super(FirewallPolicyNatRuleAction, self).__init__(**kwargs)
         self.type = type
 
@@ -9635,12 +9278,12 @@ class FirewallPolicyRuleConditionApplicationProtocol(msrest.serialization.Model)
     """
 
     _validation = {
-        'port': {'maximum': 64000, 'minimum': 0},
+        "port": {"maximum": 64000, "minimum": 0},
     }
 
     _attribute_map = {
-        'protocol_type': {'key': 'protocolType', 'type': 'str'},
-        'port': {'key': 'port', 'type': 'int'},
+        "protocol_type": {"key": "protocolType", "type": "str"},
+        "port": {"key": "port", "type": "int"},
     }
 
     def __init__(
@@ -9679,20 +9322,20 @@ class FirewallPolicyRuleGroup(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'priority': {'maximum': 65000, 'minimum': 100},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "priority": {"maximum": 65000, "minimum": 100},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'priority': {'key': 'properties.priority', 'type': 'int'},
-        'rules': {'key': 'properties.rules', 'type': '[FirewallPolicyRule]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "priority": {"key": "properties.priority", "type": "int"},
+        "rules": {"key": "properties.rules", "type": "[FirewallPolicyRule]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -9723,16 +9366,12 @@ class FirewallPolicyRuleGroupListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[FirewallPolicyRuleGroup]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[FirewallPolicyRuleGroup]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["FirewallPolicyRuleGroup"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["FirewallPolicyRuleGroup"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         super(FirewallPolicyRuleGroupListResult, self).__init__(**kwargs)
         self.value = value
@@ -9749,17 +9388,11 @@ class FirewallPolicyThreatIntelWhitelist(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'ip_addresses': {'key': 'ipAddresses', 'type': '[str]'},
-        'fqdns': {'key': 'fqdns', 'type': '[str]'},
+        "ip_addresses": {"key": "ipAddresses", "type": "[str]"},
+        "fqdns": {"key": "fqdns", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        ip_addresses: Optional[List[str]] = None,
-        fqdns: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, ip_addresses: Optional[List[str]] = None, fqdns: Optional[List[str]] = None, **kwargs):
         super(FirewallPolicyThreatIntelWhitelist, self).__init__(**kwargs)
         self.ip_addresses = ip_addresses
         self.fqdns = fqdns
@@ -9804,28 +9437,31 @@ class FlowLog(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'target_resource_guid': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "target_resource_guid": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'target_resource_id': {'key': 'properties.targetResourceId', 'type': 'str'},
-        'target_resource_guid': {'key': 'properties.targetResourceGuid', 'type': 'str'},
-        'storage_id': {'key': 'properties.storageId', 'type': 'str'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'retention_policy': {'key': 'properties.retentionPolicy', 'type': 'RetentionPolicyParameters'},
-        'format': {'key': 'properties.format', 'type': 'FlowLogFormatParameters'},
-        'flow_analytics_configuration': {'key': 'properties.flowAnalyticsConfiguration', 'type': 'TrafficAnalyticsProperties'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "target_resource_id": {"key": "properties.targetResourceId", "type": "str"},
+        "target_resource_guid": {"key": "properties.targetResourceGuid", "type": "str"},
+        "storage_id": {"key": "properties.storageId", "type": "str"},
+        "enabled": {"key": "properties.enabled", "type": "bool"},
+        "retention_policy": {"key": "properties.retentionPolicy", "type": "RetentionPolicyParameters"},
+        "format": {"key": "properties.format", "type": "FlowLogFormatParameters"},
+        "flow_analytics_configuration": {
+            "key": "properties.flowAnalyticsConfiguration",
+            "type": "TrafficAnalyticsProperties",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -9864,17 +9500,11 @@ class FlowLogFormatParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'int'},
+        "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: Optional[Union[str, "FlowLogFormatType"]] = None,
-        version: Optional[int] = 0,
-        **kwargs
-    ):
+    def __init__(self, *, type: Optional[Union[str, "FlowLogFormatType"]] = None, version: Optional[int] = 0, **kwargs):
         super(FlowLogFormatParameters, self).__init__(**kwargs)
         self.type = type
         self.version = version
@@ -9903,18 +9533,18 @@ class FlowLogInformation(msrest.serialization.Model):
     """
 
     _validation = {
-        'target_resource_id': {'required': True},
-        'storage_id': {'required': True},
-        'enabled': {'required': True},
+        "target_resource_id": {"required": True},
+        "storage_id": {"required": True},
+        "enabled": {"required": True},
     }
 
     _attribute_map = {
-        'target_resource_id': {'key': 'targetResourceId', 'type': 'str'},
-        'flow_analytics_configuration': {'key': 'flowAnalyticsConfiguration', 'type': 'TrafficAnalyticsProperties'},
-        'storage_id': {'key': 'properties.storageId', 'type': 'str'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'retention_policy': {'key': 'properties.retentionPolicy', 'type': 'RetentionPolicyParameters'},
-        'format': {'key': 'properties.format', 'type': 'FlowLogFormatParameters'},
+        "target_resource_id": {"key": "targetResourceId", "type": "str"},
+        "flow_analytics_configuration": {"key": "flowAnalyticsConfiguration", "type": "TrafficAnalyticsProperties"},
+        "storage_id": {"key": "properties.storageId", "type": "str"},
+        "enabled": {"key": "properties.enabled", "type": "bool"},
+        "retention_policy": {"key": "properties.retentionPolicy", "type": "RetentionPolicyParameters"},
+        "format": {"key": "properties.format", "type": "FlowLogFormatParameters"},
     }
 
     def __init__(
@@ -9949,20 +9579,15 @@ class FlowLogListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[FlowLog]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[FlowLog]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["FlowLog"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["FlowLog"]] = None, **kwargs):
         super(FlowLogListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -9979,19 +9604,14 @@ class FlowLogStatusParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'target_resource_id': {'required': True},
+        "target_resource_id": {"required": True},
     }
 
     _attribute_map = {
-        'target_resource_id': {'key': 'targetResourceId', 'type': 'str'},
+        "target_resource_id": {"key": "targetResourceId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        target_resource_id: str,
-        **kwargs
-    ):
+    def __init__(self, *, target_resource_id: str, **kwargs):
         super(FlowLogStatusParameters, self).__init__(**kwargs)
         self.target_resource_id = target_resource_id
 
@@ -10043,32 +9663,32 @@ class FrontendIPConfiguration(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'inbound_nat_rules': {'readonly': True},
-        'inbound_nat_pools': {'readonly': True},
-        'outbound_rules': {'readonly': True},
-        'load_balancing_rules': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "inbound_nat_rules": {"readonly": True},
+        "inbound_nat_pools": {"readonly": True},
+        "outbound_rules": {"readonly": True},
+        "load_balancing_rules": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'zones': {'key': 'zones', 'type': '[str]'},
-        'inbound_nat_rules': {'key': 'properties.inboundNatRules', 'type': '[SubResource]'},
-        'inbound_nat_pools': {'key': 'properties.inboundNatPools', 'type': '[SubResource]'},
-        'outbound_rules': {'key': 'properties.outboundRules', 'type': '[SubResource]'},
-        'load_balancing_rules': {'key': 'properties.loadBalancingRules', 'type': '[SubResource]'},
-        'private_ip_address': {'key': 'properties.privateIPAddress', 'type': 'str'},
-        'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'str'},
-        'private_ip_address_version': {'key': 'properties.privateIPAddressVersion', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'Subnet'},
-        'public_ip_address': {'key': 'properties.publicIPAddress', 'type': 'PublicIPAddress'},
-        'public_ip_prefix': {'key': 'properties.publicIPPrefix', 'type': 'SubResource'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "zones": {"key": "zones", "type": "[str]"},
+        "inbound_nat_rules": {"key": "properties.inboundNatRules", "type": "[SubResource]"},
+        "inbound_nat_pools": {"key": "properties.inboundNatPools", "type": "[SubResource]"},
+        "outbound_rules": {"key": "properties.outboundRules", "type": "[SubResource]"},
+        "load_balancing_rules": {"key": "properties.loadBalancingRules", "type": "[SubResource]"},
+        "private_ip_address": {"key": "properties.privateIPAddress", "type": "str"},
+        "private_ip_allocation_method": {"key": "properties.privateIPAllocationMethod", "type": "str"},
+        "private_ip_address_version": {"key": "properties.privateIPAddressVersion", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "Subnet"},
+        "public_ip_address": {"key": "properties.publicIPAddress", "type": "PublicIPAddress"},
+        "public_ip_prefix": {"key": "properties.publicIPPrefix", "type": "SubResource"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -10125,29 +9745,26 @@ class GatewayRoute(msrest.serialization.Model):
     """
 
     _validation = {
-        'local_address': {'readonly': True},
-        'network': {'readonly': True},
-        'next_hop': {'readonly': True},
-        'source_peer': {'readonly': True},
-        'origin': {'readonly': True},
-        'as_path': {'readonly': True},
-        'weight': {'readonly': True},
+        "local_address": {"readonly": True},
+        "network": {"readonly": True},
+        "next_hop": {"readonly": True},
+        "source_peer": {"readonly": True},
+        "origin": {"readonly": True},
+        "as_path": {"readonly": True},
+        "weight": {"readonly": True},
     }
 
     _attribute_map = {
-        'local_address': {'key': 'localAddress', 'type': 'str'},
-        'network': {'key': 'network', 'type': 'str'},
-        'next_hop': {'key': 'nextHop', 'type': 'str'},
-        'source_peer': {'key': 'sourcePeer', 'type': 'str'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'as_path': {'key': 'asPath', 'type': 'str'},
-        'weight': {'key': 'weight', 'type': 'int'},
+        "local_address": {"key": "localAddress", "type": "str"},
+        "network": {"key": "network", "type": "str"},
+        "next_hop": {"key": "nextHop", "type": "str"},
+        "source_peer": {"key": "sourcePeer", "type": "str"},
+        "origin": {"key": "origin", "type": "str"},
+        "as_path": {"key": "asPath", "type": "str"},
+        "weight": {"key": "weight", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(GatewayRoute, self).__init__(**kwargs)
         self.local_address = None
         self.network = None
@@ -10166,15 +9783,10 @@ class GatewayRouteListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[GatewayRoute]'},
+        "value": {"key": "value", "type": "[GatewayRoute]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["GatewayRoute"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["GatewayRoute"]] = None, **kwargs):
         super(GatewayRouteListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -10191,21 +9803,15 @@ class GetVpnSitesConfigurationRequest(msrest.serialization.Model):
     """
 
     _validation = {
-        'output_blob_sas_url': {'required': True},
+        "output_blob_sas_url": {"required": True},
     }
 
     _attribute_map = {
-        'vpn_sites': {'key': 'vpnSites', 'type': '[str]'},
-        'output_blob_sas_url': {'key': 'outputBlobSasUrl', 'type': 'str'},
+        "vpn_sites": {"key": "vpnSites", "type": "[str]"},
+        "output_blob_sas_url": {"key": "outputBlobSasUrl", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        output_blob_sas_url: str,
-        vpn_sites: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, output_blob_sas_url: str, vpn_sites: Optional[List[str]] = None, **kwargs):
         super(GetVpnSitesConfigurationRequest, self).__init__(**kwargs)
         self.vpn_sites = vpn_sites
         self.output_blob_sas_url = output_blob_sas_url
@@ -10223,9 +9829,9 @@ class HTTPConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'method': {'key': 'method', 'type': 'str'},
-        'headers': {'key': 'headers', 'type': '[HTTPHeader]'},
-        'valid_status_codes': {'key': 'validStatusCodes', 'type': '[int]'},
+        "method": {"key": "method", "type": "str"},
+        "headers": {"key": "headers", "type": "[HTTPHeader]"},
+        "valid_status_codes": {"key": "validStatusCodes", "type": "[int]"},
     }
 
     def __init__(
@@ -10252,17 +9858,11 @@ class HTTPHeader(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs):
         super(HTTPHeader, self).__init__(**kwargs)
         self.name = name
         self.value = value
@@ -10279,8 +9879,8 @@ class HubIPAddresses(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'public_ip_addresses': {'key': 'publicIPAddresses', 'type': '[AzureFirewallPublicIPAddress]'},
-        'private_ip_address': {'key': 'privateIPAddress', 'type': 'str'},
+        "public_ip_addresses": {"key": "publicIPAddresses", "type": "[AzureFirewallPublicIPAddress]"},
+        "private_ip_address": {"key": "privateIPAddress", "type": "str"},
     }
 
     def __init__(
@@ -10314,30 +9914,23 @@ class HubRoute(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'destination_type': {'required': True},
-        'destinations': {'required': True},
-        'next_hop_type': {'required': True},
-        'next_hop': {'required': True},
+        "name": {"required": True},
+        "destination_type": {"required": True},
+        "destinations": {"required": True},
+        "next_hop_type": {"required": True},
+        "next_hop": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'destination_type': {'key': 'destinationType', 'type': 'str'},
-        'destinations': {'key': 'destinations', 'type': '[str]'},
-        'next_hop_type': {'key': 'nextHopType', 'type': 'str'},
-        'next_hop': {'key': 'nextHop', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "destination_type": {"key": "destinationType", "type": "str"},
+        "destinations": {"key": "destinations", "type": "[str]"},
+        "next_hop_type": {"key": "nextHopType", "type": "str"},
+        "next_hop": {"key": "nextHop", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        name: str,
-        destination_type: str,
-        destinations: List[str],
-        next_hop_type: str,
-        next_hop: str,
-        **kwargs
+        self, *, name: str, destination_type: str, destinations: List[str], next_hop_type: str, next_hop: str, **kwargs
     ):
         super(HubRoute, self).__init__(**kwargs)
         self.name = name
@@ -10375,23 +9968,23 @@ class HubRouteTable(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'associated_connections': {'readonly': True},
-        'propagating_connections': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "associated_connections": {"readonly": True},
+        "propagating_connections": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'routes': {'key': 'properties.routes', 'type': '[HubRoute]'},
-        'labels': {'key': 'properties.labels', 'type': '[str]'},
-        'associated_connections': {'key': 'properties.associatedConnections', 'type': '[str]'},
-        'propagating_connections': {'key': 'properties.propagatingConnections', 'type': '[str]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "routes": {"key": "properties.routes", "type": "[HubRoute]"},
+        "labels": {"key": "properties.labels", "type": "[str]"},
+        "associated_connections": {"key": "properties.associatedConnections", "type": "[str]"},
+        "propagating_connections": {"key": "properties.propagatingConnections", "type": "[str]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -10444,20 +10037,23 @@ class HubVirtualNetworkConnection(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'remote_virtual_network': {'key': 'properties.remoteVirtualNetwork', 'type': 'SubResource'},
-        'allow_hub_to_remote_vnet_transit': {'key': 'properties.allowHubToRemoteVnetTransit', 'type': 'bool'},
-        'allow_remote_vnet_to_use_hub_vnet_gateways': {'key': 'properties.allowRemoteVnetToUseHubVnetGateways', 'type': 'bool'},
-        'enable_internet_security': {'key': 'properties.enableInternetSecurity', 'type': 'bool'},
-        'routing_configuration': {'key': 'properties.routingConfiguration', 'type': 'RoutingConfiguration'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "remote_virtual_network": {"key": "properties.remoteVirtualNetwork", "type": "SubResource"},
+        "allow_hub_to_remote_vnet_transit": {"key": "properties.allowHubToRemoteVnetTransit", "type": "bool"},
+        "allow_remote_vnet_to_use_hub_vnet_gateways": {
+            "key": "properties.allowRemoteVnetToUseHubVnetGateways",
+            "type": "bool",
+        },
+        "enable_internet_security": {"key": "properties.enableInternetSecurity", "type": "bool"},
+        "routing_configuration": {"key": "properties.routingConfiguration", "type": "RoutingConfiguration"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -10531,25 +10127,25 @@ class InboundNatPool(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'frontend_ip_configuration': {'key': 'properties.frontendIPConfiguration', 'type': 'SubResource'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'frontend_port_range_start': {'key': 'properties.frontendPortRangeStart', 'type': 'int'},
-        'frontend_port_range_end': {'key': 'properties.frontendPortRangeEnd', 'type': 'int'},
-        'backend_port': {'key': 'properties.backendPort', 'type': 'int'},
-        'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},
-        'enable_floating_ip': {'key': 'properties.enableFloatingIP', 'type': 'bool'},
-        'enable_tcp_reset': {'key': 'properties.enableTcpReset', 'type': 'bool'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "frontend_ip_configuration": {"key": "properties.frontendIPConfiguration", "type": "SubResource"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "frontend_port_range_start": {"key": "properties.frontendPortRangeStart", "type": "int"},
+        "frontend_port_range_end": {"key": "properties.frontendPortRangeEnd", "type": "int"},
+        "backend_port": {"key": "properties.backendPort", "type": "int"},
+        "idle_timeout_in_minutes": {"key": "properties.idleTimeoutInMinutes", "type": "int"},
+        "enable_floating_ip": {"key": "properties.enableFloatingIP", "type": "bool"},
+        "enable_tcp_reset": {"key": "properties.enableTcpReset", "type": "bool"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -10630,26 +10226,29 @@ class InboundNatRule(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'backend_ip_configuration': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "backend_ip_configuration": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'frontend_ip_configuration': {'key': 'properties.frontendIPConfiguration', 'type': 'SubResource'},
-        'backend_ip_configuration': {'key': 'properties.backendIPConfiguration', 'type': 'NetworkInterfaceIPConfiguration'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'frontend_port': {'key': 'properties.frontendPort', 'type': 'int'},
-        'backend_port': {'key': 'properties.backendPort', 'type': 'int'},
-        'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},
-        'enable_floating_ip': {'key': 'properties.enableFloatingIP', 'type': 'bool'},
-        'enable_tcp_reset': {'key': 'properties.enableTcpReset', 'type': 'bool'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "frontend_ip_configuration": {"key": "properties.frontendIPConfiguration", "type": "SubResource"},
+        "backend_ip_configuration": {
+            "key": "properties.backendIPConfiguration",
+            "type": "NetworkInterfaceIPConfiguration",
+        },
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "frontend_port": {"key": "properties.frontendPort", "type": "int"},
+        "backend_port": {"key": "properties.backendPort", "type": "int"},
+        "idle_timeout_in_minutes": {"key": "properties.idleTimeoutInMinutes", "type": "int"},
+        "enable_floating_ip": {"key": "properties.enableFloatingIP", "type": "bool"},
+        "enable_tcp_reset": {"key": "properties.enableTcpReset", "type": "bool"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -10693,20 +10292,15 @@ class InboundNatRuleListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[InboundNatRule]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[InboundNatRule]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["InboundNatRule"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["InboundNatRule"]] = None, **kwargs):
         super(InboundNatRuleListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -10723,16 +10317,12 @@ class IPAddressAvailabilityResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'available': {'key': 'available', 'type': 'bool'},
-        'available_ip_addresses': {'key': 'availableIPAddresses', 'type': '[str]'},
+        "available": {"key": "available", "type": "bool"},
+        "available_ip_addresses": {"key": "availableIPAddresses", "type": "[str]"},
     }
 
     def __init__(
-        self,
-        *,
-        available: Optional[bool] = None,
-        available_ip_addresses: Optional[List[str]] = None,
-        **kwargs
+        self, *, available: Optional[bool] = None, available_ip_addresses: Optional[List[str]] = None, **kwargs
     ):
         super(IPAddressAvailabilityResult, self).__init__(**kwargs)
         self.available = available
@@ -10777,28 +10367,28 @@ class IpAllocation(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'subnet': {'readonly': True},
-        'virtual_network': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "subnet": {"readonly": True},
+        "virtual_network": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'SubResource'},
-        'virtual_network': {'key': 'properties.virtualNetwork', 'type': 'SubResource'},
-        'type_properties_type': {'key': 'properties.type', 'type': 'str'},
-        'prefix': {'key': 'properties.prefix', 'type': 'str'},
-        'prefix_length': {'key': 'properties.prefixLength', 'type': 'int'},
-        'prefix_type': {'key': 'properties.prefixType', 'type': 'str'},
-        'ipam_allocation_id': {'key': 'properties.ipamAllocationId', 'type': 'str'},
-        'allocation_tags': {'key': 'properties.allocationTags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "SubResource"},
+        "virtual_network": {"key": "properties.virtualNetwork", "type": "SubResource"},
+        "type_properties_type": {"key": "properties.type", "type": "str"},
+        "prefix": {"key": "properties.prefix", "type": "str"},
+        "prefix_length": {"key": "properties.prefixLength", "type": "int"},
+        "prefix_type": {"key": "properties.prefixType", "type": "str"},
+        "ipam_allocation_id": {"key": "properties.ipamAllocationId", "type": "str"},
+        "allocation_tags": {"key": "properties.allocationTags", "type": "{str}"},
     }
 
     def __init__(
@@ -10837,17 +10427,11 @@ class IpAllocationListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[IpAllocation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[IpAllocation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["IpAllocation"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["IpAllocation"]] = None, next_link: Optional[str] = None, **kwargs):
         super(IpAllocationListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -10881,19 +10465,19 @@ class IPConfiguration(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'private_ip_address': {'key': 'properties.privateIPAddress', 'type': 'str'},
-        'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'Subnet'},
-        'public_ip_address': {'key': 'properties.publicIPAddress', 'type': 'PublicIPAddress'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "private_ip_address": {"key": "properties.privateIPAddress", "type": "str"},
+        "private_ip_allocation_method": {"key": "properties.privateIPAllocationMethod", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "Subnet"},
+        "public_ip_address": {"key": "properties.publicIPAddress", "type": "PublicIPAddress"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -10936,23 +10520,19 @@ class IPConfigurationBgpPeeringAddress(msrest.serialization.Model):
     """
 
     _validation = {
-        'default_bgp_ip_addresses': {'readonly': True},
-        'tunnel_ip_addresses': {'readonly': True},
+        "default_bgp_ip_addresses": {"readonly": True},
+        "tunnel_ip_addresses": {"readonly": True},
     }
 
     _attribute_map = {
-        'ipconfiguration_id': {'key': 'ipconfigurationId', 'type': 'str'},
-        'default_bgp_ip_addresses': {'key': 'defaultBgpIpAddresses', 'type': '[str]'},
-        'custom_bgp_ip_addresses': {'key': 'customBgpIpAddresses', 'type': '[str]'},
-        'tunnel_ip_addresses': {'key': 'tunnelIpAddresses', 'type': '[str]'},
+        "ipconfiguration_id": {"key": "ipconfigurationId", "type": "str"},
+        "default_bgp_ip_addresses": {"key": "defaultBgpIpAddresses", "type": "[str]"},
+        "custom_bgp_ip_addresses": {"key": "customBgpIpAddresses", "type": "[str]"},
+        "tunnel_ip_addresses": {"key": "tunnelIpAddresses", "type": "[str]"},
     }
 
     def __init__(
-        self,
-        *,
-        ipconfiguration_id: Optional[str] = None,
-        custom_bgp_ip_addresses: Optional[List[str]] = None,
-        **kwargs
+        self, *, ipconfiguration_id: Optional[str] = None, custom_bgp_ip_addresses: Optional[List[str]] = None, **kwargs
     ):
         super(IPConfigurationBgpPeeringAddress, self).__init__(**kwargs)
         self.ipconfiguration_id = ipconfiguration_id
@@ -10983,27 +10563,22 @@ class IPConfigurationProfile(SubResource):
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'Subnet'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "Subnet"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        name: Optional[str] = None,
-        subnet: Optional["Subnet"] = None,
-        **kwargs
+        self, *, id: Optional[str] = None, name: Optional[str] = None, subnet: Optional["Subnet"] = None, **kwargs
     ):
         super(IPConfigurationProfile, self).__init__(id=id, **kwargs)
         self.name = name
@@ -11040,23 +10615,23 @@ class IpGroup(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'firewalls': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "firewalls": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'ip_addresses': {'key': 'properties.ipAddresses', 'type': '[str]'},
-        'firewalls': {'key': 'properties.firewalls', 'type': '[SubResource]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "ip_addresses": {"key": "properties.ipAddresses", "type": "[str]"},
+        "firewalls": {"key": "properties.firewalls", "type": "[SubResource]"},
     }
 
     def __init__(
@@ -11085,17 +10660,11 @@ class IpGroupListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[IpGroup]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[IpGroup]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["IpGroup"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["IpGroup"]] = None, next_link: Optional[str] = None, **kwargs):
         super(IpGroupListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -11135,25 +10704,25 @@ class IpsecPolicy(msrest.serialization.Model):
     """
 
     _validation = {
-        'sa_life_time_seconds': {'required': True},
-        'sa_data_size_kilobytes': {'required': True},
-        'ipsec_encryption': {'required': True},
-        'ipsec_integrity': {'required': True},
-        'ike_encryption': {'required': True},
-        'ike_integrity': {'required': True},
-        'dh_group': {'required': True},
-        'pfs_group': {'required': True},
+        "sa_life_time_seconds": {"required": True},
+        "sa_data_size_kilobytes": {"required": True},
+        "ipsec_encryption": {"required": True},
+        "ipsec_integrity": {"required": True},
+        "ike_encryption": {"required": True},
+        "ike_integrity": {"required": True},
+        "dh_group": {"required": True},
+        "pfs_group": {"required": True},
     }
 
     _attribute_map = {
-        'sa_life_time_seconds': {'key': 'saLifeTimeSeconds', 'type': 'int'},
-        'sa_data_size_kilobytes': {'key': 'saDataSizeKilobytes', 'type': 'int'},
-        'ipsec_encryption': {'key': 'ipsecEncryption', 'type': 'str'},
-        'ipsec_integrity': {'key': 'ipsecIntegrity', 'type': 'str'},
-        'ike_encryption': {'key': 'ikeEncryption', 'type': 'str'},
-        'ike_integrity': {'key': 'ikeIntegrity', 'type': 'str'},
-        'dh_group': {'key': 'dhGroup', 'type': 'str'},
-        'pfs_group': {'key': 'pfsGroup', 'type': 'str'},
+        "sa_life_time_seconds": {"key": "saLifeTimeSeconds", "type": "int"},
+        "sa_data_size_kilobytes": {"key": "saDataSizeKilobytes", "type": "int"},
+        "ipsec_encryption": {"key": "ipsecEncryption", "type": "str"},
+        "ipsec_integrity": {"key": "ipsecIntegrity", "type": "str"},
+        "ike_encryption": {"key": "ikeEncryption", "type": "str"},
+        "ike_integrity": {"key": "ikeIntegrity", "type": "str"},
+        "dh_group": {"key": "dhGroup", "type": "str"},
+        "pfs_group": {"key": "pfsGroup", "type": "str"},
     }
 
     def __init__(
@@ -11190,17 +10759,11 @@ class IpTag(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'ip_tag_type': {'key': 'ipTagType', 'type': 'str'},
-        'tag': {'key': 'tag', 'type': 'str'},
+        "ip_tag_type": {"key": "ipTagType", "type": "str"},
+        "tag": {"key": "tag", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        ip_tag_type: Optional[str] = None,
-        tag: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, ip_tag_type: Optional[str] = None, tag: Optional[str] = None, **kwargs):
         super(IpTag, self).__init__(**kwargs)
         self.ip_tag_type = ip_tag_type
         self.tag = tag
@@ -11220,20 +10783,15 @@ class Ipv6CircuitConnectionConfig(msrest.serialization.Model):
     """
 
     _validation = {
-        'circuit_connection_status': {'readonly': True},
+        "circuit_connection_status": {"readonly": True},
     }
 
     _attribute_map = {
-        'address_prefix': {'key': 'addressPrefix', 'type': 'str'},
-        'circuit_connection_status': {'key': 'circuitConnectionStatus', 'type': 'str'},
+        "address_prefix": {"key": "addressPrefix", "type": "str"},
+        "circuit_connection_status": {"key": "circuitConnectionStatus", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        address_prefix: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, address_prefix: Optional[str] = None, **kwargs):
         super(Ipv6CircuitConnectionConfig, self).__init__(**kwargs)
         self.address_prefix = address_prefix
         self.circuit_connection_status = None
@@ -11256,11 +10814,11 @@ class Ipv6ExpressRouteCircuitPeeringConfig(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'primary_peer_address_prefix': {'key': 'primaryPeerAddressPrefix', 'type': 'str'},
-        'secondary_peer_address_prefix': {'key': 'secondaryPeerAddressPrefix', 'type': 'str'},
-        'microsoft_peering_config': {'key': 'microsoftPeeringConfig', 'type': 'ExpressRouteCircuitPeeringConfig'},
-        'route_filter': {'key': 'routeFilter', 'type': 'SubResource'},
-        'state': {'key': 'state', 'type': 'str'},
+        "primary_peer_address_prefix": {"key": "primaryPeerAddressPrefix", "type": "str"},
+        "secondary_peer_address_prefix": {"key": "secondaryPeerAddressPrefix", "type": "str"},
+        "microsoft_peering_config": {"key": "microsoftPeeringConfig", "type": "ExpressRouteCircuitPeeringConfig"},
+        "route_filter": {"key": "routeFilter", "type": "SubResource"},
+        "state": {"key": "state", "type": "str"},
     }
 
     def __init__(
@@ -11291,17 +10849,11 @@ class ListHubRouteTablesResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[HubRouteTable]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[HubRouteTable]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["HubRouteTable"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["HubRouteTable"]] = None, next_link: Optional[str] = None, **kwargs):
         super(ListHubRouteTablesResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -11317,16 +10869,12 @@ class ListHubVirtualNetworkConnectionsResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[HubVirtualNetworkConnection]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[HubVirtualNetworkConnection]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["HubVirtualNetworkConnection"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["HubVirtualNetworkConnection"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         super(ListHubVirtualNetworkConnectionsResult, self).__init__(**kwargs)
         self.value = value
@@ -11343,17 +10891,11 @@ class ListP2SVpnGatewaysResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[P2SVpnGateway]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[P2SVpnGateway]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["P2SVpnGateway"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["P2SVpnGateway"]] = None, next_link: Optional[str] = None, **kwargs):
         super(ListP2SVpnGatewaysResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -11369,16 +10911,12 @@ class ListVirtualHubRouteTableV2SResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualHubRouteTableV2]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualHubRouteTableV2]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["VirtualHubRouteTableV2"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["VirtualHubRouteTableV2"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         super(ListVirtualHubRouteTableV2SResult, self).__init__(**kwargs)
         self.value = value
@@ -11395,17 +10933,11 @@ class ListVirtualHubsResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualHub]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualHub]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["VirtualHub"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["VirtualHub"]] = None, next_link: Optional[str] = None, **kwargs):
         super(ListVirtualHubsResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -11421,17 +10953,11 @@ class ListVirtualWANsResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualWAN]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualWAN]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["VirtualWAN"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["VirtualWAN"]] = None, next_link: Optional[str] = None, **kwargs):
         super(ListVirtualWANsResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -11447,17 +10973,11 @@ class ListVpnConnectionsResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VpnConnection]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VpnConnection]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["VpnConnection"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["VpnConnection"]] = None, next_link: Optional[str] = None, **kwargs):
         super(ListVpnConnectionsResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -11473,17 +10993,11 @@ class ListVpnGatewaysResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VpnGateway]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VpnGateway]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["VpnGateway"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["VpnGateway"]] = None, next_link: Optional[str] = None, **kwargs):
         super(ListVpnGatewaysResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -11499,16 +11013,12 @@ class ListVpnServerConfigurationsResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VpnServerConfiguration]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VpnServerConfiguration]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["VpnServerConfiguration"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["VpnServerConfiguration"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         super(ListVpnServerConfigurationsResult, self).__init__(**kwargs)
         self.value = value
@@ -11525,16 +11035,12 @@ class ListVpnSiteLinkConnectionsResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VpnSiteLinkConnection]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VpnSiteLinkConnection]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["VpnSiteLinkConnection"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["VpnSiteLinkConnection"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         super(ListVpnSiteLinkConnectionsResult, self).__init__(**kwargs)
         self.value = value
@@ -11551,17 +11057,11 @@ class ListVpnSiteLinksResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VpnSiteLink]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VpnSiteLink]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["VpnSiteLink"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["VpnSiteLink"]] = None, next_link: Optional[str] = None, **kwargs):
         super(ListVpnSiteLinksResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -11577,17 +11077,11 @@ class ListVpnSitesResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VpnSite]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VpnSite]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["VpnSite"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["VpnSite"]] = None, next_link: Optional[str] = None, **kwargs):
         super(ListVpnSitesResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -11647,30 +11141,33 @@ class LoadBalancer(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'resource_guid': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "resource_guid": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'LoadBalancerSku'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'frontend_ip_configurations': {'key': 'properties.frontendIPConfigurations', 'type': '[FrontendIPConfiguration]'},
-        'backend_address_pools': {'key': 'properties.backendAddressPools', 'type': '[BackendAddressPool]'},
-        'load_balancing_rules': {'key': 'properties.loadBalancingRules', 'type': '[LoadBalancingRule]'},
-        'probes': {'key': 'properties.probes', 'type': '[Probe]'},
-        'inbound_nat_rules': {'key': 'properties.inboundNatRules', 'type': '[InboundNatRule]'},
-        'inbound_nat_pools': {'key': 'properties.inboundNatPools', 'type': '[InboundNatPool]'},
-        'outbound_rules': {'key': 'properties.outboundRules', 'type': '[OutboundRule]'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "LoadBalancerSku"},
+        "etag": {"key": "etag", "type": "str"},
+        "frontend_ip_configurations": {
+            "key": "properties.frontendIPConfigurations",
+            "type": "[FrontendIPConfiguration]",
+        },
+        "backend_address_pools": {"key": "properties.backendAddressPools", "type": "[BackendAddressPool]"},
+        "load_balancing_rules": {"key": "properties.loadBalancingRules", "type": "[LoadBalancingRule]"},
+        "probes": {"key": "properties.probes", "type": "[Probe]"},
+        "inbound_nat_rules": {"key": "properties.inboundNatRules", "type": "[InboundNatRule]"},
+        "inbound_nat_pools": {"key": "properties.inboundNatPools", "type": "[InboundNatPool]"},
+        "outbound_rules": {"key": "properties.outboundRules", "type": "[OutboundRule]"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -11720,14 +11217,17 @@ class LoadBalancerBackendAddress(msrest.serialization.Model):
     """
 
     _validation = {
-        'network_interface_ip_configuration': {'readonly': True},
+        "network_interface_ip_configuration": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'virtual_network': {'key': 'properties.virtualNetwork', 'type': 'SubResource'},
-        'ip_address': {'key': 'properties.ipAddress', 'type': 'str'},
-        'network_interface_ip_configuration': {'key': 'properties.networkInterfaceIPConfiguration', 'type': 'SubResource'},
+        "name": {"key": "name", "type": "str"},
+        "virtual_network": {"key": "properties.virtualNetwork", "type": "SubResource"},
+        "ip_address": {"key": "properties.ipAddress", "type": "str"},
+        "network_interface_ip_configuration": {
+            "key": "properties.networkInterfaceIPConfiguration",
+            "type": "SubResource",
+        },
     }
 
     def __init__(
@@ -11757,20 +11257,15 @@ class LoadBalancerBackendAddressPoolListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[BackendAddressPool]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[BackendAddressPool]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["BackendAddressPool"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["BackendAddressPool"]] = None, **kwargs):
         super(LoadBalancerBackendAddressPoolListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -11788,20 +11283,15 @@ class LoadBalancerFrontendIPConfigurationListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[FrontendIPConfiguration]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[FrontendIPConfiguration]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["FrontendIPConfiguration"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["FrontendIPConfiguration"]] = None, **kwargs):
         super(LoadBalancerFrontendIPConfigurationListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -11819,20 +11309,15 @@ class LoadBalancerListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[LoadBalancer]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[LoadBalancer]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["LoadBalancer"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["LoadBalancer"]] = None, **kwargs):
         super(LoadBalancerListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -11850,20 +11335,15 @@ class LoadBalancerLoadBalancingRuleListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[LoadBalancingRule]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[LoadBalancingRule]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["LoadBalancingRule"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["LoadBalancingRule"]] = None, **kwargs):
         super(LoadBalancerLoadBalancingRuleListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -11881,20 +11361,15 @@ class LoadBalancerOutboundRuleListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[OutboundRule]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[OutboundRule]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["OutboundRule"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["OutboundRule"]] = None, **kwargs):
         super(LoadBalancerOutboundRuleListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -11912,20 +11387,15 @@ class LoadBalancerProbeListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Probe]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Probe]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Probe"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["Probe"]] = None, **kwargs):
         super(LoadBalancerProbeListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -11939,15 +11409,10 @@ class LoadBalancerSku(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[Union[str, "LoadBalancerSkuName"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[Union[str, "LoadBalancerSkuName"]] = None, **kwargs):
         super(LoadBalancerSku, self).__init__(**kwargs)
         self.name = name
 
@@ -12007,28 +11472,28 @@ class LoadBalancingRule(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'frontend_ip_configuration': {'key': 'properties.frontendIPConfiguration', 'type': 'SubResource'},
-        'backend_address_pool': {'key': 'properties.backendAddressPool', 'type': 'SubResource'},
-        'probe': {'key': 'properties.probe', 'type': 'SubResource'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'load_distribution': {'key': 'properties.loadDistribution', 'type': 'str'},
-        'frontend_port': {'key': 'properties.frontendPort', 'type': 'int'},
-        'backend_port': {'key': 'properties.backendPort', 'type': 'int'},
-        'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},
-        'enable_floating_ip': {'key': 'properties.enableFloatingIP', 'type': 'bool'},
-        'enable_tcp_reset': {'key': 'properties.enableTcpReset', 'type': 'bool'},
-        'disable_outbound_snat': {'key': 'properties.disableOutboundSnat', 'type': 'bool'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "frontend_ip_configuration": {"key": "properties.frontendIPConfiguration", "type": "SubResource"},
+        "backend_address_pool": {"key": "properties.backendAddressPool", "type": "SubResource"},
+        "probe": {"key": "properties.probe", "type": "SubResource"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "load_distribution": {"key": "properties.loadDistribution", "type": "str"},
+        "frontend_port": {"key": "properties.frontendPort", "type": "int"},
+        "backend_port": {"key": "properties.backendPort", "type": "int"},
+        "idle_timeout_in_minutes": {"key": "properties.idleTimeoutInMinutes", "type": "int"},
+        "enable_floating_ip": {"key": "properties.enableFloatingIP", "type": "bool"},
+        "enable_tcp_reset": {"key": "properties.enableTcpReset", "type": "bool"},
+        "disable_outbound_snat": {"key": "properties.disableOutboundSnat", "type": "bool"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -12100,26 +11565,26 @@ class LocalNetworkGateway(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'resource_guid': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "resource_guid": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'local_network_address_space': {'key': 'properties.localNetworkAddressSpace', 'type': 'AddressSpace'},
-        'gateway_ip_address': {'key': 'properties.gatewayIpAddress', 'type': 'str'},
-        'fqdn': {'key': 'properties.fqdn', 'type': 'str'},
-        'bgp_settings': {'key': 'properties.bgpSettings', 'type': 'BgpSettings'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "local_network_address_space": {"key": "properties.localNetworkAddressSpace", "type": "AddressSpace"},
+        "gateway_ip_address": {"key": "properties.gatewayIpAddress", "type": "str"},
+        "fqdn": {"key": "properties.fqdn", "type": "str"},
+        "bgp_settings": {"key": "properties.bgpSettings", "type": "BgpSettings"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -12156,20 +11621,15 @@ class LocalNetworkGatewayListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[LocalNetworkGateway]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[LocalNetworkGateway]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["LocalNetworkGateway"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["LocalNetworkGateway"]] = None, **kwargs):
         super(LocalNetworkGatewayListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -12187,9 +11647,9 @@ class LogSpecification(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'blob_duration': {'key': 'blobDuration', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "blob_duration": {"key": "blobDuration", "type": "str"},
     }
 
     def __init__(
@@ -12219,21 +11679,15 @@ class ManagedRuleGroupOverride(msrest.serialization.Model):
     """
 
     _validation = {
-        'rule_group_name': {'required': True},
+        "rule_group_name": {"required": True},
     }
 
     _attribute_map = {
-        'rule_group_name': {'key': 'ruleGroupName', 'type': 'str'},
-        'rules': {'key': 'rules', 'type': '[ManagedRuleOverride]'},
+        "rule_group_name": {"key": "ruleGroupName", "type": "str"},
+        "rules": {"key": "rules", "type": "[ManagedRuleOverride]"},
     }
 
-    def __init__(
-        self,
-        *,
-        rule_group_name: str,
-        rules: Optional[List["ManagedRuleOverride"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, rule_group_name: str, rules: Optional[List["ManagedRuleOverride"]] = None, **kwargs):
         super(ManagedRuleGroupOverride, self).__init__(**kwargs)
         self.rule_group_name = rule_group_name
         self.rules = rules
@@ -12252,21 +11706,15 @@ class ManagedRuleOverride(msrest.serialization.Model):
     """
 
     _validation = {
-        'rule_id': {'required': True},
+        "rule_id": {"required": True},
     }
 
     _attribute_map = {
-        'rule_id': {'key': 'ruleId', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
+        "rule_id": {"key": "ruleId", "type": "str"},
+        "state": {"key": "state", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        rule_id: str,
-        state: Optional[Union[str, "ManagedRuleEnabledState"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, rule_id: str, state: Optional[Union[str, "ManagedRuleEnabledState"]] = None, **kwargs):
         super(ManagedRuleOverride, self).__init__(**kwargs)
         self.rule_id = rule_id
         self.state = state
@@ -12284,12 +11732,12 @@ class ManagedRulesDefinition(msrest.serialization.Model):
     """
 
     _validation = {
-        'managed_rule_sets': {'required': True},
+        "managed_rule_sets": {"required": True},
     }
 
     _attribute_map = {
-        'exclusions': {'key': 'exclusions', 'type': '[OwaspCrsExclusionEntry]'},
-        'managed_rule_sets': {'key': 'managedRuleSets', 'type': '[ManagedRuleSet]'},
+        "exclusions": {"key": "exclusions", "type": "[OwaspCrsExclusionEntry]"},
+        "managed_rule_sets": {"key": "managedRuleSets", "type": "[ManagedRuleSet]"},
     }
 
     def __init__(
@@ -12319,14 +11767,14 @@ class ManagedRuleSet(msrest.serialization.Model):
     """
 
     _validation = {
-        'rule_set_type': {'required': True},
-        'rule_set_version': {'required': True},
+        "rule_set_type": {"required": True},
+        "rule_set_version": {"required": True},
     }
 
     _attribute_map = {
-        'rule_set_type': {'key': 'ruleSetType', 'type': 'str'},
-        'rule_set_version': {'key': 'ruleSetVersion', 'type': 'str'},
-        'rule_group_overrides': {'key': 'ruleGroupOverrides', 'type': '[ManagedRuleGroupOverride]'},
+        "rule_set_type": {"key": "ruleSetType", "type": "str"},
+        "rule_set_version": {"key": "ruleSetVersion", "type": "str"},
+        "rule_group_overrides": {"key": "ruleGroupOverrides", "type": "[ManagedRuleGroupOverride]"},
     }
 
     def __init__(
@@ -12367,22 +11815,30 @@ class ManagedServiceIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties}'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {
+            "key": "userAssignedIdentities",
+            "type": "{Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties}",
+        },
     }
 
     def __init__(
         self,
         *,
         type: Optional[Union[str, "ResourceIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties"]] = None,
+        user_assigned_identities: Optional[
+            Dict[
+                str,
+                "Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties",
+            ]
+        ] = None,
         **kwargs
     ):
         super(ManagedServiceIdentity, self).__init__(**kwargs)
@@ -12413,17 +11869,17 @@ class MatchCondition(msrest.serialization.Model):
     """
 
     _validation = {
-        'match_variables': {'required': True},
-        'operator': {'required': True},
-        'match_values': {'required': True},
+        "match_variables": {"required": True},
+        "operator": {"required": True},
+        "match_values": {"required": True},
     }
 
     _attribute_map = {
-        'match_variables': {'key': 'matchVariables', 'type': '[MatchVariable]'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'negation_conditon': {'key': 'negationConditon', 'type': 'bool'},
-        'match_values': {'key': 'matchValues', 'type': '[str]'},
-        'transforms': {'key': 'transforms', 'type': '[str]'},
+        "match_variables": {"key": "matchVariables", "type": "[MatchVariable]"},
+        "operator": {"key": "operator", "type": "str"},
+        "negation_conditon": {"key": "negationConditon", "type": "bool"},
+        "match_values": {"key": "matchValues", "type": "[str]"},
+        "transforms": {"key": "transforms", "type": "[str]"},
     }
 
     def __init__(
@@ -12455,17 +11911,11 @@ class MatchedRule(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'rule_name': {'key': 'ruleName', 'type': 'str'},
-        'action': {'key': 'action', 'type': 'str'},
+        "rule_name": {"key": "ruleName", "type": "str"},
+        "action": {"key": "action", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        rule_name: Optional[str] = None,
-        action: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, rule_name: Optional[str] = None, action: Optional[str] = None, **kwargs):
         super(MatchedRule, self).__init__(**kwargs)
         self.rule_name = rule_name
         self.action = action
@@ -12486,12 +11936,12 @@ class MatchVariable(msrest.serialization.Model):
     """
 
     _validation = {
-        'variable_name': {'required': True},
+        "variable_name": {"required": True},
     }
 
     _attribute_map = {
-        'variable_name': {'key': 'variableName', 'type': 'str'},
-        'selector': {'key': 'selector', 'type': 'str'},
+        "variable_name": {"key": "variableName", "type": "str"},
+        "selector": {"key": "selector", "type": "str"},
     }
 
     def __init__(
@@ -12540,20 +11990,20 @@ class MetricSpecification(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'display_description': {'key': 'displayDescription', 'type': 'str'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
-        'availabilities': {'key': 'availabilities', 'type': '[Availability]'},
-        'enable_regional_mdm_account': {'key': 'enableRegionalMdmAccount', 'type': 'bool'},
-        'fill_gap_with_zero': {'key': 'fillGapWithZero', 'type': 'bool'},
-        'metric_filter_pattern': {'key': 'metricFilterPattern', 'type': 'str'},
-        'dimensions': {'key': 'dimensions', 'type': '[Dimension]'},
-        'is_internal': {'key': 'isInternal', 'type': 'bool'},
-        'source_mdm_account': {'key': 'sourceMdmAccount', 'type': 'str'},
-        'source_mdm_namespace': {'key': 'sourceMdmNamespace', 'type': 'str'},
-        'resource_id_dimension_name_override': {'key': 'resourceIdDimensionNameOverride', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "display_description": {"key": "displayDescription", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+        "aggregation_type": {"key": "aggregationType", "type": "str"},
+        "availabilities": {"key": "availabilities", "type": "[Availability]"},
+        "enable_regional_mdm_account": {"key": "enableRegionalMdmAccount", "type": "bool"},
+        "fill_gap_with_zero": {"key": "fillGapWithZero", "type": "bool"},
+        "metric_filter_pattern": {"key": "metricFilterPattern", "type": "str"},
+        "dimensions": {"key": "dimensions", "type": "[Dimension]"},
+        "is_internal": {"key": "isInternal", "type": "bool"},
+        "source_mdm_account": {"key": "sourceMdmAccount", "type": "str"},
+        "source_mdm_namespace": {"key": "sourceMdmNamespace", "type": "str"},
+        "resource_id_dimension_name_override": {"key": "resourceIdDimensionNameOverride", "type": "str"},
     }
 
     def __init__(
@@ -12632,29 +12082,29 @@ class NatGateway(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'subnets': {'readonly': True},
-        'resource_guid': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "subnets": {"readonly": True},
+        "resource_guid": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'NatGatewaySku'},
-        'zones': {'key': 'zones', 'type': '[str]'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},
-        'public_ip_addresses': {'key': 'properties.publicIpAddresses', 'type': '[SubResource]'},
-        'public_ip_prefixes': {'key': 'properties.publicIpPrefixes', 'type': '[SubResource]'},
-        'subnets': {'key': 'properties.subnets', 'type': '[SubResource]'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "NatGatewaySku"},
+        "zones": {"key": "zones", "type": "[str]"},
+        "etag": {"key": "etag", "type": "str"},
+        "idle_timeout_in_minutes": {"key": "properties.idleTimeoutInMinutes", "type": "int"},
+        "public_ip_addresses": {"key": "properties.publicIpAddresses", "type": "[SubResource]"},
+        "public_ip_prefixes": {"key": "properties.publicIpPrefixes", "type": "[SubResource]"},
+        "subnets": {"key": "properties.subnets", "type": "[SubResource]"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -12692,17 +12142,11 @@ class NatGatewayListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[NatGateway]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[NatGateway]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["NatGateway"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["NatGateway"]] = None, next_link: Optional[str] = None, **kwargs):
         super(NatGatewayListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -12716,15 +12160,10 @@ class NatGatewaySku(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[Union[str, "NatGatewaySkuName"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[Union[str, "NatGatewaySkuName"]] = None, **kwargs):
         super(NatGatewaySku, self).__init__(**kwargs)
         self.name = name
 
@@ -12756,18 +12195,18 @@ class NatRuleCondition(FirewallPolicyRuleCondition):
     """
 
     _validation = {
-        'rule_condition_type': {'required': True},
+        "rule_condition_type": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'rule_condition_type': {'key': 'ruleConditionType', 'type': 'str'},
-        'ip_protocols': {'key': 'ipProtocols', 'type': '[str]'},
-        'source_addresses': {'key': 'sourceAddresses', 'type': '[str]'},
-        'destination_addresses': {'key': 'destinationAddresses', 'type': '[str]'},
-        'destination_ports': {'key': 'destinationPorts', 'type': '[str]'},
-        'source_ip_groups': {'key': 'sourceIpGroups', 'type': '[str]'},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "rule_condition_type": {"key": "ruleConditionType", "type": "str"},
+        "ip_protocols": {"key": "ipProtocols", "type": "[str]"},
+        "source_addresses": {"key": "sourceAddresses", "type": "[str]"},
+        "destination_addresses": {"key": "destinationAddresses", "type": "[str]"},
+        "destination_ports": {"key": "destinationPorts", "type": "[str]"},
+        "source_ip_groups": {"key": "sourceIpGroups", "type": "[str]"},
     }
 
     def __init__(
@@ -12783,7 +12222,7 @@ class NatRuleCondition(FirewallPolicyRuleCondition):
         **kwargs
     ):
         super(NatRuleCondition, self).__init__(name=name, description=description, **kwargs)
-        self.rule_condition_type = 'NatRuleCondition'  # type: str
+        self.rule_condition_type = "NatRuleCondition"  # type: str
         self.ip_protocols = ip_protocols
         self.source_addresses = source_addresses
         self.destination_addresses = destination_addresses
@@ -12808,14 +12247,14 @@ class NetworkConfigurationDiagnosticParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'target_resource_id': {'required': True},
-        'profiles': {'required': True},
+        "target_resource_id": {"required": True},
+        "profiles": {"required": True},
     }
 
     _attribute_map = {
-        'target_resource_id': {'key': 'targetResourceId', 'type': 'str'},
-        'verbosity_level': {'key': 'verbosityLevel', 'type': 'str'},
-        'profiles': {'key': 'profiles', 'type': '[NetworkConfigurationDiagnosticProfile]'},
+        "target_resource_id": {"key": "targetResourceId", "type": "str"},
+        "verbosity_level": {"key": "verbosityLevel", "type": "str"},
+        "profiles": {"key": "profiles", "type": "[NetworkConfigurationDiagnosticProfile]"},
     }
 
     def __init__(
@@ -12853,19 +12292,19 @@ class NetworkConfigurationDiagnosticProfile(msrest.serialization.Model):
     """
 
     _validation = {
-        'direction': {'required': True},
-        'protocol': {'required': True},
-        'source': {'required': True},
-        'destination': {'required': True},
-        'destination_port': {'required': True},
+        "direction": {"required": True},
+        "protocol": {"required": True},
+        "source": {"required": True},
+        "destination": {"required": True},
+        "destination_port": {"required": True},
     }
 
     _attribute_map = {
-        'direction': {'key': 'direction', 'type': 'str'},
-        'protocol': {'key': 'protocol', 'type': 'str'},
-        'source': {'key': 'source', 'type': 'str'},
-        'destination': {'key': 'destination', 'type': 'str'},
-        'destination_port': {'key': 'destinationPort', 'type': 'str'},
+        "direction": {"key": "direction", "type": "str"},
+        "protocol": {"key": "protocol", "type": "str"},
+        "source": {"key": "source", "type": "str"},
+        "destination": {"key": "destination", "type": "str"},
+        "destination_port": {"key": "destinationPort", "type": "str"},
     }
 
     def __init__(
@@ -12897,17 +12336,14 @@ class NetworkConfigurationDiagnosticResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'results': {'readonly': True},
+        "results": {"readonly": True},
     }
 
     _attribute_map = {
-        'results': {'key': 'results', 'type': '[NetworkConfigurationDiagnosticResult]'},
+        "results": {"key": "results", "type": "[NetworkConfigurationDiagnosticResult]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(NetworkConfigurationDiagnosticResponse, self).__init__(**kwargs)
         self.results = None
 
@@ -12923,8 +12359,8 @@ class NetworkConfigurationDiagnosticResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'profile': {'key': 'profile', 'type': 'NetworkConfigurationDiagnosticProfile'},
-        'network_security_group_result': {'key': 'networkSecurityGroupResult', 'type': 'NetworkSecurityGroupResult'},
+        "profile": {"key": "profile", "type": "NetworkConfigurationDiagnosticProfile"},
+        "network_security_group_result": {"key": "networkSecurityGroupResult", "type": "NetworkSecurityGroupResult"},
     }
 
     def __init__(
@@ -12959,18 +12395,18 @@ class NetworkIntentPolicy(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
     }
 
     def __init__(
@@ -12996,8 +12432,8 @@ class NetworkIntentPolicyConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'network_intent_policy_name': {'key': 'networkIntentPolicyName', 'type': 'str'},
-        'source_network_intent_policy': {'key': 'sourceNetworkIntentPolicy', 'type': 'NetworkIntentPolicy'},
+        "network_intent_policy_name": {"key": "networkIntentPolicyName", "type": "str"},
+        "source_network_intent_policy": {"key": "sourceNetworkIntentPolicy", "type": "NetworkIntentPolicy"},
     }
 
     def __init__(
@@ -13064,39 +12500,39 @@ class NetworkInterface(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'virtual_machine': {'readonly': True},
-        'private_endpoint': {'readonly': True},
-        'tap_configurations': {'readonly': True},
-        'mac_address': {'readonly': True},
-        'primary': {'readonly': True},
-        'hosted_workloads': {'readonly': True},
-        'resource_guid': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "virtual_machine": {"readonly": True},
+        "private_endpoint": {"readonly": True},
+        "tap_configurations": {"readonly": True},
+        "mac_address": {"readonly": True},
+        "primary": {"readonly": True},
+        "hosted_workloads": {"readonly": True},
+        "resource_guid": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'virtual_machine': {'key': 'properties.virtualMachine', 'type': 'SubResource'},
-        'network_security_group': {'key': 'properties.networkSecurityGroup', 'type': 'NetworkSecurityGroup'},
-        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
-        'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[NetworkInterfaceIPConfiguration]'},
-        'tap_configurations': {'key': 'properties.tapConfigurations', 'type': '[NetworkInterfaceTapConfiguration]'},
-        'dns_settings': {'key': 'properties.dnsSettings', 'type': 'NetworkInterfaceDnsSettings'},
-        'mac_address': {'key': 'properties.macAddress', 'type': 'str'},
-        'primary': {'key': 'properties.primary', 'type': 'bool'},
-        'enable_accelerated_networking': {'key': 'properties.enableAcceleratedNetworking', 'type': 'bool'},
-        'enable_ip_forwarding': {'key': 'properties.enableIPForwarding', 'type': 'bool'},
-        'hosted_workloads': {'key': 'properties.hostedWorkloads', 'type': '[str]'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "virtual_machine": {"key": "properties.virtualMachine", "type": "SubResource"},
+        "network_security_group": {"key": "properties.networkSecurityGroup", "type": "NetworkSecurityGroup"},
+        "private_endpoint": {"key": "properties.privateEndpoint", "type": "PrivateEndpoint"},
+        "ip_configurations": {"key": "properties.ipConfigurations", "type": "[NetworkInterfaceIPConfiguration]"},
+        "tap_configurations": {"key": "properties.tapConfigurations", "type": "[NetworkInterfaceTapConfiguration]"},
+        "dns_settings": {"key": "properties.dnsSettings", "type": "NetworkInterfaceDnsSettings"},
+        "mac_address": {"key": "properties.macAddress", "type": "str"},
+        "primary": {"key": "properties.primary", "type": "bool"},
+        "enable_accelerated_networking": {"key": "properties.enableAcceleratedNetworking", "type": "bool"},
+        "enable_ip_forwarding": {"key": "properties.enableIPForwarding", "type": "bool"},
+        "hosted_workloads": {"key": "properties.hostedWorkloads", "type": "[str]"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -13141,20 +12577,15 @@ class NetworkInterfaceAssociation(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
+        "id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'security_rules': {'key': 'securityRules', 'type': '[SecurityRule]'},
+        "id": {"key": "id", "type": "str"},
+        "security_rules": {"key": "securityRules", "type": "[SecurityRule]"},
     }
 
-    def __init__(
-        self,
-        *,
-        security_rules: Optional[List["SecurityRule"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, security_rules: Optional[List["SecurityRule"]] = None, **kwargs):
         super(NetworkInterfaceAssociation, self).__init__(**kwargs)
         self.id = None
         self.security_rules = security_rules
@@ -13186,25 +12617,21 @@ class NetworkInterfaceDnsSettings(msrest.serialization.Model):
     """
 
     _validation = {
-        'applied_dns_servers': {'readonly': True},
-        'internal_fqdn': {'readonly': True},
-        'internal_domain_name_suffix': {'readonly': True},
+        "applied_dns_servers": {"readonly": True},
+        "internal_fqdn": {"readonly": True},
+        "internal_domain_name_suffix": {"readonly": True},
     }
 
     _attribute_map = {
-        'dns_servers': {'key': 'dnsServers', 'type': '[str]'},
-        'applied_dns_servers': {'key': 'appliedDnsServers', 'type': '[str]'},
-        'internal_dns_name_label': {'key': 'internalDnsNameLabel', 'type': 'str'},
-        'internal_fqdn': {'key': 'internalFqdn', 'type': 'str'},
-        'internal_domain_name_suffix': {'key': 'internalDomainNameSuffix', 'type': 'str'},
+        "dns_servers": {"key": "dnsServers", "type": "[str]"},
+        "applied_dns_servers": {"key": "appliedDnsServers", "type": "[str]"},
+        "internal_dns_name_label": {"key": "internalDnsNameLabel", "type": "str"},
+        "internal_fqdn": {"key": "internalFqdn", "type": "str"},
+        "internal_domain_name_suffix": {"key": "internalDomainNameSuffix", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        dns_servers: Optional[List[str]] = None,
-        internal_dns_name_label: Optional[str] = None,
-        **kwargs
+        self, *, dns_servers: Optional[List[str]] = None, internal_dns_name_label: Optional[str] = None, **kwargs
     ):
         super(NetworkInterfaceDnsSettings, self).__init__(**kwargs)
         self.dns_servers = dns_servers
@@ -13268,28 +12695,43 @@ class NetworkInterfaceIPConfiguration(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'private_link_connection_properties': {'readonly': True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "private_link_connection_properties": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'virtual_network_taps': {'key': 'properties.virtualNetworkTaps', 'type': '[VirtualNetworkTap]'},
-        'application_gateway_backend_address_pools': {'key': 'properties.applicationGatewayBackendAddressPools', 'type': '[ApplicationGatewayBackendAddressPool]'},
-        'load_balancer_backend_address_pools': {'key': 'properties.loadBalancerBackendAddressPools', 'type': '[BackendAddressPool]'},
-        'load_balancer_inbound_nat_rules': {'key': 'properties.loadBalancerInboundNatRules', 'type': '[InboundNatRule]'},
-        'private_ip_address': {'key': 'properties.privateIPAddress', 'type': 'str'},
-        'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'str'},
-        'private_ip_address_version': {'key': 'properties.privateIPAddressVersion', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'Subnet'},
-        'primary': {'key': 'properties.primary', 'type': 'bool'},
-        'public_ip_address': {'key': 'properties.publicIPAddress', 'type': 'PublicIPAddress'},
-        'application_security_groups': {'key': 'properties.applicationSecurityGroups', 'type': '[ApplicationSecurityGroup]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'private_link_connection_properties': {'key': 'properties.privateLinkConnectionProperties', 'type': 'NetworkInterfaceIPConfigurationPrivateLinkConnectionProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "virtual_network_taps": {"key": "properties.virtualNetworkTaps", "type": "[VirtualNetworkTap]"},
+        "application_gateway_backend_address_pools": {
+            "key": "properties.applicationGatewayBackendAddressPools",
+            "type": "[ApplicationGatewayBackendAddressPool]",
+        },
+        "load_balancer_backend_address_pools": {
+            "key": "properties.loadBalancerBackendAddressPools",
+            "type": "[BackendAddressPool]",
+        },
+        "load_balancer_inbound_nat_rules": {
+            "key": "properties.loadBalancerInboundNatRules",
+            "type": "[InboundNatRule]",
+        },
+        "private_ip_address": {"key": "properties.privateIPAddress", "type": "str"},
+        "private_ip_allocation_method": {"key": "properties.privateIPAllocationMethod", "type": "str"},
+        "private_ip_address_version": {"key": "properties.privateIPAddressVersion", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "Subnet"},
+        "primary": {"key": "properties.primary", "type": "bool"},
+        "public_ip_address": {"key": "properties.publicIPAddress", "type": "PublicIPAddress"},
+        "application_security_groups": {
+            "key": "properties.applicationSecurityGroups",
+            "type": "[ApplicationSecurityGroup]",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "private_link_connection_properties": {
+            "key": "properties.privateLinkConnectionProperties",
+            "type": "NetworkInterfaceIPConfigurationPrivateLinkConnectionProperties",
+        },
     }
 
     def __init__(
@@ -13340,20 +12782,15 @@ class NetworkInterfaceIPConfigurationListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[NetworkInterfaceIPConfiguration]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[NetworkInterfaceIPConfiguration]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["NetworkInterfaceIPConfiguration"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["NetworkInterfaceIPConfiguration"]] = None, **kwargs):
         super(NetworkInterfaceIPConfigurationListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -13373,21 +12810,18 @@ class NetworkInterfaceIPConfigurationPrivateLinkConnectionProperties(msrest.seri
     """
 
     _validation = {
-        'group_id': {'readonly': True},
-        'required_member_name': {'readonly': True},
-        'fqdns': {'readonly': True},
+        "group_id": {"readonly": True},
+        "required_member_name": {"readonly": True},
+        "fqdns": {"readonly": True},
     }
 
     _attribute_map = {
-        'group_id': {'key': 'groupId', 'type': 'str'},
-        'required_member_name': {'key': 'requiredMemberName', 'type': 'str'},
-        'fqdns': {'key': 'fqdns', 'type': '[str]'},
+        "group_id": {"key": "groupId", "type": "str"},
+        "required_member_name": {"key": "requiredMemberName", "type": "str"},
+        "fqdns": {"key": "fqdns", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(NetworkInterfaceIPConfigurationPrivateLinkConnectionProperties, self).__init__(**kwargs)
         self.group_id = None
         self.required_member_name = None
@@ -13406,20 +12840,15 @@ class NetworkInterfaceListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[NetworkInterface]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[NetworkInterface]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["NetworkInterface"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["NetworkInterface"]] = None, **kwargs):
         super(NetworkInterfaceListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -13437,20 +12866,15 @@ class NetworkInterfaceLoadBalancerListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[LoadBalancer]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[LoadBalancer]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["LoadBalancer"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["LoadBalancer"]] = None, **kwargs):
         super(NetworkInterfaceLoadBalancerListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -13478,18 +12902,18 @@ class NetworkInterfaceTapConfiguration(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'virtual_network_tap': {'key': 'properties.virtualNetworkTap', 'type': 'VirtualNetworkTap'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "virtual_network_tap": {"key": "properties.virtualNetworkTap", "type": "VirtualNetworkTap"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -13520,20 +12944,15 @@ class NetworkInterfaceTapConfigurationListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[NetworkInterfaceTapConfiguration]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[NetworkInterfaceTapConfiguration]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["NetworkInterfaceTapConfiguration"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["NetworkInterfaceTapConfiguration"]] = None, **kwargs):
         super(NetworkInterfaceTapConfigurationListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -13571,25 +12990,31 @@ class NetworkProfile(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'container_network_interfaces': {'readonly': True},
-        'resource_guid': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "container_network_interfaces": {"readonly": True},
+        "resource_guid": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'container_network_interfaces': {'key': 'properties.containerNetworkInterfaces', 'type': '[ContainerNetworkInterface]'},
-        'container_network_interface_configurations': {'key': 'properties.containerNetworkInterfaceConfigurations', 'type': '[ContainerNetworkInterfaceConfiguration]'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "container_network_interfaces": {
+            "key": "properties.containerNetworkInterfaces",
+            "type": "[ContainerNetworkInterface]",
+        },
+        "container_network_interface_configurations": {
+            "key": "properties.containerNetworkInterfaceConfigurations",
+            "type": "[ContainerNetworkInterfaceConfiguration]",
+        },
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -13619,17 +13044,11 @@ class NetworkProfileListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[NetworkProfile]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[NetworkProfile]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["NetworkProfile"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["NetworkProfile"]] = None, next_link: Optional[str] = None, **kwargs):
         super(NetworkProfileListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -13664,19 +13083,19 @@ class NetworkRuleCondition(FirewallPolicyRuleCondition):
     """
 
     _validation = {
-        'rule_condition_type': {'required': True},
+        "rule_condition_type": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'rule_condition_type': {'key': 'ruleConditionType', 'type': 'str'},
-        'ip_protocols': {'key': 'ipProtocols', 'type': '[str]'},
-        'source_addresses': {'key': 'sourceAddresses', 'type': '[str]'},
-        'destination_addresses': {'key': 'destinationAddresses', 'type': '[str]'},
-        'destination_ports': {'key': 'destinationPorts', 'type': '[str]'},
-        'source_ip_groups': {'key': 'sourceIpGroups', 'type': '[str]'},
-        'destination_ip_groups': {'key': 'destinationIpGroups', 'type': '[str]'},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "rule_condition_type": {"key": "ruleConditionType", "type": "str"},
+        "ip_protocols": {"key": "ipProtocols", "type": "[str]"},
+        "source_addresses": {"key": "sourceAddresses", "type": "[str]"},
+        "destination_addresses": {"key": "destinationAddresses", "type": "[str]"},
+        "destination_ports": {"key": "destinationPorts", "type": "[str]"},
+        "source_ip_groups": {"key": "sourceIpGroups", "type": "[str]"},
+        "destination_ip_groups": {"key": "destinationIpGroups", "type": "[str]"},
     }
 
     def __init__(
@@ -13693,7 +13112,7 @@ class NetworkRuleCondition(FirewallPolicyRuleCondition):
         **kwargs
     ):
         super(NetworkRuleCondition, self).__init__(name=name, description=description, **kwargs)
-        self.rule_condition_type = 'NetworkRuleCondition'  # type: str
+        self.rule_condition_type = "NetworkRuleCondition"  # type: str
         self.ip_protocols = ip_protocols
         self.source_addresses = source_addresses
         self.destination_addresses = destination_addresses
@@ -13737,31 +13156,31 @@ class NetworkSecurityGroup(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'default_security_rules': {'readonly': True},
-        'network_interfaces': {'readonly': True},
-        'subnets': {'readonly': True},
-        'flow_logs': {'readonly': True},
-        'resource_guid': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "default_security_rules": {"readonly": True},
+        "network_interfaces": {"readonly": True},
+        "subnets": {"readonly": True},
+        "flow_logs": {"readonly": True},
+        "resource_guid": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'security_rules': {'key': 'properties.securityRules', 'type': '[SecurityRule]'},
-        'default_security_rules': {'key': 'properties.defaultSecurityRules', 'type': '[SecurityRule]'},
-        'network_interfaces': {'key': 'properties.networkInterfaces', 'type': '[NetworkInterface]'},
-        'subnets': {'key': 'properties.subnets', 'type': '[Subnet]'},
-        'flow_logs': {'key': 'properties.flowLogs', 'type': '[FlowLog]'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "security_rules": {"key": "properties.securityRules", "type": "[SecurityRule]"},
+        "default_security_rules": {"key": "properties.defaultSecurityRules", "type": "[SecurityRule]"},
+        "network_interfaces": {"key": "properties.networkInterfaces", "type": "[NetworkInterface]"},
+        "subnets": {"key": "properties.subnets", "type": "[Subnet]"},
+        "flow_logs": {"key": "properties.flowLogs", "type": "[FlowLog]"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -13794,16 +13213,12 @@ class NetworkSecurityGroupListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[NetworkSecurityGroup]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[NetworkSecurityGroup]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["NetworkSecurityGroup"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["NetworkSecurityGroup"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         super(NetworkSecurityGroupListResult, self).__init__(**kwargs)
         self.value = value
@@ -13825,20 +13240,18 @@ class NetworkSecurityGroupResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'evaluated_network_security_groups': {'readonly': True},
+        "evaluated_network_security_groups": {"readonly": True},
     }
 
     _attribute_map = {
-        'security_rule_access_result': {'key': 'securityRuleAccessResult', 'type': 'str'},
-        'evaluated_network_security_groups': {'key': 'evaluatedNetworkSecurityGroups', 'type': '[EvaluatedNetworkSecurityGroup]'},
+        "security_rule_access_result": {"key": "securityRuleAccessResult", "type": "str"},
+        "evaluated_network_security_groups": {
+            "key": "evaluatedNetworkSecurityGroups",
+            "type": "[EvaluatedNetworkSecurityGroup]",
+        },
     }
 
-    def __init__(
-        self,
-        *,
-        security_rule_access_result: Optional[Union[str, "SecurityRuleAccess"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, security_rule_access_result: Optional[Union[str, "SecurityRuleAccess"]] = None, **kwargs):
         super(NetworkSecurityGroupResult, self).__init__(**kwargs)
         self.security_rule_access_result = security_rule_access_result
         self.evaluated_network_security_groups = None
@@ -13862,12 +13275,12 @@ class NetworkSecurityRulesEvaluationResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'protocol_matched': {'key': 'protocolMatched', 'type': 'bool'},
-        'source_matched': {'key': 'sourceMatched', 'type': 'bool'},
-        'source_port_matched': {'key': 'sourcePortMatched', 'type': 'bool'},
-        'destination_matched': {'key': 'destinationMatched', 'type': 'bool'},
-        'destination_port_matched': {'key': 'destinationPortMatched', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "protocol_matched": {"key": "protocolMatched", "type": "bool"},
+        "source_matched": {"key": "sourceMatched", "type": "bool"},
+        "source_port_matched": {"key": "sourcePortMatched", "type": "bool"},
+        "destination_matched": {"key": "destinationMatched", "type": "bool"},
+        "destination_port_matched": {"key": "destinationPortMatched", "type": "bool"},
     }
 
     def __init__(
@@ -13928,29 +13341,29 @@ class NetworkVirtualAppliance(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'virtual_appliance_asn': {'maximum': 4294967295, 'minimum': 0},
-        'virtual_appliance_nics': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "virtual_appliance_asn": {"maximum": 4294967295, "minimum": 0},
+        "virtual_appliance_nics": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
-        'sku': {'key': 'sku', 'type': 'VirtualApplianceSkuProperties'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'boot_strap_configuration_blob': {'key': 'properties.bootStrapConfigurationBlob', 'type': '[str]'},
-        'virtual_hub': {'key': 'properties.virtualHub', 'type': 'SubResource'},
-        'cloud_init_configuration_blob': {'key': 'properties.cloudInitConfigurationBlob', 'type': '[str]'},
-        'virtual_appliance_asn': {'key': 'properties.virtualApplianceAsn', 'type': 'long'},
-        'virtual_appliance_nics': {'key': 'properties.virtualApplianceNics', 'type': '[VirtualApplianceNicProperties]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
+        "sku": {"key": "sku", "type": "VirtualApplianceSkuProperties"},
+        "etag": {"key": "etag", "type": "str"},
+        "boot_strap_configuration_blob": {"key": "properties.bootStrapConfigurationBlob", "type": "[str]"},
+        "virtual_hub": {"key": "properties.virtualHub", "type": "SubResource"},
+        "cloud_init_configuration_blob": {"key": "properties.cloudInitConfigurationBlob", "type": "[str]"},
+        "virtual_appliance_asn": {"key": "properties.virtualApplianceAsn", "type": "long"},
+        "virtual_appliance_nics": {"key": "properties.virtualApplianceNics", "type": "[VirtualApplianceNicProperties]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -13989,16 +13402,12 @@ class NetworkVirtualApplianceListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[NetworkVirtualAppliance]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[NetworkVirtualAppliance]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["NetworkVirtualAppliance"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["NetworkVirtualAppliance"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         super(NetworkVirtualApplianceListResult, self).__init__(**kwargs)
         self.value = value
@@ -14028,20 +13437,20 @@ class NetworkWatcher(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -14065,15 +13474,10 @@ class NetworkWatcherListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[NetworkWatcher]'},
+        "value": {"key": "value", "type": "[NetworkWatcher]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["NetworkWatcher"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["NetworkWatcher"]] = None, **kwargs):
         super(NetworkWatcherListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -14096,16 +13500,16 @@ class NextHopParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'target_resource_id': {'required': True},
-        'source_ip_address': {'required': True},
-        'destination_ip_address': {'required': True},
+        "target_resource_id": {"required": True},
+        "source_ip_address": {"required": True},
+        "destination_ip_address": {"required": True},
     }
 
     _attribute_map = {
-        'target_resource_id': {'key': 'targetResourceId', 'type': 'str'},
-        'source_ip_address': {'key': 'sourceIPAddress', 'type': 'str'},
-        'destination_ip_address': {'key': 'destinationIPAddress', 'type': 'str'},
-        'target_nic_resource_id': {'key': 'targetNicResourceId', 'type': 'str'},
+        "target_resource_id": {"key": "targetResourceId", "type": "str"},
+        "source_ip_address": {"key": "sourceIPAddress", "type": "str"},
+        "destination_ip_address": {"key": "destinationIPAddress", "type": "str"},
+        "target_nic_resource_id": {"key": "targetNicResourceId", "type": "str"},
     }
 
     def __init__(
@@ -14139,9 +13543,9 @@ class NextHopResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'next_hop_type': {'key': 'nextHopType', 'type': 'str'},
-        'next_hop_ip_address': {'key': 'nextHopIpAddress', 'type': 'str'},
-        'route_table_id': {'key': 'routeTableId', 'type': 'str'},
+        "next_hop_type": {"key": "nextHopType", "type": "str"},
+        "next_hop_ip_address": {"key": "nextHopIpAddress", "type": "str"},
+        "route_table_id": {"key": "routeTableId", "type": "str"},
     }
 
     def __init__(
@@ -14173,10 +13577,13 @@ class Operation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'service_specification': {'key': 'properties.serviceSpecification', 'type': 'OperationPropertiesFormatServiceSpecification'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
+        "service_specification": {
+            "key": "properties.serviceSpecification",
+            "type": "OperationPropertiesFormatServiceSpecification",
+        },
     }
 
     def __init__(
@@ -14209,10 +13616,10 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -14241,17 +13648,11 @@ class OperationListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Operation"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["Operation"]] = None, next_link: Optional[str] = None, **kwargs):
         super(OperationListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -14267,8 +13668,8 @@ class OperationPropertiesFormatServiceSpecification(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'metric_specifications': {'key': 'metricSpecifications', 'type': '[MetricSpecification]'},
-        'log_specifications': {'key': 'logSpecifications', 'type': '[LogSpecification]'},
+        "metric_specifications": {"key": "metricSpecifications", "type": "[MetricSpecification]"},
+        "log_specifications": {"key": "logSpecifications", "type": "[LogSpecification]"},
     }
 
     def __init__(
@@ -14318,23 +13719,23 @@ class OutboundRule(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'allocated_outbound_ports': {'key': 'properties.allocatedOutboundPorts', 'type': 'int'},
-        'frontend_ip_configurations': {'key': 'properties.frontendIPConfigurations', 'type': '[SubResource]'},
-        'backend_address_pool': {'key': 'properties.backendAddressPool', 'type': 'SubResource'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'enable_tcp_reset': {'key': 'properties.enableTcpReset', 'type': 'bool'},
-        'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "allocated_outbound_ports": {"key": "properties.allocatedOutboundPorts", "type": "int"},
+        "frontend_ip_configurations": {"key": "properties.frontendIPConfigurations", "type": "[SubResource]"},
+        "backend_address_pool": {"key": "properties.backendAddressPool", "type": "SubResource"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "enable_tcp_reset": {"key": "properties.enableTcpReset", "type": "bool"},
+        "idle_timeout_in_minutes": {"key": "properties.idleTimeoutInMinutes", "type": "int"},
     }
 
     def __init__(
@@ -14383,15 +13784,15 @@ class OwaspCrsExclusionEntry(msrest.serialization.Model):
     """
 
     _validation = {
-        'match_variable': {'required': True},
-        'selector_match_operator': {'required': True},
-        'selector': {'required': True},
+        "match_variable": {"required": True},
+        "selector_match_operator": {"required": True},
+        "selector": {"required": True},
     }
 
     _attribute_map = {
-        'match_variable': {'key': 'matchVariable', 'type': 'str'},
-        'selector_match_operator': {'key': 'selectorMatchOperator', 'type': 'str'},
-        'selector': {'key': 'selector', 'type': 'str'},
+        "match_variable": {"key": "matchVariable", "type": "str"},
+        "selector_match_operator": {"key": "selectorMatchOperator", "type": "str"},
+        "selector": {"key": "selector", "type": "str"},
     }
 
     def __init__(
@@ -14432,17 +13833,17 @@ class P2SConnectionConfiguration(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'vpn_client_address_pool': {'key': 'properties.vpnClientAddressPool', 'type': 'AddressSpace'},
-        'routing_configuration': {'key': 'properties.routingConfiguration', 'type': 'RoutingConfiguration'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "vpn_client_address_pool": {"key": "properties.vpnClientAddressPool", "type": "AddressSpace"},
+        "routing_configuration": {"key": "properties.routingConfiguration", "type": "RoutingConfiguration"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -14471,15 +13872,10 @@ class P2SVpnConnectionHealth(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'sas_url': {'key': 'sasUrl', 'type': 'str'},
+        "sas_url": {"key": "sasUrl", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        sas_url: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, sas_url: Optional[str] = None, **kwargs):
         super(P2SVpnConnectionHealth, self).__init__(**kwargs)
         self.sas_url = sas_url
 
@@ -14495,16 +13891,12 @@ class P2SVpnConnectionHealthRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'vpn_user_names_filter': {'key': 'vpnUserNamesFilter', 'type': '[str]'},
-        'output_blob_sas_url': {'key': 'outputBlobSasUrl', 'type': 'str'},
+        "vpn_user_names_filter": {"key": "vpnUserNamesFilter", "type": "[str]"},
+        "output_blob_sas_url": {"key": "outputBlobSasUrl", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        vpn_user_names_filter: Optional[List[str]] = None,
-        output_blob_sas_url: Optional[str] = None,
-        **kwargs
+        self, *, vpn_user_names_filter: Optional[List[str]] = None, output_blob_sas_url: Optional[str] = None, **kwargs
     ):
         super(P2SVpnConnectionHealthRequest, self).__init__(**kwargs)
         self.vpn_user_names_filter = vpn_user_names_filter
@@ -14519,15 +13911,10 @@ class P2SVpnConnectionRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'vpn_connection_ids': {'key': 'vpnConnectionIds', 'type': '[str]'},
+        "vpn_connection_ids": {"key": "vpnConnectionIds", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        vpn_connection_ids: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, vpn_connection_ids: Optional[List[str]] = None, **kwargs):
         super(P2SVpnConnectionRequest, self).__init__(**kwargs)
         self.vpn_connection_ids = vpn_connection_ids
 
@@ -14569,26 +13956,32 @@ class P2SVpnGateway(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'vpn_client_connection_health': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "vpn_client_connection_health": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'virtual_hub': {'key': 'properties.virtualHub', 'type': 'SubResource'},
-        'p2_s_connection_configurations': {'key': 'properties.p2SConnectionConfigurations', 'type': '[P2SConnectionConfiguration]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'vpn_gateway_scale_unit': {'key': 'properties.vpnGatewayScaleUnit', 'type': 'int'},
-        'vpn_server_configuration': {'key': 'properties.vpnServerConfiguration', 'type': 'SubResource'},
-        'vpn_client_connection_health': {'key': 'properties.vpnClientConnectionHealth', 'type': 'VpnClientConnectionHealth'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "virtual_hub": {"key": "properties.virtualHub", "type": "SubResource"},
+        "p2_s_connection_configurations": {
+            "key": "properties.p2SConnectionConfigurations",
+            "type": "[P2SConnectionConfiguration]",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "vpn_gateway_scale_unit": {"key": "properties.vpnGatewayScaleUnit", "type": "int"},
+        "vpn_server_configuration": {"key": "properties.vpnServerConfiguration", "type": "SubResource"},
+        "vpn_client_connection_health": {
+            "key": "properties.vpnClientConnectionHealth",
+            "type": "VpnClientConnectionHealth",
+        },
     }
 
     def __init__(
@@ -14622,15 +14015,10 @@ class P2SVpnProfileParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'authentication_method': {'key': 'authenticationMethod', 'type': 'str'},
+        "authentication_method": {"key": "authenticationMethod", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        authentication_method: Optional[Union[str, "AuthenticationMethod"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, authentication_method: Optional[Union[str, "AuthenticationMethod"]] = None, **kwargs):
         super(P2SVpnProfileParameters, self).__init__(**kwargs)
         self.authentication_method = authentication_method
 
@@ -14656,17 +14044,17 @@ class PacketCapture(msrest.serialization.Model):
     """
 
     _validation = {
-        'target': {'required': True},
-        'storage_location': {'required': True},
+        "target": {"required": True},
+        "storage_location": {"required": True},
     }
 
     _attribute_map = {
-        'target': {'key': 'properties.target', 'type': 'str'},
-        'bytes_to_capture_per_packet': {'key': 'properties.bytesToCapturePerPacket', 'type': 'int'},
-        'total_bytes_per_session': {'key': 'properties.totalBytesPerSession', 'type': 'int'},
-        'time_limit_in_seconds': {'key': 'properties.timeLimitInSeconds', 'type': 'int'},
-        'storage_location': {'key': 'properties.storageLocation', 'type': 'PacketCaptureStorageLocation'},
-        'filters': {'key': 'properties.filters', 'type': '[PacketCaptureFilter]'},
+        "target": {"key": "properties.target", "type": "str"},
+        "bytes_to_capture_per_packet": {"key": "properties.bytesToCapturePerPacket", "type": "int"},
+        "total_bytes_per_session": {"key": "properties.totalBytesPerSession", "type": "int"},
+        "time_limit_in_seconds": {"key": "properties.timeLimitInSeconds", "type": "int"},
+        "storage_location": {"key": "properties.storageLocation", "type": "PacketCaptureStorageLocation"},
+        "filters": {"key": "properties.filters", "type": "[PacketCaptureFilter]"},
     }
 
     def __init__(
@@ -14716,11 +14104,11 @@ class PacketCaptureFilter(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'protocol': {'key': 'protocol', 'type': 'str'},
-        'local_ip_address': {'key': 'localIPAddress', 'type': 'str'},
-        'remote_ip_address': {'key': 'remoteIPAddress', 'type': 'str'},
-        'local_port': {'key': 'localPort', 'type': 'str'},
-        'remote_port': {'key': 'remotePort', 'type': 'str'},
+        "protocol": {"key": "protocol", "type": "str"},
+        "local_ip_address": {"key": "localIPAddress", "type": "str"},
+        "remote_ip_address": {"key": "remoteIPAddress", "type": "str"},
+        "local_port": {"key": "localPort", "type": "str"},
+        "remote_port": {"key": "remotePort", "type": "str"},
     }
 
     def __init__(
@@ -14749,15 +14137,10 @@ class PacketCaptureListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PacketCaptureResult]'},
+        "value": {"key": "value", "type": "[PacketCaptureResult]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["PacketCaptureResult"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["PacketCaptureResult"]] = None, **kwargs):
         super(PacketCaptureListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -14783,17 +14166,17 @@ class PacketCaptureParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'target': {'required': True},
-        'storage_location': {'required': True},
+        "target": {"required": True},
+        "storage_location": {"required": True},
     }
 
     _attribute_map = {
-        'target': {'key': 'target', 'type': 'str'},
-        'bytes_to_capture_per_packet': {'key': 'bytesToCapturePerPacket', 'type': 'int'},
-        'total_bytes_per_session': {'key': 'totalBytesPerSession', 'type': 'int'},
-        'time_limit_in_seconds': {'key': 'timeLimitInSeconds', 'type': 'int'},
-        'storage_location': {'key': 'storageLocation', 'type': 'PacketCaptureStorageLocation'},
-        'filters': {'key': 'filters', 'type': '[PacketCaptureFilter]'},
+        "target": {"key": "target", "type": "str"},
+        "bytes_to_capture_per_packet": {"key": "bytesToCapturePerPacket", "type": "int"},
+        "total_bytes_per_session": {"key": "totalBytesPerSession", "type": "int"},
+        "time_limit_in_seconds": {"key": "timeLimitInSeconds", "type": "int"},
+        "storage_location": {"key": "storageLocation", "type": "PacketCaptureStorageLocation"},
+        "filters": {"key": "filters", "type": "[PacketCaptureFilter]"},
     }
 
     def __init__(
@@ -14835,12 +14218,12 @@ class PacketCaptureQueryStatusResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'capture_start_time': {'key': 'captureStartTime', 'type': 'iso-8601'},
-        'packet_capture_status': {'key': 'packetCaptureStatus', 'type': 'str'},
-        'stop_reason': {'key': 'stopReason', 'type': 'str'},
-        'packet_capture_error': {'key': 'packetCaptureError', 'type': '[str]'},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "capture_start_time": {"key": "captureStartTime", "type": "iso-8601"},
+        "packet_capture_status": {"key": "packetCaptureStatus", "type": "str"},
+        "stop_reason": {"key": "stopReason", "type": "str"},
+        "packet_capture_error": {"key": "packetCaptureError", "type": "[str]"},
     }
 
     def __init__(
@@ -14893,23 +14276,23 @@ class PacketCaptureResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'id': {'readonly': True},
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "id": {"readonly": True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'target': {'key': 'properties.target', 'type': 'str'},
-        'bytes_to_capture_per_packet': {'key': 'properties.bytesToCapturePerPacket', 'type': 'int'},
-        'total_bytes_per_session': {'key': 'properties.totalBytesPerSession', 'type': 'int'},
-        'time_limit_in_seconds': {'key': 'properties.timeLimitInSeconds', 'type': 'int'},
-        'storage_location': {'key': 'properties.storageLocation', 'type': 'PacketCaptureStorageLocation'},
-        'filters': {'key': 'properties.filters', 'type': '[PacketCaptureFilter]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "target": {"key": "properties.target", "type": "str"},
+        "bytes_to_capture_per_packet": {"key": "properties.bytesToCapturePerPacket", "type": "int"},
+        "total_bytes_per_session": {"key": "properties.totalBytesPerSession", "type": "int"},
+        "time_limit_in_seconds": {"key": "properties.timeLimitInSeconds", "type": "int"},
+        "storage_location": {"key": "properties.storageLocation", "type": "PacketCaptureStorageLocation"},
+        "filters": {"key": "properties.filters", "type": "[PacketCaptureFilter]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -14962,19 +14345,19 @@ class PacketCaptureResultProperties(PacketCaptureParameters):
     """
 
     _validation = {
-        'target': {'required': True},
-        'storage_location': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "target": {"required": True},
+        "storage_location": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'target': {'key': 'target', 'type': 'str'},
-        'bytes_to_capture_per_packet': {'key': 'bytesToCapturePerPacket', 'type': 'int'},
-        'total_bytes_per_session': {'key': 'totalBytesPerSession', 'type': 'int'},
-        'time_limit_in_seconds': {'key': 'timeLimitInSeconds', 'type': 'int'},
-        'storage_location': {'key': 'storageLocation', 'type': 'PacketCaptureStorageLocation'},
-        'filters': {'key': 'filters', 'type': '[PacketCaptureFilter]'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        "target": {"key": "target", "type": "str"},
+        "bytes_to_capture_per_packet": {"key": "bytesToCapturePerPacket", "type": "int"},
+        "total_bytes_per_session": {"key": "totalBytesPerSession", "type": "int"},
+        "time_limit_in_seconds": {"key": "timeLimitInSeconds", "type": "int"},
+        "storage_location": {"key": "storageLocation", "type": "PacketCaptureStorageLocation"},
+        "filters": {"key": "filters", "type": "[PacketCaptureFilter]"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -14988,7 +14371,15 @@ class PacketCaptureResultProperties(PacketCaptureParameters):
         filters: Optional[List["PacketCaptureFilter"]] = None,
         **kwargs
     ):
-        super(PacketCaptureResultProperties, self).__init__(target=target, bytes_to_capture_per_packet=bytes_to_capture_per_packet, total_bytes_per_session=total_bytes_per_session, time_limit_in_seconds=time_limit_in_seconds, storage_location=storage_location, filters=filters, **kwargs)
+        super(PacketCaptureResultProperties, self).__init__(
+            target=target,
+            bytes_to_capture_per_packet=bytes_to_capture_per_packet,
+            total_bytes_per_session=total_bytes_per_session,
+            time_limit_in_seconds=time_limit_in_seconds,
+            storage_location=storage_location,
+            filters=filters,
+            **kwargs
+        )
         self.provisioning_state = None
 
 
@@ -15008,9 +14399,9 @@ class PacketCaptureStorageLocation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'storage_id': {'key': 'storageId', 'type': 'str'},
-        'storage_path': {'key': 'storagePath', 'type': 'str'},
-        'file_path': {'key': 'filePath', 'type': 'str'},
+        "storage_id": {"key": "storageId", "type": "str"},
+        "storage_path": {"key": "storagePath", "type": "str"},
+        "file_path": {"key": "filePath", "type": "str"},
     }
 
     def __init__(
@@ -15055,24 +14446,24 @@ class PatchRouteFilter(SubResource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'peerings': {'readonly': True},
-        'ipv6_peerings': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "peerings": {"readonly": True},
+        "ipv6_peerings": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'rules': {'key': 'properties.rules', 'type': '[RouteFilterRule]'},
-        'peerings': {'key': 'properties.peerings', 'type': '[ExpressRouteCircuitPeering]'},
-        'ipv6_peerings': {'key': 'properties.ipv6Peerings', 'type': '[ExpressRouteCircuitPeering]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "rules": {"key": "properties.rules", "type": "[RouteFilterRule]"},
+        "peerings": {"key": "properties.peerings", "type": "[ExpressRouteCircuitPeering]"},
+        "ipv6_peerings": {"key": "properties.ipv6Peerings", "type": "[ExpressRouteCircuitPeering]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -15119,19 +14510,19 @@ class PatchRouteFilterRule(SubResource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'access': {'key': 'properties.access', 'type': 'str'},
-        'route_filter_rule_type': {'key': 'properties.routeFilterRuleType', 'type': 'str'},
-        'communities': {'key': 'properties.communities', 'type': '[str]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "access": {"key": "properties.access", "type": "str"},
+        "route_filter_rule_type": {"key": "properties.routeFilterRuleType", "type": "str"},
+        "communities": {"key": "properties.communities", "type": "[str]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -15189,24 +14580,27 @@ class PeerExpressRouteCircuitConnection(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'circuit_connection_status': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "circuit_connection_status": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'express_route_circuit_peering': {'key': 'properties.expressRouteCircuitPeering', 'type': 'SubResource'},
-        'peer_express_route_circuit_peering': {'key': 'properties.peerExpressRouteCircuitPeering', 'type': 'SubResource'},
-        'address_prefix': {'key': 'properties.addressPrefix', 'type': 'str'},
-        'circuit_connection_status': {'key': 'properties.circuitConnectionStatus', 'type': 'str'},
-        'connection_name': {'key': 'properties.connectionName', 'type': 'str'},
-        'auth_resource_guid': {'key': 'properties.authResourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "express_route_circuit_peering": {"key": "properties.expressRouteCircuitPeering", "type": "SubResource"},
+        "peer_express_route_circuit_peering": {
+            "key": "properties.peerExpressRouteCircuitPeering",
+            "type": "SubResource",
+        },
+        "address_prefix": {"key": "properties.addressPrefix", "type": "str"},
+        "circuit_connection_status": {"key": "properties.circuitConnectionStatus", "type": "str"},
+        "connection_name": {"key": "properties.connectionName", "type": "str"},
+        "auth_resource_guid": {"key": "properties.authResourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -15245,8 +14639,8 @@ class PeerExpressRouteCircuitConnectionListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PeerExpressRouteCircuitConnection]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PeerExpressRouteCircuitConnection]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
@@ -15277,16 +14671,16 @@ class PolicySettings(msrest.serialization.Model):
     """
 
     _validation = {
-        'max_request_body_size_in_kb': {'maximum': 128, 'minimum': 8},
-        'file_upload_limit_in_mb': {'minimum': 0},
+        "max_request_body_size_in_kb": {"maximum": 128, "minimum": 8},
+        "file_upload_limit_in_mb": {"minimum": 0},
     }
 
     _attribute_map = {
-        'state': {'key': 'state', 'type': 'str'},
-        'mode': {'key': 'mode', 'type': 'str'},
-        'request_body_check': {'key': 'requestBodyCheck', 'type': 'bool'},
-        'max_request_body_size_in_kb': {'key': 'maxRequestBodySizeInKb', 'type': 'int'},
-        'file_upload_limit_in_mb': {'key': 'fileUploadLimitInMb', 'type': 'int'},
+        "state": {"key": "state", "type": "str"},
+        "mode": {"key": "mode", "type": "str"},
+        "request_body_check": {"key": "requestBodyCheck", "type": "bool"},
+        "max_request_body_size_in_kb": {"key": "maxRequestBodySizeInKb", "type": "int"},
+        "file_upload_limit_in_mb": {"key": "fileUploadLimitInMb", "type": "int"},
     }
 
     def __init__(
@@ -15318,8 +14712,11 @@ class PrepareNetworkPoliciesRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'service_name': {'key': 'serviceName', 'type': 'str'},
-        'network_intent_policy_configurations': {'key': 'networkIntentPolicyConfigurations', 'type': '[NetworkIntentPolicyConfiguration]'},
+        "service_name": {"key": "serviceName", "type": "str"},
+        "network_intent_policy_configurations": {
+            "key": "networkIntentPolicyConfigurations",
+            "type": "[NetworkIntentPolicyConfiguration]",
+        },
     }
 
     def __init__(
@@ -15350,22 +14747,16 @@ class PrivateDnsZoneConfig(msrest.serialization.Model):
     """
 
     _validation = {
-        'record_sets': {'readonly': True},
+        "record_sets": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'private_dns_zone_id': {'key': 'properties.privateDnsZoneId', 'type': 'str'},
-        'record_sets': {'key': 'properties.recordSets', 'type': '[RecordSet]'},
+        "name": {"key": "name", "type": "str"},
+        "private_dns_zone_id": {"key": "properties.privateDnsZoneId", "type": "str"},
+        "record_sets": {"key": "properties.recordSets", "type": "[RecordSet]"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        private_dns_zone_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, private_dns_zone_id: Optional[str] = None, **kwargs):
         super(PrivateDnsZoneConfig, self).__init__(**kwargs)
         self.name = name
         self.private_dns_zone_id = private_dns_zone_id
@@ -15394,16 +14785,16 @@ class PrivateDnsZoneGroup(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'private_dns_zone_configs': {'key': 'properties.privateDnsZoneConfigs', 'type': '[PrivateDnsZoneConfig]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "private_dns_zone_configs": {"key": "properties.privateDnsZoneConfigs", "type": "[PrivateDnsZoneConfig]"},
     }
 
     def __init__(
@@ -15433,20 +14824,15 @@ class PrivateDnsZoneGroupListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateDnsZoneGroup]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PrivateDnsZoneGroup]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["PrivateDnsZoneGroup"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["PrivateDnsZoneGroup"]] = None, **kwargs):
         super(PrivateDnsZoneGroupListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -15492,26 +14878,32 @@ class PrivateEndpoint(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'network_interfaces': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "network_interfaces": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'Subnet'},
-        'network_interfaces': {'key': 'properties.networkInterfaces', 'type': '[NetworkInterface]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'private_link_service_connections': {'key': 'properties.privateLinkServiceConnections', 'type': '[PrivateLinkServiceConnection]'},
-        'manual_private_link_service_connections': {'key': 'properties.manualPrivateLinkServiceConnections', 'type': '[PrivateLinkServiceConnection]'},
-        'custom_dns_configs': {'key': 'properties.customDnsConfigs', 'type': '[CustomDnsConfigPropertiesFormat]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "Subnet"},
+        "network_interfaces": {"key": "properties.networkInterfaces", "type": "[NetworkInterface]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "private_link_service_connections": {
+            "key": "properties.privateLinkServiceConnections",
+            "type": "[PrivateLinkServiceConnection]",
+        },
+        "manual_private_link_service_connections": {
+            "key": "properties.manualPrivateLinkServiceConnections",
+            "type": "[PrivateLinkServiceConnection]",
+        },
+        "custom_dns_configs": {"key": "properties.customDnsConfigs", "type": "[CustomDnsConfigPropertiesFormat]"},
     }
 
     def __init__(
@@ -15564,22 +14956,25 @@ class PrivateEndpointConnection(SubResource):
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'private_endpoint': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'link_identifier': {'readonly': True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "private_endpoint": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "link_identifier": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
-        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'link_identifier': {'key': 'properties.linkIdentifier', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "private_endpoint": {"key": "properties.privateEndpoint", "type": "PrivateEndpoint"},
+        "private_link_service_connection_state": {
+            "key": "properties.privateLinkServiceConnectionState",
+            "type": "PrivateLinkServiceConnectionState",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "link_identifier": {"key": "properties.linkIdentifier", "type": "str"},
     }
 
     def __init__(
@@ -15613,20 +15008,15 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateEndpointConnection]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["PrivateEndpointConnection"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["PrivateEndpointConnection"]] = None, **kwargs):
         super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -15644,20 +15034,15 @@ class PrivateEndpointListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateEndpoint]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PrivateEndpoint]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["PrivateEndpoint"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["PrivateEndpoint"]] = None, **kwargs):
         super(PrivateEndpointListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -15711,32 +15096,38 @@ class PrivateLinkService(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'network_interfaces': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'private_endpoint_connections': {'readonly': True},
-        'alias': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "network_interfaces": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "private_endpoint_connections": {"readonly": True},
+        "alias": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'load_balancer_frontend_ip_configurations': {'key': 'properties.loadBalancerFrontendIpConfigurations', 'type': '[FrontendIPConfiguration]'},
-        'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[PrivateLinkServiceIpConfiguration]'},
-        'network_interfaces': {'key': 'properties.networkInterfaces', 'type': '[NetworkInterface]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
-        'visibility': {'key': 'properties.visibility', 'type': 'PrivateLinkServicePropertiesVisibility'},
-        'auto_approval': {'key': 'properties.autoApproval', 'type': 'PrivateLinkServicePropertiesAutoApproval'},
-        'fqdns': {'key': 'properties.fqdns', 'type': '[str]'},
-        'alias': {'key': 'properties.alias', 'type': 'str'},
-        'enable_proxy_protocol': {'key': 'properties.enableProxyProtocol', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "load_balancer_frontend_ip_configurations": {
+            "key": "properties.loadBalancerFrontendIpConfigurations",
+            "type": "[FrontendIPConfiguration]",
+        },
+        "ip_configurations": {"key": "properties.ipConfigurations", "type": "[PrivateLinkServiceIpConfiguration]"},
+        "network_interfaces": {"key": "properties.networkInterfaces", "type": "[NetworkInterface]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "private_endpoint_connections": {
+            "key": "properties.privateEndpointConnections",
+            "type": "[PrivateEndpointConnection]",
+        },
+        "visibility": {"key": "properties.visibility", "type": "PrivateLinkServicePropertiesVisibility"},
+        "auto_approval": {"key": "properties.autoApproval", "type": "PrivateLinkServicePropertiesAutoApproval"},
+        "fqdns": {"key": "properties.fqdns", "type": "[str]"},
+        "alias": {"key": "properties.alias", "type": "str"},
+        "enable_proxy_protocol": {"key": "properties.enableProxyProtocol", "type": "bool"},
     }
 
     def __init__(
@@ -15799,21 +15190,24 @@ class PrivateLinkServiceConnection(SubResource):
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'private_link_service_id': {'key': 'properties.privateLinkServiceId', 'type': 'str'},
-        'group_ids': {'key': 'properties.groupIds', 'type': '[str]'},
-        'request_message': {'key': 'properties.requestMessage', 'type': 'str'},
-        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "private_link_service_id": {"key": "properties.privateLinkServiceId", "type": "str"},
+        "group_ids": {"key": "properties.groupIds", "type": "[str]"},
+        "request_message": {"key": "properties.requestMessage", "type": "str"},
+        "private_link_service_connection_state": {
+            "key": "properties.privateLinkServiceConnectionState",
+            "type": "PrivateLinkServiceConnectionState",
+        },
     }
 
     def __init__(
@@ -15852,9 +15246,9 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "actions_required": {"key": "actionsRequired", "type": "str"},
     }
 
     def __init__(
@@ -15903,22 +15297,22 @@ class PrivateLinkServiceIpConfiguration(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'private_ip_address': {'key': 'properties.privateIPAddress', 'type': 'str'},
-        'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'Subnet'},
-        'primary': {'key': 'properties.primary', 'type': 'bool'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'private_ip_address_version': {'key': 'properties.privateIPAddressVersion', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "private_ip_address": {"key": "properties.privateIPAddress", "type": "str"},
+        "private_ip_allocation_method": {"key": "properties.privateIPAllocationMethod", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "Subnet"},
+        "primary": {"key": "properties.primary", "type": "bool"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "private_ip_address_version": {"key": "properties.privateIPAddressVersion", "type": "str"},
     }
 
     def __init__(
@@ -15957,20 +15351,15 @@ class PrivateLinkServiceListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateLinkService]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PrivateLinkService]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["PrivateLinkService"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["PrivateLinkService"]] = None, **kwargs):
         super(PrivateLinkServiceListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -15984,15 +15373,10 @@ class ResourceSet(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'subscriptions': {'key': 'subscriptions', 'type': '[str]'},
+        "subscriptions": {"key": "subscriptions", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        subscriptions: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, subscriptions: Optional[List[str]] = None, **kwargs):
         super(ResourceSet, self).__init__(**kwargs)
         self.subscriptions = subscriptions
 
@@ -16005,15 +15389,10 @@ class PrivateLinkServicePropertiesAutoApproval(ResourceSet):
     """
 
     _attribute_map = {
-        'subscriptions': {'key': 'subscriptions', 'type': '[str]'},
+        "subscriptions": {"key": "subscriptions", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        subscriptions: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, subscriptions: Optional[List[str]] = None, **kwargs):
         super(PrivateLinkServicePropertiesAutoApproval, self).__init__(subscriptions=subscriptions, **kwargs)
 
 
@@ -16025,15 +15404,10 @@ class PrivateLinkServicePropertiesVisibility(ResourceSet):
     """
 
     _attribute_map = {
-        'subscriptions': {'key': 'subscriptions', 'type': '[str]'},
+        "subscriptions": {"key": "subscriptions", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        subscriptions: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, subscriptions: Optional[List[str]] = None, **kwargs):
         super(PrivateLinkServicePropertiesVisibility, self).__init__(subscriptions=subscriptions, **kwargs)
 
 
@@ -16045,15 +15419,10 @@ class PrivateLinkServiceVisibility(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'visible': {'key': 'visible', 'type': 'bool'},
+        "visible": {"key": "visible", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        visible: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, visible: Optional[bool] = None, **kwargs):
         super(PrivateLinkServiceVisibility, self).__init__(**kwargs)
         self.visible = visible
 
@@ -16100,24 +15469,24 @@ class Probe(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'load_balancing_rules': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "load_balancing_rules": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'load_balancing_rules': {'key': 'properties.loadBalancingRules', 'type': '[SubResource]'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'port': {'key': 'properties.port', 'type': 'int'},
-        'interval_in_seconds': {'key': 'properties.intervalInSeconds', 'type': 'int'},
-        'number_of_probes': {'key': 'properties.numberOfProbes', 'type': 'int'},
-        'request_path': {'key': 'properties.requestPath', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "load_balancing_rules": {"key": "properties.loadBalancingRules", "type": "[SubResource]"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "port": {"key": "properties.port", "type": "int"},
+        "interval_in_seconds": {"key": "properties.intervalInSeconds", "type": "int"},
+        "number_of_probes": {"key": "properties.numberOfProbes", "type": "int"},
+        "request_path": {"key": "properties.requestPath", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -16155,17 +15524,11 @@ class PropagatedRouteTable(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'labels': {'key': 'labels', 'type': '[str]'},
-        'ids': {'key': 'ids', 'type': '[SubResource]'},
+        "labels": {"key": "labels", "type": "[str]"},
+        "ids": {"key": "ids", "type": "[SubResource]"},
     }
 
-    def __init__(
-        self,
-        *,
-        labels: Optional[List[str]] = None,
-        ids: Optional[List["SubResource"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, labels: Optional[List[str]] = None, ids: Optional[List["SubResource"]] = None, **kwargs):
         super(PropagatedRouteTable, self).__init__(**kwargs)
         self.labels = labels
         self.ids = ids
@@ -16179,15 +15542,10 @@ class ProtocolConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'http_configuration': {'key': 'HTTPConfiguration', 'type': 'HTTPConfiguration'},
+        "http_configuration": {"key": "HTTPConfiguration", "type": "HTTPConfiguration"},
     }
 
-    def __init__(
-        self,
-        *,
-        http_configuration: Optional["HTTPConfiguration"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, http_configuration: Optional["HTTPConfiguration"] = None, **kwargs):
         super(ProtocolConfiguration, self).__init__(**kwargs)
         self.http_configuration = http_configuration
 
@@ -16212,10 +15570,10 @@ class ProtocolCustomSettingsFormat(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'protocol': {'key': 'protocol', 'type': 'str'},
-        'trigger_rate_override': {'key': 'triggerRateOverride', 'type': 'str'},
-        'source_rate_override': {'key': 'sourceRateOverride', 'type': 'str'},
-        'trigger_sensitivity_override': {'key': 'triggerSensitivityOverride', 'type': 'str'},
+        "protocol": {"key": "protocol", "type": "str"},
+        "trigger_rate_override": {"key": "triggerRateOverride", "type": "str"},
+        "source_rate_override": {"key": "sourceRateOverride", "type": "str"},
+        "trigger_sensitivity_override": {"key": "triggerSensitivityOverride", "type": "str"},
     }
 
     def __init__(
@@ -16285,34 +15643,34 @@ class PublicIPAddress(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'ip_configuration': {'readonly': True},
-        'resource_guid': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "ip_configuration": {"readonly": True},
+        "resource_guid": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'PublicIPAddressSku'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'zones': {'key': 'zones', 'type': '[str]'},
-        'public_ip_allocation_method': {'key': 'properties.publicIPAllocationMethod', 'type': 'str'},
-        'public_ip_address_version': {'key': 'properties.publicIPAddressVersion', 'type': 'str'},
-        'ip_configuration': {'key': 'properties.ipConfiguration', 'type': 'IPConfiguration'},
-        'dns_settings': {'key': 'properties.dnsSettings', 'type': 'PublicIPAddressDnsSettings'},
-        'ddos_settings': {'key': 'properties.ddosSettings', 'type': 'DdosSettings'},
-        'ip_tags': {'key': 'properties.ipTags', 'type': '[IpTag]'},
-        'ip_address': {'key': 'properties.ipAddress', 'type': 'str'},
-        'public_ip_prefix': {'key': 'properties.publicIPPrefix', 'type': 'SubResource'},
-        'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "PublicIPAddressSku"},
+        "etag": {"key": "etag", "type": "str"},
+        "zones": {"key": "zones", "type": "[str]"},
+        "public_ip_allocation_method": {"key": "properties.publicIPAllocationMethod", "type": "str"},
+        "public_ip_address_version": {"key": "properties.publicIPAddressVersion", "type": "str"},
+        "ip_configuration": {"key": "properties.ipConfiguration", "type": "IPConfiguration"},
+        "dns_settings": {"key": "properties.dnsSettings", "type": "PublicIPAddressDnsSettings"},
+        "ddos_settings": {"key": "properties.ddosSettings", "type": "DdosSettings"},
+        "ip_tags": {"key": "properties.ipTags", "type": "[IpTag]"},
+        "ip_address": {"key": "properties.ipAddress", "type": "str"},
+        "public_ip_prefix": {"key": "properties.publicIPPrefix", "type": "SubResource"},
+        "idle_timeout_in_minutes": {"key": "properties.idleTimeoutInMinutes", "type": "int"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -16368,9 +15726,9 @@ class PublicIPAddressDnsSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'domain_name_label': {'key': 'domainNameLabel', 'type': 'str'},
-        'fqdn': {'key': 'fqdn', 'type': 'str'},
-        'reverse_fqdn': {'key': 'reverseFqdn', 'type': 'str'},
+        "domain_name_label": {"key": "domainNameLabel", "type": "str"},
+        "fqdn": {"key": "fqdn", "type": "str"},
+        "reverse_fqdn": {"key": "reverseFqdn", "type": "str"},
     }
 
     def __init__(
@@ -16397,17 +15755,11 @@ class PublicIPAddressListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PublicIPAddress]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PublicIPAddress]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["PublicIPAddress"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["PublicIPAddress"]] = None, next_link: Optional[str] = None, **kwargs):
         super(PublicIPAddressListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -16421,15 +15773,10 @@ class PublicIPAddressSku(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[Union[str, "PublicIPAddressSkuName"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[Union[str, "PublicIPAddressSkuName"]] = None, **kwargs):
         super(PublicIPAddressSku, self).__init__(**kwargs)
         self.name = name
 
@@ -16480,33 +15827,36 @@ class PublicIPPrefix(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'ip_prefix': {'readonly': True},
-        'public_ip_addresses': {'readonly': True},
-        'load_balancer_frontend_ip_configuration': {'readonly': True},
-        'resource_guid': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "ip_prefix": {"readonly": True},
+        "public_ip_addresses": {"readonly": True},
+        "load_balancer_frontend_ip_configuration": {"readonly": True},
+        "resource_guid": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'PublicIPPrefixSku'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'zones': {'key': 'zones', 'type': '[str]'},
-        'public_ip_address_version': {'key': 'properties.publicIPAddressVersion', 'type': 'str'},
-        'ip_tags': {'key': 'properties.ipTags', 'type': '[IpTag]'},
-        'prefix_length': {'key': 'properties.prefixLength', 'type': 'int'},
-        'ip_prefix': {'key': 'properties.ipPrefix', 'type': 'str'},
-        'public_ip_addresses': {'key': 'properties.publicIPAddresses', 'type': '[ReferencedPublicIpAddress]'},
-        'load_balancer_frontend_ip_configuration': {'key': 'properties.loadBalancerFrontendIpConfiguration', 'type': 'SubResource'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "PublicIPPrefixSku"},
+        "etag": {"key": "etag", "type": "str"},
+        "zones": {"key": "zones", "type": "[str]"},
+        "public_ip_address_version": {"key": "properties.publicIPAddressVersion", "type": "str"},
+        "ip_tags": {"key": "properties.ipTags", "type": "[IpTag]"},
+        "prefix_length": {"key": "properties.prefixLength", "type": "int"},
+        "ip_prefix": {"key": "properties.ipPrefix", "type": "str"},
+        "public_ip_addresses": {"key": "properties.publicIPAddresses", "type": "[ReferencedPublicIpAddress]"},
+        "load_balancer_frontend_ip_configuration": {
+            "key": "properties.loadBalancerFrontendIpConfiguration",
+            "type": "SubResource",
+        },
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -16546,17 +15896,11 @@ class PublicIPPrefixListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PublicIPPrefix]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PublicIPPrefix]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["PublicIPPrefix"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["PublicIPPrefix"]] = None, next_link: Optional[str] = None, **kwargs):
         super(PublicIPPrefixListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -16570,15 +15914,10 @@ class PublicIPPrefixSku(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[Union[str, "PublicIPPrefixSkuName"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[Union[str, "PublicIPPrefixSkuName"]] = None, **kwargs):
         super(PublicIPPrefixSku, self).__init__(**kwargs)
         self.name = name
 
@@ -16594,19 +15933,14 @@ class QueryTroubleshootingParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'target_resource_id': {'required': True},
+        "target_resource_id": {"required": True},
     }
 
     _attribute_map = {
-        'target_resource_id': {'key': 'targetResourceId', 'type': 'str'},
+        "target_resource_id": {"key": "targetResourceId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        target_resource_id: str,
-        **kwargs
-    ):
+    def __init__(self, *, target_resource_id: str, **kwargs):
         super(QueryTroubleshootingParameters, self).__init__(**kwargs)
         self.target_resource_id = target_resource_id
 
@@ -16625,13 +15959,13 @@ class RadiusServer(msrest.serialization.Model):
     """
 
     _validation = {
-        'radius_server_address': {'required': True},
+        "radius_server_address": {"required": True},
     }
 
     _attribute_map = {
-        'radius_server_address': {'key': 'radiusServerAddress', 'type': 'str'},
-        'radius_server_score': {'key': 'radiusServerScore', 'type': 'long'},
-        'radius_server_secret': {'key': 'radiusServerSecret', 'type': 'str'},
+        "radius_server_address": {"key": "radiusServerAddress", "type": "str"},
+        "radius_server_score": {"key": "radiusServerScore", "type": "long"},
+        "radius_server_secret": {"key": "radiusServerSecret", "type": "str"},
     }
 
     def __init__(
@@ -16669,16 +16003,16 @@ class RecordSet(msrest.serialization.Model):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'record_type': {'key': 'recordType', 'type': 'str'},
-        'record_set_name': {'key': 'recordSetName', 'type': 'str'},
-        'fqdn': {'key': 'fqdn', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'ttl': {'key': 'ttl', 'type': 'int'},
-        'ip_addresses': {'key': 'ipAddresses', 'type': '[str]'},
+        "record_type": {"key": "recordType", "type": "str"},
+        "record_set_name": {"key": "recordSetName", "type": "str"},
+        "fqdn": {"key": "fqdn", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "ttl": {"key": "ttl", "type": "int"},
+        "ip_addresses": {"key": "ipAddresses", "type": "[str]"},
     }
 
     def __init__(
@@ -16708,15 +16042,10 @@ class ReferencedPublicIpAddress(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs):
         super(ReferencedPublicIpAddress, self).__init__(**kwargs)
         self.id = id
 
@@ -16745,19 +16074,19 @@ class ResourceNavigationLink(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'linked_resource_type': {'key': 'properties.linkedResourceType', 'type': 'str'},
-        'link': {'key': 'properties.link', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "linked_resource_type": {"key": "properties.linkedResourceType", "type": "str"},
+        "link": {"key": "properties.link", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -16790,20 +16119,15 @@ class ResourceNavigationLinksListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ResourceNavigationLink]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ResourceNavigationLink]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["ResourceNavigationLink"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["ResourceNavigationLink"]] = None, **kwargs):
         super(ResourceNavigationLinksListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -16819,17 +16143,11 @@ class RetentionPolicyParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'days': {'key': 'days', 'type': 'int'},
-        'enabled': {'key': 'enabled', 'type': 'bool'},
+        "days": {"key": "days", "type": "int"},
+        "enabled": {"key": "enabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        days: Optional[int] = 0,
-        enabled: Optional[bool] = False,
-        **kwargs
-    ):
+    def __init__(self, *, days: Optional[int] = 0, enabled: Optional[bool] = False, **kwargs):
         super(RetentionPolicyParameters, self).__init__(**kwargs)
         self.days = days
         self.enabled = enabled
@@ -16861,18 +16179,18 @@ class Route(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'address_prefix': {'key': 'properties.addressPrefix', 'type': 'str'},
-        'next_hop_type': {'key': 'properties.nextHopType', 'type': 'str'},
-        'next_hop_ip_address': {'key': 'properties.nextHopIpAddress', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "address_prefix": {"key": "properties.addressPrefix", "type": "str"},
+        "next_hop_type": {"key": "properties.nextHopType", "type": "str"},
+        "next_hop_ip_address": {"key": "properties.nextHopIpAddress", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -16923,25 +16241,25 @@ class RouteFilter(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'peerings': {'readonly': True},
-        'ipv6_peerings': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "peerings": {"readonly": True},
+        "ipv6_peerings": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'rules': {'key': 'properties.rules', 'type': '[RouteFilterRule]'},
-        'peerings': {'key': 'properties.peerings', 'type': '[ExpressRouteCircuitPeering]'},
-        'ipv6_peerings': {'key': 'properties.ipv6Peerings', 'type': '[ExpressRouteCircuitPeering]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "rules": {"key": "properties.rules", "type": "[RouteFilterRule]"},
+        "peerings": {"key": "properties.peerings", "type": "[ExpressRouteCircuitPeering]"},
+        "ipv6_peerings": {"key": "properties.ipv6Peerings", "type": "[ExpressRouteCircuitPeering]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -16971,17 +16289,11 @@ class RouteFilterListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[RouteFilter]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[RouteFilter]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["RouteFilter"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["RouteFilter"]] = None, next_link: Optional[str] = None, **kwargs):
         super(RouteFilterListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -17014,19 +16326,19 @@ class RouteFilterRule(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'access': {'key': 'properties.access', 'type': 'str'},
-        'route_filter_rule_type': {'key': 'properties.routeFilterRuleType', 'type': 'str'},
-        'communities': {'key': 'properties.communities', 'type': '[str]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "access": {"key": "properties.access", "type": "str"},
+        "route_filter_rule_type": {"key": "properties.routeFilterRuleType", "type": "str"},
+        "communities": {"key": "properties.communities", "type": "[str]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -17060,17 +16372,11 @@ class RouteFilterRuleListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[RouteFilterRule]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[RouteFilterRule]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["RouteFilterRule"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["RouteFilterRule"]] = None, next_link: Optional[str] = None, **kwargs):
         super(RouteFilterRuleListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -17086,17 +16392,11 @@ class RouteListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Route]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Route]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Route"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["Route"]] = None, next_link: Optional[str] = None, **kwargs):
         super(RouteListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -17132,24 +16432,24 @@ class RouteTable(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'subnets': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "subnets": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'routes': {'key': 'properties.routes', 'type': '[Route]'},
-        'subnets': {'key': 'properties.subnets', 'type': '[Subnet]'},
-        'disable_bgp_route_propagation': {'key': 'properties.disableBgpRoutePropagation', 'type': 'bool'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "routes": {"key": "properties.routes", "type": "[Route]"},
+        "subnets": {"key": "properties.subnets", "type": "[Subnet]"},
+        "disable_bgp_route_propagation": {"key": "properties.disableBgpRoutePropagation", "type": "bool"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -17180,17 +16480,11 @@ class RouteTableListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[RouteTable]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[RouteTable]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["RouteTable"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["RouteTable"]] = None, next_link: Optional[str] = None, **kwargs):
         super(RouteTableListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -17210,9 +16504,9 @@ class RoutingConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'associated_route_table': {'key': 'associatedRouteTable', 'type': 'SubResource'},
-        'propagated_route_tables': {'key': 'propagatedRouteTables', 'type': 'PropagatedRouteTable'},
-        'vnet_routes': {'key': 'vnetRoutes', 'type': 'VnetRoute'},
+        "associated_route_table": {"key": "associatedRouteTable", "type": "SubResource"},
+        "propagated_route_tables": {"key": "propagatedRouteTables", "type": "PropagatedRouteTable"},
+        "vnet_routes": {"key": "vnetRoutes", "type": "VnetRoute"},
     }
 
     def __init__(
@@ -17240,8 +16534,8 @@ class SecurityGroupNetworkInterface(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'security_rule_associations': {'key': 'securityRuleAssociations', 'type': 'SecurityRuleAssociations'},
+        "id": {"key": "id", "type": "str"},
+        "security_rule_associations": {"key": "securityRuleAssociations", "type": "SecurityRuleAssociations"},
     }
 
     def __init__(
@@ -17266,19 +16560,14 @@ class SecurityGroupViewParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'target_resource_id': {'required': True},
+        "target_resource_id": {"required": True},
     }
 
     _attribute_map = {
-        'target_resource_id': {'key': 'targetResourceId', 'type': 'str'},
+        "target_resource_id": {"key": "targetResourceId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        target_resource_id: str,
-        **kwargs
-    ):
+    def __init__(self, *, target_resource_id: str, **kwargs):
         super(SecurityGroupViewParameters, self).__init__(**kwargs)
         self.target_resource_id = target_resource_id
 
@@ -17292,15 +16581,10 @@ class SecurityGroupViewResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'network_interfaces': {'key': 'networkInterfaces', 'type': '[SecurityGroupNetworkInterface]'},
+        "network_interfaces": {"key": "networkInterfaces", "type": "[SecurityGroupNetworkInterface]"},
     }
 
-    def __init__(
-        self,
-        *,
-        network_interfaces: Optional[List["SecurityGroupNetworkInterface"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, network_interfaces: Optional[List["SecurityGroupNetworkInterface"]] = None, **kwargs):
         super(SecurityGroupViewResult, self).__init__(**kwargs)
         self.network_interfaces = network_interfaces
 
@@ -17338,24 +16622,24 @@ class SecurityPartnerProvider(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'connection_status': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "connection_status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'security_provider_name': {'key': 'properties.securityProviderName', 'type': 'str'},
-        'connection_status': {'key': 'properties.connectionStatus', 'type': 'str'},
-        'virtual_hub': {'key': 'properties.virtualHub', 'type': 'SubResource'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "security_provider_name": {"key": "properties.securityProviderName", "type": "str"},
+        "connection_status": {"key": "properties.connectionStatus", "type": "str"},
+        "virtual_hub": {"key": "properties.virtualHub", "type": "SubResource"},
     }
 
     def __init__(
@@ -17386,16 +16670,12 @@ class SecurityPartnerProviderListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SecurityPartnerProvider]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SecurityPartnerProvider]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["SecurityPartnerProvider"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["SecurityPartnerProvider"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         super(SecurityPartnerProviderListResult, self).__init__(**kwargs)
         self.value = value
@@ -17465,30 +16745,36 @@ class SecurityRule(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'protocol': {'key': 'properties.protocol', 'type': 'str'},
-        'source_port_range': {'key': 'properties.sourcePortRange', 'type': 'str'},
-        'destination_port_range': {'key': 'properties.destinationPortRange', 'type': 'str'},
-        'source_address_prefix': {'key': 'properties.sourceAddressPrefix', 'type': 'str'},
-        'source_address_prefixes': {'key': 'properties.sourceAddressPrefixes', 'type': '[str]'},
-        'source_application_security_groups': {'key': 'properties.sourceApplicationSecurityGroups', 'type': '[ApplicationSecurityGroup]'},
-        'destination_address_prefix': {'key': 'properties.destinationAddressPrefix', 'type': 'str'},
-        'destination_address_prefixes': {'key': 'properties.destinationAddressPrefixes', 'type': '[str]'},
-        'destination_application_security_groups': {'key': 'properties.destinationApplicationSecurityGroups', 'type': '[ApplicationSecurityGroup]'},
-        'source_port_ranges': {'key': 'properties.sourcePortRanges', 'type': '[str]'},
-        'destination_port_ranges': {'key': 'properties.destinationPortRanges', 'type': '[str]'},
-        'access': {'key': 'properties.access', 'type': 'str'},
-        'priority': {'key': 'properties.priority', 'type': 'int'},
-        'direction': {'key': 'properties.direction', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "source_port_range": {"key": "properties.sourcePortRange", "type": "str"},
+        "destination_port_range": {"key": "properties.destinationPortRange", "type": "str"},
+        "source_address_prefix": {"key": "properties.sourceAddressPrefix", "type": "str"},
+        "source_address_prefixes": {"key": "properties.sourceAddressPrefixes", "type": "[str]"},
+        "source_application_security_groups": {
+            "key": "properties.sourceApplicationSecurityGroups",
+            "type": "[ApplicationSecurityGroup]",
+        },
+        "destination_address_prefix": {"key": "properties.destinationAddressPrefix", "type": "str"},
+        "destination_address_prefixes": {"key": "properties.destinationAddressPrefixes", "type": "[str]"},
+        "destination_application_security_groups": {
+            "key": "properties.destinationApplicationSecurityGroups",
+            "type": "[ApplicationSecurityGroup]",
+        },
+        "source_port_ranges": {"key": "properties.sourcePortRanges", "type": "[str]"},
+        "destination_port_ranges": {"key": "properties.destinationPortRanges", "type": "[str]"},
+        "access": {"key": "properties.access", "type": "str"},
+        "priority": {"key": "properties.priority", "type": "int"},
+        "direction": {"key": "properties.direction", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -17551,10 +16837,10 @@ class SecurityRuleAssociations(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'network_interface_association': {'key': 'networkInterfaceAssociation', 'type': 'NetworkInterfaceAssociation'},
-        'subnet_association': {'key': 'subnetAssociation', 'type': 'SubnetAssociation'},
-        'default_security_rules': {'key': 'defaultSecurityRules', 'type': '[SecurityRule]'},
-        'effective_security_rules': {'key': 'effectiveSecurityRules', 'type': '[EffectiveNetworkSecurityRule]'},
+        "network_interface_association": {"key": "networkInterfaceAssociation", "type": "NetworkInterfaceAssociation"},
+        "subnet_association": {"key": "subnetAssociation", "type": "SubnetAssociation"},
+        "default_security_rules": {"key": "defaultSecurityRules", "type": "[SecurityRule]"},
+        "effective_security_rules": {"key": "effectiveSecurityRules", "type": "[EffectiveNetworkSecurityRule]"},
     }
 
     def __init__(
@@ -17583,17 +16869,11 @@ class SecurityRuleListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SecurityRule]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SecurityRule]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["SecurityRule"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["SecurityRule"]] = None, next_link: Optional[str] = None, **kwargs):
         super(SecurityRuleListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -17627,21 +16907,21 @@ class ServiceAssociationLink(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'linked_resource_type': {'key': 'properties.linkedResourceType', 'type': 'str'},
-        'link': {'key': 'properties.link', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'allow_delete': {'key': 'properties.allowDelete', 'type': 'bool'},
-        'locations': {'key': 'properties.locations', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "linked_resource_type": {"key": "properties.linkedResourceType", "type": "str"},
+        "link": {"key": "properties.link", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "allow_delete": {"key": "properties.allowDelete", "type": "bool"},
+        "locations": {"key": "properties.locations", "type": "[str]"},
     }
 
     def __init__(
@@ -17678,20 +16958,15 @@ class ServiceAssociationLinksListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ServiceAssociationLink]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ServiceAssociationLink]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["ServiceAssociationLink"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["ServiceAssociationLink"]] = None, **kwargs):
         super(ServiceAssociationLinksListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -17728,25 +17003,28 @@ class ServiceEndpointPolicy(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'subnets': {'readonly': True},
-        'resource_guid': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "subnets": {"readonly": True},
+        "resource_guid": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'service_endpoint_policy_definitions': {'key': 'properties.serviceEndpointPolicyDefinitions', 'type': '[ServiceEndpointPolicyDefinition]'},
-        'subnets': {'key': 'properties.subnets', 'type': '[Subnet]'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "service_endpoint_policy_definitions": {
+            "key": "properties.serviceEndpointPolicyDefinitions",
+            "type": "[ServiceEndpointPolicyDefinition]",
+        },
+        "subnets": {"key": "properties.subnets", "type": "[Subnet]"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -17790,18 +17068,18 @@ class ServiceEndpointPolicyDefinition(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'service': {'key': 'properties.service', 'type': 'str'},
-        'service_resources': {'key': 'properties.serviceResources', 'type': '[str]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "service": {"key": "properties.service", "type": "str"},
+        "service_resources": {"key": "properties.serviceResources", "type": "[str]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -17833,8 +17111,8 @@ class ServiceEndpointPolicyDefinitionListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ServiceEndpointPolicyDefinition]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ServiceEndpointPolicyDefinition]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
@@ -17861,20 +17139,15 @@ class ServiceEndpointPolicyListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ServiceEndpointPolicy]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ServiceEndpointPolicy]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["ServiceEndpointPolicy"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["ServiceEndpointPolicy"]] = None, **kwargs):
         super(ServiceEndpointPolicyListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -17895,22 +17168,16 @@ class ServiceEndpointPropertiesFormat(msrest.serialization.Model):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'service': {'key': 'service', 'type': 'str'},
-        'locations': {'key': 'locations', 'type': '[str]'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        "service": {"key": "service", "type": "str"},
+        "locations": {"key": "locations", "type": "[str]"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        service: Optional[str] = None,
-        locations: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, service: Optional[str] = None, locations: Optional[List[str]] = None, **kwargs):
         super(ServiceEndpointPropertiesFormat, self).__init__(**kwargs)
         self.service = service
         self.locations = locations
@@ -17932,21 +17199,18 @@ class ServiceTagInformation(msrest.serialization.Model):
     """
 
     _validation = {
-        'properties': {'readonly': True},
-        'name': {'readonly': True},
-        'id': {'readonly': True},
+        "properties": {"readonly": True},
+        "name": {"readonly": True},
+        "id": {"readonly": True},
     }
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'ServiceTagInformationPropertiesFormat'},
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
+        "properties": {"key": "properties", "type": "ServiceTagInformationPropertiesFormat"},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ServiceTagInformation, self).__init__(**kwargs)
         self.properties = None
         self.name = None
@@ -17969,23 +17233,20 @@ class ServiceTagInformationPropertiesFormat(msrest.serialization.Model):
     """
 
     _validation = {
-        'change_number': {'readonly': True},
-        'region': {'readonly': True},
-        'system_service': {'readonly': True},
-        'address_prefixes': {'readonly': True},
+        "change_number": {"readonly": True},
+        "region": {"readonly": True},
+        "system_service": {"readonly": True},
+        "address_prefixes": {"readonly": True},
     }
 
     _attribute_map = {
-        'change_number': {'key': 'changeNumber', 'type': 'str'},
-        'region': {'key': 'region', 'type': 'str'},
-        'system_service': {'key': 'systemService', 'type': 'str'},
-        'address_prefixes': {'key': 'addressPrefixes', 'type': '[str]'},
+        "change_number": {"key": "changeNumber", "type": "str"},
+        "region": {"key": "region", "type": "str"},
+        "system_service": {"key": "systemService", "type": "str"},
+        "address_prefixes": {"key": "addressPrefixes", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ServiceTagInformationPropertiesFormat, self).__init__(**kwargs)
         self.change_number = None
         self.region = None
@@ -18013,27 +17274,24 @@ class ServiceTagsListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'change_number': {'readonly': True},
-        'cloud': {'readonly': True},
-        'values': {'readonly': True},
+        "name": {"readonly": True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "change_number": {"readonly": True},
+        "cloud": {"readonly": True},
+        "values": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'change_number': {'key': 'changeNumber', 'type': 'str'},
-        'cloud': {'key': 'cloud', 'type': 'str'},
-        'values': {'key': 'values', 'type': '[ServiceTagInformation]'},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "change_number": {"key": "changeNumber", "type": "str"},
+        "cloud": {"key": "cloud", "type": "str"},
+        "values": {"key": "values", "type": "[ServiceTagInformation]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ServiceTagsListResult, self).__init__(**kwargs)
         self.name = None
         self.id = None
@@ -18051,15 +17309,10 @@ class SessionIds(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'session_ids': {'key': 'sessionIds', 'type': '[str]'},
+        "session_ids": {"key": "sessionIds", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        session_ids: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, session_ids: Optional[List[str]] = None, **kwargs):
         super(SessionIds, self).__init__(**kwargs)
         self.session_ids = session_ids
 
@@ -18076,9 +17329,9 @@ class StaticRoute(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'address_prefixes': {'key': 'addressPrefixes', 'type': '[str]'},
-        'next_hop_ip_address': {'key': 'nextHopIpAddress', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "address_prefixes": {"key": "addressPrefixes", "type": "[str]"},
+        "next_hop_ip_address": {"key": "nextHopIpAddress", "type": "str"},
     }
 
     def __init__(
@@ -18157,38 +17410,38 @@ class Subnet(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'private_endpoints': {'readonly': True},
-        'ip_configurations': {'readonly': True},
-        'ip_configuration_profiles': {'readonly': True},
-        'resource_navigation_links': {'readonly': True},
-        'service_association_links': {'readonly': True},
-        'purpose': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "private_endpoints": {"readonly": True},
+        "ip_configurations": {"readonly": True},
+        "ip_configuration_profiles": {"readonly": True},
+        "resource_navigation_links": {"readonly": True},
+        "service_association_links": {"readonly": True},
+        "purpose": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'address_prefix': {'key': 'properties.addressPrefix', 'type': 'str'},
-        'address_prefixes': {'key': 'properties.addressPrefixes', 'type': '[str]'},
-        'network_security_group': {'key': 'properties.networkSecurityGroup', 'type': 'NetworkSecurityGroup'},
-        'route_table': {'key': 'properties.routeTable', 'type': 'RouteTable'},
-        'nat_gateway': {'key': 'properties.natGateway', 'type': 'SubResource'},
-        'service_endpoints': {'key': 'properties.serviceEndpoints', 'type': '[ServiceEndpointPropertiesFormat]'},
-        'service_endpoint_policies': {'key': 'properties.serviceEndpointPolicies', 'type': '[ServiceEndpointPolicy]'},
-        'private_endpoints': {'key': 'properties.privateEndpoints', 'type': '[PrivateEndpoint]'},
-        'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[IPConfiguration]'},
-        'ip_configuration_profiles': {'key': 'properties.ipConfigurationProfiles', 'type': '[IPConfigurationProfile]'},
-        'ip_allocations': {'key': 'properties.ipAllocations', 'type': '[SubResource]'},
-        'resource_navigation_links': {'key': 'properties.resourceNavigationLinks', 'type': '[ResourceNavigationLink]'},
-        'service_association_links': {'key': 'properties.serviceAssociationLinks', 'type': '[ServiceAssociationLink]'},
-        'delegations': {'key': 'properties.delegations', 'type': '[Delegation]'},
-        'purpose': {'key': 'properties.purpose', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'private_endpoint_network_policies': {'key': 'properties.privateEndpointNetworkPolicies', 'type': 'str'},
-        'private_link_service_network_policies': {'key': 'properties.privateLinkServiceNetworkPolicies', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "address_prefix": {"key": "properties.addressPrefix", "type": "str"},
+        "address_prefixes": {"key": "properties.addressPrefixes", "type": "[str]"},
+        "network_security_group": {"key": "properties.networkSecurityGroup", "type": "NetworkSecurityGroup"},
+        "route_table": {"key": "properties.routeTable", "type": "RouteTable"},
+        "nat_gateway": {"key": "properties.natGateway", "type": "SubResource"},
+        "service_endpoints": {"key": "properties.serviceEndpoints", "type": "[ServiceEndpointPropertiesFormat]"},
+        "service_endpoint_policies": {"key": "properties.serviceEndpointPolicies", "type": "[ServiceEndpointPolicy]"},
+        "private_endpoints": {"key": "properties.privateEndpoints", "type": "[PrivateEndpoint]"},
+        "ip_configurations": {"key": "properties.ipConfigurations", "type": "[IPConfiguration]"},
+        "ip_configuration_profiles": {"key": "properties.ipConfigurationProfiles", "type": "[IPConfigurationProfile]"},
+        "ip_allocations": {"key": "properties.ipAllocations", "type": "[SubResource]"},
+        "resource_navigation_links": {"key": "properties.resourceNavigationLinks", "type": "[ResourceNavigationLink]"},
+        "service_association_links": {"key": "properties.serviceAssociationLinks", "type": "[ServiceAssociationLink]"},
+        "delegations": {"key": "properties.delegations", "type": "[Delegation]"},
+        "purpose": {"key": "properties.purpose", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "private_endpoint_network_policies": {"key": "properties.privateEndpointNetworkPolicies", "type": "str"},
+        "private_link_service_network_policies": {"key": "properties.privateLinkServiceNetworkPolicies", "type": "str"},
     }
 
     def __init__(
@@ -18244,20 +17497,15 @@ class SubnetAssociation(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
+        "id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'security_rules': {'key': 'securityRules', 'type': '[SecurityRule]'},
+        "id": {"key": "id", "type": "str"},
+        "security_rules": {"key": "securityRules", "type": "[SecurityRule]"},
     }
 
-    def __init__(
-        self,
-        *,
-        security_rules: Optional[List["SecurityRule"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, security_rules: Optional[List["SecurityRule"]] = None, **kwargs):
         super(SubnetAssociation, self).__init__(**kwargs)
         self.id = None
         self.security_rules = security_rules
@@ -18273,17 +17521,11 @@ class SubnetListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Subnet]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Subnet]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Subnet"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["Subnet"]] = None, next_link: Optional[str] = None, **kwargs):
         super(SubnetListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -18297,15 +17539,10 @@ class TagsObject(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
         super(TagsObject, self).__init__(**kwargs)
         self.tags = tags
 
@@ -18327,24 +17564,19 @@ class Topology(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'created_date_time': {'readonly': True},
-        'last_modified': {'readonly': True},
+        "id": {"readonly": True},
+        "created_date_time": {"readonly": True},
+        "last_modified": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'last_modified': {'key': 'lastModified', 'type': 'iso-8601'},
-        'resources': {'key': 'resources', 'type': '[TopologyResource]'},
+        "id": {"key": "id", "type": "str"},
+        "created_date_time": {"key": "createdDateTime", "type": "iso-8601"},
+        "last_modified": {"key": "lastModified", "type": "iso-8601"},
+        "resources": {"key": "resources", "type": "[TopologyResource]"},
     }
 
-    def __init__(
-        self,
-        *,
-        resources: Optional[List["TopologyResource"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, resources: Optional[List["TopologyResource"]] = None, **kwargs):
         super(Topology, self).__init__(**kwargs)
         self.id = None
         self.created_date_time = None
@@ -18365,9 +17597,9 @@ class TopologyAssociation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'association_type': {'key': 'associationType', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "association_type": {"key": "associationType", "type": "str"},
     }
 
     def __init__(
@@ -18397,9 +17629,9 @@ class TopologyParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'target_resource_group_name': {'key': 'targetResourceGroupName', 'type': 'str'},
-        'target_virtual_network': {'key': 'targetVirtualNetwork', 'type': 'SubResource'},
-        'target_subnet': {'key': 'targetSubnet', 'type': 'SubResource'},
+        "target_resource_group_name": {"key": "targetResourceGroupName", "type": "str"},
+        "target_virtual_network": {"key": "targetVirtualNetwork", "type": "SubResource"},
+        "target_subnet": {"key": "targetSubnet", "type": "SubResource"},
     }
 
     def __init__(
@@ -18431,10 +17663,10 @@ class TopologyResource(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'associations': {'key': 'associations', 'type': '[TopologyAssociation]'},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "associations": {"key": "associations", "type": "[TopologyAssociation]"},
     }
 
     def __init__(
@@ -18470,11 +17702,11 @@ class TrafficAnalyticsConfigurationProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'workspace_id': {'key': 'workspaceId', 'type': 'str'},
-        'workspace_region': {'key': 'workspaceRegion', 'type': 'str'},
-        'workspace_resource_id': {'key': 'workspaceResourceId', 'type': 'str'},
-        'traffic_analytics_interval': {'key': 'trafficAnalyticsInterval', 'type': 'int'},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "workspace_id": {"key": "workspaceId", "type": "str"},
+        "workspace_region": {"key": "workspaceRegion", "type": "str"},
+        "workspace_resource_id": {"key": "workspaceResourceId", "type": "str"},
+        "traffic_analytics_interval": {"key": "trafficAnalyticsInterval", "type": "int"},
     }
 
     def __init__(
@@ -18505,7 +17737,10 @@ class TrafficAnalyticsProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'network_watcher_flow_analytics_configuration': {'key': 'networkWatcherFlowAnalyticsConfiguration', 'type': 'TrafficAnalyticsConfigurationProperties'},
+        "network_watcher_flow_analytics_configuration": {
+            "key": "networkWatcherFlowAnalyticsConfiguration",
+            "type": "TrafficAnalyticsConfigurationProperties",
+        },
     }
 
     def __init__(
@@ -18530,22 +17765,16 @@ class TrafficSelectorPolicy(msrest.serialization.Model):
     """
 
     _validation = {
-        'local_address_ranges': {'required': True},
-        'remote_address_ranges': {'required': True},
+        "local_address_ranges": {"required": True},
+        "remote_address_ranges": {"required": True},
     }
 
     _attribute_map = {
-        'local_address_ranges': {'key': 'localAddressRanges', 'type': '[str]'},
-        'remote_address_ranges': {'key': 'remoteAddressRanges', 'type': '[str]'},
+        "local_address_ranges": {"key": "localAddressRanges", "type": "[str]"},
+        "remote_address_ranges": {"key": "remoteAddressRanges", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        local_address_ranges: List[str],
-        remote_address_ranges: List[str],
-        **kwargs
-    ):
+    def __init__(self, *, local_address_ranges: List[str], remote_address_ranges: List[str], **kwargs):
         super(TrafficSelectorPolicy, self).__init__(**kwargs)
         self.local_address_ranges = local_address_ranges
         self.remote_address_ranges = remote_address_ranges
@@ -18568,11 +17797,11 @@ class TroubleshootingDetails(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'reason_type': {'key': 'reasonType', 'type': 'str'},
-        'summary': {'key': 'summary', 'type': 'str'},
-        'detail': {'key': 'detail', 'type': 'str'},
-        'recommended_actions': {'key': 'recommendedActions', 'type': '[TroubleshootingRecommendedActions]'},
+        "id": {"key": "id", "type": "str"},
+        "reason_type": {"key": "reasonType", "type": "str"},
+        "summary": {"key": "summary", "type": "str"},
+        "detail": {"key": "detail", "type": "str"},
+        "recommended_actions": {"key": "recommendedActions", "type": "[TroubleshootingRecommendedActions]"},
     }
 
     def __init__(
@@ -18607,25 +17836,18 @@ class TroubleshootingParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'target_resource_id': {'required': True},
-        'storage_id': {'required': True},
-        'storage_path': {'required': True},
+        "target_resource_id": {"required": True},
+        "storage_id": {"required": True},
+        "storage_path": {"required": True},
     }
 
     _attribute_map = {
-        'target_resource_id': {'key': 'targetResourceId', 'type': 'str'},
-        'storage_id': {'key': 'properties.storageId', 'type': 'str'},
-        'storage_path': {'key': 'properties.storagePath', 'type': 'str'},
+        "target_resource_id": {"key": "targetResourceId", "type": "str"},
+        "storage_id": {"key": "properties.storageId", "type": "str"},
+        "storage_path": {"key": "properties.storagePath", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        target_resource_id: str,
-        storage_id: str,
-        storage_path: str,
-        **kwargs
-    ):
+    def __init__(self, *, target_resource_id: str, storage_id: str, storage_path: str, **kwargs):
         super(TroubleshootingParameters, self).__init__(**kwargs)
         self.target_resource_id = target_resource_id
         self.storage_id = storage_id
@@ -18648,10 +17870,10 @@ class TroubleshootingRecommendedActions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'action_id': {'key': 'actionId', 'type': 'str'},
-        'action_text': {'key': 'actionText', 'type': 'str'},
-        'action_uri': {'key': 'actionUri', 'type': 'str'},
-        'action_uri_text': {'key': 'actionUriText', 'type': 'str'},
+        "action_id": {"key": "actionId", "type": "str"},
+        "action_text": {"key": "actionText", "type": "str"},
+        "action_uri": {"key": "actionUri", "type": "str"},
+        "action_uri_text": {"key": "actionUriText", "type": "str"},
     }
 
     def __init__(
@@ -18684,10 +17906,10 @@ class TroubleshootingResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'code': {'key': 'code', 'type': 'str'},
-        'results': {'key': 'results', 'type': '[TroubleshootingDetails]'},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "code": {"key": "code", "type": "str"},
+        "results": {"key": "results", "type": "[TroubleshootingDetails]"},
     }
 
     def __init__(
@@ -18727,25 +17949,22 @@ class TunnelConnectionHealth(msrest.serialization.Model):
     """
 
     _validation = {
-        'tunnel': {'readonly': True},
-        'connection_status': {'readonly': True},
-        'ingress_bytes_transferred': {'readonly': True},
-        'egress_bytes_transferred': {'readonly': True},
-        'last_connection_established_utc_time': {'readonly': True},
+        "tunnel": {"readonly": True},
+        "connection_status": {"readonly": True},
+        "ingress_bytes_transferred": {"readonly": True},
+        "egress_bytes_transferred": {"readonly": True},
+        "last_connection_established_utc_time": {"readonly": True},
     }
 
     _attribute_map = {
-        'tunnel': {'key': 'tunnel', 'type': 'str'},
-        'connection_status': {'key': 'connectionStatus', 'type': 'str'},
-        'ingress_bytes_transferred': {'key': 'ingressBytesTransferred', 'type': 'long'},
-        'egress_bytes_transferred': {'key': 'egressBytesTransferred', 'type': 'long'},
-        'last_connection_established_utc_time': {'key': 'lastConnectionEstablishedUtcTime', 'type': 'str'},
+        "tunnel": {"key": "tunnel", "type": "str"},
+        "connection_status": {"key": "connectionStatus", "type": "str"},
+        "ingress_bytes_transferred": {"key": "ingressBytesTransferred", "type": "long"},
+        "egress_bytes_transferred": {"key": "egressBytesTransferred", "type": "long"},
+        "last_connection_established_utc_time": {"key": "lastConnectionEstablishedUtcTime", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(TunnelConnectionHealth, self).__init__(**kwargs)
         self.tunnel = None
         self.connection_status = None
@@ -18762,15 +17981,10 @@ class UnprepareNetworkPoliciesRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'service_name': {'key': 'serviceName', 'type': 'str'},
+        "service_name": {"key": "serviceName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        service_name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, service_name: Optional[str] = None, **kwargs):
         super(UnprepareNetworkPoliciesRequest, self).__init__(**kwargs)
         self.service_name = service_name
 
@@ -18796,30 +18010,22 @@ class Usage(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'unit': {'required': True},
-        'current_value': {'required': True},
-        'limit': {'required': True},
-        'name': {'required': True},
+        "id": {"readonly": True},
+        "unit": {"required": True},
+        "current_value": {"required": True},
+        "limit": {"required": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'current_value': {'key': 'currentValue', 'type': 'long'},
-        'limit': {'key': 'limit', 'type': 'long'},
-        'name': {'key': 'name', 'type': 'UsageName'},
+        "id": {"key": "id", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+        "current_value": {"key": "currentValue", "type": "long"},
+        "limit": {"key": "limit", "type": "long"},
+        "name": {"key": "name", "type": "UsageName"},
     }
 
-    def __init__(
-        self,
-        *,
-        unit: Union[str, "UsageUnit"],
-        current_value: int,
-        limit: int,
-        name: "UsageName",
-        **kwargs
-    ):
+    def __init__(self, *, unit: Union[str, "UsageUnit"], current_value: int, limit: int, name: "UsageName", **kwargs):
         super(Usage, self).__init__(**kwargs)
         self.id = None
         self.unit = unit
@@ -18838,17 +18044,11 @@ class UsageName(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+        "value": {"key": "value", "type": "str"},
+        "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[str] = None,
-        localized_value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs):
         super(UsageName, self).__init__(**kwargs)
         self.value = value
         self.localized_value = localized_value
@@ -18864,17 +18064,11 @@ class UsagesListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Usage]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Usage]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Usage"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["Usage"]] = None, next_link: Optional[str] = None, **kwargs):
         super(UsagesListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -18910,24 +18104,24 @@ class VerificationIPFlowParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'target_resource_id': {'required': True},
-        'direction': {'required': True},
-        'protocol': {'required': True},
-        'local_port': {'required': True},
-        'remote_port': {'required': True},
-        'local_ip_address': {'required': True},
-        'remote_ip_address': {'required': True},
+        "target_resource_id": {"required": True},
+        "direction": {"required": True},
+        "protocol": {"required": True},
+        "local_port": {"required": True},
+        "remote_port": {"required": True},
+        "local_ip_address": {"required": True},
+        "remote_ip_address": {"required": True},
     }
 
     _attribute_map = {
-        'target_resource_id': {'key': 'targetResourceId', 'type': 'str'},
-        'direction': {'key': 'direction', 'type': 'str'},
-        'protocol': {'key': 'protocol', 'type': 'str'},
-        'local_port': {'key': 'localPort', 'type': 'str'},
-        'remote_port': {'key': 'remotePort', 'type': 'str'},
-        'local_ip_address': {'key': 'localIPAddress', 'type': 'str'},
-        'remote_ip_address': {'key': 'remoteIPAddress', 'type': 'str'},
-        'target_nic_resource_id': {'key': 'targetNicResourceId', 'type': 'str'},
+        "target_resource_id": {"key": "targetResourceId", "type": "str"},
+        "direction": {"key": "direction", "type": "str"},
+        "protocol": {"key": "protocol", "type": "str"},
+        "local_port": {"key": "localPort", "type": "str"},
+        "remote_port": {"key": "remotePort", "type": "str"},
+        "local_ip_address": {"key": "localIPAddress", "type": "str"},
+        "remote_ip_address": {"key": "remoteIPAddress", "type": "str"},
+        "target_nic_resource_id": {"key": "targetNicResourceId", "type": "str"},
     }
 
     def __init__(
@@ -18966,17 +18160,11 @@ class VerificationIPFlowResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'access': {'key': 'access', 'type': 'str'},
-        'rule_name': {'key': 'ruleName', 'type': 'str'},
+        "access": {"key": "access", "type": "str"},
+        "rule_name": {"key": "ruleName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        access: Optional[Union[str, "Access"]] = None,
-        rule_name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, access: Optional[Union[str, "Access"]] = None, rule_name: Optional[str] = None, **kwargs):
         super(VerificationIPFlowResult, self).__init__(**kwargs)
         self.access = access
         self.rule_name = rule_name
@@ -18996,21 +18184,18 @@ class VirtualApplianceNicProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'public_ip_address': {'readonly': True},
-        'private_ip_address': {'readonly': True},
+        "name": {"readonly": True},
+        "public_ip_address": {"readonly": True},
+        "private_ip_address": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'public_ip_address': {'key': 'publicIpAddress', 'type': 'str'},
-        'private_ip_address': {'key': 'privateIpAddress', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "public_ip_address": {"key": "publicIpAddress", "type": "str"},
+        "private_ip_address": {"key": "privateIpAddress", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualApplianceNicProperties, self).__init__(**kwargs)
         self.name = None
         self.public_ip_address = None
@@ -19029,9 +18214,9 @@ class VirtualApplianceSkuProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'vendor': {'key': 'vendor', 'type': 'str'},
-        'bundled_scale_unit': {'key': 'bundledScaleUnit', 'type': 'str'},
-        'market_place_version': {'key': 'marketPlaceVersion', 'type': 'str'},
+        "vendor": {"key": "vendor", "type": "str"},
+        "bundled_scale_unit": {"key": "bundledScaleUnit", "type": "str"},
+        "market_place_version": {"key": "marketPlaceVersion", "type": "str"},
     }
 
     def __init__(
@@ -19098,32 +18283,38 @@ class VirtualHub(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'virtual_wan': {'key': 'properties.virtualWan', 'type': 'SubResource'},
-        'vpn_gateway': {'key': 'properties.vpnGateway', 'type': 'SubResource'},
-        'p2_s_vpn_gateway': {'key': 'properties.p2SVpnGateway', 'type': 'SubResource'},
-        'express_route_gateway': {'key': 'properties.expressRouteGateway', 'type': 'SubResource'},
-        'azure_firewall': {'key': 'properties.azureFirewall', 'type': 'SubResource'},
-        'security_partner_provider': {'key': 'properties.securityPartnerProvider', 'type': 'SubResource'},
-        'virtual_network_connections': {'key': 'properties.virtualNetworkConnections', 'type': '[HubVirtualNetworkConnection]'},
-        'address_prefix': {'key': 'properties.addressPrefix', 'type': 'str'},
-        'route_table': {'key': 'properties.routeTable', 'type': 'VirtualHubRouteTable'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'security_provider_name': {'key': 'properties.securityProviderName', 'type': 'str'},
-        'virtual_hub_route_table_v2_s': {'key': 'properties.virtualHubRouteTableV2s', 'type': '[VirtualHubRouteTableV2]'},
-        'sku': {'key': 'properties.sku', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "virtual_wan": {"key": "properties.virtualWan", "type": "SubResource"},
+        "vpn_gateway": {"key": "properties.vpnGateway", "type": "SubResource"},
+        "p2_s_vpn_gateway": {"key": "properties.p2SVpnGateway", "type": "SubResource"},
+        "express_route_gateway": {"key": "properties.expressRouteGateway", "type": "SubResource"},
+        "azure_firewall": {"key": "properties.azureFirewall", "type": "SubResource"},
+        "security_partner_provider": {"key": "properties.securityPartnerProvider", "type": "SubResource"},
+        "virtual_network_connections": {
+            "key": "properties.virtualNetworkConnections",
+            "type": "[HubVirtualNetworkConnection]",
+        },
+        "address_prefix": {"key": "properties.addressPrefix", "type": "str"},
+        "route_table": {"key": "properties.routeTable", "type": "VirtualHubRouteTable"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "security_provider_name": {"key": "properties.securityProviderName", "type": "str"},
+        "virtual_hub_route_table_v2_s": {
+            "key": "properties.virtualHubRouteTableV2s",
+            "type": "[VirtualHubRouteTableV2]",
+        },
+        "sku": {"key": "properties.sku", "type": "str"},
     }
 
     def __init__(
@@ -19173,15 +18364,10 @@ class VirtualHubId(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs):
         super(VirtualHubId, self).__init__(**kwargs)
         self.id = id
 
@@ -19196,16 +18382,12 @@ class VirtualHubRoute(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'address_prefixes': {'key': 'addressPrefixes', 'type': '[str]'},
-        'next_hop_ip_address': {'key': 'nextHopIpAddress', 'type': 'str'},
+        "address_prefixes": {"key": "addressPrefixes", "type": "[str]"},
+        "next_hop_ip_address": {"key": "nextHopIpAddress", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        address_prefixes: Optional[List[str]] = None,
-        next_hop_ip_address: Optional[str] = None,
-        **kwargs
+        self, *, address_prefixes: Optional[List[str]] = None, next_hop_ip_address: Optional[str] = None, **kwargs
     ):
         super(VirtualHubRoute, self).__init__(**kwargs)
         self.address_prefixes = address_prefixes
@@ -19220,15 +18402,10 @@ class VirtualHubRouteTable(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'routes': {'key': 'routes', 'type': '[VirtualHubRoute]'},
+        "routes": {"key": "routes", "type": "[VirtualHubRoute]"},
     }
 
-    def __init__(
-        self,
-        *,
-        routes: Optional[List["VirtualHubRoute"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, routes: Optional[List["VirtualHubRoute"]] = None, **kwargs):
         super(VirtualHubRouteTable, self).__init__(**kwargs)
         self.routes = routes
 
@@ -19255,17 +18432,17 @@ class VirtualHubRouteTableV2(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'routes': {'key': 'properties.routes', 'type': '[VirtualHubRouteV2]'},
-        'attached_connections': {'key': 'properties.attachedConnections', 'type': '[str]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "routes": {"key": "properties.routes", "type": "[VirtualHubRouteV2]"},
+        "attached_connections": {"key": "properties.attachedConnections", "type": "[str]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -19299,10 +18476,10 @@ class VirtualHubRouteV2(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'destination_type': {'key': 'destinationType', 'type': 'str'},
-        'destinations': {'key': 'destinations', 'type': '[str]'},
-        'next_hop_type': {'key': 'nextHopType', 'type': 'str'},
-        'next_hops': {'key': 'nextHops', 'type': '[str]'},
+        "destination_type": {"key": "destinationType", "type": "str"},
+        "destinations": {"key": "destinations", "type": "[str]"},
+        "next_hop_type": {"key": "nextHopType", "type": "str"},
+        "next_hops": {"key": "nextHops", "type": "[str]"},
     }
 
     def __init__(
@@ -19371,31 +18548,31 @@ class VirtualNetwork(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'resource_guid': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "resource_guid": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'address_space': {'key': 'properties.addressSpace', 'type': 'AddressSpace'},
-        'dhcp_options': {'key': 'properties.dhcpOptions', 'type': 'DhcpOptions'},
-        'subnets': {'key': 'properties.subnets', 'type': '[Subnet]'},
-        'virtual_network_peerings': {'key': 'properties.virtualNetworkPeerings', 'type': '[VirtualNetworkPeering]'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'enable_ddos_protection': {'key': 'properties.enableDdosProtection', 'type': 'bool'},
-        'enable_vm_protection': {'key': 'properties.enableVmProtection', 'type': 'bool'},
-        'ddos_protection_plan': {'key': 'properties.ddosProtectionPlan', 'type': 'SubResource'},
-        'bgp_communities': {'key': 'properties.bgpCommunities', 'type': 'VirtualNetworkBgpCommunities'},
-        'ip_allocations': {'key': 'properties.ipAllocations', 'type': '[SubResource]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "address_space": {"key": "properties.addressSpace", "type": "AddressSpace"},
+        "dhcp_options": {"key": "properties.dhcpOptions", "type": "DhcpOptions"},
+        "subnets": {"key": "properties.subnets", "type": "[Subnet]"},
+        "virtual_network_peerings": {"key": "properties.virtualNetworkPeerings", "type": "[VirtualNetworkPeering]"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "enable_ddos_protection": {"key": "properties.enableDdosProtection", "type": "bool"},
+        "enable_vm_protection": {"key": "properties.enableVmProtection", "type": "bool"},
+        "ddos_protection_plan": {"key": "properties.ddosProtectionPlan", "type": "SubResource"},
+        "bgp_communities": {"key": "properties.bgpCommunities", "type": "VirtualNetworkBgpCommunities"},
+        "ip_allocations": {"key": "properties.ipAllocations", "type": "[SubResource]"},
     }
 
     def __init__(
@@ -19445,21 +18622,16 @@ class VirtualNetworkBgpCommunities(msrest.serialization.Model):
     """
 
     _validation = {
-        'virtual_network_community': {'required': True},
-        'regional_community': {'readonly': True},
+        "virtual_network_community": {"required": True},
+        "regional_community": {"readonly": True},
     }
 
     _attribute_map = {
-        'virtual_network_community': {'key': 'virtualNetworkCommunity', 'type': 'str'},
-        'regional_community': {'key': 'regionalCommunity', 'type': 'str'},
+        "virtual_network_community": {"key": "virtualNetworkCommunity", "type": "str"},
+        "regional_community": {"key": "regionalCommunity", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        virtual_network_community: str,
-        **kwargs
-    ):
+    def __init__(self, *, virtual_network_community: str, **kwargs):
         super(VirtualNetworkBgpCommunities, self).__init__(**kwargs)
         self.virtual_network_community = virtual_network_community
         self.regional_community = None
@@ -19475,19 +18647,14 @@ class VirtualNetworkConnectionGatewayReference(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
+        "id": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: str,
-        **kwargs
-    ):
+    def __init__(self, *, id: str, **kwargs):
         super(VirtualNetworkConnectionGatewayReference, self).__init__(**kwargs)
         self.id = id
 
@@ -19557,37 +18724,37 @@ class VirtualNetworkGateway(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'resource_guid': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'inbound_dns_forwarding_endpoint': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "resource_guid": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "inbound_dns_forwarding_endpoint": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[VirtualNetworkGatewayIPConfiguration]'},
-        'gateway_type': {'key': 'properties.gatewayType', 'type': 'str'},
-        'vpn_type': {'key': 'properties.vpnType', 'type': 'str'},
-        'vpn_gateway_generation': {'key': 'properties.vpnGatewayGeneration', 'type': 'str'},
-        'enable_bgp': {'key': 'properties.enableBgp', 'type': 'bool'},
-        'enable_private_ip_address': {'key': 'properties.enablePrivateIpAddress', 'type': 'bool'},
-        'active': {'key': 'properties.activeActive', 'type': 'bool'},
-        'gateway_default_site': {'key': 'properties.gatewayDefaultSite', 'type': 'SubResource'},
-        'sku': {'key': 'properties.sku', 'type': 'VirtualNetworkGatewaySku'},
-        'vpn_client_configuration': {'key': 'properties.vpnClientConfiguration', 'type': 'VpnClientConfiguration'},
-        'bgp_settings': {'key': 'properties.bgpSettings', 'type': 'BgpSettings'},
-        'custom_routes': {'key': 'properties.customRoutes', 'type': 'AddressSpace'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'enable_dns_forwarding': {'key': 'properties.enableDnsForwarding', 'type': 'bool'},
-        'inbound_dns_forwarding_endpoint': {'key': 'properties.inboundDnsForwardingEndpoint', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "ip_configurations": {"key": "properties.ipConfigurations", "type": "[VirtualNetworkGatewayIPConfiguration]"},
+        "gateway_type": {"key": "properties.gatewayType", "type": "str"},
+        "vpn_type": {"key": "properties.vpnType", "type": "str"},
+        "vpn_gateway_generation": {"key": "properties.vpnGatewayGeneration", "type": "str"},
+        "enable_bgp": {"key": "properties.enableBgp", "type": "bool"},
+        "enable_private_ip_address": {"key": "properties.enablePrivateIpAddress", "type": "bool"},
+        "active": {"key": "properties.activeActive", "type": "bool"},
+        "gateway_default_site": {"key": "properties.gatewayDefaultSite", "type": "SubResource"},
+        "sku": {"key": "properties.sku", "type": "VirtualNetworkGatewaySku"},
+        "vpn_client_configuration": {"key": "properties.vpnClientConfiguration", "type": "VpnClientConfiguration"},
+        "bgp_settings": {"key": "properties.bgpSettings", "type": "BgpSettings"},
+        "custom_routes": {"key": "properties.customRoutes", "type": "AddressSpace"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "enable_dns_forwarding": {"key": "properties.enableDnsForwarding", "type": "bool"},
+        "inbound_dns_forwarding_endpoint": {"key": "properties.inboundDnsForwardingEndpoint", "type": "str"},
     }
 
     def __init__(
@@ -19708,48 +18875,48 @@ class VirtualNetworkGatewayConnection(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'virtual_network_gateway1': {'required': True},
-        'connection_type': {'required': True},
-        'connection_status': {'readonly': True},
-        'tunnel_connection_status': {'readonly': True},
-        'egress_bytes_transferred': {'readonly': True},
-        'ingress_bytes_transferred': {'readonly': True},
-        'resource_guid': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "virtual_network_gateway1": {"required": True},
+        "connection_type": {"required": True},
+        "connection_status": {"readonly": True},
+        "tunnel_connection_status": {"readonly": True},
+        "egress_bytes_transferred": {"readonly": True},
+        "ingress_bytes_transferred": {"readonly": True},
+        "resource_guid": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'authorization_key': {'key': 'properties.authorizationKey', 'type': 'str'},
-        'virtual_network_gateway1': {'key': 'properties.virtualNetworkGateway1', 'type': 'VirtualNetworkGateway'},
-        'virtual_network_gateway2': {'key': 'properties.virtualNetworkGateway2', 'type': 'VirtualNetworkGateway'},
-        'local_network_gateway2': {'key': 'properties.localNetworkGateway2', 'type': 'LocalNetworkGateway'},
-        'connection_type': {'key': 'properties.connectionType', 'type': 'str'},
-        'connection_protocol': {'key': 'properties.connectionProtocol', 'type': 'str'},
-        'routing_weight': {'key': 'properties.routingWeight', 'type': 'int'},
-        'dpd_timeout_seconds': {'key': 'properties.dpdTimeoutSeconds', 'type': 'int'},
-        'shared_key': {'key': 'properties.sharedKey', 'type': 'str'},
-        'connection_status': {'key': 'properties.connectionStatus', 'type': 'str'},
-        'tunnel_connection_status': {'key': 'properties.tunnelConnectionStatus', 'type': '[TunnelConnectionHealth]'},
-        'egress_bytes_transferred': {'key': 'properties.egressBytesTransferred', 'type': 'long'},
-        'ingress_bytes_transferred': {'key': 'properties.ingressBytesTransferred', 'type': 'long'},
-        'peer': {'key': 'properties.peer', 'type': 'SubResource'},
-        'enable_bgp': {'key': 'properties.enableBgp', 'type': 'bool'},
-        'use_local_azure_ip_address': {'key': 'properties.useLocalAzureIpAddress', 'type': 'bool'},
-        'use_policy_based_traffic_selectors': {'key': 'properties.usePolicyBasedTrafficSelectors', 'type': 'bool'},
-        'ipsec_policies': {'key': 'properties.ipsecPolicies', 'type': '[IpsecPolicy]'},
-        'traffic_selector_policies': {'key': 'properties.trafficSelectorPolicies', 'type': '[TrafficSelectorPolicy]'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'express_route_gateway_bypass': {'key': 'properties.expressRouteGatewayBypass', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "authorization_key": {"key": "properties.authorizationKey", "type": "str"},
+        "virtual_network_gateway1": {"key": "properties.virtualNetworkGateway1", "type": "VirtualNetworkGateway"},
+        "virtual_network_gateway2": {"key": "properties.virtualNetworkGateway2", "type": "VirtualNetworkGateway"},
+        "local_network_gateway2": {"key": "properties.localNetworkGateway2", "type": "LocalNetworkGateway"},
+        "connection_type": {"key": "properties.connectionType", "type": "str"},
+        "connection_protocol": {"key": "properties.connectionProtocol", "type": "str"},
+        "routing_weight": {"key": "properties.routingWeight", "type": "int"},
+        "dpd_timeout_seconds": {"key": "properties.dpdTimeoutSeconds", "type": "int"},
+        "shared_key": {"key": "properties.sharedKey", "type": "str"},
+        "connection_status": {"key": "properties.connectionStatus", "type": "str"},
+        "tunnel_connection_status": {"key": "properties.tunnelConnectionStatus", "type": "[TunnelConnectionHealth]"},
+        "egress_bytes_transferred": {"key": "properties.egressBytesTransferred", "type": "long"},
+        "ingress_bytes_transferred": {"key": "properties.ingressBytesTransferred", "type": "long"},
+        "peer": {"key": "properties.peer", "type": "SubResource"},
+        "enable_bgp": {"key": "properties.enableBgp", "type": "bool"},
+        "use_local_azure_ip_address": {"key": "properties.useLocalAzureIpAddress", "type": "bool"},
+        "use_policy_based_traffic_selectors": {"key": "properties.usePolicyBasedTrafficSelectors", "type": "bool"},
+        "ipsec_policies": {"key": "properties.ipsecPolicies", "type": "[IpsecPolicy]"},
+        "traffic_selector_policies": {"key": "properties.trafficSelectorPolicies", "type": "[TrafficSelectorPolicy]"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "express_route_gateway_bypass": {"key": "properties.expressRouteGatewayBypass", "type": "bool"},
     }
 
     def __init__(
@@ -19878,46 +19045,55 @@ class VirtualNetworkGatewayConnectionListEntity(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'virtual_network_gateway1': {'required': True},
-        'connection_type': {'required': True},
-        'connection_status': {'readonly': True},
-        'tunnel_connection_status': {'readonly': True},
-        'egress_bytes_transferred': {'readonly': True},
-        'ingress_bytes_transferred': {'readonly': True},
-        'resource_guid': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "virtual_network_gateway1": {"required": True},
+        "connection_type": {"required": True},
+        "connection_status": {"readonly": True},
+        "tunnel_connection_status": {"readonly": True},
+        "egress_bytes_transferred": {"readonly": True},
+        "ingress_bytes_transferred": {"readonly": True},
+        "resource_guid": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'authorization_key': {'key': 'properties.authorizationKey', 'type': 'str'},
-        'virtual_network_gateway1': {'key': 'properties.virtualNetworkGateway1', 'type': 'VirtualNetworkConnectionGatewayReference'},
-        'virtual_network_gateway2': {'key': 'properties.virtualNetworkGateway2', 'type': 'VirtualNetworkConnectionGatewayReference'},
-        'local_network_gateway2': {'key': 'properties.localNetworkGateway2', 'type': 'VirtualNetworkConnectionGatewayReference'},
-        'connection_type': {'key': 'properties.connectionType', 'type': 'str'},
-        'connection_protocol': {'key': 'properties.connectionProtocol', 'type': 'str'},
-        'routing_weight': {'key': 'properties.routingWeight', 'type': 'int'},
-        'shared_key': {'key': 'properties.sharedKey', 'type': 'str'},
-        'connection_status': {'key': 'properties.connectionStatus', 'type': 'str'},
-        'tunnel_connection_status': {'key': 'properties.tunnelConnectionStatus', 'type': '[TunnelConnectionHealth]'},
-        'egress_bytes_transferred': {'key': 'properties.egressBytesTransferred', 'type': 'long'},
-        'ingress_bytes_transferred': {'key': 'properties.ingressBytesTransferred', 'type': 'long'},
-        'peer': {'key': 'properties.peer', 'type': 'SubResource'},
-        'enable_bgp': {'key': 'properties.enableBgp', 'type': 'bool'},
-        'use_policy_based_traffic_selectors': {'key': 'properties.usePolicyBasedTrafficSelectors', 'type': 'bool'},
-        'ipsec_policies': {'key': 'properties.ipsecPolicies', 'type': '[IpsecPolicy]'},
-        'traffic_selector_policies': {'key': 'properties.trafficSelectorPolicies', 'type': '[TrafficSelectorPolicy]'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'express_route_gateway_bypass': {'key': 'properties.expressRouteGatewayBypass', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "authorization_key": {"key": "properties.authorizationKey", "type": "str"},
+        "virtual_network_gateway1": {
+            "key": "properties.virtualNetworkGateway1",
+            "type": "VirtualNetworkConnectionGatewayReference",
+        },
+        "virtual_network_gateway2": {
+            "key": "properties.virtualNetworkGateway2",
+            "type": "VirtualNetworkConnectionGatewayReference",
+        },
+        "local_network_gateway2": {
+            "key": "properties.localNetworkGateway2",
+            "type": "VirtualNetworkConnectionGatewayReference",
+        },
+        "connection_type": {"key": "properties.connectionType", "type": "str"},
+        "connection_protocol": {"key": "properties.connectionProtocol", "type": "str"},
+        "routing_weight": {"key": "properties.routingWeight", "type": "int"},
+        "shared_key": {"key": "properties.sharedKey", "type": "str"},
+        "connection_status": {"key": "properties.connectionStatus", "type": "str"},
+        "tunnel_connection_status": {"key": "properties.tunnelConnectionStatus", "type": "[TunnelConnectionHealth]"},
+        "egress_bytes_transferred": {"key": "properties.egressBytesTransferred", "type": "long"},
+        "ingress_bytes_transferred": {"key": "properties.ingressBytesTransferred", "type": "long"},
+        "peer": {"key": "properties.peer", "type": "SubResource"},
+        "enable_bgp": {"key": "properties.enableBgp", "type": "bool"},
+        "use_policy_based_traffic_selectors": {"key": "properties.usePolicyBasedTrafficSelectors", "type": "bool"},
+        "ipsec_policies": {"key": "properties.ipsecPolicies", "type": "[IpsecPolicy]"},
+        "traffic_selector_policies": {"key": "properties.trafficSelectorPolicies", "type": "[TrafficSelectorPolicy]"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "express_route_gateway_bypass": {"key": "properties.expressRouteGatewayBypass", "type": "bool"},
     }
 
     def __init__(
@@ -19979,20 +19155,15 @@ class VirtualNetworkGatewayConnectionListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualNetworkGatewayConnection]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualNetworkGatewayConnection]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["VirtualNetworkGatewayConnection"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["VirtualNetworkGatewayConnection"]] = None, **kwargs):
         super(VirtualNetworkGatewayConnectionListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -20026,20 +19197,20 @@ class VirtualNetworkGatewayIPConfiguration(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'private_ip_address': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "private_ip_address": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'SubResource'},
-        'public_ip_address': {'key': 'properties.publicIPAddress', 'type': 'SubResource'},
-        'private_ip_address': {'key': 'properties.privateIPAddress', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "private_ip_allocation_method": {"key": "properties.privateIPAllocationMethod", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "SubResource"},
+        "public_ip_address": {"key": "properties.publicIPAddress", "type": "SubResource"},
+        "private_ip_address": {"key": "properties.privateIPAddress", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -20076,20 +19247,15 @@ class VirtualNetworkGatewayListConnectionsResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualNetworkGatewayConnectionListEntity]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualNetworkGatewayConnectionListEntity]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["VirtualNetworkGatewayConnectionListEntity"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["VirtualNetworkGatewayConnectionListEntity"]] = None, **kwargs):
         super(VirtualNetworkGatewayListConnectionsResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -20107,20 +19273,15 @@ class VirtualNetworkGatewayListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualNetworkGateway]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualNetworkGateway]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["VirtualNetworkGateway"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["VirtualNetworkGateway"]] = None, **kwargs):
         super(VirtualNetworkGatewayListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -20144,13 +19305,13 @@ class VirtualNetworkGatewaySku(msrest.serialization.Model):
     """
 
     _validation = {
-        'capacity': {'readonly': True},
+        "capacity": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "capacity": {"key": "capacity", "type": "int"},
     }
 
     def __init__(
@@ -20176,17 +19337,11 @@ class VirtualNetworkListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualNetwork]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualNetwork]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["VirtualNetwork"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["VirtualNetwork"]] = None, next_link: Optional[str] = None, **kwargs):
         super(VirtualNetworkListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -20204,20 +19359,15 @@ class VirtualNetworkListUsageResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualNetworkUsage]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualNetworkUsage]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
         super(VirtualNetworkListUsageResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = next_link
@@ -20265,22 +19415,22 @@ class VirtualNetworkPeering(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'allow_virtual_network_access': {'key': 'properties.allowVirtualNetworkAccess', 'type': 'bool'},
-        'allow_forwarded_traffic': {'key': 'properties.allowForwardedTraffic', 'type': 'bool'},
-        'allow_gateway_transit': {'key': 'properties.allowGatewayTransit', 'type': 'bool'},
-        'use_remote_gateways': {'key': 'properties.useRemoteGateways', 'type': 'bool'},
-        'remote_virtual_network': {'key': 'properties.remoteVirtualNetwork', 'type': 'SubResource'},
-        'remote_address_space': {'key': 'properties.remoteAddressSpace', 'type': 'AddressSpace'},
-        'peering_state': {'key': 'properties.peeringState', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "allow_virtual_network_access": {"key": "properties.allowVirtualNetworkAccess", "type": "bool"},
+        "allow_forwarded_traffic": {"key": "properties.allowForwardedTraffic", "type": "bool"},
+        "allow_gateway_transit": {"key": "properties.allowGatewayTransit", "type": "bool"},
+        "use_remote_gateways": {"key": "properties.useRemoteGateways", "type": "bool"},
+        "remote_virtual_network": {"key": "properties.remoteVirtualNetwork", "type": "SubResource"},
+        "remote_address_space": {"key": "properties.remoteAddressSpace", "type": "AddressSpace"},
+        "peering_state": {"key": "properties.peeringState", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -20320,16 +19470,12 @@ class VirtualNetworkPeeringListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualNetworkPeering]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualNetworkPeering]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["VirtualNetworkPeering"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["VirtualNetworkPeering"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         super(VirtualNetworkPeeringListResult, self).__init__(**kwargs)
         self.value = value
@@ -20375,27 +19521,36 @@ class VirtualNetworkTap(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'network_interface_tap_configurations': {'readonly': True},
-        'resource_guid': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "network_interface_tap_configurations": {"readonly": True},
+        "resource_guid": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'network_interface_tap_configurations': {'key': 'properties.networkInterfaceTapConfigurations', 'type': '[NetworkInterfaceTapConfiguration]'},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'destination_network_interface_ip_configuration': {'key': 'properties.destinationNetworkInterfaceIPConfiguration', 'type': 'NetworkInterfaceIPConfiguration'},
-        'destination_load_balancer_front_end_ip_configuration': {'key': 'properties.destinationLoadBalancerFrontEndIPConfiguration', 'type': 'FrontendIPConfiguration'},
-        'destination_port': {'key': 'properties.destinationPort', 'type': 'int'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "network_interface_tap_configurations": {
+            "key": "properties.networkInterfaceTapConfigurations",
+            "type": "[NetworkInterfaceTapConfiguration]",
+        },
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "destination_network_interface_ip_configuration": {
+            "key": "properties.destinationNetworkInterfaceIPConfiguration",
+            "type": "NetworkInterfaceIPConfiguration",
+        },
+        "destination_load_balancer_front_end_ip_configuration": {
+            "key": "properties.destinationLoadBalancerFrontEndIPConfiguration",
+            "type": "FrontendIPConfiguration",
+        },
+        "destination_port": {"key": "properties.destinationPort", "type": "int"},
     }
 
     def __init__(
@@ -20429,17 +19584,11 @@ class VirtualNetworkTapListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualNetworkTap]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualNetworkTap]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["VirtualNetworkTap"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["VirtualNetworkTap"]] = None, next_link: Optional[str] = None, **kwargs):
         super(VirtualNetworkTapListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -20463,25 +19612,22 @@ class VirtualNetworkUsage(msrest.serialization.Model):
     """
 
     _validation = {
-        'current_value': {'readonly': True},
-        'id': {'readonly': True},
-        'limit': {'readonly': True},
-        'name': {'readonly': True},
-        'unit': {'readonly': True},
+        "current_value": {"readonly": True},
+        "id": {"readonly": True},
+        "limit": {"readonly": True},
+        "name": {"readonly": True},
+        "unit": {"readonly": True},
     }
 
     _attribute_map = {
-        'current_value': {'key': 'currentValue', 'type': 'float'},
-        'id': {'key': 'id', 'type': 'str'},
-        'limit': {'key': 'limit', 'type': 'float'},
-        'name': {'key': 'name', 'type': 'VirtualNetworkUsageName'},
-        'unit': {'key': 'unit', 'type': 'str'},
+        "current_value": {"key": "currentValue", "type": "float"},
+        "id": {"key": "id", "type": "str"},
+        "limit": {"key": "limit", "type": "float"},
+        "name": {"key": "name", "type": "VirtualNetworkUsageName"},
+        "unit": {"key": "unit", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualNetworkUsage, self).__init__(**kwargs)
         self.current_value = None
         self.id = None
@@ -20502,19 +19648,16 @@ class VirtualNetworkUsageName(msrest.serialization.Model):
     """
 
     _validation = {
-        'localized_value': {'readonly': True},
-        'value': {'readonly': True},
+        "localized_value": {"readonly": True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "localized_value": {"key": "localizedValue", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VirtualNetworkUsageName, self).__init__(**kwargs)
         self.localized_value = None
         self.value = None
@@ -20553,27 +19696,27 @@ class VirtualRouter(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'virtual_router_asn': {'maximum': 4294967295, 'minimum': 0},
-        'peerings': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "virtual_router_asn": {"maximum": 4294967295, "minimum": 0},
+        "peerings": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'virtual_router_asn': {'key': 'properties.virtualRouterAsn', 'type': 'long'},
-        'virtual_router_ips': {'key': 'properties.virtualRouterIps', 'type': '[str]'},
-        'hosted_subnet': {'key': 'properties.hostedSubnet', 'type': 'SubResource'},
-        'hosted_gateway': {'key': 'properties.hostedGateway', 'type': 'SubResource'},
-        'peerings': {'key': 'properties.peerings', 'type': '[SubResource]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "virtual_router_asn": {"key": "properties.virtualRouterAsn", "type": "long"},
+        "virtual_router_ips": {"key": "properties.virtualRouterIps", "type": "[str]"},
+        "hosted_subnet": {"key": "properties.hostedSubnet", "type": "SubResource"},
+        "hosted_gateway": {"key": "properties.hostedGateway", "type": "SubResource"},
+        "peerings": {"key": "properties.peerings", "type": "[SubResource]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -20608,17 +19751,11 @@ class VirtualRouterListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualRouter]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualRouter]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["VirtualRouter"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["VirtualRouter"]] = None, next_link: Optional[str] = None, **kwargs):
         super(VirtualRouterListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -20647,20 +19784,20 @@ class VirtualRouterPeering(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'peer_asn': {'maximum': 4294967295, 'minimum': 0},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "peer_asn": {"maximum": 4294967295, "minimum": 0},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'peer_asn': {'key': 'properties.peerAsn', 'type': 'long'},
-        'peer_ip': {'key': 'properties.peerIp', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "peer_asn": {"key": "properties.peerAsn", "type": "long"},
+        "peer_ip": {"key": "properties.peerIp", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -20691,16 +19828,12 @@ class VirtualRouterPeeringListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualRouterPeering]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualRouterPeering]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["VirtualRouterPeering"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["VirtualRouterPeering"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         super(VirtualRouterPeeringListResult, self).__init__(**kwargs)
         self.value = value
@@ -20746,30 +19879,30 @@ class VirtualWAN(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'virtual_hubs': {'readonly': True},
-        'vpn_sites': {'readonly': True},
-        'office365_local_breakout_category': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "virtual_hubs": {"readonly": True},
+        "vpn_sites": {"readonly": True},
+        "office365_local_breakout_category": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'disable_vpn_encryption': {'key': 'properties.disableVpnEncryption', 'type': 'bool'},
-        'virtual_hubs': {'key': 'properties.virtualHubs', 'type': '[SubResource]'},
-        'vpn_sites': {'key': 'properties.vpnSites', 'type': '[SubResource]'},
-        'allow_branch_to_branch_traffic': {'key': 'properties.allowBranchToBranchTraffic', 'type': 'bool'},
-        'allow_vnet_to_vnet_traffic': {'key': 'properties.allowVnetToVnetTraffic', 'type': 'bool'},
-        'office365_local_breakout_category': {'key': 'properties.office365LocalBreakoutCategory', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'type_properties_type': {'key': 'properties.type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "disable_vpn_encryption": {"key": "properties.disableVpnEncryption", "type": "bool"},
+        "virtual_hubs": {"key": "properties.virtualHubs", "type": "[SubResource]"},
+        "vpn_sites": {"key": "properties.vpnSites", "type": "[SubResource]"},
+        "allow_branch_to_branch_traffic": {"key": "properties.allowBranchToBranchTraffic", "type": "bool"},
+        "allow_vnet_to_vnet_traffic": {"key": "properties.allowVnetToVnetTraffic", "type": "bool"},
+        "office365_local_breakout_category": {"key": "properties.office365LocalBreakoutCategory", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "type_properties_type": {"key": "properties.type", "type": "str"},
     }
 
     def __init__(
@@ -20810,22 +19943,16 @@ class VirtualWanSecurityProvider(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'readonly': True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'url': {'key': 'url', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "url": {"key": "url", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        url: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, url: Optional[str] = None, **kwargs):
         super(VirtualWanSecurityProvider, self).__init__(**kwargs)
         self.name = name
         self.url = url
@@ -20841,15 +19968,10 @@ class VirtualWanSecurityProviders(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'supported_providers': {'key': 'supportedProviders', 'type': '[VirtualWanSecurityProvider]'},
+        "supported_providers": {"key": "supportedProviders", "type": "[VirtualWanSecurityProvider]"},
     }
 
-    def __init__(
-        self,
-        *,
-        supported_providers: Optional[List["VirtualWanSecurityProvider"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, supported_providers: Optional[List["VirtualWanSecurityProvider"]] = None, **kwargs):
         super(VirtualWanSecurityProviders, self).__init__(**kwargs)
         self.supported_providers = supported_providers
 
@@ -20866,8 +19988,8 @@ class VirtualWanVpnProfileParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'vpn_server_configuration_resource_id': {'key': 'vpnServerConfigurationResourceId', 'type': 'str'},
-        'authentication_method': {'key': 'authenticationMethod', 'type': 'str'},
+        "vpn_server_configuration_resource_id": {"key": "vpnServerConfigurationResourceId", "type": "str"},
+        "authentication_method": {"key": "authenticationMethod", "type": "str"},
     }
 
     def __init__(
@@ -20900,16 +20022,16 @@ class VM(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
@@ -20931,15 +20053,10 @@ class VnetRoute(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'static_routes': {'key': 'staticRoutes', 'type': '[StaticRoute]'},
+        "static_routes": {"key": "staticRoutes", "type": "[StaticRoute]"},
     }
 
-    def __init__(
-        self,
-        *,
-        static_routes: Optional[List["StaticRoute"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, static_routes: Optional[List["StaticRoute"]] = None, **kwargs):
         super(VnetRoute, self).__init__(**kwargs)
         self.static_routes = static_routes
 
@@ -20983,17 +20100,20 @@ class VpnClientConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'vpn_client_address_pool': {'key': 'vpnClientAddressPool', 'type': 'AddressSpace'},
-        'vpn_client_root_certificates': {'key': 'vpnClientRootCertificates', 'type': '[VpnClientRootCertificate]'},
-        'vpn_client_revoked_certificates': {'key': 'vpnClientRevokedCertificates', 'type': '[VpnClientRevokedCertificate]'},
-        'vpn_client_protocols': {'key': 'vpnClientProtocols', 'type': '[str]'},
-        'vpn_client_ipsec_policies': {'key': 'vpnClientIpsecPolicies', 'type': '[IpsecPolicy]'},
-        'radius_server_address': {'key': 'radiusServerAddress', 'type': 'str'},
-        'radius_server_secret': {'key': 'radiusServerSecret', 'type': 'str'},
-        'radius_servers': {'key': 'radiusServers', 'type': '[RadiusServer]'},
-        'aad_tenant': {'key': 'aadTenant', 'type': 'str'},
-        'aad_audience': {'key': 'aadAudience', 'type': 'str'},
-        'aad_issuer': {'key': 'aadIssuer', 'type': 'str'},
+        "vpn_client_address_pool": {"key": "vpnClientAddressPool", "type": "AddressSpace"},
+        "vpn_client_root_certificates": {"key": "vpnClientRootCertificates", "type": "[VpnClientRootCertificate]"},
+        "vpn_client_revoked_certificates": {
+            "key": "vpnClientRevokedCertificates",
+            "type": "[VpnClientRevokedCertificate]",
+        },
+        "vpn_client_protocols": {"key": "vpnClientProtocols", "type": "[str]"},
+        "vpn_client_ipsec_policies": {"key": "vpnClientIpsecPolicies", "type": "[IpsecPolicy]"},
+        "radius_server_address": {"key": "radiusServerAddress", "type": "str"},
+        "radius_server_secret": {"key": "radiusServerSecret", "type": "str"},
+        "radius_servers": {"key": "radiusServers", "type": "[RadiusServer]"},
+        "aad_tenant": {"key": "aadTenant", "type": "str"},
+        "aad_audience": {"key": "aadAudience", "type": "str"},
+        "aad_issuer": {"key": "aadIssuer", "type": "str"},
     }
 
     def __init__(
@@ -21044,15 +20164,15 @@ class VpnClientConnectionHealth(msrest.serialization.Model):
     """
 
     _validation = {
-        'total_ingress_bytes_transferred': {'readonly': True},
-        'total_egress_bytes_transferred': {'readonly': True},
+        "total_ingress_bytes_transferred": {"readonly": True},
+        "total_egress_bytes_transferred": {"readonly": True},
     }
 
     _attribute_map = {
-        'total_ingress_bytes_transferred': {'key': 'totalIngressBytesTransferred', 'type': 'long'},
-        'total_egress_bytes_transferred': {'key': 'totalEgressBytesTransferred', 'type': 'long'},
-        'vpn_client_connections_count': {'key': 'vpnClientConnectionsCount', 'type': 'int'},
-        'allocated_ip_addresses': {'key': 'allocatedIpAddresses', 'type': '[str]'},
+        "total_ingress_bytes_transferred": {"key": "totalIngressBytesTransferred", "type": "long"},
+        "total_egress_bytes_transferred": {"key": "totalEgressBytesTransferred", "type": "long"},
+        "vpn_client_connections_count": {"key": "vpnClientConnectionsCount", "type": "int"},
+        "allocated_ip_addresses": {"key": "allocatedIpAddresses", "type": "[str]"},
     }
 
     def __init__(
@@ -21101,39 +20221,36 @@ class VpnClientConnectionHealthDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'vpn_connection_id': {'readonly': True},
-        'vpn_connection_duration': {'readonly': True},
-        'vpn_connection_time': {'readonly': True},
-        'public_ip_address': {'readonly': True},
-        'private_ip_address': {'readonly': True},
-        'vpn_user_name': {'readonly': True},
-        'max_bandwidth': {'readonly': True},
-        'egress_packets_transferred': {'readonly': True},
-        'egress_bytes_transferred': {'readonly': True},
-        'ingress_packets_transferred': {'readonly': True},
-        'ingress_bytes_transferred': {'readonly': True},
-        'max_packets_per_second': {'readonly': True},
+        "vpn_connection_id": {"readonly": True},
+        "vpn_connection_duration": {"readonly": True},
+        "vpn_connection_time": {"readonly": True},
+        "public_ip_address": {"readonly": True},
+        "private_ip_address": {"readonly": True},
+        "vpn_user_name": {"readonly": True},
+        "max_bandwidth": {"readonly": True},
+        "egress_packets_transferred": {"readonly": True},
+        "egress_bytes_transferred": {"readonly": True},
+        "ingress_packets_transferred": {"readonly": True},
+        "ingress_bytes_transferred": {"readonly": True},
+        "max_packets_per_second": {"readonly": True},
     }
 
     _attribute_map = {
-        'vpn_connection_id': {'key': 'vpnConnectionId', 'type': 'str'},
-        'vpn_connection_duration': {'key': 'vpnConnectionDuration', 'type': 'long'},
-        'vpn_connection_time': {'key': 'vpnConnectionTime', 'type': 'str'},
-        'public_ip_address': {'key': 'publicIpAddress', 'type': 'str'},
-        'private_ip_address': {'key': 'privateIpAddress', 'type': 'str'},
-        'vpn_user_name': {'key': 'vpnUserName', 'type': 'str'},
-        'max_bandwidth': {'key': 'maxBandwidth', 'type': 'long'},
-        'egress_packets_transferred': {'key': 'egressPacketsTransferred', 'type': 'long'},
-        'egress_bytes_transferred': {'key': 'egressBytesTransferred', 'type': 'long'},
-        'ingress_packets_transferred': {'key': 'ingressPacketsTransferred', 'type': 'long'},
-        'ingress_bytes_transferred': {'key': 'ingressBytesTransferred', 'type': 'long'},
-        'max_packets_per_second': {'key': 'maxPacketsPerSecond', 'type': 'long'},
+        "vpn_connection_id": {"key": "vpnConnectionId", "type": "str"},
+        "vpn_connection_duration": {"key": "vpnConnectionDuration", "type": "long"},
+        "vpn_connection_time": {"key": "vpnConnectionTime", "type": "str"},
+        "public_ip_address": {"key": "publicIpAddress", "type": "str"},
+        "private_ip_address": {"key": "privateIpAddress", "type": "str"},
+        "vpn_user_name": {"key": "vpnUserName", "type": "str"},
+        "max_bandwidth": {"key": "maxBandwidth", "type": "long"},
+        "egress_packets_transferred": {"key": "egressPacketsTransferred", "type": "long"},
+        "egress_bytes_transferred": {"key": "egressBytesTransferred", "type": "long"},
+        "ingress_packets_transferred": {"key": "ingressPacketsTransferred", "type": "long"},
+        "ingress_bytes_transferred": {"key": "ingressBytesTransferred", "type": "long"},
+        "max_packets_per_second": {"key": "maxPacketsPerSecond", "type": "long"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VpnClientConnectionHealthDetail, self).__init__(**kwargs)
         self.vpn_connection_id = None
         self.vpn_connection_duration = None
@@ -21157,15 +20274,10 @@ class VpnClientConnectionHealthDetailListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VpnClientConnectionHealthDetail]'},
+        "value": {"key": "value", "type": "[VpnClientConnectionHealthDetail]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["VpnClientConnectionHealthDetail"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["VpnClientConnectionHealthDetail"]] = None, **kwargs):
         super(VpnClientConnectionHealthDetailListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -21204,25 +20316,25 @@ class VpnClientIPsecParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'sa_life_time_seconds': {'required': True},
-        'sa_data_size_kilobytes': {'required': True},
-        'ipsec_encryption': {'required': True},
-        'ipsec_integrity': {'required': True},
-        'ike_encryption': {'required': True},
-        'ike_integrity': {'required': True},
-        'dh_group': {'required': True},
-        'pfs_group': {'required': True},
+        "sa_life_time_seconds": {"required": True},
+        "sa_data_size_kilobytes": {"required": True},
+        "ipsec_encryption": {"required": True},
+        "ipsec_integrity": {"required": True},
+        "ike_encryption": {"required": True},
+        "ike_integrity": {"required": True},
+        "dh_group": {"required": True},
+        "pfs_group": {"required": True},
     }
 
     _attribute_map = {
-        'sa_life_time_seconds': {'key': 'saLifeTimeSeconds', 'type': 'int'},
-        'sa_data_size_kilobytes': {'key': 'saDataSizeKilobytes', 'type': 'int'},
-        'ipsec_encryption': {'key': 'ipsecEncryption', 'type': 'str'},
-        'ipsec_integrity': {'key': 'ipsecIntegrity', 'type': 'str'},
-        'ike_encryption': {'key': 'ikeEncryption', 'type': 'str'},
-        'ike_integrity': {'key': 'ikeIntegrity', 'type': 'str'},
-        'dh_group': {'key': 'dhGroup', 'type': 'str'},
-        'pfs_group': {'key': 'pfsGroup', 'type': 'str'},
+        "sa_life_time_seconds": {"key": "saLifeTimeSeconds", "type": "int"},
+        "sa_data_size_kilobytes": {"key": "saDataSizeKilobytes", "type": "int"},
+        "ipsec_encryption": {"key": "ipsecEncryption", "type": "str"},
+        "ipsec_integrity": {"key": "ipsecIntegrity", "type": "str"},
+        "ike_encryption": {"key": "ikeEncryption", "type": "str"},
+        "ike_integrity": {"key": "ikeIntegrity", "type": "str"},
+        "dh_group": {"key": "dhGroup", "type": "str"},
+        "pfs_group": {"key": "pfsGroup", "type": "str"},
     }
 
     def __init__(
@@ -21270,10 +20382,10 @@ class VpnClientParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'processor_architecture': {'key': 'processorArchitecture', 'type': 'str'},
-        'authentication_method': {'key': 'authenticationMethod', 'type': 'str'},
-        'radius_server_auth_certificate': {'key': 'radiusServerAuthCertificate', 'type': 'str'},
-        'client_root_certificates': {'key': 'clientRootCertificates', 'type': '[str]'},
+        "processor_architecture": {"key": "processorArchitecture", "type": "str"},
+        "authentication_method": {"key": "authenticationMethod", "type": "str"},
+        "radius_server_auth_certificate": {"key": "radiusServerAuthCertificate", "type": "str"},
+        "client_root_certificates": {"key": "clientRootCertificates", "type": "[str]"},
     }
 
     def __init__(
@@ -21312,25 +20424,20 @@ class VpnClientRevokedCertificate(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'thumbprint': {'key': 'properties.thumbprint', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "thumbprint": {"key": "properties.thumbprint", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        name: Optional[str] = None,
-        thumbprint: Optional[str] = None,
-        **kwargs
+        self, *, id: Optional[str] = None, name: Optional[str] = None, thumbprint: Optional[str] = None, **kwargs
     ):
         super(VpnClientRevokedCertificate, self).__init__(id=id, **kwargs)
         self.name = name
@@ -21361,27 +20468,20 @@ class VpnClientRootCertificate(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'public_cert_data': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "public_cert_data": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'public_cert_data': {'key': 'properties.publicCertData', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "public_cert_data": {"key": "properties.publicCertData", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        public_cert_data: str,
-        id: Optional[str] = None,
-        name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, public_cert_data: str, id: Optional[str] = None, name: Optional[str] = None, **kwargs):
         super(VpnClientRootCertificate, self).__init__(id=id, **kwargs)
         self.name = name
         self.etag = None
@@ -21445,35 +20545,35 @@ class VpnConnection(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'connection_status': {'readonly': True},
-        'ingress_bytes_transferred': {'readonly': True},
-        'egress_bytes_transferred': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "connection_status": {"readonly": True},
+        "ingress_bytes_transferred": {"readonly": True},
+        "egress_bytes_transferred": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'remote_vpn_site': {'key': 'properties.remoteVpnSite', 'type': 'SubResource'},
-        'routing_weight': {'key': 'properties.routingWeight', 'type': 'int'},
-        'dpd_timeout_seconds': {'key': 'properties.dpdTimeoutSeconds', 'type': 'int'},
-        'connection_status': {'key': 'properties.connectionStatus', 'type': 'str'},
-        'vpn_connection_protocol_type': {'key': 'properties.vpnConnectionProtocolType', 'type': 'str'},
-        'ingress_bytes_transferred': {'key': 'properties.ingressBytesTransferred', 'type': 'long'},
-        'egress_bytes_transferred': {'key': 'properties.egressBytesTransferred', 'type': 'long'},
-        'connection_bandwidth': {'key': 'properties.connectionBandwidth', 'type': 'int'},
-        'shared_key': {'key': 'properties.sharedKey', 'type': 'str'},
-        'enable_bgp': {'key': 'properties.enableBgp', 'type': 'bool'},
-        'use_policy_based_traffic_selectors': {'key': 'properties.usePolicyBasedTrafficSelectors', 'type': 'bool'},
-        'ipsec_policies': {'key': 'properties.ipsecPolicies', 'type': '[IpsecPolicy]'},
-        'enable_rate_limiting': {'key': 'properties.enableRateLimiting', 'type': 'bool'},
-        'enable_internet_security': {'key': 'properties.enableInternetSecurity', 'type': 'bool'},
-        'use_local_azure_ip_address': {'key': 'properties.useLocalAzureIpAddress', 'type': 'bool'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'vpn_link_connections': {'key': 'properties.vpnLinkConnections', 'type': '[VpnSiteLinkConnection]'},
-        'routing_configuration': {'key': 'properties.routingConfiguration', 'type': 'RoutingConfiguration'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "remote_vpn_site": {"key": "properties.remoteVpnSite", "type": "SubResource"},
+        "routing_weight": {"key": "properties.routingWeight", "type": "int"},
+        "dpd_timeout_seconds": {"key": "properties.dpdTimeoutSeconds", "type": "int"},
+        "connection_status": {"key": "properties.connectionStatus", "type": "str"},
+        "vpn_connection_protocol_type": {"key": "properties.vpnConnectionProtocolType", "type": "str"},
+        "ingress_bytes_transferred": {"key": "properties.ingressBytesTransferred", "type": "long"},
+        "egress_bytes_transferred": {"key": "properties.egressBytesTransferred", "type": "long"},
+        "connection_bandwidth": {"key": "properties.connectionBandwidth", "type": "int"},
+        "shared_key": {"key": "properties.sharedKey", "type": "str"},
+        "enable_bgp": {"key": "properties.enableBgp", "type": "bool"},
+        "use_policy_based_traffic_selectors": {"key": "properties.usePolicyBasedTrafficSelectors", "type": "bool"},
+        "ipsec_policies": {"key": "properties.ipsecPolicies", "type": "[IpsecPolicy]"},
+        "enable_rate_limiting": {"key": "properties.enableRateLimiting", "type": "bool"},
+        "enable_internet_security": {"key": "properties.enableInternetSecurity", "type": "bool"},
+        "use_local_azure_ip_address": {"key": "properties.useLocalAzureIpAddress", "type": "bool"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "vpn_link_connections": {"key": "properties.vpnLinkConnections", "type": "[VpnSiteLinkConnection]"},
+        "routing_configuration": {"key": "properties.routingConfiguration", "type": "RoutingConfiguration"},
     }
 
     def __init__(
@@ -21532,9 +20632,9 @@ class VpnDeviceScriptParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'vendor': {'key': 'vendor', 'type': 'str'},
-        'device_family': {'key': 'deviceFamily', 'type': 'str'},
-        'firmware_version': {'key': 'firmwareVersion', 'type': 'str'},
+        "vendor": {"key": "vendor", "type": "str"},
+        "device_family": {"key": "deviceFamily", "type": "str"},
+        "firmware_version": {"key": "firmwareVersion", "type": "str"},
     }
 
     def __init__(
@@ -21582,24 +20682,24 @@ class VpnGateway(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'virtual_hub': {'key': 'properties.virtualHub', 'type': 'SubResource'},
-        'connections': {'key': 'properties.connections', 'type': '[VpnConnection]'},
-        'bgp_settings': {'key': 'properties.bgpSettings', 'type': 'BgpSettings'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'vpn_gateway_scale_unit': {'key': 'properties.vpnGatewayScaleUnit', 'type': 'int'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "virtual_hub": {"key": "properties.virtualHub", "type": "SubResource"},
+        "connections": {"key": "properties.connections", "type": "[VpnConnection]"},
+        "bgp_settings": {"key": "properties.bgpSettings", "type": "BgpSettings"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "vpn_gateway_scale_unit": {"key": "properties.vpnGatewayScaleUnit", "type": "int"},
     }
 
     def __init__(
@@ -21633,17 +20733,11 @@ class VpnLinkBgpSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'asn': {'key': 'asn', 'type': 'long'},
-        'bgp_peering_address': {'key': 'bgpPeeringAddress', 'type': 'str'},
+        "asn": {"key": "asn", "type": "long"},
+        "bgp_peering_address": {"key": "bgpPeeringAddress", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        asn: Optional[int] = None,
-        bgp_peering_address: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, asn: Optional[int] = None, bgp_peering_address: Optional[str] = None, **kwargs):
         super(VpnLinkBgpSettings, self).__init__(**kwargs)
         self.asn = asn
         self.bgp_peering_address = bgp_peering_address
@@ -21659,17 +20753,11 @@ class VpnLinkProviderProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'link_provider_name': {'key': 'linkProviderName', 'type': 'str'},
-        'link_speed_in_mbps': {'key': 'linkSpeedInMbps', 'type': 'int'},
+        "link_provider_name": {"key": "linkProviderName", "type": "str"},
+        "link_speed_in_mbps": {"key": "linkSpeedInMbps", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        link_provider_name: Optional[str] = None,
-        link_speed_in_mbps: Optional[int] = None,
-        **kwargs
-    ):
+    def __init__(self, *, link_provider_name: Optional[str] = None, link_speed_in_mbps: Optional[int] = None, **kwargs):
         super(VpnLinkProviderProperties, self).__init__(**kwargs)
         self.link_provider_name = link_provider_name
         self.link_speed_in_mbps = link_speed_in_mbps
@@ -21683,15 +20771,10 @@ class VpnPacketCaptureStartParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'filter_data': {'key': 'filterData', 'type': 'str'},
+        "filter_data": {"key": "filterData", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        filter_data: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, filter_data: Optional[str] = None, **kwargs):
         super(VpnPacketCaptureStartParameters, self).__init__(**kwargs)
         self.filter_data = filter_data
 
@@ -21704,15 +20787,10 @@ class VpnPacketCaptureStopParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'sas_url': {'key': 'sasUrl', 'type': 'str'},
+        "sas_url": {"key": "sasUrl", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        sas_url: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, sas_url: Optional[str] = None, **kwargs):
         super(VpnPacketCaptureStopParameters, self).__init__(**kwargs)
         self.sas_url = sas_url
 
@@ -21725,15 +20803,10 @@ class VpnProfileResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'profile_url': {'key': 'profileUrl', 'type': 'str'},
+        "profile_url": {"key": "profileUrl", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        profile_url: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, profile_url: Optional[str] = None, **kwargs):
         super(VpnProfileResponse, self).__init__(**kwargs)
         self.profile_url = profile_url
 
@@ -21748,17 +20821,11 @@ class VpnServerConfigRadiusClientRootCertificate(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "thumbprint": {"key": "thumbprint", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        thumbprint: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, thumbprint: Optional[str] = None, **kwargs):
         super(VpnServerConfigRadiusClientRootCertificate, self).__init__(**kwargs)
         self.name = name
         self.thumbprint = thumbprint
@@ -21774,17 +20841,11 @@ class VpnServerConfigRadiusServerRootCertificate(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'public_cert_data': {'key': 'publicCertData', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "public_cert_data": {"key": "publicCertData", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        public_cert_data: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, public_cert_data: Optional[str] = None, **kwargs):
         super(VpnServerConfigRadiusServerRootCertificate, self).__init__(**kwargs)
         self.name = name
         self.public_cert_data = public_cert_data
@@ -21855,36 +20916,51 @@ class VpnServerConfiguration(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'p2_s_vpn_gateways': {'readonly': True},
-        'etag_properties_etag': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "p2_s_vpn_gateways": {"readonly": True},
+        "etag_properties_etag": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'name_properties_name': {'key': 'properties.name', 'type': 'str'},
-        'vpn_protocols': {'key': 'properties.vpnProtocols', 'type': '[str]'},
-        'vpn_authentication_types': {'key': 'properties.vpnAuthenticationTypes', 'type': '[str]'},
-        'vpn_client_root_certificates': {'key': 'properties.vpnClientRootCertificates', 'type': '[VpnServerConfigVpnClientRootCertificate]'},
-        'vpn_client_revoked_certificates': {'key': 'properties.vpnClientRevokedCertificates', 'type': '[VpnServerConfigVpnClientRevokedCertificate]'},
-        'radius_server_root_certificates': {'key': 'properties.radiusServerRootCertificates', 'type': '[VpnServerConfigRadiusServerRootCertificate]'},
-        'radius_client_root_certificates': {'key': 'properties.radiusClientRootCertificates', 'type': '[VpnServerConfigRadiusClientRootCertificate]'},
-        'vpn_client_ipsec_policies': {'key': 'properties.vpnClientIpsecPolicies', 'type': '[IpsecPolicy]'},
-        'radius_server_address': {'key': 'properties.radiusServerAddress', 'type': 'str'},
-        'radius_server_secret': {'key': 'properties.radiusServerSecret', 'type': 'str'},
-        'radius_servers': {'key': 'properties.radiusServers', 'type': '[RadiusServer]'},
-        'aad_authentication_parameters': {'key': 'properties.aadAuthenticationParameters', 'type': 'AadAuthenticationParameters'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'p2_s_vpn_gateways': {'key': 'properties.p2SVpnGateways', 'type': '[P2SVpnGateway]'},
-        'etag_properties_etag': {'key': 'properties.etag', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "name_properties_name": {"key": "properties.name", "type": "str"},
+        "vpn_protocols": {"key": "properties.vpnProtocols", "type": "[str]"},
+        "vpn_authentication_types": {"key": "properties.vpnAuthenticationTypes", "type": "[str]"},
+        "vpn_client_root_certificates": {
+            "key": "properties.vpnClientRootCertificates",
+            "type": "[VpnServerConfigVpnClientRootCertificate]",
+        },
+        "vpn_client_revoked_certificates": {
+            "key": "properties.vpnClientRevokedCertificates",
+            "type": "[VpnServerConfigVpnClientRevokedCertificate]",
+        },
+        "radius_server_root_certificates": {
+            "key": "properties.radiusServerRootCertificates",
+            "type": "[VpnServerConfigRadiusServerRootCertificate]",
+        },
+        "radius_client_root_certificates": {
+            "key": "properties.radiusClientRootCertificates",
+            "type": "[VpnServerConfigRadiusClientRootCertificate]",
+        },
+        "vpn_client_ipsec_policies": {"key": "properties.vpnClientIpsecPolicies", "type": "[IpsecPolicy]"},
+        "radius_server_address": {"key": "properties.radiusServerAddress", "type": "str"},
+        "radius_server_secret": {"key": "properties.radiusServerSecret", "type": "str"},
+        "radius_servers": {"key": "properties.radiusServers", "type": "[RadiusServer]"},
+        "aad_authentication_parameters": {
+            "key": "properties.aadAuthenticationParameters",
+            "type": "AadAuthenticationParameters",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "p2_s_vpn_gateways": {"key": "properties.p2SVpnGateways", "type": "[P2SVpnGateway]"},
+        "etag_properties_etag": {"key": "properties.etag", "type": "str"},
     }
 
     def __init__(
@@ -21935,15 +21011,10 @@ class VpnServerConfigurationsResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'vpn_server_configuration_resource_ids': {'key': 'vpnServerConfigurationResourceIds', 'type': '[str]'},
+        "vpn_server_configuration_resource_ids": {"key": "vpnServerConfigurationResourceIds", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        vpn_server_configuration_resource_ids: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, vpn_server_configuration_resource_ids: Optional[List[str]] = None, **kwargs):
         super(VpnServerConfigurationsResponse, self).__init__(**kwargs)
         self.vpn_server_configuration_resource_ids = vpn_server_configuration_resource_ids
 
@@ -21958,17 +21029,11 @@ class VpnServerConfigVpnClientRevokedCertificate(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "thumbprint": {"key": "thumbprint", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        thumbprint: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, thumbprint: Optional[str] = None, **kwargs):
         super(VpnServerConfigVpnClientRevokedCertificate, self).__init__(**kwargs)
         self.name = name
         self.thumbprint = thumbprint
@@ -21984,17 +21049,11 @@ class VpnServerConfigVpnClientRootCertificate(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'public_cert_data': {'key': 'publicCertData', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "public_cert_data": {"key": "publicCertData", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        public_cert_data: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, public_cert_data: Optional[str] = None, **kwargs):
         super(VpnServerConfigVpnClientRootCertificate, self).__init__(**kwargs)
         self.name = name
         self.public_cert_data = public_cert_data
@@ -22039,28 +21098,28 @@ class VpnSite(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'virtual_wan': {'key': 'properties.virtualWan', 'type': 'SubResource'},
-        'device_properties': {'key': 'properties.deviceProperties', 'type': 'DeviceProperties'},
-        'ip_address': {'key': 'properties.ipAddress', 'type': 'str'},
-        'site_key': {'key': 'properties.siteKey', 'type': 'str'},
-        'address_space': {'key': 'properties.addressSpace', 'type': 'AddressSpace'},
-        'bgp_properties': {'key': 'properties.bgpProperties', 'type': 'BgpSettings'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'is_security_site': {'key': 'properties.isSecuritySite', 'type': 'bool'},
-        'vpn_site_links': {'key': 'properties.vpnSiteLinks', 'type': '[VpnSiteLink]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "virtual_wan": {"key": "properties.virtualWan", "type": "SubResource"},
+        "device_properties": {"key": "properties.deviceProperties", "type": "DeviceProperties"},
+        "ip_address": {"key": "properties.ipAddress", "type": "str"},
+        "site_key": {"key": "properties.siteKey", "type": "str"},
+        "address_space": {"key": "properties.addressSpace", "type": "AddressSpace"},
+        "bgp_properties": {"key": "properties.bgpProperties", "type": "BgpSettings"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "is_security_site": {"key": "properties.isSecuritySite", "type": "bool"},
+        "vpn_site_links": {"key": "properties.vpnSiteLinks", "type": "[VpnSiteLink]"},
     }
 
     def __init__(
@@ -22102,17 +21161,14 @@ class VpnSiteId(msrest.serialization.Model):
     """
 
     _validation = {
-        'vpn_site': {'readonly': True},
+        "vpn_site": {"readonly": True},
     }
 
     _attribute_map = {
-        'vpn_site': {'key': 'vpnSite', 'type': 'str'},
+        "vpn_site": {"key": "vpnSite", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VpnSiteId, self).__init__(**kwargs)
         self.vpn_site = None
 
@@ -22145,21 +21201,21 @@ class VpnSiteLink(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'link_properties': {'key': 'properties.linkProperties', 'type': 'VpnLinkProviderProperties'},
-        'ip_address': {'key': 'properties.ipAddress', 'type': 'str'},
-        'fqdn': {'key': 'properties.fqdn', 'type': 'str'},
-        'bgp_properties': {'key': 'properties.bgpProperties', 'type': 'VpnLinkBgpSettings'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "link_properties": {"key": "properties.linkProperties", "type": "VpnLinkProviderProperties"},
+        "ip_address": {"key": "properties.ipAddress", "type": "str"},
+        "fqdn": {"key": "properties.fqdn", "type": "str"},
+        "bgp_properties": {"key": "properties.bgpProperties", "type": "VpnLinkBgpSettings"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -22233,33 +21289,33 @@ class VpnSiteLinkConnection(SubResource):
     """
 
     _validation = {
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'connection_status': {'readonly': True},
-        'ingress_bytes_transferred': {'readonly': True},
-        'egress_bytes_transferred': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "connection_status": {"readonly": True},
+        "ingress_bytes_transferred": {"readonly": True},
+        "egress_bytes_transferred": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'vpn_site_link': {'key': 'properties.vpnSiteLink', 'type': 'SubResource'},
-        'routing_weight': {'key': 'properties.routingWeight', 'type': 'int'},
-        'connection_status': {'key': 'properties.connectionStatus', 'type': 'str'},
-        'vpn_connection_protocol_type': {'key': 'properties.vpnConnectionProtocolType', 'type': 'str'},
-        'ingress_bytes_transferred': {'key': 'properties.ingressBytesTransferred', 'type': 'long'},
-        'egress_bytes_transferred': {'key': 'properties.egressBytesTransferred', 'type': 'long'},
-        'connection_bandwidth': {'key': 'properties.connectionBandwidth', 'type': 'int'},
-        'shared_key': {'key': 'properties.sharedKey', 'type': 'str'},
-        'enable_bgp': {'key': 'properties.enableBgp', 'type': 'bool'},
-        'use_policy_based_traffic_selectors': {'key': 'properties.usePolicyBasedTrafficSelectors', 'type': 'bool'},
-        'ipsec_policies': {'key': 'properties.ipsecPolicies', 'type': '[IpsecPolicy]'},
-        'enable_rate_limiting': {'key': 'properties.enableRateLimiting', 'type': 'bool'},
-        'use_local_azure_ip_address': {'key': 'properties.useLocalAzureIpAddress', 'type': 'bool'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "vpn_site_link": {"key": "properties.vpnSiteLink", "type": "SubResource"},
+        "routing_weight": {"key": "properties.routingWeight", "type": "int"},
+        "connection_status": {"key": "properties.connectionStatus", "type": "str"},
+        "vpn_connection_protocol_type": {"key": "properties.vpnConnectionProtocolType", "type": "str"},
+        "ingress_bytes_transferred": {"key": "properties.ingressBytesTransferred", "type": "long"},
+        "egress_bytes_transferred": {"key": "properties.egressBytesTransferred", "type": "long"},
+        "connection_bandwidth": {"key": "properties.connectionBandwidth", "type": "int"},
+        "shared_key": {"key": "properties.sharedKey", "type": "str"},
+        "enable_bgp": {"key": "properties.enableBgp", "type": "bool"},
+        "use_policy_based_traffic_selectors": {"key": "properties.usePolicyBasedTrafficSelectors", "type": "bool"},
+        "ipsec_policies": {"key": "properties.ipsecPolicies", "type": "[IpsecPolicy]"},
+        "enable_rate_limiting": {"key": "properties.enableRateLimiting", "type": "bool"},
+        "use_local_azure_ip_address": {"key": "properties.useLocalAzureIpAddress", "type": "bool"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -22323,21 +21379,21 @@ class WebApplicationFirewallCustomRule(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'max_length': 128, 'min_length': 0},
-        'etag': {'readonly': True},
-        'priority': {'required': True},
-        'rule_type': {'required': True},
-        'match_conditions': {'required': True},
-        'action': {'required': True},
+        "name": {"max_length": 128, "min_length": 0},
+        "etag": {"readonly": True},
+        "priority": {"required": True},
+        "rule_type": {"required": True},
+        "match_conditions": {"required": True},
+        "action": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'priority': {'key': 'priority', 'type': 'int'},
-        'rule_type': {'key': 'ruleType', 'type': 'str'},
-        'match_conditions': {'key': 'matchConditions', 'type': '[MatchCondition]'},
-        'action': {'key': 'action', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "priority": {"key": "priority", "type": "int"},
+        "rule_type": {"key": "ruleType", "type": "str"},
+        "match_conditions": {"key": "matchConditions", "type": "[MatchCondition]"},
+        "action": {"key": "action", "type": "str"},
     }
 
     def __init__(
@@ -22399,31 +21455,31 @@ class WebApplicationFirewallPolicy(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'application_gateways': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'resource_state': {'readonly': True},
-        'http_listeners': {'readonly': True},
-        'path_based_rules': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "application_gateways": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "resource_state": {"readonly": True},
+        "http_listeners": {"readonly": True},
+        "path_based_rules": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'policy_settings': {'key': 'properties.policySettings', 'type': 'PolicySettings'},
-        'custom_rules': {'key': 'properties.customRules', 'type': '[WebApplicationFirewallCustomRule]'},
-        'application_gateways': {'key': 'properties.applicationGateways', 'type': '[ApplicationGateway]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
-        'managed_rules': {'key': 'properties.managedRules', 'type': 'ManagedRulesDefinition'},
-        'http_listeners': {'key': 'properties.httpListeners', 'type': '[SubResource]'},
-        'path_based_rules': {'key': 'properties.pathBasedRules', 'type': '[SubResource]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "policy_settings": {"key": "properties.policySettings", "type": "PolicySettings"},
+        "custom_rules": {"key": "properties.customRules", "type": "[WebApplicationFirewallCustomRule]"},
+        "application_gateways": {"key": "properties.applicationGateways", "type": "[ApplicationGateway]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "resource_state": {"key": "properties.resourceState", "type": "str"},
+        "managed_rules": {"key": "properties.managedRules", "type": "ManagedRulesDefinition"},
+        "http_listeners": {"key": "properties.httpListeners", "type": "[SubResource]"},
+        "path_based_rules": {"key": "properties.pathBasedRules", "type": "[SubResource]"},
     }
 
     def __init__(
@@ -22462,19 +21518,16 @@ class WebApplicationFirewallPolicyListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[WebApplicationFirewallPolicy]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[WebApplicationFirewallPolicy]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(WebApplicationFirewallPolicyListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
