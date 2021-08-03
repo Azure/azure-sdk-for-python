@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Close session of `ChallengePolicyClient` in context manager    #20000
+
 ### Other Changes
 
 - Bumped dependency on `msrest` to `>=0.6.21`
