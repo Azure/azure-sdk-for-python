@@ -23,19 +23,28 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import json
-
 from azure.core.rest import HttpResponse
 
 
 from ._schema import SchemaProperties, Schema
 
 
+def _parse_schema_properties(response):
+    return {
+        'location': response.headers.get('location'),
+        'location_by_id': response.headers.get('schema-id-location'),
+        'schema_id': response.headers.get('schema-id'),
+        'serialization_type': response.headers.get('serialization-type'),
+        'version': int(response.headers.get('schema-version'))
+    }
+
+
 def _parse_response_schema_id(response):
     # type: (HttpResponse) -> SchemaProperties
+    properties_dict = _parse_schema_properties(response)
+    properties_dict['schema_id'] = response.json()["id"]
     return SchemaProperties(
-        schema_id=response.json()["id"],
-        **response.headers
+        **properties_dict
     )
 
 
@@ -43,5 +52,5 @@ def _parse_response_schema(response):
     # type: (HttpResponse) -> Schema
     return Schema(
         schema_content=response.text,
-        schema_properties=SchemaProperties(**response.headers)
+        schema_properties=SchemaProperties(**_parse_schema_properties(response))
     )

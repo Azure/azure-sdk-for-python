@@ -11,7 +11,7 @@ interactions:
       Content-Length:
       - '201'
       Content-Type:
-      - text/plain
+      - application/json
       Serialization-Type:
       - Avro
       User-Agent:
@@ -25,7 +25,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 02 Aug 2021 23:58:32 GMT
+      - Tue, 03 Aug 2021 19:32:12 GMT
       location:
       - https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-basic31c70f88/versions/1?api-version=2020-09-01-preview
       schema-id:
@@ -67,7 +67,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 02 Aug 2021 23:58:32 GMT
+      - Tue, 03 Aug 2021 19:32:12 GMT
       location:
       - https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-basic31c70f88/versions/1?api-version=2020-09-01-preview
       schema-id:
@@ -101,7 +101,7 @@ interactions:
       Content-Length:
       - '201'
       Content-Type:
-      - text/plain
+      - application/json
       Serialization-Type:
       - Avro
       User-Agent:
@@ -115,7 +115,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 02 Aug 2021 23:58:34 GMT
+      - Tue, 03 Aug 2021 19:32:13 GMT
       location:
       - https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-basic31c70f88/versions/1?api-version=2020-09-01-preview
       schema-id:

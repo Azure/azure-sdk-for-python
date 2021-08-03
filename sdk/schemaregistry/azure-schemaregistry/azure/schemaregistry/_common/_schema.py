@@ -58,12 +58,11 @@ class SchemaProperties(object):
         **kwargs
     ):
         # type: (Optional[str], Any) -> None
-        self.location = kwargs.get('Location') or kwargs.get('location')
-        self.schema_id = schema_id or kwargs.get("Schema-Id") or kwargs.get('schema-id')
-        self.location_by_id = kwargs.get('Schema-Id-Location') or kwargs.get('schema-id-location')
-        self.serialization_type = kwargs.get('Serialization-Type') or kwargs.get('serialization-type')
-        # headers are always strings, should be parsed into integer
-        self.version = int(kwargs.get('Schema-Version') or kwargs.get('schema-version'))
+        self.schema_id = schema_id
+        self.location = kwargs.get('location')
+        self.location_by_id = kwargs.get('location_by_id')
+        self.serialization_type = kwargs.get('serialization_type')
+        self.version = kwargs.get('version')
 
 
 class Schema(object):

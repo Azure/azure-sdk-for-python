@@ -97,6 +97,8 @@ class SchemaRegistryClient(object):
          For now Avro is the only supported serialization type by the service.
         :type serialization_type: Union[str, SerializationType]
         :param str schema_content: String representation of the schema being registered.
+        :keyword content_type: The content type of the request. Default value is 'application/json'.
+        :paramtype content_type: str
         :rtype: SchemaProperties
 
         .. admonition:: Example:
@@ -119,6 +121,7 @@ class SchemaRegistryClient(object):
             schema_name=schema_name,
             content=schema_content,
             serialization_type=serialization_type,
+            content_type=kwargs.pop("content_type", "application/json"),
             **kwargs
         )
         response = self._generated_client.send_request(request)
@@ -158,9 +161,10 @@ class SchemaRegistryClient(object):
         :param str schema_group: Schema group under which schema should be registered.
         :param str schema_name: Name of schema being registered.
         :param serialization_type: Serialization type for the schema being registered.
-         The
         :type serialization_type: Union[str, SerializationType]
         :param str schema_content: String representation of the schema being registered.
+        :keyword content_type: The content type of the request. Default value is 'application/json'.
+        :paramtype content_type: str
         :rtype: SchemaProperties
 
         .. admonition:: Example:
@@ -183,6 +187,7 @@ class SchemaRegistryClient(object):
             schema_name=schema_name,
             content=schema_content,
             serialization_type=serialization_type,
+            content_type=kwargs.pop("content_type", "application/json"),
             **kwargs
         )
 
