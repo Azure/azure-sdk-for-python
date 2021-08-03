@@ -49,7 +49,7 @@ class AppsOperations:
         service_name: str,
         app_name: str,
         sync_status: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AppResource":
         """Get an App and its properties.
 
@@ -117,7 +117,7 @@ class AppsOperations:
         service_name: str,
         app_name: str,
         app_resource: "_models.AppResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AppResource":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AppResource"]
         error_map = {
@@ -179,7 +179,7 @@ class AppsOperations:
         service_name: str,
         app_name: str,
         app_resource: "_models.AppResource",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.AppResource"]:
         """Create a new App or update an exiting App.
 
@@ -194,8 +194,8 @@ class AppsOperations:
         :type app_resource: ~azure.mgmt.appplatform.v2020_11_01_preview.models.AppResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either AppResource or the result of cls(response)
@@ -255,7 +255,7 @@ class AppsOperations:
         resource_group_name: str,
         service_name: str,
         app_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -301,7 +301,7 @@ class AppsOperations:
         resource_group_name: str,
         service_name: str,
         app_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Operation to delete an App.
 
@@ -314,8 +314,8 @@ class AppsOperations:
         :type app_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -372,7 +372,7 @@ class AppsOperations:
         service_name: str,
         app_name: str,
         app_resource: "_models.AppResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AppResource":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AppResource"]
         error_map = {
@@ -431,7 +431,7 @@ class AppsOperations:
         service_name: str,
         app_name: str,
         app_resource: "_models.AppResource",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.AppResource"]:
         """Operation to update an exiting App.
 
@@ -446,8 +446,8 @@ class AppsOperations:
         :type app_resource: ~azure.mgmt.appplatform.v2020_11_01_preview.models.AppResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either AppResource or the result of cls(response)
@@ -506,7 +506,7 @@ class AppsOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AppResourceCollection"]:
         """Handles requests to list all resources in a Service.
 
@@ -582,7 +582,7 @@ class AppsOperations:
         resource_group_name: str,
         service_name: str,
         app_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ResourceUploadDefinition":
         """Get an resource upload URL for an App, which may be artifacts or source archive.
 
@@ -646,7 +646,7 @@ class AppsOperations:
         service_name: str,
         app_name: str,
         validate_payload: "_models.CustomDomainValidatePayload",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CustomDomainValidateResult":
         """Check the resource name is valid as well as not in use.
 

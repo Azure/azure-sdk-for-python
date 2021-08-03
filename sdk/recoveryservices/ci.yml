@@ -3,7 +3,6 @@
 trigger:
   branches:
     include:
-    - master
     - main
     - hotfix/*
     - release/*
@@ -15,7 +14,6 @@ trigger:
 pr:
   branches:
     include:
-    - master
     - main
     - feature/*
     - hotfix/*
@@ -34,4 +32,6 @@ extends:
       safeName: azuremgmtrecoveryservices
     - name: azure-mgmt-recoveryservicesbackup
       safeName: azuremgmtrecoveryservicesbackup
+    - name: azure-mgmt-recoveryservicessiterecovery
+      safeName: azuremgmtrecoveryservicessiterecovery
 

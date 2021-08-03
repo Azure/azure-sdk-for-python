@@ -3,12 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import functools
 import os
 
 from . import AzureMgmtPreparer
-from .resource_testcase import RESOURCE_GROUP_PARAM
 from azure_devtools.scenario_tests.exceptions import AzureTestError
+from dotenv import load_dotenv, find_dotenv
 
 
 class PowerShellPreparer(AzureMgmtPreparer):
@@ -56,6 +55,7 @@ class PowerShellPreparer(AzureMgmtPreparer):
             os.environ["AZURE_CLIENT_SECRET"] = os.environ["{}_CLIENT_SECRET".format(self.directory.upper())]
 
     def create_resource(self, name, **kwargs):
+        load_dotenv(find_dotenv())
 
         if self.is_live:
             self._set_mgmt_settings_real_values()

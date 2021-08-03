@@ -46,7 +46,7 @@ class ManagedClustersOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ManagedClusterListResult"]:
         """Gets the list of Service Fabric cluster resources created in the specified resource group.
 
@@ -106,7 +106,7 @@ class ManagedClustersOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorModel, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorModel, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -119,7 +119,7 @@ class ManagedClustersOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ManagedClusterListResult"]:
         """Gets the list of Service Fabric cluster resources created in the specified subscription.
 
@@ -176,7 +176,7 @@ class ManagedClustersOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorModel, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorModel, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -191,7 +191,7 @@ class ManagedClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagedCluster":
         """Gets a Service Fabric managed cluster resource.
 
@@ -238,7 +238,7 @@ class ManagedClustersOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorModel, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorModel, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ManagedCluster', pipeline_response)
@@ -254,7 +254,7 @@ class ManagedClustersOperations:
         resource_group_name: str,
         cluster_name: str,
         parameters: "_models.ManagedCluster",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagedCluster":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedCluster"]
         error_map = {
@@ -292,7 +292,7 @@ class ManagedClustersOperations:
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorModel, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorModel, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -315,7 +315,7 @@ class ManagedClustersOperations:
         resource_group_name: str,
         cluster_name: str,
         parameters: "_models.ManagedCluster",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ManagedCluster"]:
         """Creates or updates a Service Fabric managed cluster resource.
 
@@ -329,8 +329,8 @@ class ManagedClustersOperations:
         :type parameters: ~azure.mgmt.servicefabric.models.ManagedCluster
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ManagedCluster or the result of cls(response)
@@ -388,7 +388,7 @@ class ManagedClustersOperations:
         resource_group_name: str,
         cluster_name: str,
         parameters: "_models.ManagedClusterUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagedCluster":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedCluster"]
         error_map = {
@@ -426,7 +426,7 @@ class ManagedClustersOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorModel, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorModel, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -446,7 +446,7 @@ class ManagedClustersOperations:
         resource_group_name: str,
         cluster_name: str,
         parameters: "_models.ManagedClusterUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ManagedCluster"]:
         """Updates the configuration of a Service Fabric managed cluster resource.
 
@@ -460,8 +460,8 @@ class ManagedClustersOperations:
         :type parameters: ~azure.mgmt.servicefabric.models.ManagedClusterUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ManagedCluster or the result of cls(response)
@@ -518,7 +518,7 @@ class ManagedClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -551,7 +551,7 @@ class ManagedClustersOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorModel, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorModel, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -563,7 +563,7 @@ class ManagedClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a Service Fabric managed cluster resource.
 
@@ -575,8 +575,8 @@ class ManagedClustersOperations:
         :type cluster_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)

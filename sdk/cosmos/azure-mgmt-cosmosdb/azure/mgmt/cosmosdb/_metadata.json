@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2021-04-15",
-    "total_api_version_list": ["2021-04-15"],
+    "chosen_version": "2021-06-15",
+    "total_api_version_list": ["2021-06-15"],
     "client": {
         "name": "CosmosDBManagementClient",
         "filename": "_cosmos_db_management_client",
@@ -117,7 +117,14 @@
         "cassandra_resources": "CassandraResourcesOperations",
         "gremlin_resources": "GremlinResourcesOperations",
         "notebook_workspaces": "NotebookWorkspacesOperations",
+        "private_endpoint_connections": "PrivateEndpointConnectionsOperations",
         "private_link_resources": "PrivateLinkResourcesOperations",
-        "private_endpoint_connections": "PrivateEndpointConnectionsOperations"
+        "restorable_database_accounts": "RestorableDatabaseAccountsOperations",
+        "restorable_sql_databases": "RestorableSqlDatabasesOperations",
+        "restorable_sql_containers": "RestorableSqlContainersOperations",
+        "restorable_sql_resources": "RestorableSqlResourcesOperations",
+        "restorable_mongodb_databases": "RestorableMongodbDatabasesOperations",
+        "restorable_mongodb_collections": "RestorableMongodbCollectionsOperations",
+        "restorable_mongodb_resources": "RestorableMongodbResourcesOperations"
     }
 }

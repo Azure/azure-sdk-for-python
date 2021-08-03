@@ -237,10 +237,9 @@ try:
     from ._models_py3 import RecoverableManagedDatabase
     from ._models_py3 import RecoverableManagedDatabaseListResult
     from ._models_py3 import ReplicationLink
-    from ._models_py3 import ReplicationLinksListResult
+    from ._models_py3 import ReplicationLinkListResult
     from ._models_py3 import Resource
     from ._models_py3 import ResourceIdentity
-    from ._models_py3 import ResourceIdentityWithUserAssignedIdentities
     from ._models_py3 import ResourceMoveDefinition
     from ._models_py3 import ResourceWithWritableName
     from ._models_py3 import RestorableDroppedDatabase
@@ -579,10 +578,9 @@ except (SyntaxError, ImportError):
     from ._models import RecoverableManagedDatabase  # type: ignore
     from ._models import RecoverableManagedDatabaseListResult  # type: ignore
     from ._models import ReplicationLink  # type: ignore
-    from ._models import ReplicationLinksListResult  # type: ignore
+    from ._models import ReplicationLinkListResult  # type: ignore
     from ._models import Resource  # type: ignore
     from ._models import ResourceIdentity  # type: ignore
-    from ._models import ResourceIdentityWithUserAssignedIdentities  # type: ignore
     from ._models import ResourceMoveDefinition  # type: ignore
     from ._models import ResourceWithWritableName  # type: ignore
     from ._models import RestorableDroppedDatabase  # type: ignore
@@ -725,11 +723,12 @@ from ._sql_management_client_enums import (
     DatabaseState,
     DatabaseStatus,
     DayOfWeek,
+    DiffBackupIntervalInHours,
     DnsRefreshConfigurationPropertiesStatus,
     ElasticPoolLicenseType,
     ElasticPoolState,
     EncryptionProtectorName,
-    Enum81,
+    Enum77,
     FailoverGroupReplicationRole,
     GeoBackupPolicyName,
     GeoBackupPolicyState,
@@ -780,6 +779,9 @@ from ._sql_management_client_enums import (
     RecommendedActionInitiatedBy,
     RecommendedSensitivityLabelUpdateKind,
     ReplicaType,
+    ReplicationLinkType,
+    ReplicationRole,
+    ReplicationState,
     RequestedBackupStorageRedundancy,
     RestorableDroppedDatabasePropertiesBackupStorageRedundancy,
     RestoreDetailsName,
@@ -796,7 +798,7 @@ from ._sql_management_client_enums import (
     SensitivityLabelUpdateKind,
     ServerConnectionType,
     ServerKeyType,
-    ServerPublicNetworkAccess,
+    ServerNetworkAccessFlag,
     ServerTrustGroupPropertiesTrustScopesItem,
     ServerWorkspaceFeature,
     ServiceObjectiveName,
@@ -1059,10 +1061,9 @@ __all__ = [
     'RecoverableManagedDatabase',
     'RecoverableManagedDatabaseListResult',
     'ReplicationLink',
-    'ReplicationLinksListResult',
+    'ReplicationLinkListResult',
     'Resource',
     'ResourceIdentity',
-    'ResourceIdentityWithUserAssignedIdentities',
     'ResourceMoveDefinition',
     'ResourceWithWritableName',
     'RestorableDroppedDatabase',
@@ -1203,11 +1204,12 @@ __all__ = [
     'DatabaseState',
     'DatabaseStatus',
     'DayOfWeek',
+    'DiffBackupIntervalInHours',
     'DnsRefreshConfigurationPropertiesStatus',
     'ElasticPoolLicenseType',
     'ElasticPoolState',
     'EncryptionProtectorName',
-    'Enum81',
+    'Enum77',
     'FailoverGroupReplicationRole',
     'GeoBackupPolicyName',
     'GeoBackupPolicyState',
@@ -1258,6 +1260,9 @@ __all__ = [
     'RecommendedActionInitiatedBy',
     'RecommendedSensitivityLabelUpdateKind',
     'ReplicaType',
+    'ReplicationLinkType',
+    'ReplicationRole',
+    'ReplicationState',
     'RequestedBackupStorageRedundancy',
     'RestorableDroppedDatabasePropertiesBackupStorageRedundancy',
     'RestoreDetailsName',
@@ -1274,7 +1279,7 @@ __all__ = [
     'SensitivityLabelUpdateKind',
     'ServerConnectionType',
     'ServerKeyType',
-    'ServerPublicNetworkAccess',
+    'ServerNetworkAccessFlag',
     'ServerTrustGroupPropertiesTrustScopesItem',
     'ServerWorkspaceFeature',
     'ServiceObjectiveName',

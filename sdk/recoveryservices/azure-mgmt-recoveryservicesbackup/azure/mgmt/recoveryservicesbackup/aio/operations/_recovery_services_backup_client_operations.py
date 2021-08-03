@@ -27,7 +27,7 @@ class RecoveryServicesBackupClientOperationsMixin:
         vault_name: str,
         resource_group_name: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OperationStatus":
         """Fetches operation status for data move operation on vault.
 
@@ -48,7 +48,7 @@ class RecoveryServicesBackupClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -91,14 +91,14 @@ class RecoveryServicesBackupClientOperationsMixin:
         vault_name: str,
         resource_group_name: str,
         parameters: "_models.PrepareDataMoveRequest",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -142,7 +142,7 @@ class RecoveryServicesBackupClientOperationsMixin:
         vault_name: str,
         resource_group_name: str,
         parameters: "_models.PrepareDataMoveRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Prepares source vault for Data Move operation.
 
@@ -155,8 +155,8 @@ class RecoveryServicesBackupClientOperationsMixin:
         :type parameters: ~azure.mgmt.recoveryservicesbackup.models.PrepareDataMoveRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -211,14 +211,14 @@ class RecoveryServicesBackupClientOperationsMixin:
         vault_name: str,
         resource_group_name: str,
         parameters: "_models.TriggerDataMoveRequest",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -262,7 +262,7 @@ class RecoveryServicesBackupClientOperationsMixin:
         vault_name: str,
         resource_group_name: str,
         parameters: "_models.TriggerDataMoveRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Triggers Data Move Operation on target vault.
 
@@ -275,8 +275,8 @@ class RecoveryServicesBackupClientOperationsMixin:
         :type parameters: ~azure.mgmt.recoveryservicesbackup.models.TriggerDataMoveRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -335,14 +335,14 @@ class RecoveryServicesBackupClientOperationsMixin:
         protected_item_name: str,
         recovery_point_id: str,
         parameters: "_models.MoveRPAcrossTiersRequest",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -393,7 +393,7 @@ class RecoveryServicesBackupClientOperationsMixin:
         protected_item_name: str,
         recovery_point_id: str,
         parameters: "_models.MoveRPAcrossTiersRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Move recovery point from one datastore to another store.
 
@@ -416,8 +416,8 @@ class RecoveryServicesBackupClientOperationsMixin:
         :type parameters: ~azure.mgmt.recoveryservicesbackup.models.MoveRPAcrossTiersRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)

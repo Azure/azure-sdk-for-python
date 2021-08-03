@@ -44,7 +44,7 @@ class BackupResourceVaultConfigsOperations:
         self,
         vault_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BackupResourceVaultConfigResource":
         """Fetches resource vault config.
 
@@ -63,7 +63,7 @@ class BackupResourceVaultConfigsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -105,7 +105,7 @@ class BackupResourceVaultConfigsOperations:
         vault_name: str,
         resource_group_name: str,
         parameters: "_models.BackupResourceVaultConfigResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BackupResourceVaultConfigResource":
         """Updates vault security config.
 
@@ -126,7 +126,7 @@ class BackupResourceVaultConfigsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -173,7 +173,7 @@ class BackupResourceVaultConfigsOperations:
         vault_name: str,
         resource_group_name: str,
         parameters: "_models.BackupResourceVaultConfigResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BackupResourceVaultConfigResource":
         """Updates vault security config.
 
@@ -194,7 +194,7 @@ class BackupResourceVaultConfigsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

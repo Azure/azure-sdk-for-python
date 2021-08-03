@@ -74,7 +74,7 @@ from azure.core.pipeline import (
     PipelineContext,
 )
 from .._tools import await_result as _await_result
-from ..._utils import _case_insensitive_dict
+from ...utils._utils import _case_insensitive_dict
 
 
 if TYPE_CHECKING:
@@ -472,7 +472,6 @@ class HttpRequest(object):
         :rtype: bytes
         """
         return _serialize_request(self)
-
 
 class _HttpResponseBase(object):
     """Represent a HTTP response.

@@ -42,7 +42,7 @@ class Operations:
 
     async def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OperationListResult":
         """Lists all of the available REST API operations.
 
@@ -56,7 +56,7 @@ class Operations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-14-preview"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -84,4 +84,4 @@ class Operations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.DBForPostgreSql/operations'}  # type: ignore
+    list.metadata = {'url': '/providers/Microsoft.DBforPostgreSQL/operations'}  # type: ignore

@@ -45,7 +45,7 @@ class BackupOperationStatusesOperations:
         vault_name: str,
         resource_group_name: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OperationStatus":
         """Fetches the status of an operation such as triggering a backup, restore. The status can be in
         progress, completed
@@ -70,7 +70,7 @@ class BackupOperationStatusesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL

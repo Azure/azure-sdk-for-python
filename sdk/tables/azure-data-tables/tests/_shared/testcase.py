@@ -20,15 +20,24 @@ from azure.data.tables import (
     EdmType,
     TableEntity,
     TableAnalyticsLogging,
-    Metrics,
+    TableMetrics,
     TableServiceClient,
 )
+from azure.identity import DefaultAzureCredential
 
 from devtools_testutils import is_live
 
 SLEEP_DELAY = 30
 
 TEST_TABLE_PREFIX = "pytablesync"
+
+SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
+                                '>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication' \
+                                '></StorageServiceStats> '
+
+SERVICE_LIVE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
+                         '>live</Status><LastSyncTime>Wed, 19 Jan 2021 22:28:43 GMT</LastSyncTime></GeoReplication' \
+                         '></StorageServiceStats> '
 
 
 class FakeTokenCredential(object):
@@ -80,6 +89,11 @@ class TableTestCase(object):
             start=datetime.now() - timedelta(hours=24),
             expiry=datetime.now() + timedelta(days=8),
         )
+
+    def get_token_credential(self):
+        if is_live():
+            return DefaultAzureCredential()
+        return self.generate_fake_token()
 
     def generate_fake_token(self):
         return FakeTokenCredential()
@@ -292,9 +306,18 @@ class TableTestCase(object):
         assert prop is not None
 
         self._assert_logging_equal(prop["analytics_logging"], TableAnalyticsLogging())
-        self._assert_metrics_equal(prop["hour_metrics"], Metrics())
-        self._assert_metrics_equal(prop["minute_metrics"], Metrics())
+        self._assert_metrics_equal(prop["hour_metrics"], TableMetrics())
+        self._assert_metrics_equal(prop["minute_metrics"], TableMetrics())
         self._assert_cors_equal(prop["cors"], list())
+
+    def _assert_policy_datetime(self, val1, val2):
+        assert isinstance(val2, datetime)
+        assert val1.year == val2.year
+        assert val1.month == val2.month
+        assert val1.day == val2.day
+        assert val1.hour == val2.hour
+        assert val1.minute == val2.minute
+        assert val1.second == val2.second
 
     def _assert_logging_equal(self, log1, log2):
         if log1 is None or log2 is None:
@@ -347,15 +370,14 @@ class TableTestCase(object):
             return
 
         assert len(cors1) == len(cors2)
-
         for i in range(0, len(cors1)):
             rule1 = cors1[i]
             rule2 = cors2[i]
-            assert len(rule1.allowed_origins) == len(rule2.allowed_origins)
-            assert len(rule1.allowed_methods) == len(rule2.allowed_methods)
+            assert sorted(rule1.allowed_origins) == sorted(rule2.allowed_origins)
+            assert sorted(rule1.allowed_methods) == sorted(rule2.allowed_methods)
             assert rule1.max_age_in_seconds == rule2.max_age_in_seconds
-            assert len(rule1.exposed_headers) == len(rule2.exposed_headers)
-            assert len(rule1.allowed_headers) == len(rule2.allowed_headers)
+            assert sorted(rule1.exposed_headers) == sorted(rule2.exposed_headers)
+            assert sorted(rule1.allowed_headers) == sorted(rule2.allowed_headers)
 
     def _assert_retention_equal(self, ret1, ret2):
         assert ret1.enabled == ret2.enabled
@@ -413,10 +435,10 @@ class TableTestCase(object):
         metadata = self.table.create_entity(entity)
         return entity, metadata["etag"]
 
-    def _set_up(self, account_name, account_key, url="table"):
+    def _set_up(self, account_name, credential, url="table"):
         self.table_name = self.get_resource_name("uttable")
         self.ts = TableServiceClient(
-            self.account_url(account_name, url), credential=account_key, table_name=self.table_name
+            self.account_url(account_name, url), credential=credential, table_name=self.table_name
         )
         self.table = self.ts.get_table_client(self.table_name)
         if self.is_live:
@@ -441,6 +463,13 @@ class TableTestCase(object):
         assert stats["geo_replication"]["status"] == "unavailable"
         assert stats["geo_replication"]["last_sync_time"] is None
 
+    @staticmethod
+    def override_response_body_with_unavailable_status(response):
+        response.http_response.text = lambda _: SERVICE_UNAVAILABLE_RESP_BODY
+
+    @staticmethod
+    def override_response_body_with_live_status(response):
+        response.http_response.text = lambda _: SERVICE_LIVE_RESP_BODY
 
 class ResponseCallback(object):
     def __init__(self, status=None, new_status=None):

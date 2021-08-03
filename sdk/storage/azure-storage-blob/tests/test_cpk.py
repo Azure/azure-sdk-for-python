@@ -19,8 +19,9 @@ from azure.storage.blob import (
     generate_blob_sas
 )
 from azure.storage.blob import CustomerProvidedEncryptionKey, BlobSasPermissions
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
+from _shared.testcase import GlobalStorageAccountPreparer
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------
 TEST_ENCRYPTION_KEY = CustomerProvidedEncryptionKey(key_value="MDEyMzQ1NjcwMTIzNDU2NzAxMjM0NTY3MDEyMzQ1Njc=",

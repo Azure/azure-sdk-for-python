@@ -44,7 +44,7 @@ class OperationStatusesOperations:
         self,
         location: str,
         async_operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OperationStatus":
         """Get the status of a long running azure asynchronous operation.
 

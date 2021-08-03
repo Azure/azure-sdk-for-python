@@ -524,7 +524,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         invalid_key = tables_primary_storage_account_key.named_key.key[0:-6] + "==" # cut off a bit from the end to invalidate
         tables_primary_storage_account_key = AzureNamedKeyCredential(tables_storage_account_name, invalid_key)
         credential = AzureNamedKeyCredential(name=tables_storage_account_name, key=tables_primary_storage_account_key.named_key.key)
-        self.ts = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential)
+        self.ts = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=credential)
         self.table_name = self.get_resource_name('uttable')
         self.table = self.ts.get_table_client(self.table_name)
 

@@ -49,6 +49,8 @@ class SkillsetsOperations(object):
         skillset,  # type: "_models.SearchIndexerSkillset"
         if_match=None,  # type: Optional[str]
         if_none_match=None,  # type: Optional[str]
+        disable_cache_reprocessing_change_detection=None,  # type: Optional[bool]
+        ignore_reset_requirements=None,  # type: Optional[bool]
         request_options=None,  # type: Optional["_models.RequestOptions"]
         **kwargs  # type: Any
     ):
@@ -66,6 +68,11 @@ class SkillsetsOperations(object):
         :param if_none_match: Defines the If-None-Match condition. The operation will be performed only
          if the ETag on the server does not match this value.
         :type if_none_match: str
+        :param disable_cache_reprocessing_change_detection: Disables cache reprocessing change
+         detection.
+        :type disable_cache_reprocessing_change_detection: bool
+        :param ignore_reset_requirements: Ignores cache reset requirements.
+        :type ignore_reset_requirements: bool
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -83,7 +90,7 @@ class SkillsetsOperations(object):
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         prefer = "return=representation"
-        api_version = "2020-06-30"
+        api_version = "2021-04-30-Preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -98,6 +105,10 @@ class SkillsetsOperations(object):
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if disable_cache_reprocessing_change_detection is not None:
+            query_parameters['disableCacheReprocessingChangeDetection'] = self._serialize.query("disable_cache_reprocessing_change_detection", disable_cache_reprocessing_change_detection, 'bool')
+        if ignore_reset_requirements is not None:
+            query_parameters['ignoreResetRequirements'] = self._serialize.query("ignore_reset_requirements", ignore_reset_requirements, 'bool')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -170,7 +181,7 @@ class SkillsetsOperations(object):
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2021-04-30-Preview"
         accept = "application/json"
 
         # Construct URL
@@ -236,7 +247,7 @@ class SkillsetsOperations(object):
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2021-04-30-Preview"
         accept = "application/json"
 
         # Construct URL
@@ -303,7 +314,7 @@ class SkillsetsOperations(object):
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2021-04-30-Preview"
         accept = "application/json"
 
         # Construct URL
@@ -369,7 +380,7 @@ class SkillsetsOperations(object):
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2021-04-30-Preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

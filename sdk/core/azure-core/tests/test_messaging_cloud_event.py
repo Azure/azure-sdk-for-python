@@ -2,14 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import logging
-import sys
-import os
 import pytest
 import json
 import datetime
 
 from azure.core.messaging import CloudEvent
+from azure.core.utils._utils import _convert_to_isoformat
 from azure.core.serialization import NULL
 
 # Cloud Event tests
@@ -145,6 +143,108 @@ def test_cloud_custom_dict_with_extensions():
     assert event.time.hour == 20
     assert event.time.microsecond == 539861
     assert event.extensions == {"ext1": "example", "ext2": "example2"}
+
+def test_cloud_custom_dict_ms_precision_is_gt_six():
+    cloud_custom_dict_with_extensions = {
+        "id":"de0fd76c-4ef4-4dfb-ab3a-8f24a307e033",
+        "source":"https://egtest.dev/cloudcustomevent",
+        "data":{"team": "event grid squad"},
+        "type":"Azure.Sdk.Sample",
+        "time":"2021-02-18T20:18:10.539861122+00:00",
+        "specversion":"1.0",
+    }
+    event = CloudEvent.from_dict(cloud_custom_dict_with_extensions)
+    assert event.data == {"team": "event grid squad"}
+    assert event.__class__ == CloudEvent
+    assert event.time.month == 2
+    assert event.time.day == 18
+    assert event.time.hour == 20
+    assert event.time.microsecond == 539861
+
+def test_cloud_custom_dict_ms_precision_is_lt_six():
+    cloud_custom_dict_with_extensions = {
+        "id":"de0fd76c-4ef4-4dfb-ab3a-8f24a307e033",
+        "source":"https://egtest.dev/cloudcustomevent",
+        "data":{"team": "event grid squad"},
+        "type":"Azure.Sdk.Sample",
+        "time":"2021-02-18T20:18:10.123+00:00",
+        "specversion":"1.0",
+    }
+    event = CloudEvent.from_dict(cloud_custom_dict_with_extensions)
+    assert event.data == {"team": "event grid squad"}
+    assert event.__class__ == CloudEvent
+    assert event.time.month == 2
+    assert event.time.day == 18
+    assert event.time.hour == 20
+    assert event.time.microsecond == 123000
+
+def test_cloud_custom_dict_ms_precision_is_eq_six():
+    cloud_custom_dict_with_extensions = {
+        "id":"de0fd76c-4ef4-4dfb-ab3a-8f24a307e033",
+        "source":"https://egtest.dev/cloudcustomevent",
+        "data":{"team": "event grid squad"},
+        "type":"Azure.Sdk.Sample",
+        "time":"2021-02-18T20:18:10.123456+00:00",
+        "specversion":"1.0",
+    }
+    event = CloudEvent.from_dict(cloud_custom_dict_with_extensions)
+    assert event.data == {"team": "event grid squad"}
+    assert event.__class__ == CloudEvent
+    assert event.time.month == 2
+    assert event.time.day == 18
+    assert event.time.hour == 20
+    assert event.time.microsecond == 123456
+
+def test_cloud_custom_dict_ms_precision_is_gt_six_z_not():
+    cloud_custom_dict_with_extensions = {
+        "id":"de0fd76c-4ef4-4dfb-ab3a-8f24a307e033",
+        "source":"https://egtest.dev/cloudcustomevent",
+        "data":{"team": "event grid squad"},
+        "type":"Azure.Sdk.Sample",
+        "time":"2021-02-18T20:18:10.539861122Z",
+        "specversion":"1.0",
+    }
+    event = CloudEvent.from_dict(cloud_custom_dict_with_extensions)
+    assert event.data == {"team": "event grid squad"}
+    assert event.__class__ == CloudEvent
+    assert event.time.month == 2
+    assert event.time.day == 18
+    assert event.time.hour == 20
+    assert event.time.microsecond == 539861
+
+def test_cloud_custom_dict_ms_precision_is_lt_six_z_not():
+    cloud_custom_dict_with_extensions = {
+        "id":"de0fd76c-4ef4-4dfb-ab3a-8f24a307e033",
+        "source":"https://egtest.dev/cloudcustomevent",
+        "data":{"team": "event grid squad"},
+        "type":"Azure.Sdk.Sample",
+        "time":"2021-02-18T20:18:10.123Z",
+        "specversion":"1.0",
+    }
+    event = CloudEvent.from_dict(cloud_custom_dict_with_extensions)
+    assert event.data == {"team": "event grid squad"}
+    assert event.__class__ == CloudEvent
+    assert event.time.month == 2
+    assert event.time.day == 18
+    assert event.time.hour == 20
+    assert event.time.microsecond == 123000
+
+def test_cloud_custom_dict_ms_precision_is_eq_six_z_not():
+    cloud_custom_dict_with_extensions = {
+        "id":"de0fd76c-4ef4-4dfb-ab3a-8f24a307e034",
+        "source":"https://egtest.dev/cloudcustomevent",
+        "data":{"team": "event grid squad"},
+        "type":"Azure.Sdk.Sample",
+        "time":"2021-02-18T20:18:10.123456Z",
+        "specversion":"1.0",
+    }
+    event = CloudEvent.from_dict(cloud_custom_dict_with_extensions)
+    assert event.data == {"team": "event grid squad"}
+    assert event.__class__ == CloudEvent
+    assert event.time.month == 2
+    assert event.time.day == 18
+    assert event.time.hour == 20
+    assert event.time.microsecond == 123456
 
 def test_cloud_custom_dict_blank_data():
     cloud_custom_dict_with_extensions = {
@@ -282,3 +382,91 @@ def test_cloud_from_dict_with_invalid_extensions():
     }
     with pytest.raises(ValueError):
         event = CloudEvent.from_dict(cloud_custom_dict_with_extensions)
+
+def test_cloud_custom_dict_ms_precision_is_gt_six():
+    time ="2021-02-18T20:18:10.539861122+00:00"
+    date_obj = _convert_to_isoformat(time)
+
+    assert date_obj.month == 2
+    assert date_obj.day == 18
+    assert date_obj.hour == 20
+    assert date_obj.microsecond == 539861
+
+def test_cloud_custom_dict_ms_precision_is_lt_six():
+    time ="2021-02-18T20:18:10.123+00:00"
+    date_obj = _convert_to_isoformat(time)
+
+    assert date_obj.month == 2
+    assert date_obj.day == 18
+    assert date_obj.hour == 20
+    assert date_obj.microsecond == 123000
+
+def test_cloud_custom_dict_ms_precision_is_eq_six():
+    time ="2021-02-18T20:18:10.123456+00:00"
+    date_obj = _convert_to_isoformat(time)
+
+    assert date_obj.month == 2
+    assert date_obj.day == 18
+    assert date_obj.hour == 20
+    assert date_obj.microsecond == 123456
+
+def test_cloud_custom_dict_ms_precision_is_gt_six_z_not():
+    time ="2021-02-18T20:18:10.539861122Z"
+    date_obj = _convert_to_isoformat(time)
+
+    assert date_obj.month == 2
+    assert date_obj.day == 18
+    assert date_obj.hour == 20
+    assert date_obj.microsecond == 539861
+
+def test_cloud_custom_dict_ms_precision_is_lt_six_z_not():
+    time ="2021-02-18T20:18:10.123Z"
+    date_obj = _convert_to_isoformat(time)
+
+    assert date_obj.month == 2
+    assert date_obj.day == 18
+    assert date_obj.hour == 20
+    assert date_obj.microsecond == 123000
+
+def test_cloud_custom_dict_ms_precision_is_eq_six_z_not():
+    time ="2021-02-18T20:18:10.123456Z"
+    date_obj = _convert_to_isoformat(time)
+
+    assert date_obj.month == 2
+    assert date_obj.day == 18
+    assert date_obj.hour == 20
+    assert date_obj.microsecond == 123456
+
+def test_eventgrid_event_schema_raises():
+    cloud_custom_dict = {
+        "id":"de0fd76c-4ef4-4dfb-ab3a-8f24a307e033",
+        "data":{"team": "event grid squad"},
+        "dataVersion": "1.0",
+        "subject":"Azure.Sdk.Sample",
+        "eventTime":"2020-08-07T02:06:08.11969Z",
+        "eventType":"pull request",
+    }
+    with pytest.raises(ValueError, match="The event you are trying to parse follows the Eventgrid Schema. You can parse EventGrid events using EventGridEvent.from_dict method in the azure-eventgrid library."):
+        CloudEvent.from_dict(cloud_custom_dict)
+
+def test_wrong_schema_raises_no_source():
+    cloud_custom_dict = {
+        "id":"de0fd76c-4ef4-4dfb-ab3a-8f24a307e033",
+        "data":{"team": "event grid squad"},
+        "type":"Azure.Sdk.Sample",
+        "time":"2020-08-07T02:06:08.11969Z",
+        "specversion":"1.0",
+    }
+    with pytest.raises(ValueError, match="The event does not conform to the cloud event spec https://github.com/cloudevents/spec. The `source` and `type` params are required."):
+        CloudEvent.from_dict(cloud_custom_dict)
+
+def test_wrong_schema_raises_no_type():
+    cloud_custom_dict = {
+        "id":"de0fd76c-4ef4-4dfb-ab3a-8f24a307e033",
+        "data":{"team": "event grid squad"},
+        "source":"Azure/Sdk/Sample",
+        "time":"2020-08-07T02:06:08.11969Z",
+        "specversion":"1.0",
+    }
+    with pytest.raises(ValueError, match="The event does not conform to the cloud event spec https://github.com/cloudevents/spec. The `source` and `type` params are required."):
+        CloudEvent.from_dict(cloud_custom_dict)

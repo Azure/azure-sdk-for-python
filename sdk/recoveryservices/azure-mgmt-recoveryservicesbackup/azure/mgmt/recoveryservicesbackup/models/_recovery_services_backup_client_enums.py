@@ -330,6 +330,8 @@ class LastUpdateStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     PARTIALLY_FAILED = "PartiallyFailed"
     FAILED = "Failed"
     SUCCEEDED = "Succeeded"
+    INITIALIZED = "Initialized"
+    FIRST_INITIALIZATION = "FirstInitialization"
 
 class MabServerType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Server type of MAB container.

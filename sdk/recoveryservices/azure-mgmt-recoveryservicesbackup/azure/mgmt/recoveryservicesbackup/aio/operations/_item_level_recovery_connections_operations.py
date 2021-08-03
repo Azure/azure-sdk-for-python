@@ -49,7 +49,7 @@ class ItemLevelRecoveryConnectionsOperations:
         protected_item_name: str,
         recovery_point_id: str,
         parameters: "_models.ILRRequestResource",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Provisions a script which invokes an iSCSI connection to the backup data. Executing this script
         opens a file
@@ -84,7 +84,7 @@ class ItemLevelRecoveryConnectionsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -134,7 +134,7 @@ class ItemLevelRecoveryConnectionsOperations:
         container_name: str,
         protected_item_name: str,
         recovery_point_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Revokes an iSCSI connection which can be used to download a script. Executing this script opens
         a file explorer
@@ -165,7 +165,7 @@ class ItemLevelRecoveryConnectionsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL

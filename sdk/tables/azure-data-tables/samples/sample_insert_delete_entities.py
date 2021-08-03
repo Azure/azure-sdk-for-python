@@ -72,7 +72,7 @@ class InsertDeleteEntity(object):
         from azure.core.credentials import AzureNamedKeyCredential
 
         credential = AzureNamedKeyCredential(self.account_name, self.access_key)
-        with TableClient(endpoint=self.endpoint, credential=credential, table_name=self.table_name) as table_client:
+        with TableClient(endpoint=self.endpoint, table_name=self.table_name, credential=credential) as table_client:
 
             # Create entity to delete (to showcase etag)
             try:

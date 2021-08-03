@@ -9,7 +9,6 @@ from typing import TYPE_CHECKING
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
@@ -18,7 +17,7 @@ from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
+    from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -49,14 +48,14 @@ class Operations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.OperationCollection"]
+        # type: (...) -> "_models.OperationCollection"
         """List Operations.
 
         Lists all the Media Services operations.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either OperationCollection or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.media.models.OperationCollection]
+        :return: OperationCollection, or the result of cls(response)
+        :rtype: ~azure.mgmt.media.models.OperationCollection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationCollection"]
@@ -64,49 +63,33 @@ class Operations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
-        def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        # Construct URL
+        url = self.list.metadata['url']  # type: ignore
 
-            if not next_link:
-                # Construct URL
-                url = self.list.metadata['url']  # type: ignore
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
-                request = self._client.get(url, query_parameters, header_parameters)
-            else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
-            return request
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        def extract_data(pipeline_response):
-            deserialized = self._deserialize('OperationCollection', pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
 
-        def get_next(next_link=None):
-            request = prepare_request(next_link)
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-            response = pipeline_response.http_response
+        deserialized = self._deserialize('OperationCollection', pipeline_response)
 
-            if response.status_code not in [200]:
-                error = self._deserialize(_models.ApiError, response)
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+        if cls:
+            return cls(pipeline_response, deserialized, {})
 
-            return pipeline_response
-
-        return ItemPaged(
-            get_next, extract_data
-        )
+        return deserialized
     list.metadata = {'url': '/providers/Microsoft.Media/operations'}  # type: ignore

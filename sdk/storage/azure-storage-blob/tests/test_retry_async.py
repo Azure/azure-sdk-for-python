@@ -28,13 +28,9 @@ from azure.storage.blob.aio import (
     BlobClient,
 )
 
-from _shared.testcase import (
-    ResponseCallback,
-    RetryCounter,
-    GlobalStorageAccountPreparer
-)
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from _shared.asynctestcase import AsyncStorageTestCase
+from _shared.testcase import GlobalStorageAccountPreparer
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, RetryCounter, ResponseCallback
+from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 
 class AiohttpTestTransport(AioHttpTransport):
@@ -161,7 +157,7 @@ class StorageRetryTestAsync(AsyncStorageTestCase):
         try:
             with self.assertRaises(AzureError) as error:
                 await service.create_container(container_name)
-            
+
 
             # Assert
             # 3 retries + 1 original == 4
@@ -361,7 +357,7 @@ class StorageRetryTestAsync(AsyncStorageTestCase):
     async def test_retry_secondary_async(self, resource_group, location, storage_account, storage_account_key):
         """Secondary location test.
 
-        This test is special, since in pratical term, we don't have time to wait
+        This test is special, since in practical term, we don't have time to wait
         for the georeplication to be done (can take a loooooong time).
         So for the purpose of this test, we fake a 408 on the primary request,
         and then we check we do a 408. AND DONE.

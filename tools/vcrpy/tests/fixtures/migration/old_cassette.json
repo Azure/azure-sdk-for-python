@@ -1,0 +1,34 @@
+[
+    {
+        "request": {
+            "body": null, 
+            "protocol": "http", 
+            "method": "GET", 
+            "headers": {
+                "accept-encoding": "gzip, deflate, compress", 
+                "accept": "*/*", 
+                "user-agent": "python-requests/2.2.1 CPython/2.6.1 Darwin/10.8.0"
+            }, 
+            "host": "httpbin.org", 
+            "path": "/ip", 
+            "port": 80
+        }, 
+        "response": {
+            "status": {
+                "message": "OK", 
+                "code": 200
+            }, 
+            "headers": [
+                "access-control-allow-origin: *\r\n", 
+                "content-type: application/json\r\n", 
+                "date: Mon, 21 Apr 2014 23:13:40 GMT\r\n", 
+                "server: gunicorn/0.17.4\r\n", 
+                "content-length: 32\r\n", 
+                "connection: keep-alive\r\n"
+            ], 
+            "body": {
+                "string": "{\n  \"origin\": \"217.122.164.194\"\n}"
+            }
+        }
+    }
+]

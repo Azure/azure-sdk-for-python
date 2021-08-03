@@ -19,7 +19,7 @@ from azure.data.tables import (
     UpdateMode,
     generate_table_sas,
     TableSasPermissions,
-    AccessPolicy,
+    TableAccessPolicy,
 )
 from azure.data.tables.aio import TableServiceClient
 from azure.core import MatchConditions

@@ -96,7 +96,7 @@ def process_requires(setup_py_path):
     requires = [
         Requirement.parse(r)
         for r in get_install_requires(setup_py_path)
-        if r.startswith("azure") and "-nspkg" not in r
+        if r.startswith("azure")
     ]
     # Find package requirements that are not available on PyPI
     requirement_to_update = {}

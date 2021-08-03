@@ -44,7 +44,7 @@ class CrrOperationResultsOperations:
         self,
         azure_region: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """get.
 

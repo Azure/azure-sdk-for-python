@@ -1,0 +1,5 @@
+recursive-include tests *.py *.yaml
+recursive-include samples *.py
+include *.md
+include azure/__init__.py
+include azure/monitor/__init__.py

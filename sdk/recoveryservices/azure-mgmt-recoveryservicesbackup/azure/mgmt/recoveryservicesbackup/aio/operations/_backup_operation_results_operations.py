@@ -45,7 +45,7 @@ class BackupOperationResultsOperations:
         vault_name: str,
         resource_group_name: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Provides the status of the delete operations such as deleting backed up item. Once the
         operation has started, the
@@ -72,7 +72,7 @@ class BackupOperationResultsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL

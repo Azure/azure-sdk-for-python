@@ -29,7 +29,7 @@ from azure.data.tables import (
     generate_table_sas,
     TableSasPermissions,
     TableServiceClient,
-    AccessPolicy
+    TableAccessPolicy
 )
 
 from _shared.testcase import TableTestCase

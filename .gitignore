@@ -35,6 +35,9 @@ build/
 TestResults/
 ENV_DIR/
 
+# Perf test profiling
+cProfile-*.pstats
+
 # tox generated artifacts
 test-junit-*.xml
 pylint-*.out.txt

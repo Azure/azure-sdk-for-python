@@ -17,8 +17,8 @@ from typing import (
 import datetime
 import six
 from azure.core.tracing.decorator import distributed_trace
-from ._generated._azure_cognitive_service_metrics_advisor_restapi_open_ap_iv2 \
-    import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2 as _Client
+from ._generated._microsoft_azure_metrics_advisor_restapi_open_ap_iv2 \
+    import MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2 as _Client
 from ._generated.models import (
     AnomalyAlertingConfiguration as _AnomalyAlertingConfiguration,
     AzureApplicationInsightsDataFeed as _AzureApplicationInsightsDataFeed,
@@ -295,8 +295,19 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :param ingestion_settings: The data feed ingestions settings. Can be passed as a datetime to use for the
             ingestion begin time or as a DataFeedIngestionSettings object if additional configuration is needed.
         :type ingestion_settings: Union[~datetime.datetime, ~azure.ai.metricsadvisor.models.DataFeedIngestionSettings]
-        :keyword options: Data feed options.
-        :paramtype options: ~azure.ai.metricsadvisor.models.DataFeedOptions
+        :keyword list[str] admins: Data feed administrators.
+        :keyword str data_feed_description: Data feed description.
+        :keyword missing_data_point_fill_settings: The fill missing point type and value.
+        :paramtype missing_data_point_fill_settings:
+            ~azure.ai.metricsadvisor.models.DataFeedMissingDataPointFillSettings
+        :keyword rollup_settings: The rollup settings.
+        :paramtype rollup_settings:
+            ~azure.ai.metricsadvisor.models.DataFeedRollupSettings
+        :keyword list[str] viewers: Data feed viewers.
+        :keyword access_mode: Data feed access mode. Possible values include:
+            "Private", "Public". Default value: "Private".
+        :paramtype access_mode: str or ~azure.ai.metricsadvisor.models.DataFeedAccessMode
+        :keyword str action_link_template: action link for alert.
         :return: DataFeed
         :rtype: ~azure.ai.metricsadvisor.models.DataFeed
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -311,7 +322,13 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :caption: Create a data feed
         """
 
-        options = kwargs.pop("options", None)
+        admins = kwargs.pop('admins', None)
+        data_feed_description = kwargs.pop('data_feed_description', None)
+        missing_data_point_fill_settings = kwargs.pop('missing_data_point_fill_settings', None)
+        rollup_settings = kwargs.pop('rollup_settings', None)
+        viewers = kwargs.pop('viewers', None)
+        access_mode = kwargs.pop('access_mode', "Private")
+        action_link_template = kwargs.pop('action_link_template', None)
         data_feed_type = DATA_FEED[source.data_source_type]
         data_feed_detail = convert_to_generated_data_feed_type(
             generated_feed_type=data_feed_type,
@@ -320,7 +337,13 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             granularity=granularity,
             schema=schema,
             ingestion_settings=ingestion_settings,
-            options=options
+            admins=admins,
+            data_feed_description=data_feed_description,
+            missing_data_point_fill_settings=missing_data_point_fill_settings,
+            rollup_settings=rollup_settings,
+            viewers=viewers,
+            access_mode=access_mode,
+            action_link_template=action_link_template
         )
 
         response_headers = self._client.create_data_feed(  # type: ignore
@@ -736,12 +759,12 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :keyword fill_type: The type of fill missing point for anomaly detection. Possible
             values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling". Default value:
             "SmartFilling".
-        :paramtype fill_type: str or ~azure.ai.metricsadvisor.models.DataSourceMissingDataPointFillType
+        :paramtype fill_type: str or ~azure.ai.metricsadvisor.models.DatasourceMissingDataPointFillType
         :keyword float custom_fill_value: The value of fill missing point for anomaly detection
             if "CustomValue" fill type is specified.
-        :keyword list[str] admin_emails: Data feed administrator emails.
+        :keyword list[str] admins: Data feed administrators.
         :keyword str data_feed_description: Data feed description.
-        :keyword list[str] viewer_emails: Data feed viewer emails.
+        :keyword list[str] viewers: Data feed viewers.
         :keyword access_mode: Data feed access mode. Possible values include:
             "Private", "Public". Default value: "Private".
         :paramtype access_mode: str or ~azure.ai.metricsadvisor.models.DataFeedAccessMode
@@ -783,8 +806,8 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         update_kwargs["fillMissingPointType"] = kwargs.pop("fill_type", unset)
         update_kwargs["fillMissingPointValue"] = kwargs.pop("custom_fill_value", unset)
         update_kwargs["viewMode"] = kwargs.pop("access_mode", unset)
-        update_kwargs["admins"] = kwargs.pop("admin_emails", unset)
-        update_kwargs["viewers"] = kwargs.pop("viewer_emails", unset)
+        update_kwargs["admins"] = kwargs.pop("admins", unset)
+        update_kwargs["viewers"] = kwargs.pop("viewers", unset)
         update_kwargs["status"] = kwargs.pop("status", unset)
         update_kwargs["actionLinkTemplate"] = kwargs.pop("action_link_template", unset)
         update_kwargs["dataSourceParameter"] = kwargs.pop("source", unset)
@@ -1087,7 +1110,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         :keyword str data_feed_name: filter data feed by its name.
         :keyword data_source_type: filter data feed by its source type.
-        :paramtype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+        :paramtype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
         :keyword granularity_type: filter data feed by its granularity.
         :paramtype granularity_type: str or ~azure.ai.metricsadvisor.models.DataFeedGranularityType
         :keyword status: filter data feed by its status.

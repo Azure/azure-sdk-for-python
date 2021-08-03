@@ -46,7 +46,7 @@ class PrivateEndpointOperations:
         resource_group_name: str,
         private_endpoint_connection_name: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OperationStatus":
         """Gets the operation status for a private endpoint connection.
 
@@ -71,7 +71,7 @@ class PrivateEndpointOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL

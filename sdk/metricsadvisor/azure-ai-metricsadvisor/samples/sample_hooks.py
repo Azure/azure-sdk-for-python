@@ -42,7 +42,7 @@ def sample_create_hook():
             name="email hook",
             description="my email hook",
             emails_to_alert=["alertme@alertme.com"],
-            external_link="https://example.com/alertHandler" # the external link to handle the alerts
+            external_link="https://docs.microsoft.com/en-us/azure/cognitive-services/metrics-advisor/how-tos/alerts"
         )
     )
 
@@ -67,7 +67,7 @@ def sample_get_hook(hook_id):
     print("Description: {}".format(hook.description))
     print("Emails to alert: {}".format(hook.emails_to_alert))
     print("External link: {}".format(hook.external_link))
-    print("Admins: {}".format(hook.admin_emails))
+    print("Admins: {}".format(hook.admins))
 
     # [END get_hook]
 

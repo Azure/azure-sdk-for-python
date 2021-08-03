@@ -45,7 +45,7 @@ class JobCancellationsOperations:
         vault_name: str,
         resource_group_name: str,
         job_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Cancels a job. This is an asynchronous operation. To know the status of the cancellation, call
         GetCancelOperationResult API.
@@ -67,7 +67,7 @@ class JobCancellationsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL

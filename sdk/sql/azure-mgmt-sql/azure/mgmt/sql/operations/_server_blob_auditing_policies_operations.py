@@ -220,6 +220,7 @@ class ServerBlobAuditingPoliciesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
+        blob_auditing_policy_name = "default"
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),

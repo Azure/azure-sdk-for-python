@@ -24,13 +24,13 @@
 #
 # --------------------------------------------------------------------------
 
-from .._generated.models._azure_cognitive_service_metrics_advisor_restapi_open_ap_iv2_enums import (
+from .._generated.models._microsoft_azure_metrics_advisor_restapi_open_ap_iv2_enums import (
     SnoozeScope,
     Severity as AnomalySeverity,
-    DataSourceType,
+    DataSourceType as DatasourceType,
     ViewMode as DataFeedAccessMode,
     RollUpMethod as DataFeedAutoRollupMethod,
-    FillMissingPointType as DataSourceMissingDataPointFillType,
+    FillMissingPointType as DatasourceMissingDataPointFillType,
     AnomalyDetectorDirection,
     IncidentStatus as AnomalyIncidentStatus,
     Granularity as DataFeedGranularityType,
@@ -40,14 +40,13 @@ from .._generated.models._azure_cognitive_service_metrics_advisor_restapi_open_a
     PeriodType,
     FeedbackType,
     TimeMode as AlertQueryTimeMode,
-    DataSourceCredentialType,
-    AuthenticationTypeEnum as DataSourceAuthenticationType
+    DataSourceCredentialType as DatasourceCredentialType,
+    AuthenticationTypeEnum as DatasourceAuthenticationType
 )
 
 from .._generated.models import (
     FeedbackQueryTimeMode,
     RootCause,
-    DetectionAnomalyFilterCondition,
     DimensionGroupIdentity,
     DetectionIncidentFilterCondition,
     EnrichmentStatus,
@@ -58,6 +57,7 @@ from .._generated.models import (
 )
 
 from ._models import (
+    MetricFeedback,
     AnomalyFeedback,
     ChangePointFeedback,
     CommentFeedback,
@@ -65,7 +65,6 @@ from ._models import (
     MetricAnomalyAlertConfigurationsOperator,
     DataFeedGranularity,
     DataFeedIngestionSettings,
-    DataFeedOptions,
     DataFeedMissingDataPointFillSettings,
     DataFeedRollupSettings,
     DataFeedSchema,
@@ -101,7 +100,7 @@ from ._models import (
     DataFeedDimension,
     DataFeedMetric,
     DataFeedIngestionProgress,
-    DetectionConditionsOperator,
+    DetectionConditionOperator,
     AnomalyDetectionConfiguration,
     MetricAnomalyAlertConditions,
     AnomalyIncident,
@@ -120,10 +119,12 @@ from ._models import (
     DatasourceServicePrincipalInKeyVault,
     DatasourceCredential,
     DataFeedSource,
+    DetectionAnomalyFilterCondition,
 )
 
 
 __all__ = (
+    "MetricFeedback",
     "AnomalyFeedback",
     "ChangePointFeedback",
     "CommentFeedback",
@@ -140,7 +141,6 @@ __all__ = (
     "DataFeedStatus",
     "DataFeedGranularity",
     "DataFeedIngestionSettings",
-    "DataFeedOptions",
     "DataFeedMissingDataPointFillSettings",
     "DataFeedRollupSettings",
     "DataFeedSchema",
@@ -169,14 +169,14 @@ __all__ = (
     "MetricSeriesGroupDetectionCondition",
     "MetricSingleSeriesDetectionCondition",
     "SeverityCondition",
-    "DataSourceType",
+    "DatasourceType",
     "MetricAnomalyAlertScopeType",
     "AnomalyDetectorDirection",
     "NotificationHook",
     "EmailNotificationHook",
     "WebNotificationHook",
     "DataFeedIngestionProgress",
-    "DetectionConditionsOperator",
+    "DetectionConditionOperator",
     "MetricAnomalyAlertConditions",
     "EnrichmentStatus",
     "DataFeedGranularityType",
@@ -188,7 +188,7 @@ __all__ = (
     "DataFeedAccessMode",
     "DataFeedRollupType",
     "DataFeedAutoRollupMethod",
-    "DataSourceMissingDataPointFillType",
+    "DatasourceMissingDataPointFillType",
     "DataFeedIngestionStatus",
     "SmartDetectionCondition",
     "SuppressCondition",
@@ -209,8 +209,8 @@ __all__ = (
     "DatasourceDataLakeGen2SharedKey",
     "DatasourceServicePrincipal",
     "DatasourceServicePrincipalInKeyVault",
-    "DataSourceCredentialType",
-    "DataSourceAuthenticationType",
+    "DatasourceCredentialType",
+    "DatasourceAuthenticationType",
     "DatasourceCredential",
     "DataFeedSource",
 )
