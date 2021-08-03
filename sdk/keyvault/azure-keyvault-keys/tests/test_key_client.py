@@ -446,8 +446,8 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         key = self._create_rsa_key(
             client, rsa_key_name, hardware_protected=True, exportable=True, release_policy=release_policy
         )
-        assert key.release_policy
-        assert key.release_policy.data
+        assert key.properties.release_policy
+        assert key.properties.release_policy.data
         assert key.properties.exportable
 
         release_result = client.release_key(rsa_key_name, attestation)
@@ -464,8 +464,8 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         key = self._import_test_key(
             client, imported_key_name, hardware_protected=True, exportable=True, release_policy=release_policy
         )
-        assert key.release_policy
-        assert key.release_policy.data
+        assert key.properties.release_policy
+        assert key.properties.release_policy.data
         assert key.properties.exportable
 
         release_result = client.release_key(imported_key_name, attestation)
