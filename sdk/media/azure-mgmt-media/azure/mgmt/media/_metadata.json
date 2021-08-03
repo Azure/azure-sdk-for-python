@@ -1,6 +1,6 @@
 {
-    "chosen_version": "",
-    "total_api_version_list": ["2020-05-01", "2021-05-01"],
+    "chosen_version": "2021-06-01",
+    "total_api_version_list": ["2021-06-01"],
     "client": {
         "name": "AzureMediaServices",
         "filename": "_azure_media_services",
@@ -98,12 +98,12 @@
         "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "operation_groups": {
-        "account_filters": "AccountFiltersOperations",
         "operations": "Operations",
         "mediaservices": "MediaservicesOperations",
         "private_link_resources": "PrivateLinkResourcesOperations",
         "private_endpoint_connections": "PrivateEndpointConnectionsOperations",
         "locations": "LocationsOperations",
+        "account_filters": "AccountFiltersOperations",
         "assets": "AssetsOperations",
         "asset_filters": "AssetFiltersOperations",
         "content_key_policies": "ContentKeyPoliciesOperations",

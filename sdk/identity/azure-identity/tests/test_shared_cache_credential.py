@@ -752,7 +752,7 @@ def test_client_capabilities():
     transport = Mock(send=send)
     credential = SharedTokenCacheCredential(transport=transport, authentication_record=record, _cache=TokenCache())
 
-    with patch(SharedTokenCacheCredential.__module__ + ".PublicClientApplication") as PublicClientApplication:
+    with patch("azure.identity._credentials.silent.PublicClientApplication") as PublicClientApplication:
         with pytest.raises(ClientAuthenticationError):  # (cache is empty)
             credential.get_token("scope")
 
@@ -761,7 +761,7 @@ def test_client_capabilities():
     assert kwargs["client_capabilities"] == ["CP1"]
 
     credential = SharedTokenCacheCredential(transport=transport, authentication_record=record, _cache=TokenCache())
-    with patch(SharedTokenCacheCredential.__module__ + ".PublicClientApplication") as PublicClientApplication:
+    with patch("azure.identity._credentials.silent.PublicClientApplication") as PublicClientApplication:
         with patch.dict("os.environ", {"AZURE_IDENTITY_DISABLE_CP1": "true"}):
             with pytest.raises(ClientAuthenticationError):  # (cache is empty)
                 credential.get_token("scope")
@@ -786,7 +786,7 @@ def test_claims_challenge():
 
     transport = Mock(send=Mock(side_effect=Exception("this test mocks MSAL, so no request should be sent")))
     credential = SharedTokenCacheCredential(transport=transport, authentication_record=record, _cache=TokenCache())
-    with patch(SharedTokenCacheCredential.__module__ + ".PublicClientApplication", lambda *_, **__: msal_app):
+    with patch("azure.identity._credentials.silent.PublicClientApplication", lambda *_, **__: msal_app):
         credential.get_token("scope", claims=expected_claims)
 
     assert msal_app.acquire_token_silent_with_error.call_count == 1

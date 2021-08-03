@@ -1,8 +1,10 @@
 # Release History
 
-## 1.16.1 (Unreleased)
+## 1.17.0 (2021-08-05)
 
 ### Features Added
+
+- Cut hard dependency on requests library
 
 ### Breaking Changes
 
