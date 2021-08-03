@@ -143,7 +143,11 @@ class TestLogging(AsyncFormRecognizerTest):
         transport = AsyncMockTransport(send=wrap_in_future(lambda request, **kwargs: response))
 
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key), transport=transport)
-
+        for policy in client._client._client._pipeline._impl_policies:
+            try:
+                print(policy._policy)
+            except:
+                print(policy)
         with pytest.raises(HttpResponseError) as e:
             poller = await client.begin_recognize_receipts_from_url(self.receipt_url_jpg)
         assert e.value.status_code == 429
