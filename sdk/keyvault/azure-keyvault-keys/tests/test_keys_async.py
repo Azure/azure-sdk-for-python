@@ -38,6 +38,9 @@ class MockHandler(logging.Handler):
 
 
 class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, match_body=False, **kwargs)
+
     def _assert_jwks_equal(self, jwk1, jwk2):
         assert jwk1.kid == jwk2.kid
         assert jwk1.kty == jwk2.kty

@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import base64
 import codecs
 from dateutil import parser as date_parse
 import functools
@@ -39,6 +38,9 @@ class MockHandler(logging.Handler):
 
 
 class KeyClientTests(KeysTestCase, KeyVaultTestCase):
+    def __init__(self, *args, **kwargs):
+        super(KeyClientTests, self).__init__(*args, match_body=False, **kwargs)
+
     def _assert_key_attributes_equal(self, k1, k2):
         self.assertEqual(k1.name, k2.name)
         self.assertEqual(k1.vault_url, k2.vault_url)
