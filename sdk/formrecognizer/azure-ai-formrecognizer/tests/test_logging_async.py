@@ -8,6 +8,7 @@
 import logging
 import pytest
 import json
+import sys
 import asyncio
 import functools
 try:
@@ -46,6 +47,20 @@ def wrap_in_future(fn):
         result = fn(*args, **kwargs)
         return get_completed_future(result)
     return wrapper
+
+
+class AsyncMockTransport(mock.MagicMock):
+    """Mock with do-nothing aenter/exit for mocking async transport.
+
+    This is unnecessary on 3.8+, where MagicMocks implement aenter/exit.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if sys.version_info < (3, 8):
+            self.__aenter__ = mock.Mock(return_value=get_completed_future())
+            self.__aexit__ = mock.Mock(return_value=get_completed_future())
 
 
 class TestLogging(AsyncFormRecognizerTest):
@@ -104,7 +119,7 @@ class TestLogging(AsyncFormRecognizerTest):
             "Please retry after 1 day. To increase your call volume switch to a paid tier."}}
         )
         response.content_type = "application/json"
-        transport = mock.Mock(send=wrap_in_future(lambda request, **kwargs: response))
+        transport = AsyncMockTransport(send=wrap_in_future(lambda request, **kwargs: response))
 
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key), transport=transport)
 
@@ -125,7 +140,7 @@ class TestLogging(AsyncFormRecognizerTest):
             "Please retry after 1 day. To increase your call volume switch to a paid tier."}}
         )
         response.content_type = "application/json"
-        transport = mock.Mock(send=wrap_in_future(lambda request, **kwargs: response))
+        transport = AsyncMockTransport(send=wrap_in_future(lambda request, **kwargs: response))
 
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key), transport=transport)
 
