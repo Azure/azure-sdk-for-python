@@ -35,7 +35,8 @@ jobs:
         displayName: 'Install docker-cli only'
 
       - pwsh: |
-          "C:\Program Files\Docker\Docker\DockerCli.exe" -SwitchDaemon
+          cd "C:\Program Files\Docker\Docker\"
+          ./DockerCli.exe -SwitchDaemon
         displayName: 'Install docker-cli only'
 
       - pwsh: |
