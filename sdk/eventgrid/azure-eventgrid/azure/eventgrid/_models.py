@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 # pylint:disable=protected-access
-from typing import Any
+from typing import Any, cast
 import datetime as dt
 import uuid
 from msrest.serialization import UTC
@@ -110,4 +110,4 @@ class EventGridEvent(InternalEventGridEvent):
         :raises ValueError: If the provided JSON is invalid.
         """
         event = _get_json_content(json)
-        return EventGridEvent.from_dict(event)
+        return cast(EventGridEvent, EventGridEvent.from_dict(event))
