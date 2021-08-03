@@ -67,14 +67,16 @@ class LogsQueryResultColumn(InternalColumn):
 class LogsQueryResult(object):
     """Contains the tables, columns & rows resulting from a query.
 
-    :keyword tables: The list of tables, columns and rows.
-    :paramtype tables: list[~azure.monitor.query.LogsQueryResultTable]
-    :keyword statistics: Any object.
-    :paramtype statistics: object
-    :keyword render: Any object.
-    :paramtype render: object
-    :keyword error: Any object.
-    :paramtype error: object
+    :ivar tables: The list of tables, columns and rows.
+    :vartype tables: list[~azure.monitor.query.LogsQueryResultTable]
+    :ivar statistics: This will include a statistics property in the response that describes various
+     performance statistics such as query execution time and resource usage.
+    :vartype statistics: object
+    :ivar render: This will include a render property in the response that specifies the type of
+     visualization selected by the query and any properties for that visualization.
+    :vartype render: object
+    :ivar error: Any error info.
+    :vartype error: object
     """
     def __init__(self, **kwargs):
         # type: (Any) -> None
@@ -213,18 +215,20 @@ class LogsBatchQueryRequest(InternalLogQueryRequest):
 class LogsBatchQueryResult(object):
     """The LogsBatchQueryResult.
 
-    :param id: the request id of the request that was sent.
-    :type id: str
-    :param status: status code of the response.
-    :type status: int
-    :keyword tables: The list of tables, columns and rows.
-    :paramtype tables: list[~azure.monitor.query.LogsQueryResultTable]
-    :keyword statistics: Any object.
-    :paramtype statistics: object
-    :keyword render: Any object.
-    :paramtype render: object
-    :keyword error: Any object.
-    :paramtype error: object
+    :ivar id: the request id of the request that was sent.
+    :vartype id: str
+    :ivar status: status code of the response.
+    :vartype status: int
+    :ivar tables: The list of tables, columns and rows.
+    :vartype tables: list[~azure.monitor.query.LogsQueryResultTable]
+    :ivar statistics: This will include a statistics property in the response that describes various
+     performance statistics such as query execution time and resource usage.
+    :vartype statistics: object
+    :ivar render: This will include a render property in the response that specifies the type of
+     visualization selected by the query and any properties for that visualization.
+    :vartype render: object
+    :ivar error: Any error info.
+    :vartype error: object
     """
     def __init__(
         self,
