@@ -44,6 +44,7 @@ from ._helpers import (
     get_charset_encoding,
     decode_to_text,
 )
+from ._backcompat import HttpRequestBackcompatMixin, HttpResponseBackcompatMixin
 from ..exceptions import ResponseNotReadError
 if TYPE_CHECKING:
     from typing import (
@@ -64,7 +65,7 @@ if TYPE_CHECKING:
 
 ################################## CLASSES ######################################
 
-class HttpRequest(object):
+class HttpRequest(HttpRequestBackcompatMixin):
     """Provisional object that represents an HTTP request.
 
     **This object is provisional**, meaning it may be changed in a future release.
@@ -288,7 +289,7 @@ class _HttpResponseBase(object):  # pylint: disable=too-many-instance-attributes
             self.status_code, self.reason, content_type_str
         )
 
-class HttpResponse(_HttpResponseBase):  # pylint: disable=too-many-instance-attributes
+class HttpResponse(_HttpResponseBase, HttpResponseBackcompatMixin):  # pylint: disable=too-many-instance-attributes
     """**Provisional** object that represents an HTTP response.
 
     **This object is provisional**, meaning it may be changed in a future release.

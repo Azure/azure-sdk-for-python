@@ -58,6 +58,8 @@ from ._helpers import (
     get_charset_encoding,
     decode_to_text,
 )
+from ._backcompat import HttpRequestBackcompatMixin, HttpResponseBackcompatMixin
+from ._backcompat_async import AsyncHttpResponseBackcompatMixin
 from ._helpers_py3 import set_content_body
 from ..exceptions import ResponseNotReadError
 
@@ -85,7 +87,7 @@ class _AsyncContextManager(collections.abc.Awaitable):
 
 ################################## CLASSES ######################################
 
-class HttpRequest:
+class HttpRequest(HttpRequestBackcompatMixin):
     """**Provisional** object that represents an HTTP request.
 
     **This object is provisional**, meaning it may be changed in a future release.
@@ -302,7 +304,7 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
             raise ResponseNotReadError(self)
         return self._content
 
-class HttpResponse(_HttpResponseBase):
+class HttpResponse(_HttpResponseBase, HttpResponseBackcompatMixin):
     """**Provisional** object that represents an HTTP response.
 
     **This object is provisional**, meaning it may be changed in a future release.
@@ -405,7 +407,7 @@ class HttpResponse(_HttpResponseBase):
             self.status_code, self.reason, content_type_str
         )
 
-class AsyncHttpResponse(_HttpResponseBase):
+class AsyncHttpResponse(_HttpResponseBase, AsyncHttpResponseBackcompatMixin):
     """**Provisional** object that represents an Async HTTP response.
 
     **This object is provisional**, meaning it may be changed in a future release.
