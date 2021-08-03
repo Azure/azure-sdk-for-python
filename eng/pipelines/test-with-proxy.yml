@@ -26,8 +26,8 @@ jobs:
         displayName: "Dump Env"
 
       - pwsh: |
-          Write-Host "$env:PATH"
-        displayName: 'Ensure appropriate image type'
+          Get-ChildItem -Recurse C:\Program Files\Docker
+        displayName: 'Dump Details of Docker Install'
         continueOnError: true
 
       - pwsh: |
