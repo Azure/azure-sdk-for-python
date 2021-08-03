@@ -60,11 +60,11 @@ class PrivateLinkResourcesOperations(object):
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
-        :param parent_type: The type of the parent resource. This can be either \'topics\' or
-         \'domains\'.
+        :param parent_type: The type of the parent resource. This can be either \'topics\',
+         \'domains\', or \'partnerNamespaces\'.
         :type parent_type: str
-        :param parent_name: The name of the parent resource (namely, either, the topic name or domain
-         name).
+        :param parent_name: The name of the parent resource (namely, either, the topic name, domain
+         name, or partner namespace name).
         :type parent_name: str
         :param private_link_resource_name: The name of private link resource.
         :type private_link_resource_name: str
@@ -78,7 +78,7 @@ class PrivateLinkResourcesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-15-preview"
+        api_version = "2021-06-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -126,17 +126,17 @@ class PrivateLinkResourcesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.PrivateLinkResourcesListResult"]
-        """List private link resources under specific topic or domain.
+        """List private link resources under specific topic, domain, or partner namespace.
 
-        List all the private link resources under a topic or domain.
+        List all the private link resources under a topic, domain, or partner namespace.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
-        :param parent_type: The type of the parent resource. This can be either \'topics\' or
-         \'domains\'.
+        :param parent_type: The type of the parent resource. This can be either \'topics\',
+         \'domains\', or \'partnerNamespaces\'.
         :type parent_type: str
-        :param parent_name: The name of the parent resource (namely, either, the topic name or domain
-         name).
+        :param parent_name: The name of the parent resource (namely, either, the topic name, domain
+         name, or partner namespace name).
         :type parent_name: str
         :param filter: The query used to filter the search results using OData syntax. Filtering is
          permitted on the 'name' property only and with limited number of OData operations. These
@@ -159,7 +159,7 @@ class PrivateLinkResourcesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-15-preview"
+        api_version = "2021-06-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):

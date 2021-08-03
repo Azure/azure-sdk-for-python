@@ -73,7 +73,7 @@ class DeliveryAttributeMappingType(with_metaclass(_CaseInsensitiveEnumMeta, str,
     DYNAMIC = "Dynamic"
 
 class DomainProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Provisioning state of the domain.
+    """Provisioning state of the Event Grid Domain Resource.
     """
 
     CREATING = "Creating"
@@ -110,21 +110,25 @@ class Enum25(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     TOPICS = "topics"
     DOMAINS = "domains"
+    PARTNER_NAMESPACES = "partnerNamespaces"
 
 class Enum26(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     TOPICS = "topics"
     DOMAINS = "domains"
+    PARTNER_NAMESPACES = "partnerNamespaces"
 
 class Enum27(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     TOPICS = "topics"
     DOMAINS = "domains"
+    PARTNER_NAMESPACES = "partnerNamespaces"
 
 class Enum28(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     TOPICS = "topics"
     DOMAINS = "domains"
+    PARTNER_NAMESPACES = "partnerNamespaces"
 
 class EventChannelProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Provisioning state of the event channel.
@@ -179,7 +183,7 @@ class IdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
 class InputSchema(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """This determines the format that Event Grid should expect for incoming events published to the
-    domain.
+    Event Grid Domain Resource.
     """
 
     EVENT_GRID_SCHEMA = "EventGridSchema"
@@ -255,15 +259,6 @@ class PartnerTopicReadinessState(with_metaclass(_CaseInsensitiveEnumMeta, str, E
     ACTIVATED_BY_USER = "ActivatedByUser"
     DEACTIVATED_BY_USER = "DeactivatedByUser"
     DELETED_BY_USER = "DeletedByUser"
-
-class PartnerTopicTypeAuthorizationState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Status of whether the customer has authorized a partner to create partner topics
-    in the customer's subscription.
-    """
-
-    NOT_APPLICABLE = "NotApplicable"
-    NOT_AUTHORIZED = "NotAuthorized"
-    AUTHORIZED = "Authorized"
 
 class PersistedConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Status of the connection.

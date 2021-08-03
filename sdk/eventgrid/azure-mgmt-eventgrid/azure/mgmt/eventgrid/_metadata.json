@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2020-10-15-preview",
-    "total_api_version_list": ["2020-10-15-preview"],
+    "chosen_version": "2021-06-01-preview",
+    "total_api_version_list": ["2021-06-01-preview"],
     "client": {
         "name": "EventGridManagementClient",
         "filename": "_event_grid_management_client",

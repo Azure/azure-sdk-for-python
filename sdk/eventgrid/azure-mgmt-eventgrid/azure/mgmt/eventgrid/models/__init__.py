@@ -67,12 +67,9 @@ try:
     from ._models_py3 import PartnerNamespaceUpdateParameters
     from ._models_py3 import PartnerNamespacesListResult
     from ._models_py3 import PartnerRegistration
-    from ._models_py3 import PartnerRegistrationEventTypesListResult
     from ._models_py3 import PartnerRegistrationUpdateParameters
     from ._models_py3 import PartnerRegistrationsListResult
     from ._models_py3 import PartnerTopic
-    from ._models_py3 import PartnerTopicType
-    from ._models_py3 import PartnerTopicTypesListResult
     from ._models_py3 import PartnerTopicUpdateParameters
     from ._models_py3 import PartnerTopicsListResult
     from ._models_py3 import PrivateEndpoint
@@ -171,12 +168,9 @@ except (SyntaxError, ImportError):
     from ._models import PartnerNamespaceUpdateParameters  # type: ignore
     from ._models import PartnerNamespacesListResult  # type: ignore
     from ._models import PartnerRegistration  # type: ignore
-    from ._models import PartnerRegistrationEventTypesListResult  # type: ignore
     from ._models import PartnerRegistrationUpdateParameters  # type: ignore
     from ._models import PartnerRegistrationsListResult  # type: ignore
     from ._models import PartnerTopic  # type: ignore
-    from ._models import PartnerTopicType  # type: ignore
-    from ._models import PartnerTopicTypesListResult  # type: ignore
     from ._models import PartnerTopicUpdateParameters  # type: ignore
     from ._models import PartnerTopicsListResult  # type: ignore
     from ._models import PrivateEndpoint  # type: ignore
@@ -241,7 +235,6 @@ from ._event_grid_management_client_enums import (
     PartnerTopicActivationState,
     PartnerTopicProvisioningState,
     PartnerTopicReadinessState,
-    PartnerTopicTypeAuthorizationState,
     PersistedConnectionStatus,
     PublicNetworkAccess,
     ResourceKind,
@@ -314,12 +307,9 @@ __all__ = [
     'PartnerNamespaceUpdateParameters',
     'PartnerNamespacesListResult',
     'PartnerRegistration',
-    'PartnerRegistrationEventTypesListResult',
     'PartnerRegistrationUpdateParameters',
     'PartnerRegistrationsListResult',
     'PartnerTopic',
-    'PartnerTopicType',
-    'PartnerTopicTypesListResult',
     'PartnerTopicUpdateParameters',
     'PartnerTopicsListResult',
     'PrivateEndpoint',
@@ -382,7 +372,6 @@ __all__ = [
     'PartnerTopicActivationState',
     'PartnerTopicProvisioningState',
     'PartnerTopicReadinessState',
-    'PartnerTopicTypeAuthorizationState',
     'PersistedConnectionStatus',
     'PublicNetworkAccess',
     'ResourceKind',

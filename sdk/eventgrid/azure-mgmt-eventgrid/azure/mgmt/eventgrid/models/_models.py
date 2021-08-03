@@ -429,28 +429,29 @@ class Domain(TrackedResource):
     :type location: str
     :param tags: A set of tags. Tags of the resource.
     :type tags: dict[str, str]
-    :param sku: The Sku pricing tier for the domain.
+    :param sku: The Sku pricing tier for the Event Grid Domain resource.
     :type sku: ~azure.mgmt.eventgrid.models.ResourceSku
-    :param identity: Identity information for the resource.
+    :param identity: Identity information for the Event Grid Domain resource.
     :type identity: ~azure.mgmt.eventgrid.models.IdentityInfo
-    :ivar system_data: The system metadata relating to Domain resource.
+    :ivar system_data: The system metadata relating to the Event Grid Domain resource.
     :vartype system_data: ~azure.mgmt.eventgrid.models.SystemData
     :ivar private_endpoint_connections: List of private endpoint connections.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.eventgrid.models.PrivateEndpointConnection]
-    :ivar provisioning_state: Provisioning state of the domain. Possible values include:
-     "Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed".
+    :ivar provisioning_state: Provisioning state of the Event Grid Domain Resource. Possible values
+     include: "Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.eventgrid.models.DomainProvisioningState
-    :ivar endpoint: Endpoint for the domain.
+    :ivar endpoint: Endpoint for the Event Grid Domain Resource which is used for publishing the
+     events.
     :vartype endpoint: str
     :param input_schema: This determines the format that Event Grid should expect for incoming
-     events published to the domain. Possible values include: "EventGridSchema",
+     events published to the Event Grid Domain Resource. Possible values include: "EventGridSchema",
      "CustomEventSchema", "CloudEventSchemaV1_0".
     :type input_schema: str or ~azure.mgmt.eventgrid.models.InputSchema
     :param input_schema_mapping: Information about the InputSchemaMapping which specified the info
      about mapping event payload.
     :type input_schema_mapping: ~azure.mgmt.eventgrid.models.InputSchemaMapping
-    :ivar metric_resource_id: Metric resource id for the domain.
+    :ivar metric_resource_id: Metric resource id for the Event Grid Domain Resource.
     :vartype metric_resource_id: str
     :param public_network_access: This determines if traffic is allowed over public network. By
      default it is enabled.
@@ -461,6 +462,40 @@ class Domain(TrackedResource):
     :param inbound_ip_rules: This can be used to restrict traffic from specific IPs instead of all
      IPs. Note: These are considered only if PublicNetworkAccess is enabled.
     :type inbound_ip_rules: list[~azure.mgmt.eventgrid.models.InboundIpRule]
+    :param disable_local_auth: This boolean is used to enable or disable local auth. Default value
+     is false. When the property is set to true, only AAD token will be used to authenticate if user
+     is allowed to publish to the domain.
+    :type disable_local_auth: bool
+    :param auto_create_topic_with_first_subscription: This Boolean is used to specify the creation
+     mechanism for 'all' the Event Grid Domain Topics associated with this Event Grid Domain
+     resource.
+     In this context, creation of domain topic can be auto-managed (when true) or self-managed
+     (when false). The default value for this property is true.
+     When this property is null or set to true, Event Grid is responsible of automatically creating
+     the domain topic when the first event subscription is
+     created at the scope of the domain topic. If this property is set to false, then creating the
+     first event subscription will require creating a domain topic
+     by the user. The self-management mode can be used if the user wants full control of when the
+     domain topic is created, while auto-managed mode provides the
+     flexibility to perform less operations and manage fewer resources by the user. Also, note that
+     in auto-managed creation mode, user is allowed to create the
+     domain topic on demand if needed.
+    :type auto_create_topic_with_first_subscription: bool
+    :param auto_delete_topic_with_last_subscription: This Boolean is used to specify the deletion
+     mechanism for 'all' the Event Grid Domain Topics associated with this Event Grid Domain
+     resource.
+     In this context, deletion of domain topic can be auto-managed (when true) or self-managed
+     (when false). The default value for this property is true.
+     When this property is set to true, Event Grid is responsible of automatically deleting the
+     domain topic when the last event subscription at the scope
+     of the domain topic is deleted. If this property is set to false, then the user needs to
+     manually delete the domain topic when it is no longer needed
+     (e.g., when last event subscription is deleted and the resource needs to be cleaned up). The
+     self-management mode can be used if the user wants full
+     control of when the domain topic needs to be deleted, while auto-managed mode provides the
+     flexibility to perform less operations and manage fewer
+     resources by the user.
+    :type auto_delete_topic_with_last_subscription: bool
     """
 
     _validation = {
@@ -492,6 +527,9 @@ class Domain(TrackedResource):
         'metric_resource_id': {'key': 'properties.metricResourceId', 'type': 'str'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'inbound_ip_rules': {'key': 'properties.inboundIpRules', 'type': '[InboundIpRule]'},
+        'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
+        'auto_create_topic_with_first_subscription': {'key': 'properties.autoCreateTopicWithFirstSubscription', 'type': 'bool'},
+        'auto_delete_topic_with_last_subscription': {'key': 'properties.autoDeleteTopicWithLastSubscription', 'type': 'bool'},
     }
 
     def __init__(
@@ -510,6 +548,9 @@ class Domain(TrackedResource):
         self.metric_resource_id = None
         self.public_network_access = kwargs.get('public_network_access', None)
         self.inbound_ip_rules = kwargs.get('inbound_ip_rules', None)
+        self.disable_local_auth = kwargs.get('disable_local_auth', False)
+        self.auto_create_topic_with_first_subscription = kwargs.get('auto_create_topic_with_first_subscription', True)
+        self.auto_delete_topic_with_last_subscription = kwargs.get('auto_delete_topic_with_last_subscription', True)
 
 
 class DomainRegenerateKeyRequest(msrest.serialization.Model):
@@ -667,6 +708,40 @@ class DomainUpdateParameters(msrest.serialization.Model):
     :param inbound_ip_rules: This can be used to restrict traffic from specific IPs instead of all
      IPs. Note: These are considered only if PublicNetworkAccess is enabled.
     :type inbound_ip_rules: list[~azure.mgmt.eventgrid.models.InboundIpRule]
+    :param disable_local_auth: This boolean is used to enable or disable local auth. Default value
+     is false. When the property is set to true, only AAD token will be used to authenticate if user
+     is allowed to publish to the domain.
+    :type disable_local_auth: bool
+    :param auto_create_topic_with_first_subscription: This Boolean is used to specify the creation
+     mechanism for 'all' the Event Grid Domain Topics associated with this Event Grid Domain
+     resource.
+     In this context, creation of domain topic can be auto-managed (when true) or self-managed
+     (when false). The default value for this property is true.
+     When this property is null or set to true, Event Grid is responsible of automatically creating
+     the domain topic when the first event subscription is
+     created at the scope of the domain topic. If this property is set to false, then creating the
+     first event subscription will require creating a domain topic
+     by the user. The self-management mode can be used if the user wants full control of when the
+     domain topic is created, while auto-managed mode provides the
+     flexibility to perform less operations and manage fewer resources by the user. Also, note that
+     in auto-managed creation mode, user is allowed to create the
+     domain topic on demand if needed.
+    :type auto_create_topic_with_first_subscription: bool
+    :param auto_delete_topic_with_last_subscription: This Boolean is used to specify the deletion
+     mechanism for 'all' the Event Grid Domain Topics associated with this Event Grid Domain
+     resource.
+     In this context, deletion of domain topic can be auto-managed (when true) or self-managed
+     (when false). The default value for this property is true.
+     When this property is set to true, Event Grid is responsible of automatically deleting the
+     domain topic when the last event subscription at the scope
+     of the domain topic is deleted. If this property is set to false, then the user needs to
+     manually delete the domain topic when it is no longer needed
+     (e.g., when last event subscription is deleted and the resource needs to be cleaned up). The
+     self-management mode can be used if the user wants full
+     control of when the domain topic needs to be deleted, while auto-managed mode provides the
+     flexibility to perform less operations and manage fewer
+     resources by the user.
+    :type auto_delete_topic_with_last_subscription: bool
     """
 
     _attribute_map = {
@@ -675,6 +750,9 @@ class DomainUpdateParameters(msrest.serialization.Model):
         'sku': {'key': 'sku', 'type': 'ResourceSku'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'inbound_ip_rules': {'key': 'properties.inboundIpRules', 'type': '[InboundIpRule]'},
+        'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
+        'auto_create_topic_with_first_subscription': {'key': 'properties.autoCreateTopicWithFirstSubscription', 'type': 'bool'},
+        'auto_delete_topic_with_last_subscription': {'key': 'properties.autoDeleteTopicWithLastSubscription', 'type': 'bool'},
     }
 
     def __init__(
@@ -687,6 +765,9 @@ class DomainUpdateParameters(msrest.serialization.Model):
         self.sku = kwargs.get('sku', None)
         self.public_network_access = kwargs.get('public_network_access', None)
         self.inbound_ip_rules = kwargs.get('inbound_ip_rules', None)
+        self.disable_local_auth = kwargs.get('disable_local_auth', None)
+        self.auto_create_topic_with_first_subscription = kwargs.get('auto_create_topic_with_first_subscription', None)
+        self.auto_delete_topic_with_last_subscription = kwargs.get('auto_delete_topic_with_last_subscription', None)
 
 
 class DynamicDeliveryAttributeMapping(DeliveryAttributeMapping):
@@ -834,7 +915,8 @@ class EventChannelFilter(msrest.serialization.Model):
     """Filter for the Event Channel.
 
     :param enable_advanced_filtering_on_arrays: Allows advanced filters to be evaluated against an
-     array of values instead of expecting a singular value.
+     array of values instead of expecting a singular value. The default value is either false or
+     null.
     :type enable_advanced_filtering_on_arrays: bool
     :param advanced_filters: An array of advanced filters that are used for filtering event
      channels.
@@ -851,7 +933,7 @@ class EventChannelFilter(msrest.serialization.Model):
         **kwargs
     ):
         super(EventChannelFilter, self).__init__(**kwargs)
-        self.enable_advanced_filtering_on_arrays = kwargs.get('enable_advanced_filtering_on_arrays', None)
+        self.enable_advanced_filtering_on_arrays = kwargs.get('enable_advanced_filtering_on_arrays', False)
         self.advanced_filters = kwargs.get('advanced_filters', None)
 
 
@@ -1953,6 +2035,9 @@ class Operation(msrest.serialization.Model):
     :type display: ~azure.mgmt.eventgrid.models.OperationInfo
     :param origin: Origin of the operation.
     :type origin: str
+    :param is_data_action: This Boolean is used to determine if the operation is a data plane
+     action or not.
+    :type is_data_action: bool
     :param properties: Properties of the operation.
     :type properties: any
     """
@@ -1961,6 +2046,7 @@ class Operation(msrest.serialization.Model):
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationInfo'},
         'origin': {'key': 'origin', 'type': 'str'},
+        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
         'properties': {'key': 'properties', 'type': 'object'},
     }
 
@@ -1972,6 +2058,7 @@ class Operation(msrest.serialization.Model):
         self.name = kwargs.get('name', None)
         self.display = kwargs.get('display', None)
         self.origin = kwargs.get('origin', None)
+        self.is_data_action = kwargs.get('is_data_action', None)
         self.properties = kwargs.get('properties', None)
 
 
@@ -2044,6 +2131,9 @@ class PartnerNamespace(TrackedResource):
     :type tags: dict[str, str]
     :ivar system_data: The system metadata relating to Partner Namespace resource.
     :vartype system_data: ~azure.mgmt.eventgrid.models.SystemData
+    :ivar private_endpoint_connections:
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.eventgrid.models.PrivateEndpointConnection]
     :ivar provisioning_state: Provisioning state of the partner namespace. Possible values include:
      "Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed".
     :vartype provisioning_state: str or
@@ -2055,6 +2145,19 @@ class PartnerNamespace(TrackedResource):
     :type partner_registration_fully_qualified_id: str
     :ivar endpoint: Endpoint for the partner namespace.
     :vartype endpoint: str
+    :param public_network_access: This determines if traffic is allowed over public network. By
+     default it is enabled.
+     You can further restrict to specific IPs by configuring :code:`<seealso
+     cref="P:Microsoft.Azure.Events.ResourceProvider.Common.Contracts.PartnerNamespaceProperties.InboundIpRules"
+     />`. Possible values include: "Enabled", "Disabled".
+    :type public_network_access: str or ~azure.mgmt.eventgrid.models.PublicNetworkAccess
+    :param inbound_ip_rules: This can be used to restrict traffic from specific IPs instead of all
+     IPs. Note: These are considered only if PublicNetworkAccess is enabled.
+    :type inbound_ip_rules: list[~azure.mgmt.eventgrid.models.InboundIpRule]
+    :param disable_local_auth: This boolean is used to enable or disable local auth. Default value
+     is false. When the property is set to true, only AAD token will be used to authenticate if user
+     is allowed to publish to the partner namespace.
+    :type disable_local_auth: bool
     """
 
     _validation = {
@@ -2063,6 +2166,7 @@ class PartnerNamespace(TrackedResource):
         'type': {'readonly': True},
         'location': {'required': True},
         'system_data': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'endpoint': {'readonly': True},
     }
@@ -2074,9 +2178,13 @@ class PartnerNamespace(TrackedResource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'partner_registration_fully_qualified_id': {'key': 'properties.partnerRegistrationFullyQualifiedId', 'type': 'str'},
         'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'inbound_ip_rules': {'key': 'properties.inboundIpRules', 'type': '[InboundIpRule]'},
+        'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
     }
 
     def __init__(
@@ -2085,9 +2193,13 @@ class PartnerNamespace(TrackedResource):
     ):
         super(PartnerNamespace, self).__init__(**kwargs)
         self.system_data = None
+        self.private_endpoint_connections = None
         self.provisioning_state = None
         self.partner_registration_fully_qualified_id = kwargs.get('partner_registration_fully_qualified_id', None)
         self.endpoint = None
+        self.public_network_access = kwargs.get('public_network_access', None)
+        self.inbound_ip_rules = kwargs.get('inbound_ip_rules', None)
+        self.disable_local_auth = kwargs.get('disable_local_auth', False)
 
 
 class PartnerNamespaceRegenerateKeyRequest(msrest.serialization.Model):
@@ -2166,10 +2278,26 @@ class PartnerNamespaceUpdateParameters(msrest.serialization.Model):
 
     :param tags: A set of tags. Tags of the partner namespace.
     :type tags: dict[str, str]
+    :param public_network_access: This determines if traffic is allowed over public network. By
+     default it is enabled.
+     You can further restrict to specific IPs by configuring :code:`<seealso
+     cref="P:Microsoft.Azure.Events.ResourceProvider.Common.Contracts.PartnerNamespaceUpdateParameterProperties.InboundIpRules"
+     />`. Possible values include: "Enabled", "Disabled".
+    :type public_network_access: str or ~azure.mgmt.eventgrid.models.PublicNetworkAccess
+    :param inbound_ip_rules: This can be used to restrict traffic from specific IPs instead of all
+     IPs. Note: These are considered only if PublicNetworkAccess is enabled.
+    :type inbound_ip_rules: list[~azure.mgmt.eventgrid.models.InboundIpRule]
+    :param disable_local_auth: This boolean is used to enable or disable local auth. Default value
+     is false. When the property is set to true, only AAD token will be used to authenticate if user
+     is allowed to publish to the partner namespace.
+    :type disable_local_auth: bool
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'inbound_ip_rules': {'key': 'properties.inboundIpRules', 'type': '[InboundIpRule]'},
+        'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
     }
 
     def __init__(
@@ -2178,6 +2306,9 @@ class PartnerNamespaceUpdateParameters(msrest.serialization.Model):
     ):
         super(PartnerNamespaceUpdateParameters, self).__init__(**kwargs)
         self.tags = kwargs.get('tags', None)
+        self.public_network_access = kwargs.get('public_network_access', None)
+        self.inbound_ip_rules = kwargs.get('inbound_ip_rules', None)
+        self.disable_local_auth = kwargs.get('disable_local_auth', None)
 
 
 class PartnerRegistration(TrackedResource):
@@ -2299,29 +2430,6 @@ class PartnerRegistration(TrackedResource):
         self.authorized_azure_subscription_ids = kwargs.get('authorized_azure_subscription_ids', None)
 
 
-class PartnerRegistrationEventTypesListResult(msrest.serialization.Model):
-    """Result of the List Partner Registration Event Types operation.
-
-    :param value: A collection of partner registration event types.
-    :type value: list[~azure.mgmt.eventgrid.models.EventType]
-    :param next_link: A link for the next page of partner registration event types.
-    :type next_link: str
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[EventType]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PartnerRegistrationEventTypesListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
-
-
 class PartnerRegistrationsListResult(msrest.serialization.Model):
     """Result of the List Partner Registrations operation.
 
@@ -2411,10 +2519,10 @@ class PartnerTopic(TrackedResource):
     :type location: str
     :param tags: A set of tags. Tags of the resource.
     :type tags: dict[str, str]
-    :param identity: Identity information for the resource.
-    :type identity: ~azure.mgmt.eventgrid.models.IdentityInfo
     :ivar system_data: The system metadata relating to Partner Topic resource.
     :vartype system_data: ~azure.mgmt.eventgrid.models.SystemData
+    :param identity: Identity information for the Partner Topic resource.
+    :type identity: ~azure.mgmt.eventgrid.models.IdentityInfo
     :param source: Source associated with this partner topic. This represents a unique partner
      resource.
     :type source: str
@@ -2450,8 +2558,8 @@ class PartnerTopic(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'IdentityInfo'},
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'identity': {'key': 'identity', 'type': 'IdentityInfo'},
         'source': {'key': 'properties.source', 'type': 'str'},
         'expiration_time_if_not_activated_utc': {'key': 'properties.expirationTimeIfNotActivatedUtc', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -2464,8 +2572,8 @@ class PartnerTopic(TrackedResource):
         **kwargs
     ):
         super(PartnerTopic, self).__init__(**kwargs)
-        self.identity = kwargs.get('identity', None)
         self.system_data = None
+        self.identity = kwargs.get('identity', None)
         self.source = kwargs.get('source', None)
         self.expiration_time_if_not_activated_utc = kwargs.get('expiration_time_if_not_activated_utc', None)
         self.provisioning_state = None
@@ -2496,97 +2604,18 @@ class PartnerTopicsListResult(msrest.serialization.Model):
         self.next_link = kwargs.get('next_link', None)
 
 
-class PartnerTopicType(Resource):
-    """Properties of a partner topic type.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified identifier of the resource.
-    :vartype id: str
-    :ivar name: Name of the resource.
-    :vartype name: str
-    :ivar type: Type of the resource.
-    :vartype type: str
-    :param partner_name: Official name of the partner.
-    :type partner_name: str
-    :param topic_type_name: Name of the partner topic type. This name should be unique among all
-     partner topic types names.
-    :type topic_type_name: str
-    :param display_name: Display Name for the partner topic type.
-    :type display_name: str
-    :param description: Description of the partner topic type.
-    :type description: str
-    :param setup_uri: URI of the partner website that can be used by Azure customers to setup Event
-     Grid
-     integration on an event source.
-    :type setup_uri: str
-    :param authorization_state: Status of whether the customer has authorized a partner to create
-     partner topics
-     in the customer's subscription. Possible values include: "NotApplicable", "NotAuthorized",
-     "Authorized".
-    :type authorization_state: str or
-     ~azure.mgmt.eventgrid.models.PartnerTopicTypeAuthorizationState
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'partner_name': {'key': 'properties.partnerName', 'type': 'str'},
-        'topic_type_name': {'key': 'properties.topicTypeName', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'setup_uri': {'key': 'properties.setupUri', 'type': 'str'},
-        'authorization_state': {'key': 'properties.authorizationState', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PartnerTopicType, self).__init__(**kwargs)
-        self.partner_name = kwargs.get('partner_name', None)
-        self.topic_type_name = kwargs.get('topic_type_name', None)
-        self.display_name = kwargs.get('display_name', None)
-        self.description = kwargs.get('description', None)
-        self.setup_uri = kwargs.get('setup_uri', None)
-        self.authorization_state = kwargs.get('authorization_state', None)
-
-
-class PartnerTopicTypesListResult(msrest.serialization.Model):
-    """Result of the List Partner Topic Types operation.
-
-    :param value: A collection of partner topic types.
-    :type value: list[~azure.mgmt.eventgrid.models.PartnerTopicType]
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[PartnerTopicType]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PartnerTopicTypesListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-
-
 class PartnerTopicUpdateParameters(msrest.serialization.Model):
     """Properties of the Partner Topic update.
 
-    :param tags: A set of tags. Tags of the partner topic.
+    :param tags: A set of tags. Tags of the Partner Topic resource.
     :type tags: dict[str, str]
+    :param identity: Identity information for the Partner Topic resource.
+    :type identity: ~azure.mgmt.eventgrid.models.IdentityInfo
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'IdentityInfo'},
     }
 
     def __init__(
@@ -2595,6 +2624,7 @@ class PartnerTopicUpdateParameters(msrest.serialization.Model):
     ):
         super(PartnerTopicUpdateParameters, self).__init__(**kwargs)
         self.tags = kwargs.get('tags', None)
+        self.identity = kwargs.get('identity', None)
 
 
 class PrivateEndpoint(msrest.serialization.Model):
@@ -2903,7 +2933,7 @@ class StaticDeliveryAttributeMapping(DeliveryAttributeMapping):
         super(StaticDeliveryAttributeMapping, self).__init__(**kwargs)
         self.type = 'Static'  # type: str
         self.value = kwargs.get('value', None)
-        self.is_secret = kwargs.get('is_secret', None)
+        self.is_secret = kwargs.get('is_secret', False)
 
 
 class StorageBlobDeadLetterDestination(DeadLetterDestination):
@@ -3337,10 +3367,10 @@ class SystemTopic(TrackedResource):
     :type location: str
     :param tags: A set of tags. Tags of the resource.
     :type tags: dict[str, str]
-    :param identity: Identity information for the resource.
-    :type identity: ~azure.mgmt.eventgrid.models.IdentityInfo
     :ivar system_data: The system metadata relating to System Topic resource.
     :vartype system_data: ~azure.mgmt.eventgrid.models.SystemData
+    :param identity: Identity information for the resource.
+    :type identity: ~azure.mgmt.eventgrid.models.IdentityInfo
     :ivar provisioning_state: Provisioning state of the system topic. Possible values include:
      "Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.eventgrid.models.ResourceProvisioningState
@@ -3368,8 +3398,8 @@ class SystemTopic(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'IdentityInfo'},
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'identity': {'key': 'identity', 'type': 'IdentityInfo'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'source': {'key': 'properties.source', 'type': 'str'},
         'topic_type': {'key': 'properties.topicType', 'type': 'str'},
@@ -3381,8 +3411,8 @@ class SystemTopic(TrackedResource):
         **kwargs
     ):
         super(SystemTopic, self).__init__(**kwargs)
-        self.identity = kwargs.get('identity', None)
         self.system_data = None
+        self.identity = kwargs.get('identity', None)
         self.provisioning_state = None
         self.source = kwargs.get('source', None)
         self.topic_type = kwargs.get('topic_type', None)
@@ -3456,7 +3486,8 @@ class Topic(TrackedResource):
     :type sku: ~azure.mgmt.eventgrid.models.ResourceSku
     :param identity: Identity information for the resource.
     :type identity: ~azure.mgmt.eventgrid.models.IdentityInfo
-    :param kind: Kind of the resource. Possible values include: "Azure", "AzureArc".
+    :param kind: Kind of the resource. Possible values include: "Azure", "AzureArc". Default value:
+     "Azure".
     :type kind: str or ~azure.mgmt.eventgrid.models.ResourceKind
     :param extended_location: Extended location of the resource.
     :type extended_location: ~azure.mgmt.eventgrid.models.ExtendedLocation
@@ -3489,6 +3520,10 @@ class Topic(TrackedResource):
     :param inbound_ip_rules: This can be used to restrict traffic from specific IPs instead of all
      IPs. Note: These are considered only if PublicNetworkAccess is enabled.
     :type inbound_ip_rules: list[~azure.mgmt.eventgrid.models.InboundIpRule]
+    :param disable_local_auth: This boolean is used to enable or disable local auth. Default value
+     is false. When the property is set to true, only AAD token will be used to authenticate if user
+     is allowed to publish to the topic.
+    :type disable_local_auth: bool
     """
 
     _validation = {
@@ -3522,6 +3557,7 @@ class Topic(TrackedResource):
         'metric_resource_id': {'key': 'properties.metricResourceId', 'type': 'str'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'inbound_ip_rules': {'key': 'properties.inboundIpRules', 'type': '[InboundIpRule]'},
+        'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
     }
 
     def __init__(
@@ -3531,7 +3567,7 @@ class Topic(TrackedResource):
         super(Topic, self).__init__(**kwargs)
         self.sku = kwargs.get('sku', None)
         self.identity = kwargs.get('identity', None)
-        self.kind = kwargs.get('kind', None)
+        self.kind = kwargs.get('kind', "Azure")
         self.extended_location = kwargs.get('extended_location', None)
         self.system_data = None
         self.private_endpoint_connections = None
@@ -3542,6 +3578,7 @@ class Topic(TrackedResource):
         self.metric_resource_id = None
         self.public_network_access = kwargs.get('public_network_access', None)
         self.inbound_ip_rules = kwargs.get('inbound_ip_rules', None)
+        self.disable_local_auth = kwargs.get('disable_local_auth', False)
 
 
 class TopicRegenerateKeyRequest(msrest.serialization.Model):
@@ -3704,9 +3741,9 @@ class TopicTypesListResult(msrest.serialization.Model):
 class TopicUpdateParameters(msrest.serialization.Model):
     """Properties of the Topic update.
 
-    :param tags: A set of tags. Tags of the resource.
+    :param tags: A set of tags. Tags of the Topic resource.
     :type tags: dict[str, str]
-    :param identity: Resource identity information.
+    :param identity: Topic resource identity information.
     :type identity: ~azure.mgmt.eventgrid.models.IdentityInfo
     :param sku: The Sku pricing tier for the topic.
     :type sku: ~azure.mgmt.eventgrid.models.ResourceSku
@@ -3719,6 +3756,10 @@ class TopicUpdateParameters(msrest.serialization.Model):
     :param inbound_ip_rules: This can be used to restrict traffic from specific IPs instead of all
      IPs. Note: These are considered only if PublicNetworkAccess is enabled.
     :type inbound_ip_rules: list[~azure.mgmt.eventgrid.models.InboundIpRule]
+    :param disable_local_auth: This boolean is used to enable or disable local auth. Default value
+     is false. When the property is set to true, only AAD token will be used to authenticate if user
+     is allowed to publish to the topic.
+    :type disable_local_auth: bool
     """
 
     _attribute_map = {
@@ -3727,6 +3768,7 @@ class TopicUpdateParameters(msrest.serialization.Model):
         'sku': {'key': 'sku', 'type': 'ResourceSku'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'inbound_ip_rules': {'key': 'properties.inboundIpRules', 'type': '[InboundIpRule]'},
+        'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
     }
 
     def __init__(
@@ -3739,6 +3781,7 @@ class TopicUpdateParameters(msrest.serialization.Model):
         self.sku = kwargs.get('sku', None)
         self.public_network_access = kwargs.get('public_network_access', None)
         self.inbound_ip_rules = kwargs.get('inbound_ip_rules', None)
+        self.disable_local_auth = kwargs.get('disable_local_auth', None)
 
 
 class UserIdentityProperties(msrest.serialization.Model):

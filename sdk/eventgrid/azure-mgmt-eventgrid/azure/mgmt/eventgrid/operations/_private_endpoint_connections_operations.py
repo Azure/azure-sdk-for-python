@@ -58,15 +58,15 @@ class PrivateEndpointConnectionsOperations(object):
         # type: (...) -> "_models.PrivateEndpointConnection"
         """Get a specific private endpoint connection.
 
-        Get a specific private endpoint connection under a topic or domain.
+        Get a specific private endpoint connection under a topic, domain, or partner namespace.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
-        :param parent_type: The type of the parent resource. This can be either \'topics\' or
-         \'domains\'.
+        :param parent_type: The type of the parent resource. This can be either \'topics\',
+         \'domains\', or \'partnerNamespaces\'.
         :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum25
-        :param parent_name: The name of the parent resource (namely, either, the topic name or domain
-         name).
+        :param parent_name: The name of the parent resource (namely, either, the topic name, domain
+         name, or partner namespace name).
         :type parent_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection
          connection.
@@ -81,7 +81,7 @@ class PrivateEndpointConnectionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-15-preview"
+        api_version = "2021-06-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -134,7 +134,7 @@ class PrivateEndpointConnectionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-15-preview"
+        api_version = "2021-06-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -193,15 +193,15 @@ class PrivateEndpointConnectionsOperations(object):
         # type: (...) -> LROPoller["_models.PrivateEndpointConnection"]
         """Update a specific private endpoint connection.
 
-        Update a specific private endpoint connection under a topic or domain.
+        Update a specific private endpoint connection under a topic, domain or partner namespace.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
-        :param parent_type: The type of the parent resource. This can be either \'topics\' or
-         \'domains\'.
+        :param parent_type: The type of the parent resource. This can be either \'topics\',
+         \'domains\', or \'partnerNamespaces\'.
         :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum26
-        :param parent_name: The name of the parent resource (namely, either, the topic name or domain
-         name).
+        :param parent_name: The name of the parent resource (namely, either, the topic name, domain
+         name, or partner namespace name).
         :type parent_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection
          connection.
@@ -282,7 +282,7 @@ class PrivateEndpointConnectionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-15-preview"
+        api_version = "2021-06-01-preview"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -326,15 +326,15 @@ class PrivateEndpointConnectionsOperations(object):
         # type: (...) -> LROPoller[None]
         """Delete a specific private endpoint connection.
 
-        Delete a specific private endpoint connection under a topic or domain.
+        Delete a specific private endpoint connection under a topic, domain, or partner namespace.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
-        :param parent_type: The type of the parent resource. This can be either \'topics\' or
-         \'domains\'.
+        :param parent_type: The type of the parent resource. This can be either \'topics\',
+         \'domains\', or \'partnerNamespaces\'.
         :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum27
-        :param parent_name: The name of the parent resource (namely, either, the topic name or domain
-         name).
+        :param parent_name: The name of the parent resource (namely, either, the topic name, domain
+         name, or partner namespace name).
         :type parent_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection
          connection.
@@ -407,15 +407,15 @@ class PrivateEndpointConnectionsOperations(object):
         # type: (...) -> Iterable["_models.PrivateEndpointConnectionListResult"]
         """Lists all private endpoint connections under a resource.
 
-        Get all private endpoint connections under a topic or domain.
+        Get all private endpoint connections under a topic, domain, or partner namespace.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
-        :param parent_type: The type of the parent resource. This can be either \'topics\' or
-         \'domains\'.
+        :param parent_type: The type of the parent resource. This can be either \'topics\',
+         \'domains\', or \'partnerNamespaces\'.
         :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum28
-        :param parent_name: The name of the parent resource (namely, either, the topic name or domain
-         name).
+        :param parent_name: The name of the parent resource (namely, either, the topic name, domain
+         name, or partner namespace name).
         :type parent_name: str
         :param filter: The query used to filter the search results using OData syntax. Filtering is
          permitted on the 'name' property only and with limited number of OData operations. These
@@ -438,7 +438,7 @@ class PrivateEndpointConnectionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-15-preview"
+        api_version = "2021-06-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
