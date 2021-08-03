@@ -9,7 +9,7 @@ from azure.core.rest import HttpRequest
 
 @pytest.mark.asyncio
 async def test_response_headers_case_insensitive(client):
-    request = HttpRequest("GET", "/headers")
+    request = HttpRequest("GET", "/basic/headers")
     response = await client.send_request(request)
     response.raise_for_status()
     assert (

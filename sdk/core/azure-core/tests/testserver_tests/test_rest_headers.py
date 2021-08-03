@@ -117,7 +117,7 @@ def test_request_headers_case_insensitive():
     )
 
 def test_response_headers_case_insensitive(client):
-    request = HttpRequest("GET", "/headers")
+    request = HttpRequest("GET", "/basic/headers")
     response = client.send_request(request)
     response.raise_for_status()
     assert (
