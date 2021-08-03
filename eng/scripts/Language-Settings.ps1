@@ -182,6 +182,7 @@ function ValidatePackage($packageName, $packageVersion, $workingDirectory) {
     }
   } catch {
     LogWarning "pip install failed for $packageExpression"
+    Write-Host $pipInstallOutput
     return $false
   }
 
