@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
@@ -17,13 +18,13 @@ from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, IO, Optional, TypeVar, Union
+    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class IotDefenderSettingsOperations(object):
-    """IotDefenderSettingsOperations operations.
+class IngestionSettingsOperations(object):
+    """IngestionSettingsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -48,77 +49,99 @@ class IotDefenderSettingsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.IotDefenderSettingsList"
-        """List IoT Defender Settings.
+        # type: (...) -> Iterable["_models.IngestionSettingList"]
+        """Settings for ingesting security data and logs to correlate with resources associated with the
+        subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: IotDefenderSettingsList, or the result of cls(response)
-        :rtype: ~azure.mgmt.security.models.IotDefenderSettingsList
+        :return: An iterator like instance of either IngestionSettingList or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.models.IngestionSettingList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotDefenderSettingsList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IngestionSettingList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-06-preview"
+        api_version = "2021-01-15-preview"
         accept = "application/json"
 
-        # Construct URL
-        url = self.list.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = self.list.metadata['url']  # type: ignore
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
+                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+                request = self._client.get(url, query_parameters, header_parameters)
+            else:
+                url = next_link
+                query_parameters = {}  # type: Dict[str, Any]
+                request = self._client.get(url, query_parameters, header_parameters)
+            return request
 
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize('IngestionSettingList', pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
 
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
 
-        deserialized = self._deserialize('IotDefenderSettingsList', pipeline_response)
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/iotDefenderSettings'}  # type: ignore
+            return pipeline_response
+
+        return ItemPaged(
+            get_next, extract_data
+        )
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/ingestionSettings'}  # type: ignore
 
     def get(
         self,
+        ingestion_setting_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.IotDefenderSettingsModel"
-        """Get IoT Defender Settings.
+        # type: (...) -> "_models.IngestionSetting"
+        """Settings for ingesting security data and logs to correlate with resources associated with the
+        subscription.
 
+        :param ingestion_setting_name: Name of the ingestion setting.
+        :type ingestion_setting_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: IotDefenderSettingsModel, or the result of cls(response)
-        :rtype: ~azure.mgmt.security.models.IotDefenderSettingsModel
+        :return: IngestionSetting, or the result of cls(response)
+        :rtype: ~azure.mgmt.security.models.IngestionSetting
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotDefenderSettingsModel"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IngestionSetting"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-06-preview"
+        api_version = "2021-01-15-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
+            'ingestionSettingName': self._serialize.url("ingestion_setting_name", ingestion_setting_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -138,42 +161,47 @@ class IotDefenderSettingsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('IotDefenderSettingsModel', pipeline_response)
+        deserialized = self._deserialize('IngestionSetting', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/iotDefenderSettings/default'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/ingestionSettings/{ingestionSettingName}'}  # type: ignore
 
-    def create_or_update(
+    def create(
         self,
-        iot_defender_settings_model,  # type: "_models.IotDefenderSettingsModel"
+        ingestion_setting_name,  # type: str
+        ingestion_setting,  # type: "_models.IngestionSetting"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.IotDefenderSettingsModel"
-        """Create or update IoT Defender settings.
+        # type: (...) -> "_models.IngestionSetting"
+        """Create setting for ingesting security data and logs to correlate with resources associated with
+        the subscription.
 
-        :param iot_defender_settings_model: The IoT defender settings model.
-        :type iot_defender_settings_model: ~azure.mgmt.security.models.IotDefenderSettingsModel
+        :param ingestion_setting_name: Name of the ingestion setting.
+        :type ingestion_setting_name: str
+        :param ingestion_setting: Ingestion setting object.
+        :type ingestion_setting: ~azure.mgmt.security.models.IngestionSetting
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: IotDefenderSettingsModel, or the result of cls(response)
-        :rtype: ~azure.mgmt.security.models.IotDefenderSettingsModel
+        :return: IngestionSetting, or the result of cls(response)
+        :rtype: ~azure.mgmt.security.models.IngestionSetting
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotDefenderSettingsModel"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IngestionSetting"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-06-preview"
+        api_version = "2021-01-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
-        url = self.create_or_update.metadata['url']  # type: ignore
+        url = self.create.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
+            'ingestionSettingName': self._serialize.url("ingestion_setting_name", ingestion_setting_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -187,35 +215,34 @@ class IotDefenderSettingsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(iot_defender_settings_model, 'IotDefenderSettingsModel')
+        body_content = self._serialize.body(ingestion_setting, 'IngestionSetting')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('IotDefenderSettingsModel', pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize('IotDefenderSettingsModel', pipeline_response)
+        deserialized = self._deserialize('IngestionSetting', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/iotDefenderSettings/default'}  # type: ignore
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/ingestionSettings/{ingestionSettingName}'}  # type: ignore
 
     def delete(
         self,
+        ingestion_setting_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Delete IoT Defender settings.
+        """Deletes the ingestion settings for this subscription.
 
+        :param ingestion_setting_name: Name of the ingestion setting.
+        :type ingestion_setting_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -226,13 +253,14 @@ class IotDefenderSettingsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-06-preview"
+        api_version = "2021-01-15-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
+            'ingestionSettingName': self._serialize.url("ingestion_setting_name", ingestion_setting_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -255,32 +283,37 @@ class IotDefenderSettingsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/iotDefenderSettings/default'}  # type: ignore
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/ingestionSettings/{ingestionSettingName}'}  # type: ignore
 
-    def package_downloads(
+    def list_tokens(
         self,
+        ingestion_setting_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.PackageDownloads"
-        """Information about downloadable packages.
+        # type: (...) -> "_models.IngestionSettingToken"
+        """Returns the token that is used for correlating ingested telemetry with the resources in the
+        subscription.
 
+        :param ingestion_setting_name: Name of the ingestion setting.
+        :type ingestion_setting_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PackageDownloads, or the result of cls(response)
-        :rtype: ~azure.mgmt.security.models.PackageDownloads
+        :return: IngestionSettingToken, or the result of cls(response)
+        :rtype: ~azure.mgmt.security.models.IngestionSettingToken
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PackageDownloads"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IngestionSettingToken"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-06-preview"
+        api_version = "2021-01-15-preview"
         accept = "application/json"
 
         # Construct URL
-        url = self.package_downloads.metadata['url']  # type: ignore
+        url = self.list_tokens.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
+            'ingestionSettingName': self._serialize.url("ingestion_setting_name", ingestion_setting_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -300,38 +333,42 @@ class IotDefenderSettingsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('PackageDownloads', pipeline_response)
+        deserialized = self._deserialize('IngestionSettingToken', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    package_downloads.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/iotDefenderSettings/default/packageDownloads'}  # type: ignore
+    list_tokens.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/ingestionSettings/{ingestionSettingName}/listTokens'}  # type: ignore
 
-    def download_manager_activation(
+    def list_connection_strings(
         self,
+        ingestion_setting_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> IO
-        """Download manager activation data defined for this subscription.
+        # type: (...) -> "_models.ConnectionStrings"
+        """Connection strings for ingesting security scan logs and data.
 
+        :param ingestion_setting_name: Name of the ingestion setting.
+        :type ingestion_setting_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: IO, or the result of cls(response)
-        :rtype: IO
+        :return: ConnectionStrings, or the result of cls(response)
+        :rtype: ~azure.mgmt.security.models.ConnectionStrings
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConnectionStrings"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-06-preview"
-        accept = "application/zip"
+        api_version = "2021-01-15-preview"
+        accept = "application/json"
 
         # Construct URL
-        url = self.download_manager_activation.metadata['url']  # type: ignore
+        url = self.list_connection_strings.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
+            'ingestionSettingName': self._serialize.url("ingestion_setting_name", ingestion_setting_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -344,17 +381,17 @@ class IotDefenderSettingsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=True, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = response.stream_download(self._client._pipeline)
+        deserialized = self._deserialize('ConnectionStrings', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    download_manager_activation.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/iotDefenderSettings/default/downloadManagerActivation'}  # type: ignore
+    list_connection_strings.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/ingestionSettings/{ingestionSettingName}/listConnectionStrings'}  # type: ignore
