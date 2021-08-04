@@ -1002,6 +1002,26 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             renewer.close()
             assert len(messages) == 11
 
+            renewer = AutoLockRenewer(max_workers=4)
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                for i in range(10):
+                    message = ServiceBusMessage("{}".format(i))
+                    sender.send_messages(message)
+
+            with sb_client.get_queue_receiver(servicebus_queue.name,
+                                                 max_wait_time=5,
+                                                 receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
+                                                 prefetch_count=10) as receiver:
+                received_msgs = receiver.receive_messages(max_message_count=10, max_wait_time=5)
+                for msg in received_msgs:
+                    renewer.register(receiver, msg, max_lock_renewal_duration=20)
+                time.sleep(20)
+
+                for msg in received_msgs:
+                    receiver.complete_message(msg)
+            assert len(received_msgs) == 10
+            renewer.close()
+
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
