@@ -3,11 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from azure.data.tables import TableClient, UpdateMode
-import dateutil.parser
 import datetime
 import time
 import logging
 import calendar
+import dateutil.parser
 from azure.core import MatchConditions
 from azure.data.tables._base_client import parse_connection_str
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError, ResourceNotFoundError
@@ -213,14 +213,16 @@ class TableCheckpointStore():
         ownership_entity = self._create_ownership_entity(ownership)
         try:
             if ownership['etag'] is None:
-                metadata = self.table_client.create_entity(entity=ownership_entity,response_preference = "return-content")
+                metadata = self.table_client.create_entity(entity=ownership_entity,
+                response_preference="return-content")
                 ownership['etag'] = metadata['etag']
-                ownership['last_modified_time'] = _to_timestamp(dateutil.parser.isoparse(metadata['content']['Timestamp']))
+                ownership['last_modified_time'] = _to_timestamp(dateutil.parser.isoparse
+                (metadata['content']['Timestamp']))
                 return ownership
             metadata = self.table_client.update_entity(mode=UpdateMode.REPLACE, entity=ownership_entity,
             etag=ownership['etag'], match_condition=MatchConditions.IfNotModified)
             ownership['etag'] = metadata['etag']
-            entities =  self.table_client.get_entity(partition_key=ownership_entity['PartitionKey']
+            entities = self.table_client.get_entity(partition_key=ownership_entity['PartitionKey']
             , row_key=ownership_entity['RowKey'])
             ownership['last_modified_time'] = _to_timestamp(entities.metadata.get('timestamp'))
             return ownership
