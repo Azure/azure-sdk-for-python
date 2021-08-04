@@ -5,7 +5,8 @@
 ### Features Added
 - Added support for secure key release from a Managed HSM
   - Added `release_key` method to `KeyClient` for releasing the private component of a key
-  - Added `exportable` and `release_policy` keyword-only arguments to key creation methods
+  - Added `exportable` and `release_policy` keyword-only arguments to key creation and import
+    methods
   - Added `KeyExportEncryptionAlgorithm` enum for specifying an encryption algorithm to be used
     in key release
 

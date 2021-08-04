@@ -9,10 +9,10 @@ from ._models import (
     JsonWebKey,
     KeyProperties,
     KeyReleasePolicy,
-    KeyReleaseResult,
     KeyVaultKey,
     KeyVaultKeyIdentifier,
     RandomBytes,
+    ReleaseKeyResult,
 )
 from ._client import KeyClient
 
@@ -29,8 +29,8 @@ __all__ = [
     "DeletedKey",
     "KeyProperties",
     "KeyReleasePolicy",
-    "KeyReleaseResult",
     "RandomBytes",
+    "ReleaseKeyResult",
 ]
 
 from ._version import VERSION

@@ -11,7 +11,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from .._shared._polling_async import AsyncDeleteRecoverPollingMethod
 from .._shared import AsyncKeyVaultClientBase
 from .._shared.exceptions import error_map as _error_map
-from .. import DeletedKey, JsonWebKey, KeyProperties, KeyReleaseResult, KeyVaultKey, RandomBytes
+from .. import DeletedKey, JsonWebKey, KeyProperties, KeyVaultKey, RandomBytes, ReleaseKeyResult
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
@@ -516,6 +516,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             key_ops=kwargs.pop("key_operations", None),
             key_attributes=attributes,
             tags=kwargs.pop("tags", None),
+            release_policy=policy,
         )
 
         bundle = await self._client.update_key(
@@ -649,7 +650,7 @@ class KeyClient(AsyncKeyVaultClientBase):
     @distributed_trace_async
     async def release_key(
         self, name: str, target: str, version: "Optional[str]" = None, **kwargs: "Any"
-    ) -> KeyReleaseResult:
+    ) -> ReleaseKeyResult:
         """Releases a key.
 
         The release key operation is applicable to all key types. The target key must be marked
@@ -665,7 +666,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :keyword str nonce: A client-provided nonce for freshness.
 
         :return: The result of the key release.
-        :rtype: ~azure.keyvault.keys.KeyReleaseResult
+        :rtype: ~azure.keyvault.keys.ReleaseKeyResult
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         result = await self._client.release(
@@ -677,7 +678,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             ),
             **kwargs
         )
-        return KeyReleaseResult(result.value)
+        return ReleaseKeyResult(result.value)
 
     @distributed_trace_async
     async def get_random_bytes(self, count: int, **kwargs: "Any") -> RandomBytes:

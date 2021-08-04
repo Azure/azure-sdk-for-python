@@ -261,7 +261,7 @@ class KeyReleasePolicy(object):
         self.content_type = kwargs.get("content_type", None)
 
 
-class KeyReleaseResult(object):
+class ReleaseKeyResult(object):
     """The result of a key release operation.
 
     :ivar str value: A signed token containing the released key.

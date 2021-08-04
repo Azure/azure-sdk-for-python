@@ -8,7 +8,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map as _error_map
 from ._shared._polling import DeleteRecoverPollingMethod, KeyVaultOperationPoller
-from ._models import DeletedKey, KeyVaultKey, KeyProperties, KeyReleaseResult, RandomBytes
+from ._models import DeletedKey, KeyVaultKey, KeyProperties, RandomBytes, ReleaseKeyResult
 
 try:
     from typing import TYPE_CHECKING
@@ -672,7 +672,7 @@ class KeyClient(KeyVaultClientBase):
 
     @distributed_trace
     def release_key(self, name, target, version=None, **kwargs):
-        # type: (str, str, Optional[str], **Any) -> KeyReleaseResult
+        # type: (str, str, Optional[str], **Any) -> ReleaseKeyResult
         """Releases a key.
 
         The release key operation is applicable to all key types. The target key must be marked
@@ -688,7 +688,7 @@ class KeyClient(KeyVaultClientBase):
         :keyword str nonce: A client-provided nonce for freshness.
 
         :return: The result of the key release.
-        :rtype: ~azure.keyvault.keys.KeyReleaseResult
+        :rtype: ~azure.keyvault.keys.ReleaseKeyResult
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         result = self._client.release(
@@ -700,7 +700,7 @@ class KeyClient(KeyVaultClientBase):
             ),
             **kwargs
         )
-        return KeyReleaseResult(result.value)
+        return ReleaseKeyResult(result.value)
 
     @distributed_trace
     def get_random_bytes(self, count, **kwargs):
