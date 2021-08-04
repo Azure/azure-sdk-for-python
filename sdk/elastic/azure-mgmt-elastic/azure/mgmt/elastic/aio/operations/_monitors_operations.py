@@ -45,7 +45,7 @@ class MonitorsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ElasticMonitorResourceListResponse"]:
         """List all monitors under the specified subscription.
 
@@ -61,7 +61,7 @@ class MonitorsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-07-01-preview"
+        api_version = "2020-07-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -115,7 +115,7 @@ class MonitorsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ElasticMonitorResourceListResponse"]:
         """List all monitors under the specified resource group.
 
@@ -134,7 +134,7 @@ class MonitorsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-07-01-preview"
+        api_version = "2020-07-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -190,7 +190,7 @@ class MonitorsOperations:
         self,
         resource_group_name: str,
         monitor_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ElasticMonitorResource":
         """Get the properties of a specific monitor resource.
 
@@ -211,7 +211,7 @@ class MonitorsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-07-01-preview"
+        api_version = "2020-07-01"
         accept = "application/json"
 
         # Construct URL
@@ -253,14 +253,14 @@ class MonitorsOperations:
         resource_group_name: str,
         monitor_name: str,
         body: Optional["_models.ElasticMonitorResource"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ElasticMonitorResource":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ElasticMonitorResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-07-01-preview"
+        api_version = "2020-07-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -314,7 +314,7 @@ class MonitorsOperations:
         resource_group_name: str,
         monitor_name: str,
         body: Optional["_models.ElasticMonitorResource"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ElasticMonitorResource"]:
         """Create a monitor resource.
 
@@ -329,8 +329,8 @@ class MonitorsOperations:
         :type body: ~azure.mgmt.elastic.models.ElasticMonitorResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ElasticMonitorResource or the result of cls(response)
@@ -388,7 +388,7 @@ class MonitorsOperations:
         resource_group_name: str,
         monitor_name: str,
         body: Optional["_models.ElasticMonitorResourceUpdateParameters"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ElasticMonitorResource":
         """Update a monitor resource.
 
@@ -411,7 +411,7 @@ class MonitorsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-07-01-preview"
+        api_version = "2020-07-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -460,14 +460,14 @@ class MonitorsOperations:
         self,
         resource_group_name: str,
         monitor_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-07-01-preview"
+        api_version = "2020-07-01"
         accept = "application/json"
 
         # Construct URL
@@ -505,7 +505,7 @@ class MonitorsOperations:
         self,
         resource_group_name: str,
         monitor_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete a monitor resource.
 
@@ -518,8 +518,8 @@ class MonitorsOperations:
         :type monitor_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
