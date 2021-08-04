@@ -9,13 +9,17 @@ from azure.core.credentials import AzureKeyCredential
 from ._generated import TextAnalyticsClient as _TextAnalyticsClient
 from ._policies import TextAnalyticsResponseHookPolicy
 from ._user_agent import USER_AGENT
+from ._version import DEFAULT_API_VERSION
+
 
 class TextAnalyticsApiVersion(str, Enum):
     """Text Analytics API versions supported by this package"""
 
     #: this is the default version
-    V3_1_PREVIEW = "v3.1-preview.5"
+    V3_2_PREVIEW = "v3.2-preview.1"
+    V3_1 = "v3.1"
     V3_0 = "v3.0"
+
 
 def _authentication_policy(credential):
     authentication_policy = None
@@ -26,8 +30,10 @@ def _authentication_policy(credential):
             name="Ocp-Apim-Subscription-Key", credential=credential
         )
     elif credential is not None and not hasattr(credential, "get_token"):
-        raise TypeError("Unsupported credential: {}. Use an instance of AzureKeyCredential "
-                        "or a token credential from azure.identity".format(type(credential)))
+        raise TypeError(
+            "Unsupported credential: {}. Use an instance of AzureKeyCredential "
+            "or a token credential from azure.identity".format(type(credential))
+        )
     return authentication_policy
 
 
@@ -36,13 +42,12 @@ class TextAnalyticsClientBase(object):
         self._client = _TextAnalyticsClient(
             endpoint=endpoint,
             credential=credential,
-            api_version=kwargs.pop("api_version", TextAnalyticsApiVersion.V3_1_PREVIEW),
+            api_version=kwargs.pop("api_version", DEFAULT_API_VERSION),
             sdk_moniker=USER_AGENT,
             authentication_policy=_authentication_policy(credential),
             custom_hook_policy=TextAnalyticsResponseHookPolicy(**kwargs),
             **kwargs
         )
-
 
     def __enter__(self):
         self._client.__enter__()  # pylint:disable=no-member

@@ -50,7 +50,7 @@ setup(
     license="MIT License",
     author="Microsoft Corporation",
     author_email="azpysdkhelp@microsoft.com",
-    url="https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity",
+    url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python",
@@ -72,9 +72,9 @@ setup(
         ]
     ),
     install_requires=[
-        "azure-core<2.0.0,>=1.0.0",
+        "azure-core<2.0.0,>=1.11.0",
         "cryptography>=2.1.4",
-        "msal<2.0.0,>=1.7.0",
+        "msal<2.0.0,>=1.12.0",
         "msal-extensions~=0.3.0",
         "six>=1.12.0",
     ],

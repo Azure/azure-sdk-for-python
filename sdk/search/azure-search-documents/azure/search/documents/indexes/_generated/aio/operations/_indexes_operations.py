@@ -66,7 +66,7 @@ class IndexesOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2021-04-30-Preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -136,7 +136,7 @@ class IndexesOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2021-04-30-Preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -240,7 +240,7 @@ class IndexesOperations:
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         prefer = "return=representation"
-        api_version = "2020-06-30"
+        api_version = "2021-04-30-Preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -330,7 +330,7 @@ class IndexesOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2021-04-30-Preview"
         accept = "application/json"
 
         # Construct URL
@@ -395,7 +395,7 @@ class IndexesOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2021-04-30-Preview"
         accept = "application/json"
 
         # Construct URL
@@ -459,7 +459,7 @@ class IndexesOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2021-04-30-Preview"
         accept = "application/json"
 
         # Construct URL
@@ -526,7 +526,7 @@ class IndexesOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2021-04-30-Preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

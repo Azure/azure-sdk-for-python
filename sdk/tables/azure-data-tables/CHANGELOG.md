@@ -1,5 +1,22 @@
 # Release History
 
+## 12.1.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+- Bumped dependency on `msrest` to `>=0.6.21`
+
+## 12.1.0 (2021-07-06)
+
+### Features Added
+* Storage Accounts only: `TableClient` and `TableServiceClient`s can now use `azure-identity` credentials for authentication. Note: A `TableClient` authenticated with a `TokenCredential` cannot use the `get_table_access_policy` or `set_table_access_policy` methods.
+
 ## 12.0.0 (2021-06-08)
 **Breaking**
 * EdmType.Binary data in entities will now be deserialized as `bytes` in Python 3 and `str` in Python 2, rather than an `EdmProperty` instance. Likewise on serialization, `bytes` in Python 3 and `str` in Python 2 will be interpreted as binary (this is unchanged for Python 3, but breaking for Python 2, where `str` was previously serialized as EdmType.String)

@@ -72,7 +72,7 @@ class NetAppResourceOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         _body = _models.ResourceNameAvailabilityRequest(name=name, type=type, resource_group=resource_group)
-        api_version = "2021-02-01"
+        api_version = "2021-04-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -116,8 +116,7 @@ class NetAppResourceOperations:
         self,
         location: str,
         name: str,
-        type: Union[str, "_models.CheckNameResourceTypes"],
-        resource_group: str,
+        subnet_id: str,
         **kwargs: Any
     ) -> "_models.CheckAvailabilityResponse":
         """Check file path availability.
@@ -126,12 +125,11 @@ class NetAppResourceOperations:
 
         :param location: The location.
         :type location: str
-        :param name: Resource name to verify.
+        :param name: File path to verify.
         :type name: str
-        :param type: Resource type used for verification.
-        :type type: str or ~azure.mgmt.netapp.models.CheckNameResourceTypes
-        :param resource_group: Resource group name.
-        :type resource_group: str
+        :param subnet_id: The Azure Resource URI for a delegated subnet. Must have the delegation
+         Microsoft.NetApp/volumes.
+        :type subnet_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckAvailabilityResponse, or the result of cls(response)
         :rtype: ~azure.mgmt.netapp.models.CheckAvailabilityResponse
@@ -143,8 +141,8 @@ class NetAppResourceOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _body = _models.ResourceNameAvailabilityRequest(name=name, type=type, resource_group=resource_group)
-        api_version = "2021-02-01"
+        _body = _models.FilePathAvailabilityRequest(name=name, subnet_id=subnet_id)
+        api_version = "2021-04-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -166,7 +164,7 @@ class NetAppResourceOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_body, 'ResourceNameAvailabilityRequest')
+        body_content = self._serialize.body(_body, 'FilePathAvailabilityRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -216,7 +214,7 @@ class NetAppResourceOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         _body = _models.QuotaAvailabilityRequest(name=name, type=type, resource_group=resource_group)
-        api_version = "2021-02-01"
+        api_version = "2021-04-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

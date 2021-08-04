@@ -7,7 +7,7 @@
 
 # pylint: disable=anomalous-backslash-in-string
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Optional
 
 from ._generated._monitor_query_client import (
     MonitorQueryClient,
@@ -17,6 +17,7 @@ from ._models import MetricsResult, MetricDefinition, MetricNamespace
 from ._helpers import get_metrics_authentication_policy, construct_iso8601
 
 if TYPE_CHECKING:
+    from datetime import timedelta
     from azure.core.credentials import TokenCredential
     from azure.core.paging import ItemPaged
 
@@ -28,6 +29,15 @@ class MetricsQueryClient(object):
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword endpoint: The endpoint to connect to. Defaults to 'https://management.azure.com'.
     :paramtype endpoint: str
+
+    .. admonition:: Example:
+
+    .. literalinclude:: ../samples/sample_metrics_query_client.py
+        :start-after: [START metrics_client_auth_with_token_cred]
+        :end-before: [END metrics_client_auth_with_token_cred]
+        :language: python
+        :dedent: 0
+        :caption: Creating the MetricsQueryClient with a TokenCredential.
     """
 
     def __init__(self, credential, **kwargs):
@@ -44,7 +54,7 @@ class MetricsQueryClient(object):
         self._definitions_op = self._client.metric_definitions
 
     def query(self, resource_uri, metric_names, duration=None, **kwargs):
-        # type: (str, list, str, Any) -> MetricsResult
+        # type: (str, list, Optional[timedelta], Any) -> MetricsResult
         """Lists the metric values for a resource.
 
         **Note**: Although the start_time, end_time, duration are optional parameters, it is highly
@@ -53,18 +63,19 @@ class MetricsQueryClient(object):
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
         :param metric_names: The names of the metrics to retrieve.
-        :type metric_names: list
-        :param str duration: The duration for which to query the data. This can also be accompanied
+        :type metric_names: list[str]
+        :param ~datetime.timedelta duration: The duration for which to query the data. This can also be accompanied
          with either start_time or end_time. If start_time or end_time is not provided, the current time is
-         taken as the end time. This should be provided in a ISO8601 string format like 'PT1H', 'P1Y2M10DT2H30M'.
+         taken as the end time.
         :keyword datetime start_time: The start time from which to query the data. This should be accompanied
          with either end_time or duration.
         :keyword datetime end_time: The end time till which to query the data. This should be accompanied
          with either start_time or duration.
         :keyword interval: The interval (i.e. timegrain) of the query.
         :paramtype interval: ~datetime.timedelta
-        :keyword aggregation: The list of aggregation types (comma separated) to retrieve.
-        :paramtype aggregation: str
+        :keyword aggregations: The list of aggregation types to retrieve. Use `azure.monitor.query.AggregationType`
+         enum to get each aggregation type.
+        :paramtype aggregations: list[str]
         :keyword top: The maximum number of records to retrieve.
          Valid only if $filter is specified.
          Defaults to 10.
@@ -91,9 +102,21 @@ class MetricsQueryClient(object):
         :return: Response, or the result of cls(response)
         :rtype: ~azure.monitor.query.MetricsResult
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sample_metrics_query_client.py
+            :start-after: [START send_metrics_query]
+            :end-before: [END send_metrics_query]
+            :language: python
+            :dedent: 0
+            :caption: Get a response for a single Metrics Query
         """
         start = kwargs.pop('start_time', None)
         end = kwargs.pop('end_time', None)
+        aggregations = kwargs.pop("aggregations", None)
+        if aggregations:
+            kwargs.setdefault("aggregation", ",".join(aggregations))
         timespan = construct_iso8601(start, end, duration)
         kwargs.setdefault("metricnames", ",".join(metric_names))
         kwargs.setdefault("timespan", timespan)

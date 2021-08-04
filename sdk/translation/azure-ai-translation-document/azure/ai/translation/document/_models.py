@@ -20,23 +20,25 @@ class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
 
     :param str glossary_url: Required. Location of the glossary file. This should be a SAS URL to
         the glossary file in the storage blob container. If the translation language pair is
-        not present in the glossary, it will not be applied.
+        not present in the glossary, it will not be applied. See the service documentation for the
+        supported SAS permissions: https://aka.ms/azsdk/documenttranslation/sas-permissions
     :param str file_format: Required. Format of the glossary file. To see supported formats,
-        call the :func:`~DocumentTranslationClient.get_glossary_formats()` client method.
+        call the :func:`~DocumentTranslationClient.get_supported_glossary_formats()` client method.
     :keyword str format_version: File format version. If not specified, the service will
         use the default_version for the file format returned from the
-        :func:`~DocumentTranslationClient.get_glossary_formats()` client method.
+        :func:`~DocumentTranslationClient.get_supported_glossary_formats()` client method.
     :keyword str storage_source: Storage Source. Default value: "AzureBlob".
         Currently only "AzureBlob" is supported.
 
     :ivar str glossary_url: Required. Location of the glossary file. This should be a SAS URL to
         the glossary file in the storage blob container. If the translation language pair is
-        not present in the glossary, it will not be applied.
+        not present in the glossary, it will not be applied. See the service documentation for the
+        supported SAS permissions: https://aka.ms/azsdk/documenttranslation/sas-permissions
     :ivar str file_format: Required. Format of the glossary file. To see supported formats,
-        call the :func:`~DocumentTranslationClient.get_glossary_formats()` client method.
+        call the :func:`~DocumentTranslationClient.get_supported_glossary_formats()` client method.
     :ivar str format_version: File format version. If not specified, the service will
         use the default_version for the file format returned from the
-        :func:`~DocumentTranslationClient.get_glossary_formats()` client method.
+        :func:`~DocumentTranslationClient.get_supported_glossary_formats()` client method.
     :ivar str storage_source: Storage Source. Default value: "AzureBlob".
         Currently only "AzureBlob" is supported.
     """
@@ -59,7 +61,8 @@ class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
     @staticmethod
     def _to_generated_list(glossaries):
         return [
-            glossary._to_generated() for glossary in glossaries  # pylint: disable=protected-access
+            glossary._to_generated()  # pylint: disable=protected-access
+            for glossary in glossaries
         ]
 
     def __repr__(self):
@@ -78,7 +81,9 @@ class TranslationTarget(object):  # pylint: disable=useless-object-inheritance
     """Destination for the finished translated documents.
 
     :param str target_url: Required. The target location for your translated documents.
-        This should be a container SAS URL to your target container.
+        This should be a container SAS URL to your target container/blob. See the service
+        documentation for the supported SAS permissions for accessing
+        target storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions
     :param str language_code: Required. Target Language Code. This is the language
         you want your documents to be translated to. See supported languages here:
         https://docs.microsoft.com/azure/cognitive-services/translator/language-support#translate
@@ -89,7 +94,9 @@ class TranslationTarget(object):  # pylint: disable=useless-object-inheritance
         Currently only "AzureBlob" is supported.
 
     :ivar str target_url: Required. The target location for your translated documents.
-        This should be a container SAS URL to your target container.
+        This should be a container SAS URL to your target container/blob. See the service
+        documentation for the supported SAS permissions for accessing
+        target storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions
     :ivar str language_code: Required. Target Language Code. This is the language
         you want your documents to be translated to. See supported languages here:
         https://docs.microsoft.com/azure/cognitive-services/translator/language-support#translate
@@ -124,7 +131,8 @@ class TranslationTarget(object):  # pylint: disable=useless-object-inheritance
     @staticmethod
     def _to_generated_list(targets):
         return [
-            target._to_generated() for target in targets  # pylint: disable=protected-access
+            target._to_generated()  # pylint: disable=protected-access
+            for target in targets
         ]
 
     def __repr__(self):
@@ -148,7 +156,8 @@ class DocumentTranslationInput(object):  # pylint: disable=useless-object-inheri
     translated and written to the location provided by the TranslationTargets.
 
     :param str source_url: Required. Location of the folder / container or single file with your
-        documents.
+        documents. See the service documentation for the supported SAS permissions for accessing
+        source storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions
     :param targets: Required. Location of the destination for the output. This is a list of
         TranslationTargets. Note that a TranslationTarget is required for each language code specified.
     :type targets: list[~azure.ai.translation.document.TranslationTarget]
@@ -166,7 +175,8 @@ class DocumentTranslationInput(object):  # pylint: disable=useless-object-inheri
         Currently only "AzureBlob" is supported.
 
     :ivar str source_url: Required. Location of the folder / container or single file with your
-        documents.
+        documents. See the service documentation for the supported SAS permissions for accessing
+        source storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions
     :ivar targets: Required. Location of the destination for the output. This is a list of
         TranslationTargets. Note that a TranslationTarget is required for each language code specified.
     :vartype targets: list[~azure.ai.translation.document.TranslationTarget]
@@ -231,7 +241,7 @@ class DocumentTranslationInput(object):  # pylint: disable=useless-object-inheri
         )
 
 
-class TranslationStatusResult(
+class TranslationStatus(
     object
 ):  # pylint: disable=useless-object-inheritance, too-many-instance-attributes
     """Status information about the translation operation.
@@ -307,7 +317,7 @@ class TranslationStatusResult(
 
     def __repr__(self):
         return (
-            "TranslationStatusResult(id={}, created_on={}, "
+            "TranslationStatus(id={}, created_on={}, "
             "last_updated_on={}, status={}, error={}, documents_total_count={}, "
             "documents_failed_count={}, documents_succeeded_count={}, "
             "documents_in_progress_count={}, documents_not_yet_started_count={}, "
@@ -328,7 +338,7 @@ class TranslationStatusResult(
         )
 
 
-class DocumentStatusResult(
+class DocumentStatus(
     object
 ):  # pylint: disable=useless-object-inheritance, R0903, R0902
     """Status information about a particular document within a translation operation.
@@ -382,7 +392,9 @@ class DocumentStatusResult(
             last_updated_on=doc_status.last_action_date_time_utc,
             status=doc_status.status,
             translated_to=doc_status.to,
-            error=DocumentTranslationError._from_generated(doc_status.error)  # pylint: disable=protected-access
+            error=DocumentTranslationError._from_generated(  # pylint: disable=protected-access
+                doc_status.error
+            )
             if doc_status.error
             else None,
             translation_progress=doc_status.progress,
@@ -393,7 +405,7 @@ class DocumentStatusResult(
     def __repr__(self):
         # pylint: disable=line-too-long
         return (
-            "DocumentStatusResult(id={}, source_document_url={}, "
+            "DocumentStatus(id={}, source_document_url={}, "
             "translated_document_url={}, created_on={}, last_updated_on={}, "
             "status={}, translated_to={}, error={}, translation_progress={}, "
             "characters_charged={})".format(

@@ -80,7 +80,6 @@ class KeyClient(AsyncKeyVaultClientBase):
         enabled = kwargs.pop("enabled", None)
         not_before = kwargs.pop("not_before", None)
         expires_on = kwargs.pop("expires_on", None)
-
         if enabled is not None or not_before is not None or expires_on is not None:
             attributes = self._models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires_on)
         else:
@@ -93,7 +92,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             key_ops=kwargs.pop("key_operations", None),
             tags=kwargs.pop("tags", None),
             curve=kwargs.pop("curve", None),
-            public_exponent=kwargs.pop("public_exponent", None)
+            public_exponent=kwargs.pop("public_exponent", None),
         )
 
         bundle = await self._client.create_key(
@@ -474,7 +473,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         parameters = self._models.KeyUpdateParameters(
             key_ops=kwargs.pop("key_operations", None),
             key_attributes=attributes,
-            tags=kwargs.pop("tags", None)
+            tags=kwargs.pop("tags", None),
         )
 
         bundle = await self._client.update_key(
@@ -578,7 +577,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             key=key._to_generated_model(),
             key_attributes=attributes,
             hsm=kwargs.pop("hardware_protected", None),
-            tags=kwargs.pop("tags", None)
+            tags=kwargs.pop("tags", None),
         )
 
         bundle = await self._client.import_key(
@@ -589,3 +588,15 @@ class KeyClient(AsyncKeyVaultClientBase):
             **kwargs
         )
         return KeyVaultKey._from_key_bundle(bundle)
+
+    @distributed_trace_async
+    async def get_random_bytes(self, count: int, **kwargs: "Any") -> bytes:
+        """Get the requested number of random bytes from a managed HSM.
+
+        :param int count: The requested number of random bytes.
+        :return: The random bytes.
+        :rtype: bytes
+        """
+        parameters = self._models.GetRandomBytesRequest(count=count)
+        result = await self._client.get_random_bytes(vault_base_url=self._vault_url, parameters=parameters, **kwargs)
+        return result.value

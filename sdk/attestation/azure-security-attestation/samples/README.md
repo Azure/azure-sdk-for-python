@@ -12,11 +12,11 @@ urlFragment: attestation-samples
 
 These code samples show common scenario operations with the Azure Attestation client library.
 
-The Async versions of the samples require Python 3.5 or later.
+The Async versions of the samples require Python 3.6 or later.
 
 You can authenticate your client with a [TokenCredential](https://docs.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential?view=azure-python).
 
-See [sample_authentication.py][sample_authentication] and [sample_authentication_async.py][sample_authentication_async.py]
+See [sample_authentication.py][sample_authentication] and [sample_authentication_async.py][sample_authentication_async]
 
 ## Service operational modes
 
@@ -36,7 +36,6 @@ Service Mode | Instance Creation  | Attestation | Policy Get | Policy Set | Sign
 Shared | No | Yes | Yes (default always)| No | No | No
 AAD | Yes | Yes | Yes | Yes | Optional | No
 Isolated | Yes| Yes | Yes | Yes | Yes | Yes
-
 
 ### Shared Mode
 
@@ -83,8 +82,8 @@ variables have been set by the user:
     region.
 * ATTESTATION_ISOLATED_SIGNING_CERTIFICATE - The DER encoded form of the signing
     certificate used to create an isolated attestation instance, Base64 encoded.
-* ATTESTATION_ISOLATED_SIGNING_KEY - The DER encoded of an RSA Private key, which
-    was used to create an isolated attestation service instance.
+* ATTESTATION_ISOLATED_SIGNING_KEY - The DER encoded of an RSA Private key,
+    Base64 encoded, which was used to create an isolated attestation service instance.
 
 The tests also assume that the currently logged on user is authorized to call
 into the attestation service instance because they use [DefaultAzureCredential](https://docs.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential?view=azure-python) for authorization.
@@ -93,9 +92,9 @@ into the attestation service instance because they use [DefaultAzureCredential](
 
 **File Name** | **Description**
 |-----|-------|
-| [sample_authentication.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/attestation/azure-security-attestation/samples/sample_authentication.py) and [sample_authentication_async.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/attestation/azure-security-attestation/samples/sample_authentication_async.py) | Authenticate a connection with the attestation service (also retrieves the OpenID metadata configuration for the service instance).|
-| [sample_attest_enclave.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/attestation/azure-security-attestation/samples/sample_attest_enclave.py) and [sample_attest_enclave_async.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/attestation/azure-security-attestation/samples/sample_attest_enclave_async.py) | Attest an SGX and OpenEnclave enclave with the attestation service. Also shows how to use the TokenValidationOptions to perform additional validation of the returned attestation token and validation keys.|
-|[sample_get_set_policy.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/attestation/azure-security-attestation/samples/sample_get_set_policy.py) and [sample_get_set_policy_async.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/attestation/azure-security-attestation/samples) | Policy manipulation operations - Get, Set, Reset on different attestation types.|
+| [sample_authentication](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/attestation/azure-security-attestation/samples/sample_authentication.py) and [sample_authentication_async](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/attestation/azure-security-attestation/samples/sample_authentication_async.py) | Authenticate a connection with the attestation service (also retrieves the OpenID metadata configuration for the service instance).|
+| [sample_attest_enclave](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/attestation/azure-security-attestation/samples/sample_attest_enclave.py) and [sample_attest_enclave_async](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/attestation/azure-security-attestation/samples/sample_attest_enclave_async.py) | Attest an SGX and OpenEnclave enclave with the attestation service. Also shows how to use the TokenValidationOptions to perform additional validation of the returned attestation token and validation keys.|
+|[sample_get_set_policy](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/attestation/azure-security-attestation/samples/sample_get_set_policy.py) and [sample_get_set_policy_async](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/attestation/azure-security-attestation/samples) | Policy manipulation operations - Get, Set, Reset on different attestation types.|
 
 ### Prerequisites
 
@@ -129,7 +128,7 @@ rules for attestation operations.
 
 The following is an example of an attestation policy document for an SGX enclave:
 
-```
+```text
 version= 1.0;
 authorizationrules
 {
@@ -167,9 +166,9 @@ For more information on authoring attestation policy documents, see: [Authoring 
 For more information about the Microsoft Azure Attestation service, please see our [documentation page](https://docs.microsoft.com/azure/attestation/) .
 
 <!-- LINKS -->
-<!-- links are known to be broken, they will be fixed after this initial pull 
+<!-- links are known to be broken, they will be fixed after this initial pull
     request completes. -->
-[readme_md]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/attestation/azure-security-attestation/README.md
-[sample_authentication]:https://github.com/LarryOsterman/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_authentication.py
-[sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_authentication_async.py
+[readme_md]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/attestation/azure-security-attestation/README.md
+[sample_authentication]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/attestation/azure-security-attestation/samples/sample_authentication.py
+[sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/attestation/azure-security-attestation/samples/sample_authentication_async.py
 [add_policy_management_cert]: https://docs.microsoft.com/python/api/azure-security-attestation/azure.security.attestation.attestationadministrationclient?view=azure-python-preview#add-policy-management-certificate-certificate-to-add--signing-key----kwargs-

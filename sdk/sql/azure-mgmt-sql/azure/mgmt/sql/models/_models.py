@@ -368,6 +368,10 @@ class BackupShortTermRetentionPolicy(ProxyResource):
     :param retention_days: The backup retention period in days. This is how many days Point-in-Time
      Restore will be supported.
     :type retention_days: int
+    :param diff_backup_interval_in_hours: The differential backup interval in hours. This is how
+     many interval hours between each differential backup will be supported. This is only applicable
+     to live databases but not dropped databases. Possible values include: 12, 24.
+    :type diff_backup_interval_in_hours: str or ~azure.mgmt.sql.models.DiffBackupIntervalInHours
     """
 
     _validation = {
@@ -381,6 +385,7 @@ class BackupShortTermRetentionPolicy(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'retention_days': {'key': 'properties.retentionDays', 'type': 'int'},
+        'diff_backup_interval_in_hours': {'key': 'properties.diffBackupIntervalInHours', 'type': 'int'},
     }
 
     def __init__(
@@ -389,6 +394,7 @@ class BackupShortTermRetentionPolicy(ProxyResource):
     ):
         super(BackupShortTermRetentionPolicy, self).__init__(**kwargs)
         self.retention_days = kwargs.get('retention_days', None)
+        self.diff_backup_interval_in_hours = kwargs.get('diff_backup_interval_in_hours', None)
 
 
 class BackupShortTermRetentionPolicyListResult(msrest.serialization.Model):
@@ -430,7 +436,7 @@ class CheckNameAvailabilityRequest(msrest.serialization.Model):
 
     :param name: Required.
     :type name: str
-    :ivar type: Required.  Default value: "Microsoft.Sql/servers".
+    :ivar type:  Has constant value: "Microsoft.Sql/servers".
     :vartype type: str
     """
 
@@ -11179,22 +11185,25 @@ class ReplicationLink(ProxyResource):
     :vartype partner_database: str
     :ivar partner_location: Resource partner location.
     :vartype partner_location: str
-    :ivar role: Local replication role.
-    :vartype role: str
-    :ivar partner_role: Partner replication role.
-    :vartype partner_role: str
+    :ivar role: Local replication role. Possible values include: "Primary", "Secondary",
+     "NonReadableSecondary", "Source", "Copy".
+    :vartype role: str or ~azure.mgmt.sql.models.ReplicationRole
+    :ivar partner_role: Partner replication role. Possible values include: "Primary", "Secondary",
+     "NonReadableSecondary", "Source", "Copy".
+    :vartype partner_role: str or ~azure.mgmt.sql.models.ReplicationRole
     :ivar replication_mode: Replication mode.
     :vartype replication_mode: str
     :ivar start_time: Time at which the link was created.
     :vartype start_time: ~datetime.datetime
     :ivar percent_complete: Seeding completion percentage for the link.
     :vartype percent_complete: int
-    :ivar replication_state: Replication state (PENDING, SEEDING, CATCHUP, SUSPENDED).
-    :vartype replication_state: str
+    :ivar replication_state: Replication state (PENDING, SEEDING, CATCHUP, SUSPENDED). Possible
+     values include: "PENDING", "SEEDING", "CATCH_UP", "SUSPENDED".
+    :vartype replication_state: str or ~azure.mgmt.sql.models.ReplicationState
     :ivar is_termination_allowed: Whether the user is currently allowed to terminate the link.
     :vartype is_termination_allowed: bool
-    :ivar link_type: Link type (GEO, NAMED).
-    :vartype link_type: str
+    :ivar link_type: Link type (GEO, NAMED). Possible values include: "GEO", "NAMED".
+    :vartype link_type: str or ~azure.mgmt.sql.models.ReplicationLinkType
     """
 
     _validation = {
@@ -11249,7 +11258,7 @@ class ReplicationLink(ProxyResource):
         self.link_type = None
 
 
-class ReplicationLinksListResult(msrest.serialization.Model):
+class ReplicationLinkListResult(msrest.serialization.Model):
     """A list of replication links.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -11274,7 +11283,7 @@ class ReplicationLinksListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(ReplicationLinksListResult, self).__init__(**kwargs)
+        super(ReplicationLinkListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
 
@@ -11290,7 +11299,7 @@ class ResourceIdentity(msrest.serialization.Model):
     :vartype principal_id: str
     :param type: The identity type. Set this to 'SystemAssigned' in order to automatically create
      and assign an Azure Active Directory principal for the resource. Possible values include:
-     "None", "SystemAssigned", "UserAssigned".
+     "None", "SystemAssigned", "UserAssigned", "SystemAssigned,UserAssigned".
     :type type: str or ~azure.mgmt.sql.models.IdentityType
     :ivar tenant_id: The Azure Active Directory tenant id.
     :vartype tenant_id: str
@@ -11313,46 +11322,6 @@ class ResourceIdentity(msrest.serialization.Model):
         **kwargs
     ):
         super(ResourceIdentity, self).__init__(**kwargs)
-        self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
-        self.principal_id = None
-        self.type = kwargs.get('type', None)
-        self.tenant_id = None
-
-
-class ResourceIdentityWithUserAssignedIdentities(msrest.serialization.Model):
-    """Azure Active Directory identity configuration for a resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :param user_assigned_identities: The resource ids of the user assigned identities to use.
-    :type user_assigned_identities: dict[str, ~azure.mgmt.sql.models.UserIdentity]
-    :ivar principal_id: The Azure Active Directory principal id.
-    :vartype principal_id: str
-    :param type: The identity type. Set this to 'SystemAssigned' in order to automatically create
-     and assign an Azure Active Directory principal for the resource. Possible values include:
-     "None", "SystemAssigned", "UserAssigned".
-    :type type: str or ~azure.mgmt.sql.models.IdentityType
-    :ivar tenant_id: The Azure Active Directory tenant id.
-    :vartype tenant_id: str
-    """
-
-    _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserIdentity}'},
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ResourceIdentityWithUserAssignedIdentities, self).__init__(**kwargs)
         self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
         self.principal_id = None
         self.type = kwargs.get('type', None)
@@ -12084,17 +12053,23 @@ class Server(TrackedResource):
     :param public_network_access: Whether or not public endpoint access is allowed for this server.
      Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Possible values include:
      "Enabled", "Disabled".
-    :type public_network_access: str or ~azure.mgmt.sql.models.ServerPublicNetworkAccess
+    :type public_network_access: str or ~azure.mgmt.sql.models.ServerNetworkAccessFlag
     :ivar workspace_feature: Whether or not existing server has a workspace created and if it
      allows connection from workspace. Possible values include: "Connected", "Disconnected".
     :vartype workspace_feature: str or ~azure.mgmt.sql.models.ServerWorkspaceFeature
     :param primary_user_assigned_identity_id: The resource id of a user assigned identity to be
      used by default.
     :type primary_user_assigned_identity_id: str
+    :param federated_client_id: The Client id used for cross tenant CMK scenario.
+    :type federated_client_id: str
     :param key_id: A CMK URI of the key to use for encryption.
     :type key_id: str
     :param administrators: The Azure Active Directory identity of the server.
     :type administrators: ~azure.mgmt.sql.models.ServerExternalAdministrator
+    :param restrict_outbound_network_access: Whether or not to restrict outbound network access for
+     this server.  Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Possible
+     values include: "Enabled", "Disabled".
+    :type restrict_outbound_network_access: str or ~azure.mgmt.sql.models.ServerNetworkAccessFlag
     """
 
     _validation = {
@@ -12127,8 +12102,10 @@ class Server(TrackedResource):
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'workspace_feature': {'key': 'properties.workspaceFeature', 'type': 'str'},
         'primary_user_assigned_identity_id': {'key': 'properties.primaryUserAssignedIdentityId', 'type': 'str'},
+        'federated_client_id': {'key': 'properties.federatedClientId', 'type': 'str'},
         'key_id': {'key': 'properties.keyId', 'type': 'str'},
         'administrators': {'key': 'properties.administrators', 'type': 'ServerExternalAdministrator'},
+        'restrict_outbound_network_access': {'key': 'properties.restrictOutboundNetworkAccess', 'type': 'str'},
     }
 
     def __init__(
@@ -12148,8 +12125,10 @@ class Server(TrackedResource):
         self.public_network_access = kwargs.get('public_network_access', None)
         self.workspace_feature = None
         self.primary_user_assigned_identity_id = kwargs.get('primary_user_assigned_identity_id', None)
+        self.federated_client_id = kwargs.get('federated_client_id', None)
         self.key_id = kwargs.get('key_id', None)
         self.administrators = kwargs.get('administrators', None)
+        self.restrict_outbound_network_access = kwargs.get('restrict_outbound_network_access', None)
 
 
 class ServerAutomaticTuning(ProxyResource):
@@ -13366,17 +13345,23 @@ class ServerUpdate(msrest.serialization.Model):
     :param public_network_access: Whether or not public endpoint access is allowed for this server.
      Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Possible values include:
      "Enabled", "Disabled".
-    :type public_network_access: str or ~azure.mgmt.sql.models.ServerPublicNetworkAccess
+    :type public_network_access: str or ~azure.mgmt.sql.models.ServerNetworkAccessFlag
     :ivar workspace_feature: Whether or not existing server has a workspace created and if it
      allows connection from workspace. Possible values include: "Connected", "Disconnected".
     :vartype workspace_feature: str or ~azure.mgmt.sql.models.ServerWorkspaceFeature
     :param primary_user_assigned_identity_id: The resource id of a user assigned identity to be
      used by default.
     :type primary_user_assigned_identity_id: str
+    :param federated_client_id: The Client id used for cross tenant CMK scenario.
+    :type federated_client_id: str
     :param key_id: A CMK URI of the key to use for encryption.
     :type key_id: str
     :param administrators: The Azure Active Directory identity of the server.
     :type administrators: ~azure.mgmt.sql.models.ServerExternalAdministrator
+    :param restrict_outbound_network_access: Whether or not to restrict outbound network access for
+     this server.  Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Possible
+     values include: "Enabled", "Disabled".
+    :type restrict_outbound_network_access: str or ~azure.mgmt.sql.models.ServerNetworkAccessFlag
     """
 
     _validation = {
@@ -13399,8 +13384,10 @@ class ServerUpdate(msrest.serialization.Model):
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'workspace_feature': {'key': 'properties.workspaceFeature', 'type': 'str'},
         'primary_user_assigned_identity_id': {'key': 'properties.primaryUserAssignedIdentityId', 'type': 'str'},
+        'federated_client_id': {'key': 'properties.federatedClientId', 'type': 'str'},
         'key_id': {'key': 'properties.keyId', 'type': 'str'},
         'administrators': {'key': 'properties.administrators', 'type': 'ServerExternalAdministrator'},
+        'restrict_outbound_network_access': {'key': 'properties.restrictOutboundNetworkAccess', 'type': 'str'},
     }
 
     def __init__(
@@ -13420,8 +13407,10 @@ class ServerUpdate(msrest.serialization.Model):
         self.public_network_access = kwargs.get('public_network_access', None)
         self.workspace_feature = None
         self.primary_user_assigned_identity_id = kwargs.get('primary_user_assigned_identity_id', None)
+        self.federated_client_id = kwargs.get('federated_client_id', None)
         self.key_id = kwargs.get('key_id', None)
         self.administrators = kwargs.get('administrators', None)
+        self.restrict_outbound_network_access = kwargs.get('restrict_outbound_network_access', None)
 
 
 class ServerUsage(msrest.serialization.Model):

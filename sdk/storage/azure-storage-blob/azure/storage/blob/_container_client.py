@@ -77,7 +77,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
     retrieved using the :func:`~get_blob_client` function.
 
     For more optional configuration, please click
-    `here <https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob
+    `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
     #optional-configuration>`_.
 
     :param str account_url:
@@ -743,7 +743,8 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
             begin with the specified prefix.
         :param list[str] or str include:
             Specifies one or more additional datasets to include in the response.
-            Options include: 'snapshots', 'metadata', 'uncommittedblobs', 'copy', 'deleted', 'tags'.
+            Options include: 'snapshots', 'metadata', 'uncommittedblobs', 'copy', 'deleted', 'deletedwithversions',
+            'tags', 'versions', 'immutabilitypolicy', 'legalhold'.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) response of BlobProperties.

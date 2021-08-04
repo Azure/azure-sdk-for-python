@@ -8,7 +8,7 @@
 import pytest
 import datetime
 from azure.ai.textanalytics import _models
-from azure.ai.textanalytics._generated.v3_1_preview_5 import models as _generated_models
+from azure.ai.textanalytics._generated.v3_1 import models as _generated_models
 
 # All features return a tuple of the object and the repr of the obejct
 
@@ -440,54 +440,6 @@ class TestRepr():
         error = _models.TextAnalyticsError._from_generated(generated_error)
         assert error.code == "UnsupportedLanguageCode"
         assert error.message == "Supplied language not supported. Pass in one of: de,en,es,fr,it,ja,ko,nl,pt-PT,zh-Hans,zh-Hant"
-
-    def test_analyze_actions_result_recognize_entities(self, recognize_entities_result):
-        model = _models.AnalyzeActionsResult(
-            document_results=[recognize_entities_result[0]],
-            is_error=False,
-            action_type=_models.AnalyzeActionsType.RECOGNIZE_ENTITIES,
-            completed_on=datetime.datetime(1, 1, 1)
-        )
-
-        model_repr = (
-            "AnalyzeActionsResult(document_results=[{}], is_error={}, action_type={}, completed_on={})".format(
-                recognize_entities_result[1], False, "recognize_entities", datetime.datetime(1, 1, 1)
-            )
-        )
-
-        assert repr(model) == model_repr
-
-    def test_analyze_actions_result_recognize_pii_entities(self, recognize_pii_entities_result):
-        model = _models.AnalyzeActionsResult(
-            document_results=[recognize_pii_entities_result[0]],
-            is_error=False,
-            action_type=_models.AnalyzeActionsType.RECOGNIZE_PII_ENTITIES,
-            completed_on=datetime.datetime(1, 1, 1)
-        )
-
-        model_repr = (
-            "AnalyzeActionsResult(document_results=[{}], is_error={}, action_type={}, completed_on={})".format(
-                recognize_pii_entities_result[1], False, "recognize_pii_entities", datetime.datetime(1, 1, 1)
-            )
-        )
-
-        assert repr(model) == model_repr
-
-    def test_analyze_actions_result_extract_key_phrases(self, extract_key_phrases_result):
-        model = _models.AnalyzeActionsResult(
-            document_results=[extract_key_phrases_result[0]],
-            is_error=False,
-            action_type=_models.AnalyzeActionsType.EXTRACT_KEY_PHRASES,
-            completed_on=datetime.datetime(1, 1, 1)
-        )
-
-        model_repr = (
-            "AnalyzeActionsResult(document_results=[{}], is_error={}, action_type={}, completed_on={})".format(
-                extract_key_phrases_result[1], False, "extract_key_phrases", datetime.datetime(1, 1, 1)
-            )
-        )
-
-        assert repr(model) == model_repr
 
     def test_analyze_healthcare_entities_result_item(
         self, healthcare_entity, healthcare_relation, text_analytics_warning, text_document_statistics

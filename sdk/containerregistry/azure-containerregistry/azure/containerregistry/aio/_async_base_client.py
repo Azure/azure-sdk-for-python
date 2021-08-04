@@ -28,26 +28,27 @@ class ContainerRegistryBaseClient(object):
     :type endpoint: str
     :param credential: AAD Token for authenticating requests with Azure
     :type credential: :class:`~azure.identity.DefaultTokenCredential`
-    :keyword authentication_scope: URL for credential authentication if different from the default
-    :paramtype authentication_scope: str
+    :keyword credential_scopes: URL for credential authentication if different from the default
+    :paramtype credential_scopes: List[str]
     """
 
     def __init__(self, endpoint: str, credential: Optional["AsyncTokenCredential"] = None, **kwargs) -> None:
-        auth_policy = ContainerRegistryChallengePolicy(credential, endpoint, **kwargs)
+        self._auth_policy = ContainerRegistryChallengePolicy(credential, endpoint, **kwargs)
         self._client = ContainerRegistry(
             credential=credential,
             url=endpoint,
             sdk_moniker=USER_AGENT,
-            authentication_policy=auth_policy,
-            credential_scopes=kwargs.get("credential_scopes", "https://management.core.windows.net/.default"),
+            authentication_policy=self._auth_policy,
             **kwargs
         )
 
     async def __aenter__(self):
+        await self._auth_policy.__aenter__()
         await self._client.__aenter__()
         return self
 
     async def __aexit__(self, *args):
+        await self._auth_policy.__aexit__(*args)
         await self._client.__aexit__(*args)
 
     async def close(self) -> None:

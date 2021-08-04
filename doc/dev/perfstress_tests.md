@@ -2,6 +2,7 @@
 1. [The perfstress framework](#the-perfstress-framework)
     - [The PerfStressTest base](#the-perfstresstest-base)
     - [Default command options](#default-command-options)
+    - [Running with test proxy](#running-with-the-test-proxy)
 2. [Adding performance tests to an SDK](#adding-performance-tests-to-an-sdk)
     - [Writing a test](#writing-a-test)
     - [Adding legacy T1 tests](#adding-legacy-t1-tests)
@@ -10,7 +11,7 @@
 
 # The perfstress framework
 
-The perfstress framework has been added to azure-devtools module. The code can be found [here](https://github.com/Azure/azure-sdk-for-python/tree/master/tools/azure-devtools/src/azure_devtools/perfstress_tests).
+The perfstress framework has been added to azure-devtools module. The code can be found [here](https://github.com/Azure/azure-sdk-for-python/tree/main/tools/azure-devtools/src/azure_devtools/perfstress_tests).
 The framework provides a baseclass to inherit from when writing tests, as well as some tools and utilities to facilitate running
 the tests. To start using the framework, make sure that `azure-devtools` is included in the `dev_requirements.txt` for the SDK:
 ```
@@ -28,7 +29,7 @@ The `PerfStressTest` base class is what will be used for all perf test implement
 ```python
 class PerfStressTest:
     args = {}  # Command line arguments
-    
+
     def __init__(self, arguments):
         # The command line args can be accessed on construction.
 
@@ -37,6 +38,16 @@ class PerfStressTest:
 
     async def global_cleanup(self):
         # Can be optionally defined. Only run once, regardless of parallelism.
+
+    async def record_and_start_playback(self):
+        # Set up the recording on the test proxy, and configure the proxy in playback mode.
+        # This function is only run if a test proxy URL is provided (-x).
+        # There should be no need to overwrite this function.
+
+    async def stop_playback(self):
+        # Configure the proxy out of playback mode and discard the recording.
+        # This function is only run if a test proxy URL is provided (-x).
+        # There should be no need to overwrite this function.
 
     async def setup(self):
         # Can be optionally defined. Run once per test instance, after global_setup.
@@ -65,12 +76,24 @@ class PerfStressTest:
 ```
 ## Default command options
 The framework has a series of common command line options built in:
-- `--duration=10` Number of seconds to run as many operations (the "run" function) as possible. Default is 10.
-- `--iterations=1` Number of test iterations to run. Default is 1.
-- `--parallel=1` Number of tests to run in parallel. Default is 1.
-- `--warm-up=5` Number of seconds to spend warming up the connection before measuring begins. Default is 5.
+- `-d --duration=10` Number of seconds to run as many operations (the "run" function) as possible. Default is 10.
+- `-i --iterations=1` Number of test iterations to run. Default is 1.
+- `-p --parallel=1` Number of tests to run in parallel. Default is 1.
+- `-w --warm-up=5` Number of seconds to spend warming up the connection before measuring begins. Default is 5.
 - `--sync` Whether to run the tests in sync or async. Default is False (async).
 - `--no-cleanup` Whether to keep newly created resources after test run. Default is False (resources will be deleted).
+- `-x --test-proxy` Whether to run the tests against the test proxy server. Specfiy the URL for the proxy endpoint (e.g. "https://localhost:5001").
+- `--profile` Whether to run the perftest with cProfile. If enabled (default is False), the output file of the **last completed single iteration** will be written to the current working directory in the format `"cProfile-<TestClassName>-<TestID>-<sync/async>.pstats"`.
+
+
+## Running with the test proxy
+Follow the instructions here to install and run the test proxy server:
+https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy
+
+Once running, in a separate process run the perf test in question, combined with the `-x` flag to specify the proxy endpoint.
+```cmd
+(env) ~/azure-storage-blob/tests> perfstress DownloadTest -x "https://localhost:5001"
+```
 
 # Adding performance tests to an SDK
 The performance tests will be in a submodule called `perfstress_tests` within the `tests` directory in an SDK project.
@@ -104,16 +127,16 @@ class ListContainersTest(PerfStressTest):
 
     async def global_setup(self):
         """The global setup is run only once.
-        
+
         Use this for any setup that can be reused multiple times by all test instances.
         """
         await super().global_setup()
         containers = [self.async_service_client.create_container(str(i)) for i in self.args.num_containers]
         await asyncio.wait(containers)
-     
+
      async def global_cleanup(self):
         """The global cleanup is run only once.
-        
+
         Use this to cleanup any resources created in setup.
         """
         async for container in self.async_service_client.list_containers():
@@ -122,7 +145,7 @@ class ListContainersTest(PerfStressTest):
 
     async def close(self):
         """This is run after cleanup.
-        
+
         Use this to close any open handles or clients.
         """
         await self.async_service_client.close()
@@ -130,7 +153,7 @@ class ListContainersTest(PerfStressTest):
 
     def run_sync(self):
         """The synchronous perf test.
-        
+
         Try to keep this minimal and focused. Using only a single client API.
         Avoid putting any ancilliary logic (e.g. generating UUIDs), and put this in the setup/init instead
         so that we're only measuring the client API call.
@@ -140,7 +163,7 @@ class ListContainersTest(PerfStressTest):
 
     async def run_async(self):
         """The asynchronous perf test.
-        
+
         Try to keep this minimal and focused. Using only a single client API.
         Avoid putting any ancilliary logic (e.g. generating UUIDs), and put this in the setup/init instead
         so that we're only measuring the client API call.
@@ -166,7 +189,7 @@ class _StorageStreamTestBase(PerfStressTest):
 
     def __init__(self, arguments):
         super().__init__(arguments)
-        
+
         # Any common attributes
         self.container_name = 'streamperftests'
 
@@ -179,10 +202,10 @@ class _StorageStreamTestBase(PerfStressTest):
 
     async def global_setup(self):
         await super().global_setup()
-        
+
         # Any common setup used by all the streaming tests
         await self.async_service_client.create_container(self.container_name)
-     
+
      async def global_cleanup(self):
         # Any common cleanup used by all the streaming tests
         await self.async_service_client.delete_container(self.container_name)
@@ -195,7 +218,7 @@ class _StorageStreamTestBase(PerfStressTest):
     @staticmethod
     def add_arguments(parser):
         super(ListContainersTest, ListContainersTest).add_arguments(parser)
-        
+
         # Add any common arguments for the streaming test cases
         parser.add_argument('--max-concurrency', nargs='?', type=int, help='Number of concurrent threads to upload/download the data. Defaults to 1.', default=1)
         parser.add_argument('--size', nargs='?', type=int, help='Size in bytes for the amount of data to be streamed. Defaults to 1024 bytes', default=1024)
@@ -214,12 +237,12 @@ from ._test_base import _StorageStreamTestBase
 class UploadTest(_StorageStreamTestBase):
     def __init__(self, arguments):
         super().__init__(arguments)
-        
+
         # Setup service clients
         blob_name = "uploadtest"
         self.blob_client = self.service_client.get_blob_client(self.container_name, blob_name)
         self.async_blob_client = self.async_serive_client.get_blob_client(self.container_name, blob_name)
-        
+
         # Setup readable file-like upload data sources, using the configurable 'size' argument
         self.upload_stream = RandomStream(self.args.size)
         self.upload_stream_async = AsyncRandomStream(self.args.size)
@@ -228,7 +251,7 @@ class UploadTest(_StorageStreamTestBase):
         # The stream needs to be reset at the start of each run.
         # This sets the position index back to 0 with minimal overhead.
         self.upload_stream.reset()
-        
+
         # Test the upload API
         self.blob_client.upload_blob(
             self.upload_stream,
@@ -240,7 +263,7 @@ class UploadTest(_StorageStreamTestBase):
         # The stream needs to be reset at the start of each run.
         # This sets the position index back to 0 with minimal overhead.
         self.upload_stream_async.reset()
-        
+
         # Test the upload API
         await self.async_blob_client.upload_blob(
             self.upload_stream_async,
@@ -268,7 +291,7 @@ class DownloadTest(_StorageStreamTestBase):
 
     async def global_setup(self):
         await super().global_setup()
-        
+
         # Setup the test by uploading data that can be reused by all test instances.
         data = get_random_bytes(self.args.size)
         await self.async_blob_client.upload_blob(data)
@@ -277,7 +300,7 @@ class DownloadTest(_StorageStreamTestBase):
         # The stream needs to be reset at the start of each run.
         # This sets the position index back to 0 with minimal overhead.
         self.download_stream.reset()
-        
+
         # Test the API
         stream = self.blob_client.download_blob(max_concurrency=self.args.max_concurrency)
         stream.readinto(self.download_stream)
@@ -286,7 +309,7 @@ class DownloadTest(_StorageStreamTestBase):
         # The stream needs to be reset at the start of each run.
         # This sets the position index back to 0 with minimal overhead.
         self.download_stream.reset()
-        
+
         # Test the API
         stream = await self.async_blob_client.download_blob(max_concurrency=self.args.max_concurrency)
         await stream.readinto(self.download_stream)
@@ -351,5 +374,5 @@ Using the `perfstress` command alone will list the available perf tests found. N
 
 Please add a `README.md` to the perfstress_tests directory so that others know how to setup and run the perf tests, along with a description of the available tests and any support command line options. README files in a `tests/perfstress_tests` directory should already be filtered from CI validation for SDK readmes.
 Some examples can be found here:
-- [Azure Storage Blob](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/storage/azure-storage-blob/tests/perfstress_tests/README.md)
-- [Azure Service Bus](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/tests/perf_tests/README.md)
+- [Azure Storage Blob](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-blob/tests/perfstress_tests/README.md)
+- [Azure Service Bus](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/servicebus/azure-servicebus/tests/perf_tests/README.md)

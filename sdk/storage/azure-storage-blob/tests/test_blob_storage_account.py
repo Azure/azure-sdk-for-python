@@ -17,7 +17,8 @@ from azure.storage.blob import (
 )
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.blob._generated.models import RehydratePriority
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
+from _shared.testcase import GlobalStorageAccountPreparer
+from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'

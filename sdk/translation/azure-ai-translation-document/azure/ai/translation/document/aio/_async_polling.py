@@ -11,8 +11,8 @@ from azure.core.polling.base_polling import (
     _raise_if_bad_http_status_and_method,
 )
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
-from .._generated.models import TranslationStatus
-from .._models import TranslationStatusResult
+from .._generated.models import TranslationStatus as _TranslationStatus
+from .._models import TranslationStatus
 
 PollingReturnType = TypeVar("PollingReturnType")
 _FINISHED = frozenset(["succeeded", "cancelled", "cancelling", "failed"])
@@ -21,7 +21,7 @@ _FAILED = frozenset(["validationfailed"])
 
 class AsyncDocumentTranslationLROPoller(AsyncLROPoller[PollingReturnType]):
     """An async custom poller implementation for Document Translation. Call `result()` on the poller to return
-    a pageable of :class:`~azure.ai.translation.document.DocumentStatusResult`."""
+    a pageable of :class:`~azure.ai.translation.document.DocumentStatus`."""
 
     @property
     def id(self) -> str:
@@ -38,12 +38,12 @@ class AsyncDocumentTranslationLROPoller(AsyncLROPoller[PollingReturnType]):
         )
 
     @property
-    def details(self) -> TranslationStatusResult:
+    def details(self) -> TranslationStatus:
         """The details for the translation operation
 
-        :rtype: ~azure.ai.translation.document.TranslationStatusResult
+        :rtype: ~azure.ai.translation.document.TranslationStatus
         """
-        return TranslationStatusResult._from_generated(  # pylint: disable=protected-access
+        return TranslationStatus._from_generated(  # pylint: disable=protected-access
             self._polling_method._current_body  # pylint: disable=protected-access
         )
 
@@ -72,11 +72,11 @@ class AsyncDocumentTranslationLROPollingMethod(AsyncLROBasePolling):
         super(AsyncDocumentTranslationLROPollingMethod, self).__init__(*args, **kwargs)
 
     @property
-    def _current_body(self) -> TranslationStatus:
-        return TranslationStatus.deserialize(self._pipeline_response)
+    def _current_body(self) -> _TranslationStatus:
+        return _TranslationStatus.deserialize(self._pipeline_response)
 
     def _get_id_from_headers(self) -> str:
-        return self._pipeline_response.http_response.headers[
+        return self._initial_response.http_response.headers[
             "Operation-Location"
         ].split("/batches/")[1]
 

@@ -1,47 +1,45 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 import pandas as pd
-from azure.monitor.query import LogsQueryClient, LogsQueryRequest
-from azure.identity import ClientSecretCredential
+from azure.monitor.query import LogsQueryClient, LogsBatchQueryRequest
+from azure.identity import DefaultAzureCredential
 
 
-credential  = ClientSecretCredential(
-        client_id = os.environ['AZURE_CLIENT_ID'],
-        client_secret = os.environ['AZURE_CLIENT_SECRET'],
-        tenant_id = os.environ['AZURE_TENANT_ID']
-    )
+credential  = DefaultAzureCredential()
 
 client = LogsQueryClient(credential)
 
+# [START send_batch_query]
 requests = [
-    LogsQueryRequest(
+    LogsBatchQueryRequest(
         query="AzureActivity | summarize count()",
-        duration="PT1H",
-        workspace= os.environ['LOG_WORKSPACE_ID']
+        duration=timedelta(hours=1),
+        workspace_id= os.environ['LOG_WORKSPACE_ID']
     ),
-    LogsQueryRequest(
+    LogsBatchQueryRequest(
         query= """AppRequests | take 10  |
             summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId""",
-        duration="PT1H",
+        duration=timedelta(hours=1),
         start_time=datetime(2021, 6, 2),
-        workspace= os.environ['LOG_WORKSPACE_ID']
+        workspace_id= os.environ['LOG_WORKSPACE_ID']
     ),
-    LogsQueryRequest(
-        query= "AppRequests | take 2",
-        workspace= os.environ['LOG_WORKSPACE_ID']
+    LogsBatchQueryRequest(
+        query= "AppRequestss | take 5",
+        workspace_id= os.environ['LOG_WORKSPACE_ID'],
+        include_statistics=True
     ),
 ]
-response = client.batch_query(requests)
+responses = client.batch_query(requests)
 
-for response in response.responses:
-    body = response.body
-    print(response.id)
-    if not body.tables:
-        print("Something is wrong")
-    else:
-        for table in body.tables:
-            df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
-            print(df)
+for response in responses:
+    try:
+        table = response.tables[0]
+        df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
+        print(df)
+    except TypeError:
+        print(response.error)
+
+# [END send_batch_query]

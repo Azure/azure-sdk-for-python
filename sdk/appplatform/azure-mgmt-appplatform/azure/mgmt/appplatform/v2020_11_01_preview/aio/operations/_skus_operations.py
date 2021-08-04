@@ -43,7 +43,7 @@ class SkusOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ResourceSkuCollection"]:
         """Lists all of the available skus of the Microsoft.AppPlatform provider.
 

@@ -68,8 +68,8 @@ class AccessControlTests(KeyVaultTestCase):
         definition_name = self.get_replayable_uuid("definition-name")
         permissions = [KeyVaultPermission(data_actions=[KeyVaultDataAction.READ_HSM_KEY])]
         created_definition = client.set_role_definition(
-            role_scope=scope,
-            role_definition_name=definition_name,
+            scope=scope,
+            name=definition_name,
             role_name=role_name,
             description="test",
             permissions=permissions
@@ -87,7 +87,7 @@ class AccessControlTests(KeyVaultTestCase):
             KeyVaultPermission(data_actions=[], not_data_actions=[KeyVaultDataAction.READ_HSM_KEY])
         ]
         updated_definition = client.set_role_definition(
-            role_scope=scope, role_definition_name=definition_name, permissions=permissions
+            scope=scope, name=definition_name, permissions=permissions
         )
         assert updated_definition.role_name == ""
         assert updated_definition.description == ""
@@ -101,14 +101,13 @@ class AccessControlTests(KeyVaultTestCase):
         assert len(matching_definitions) == 1
 
         # get custom role definition
-        definition = client.get_role_definition(role_scope=scope, role_definition_name=definition_name)
+        definition = client.get_role_definition(scope=scope, name=definition_name)
         assert_role_definitions_equal(definition, updated_definition)
 
         # delete custom role definition
-        deleted_definition = client.delete_role_definition(scope, definition_name)
-        assert_role_definitions_equal(deleted_definition, definition)
+        client.delete_role_definition(scope, definition_name)
 
-        assert not any(d.id == deleted_definition.id for d in client.list_role_definitions(scope))
+        assert not any(d.id == definition.id for d in client.list_role_definitions(scope))
 
     def test_role_assignment(self):
         client = KeyVaultAccessControlClient(self.managed_hsm["url"], self.credential)
@@ -121,7 +120,7 @@ class AccessControlTests(KeyVaultTestCase):
         principal_id = self.get_service_principal_id()
         name = self.get_replayable_uuid("some-uuid")
 
-        created = client.create_role_assignment(scope, definition.id, principal_id, role_assignment_name=name)
+        created = client.create_role_assignment(scope, definition.id, principal_id, name=name)
         assert created.name == name
         assert created.properties.principal_id == principal_id
         assert created.properties.role_definition_id == definition.id
@@ -141,11 +140,7 @@ class AccessControlTests(KeyVaultTestCase):
         assert len(matching_assignments) == 1
 
         # delete the assignment
-        deleted = client.delete_role_assignment(scope, created.name)
-        assert deleted.name == created.name
-        assert deleted.role_assignment_id == created.role_assignment_id
-        assert deleted.properties.scope == scope
-        assert deleted.properties.role_definition_id == created.properties.role_definition_id
+        client.delete_role_assignment(scope, created.name)
 
         assert not any(a.role_assignment_id == created.role_assignment_id for a in client.list_role_assignments(scope))
 

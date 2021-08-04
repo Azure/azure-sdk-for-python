@@ -23,7 +23,7 @@
             },
             "subscription_id": {
                 "signature": "subscription_id,  # type: str",
-                "description": "The ID of the target subscription.",
+                "description": "The Microsoft Azure subscription ID.",
                 "docstring_type": "str",
                 "required": true
             }
@@ -37,7 +37,7 @@
             },
             "subscription_id": {
                 "signature": "subscription_id: str,",
-                "description": "The ID of the target subscription.",
+                "description": "The Microsoft Azure subscription ID.",
                 "docstring_type": "str",
                 "required": true
             }

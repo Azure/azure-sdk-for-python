@@ -1,7 +1,33 @@
 # Release History
 
-## 1.15.1 (Unreleased)
+## 1.17.0 (2021-08-05)
 
+### Features Added
+
+- Cut hard dependency on requests library
+- Added a `from_json` method which now accepts storage QueueMessage, eventhub's EventData or ServiceBusMessage or simply json bytes to return a `CloudEvent`
+
+### Fixed
+
+- Not override "x-ms-client-request-id" if it already exists in the header.    #17757
+
+### Breaking Changes in the Provisional `azure.core.rest` package
+
+- `azure.core.rest` will not try to guess the `charset` anymore if it was impossible to extract it from `HttpResponse` analysis. This removes our dependency on `charset`.
+
+## 1.16.0 (2021-07-01)
+
+### Features Added
+
+- Add new ***provisional*** methods `send_request` onto the `azure.core.PipelineClient` and `azure.core.AsyncPipelineClient`. This method takes in
+requests and sends them through our pipelines.
+- Add new ***provisional*** module `azure.core.rest`. `azure.core.rest` is our new public simple HTTP library in `azure.core` that users will use to create requests, and consume responses.
+- Add new ***provisional*** errors `StreamConsumedError`, `StreamClosedError`, and `ResponseNotReadError` to `azure.core.exceptions`. These errors
+are thrown if you mishandle streamed responses from the provisional `azure.core.rest` module
+
+### Fixed
+
+- Improved error message in the `from_dict` method of `CloudEvent` when a wrong schema is sent.
 
 ## 1.15.0 (2021-06-04)
 
@@ -13,7 +39,6 @@
 
 - Retry policies don't sleep after operations time out
 - The `from_dict` methhod in the `CloudEvent` can now convert a datetime string to datetime object when microsecond exceeds the python limitation
-
 
 ## 1.14.0 (2021-05-13)
 

@@ -17,12 +17,18 @@ parameters:
   - name: TestMarkArgument
     type: string
     default: ''
+  - name: BeforeTestSteps
+    type: object
+    default: []
+  - name: AfterTestSteps
+    type: object
+    default: []
   - name: BuildTargetingString
     type: string
     default: 'azure-*'
   - name: TestTimeoutInMinutes
     type: number
-    default: 0
+    default: 60
   - name: ToxEnvParallel
     type: string
     default: '--tenvparallel'
@@ -46,6 +52,12 @@ parameters:
   - name: VerifyAutorest
     type: boolean
     default: false
+  - name: ValidateFormatting
+    type: boolean
+    default: false
+  - name: UnsupportedToxEnvironments
+    type: string
+    default: ''
 
 jobs:
   - job: 'Build'
@@ -54,8 +66,8 @@ jobs:
     - template: ../variables/globals.yml
 
     pool:
-      name: azsdk-pool-mms-ubuntu-1804-general
-      vmImage: MMSUbuntu18.04
+      name: azsdk-pool-mms-ubuntu-2004-general
+      vmImage: MMSUbuntu20.04
 
     steps:
     - template: ../steps/build-artifacts.yml
@@ -82,8 +94,8 @@ jobs:
       - 'Build'
 
     pool:
-      name: azsdk-pool-mms-ubuntu-1804-general
-      vmImage: MMSUbuntu18.04
+      name: azsdk-pool-mms-ubuntu-2004-general
+      vmImage: MMSUbuntu20.04
 
     steps:
     - template: /eng/common/pipelines/templates/steps/check-spelling.yml
@@ -106,6 +118,7 @@ jobs:
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
         VerifyAutorest: ${{ parameters.VerifyAutorest }}
+        ValidateFormatting: ${{ parameters.ValidateFormatting }}
 
   - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
     parameters:
@@ -121,10 +134,13 @@ jobs:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestPipeline: ${{ parameters.TestPipeline }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
+        BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
+        AfterTestSteps: ${{ parameters.AfterTestSteps }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: ${{ parameters.InjectedPackages }}
+        UnsupportedToxEnvironments: ${{ parameters.UnsupportedToxEnvironments }}
 
   - ${{ if gt(length(parameters.CondaArtifacts), 0) }}:
     - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
@@ -152,7 +168,7 @@ jobs:
   - job: 'RunRegression'
     condition: and(succeededOrFailed(), or(eq(variables['Run.Regression'], 'true'), and(eq(variables['Build.Reason'], 'Schedule'), eq(variables['System.TeamProject'],'internal'))))
     displayName: 'Run Regression'
-    timeoutInMinutes: 120
+    timeoutInMinutes: 180
     variables:
     - template: ../variables/globals.yml
 
@@ -160,8 +176,8 @@ jobs:
       - 'Build'
 
     pool:
-      name: azsdk-pool-mms-ubuntu-1804-general
-      vmImage: MMSUbuntu18.04
+      name: azsdk-pool-mms-ubuntu-2004-general
+      vmImage: MMSUbuntu20.04
 
     steps:
     - template: ../steps/test_regression.yml

@@ -14,14 +14,15 @@ from .._generated.aio import (
 )
 from .._user_agent import USER_AGENT
 from .._models import (
-    TranslationStatusResult,
+    TranslationStatus,
     DocumentTranslationInput,
     FileFormat,
-    DocumentStatusResult,
+    DocumentStatus,
 )
 from .._helpers import (
     get_http_logging_policy,
     convert_datetime,
+    convert_order_by,
     get_authentication_policy,
     get_translation_input,
     POLLING_INTERVAL,
@@ -107,13 +108,13 @@ class DocumentTranslationClient(object):
     @overload
     async def begin_translation(
         self, source_url: str, target_url: str, target_language_code: str, **kwargs: Any
-    ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatusResult]]:
+    ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]:
         ...
 
     @overload
     async def begin_translation(
         self, inputs: List[DocumentTranslationInput], **kwargs: Any
-    ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatusResult]]:
+    ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]:
         ...
 
     @distributed_trace_async
@@ -122,17 +123,19 @@ class DocumentTranslationClient(object):
     ):  # pylint: disable=client-method-missing-type-annotations
         """Begin translating the document(s) in your source container to your target container
         in the given language. To perform a single translation from source to target, pass the `source_url`,
-        `target_url`, and `target_language_code` parameters. To pass multiple inputs for translation, including
-        other translation options, pass the `inputs` parameter as a list of
+        `target_url`, and `target_language_code` parameters including any optional keyword arguments.
+        To pass multiple inputs for translation, pass the `inputs` parameter as a list of
         :class:`~azure.ai.translation.document.DocumentTranslationInput`.
 
         For supported languages and document formats, see the service documentation:
         https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
 
         :param str source_url: The source SAS URL to the Azure Blob container containing the documents
-            to be translated. Requires read and list permissions at the minimum.
+            to be translated. See the service documentation for the supported SAS permissions for accessing
+            source storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions
         :param str target_url: The target SAS URL to the Azure Blob container where the translated documents
-            should be written. Requires write and list permissions at the minimum.
+            should be written. See the service documentation for the supported SAS permissions for accessing
+            target storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions
         :param str target_language_code: This is the language you want your documents to be translated to.
             See supported language codes here:
             https://docs.microsoft.com/azure/cognitive-services/translator/language-support#translate
@@ -140,10 +143,23 @@ class DocumentTranslationClient(object):
             source URL to documents and can contain multiple TranslationTargets (one for each language)
             for the destination to write translated documents.
         :type inputs: List[~azure.ai.translation.document.DocumentTranslationInput]
+        :keyword str source_language_code: Language code for the source documents.
+            If none is specified, the source language will be auto-detected for each document.
+        :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for
+            translation. For example, when using a Azure storage blob Uri, use the prefix to restrict
+            sub folders for translation.
+        :keyword str suffix: A case-sensitive suffix string to filter documents in the source path for
+            translation. This is most often use for file extensions.
+        :keyword storage_type: Storage type of the input documents source string. Possible values
+            include: "Folder", "File".
+        :paramtype storage_type: str or ~azure.ai.translation.document.StorageInputType
+        :keyword str category_id: Category / custom model ID for using custom translation.
+        :keyword glossaries: Glossaries to apply to translation.
+        :paramtype glossaries: list[~azure.ai.translation.document.TranslationGlossary]
         :return: An instance of an AsyncDocumentTranslationLROPoller. Call `result()` on the poller
-            object to return a pageable of DocumentStatusResult. A DocumentStatusResult will be
+            object to return a pageable of DocumentStatus. A DocumentStatus will be
             returned for each translation on a document.
-        :rtype: AsyncDocumentTranslationLROPoller[AsyncItemPaged[~azure.ai.translation.document.DocumentStatusResult]]
+        :rtype: AsyncDocumentTranslationLROPoller[AsyncItemPaged[~azure.ai.translation.document.DocumentStatus]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -194,15 +210,15 @@ class DocumentTranslationClient(object):
 
     @distributed_trace_async
     async def get_translation_status(self, translation_id, **kwargs):
-        # type: (str, **Any) -> TranslationStatusResult
+        # type: (str, **Any) -> TranslationStatus
         """Gets the status of the translation operation.
 
         Includes the overall status, as well as a summary of
         the documents that are being translated as part of that translation operation.
 
         :param str translation_id: The translation operation ID.
-        :return: A TranslationStatusResult with information on the status of the translation operation.
-        :rtype: ~azure.ai.translation.document.TranslationStatusResult
+        :return: A TranslationStatus with information on the status of the translation operation.
+        :rtype: ~azure.ai.translation.document.TranslationStatus
         :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
         """
 
@@ -212,7 +228,7 @@ class DocumentTranslationClient(object):
             )
         )
         # pylint: disable=protected-access
-        return TranslationStatusResult._from_generated(translation_status)
+        return TranslationStatus._from_generated(translation_status)
 
     @distributed_trace_async
     async def cancel_translation(self, translation_id, **kwargs):
@@ -235,7 +251,7 @@ class DocumentTranslationClient(object):
 
     @distributed_trace
     def list_all_translation_statuses(self, **kwargs):
-        # type: (**Any) -> AsyncItemPaged[TranslationStatusResult]
+        # type: (**Any) -> AsyncItemPaged[TranslationStatus]
         """List all the submitted translation operations under the Document Translation resource.
 
         :keyword int top: the total number of operations to return (across all pages) from all submitted translations.
@@ -243,16 +259,19 @@ class DocumentTranslationClient(object):
             By default, we sort by all submitted operations descendingly by start time.
         :keyword int results_per_page: is the number of operations returned per page.
         :keyword list[str] translation_ids: translation operations ids to filter by.
-        :keyword list[str] statuses: translation operation statuses to filter by.
+        :keyword list[str] statuses: translation operation statuses to filter by. Options include
+            'NotStarted', 'Running', 'Succeeded', 'Failed', 'Cancelled', 'Cancelling',
+            and 'ValidationFailed'.
         :keyword created_after: get operations created after certain datetime.
         :paramtype created_after: Union[str, datetime.datetime]
         :keyword created_before: get operations created before certain datetime.
         :paramtype created_before: Union[str, datetime.datetime]
-        :keyword list[str] order_by: the sorting query for the operations returned.
-            format: ["parm1 asc/desc", "parm2 asc/desc", ...]
-            (ex: 'createdDateTimeUtc asc', 'createdDateTimeUtc desc').
-        :return: A pageable of TranslationStatusResult.
-        :rtype: ~azure.core.paging.ItemPaged[TranslationStatusResult]
+        :keyword list[str] order_by: the sorting query for the operations returned. Currently only
+            'created_on' supported.
+            format: ["param1 asc/desc", "param2 asc/desc", ...]
+            (ex: 'created_on asc', 'created_on desc').
+        :return: A pageable of TranslationStatus.
+        :rtype: ~azure.core.paging.ItemPaged[TranslationStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -265,6 +284,7 @@ class DocumentTranslationClient(object):
                 :caption: List all submitted translations under the resource.
         """
 
+        order_by = convert_order_by(kwargs.pop("order_by", None))
         created_after = kwargs.pop("created_after", None)
         created_before = kwargs.pop("created_before", None)
         created_after = convert_datetime(created_after) if created_after else None
@@ -274,7 +294,7 @@ class DocumentTranslationClient(object):
 
         def _convert_from_generated_model(generated_model):
             # pylint: disable=protected-access
-            return TranslationStatusResult._from_generated(generated_model)
+            return TranslationStatus._from_generated(generated_model)
 
         model_conversion_function = kwargs.pop(
             "cls",
@@ -289,12 +309,13 @@ class DocumentTranslationClient(object):
             created_date_time_utc_start=created_after,
             created_date_time_utc_end=created_before,
             ids=translation_ids,
+            order_by=order_by,
             **kwargs
         )
 
     @distributed_trace
     def list_all_document_statuses(self, translation_id, **kwargs):
-        # type: (str, **Any) -> AsyncItemPaged[DocumentStatusResult]
+        # type: (str, **Any) -> AsyncItemPaged[DocumentStatus]
         """List all the document statuses for a given translation operation.
 
         :param str translation_id: ID of translation operation to list documents for.
@@ -303,16 +324,19 @@ class DocumentTranslationClient(object):
             By default, we sort by all documents descendingly by start time.
         :keyword int results_per_page: is the number of documents returned per page.
         :keyword list[str] document_ids: document IDs to filter by.
-        :keyword list[str] statuses: document statuses to filter by.
-        :keyword translated_after: get document translated after certain datetime.
-        :paramtype translated_after: Union[str, datetime.datetime]
-        :keyword translated_before: get document translated before certain datetime.
-        :paramtype translated_before: Union[str, datetime.datetime]
-        :keyword list[str] order_by: the sorting query for the documents.
-            format: ["parm1 asc/desc", "parm2 asc/desc", ...]
-            (ex: 'createdDateTimeUtc asc', 'createdDateTimeUtc desc').
-        :return: A pageable of DocumentStatusResult.
-        :rtype: ~azure.core.paging.ItemPaged[DocumentStatusResult]
+        :keyword list[str] statuses: document statuses to filter by. Options include
+            'NotStarted', 'Running', 'Succeeded', 'Failed', 'Cancelled', 'Cancelling',
+            and 'ValidationFailed'.
+        :keyword created_after: get document created after certain datetime.
+        :paramtype created_after: Union[str, datetime.datetime]
+        :keyword created_before: get document created before certain datetime.
+        :paramtype created_before: Union[str, datetime.datetime]
+        :keyword list[str] order_by: the sorting query for the documents. Currently only
+            'created_on' is supported.
+            format: ["param1 asc/desc", "param2 asc/desc", ...]
+            (ex: 'created_on asc', 'created_on desc').
+        :return: A pageable of DocumentStatus.
+        :rtype: ~azure.core.paging.ItemPaged[DocumentStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -324,20 +348,22 @@ class DocumentTranslationClient(object):
                 :dedent: 4
                 :caption: List all the document statuses as they are being translated.
         """
-        translated_after = kwargs.pop("translated_after", None)
-        translated_before = kwargs.pop("translated_before", None)
-        translated_after = (
-            convert_datetime(translated_after) if translated_after else None
+
+        order_by = convert_order_by(kwargs.pop("order_by", None))
+        created_after = kwargs.pop("created_after", None)
+        created_before = kwargs.pop("created_before", None)
+        created_after = (
+            convert_datetime(created_after) if created_after else None
         )
-        translated_before = (
-            convert_datetime(translated_before) if translated_before else None
+        created_before = (
+            convert_datetime(created_before) if created_before else None
         )
         results_per_page = kwargs.pop("results_per_page", None)
         document_ids = kwargs.pop("document_ids", None)
 
         def _convert_from_generated_model(generated_model):
             # pylint: disable=protected-access
-            return DocumentStatusResult._from_generated(generated_model)
+            return DocumentStatus._from_generated(generated_model)
 
         model_conversion_function = kwargs.pop(
             "cls",
@@ -350,31 +376,32 @@ class DocumentTranslationClient(object):
             id=translation_id,
             cls=model_conversion_function,
             maxpagesize=results_per_page,
-            created_date_time_utc_start=translated_after,
-            created_date_time_utc_end=translated_before,
+            created_date_time_utc_start=created_after,
+            created_date_time_utc_end=created_before,
             ids=document_ids,
+            order_by=order_by,
             **kwargs
         )
 
     @distributed_trace_async
     async def get_document_status(self, translation_id, document_id, **kwargs):
-        # type: (str, str, **Any) -> DocumentStatusResult
+        # type: (str, str, **Any) -> DocumentStatus
         """Get the status of an individual document within a translation operation.
 
         :param str translation_id: The translation operation ID.
         :param str document_id: The ID for the document.
-        :return: A DocumentStatusResult with information on the status of the document.
-        :rtype: ~azure.ai.translation.document.DocumentStatusResult
+        :return: A DocumentStatus with information on the status of the document.
+        :rtype: ~azure.ai.translation.document.DocumentStatus
         :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
         """
         document_status = await self._client.document_translation.get_document_status(
             translation_id, document_id, **kwargs
         )
         # pylint: disable=protected-access
-        return DocumentStatusResult._from_generated(document_status)
+        return DocumentStatus._from_generated(document_status)
 
     @distributed_trace_async
-    async def get_glossary_formats(self, **kwargs):
+    async def get_supported_glossary_formats(self, **kwargs):
         # type: (**Any) -> List[FileFormat]
         """Get the list of the glossary formats supported by the Document Translation service.
 
@@ -391,7 +418,7 @@ class DocumentTranslationClient(object):
         return FileFormat._from_generated_list(glossary_formats.value)
 
     @distributed_trace_async
-    async def get_document_formats(self, **kwargs):
+    async def get_supported_document_formats(self, **kwargs):
         # type: (**Any) -> List[FileFormat]
         """Get the list of the document formats supported by the Document Translation service.
 

@@ -250,3 +250,16 @@ class TestExceptions(object):
         }
         exp = HttpResponseError(response=_build_response(json.dumps(message).encode("utf-8")))
         assert exp.error.code == "Conflict"
+
+    def test_null_odata_details(self):
+        message = {
+            "error": {
+                "code": "501",
+                "message": "message",
+                "target": None,
+                "details": None,
+                "innererror": None,
+            }
+        }
+        exp = HttpResponseError(response=_build_response(json.dumps(message).encode("utf-8")))
+        assert exp.error.code == "501"

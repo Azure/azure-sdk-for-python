@@ -1,7 +1,8 @@
 import pytest
 import os
+from datetime import datetime, timedelta
 from azure.identity import ClientSecretCredential
-from azure.monitor.query import MetricsQueryClient
+from azure.monitor.query import MetricsQueryClient, AggregationType
 
 def _credential():
     credential  = ClientSecretCredential(
@@ -15,11 +16,15 @@ def _credential():
 def test_metrics_auth():
     credential = _credential()
     client = MetricsQueryClient(credential)
-    # returns LogsQueryResults 
-    response = client.query(os.environ['METRICS_RESOURCE_URI'], metric_names=["PublishSuccessCount"], timespan='P2D')
-
-    assert response is not None
-    assert response.metrics is not None
+    response = client.query(
+        os.environ['METRICS_RESOURCE_URI'],
+        metric_names=["MatchedEventCount"],
+        start_time=datetime(2021, 6, 21),
+        duration=timedelta(days=1),
+        aggregations=[AggregationType.COUNT]
+        )
+    assert response
+    assert response.metrics
 
 @pytest.mark.live_test_only
 def test_metrics_namespaces():

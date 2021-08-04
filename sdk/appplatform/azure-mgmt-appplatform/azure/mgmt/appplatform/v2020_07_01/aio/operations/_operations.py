@@ -43,7 +43,7 @@ class Operations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AvailableOperations"]:
         """Lists all of the available REST API operations of the Microsoft.AppPlatform provider.
 

@@ -58,7 +58,7 @@ setup(
     license='MIT License',
     author='Microsoft Corporation',
     author_email='ascl@microsoft.com',
-    url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/table/azure-table',
+    url='https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/table/azure-table',
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         'Programming Language :: Python',
@@ -80,7 +80,7 @@ setup(
     ]),
     install_requires=[
         "azure-core<2.0.0,>=1.14.0",
-        "msrest>=0.6.19"
+        "msrest>=0.6.21"
     ],
     extras_require={
         ":python_version<'3.0'": ['futures', 'azure-data-nspkg<2.0.0,>=1.0.0'],

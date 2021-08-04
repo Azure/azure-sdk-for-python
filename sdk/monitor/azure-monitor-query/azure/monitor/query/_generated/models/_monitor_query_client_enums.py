@@ -37,6 +37,21 @@ class AggregationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MAXIMUM = "Maximum"
     TOTAL = "Total"
 
+class LogsColumnType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The data type of this column.
+    """
+
+    BOOL = "bool"
+    DATETIME = "datetime"
+    DYNAMIC = "dynamic"
+    INT = "int"
+    LONG = "long"
+    REAL = "real"
+    STRING = "string"
+    GUID = "guid"
+    DECIMAL = "decimal"
+    TIMESPAN = "timespan"
+
 class MetadataColumnDataType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The data type of the column
     """
@@ -48,14 +63,22 @@ class MetadataColumnDataType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     LONG = "long"
     REAL = "real"
     STRING = "string"
+    GUID = "guid"
+    DECIMAL = "decimal"
+    TIMESPAN = "timespan"
 
-class ResultType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MetricClass(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The class of the metric.
+    """
 
-    DATA = "Data"
-    METADATA = "Metadata"
+    AVAILABILITY = "Availability"
+    TRANSACTIONS = "Transactions"
+    ERRORS = "Errors"
+    LATENCY = "Latency"
+    SATURATION = "Saturation"
 
-class Unit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """the unit of the metric.
+class MetricUnit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The unit of the metric.
     """
 
     COUNT = "Count"
@@ -71,3 +94,16 @@ class Unit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MILLI_CORES = "MilliCores"
     NANO_CORES = "NanoCores"
     BITS_PER_SECOND = "BitsPerSecond"
+
+class NamespaceClassification(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Kind of namespace
+    """
+
+    PLATFORM = "Platform"
+    CUSTOM = "Custom"
+    QOS = "Qos"
+
+class ResultType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    DATA = "Data"
+    METADATA = "Metadata"

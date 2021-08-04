@@ -61,6 +61,8 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         super(NetAppAccountTestCase, self).setUp()
         self.client = self.create_mgmt_client(azure.mgmt.netapp.NetAppManagementClient)
 
+    # Before tests are run live a resource group needs to be created along with vnet and subnet
+    # Note that when tests are run in live mode it is best to run one test at a time.
     def test_create_delete_pool(self):
         pool = create_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, LOCATION)
         self.assertEqual(pool.size, DEFAULT_SIZE)

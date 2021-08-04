@@ -121,4 +121,7 @@ FOLDER_LINK={
   'timeseriesinsights' : 'timeseriesinsights',
   'trafficmanager' : 'trafficmanager',
   'workloadmonitor' : 'workloadmonitor',
+  'guestconfig' : 'machinelearning',
+  'avs' : 'compute',
+  'recoveryservicessiterecovery' : 'recoveryservices',
 }

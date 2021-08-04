@@ -1,7 +1,21 @@
 # Release History
 
-## 3.1.1 (Unreleased)
+## 3.1.2 (Unreleased)
 
+### Features Added
+
+### Breaking Changes
+
+### Key Bugs Fixed
+
+### Fixed
+
+
+## 3.1.1 (2021-06-08)
+
+**Bug Fixes**
+
+- Handles invoices that do not have sub-line item fields detected.
 
 ## 3.1.0 (2021-05-26)
 
@@ -30,7 +44,7 @@ Note: this version will be the last to officially support Python 3.5, future ver
 - New methods `begin_recognize_id_documents` and `begin_recognize_id_documents_from_url` introduced to the SDK. Use these methods to recognize data from identity documents.
 - New field value types "gender" and "country" described in the `FieldValueType` enum.
 - Content-type `image/bmp` now supported by custom forms and training methods.
-- Added keyword argument `pages` for business cards, receipts, custom forms, and invoices 
+- Added keyword argument `pages` for business cards, receipts, custom forms, and invoices
 to specify which page to process of the document.
 - Added keyword argument `reading_order` to `begin_recognize_content` and `begin_recognize_content_from_url`.
 
@@ -175,15 +189,15 @@ CustomFormModel` and `CustomFormModelInfo`
 - `models` property of `CustomFormModel` is renamed to `submodels`
 - `CustomFormSubModel` is renamed to `CustomFormSubmodel`
 - `begin_recognize_receipts` APIs now return a list of `RecognizedReceipt` instead of `USReceipt`
-- Removed `USReceipt`. To see how to deal with the return value of `begin_recognize_receipts`, see the recognize receipt samples in the [samples directory](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/samples) for details.
-- Removed `USReceiptItem`. To see how to access the individual items on a receipt, see the recognize receipt samples in the [samples directory](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/samples) for details.
-- Removed `USReceiptType` and the `receipt_type` property from `RecognizedReceipt`. See the recognize receipt samples in the [samples directory](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/samples) for details.
+- Removed `USReceipt`. To see how to deal with the return value of `begin_recognize_receipts`, see the recognize receipt samples in the [samples directory](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples) for details.
+- Removed `USReceiptItem`. To see how to access the individual items on a receipt, see the recognize receipt samples in the [samples directory](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples) for details.
+- Removed `USReceiptType` and the `receipt_type` property from `RecognizedReceipt`. See the recognize receipt samples in the [samples directory](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples) for details.
 
 **New features**
 
 - Support to copy a custom model from one Form Recognizer resource to another
 - Authentication using `azure-identity` credentials now supported
-  - see the [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md) for more information
+  - see the [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md) for more information
 - `page_number` attribute has been added to `FormTable`
 - All long running operation methods now accept the keyword argument `continuation_token` to restart the poller from a saved state
 

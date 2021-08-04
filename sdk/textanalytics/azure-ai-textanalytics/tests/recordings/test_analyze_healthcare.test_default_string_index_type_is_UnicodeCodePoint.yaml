@@ -13,19 +13,19 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs?stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/entities/health/jobs?stringIndexType=UnicodeCodePoint
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - becdfa13-d1b2-44dc-a5af-4977be04fabe
+      - 637374fb-852d-4bfe-959f-0f1f1132ddd5
       date:
-      - Tue, 18 May 2021 17:47:09 GMT
+      - Tue, 03 Aug 2021 17:30:10 GMT
       operation-location:
-      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs/f58ff9f6-2bf9-4082-8c5c-5f1ef58d1a82
+      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/entities/health/jobs/e5d8c146-cc54-42c1-8e52-310a1c04d150
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -33,7 +33,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '104'
+      - '164'
     status:
       code: 202
       message: Accepted
@@ -47,19 +47,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs/f58ff9f6-2bf9-4082-8c5c-5f1ef58d1a82
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/entities/health/jobs/e5d8c146-cc54-42c1-8e52-310a1c04d150
   response:
     body:
-      string: '{"jobId":"f58ff9f6-2bf9-4082-8c5c-5f1ef58d1a82","lastUpdateDateTime":"2021-05-18T17:47:10Z","createdDateTime":"2021-05-18T17:47:10Z","expirationDateTime":"2021-05-19T17:47:10Z","status":"notStarted","errors":[]}'
+      string: '{"jobId":"e5d8c146-cc54-42c1-8e52-310a1c04d150","lastUpdateDateTime":"2021-08-03T17:30:12Z","createdDateTime":"2021-08-03T17:30:10Z","expirationDateTime":"2021-08-04T17:30:10Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"0","entities":[],"relations":[],"warnings":[]}],"errors":[],"modelVersion":"2021-05-15"}}'
     headers:
       apim-request-id:
-      - a0cb9c91-95f4-4a79-8e6b-8f8ed1c41cc7
+      - 91bb8d59-a42d-4709-ab46-a454726afb21
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 May 2021 17:47:15 GMT
+      - Tue, 03 Aug 2021 17:30:15 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -67,41 +67,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '7'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs/f58ff9f6-2bf9-4082-8c5c-5f1ef58d1a82
-  response:
-    body:
-      string: '{"jobId":"f58ff9f6-2bf9-4082-8c5c-5f1ef58d1a82","lastUpdateDateTime":"2021-05-18T17:47:17Z","createdDateTime":"2021-05-18T17:47:10Z","expirationDateTime":"2021-05-19T17:47:10Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"0","entities":[],"relations":[],"warnings":[]}],"errors":[],"modelVersion":"2021-03-01"}}'
-    headers:
-      apim-request-id:
-      - d69a4c6a-6d6b-420b-86d4-1fb416a387eb
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 18 May 2021 17:47:20 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '30'
+      - '51'
     status:
       code: 200
       message: OK
