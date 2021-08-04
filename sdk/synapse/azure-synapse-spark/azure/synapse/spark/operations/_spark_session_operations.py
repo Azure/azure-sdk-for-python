@@ -109,7 +109,7 @@ class SparkSessionOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_spark_sessions.metadata = {'url': '/sessions'}  # type: ignore
+    get_spark_sessions.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions'}  # type: ignore
 
     def create_spark_session(
         self,
@@ -174,7 +174,7 @@ class SparkSessionOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_spark_session.metadata = {'url': '/sessions'}  # type: ignore
+    create_spark_session.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions'}  # type: ignore
 
     def get_spark_session(
         self,
@@ -235,7 +235,7 @@ class SparkSessionOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_spark_session.metadata = {'url': '/sessions/{sessionId}'}  # type: ignore
+    get_spark_session.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}'}  # type: ignore
 
     def cancel_spark_session(
         self,
@@ -285,7 +285,7 @@ class SparkSessionOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    cancel_spark_session.metadata = {'url': '/sessions/{sessionId}'}  # type: ignore
+    cancel_spark_session.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}'}  # type: ignore
 
     def reset_spark_session_timeout(
         self,
@@ -335,7 +335,7 @@ class SparkSessionOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    reset_spark_session_timeout.metadata = {'url': '/sessions/{sessionId}/reset-timeout'}  # type: ignore
+    reset_spark_session_timeout.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}/reset-timeout'}  # type: ignore
 
     def get_spark_statements(
         self,
@@ -390,7 +390,7 @@ class SparkSessionOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_spark_statements.metadata = {'url': '/sessions/{sessionId}/statements'}  # type: ignore
+    get_spark_statements.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}/statements'}  # type: ignore
 
     def create_spark_statement(
         self,
@@ -453,7 +453,7 @@ class SparkSessionOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_spark_statement.metadata = {'url': '/sessions/{sessionId}/statements'}  # type: ignore
+    create_spark_statement.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}/statements'}  # type: ignore
 
     def get_spark_statement(
         self,
@@ -512,7 +512,7 @@ class SparkSessionOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_spark_statement.metadata = {'url': '/sessions/{sessionId}/statements/{statementId}'}  # type: ignore
+    get_spark_statement.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}/statements/{statementId}'}  # type: ignore
 
     def cancel_spark_statement(
         self,
@@ -571,4 +571,4 @@ class SparkSessionOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    cancel_spark_statement.metadata = {'url': '/sessions/{sessionId}/statements/{statementId}/cancel'}  # type: ignore
+    cancel_spark_statement.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}/statements/{statementId}/cancel'}  # type: ignore

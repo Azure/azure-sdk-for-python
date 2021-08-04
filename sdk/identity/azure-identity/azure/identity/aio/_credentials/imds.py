@@ -24,7 +24,7 @@ class ImdsCredential(AsyncContextManager, GetTokenMixin):
         super().__init__()
 
         self._client = AsyncManagedIdentityClient(get_request, **PIPELINE_SETTINGS, **kwargs)
-        if EnvironmentVariables.AZURE_POD_IDENTITY_TOKEN_URL in os.environ:
+        if EnvironmentVariables.AZURE_POD_IDENTITY_AUTHORITY_HOST in os.environ:
             self._endpoint_available = True  # type: Optional[bool]
         else:
             self._endpoint_available = None

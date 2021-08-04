@@ -4,7 +4,7 @@
 from datetime import datetime, timedelta
 import os
 import pandas as pd
-from azure.monitor.query import LogsQueryClient, LogsQueryRequest
+from azure.monitor.query import LogsQueryClient, LogsBatchQueryRequest
 from azure.identity import DefaultAzureCredential
 
 
@@ -14,20 +14,20 @@ client = LogsQueryClient(credential)
 
 # [START send_batch_query]
 requests = [
-    LogsQueryRequest(
+    LogsBatchQueryRequest(
         query="AzureActivity | summarize count()",
         duration=timedelta(hours=1),
         workspace_id= os.environ['LOG_WORKSPACE_ID']
     ),
-    LogsQueryRequest(
+    LogsBatchQueryRequest(
         query= """AppRequests | take 10  |
             summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId""",
         duration=timedelta(hours=1),
         start_time=datetime(2021, 6, 2),
         workspace_id= os.environ['LOG_WORKSPACE_ID']
     ),
-    LogsQueryRequest(
-        query= "AppRequests | take 5",
+    LogsBatchQueryRequest(
+        query= "AppRequestss | take 5",
         workspace_id= os.environ['LOG_WORKSPACE_ID'],
         include_statistics=True
     ),
@@ -35,13 +35,11 @@ requests = [
 responses = client.batch_query(requests)
 
 for response in responses:
-    body = response.body
-    print(response.id)
-    if not body.tables:
-        print("Something is wrong")
-    else:
-        for table in body.tables:
-            df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
-            print(df)
+    try:
+        table = response.tables[0]
+        df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
+        print(df)
+    except TypeError:
+        print(response.error)
 
 # [END send_batch_query]

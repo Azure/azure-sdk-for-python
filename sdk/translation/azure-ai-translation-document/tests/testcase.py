@@ -127,7 +127,7 @@ class DocumentTranslationTest(AzureTestCase):
         if data:
             self.upload_documents(data, container_client)
 
-        return self.generate_sas_url(self.target_container_name, "rw")
+        return self.generate_sas_url(self.target_container_name, "wl")
 
     def generate_sas_url(self, container_name, permission):
 

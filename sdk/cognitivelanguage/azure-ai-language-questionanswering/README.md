@@ -26,7 +26,7 @@ pip install azure-ai-language-questionanswering
 
 ### Authenticate the client
 
-In order to interact with the Question Answering service, you'll need to create an instance of the [`QuestionAnsweringClient`][questionanswering_client_class] class. You will need an **endpoint**, and an **API key** instantiate a client object. For more information regarding authenticating with Cognitive Services, see [Authenticate requests to Azure Cognitive Services][cognitive_auth].
+In order to interact with the Question Answering service, you'll need to create an instance of the [QuestionAnsweringClient][questionanswering_client_class] class. You will need an **endpoint**, and an **API key** to instantiate a client object. For more information regarding authenticating with Cognitive Services, see [Authenticate requests to Azure Cognitive Services][cognitive_auth].
 
 #### Get an API key
 
@@ -56,7 +56,7 @@ client = QuestionAnsweringClient(endpoint, credential)
 
 ### QuestionAnsweringClient
 
-The [`QuestionAnsweringClient`][questionanswering_client_class] is the primary interface for asking questions using a knowledge base with your own information, or text input using pre-trained models. 
+The [QuestionAnsweringClient][questionanswering_client_class] is the primary interface for asking questions using a knowledge base with your own information, or text input using pre-trained models. 
 For asynchronous operations, an async `QuestionAnsweringClient` is in the `azure.ai.language.questionanswering.aio` namespace.
 
 ## Examples
@@ -140,7 +140,7 @@ Optional keyword arguments can be passed in at the client and per-operation leve
 
 ### General
 Azure QuestionAnswering clients raise exceptions defined in [Azure Core][azure_core_readme].
-When you interact with the Cognitive Language Services Question Answering client library using the .Python SDK, errors returned by the service correspond to the same HTTP status codes returned for [REST API][questionanswering_rest_docs] requests.
+When you interact with the Cognitive Language Services Question Answering client library using the Python SDK, errors returned by the service correspond to the same HTTP status codes returned for [REST API][questionanswering_rest_docs] requests.
 
 For example, if you submit a question to a non-existant knowledge base, a `400` error is returned indicating "Bad Request".
 
