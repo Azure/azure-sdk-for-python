@@ -6,10 +6,9 @@ import os
 import sys
 from typing import TYPE_CHECKING
 
-import msal_extensions
-
 if TYPE_CHECKING:
     from typing import Any
+    import msal_extensions
 
 
 class TokenCachePersistenceOptions(object):
@@ -49,8 +48,10 @@ class TokenCachePersistenceOptions(object):
 
 def _load_persistent_cache(options):
     # type: (TokenCachePersistenceOptions) -> msal_extensions.PersistedTokenCache
+    import msal_extensions
+
     persistence = _get_persistence(
-        allow_unencrypted=options.allow_unencrypted_storage, account_name="MSALCache", cache_name=options.name,
+        allow_unencrypted=options.allow_unencrypted_storage, account_name="MSALCache", cache_name=options.name
     )
     return msal_extensions.PersistedTokenCache(persistence)
 
@@ -66,6 +67,7 @@ def _get_persistence(allow_unencrypted, account_name, cache_name):
     :param bool allow_unencrypted: when True, the cache will be kept in plaintext should encryption be impossible in the
         current environment
     """
+    import msal_extensions
 
     if sys.platform.startswith("win") and "LOCALAPPDATA" in os.environ:
         cache_location = os.path.join(os.environ["LOCALAPPDATA"], ".IdentityService", cache_name)
