@@ -206,7 +206,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :paramtype tags: dict[str, str]
         :keyword ~datetime.datetime not_before: Not before date of the key in UTC
         :keyword ~datetime.datetime expires_on: Expiry date of the key in UTC
-        :keyword bool exportable: Whether the private key can be exported.
+        :keyword bool exportable: Whether the key can be exported.
         :keyword release_policy: The policy rules under which the key can be exported.
         :paramtype release_policy: ~azure.keyvault.keys.KeyReleasePolicy
 
