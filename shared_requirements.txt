@@ -302,3 +302,4 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-mgmt-storagepool msrest>=0.6.21
 #override azure-mgmt-storageimportexport msrest>=0.6.21
 #override azure-mgmt-batchai msrest>=0.6.21
+#override azure-mgmt-quantum msrest>=0.6.21
