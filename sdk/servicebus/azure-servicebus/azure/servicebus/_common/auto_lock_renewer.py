@@ -10,10 +10,6 @@ import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 from typing import TYPE_CHECKING
-try:
-    import queue
-except ImportError:
-    import Queue as queue
 
 from .._servicebus_receiver import ServiceBusReceiver
 from .._servicebus_session import ServiceBusSession
@@ -26,6 +22,11 @@ if TYPE_CHECKING:
 
     Renewable = Union[ServiceBusSession, ServiceBusReceivedMessage]
     LockRenewFailureCallback = Callable[[Renewable, Optional[Exception]], None]
+
+try:
+    import queue
+except ImportError:
+    import Queue as queue  # type: ignore
 
 _log = logging.getLogger(__name__)
 
@@ -100,7 +101,7 @@ class AutoLockRenewer(object):
         self._renew_period = 10
         self._max_lock_renewal_duration = max_lock_renewal_duration
         self._on_lock_renew_failure = on_lock_renew_failure
-        self._renew_tasks = queue.Queue()
+        self._renew_tasks = queue.Queue()  # type: ignore
         self._running = False
 
     def __enter__(self):
