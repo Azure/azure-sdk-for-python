@@ -74,18 +74,21 @@ jobs:
         # create PR
         new_branch=`sed -n '1p' $output_path/output.txt`
         target_branch=`sed -n '2p' $output_path/output.txt`
-        curl \
-          --user "anything:$(USR_TOKEN)" \
-          -d "{\
-                  \"title\":\"[AutoRelease] $new_branch(Do not merge)\",\
-                  \"body\":\"issue link  $(ISSUE_LINK) \",\
-                  \"head\":\"$(USR_NAME):$new_branch\",\
-                  \"base\":\"$target_branch\"\
-              }" \
-              https://api.github.com/repos/Azure/azure-sdk-for-python/pulls
+        # curl \
+        #   --user "anything:$(USR_TOKEN)" \
+        #   -d "{\
+        #           \"title\":\"[AutoRelease] $new_branch(Do not merge)\",\
+        #           \"body\":\"issue link  $(ISSUE_LINK) \",\
+        #           \"head\":\"$(USR_NAME):$new_branch\",\
+        #           \"base\":\"$target_branch\"\
+        #       }" \
+        #       https://api.github.com/repos/Azure/azure-sdk-for-python/pulls
+
+        python $script_path/create_auto_release_pr.py "$(new_branch)" "$(target_branch)" $(USER_NAME) $(ISSUE_LINK)
+
 
         echo "\'[AutoRelease] $new_branch \' has been created!!!"
-        
+
 
         # if test fail, still push and crete PR. But pipeline would fail to remind user
         if [ -f "$output_path/live_test_fail.txt" ]; then
