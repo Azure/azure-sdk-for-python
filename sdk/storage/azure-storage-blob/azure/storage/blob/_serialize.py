@@ -44,7 +44,7 @@ _SUPPORTED_API_VERSIONS = [
 
 
 def _get_match_headers(kwargs, match_param, etag_param):
-    # type: (str) -> Tuple(Dict[str, Any], Optional[str], Optional[str])
+    # type: (Dict[str, Any], str, str) -> Tuple(Dict[str, Any], Optional[str], Optional[str])
     if_match = None
     if_none_match = None
     match_condition = kwargs.pop(match_param, None)
