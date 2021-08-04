@@ -71,9 +71,6 @@ jobs:
           test_result="Live test fail, detailed info is in pipeline log(search keyword FAILED)!!!\n"
         fi
 
-        echo "--- $output_path/output.txt"
-        tail -n 300 $output_path/output.txt
-        echo "---"
         # create PR
         new_branch=`sed -n '1p' $output_path/output.txt`
         target_branch=`sed -n '2p' $output_path/output.txt`
@@ -82,7 +79,7 @@ jobs:
           -d "{\
                   \"title\":\"[AutoRelease] $new_branch(Do not merge)\",\
                   # \"body\":\"$test_result $(ISSUE_LINK) \",\
-                  \"body\":\"[$(ISSUE_LINK)](url)\",\
+                  \"body\":\"issue link \" [$(ISSUE_LINK)](url),\
                   \"head\":\"$(USR_NAME):$new_branch\",\
                   \"base\":\"$target_branch\"\
               }" \
