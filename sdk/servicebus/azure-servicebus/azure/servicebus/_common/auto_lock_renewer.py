@@ -99,10 +99,12 @@ class AutoLockRenewer(object):
         self._shutdown = threading.Event()
         self._sleep_time = 1
         self._renew_period = 10
+        self._running = threading.Event()  # indicate whether the main worker thread is running
+        self._last_activity_timestamp = None  # the last timestamp when the main worker is active dealing with tasks
+        self._idle_timeout = 10  # the idle time that main worker thead should exist if there's no activity
         self._max_lock_renewal_duration = max_lock_renewal_duration
         self._on_lock_renew_failure = on_lock_renew_failure
         self._renew_tasks = queue.Queue()  # type: ignore
-        self._running = False
 
     def __enter__(self):
         if self._shutdown.is_set():
@@ -111,9 +113,9 @@ class AutoLockRenewer(object):
                 " auto lock renewing."
             )
 
-        if not self._running:
+        if not self._running.is_set():
+            self._running.set()
             self._executor.submit(self._main_worker)
-            self._running = True
 
         return self
 
@@ -133,11 +135,20 @@ class AutoLockRenewer(object):
         return True
 
     def _main_worker(self):
-        while not self._shutdown.is_set():
+        self._last_activity_timestamp = time.time()
+        while not self._shutdown.is_set() and self._running.is_set():
             while not self._renew_tasks.empty():
                 renew_task = self._renew_tasks.get()
                 self._executor.submit(self._auto_lock_renew_task, *renew_task)
                 self._renew_tasks.task_done()
+                self._last_activity_timestamp = time.time()
+
+            # no renew tasks during the past _idle_timeout seconds
+            # let the main worker thread exit which could be started again if new tasks get registered
+            if time.time() - self._last_activity_timestamp >= self._idle_timeout:
+                self._running.clear()
+                self._last_activity_timestamp = None
+                return
 
     def _auto_lock_renew_task(
         self,
@@ -245,10 +256,6 @@ class AutoLockRenewer(object):
                 "not using RECEIVE_AND_DELETE receive mode, and not returned from Peek)"
             )
 
-        if not self._running:
-            self._executor.submit(self._main_worker)
-            self._running = True
-
         starttime = get_renewable_start_time(renewable)
 
         # This is a heuristic to compensate if it appears the user has a lock duration less than our base renew period
@@ -265,6 +272,10 @@ class AutoLockRenewer(object):
         _log.debug(
             "Running lock auto-renew for %r for %r seconds", renewable, max_lock_renewal_duration
         )
+
+        if not self._running.is_set():
+            self._running.set()
+            self._executor.submit(self._main_worker)
 
         self._renew_tasks.put(
             (
@@ -285,6 +296,6 @@ class AutoLockRenewer(object):
 
         :rtype: None
         """
-        self._running = False
+        self._running.clear()
         self._shutdown.set()
         self._executor.shutdown(wait=wait)
