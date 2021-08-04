@@ -4,6 +4,7 @@
 
 ### Features Added
 - Added support for secure key release from a Managed HSM
+  ([#19588](https://github.com/Azure/azure-sdk-for-python/issues/19588))
   - Added `release_key` method to `KeyClient` for releasing the private component of a key
   - Added `exportable` and `release_policy` keyword-only arguments to key creation and import
     methods
