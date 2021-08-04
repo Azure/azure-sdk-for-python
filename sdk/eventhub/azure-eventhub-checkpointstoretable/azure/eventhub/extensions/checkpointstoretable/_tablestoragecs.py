@@ -214,7 +214,7 @@ class TableCheckpointStore():
         try:
             if ownership['etag'] is None:
                 metadata = self.table_client.create_entity(entity=ownership_entity,
-                response_preference="return-content")
+                headers={'Prefer': 'return-content'})
                 ownership['etag'] = metadata['etag']
                 ownership['last_modified_time'] = _to_timestamp(dateutil.parser.isoparse
                 (metadata['content']['Timestamp']))
