@@ -90,7 +90,7 @@ steps:
 
   - task: PythonScript@0
     displayName: 'Test Samples'
-    condition: eq(variables['TestSamples'], 'true')
+    condition: and(succeeded(), eq(variables['TestSamples'], 'true'))
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: >-

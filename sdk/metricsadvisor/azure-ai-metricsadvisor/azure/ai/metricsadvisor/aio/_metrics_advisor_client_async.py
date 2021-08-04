@@ -26,8 +26,9 @@ from .._generated.models import (
     TimeMode as AlertQueryTimeMode,
     SeriesIdentity,
     FeedbackDimensionFilter,
+    DimensionGroupIdentity,
 )
-from .._generated.aio import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2 as _ClientAsync
+from .._generated.aio import MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2 as _ClientAsync
 from .._helpers import convert_to_sub_feedback, convert_datetime, get_authentication_policy
 from ..models._models import (
     AnomalyIncident,
@@ -44,14 +45,10 @@ if TYPE_CHECKING:
         EnrichmentStatus,
         MetricSeriesItem as MetricSeriesDefinition
     )
-    from ..models._models import (
-        AnomalyFeedback,
-        ChangePointFeedback,
-        CommentFeedback,
-        PeriodFeedback
-    )
+    from ..models._models import MetricFeedback
     from .._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
     from azure.core.credentials_async import AsyncTokenCredential
+    from .._metrics_advisor_client import FeedbackUnion
 
 class MetricsAdvisorClient(object):
     """Represents an client that calls restful API of Azure Metrics Advisor service.
@@ -62,9 +59,6 @@ class MetricsAdvisorClient(object):
         which requires both subscription key and API key. Or an object which can provide an access
         token for the vault, such as a credential from :mod:`azure.identity`
     :type credential: ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential or ~azure.core.credentials.TokenCredential
-    :keyword Pipeline pipeline: If omitted, the standard pipeline is used.
-    :keyword HttpTransport transport: If omitted, the standard pipeline is used.
-    :keyword list[HTTPPolicy] policies: If omitted, the standard pipeline is used.
 
     """
     def __init__(self, endpoint, credential, **kwargs):
@@ -107,7 +101,7 @@ class MetricsAdvisorClient(object):
 
     @distributed_trace_async
     async def add_feedback(self, feedback, **kwargs):
-        # type: (Union[AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback], Any) -> None
+        # type: (FeedbackUnion, Any) -> None
 
         """Create a new metric feedback.
 
@@ -134,13 +128,14 @@ class MetricsAdvisorClient(object):
 
     @distributed_trace_async
     async def get_feedback(self, feedback_id, **kwargs):
-        # type: (str, Any) -> Union[AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback]
+        # type: (str, Any) -> Union[MetricFeedback, FeedbackUnion]
 
         """Get a metric feedback by its id.
 
         :param str feedback_id: the id of the feedback.
         :return: The feedback object
-        :rtype: ~azure.ai.metricsadvisor.models.AnomalyFeedback or
+        :rtype: ~azure.ai.metricsadvisor.models.MetricFeedback or
+            ~azure.ai.metricsadvisor.models.AnomalyFeedback or
             ~azure.ai.metricsadvisor.models.ChangePointFeedback or
             ~azure.ai.metricsadvisor.models.CommentFeedback or
             ~azure.ai.metricsadvisor.models.PeriodFeedback
@@ -167,7 +162,7 @@ class MetricsAdvisorClient(object):
         self, metric_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> AsyncItemPaged[Union[AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback]]
+        # type: (...) -> AsyncItemPaged[Union[MetricFeedback, FeedbackUnion]]
 
         """List feedback on the given metric.
 
@@ -185,7 +180,7 @@ class MetricsAdvisorClient(object):
         :paramtype time_mode: str or ~azure.ai.metricsadvisor.models.FeedbackQueryTimeMode
         :return: Pageable list of MetricFeedback
         :rtype: ~azure.core.async_paging.AsyncItemPaged[
-            Union[AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback]]
+            Union[MetricFeedback, AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -381,7 +376,8 @@ class MetricsAdvisorClient(object):
         # type: (...) -> AsyncItemPaged[DataPointAnomaly]
 
         skip = kwargs.pop('skip', None)
-        filter_condition = kwargs.pop('filter', None)
+        condition = kwargs.pop('filter', None)
+        filter_condition = condition._to_generated() if condition else None
         converted_start_time = convert_datetime(start_time)
         converted_end_time = convert_datetime(end_time)
         detection_anomaly_result_query = DetectionAnomalyResultQuery(
@@ -497,7 +493,7 @@ class MetricsAdvisorClient(object):
         :param Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
         :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
         :keyword int skip:
-        :paramtype dimension_filter: ~azure.ai.metricsadvisor.models.DimensionGroupIdentity
+        :keyword Dict[str, str] dimension_filter: filter specfic dimension name and values.
         :return: Dimension values of anomalies.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -513,7 +509,8 @@ class MetricsAdvisorClient(object):
         """
 
         skip = kwargs.pop('skip', None)
-        dimension_filter = kwargs.pop('dimension_filter', None)
+        dimension = kwargs.pop('dimension_filter', None)
+        dimension_filter = DimensionGroupIdentity(dimension=dimension)
         converted_start_time = convert_datetime(start_time)
         converted_end_time = convert_datetime(end_time)
         anomaly_dimension_query = AnomalyDimensionQuery(
@@ -548,7 +545,8 @@ class MetricsAdvisorClient(object):
         **kwargs: Any
     ) -> AsyncItemPaged[AnomalyIncident]:
 
-        filter_condition = kwargs.pop('filter', None)
+        condition = kwargs.pop('filter', None)
+        filter_condition = condition._to_generated() if condition else None
         converted_start_time = convert_datetime(start_time)
         converted_end_time = convert_datetime(end_time)
 
@@ -699,11 +697,11 @@ class MetricsAdvisorClient(object):
             **kwargs)
 
     @distributed_trace
-    def list_metrics_series_data(
+    def list_metric_series_data(
         self, metric_id,  # type: str
+        series_keys,  # type: List[Dict[str, str]]
         start_time,  # type: Union[str, datetime.datetime]
         end_time,  # type: Union[str, datetime.datetime]
-        series_to_filter,  # type: List[Dict[str, str]]
         **kwargs  # type: Any
     ):
         # type: (...) -> AsyncItemPaged[MetricSeriesData]
@@ -712,10 +710,10 @@ class MetricsAdvisorClient(object):
 
         :param metric_id: metric unique id.
         :type metric_id: str
+        :param series_keys: query specific series.
+        :type series_keys: list[dict[str, str]]
         :param Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
         :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
-        :param series_to_filter: query specific series.
-        :type series_to_filter: list[dict[str, str]]
         :return: Time series data from metric.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.MetricSeriesData]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -723,8 +721,8 @@ class MetricsAdvisorClient(object):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_queries_async.py
-                :start-after: [START list_metrics_series_data_async]
-                :end-before: [END list_metrics_series_data_async]
+                :start-after: [START list_metric_series_data_async]
+                :end-before: [END list_metric_series_data_async]
                 :language: python
                 :dedent: 4
                 :caption: Query metrics series data.
@@ -736,7 +734,7 @@ class MetricsAdvisorClient(object):
         metric_data_query_options = MetricDataQueryOptions(
             start_time=converted_start_time,
             end_time=converted_end_time,
-            series=series_to_filter,
+            series=series_keys,
         )
 
         return self._client.get_metric_data(  # type: ignore

@@ -60,6 +60,7 @@ from .operations import BackupProtectableItemsOperations
 from .operations import BackupProtectionContainersOperations
 from .operations import SecurityPINsOperations
 from .operations import RecoveryPointsRecommendedForMoveOperations
+from .operations import BackupUsageSummariesCRROperations
 from .operations import AadPropertiesOperations
 from .operations import CrossRegionRestoreOperations
 from .operations import BackupCrrJobDetailsOperations
@@ -159,6 +160,8 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin):
     :vartype security_pins: azure.mgmt.recoveryservicesbackup.aio.operations.SecurityPINsOperations
     :ivar recovery_points_recommended_for_move: RecoveryPointsRecommendedForMoveOperations operations
     :vartype recovery_points_recommended_for_move: azure.mgmt.recoveryservicesbackup.aio.operations.RecoveryPointsRecommendedForMoveOperations
+    :ivar backup_usage_summaries_crr: BackupUsageSummariesCRROperations operations
+    :vartype backup_usage_summaries_crr: azure.mgmt.recoveryservicesbackup.aio.operations.BackupUsageSummariesCRROperations
     :ivar aad_properties: AadPropertiesOperations operations
     :vartype aad_properties: azure.mgmt.recoveryservicesbackup.aio.operations.AadPropertiesOperations
     :ivar cross_region_restore: CrossRegionRestoreOperations operations
@@ -285,6 +288,8 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin):
         self.security_pins = SecurityPINsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.recovery_points_recommended_for_move = RecoveryPointsRecommendedForMoveOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.backup_usage_summaries_crr = BackupUsageSummariesCRROperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.aad_properties = AadPropertiesOperations(
             self._client, self._config, self._serialize, self._deserialize)

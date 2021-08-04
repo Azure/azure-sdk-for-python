@@ -19,8 +19,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class BatchManagementConfiguration(Configuration):
-    """Configuration for BatchManagement.
+class BatchManagementClientConfiguration(Configuration):
+    """Configuration for BatchManagementClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -41,11 +41,11 @@ class BatchManagementConfiguration(Configuration):
             raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        super(BatchManagementConfiguration, self).__init__(**kwargs)
+        super(BatchManagementClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.api_version = "2021-01-01"
+        self.api_version = "2021-06-01"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-batch/{}'.format(VERSION))
         self._configure(**kwargs)

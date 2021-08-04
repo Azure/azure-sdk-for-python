@@ -45,7 +45,7 @@ class OperationOperations:
         vault_name: str,
         resource_group_name: str,
         parameters: "_models.ValidateOperationRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ValidateOperationsResponse":
         """Validate operation for specified backed up item. This is a synchronous operation.
 
@@ -66,7 +66,7 @@ class OperationOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

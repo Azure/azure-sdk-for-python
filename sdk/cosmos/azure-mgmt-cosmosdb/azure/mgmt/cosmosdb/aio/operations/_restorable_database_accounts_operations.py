@@ -44,7 +44,7 @@ class RestorableDatabaseAccountsOperations:
     def list_by_location(
         self,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RestorableDatabaseAccountsListResult"]:
         """Lists all the restorable Azure Cosmos DB database accounts available under the subscription and
         in a region.  This call requires
@@ -62,7 +62,7 @@ class RestorableDatabaseAccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-06-15"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -115,7 +115,7 @@ class RestorableDatabaseAccountsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RestorableDatabaseAccountsListResult"]:
         """Lists all the restorable Azure Cosmos DB database accounts available under the subscription.
         This call requires 'Microsoft.DocumentDB/locations/restorableDatabaseAccounts/read' permission.
@@ -130,7 +130,7 @@ class RestorableDatabaseAccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-06-15"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -184,7 +184,7 @@ class RestorableDatabaseAccountsOperations:
         self,
         location: str,
         instance_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RestorableDatabaseAccountGetResult":
         """Retrieves the properties of an existing Azure Cosmos DB restorable database account.  This call
         requires 'Microsoft.DocumentDB/locations/restorableDatabaseAccounts/read/*' permission.
@@ -203,7 +203,7 @@ class RestorableDatabaseAccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-06-15"
         accept = "application/json"
 
         # Construct URL

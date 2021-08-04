@@ -12,9 +12,30 @@ from azure.identity.aio._internal.managed_identity_client import AsyncManagedIde
 import pytest
 
 from helpers import mock_response, Request
-from helpers_async import async_validating_transport
+from helpers_async import async_validating_transport, AsyncMockTransport
 
 pytestmark = pytest.mark.asyncio
+
+
+async def test_close():
+    transport = AsyncMockTransport()
+    client = AsyncManagedIdentityClient(lambda *_: None, transport=transport)
+
+    await client.close()
+
+    assert transport.__aexit__.call_count == 1
+
+
+async def test_context_manager():
+    transport = AsyncMockTransport()
+    client = AsyncManagedIdentityClient(lambda *_: None, transport=transport)
+
+    async with client:
+        assert transport.__aenter__.call_count == 1
+        assert transport.__aexit__.call_count == 0
+
+    assert transport.__aenter__.call_count == 1
+    assert transport.__aexit__.call_count == 1
 
 
 async def test_caching():

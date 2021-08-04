@@ -8,8 +8,8 @@
 FILE: sample_list_document_statuses_with_filters.py
 
 DESCRIPTION:
-    This sample demonstrates how to list all the document in a translation job for the resource 
-    using different kind of filters/sorting/paging options
+    This sample demonstrates how to list all the documents in a translation operation for the resource
+    using different kind of filters/sorting/paging options.
 
     To set up your containers for translation and generate SAS tokens to your containers (or files)
     with the appropriate permissions, see the README.
@@ -20,10 +20,10 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) AZURE_DOCUMENT_TRANSLATION_ENDPOINT - the endpoint to your Document Translation resource.
     2) AZURE_DOCUMENT_TRANSLATION_KEY - your Document Translation API key.
-    3) JOB_ID - The ID of the translation job
+    3) TRANSLATION_ID - The ID of the translation operation
 """
 
-def sample_list_document_statuses_with_filters(self, client):
+def sample_list_document_statuses_with_filters():
     # import libraries
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.translation.document import (
@@ -35,7 +35,7 @@ def sample_list_document_statuses_with_filters(self, client):
     # obtain client secrets
     endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
     key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
-    job_id = os.environ["JOB_ID"]  # this should be the id for the job you'd like to list docs for!
+    translation_id = os.environ["TRANSLATION_ID"]  # this should be the id for the translation operation you'd like to list docs for!
 
     # authorize client
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
@@ -49,17 +49,16 @@ def sample_list_document_statuses_with_filters(self, client):
     start = datetime(2021, 4, 12)
     end = datetime(2021, 4, 14)
     statuses = ["Cancelled", "Failed"]
-    order_by = ["createdDateTimeUtc desc"]
+    order_by = ["created_on desc"]
     results_per_page = 2
     skip = 3
-    
-    # list jobs
+
     filtered_docs = client.list_all_document_statuses(
-        job_id,
+        translation_id,
         # filters
         statuses=statuses,
-        translated_after=start,
-        translated_before=end,
+        created_after=start,
+        created_before=end,
         # ordering
         order_by=order_by,
         # paging
@@ -69,8 +68,8 @@ def sample_list_document_statuses_with_filters(self, client):
 
     # check statuses
     for page in filtered_docs:
-        for job in page:
-            display_doc_info(job)
+        for doc in page:
+            display_doc_info(doc)
 
 def display_doc_info(document):
     print("Document ID: {}".format(document.id))
@@ -78,7 +77,7 @@ def display_doc_info(document):
     if document.status == "Succeeded":
         print("Source document location: {}".format(document.source_document_url))
         print("Translated document location: {}".format(document.translated_document_url))
-        print("Translated to language: {}\n".format(document.translate_to))
+        print("Translated to language: {}\n".format(document.translated_to))
 
 if __name__ == '__main__':
     sample_list_document_statuses_with_filters()

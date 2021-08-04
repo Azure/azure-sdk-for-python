@@ -45,7 +45,7 @@ class ExportJobsOperationResultsOperations:
         vault_name: str,
         resource_group_name: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OperationResultInfoBaseResource":
         """Gets the operation result of operation triggered by Export Jobs API. If the operation is
         successful, then it also
@@ -69,7 +69,7 @@ class ExportJobsOperationResultsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL

@@ -47,7 +47,7 @@ class PrivateEndpointConnectionOperations:
         vault_name: str,
         resource_group_name: str,
         private_endpoint_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateEndpointConnectionResource":
         """Get Private Endpoint Connection. This call is made by Backup Admin.
 
@@ -68,7 +68,7 @@ class PrivateEndpointConnectionOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -112,14 +112,14 @@ class PrivateEndpointConnectionOperations:
         resource_group_name: str,
         private_endpoint_connection_name: str,
         parameters: "_models.PrivateEndpointConnectionResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateEndpointConnectionResource":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -171,7 +171,7 @@ class PrivateEndpointConnectionOperations:
         resource_group_name: str,
         private_endpoint_connection_name: str,
         parameters: "_models.PrivateEndpointConnectionResource",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.PrivateEndpointConnectionResource"]:
         """Approve or Reject Private Endpoint requests. This call is made by Backup Admin.
 
@@ -186,8 +186,8 @@ class PrivateEndpointConnectionOperations:
         :type parameters: ~azure.mgmt.recoveryservicesbackup.models.PrivateEndpointConnectionResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either PrivateEndpointConnectionResource or the result of cls(response)
@@ -247,14 +247,14 @@ class PrivateEndpointConnectionOperations:
         vault_name: str,
         resource_group_name: str,
         private_endpoint_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -293,7 +293,7 @@ class PrivateEndpointConnectionOperations:
         vault_name: str,
         resource_group_name: str,
         private_endpoint_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete Private Endpoint requests. This call is made by Backup Admin.
 
@@ -306,8 +306,8 @@ class PrivateEndpointConnectionOperations:
         :type private_endpoint_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)

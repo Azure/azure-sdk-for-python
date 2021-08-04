@@ -26,7 +26,7 @@ from azure.storage.blob import (
 from azure.storage.blob._shared.base_client import _format_shared_key_credential
 from azure.storage.blob._shared.constants import CONNECTION_TIMEOUT, READ_TIMEOUT
 
-from _shared.asynctestcase import AsyncStorageTestCase
+from devtools_testutils.storage.aio import AsyncStorageTestCase
 from _shared.testcase import GlobalStorageAccountPreparer
 
 # ------------------------------------------------------------------------------

@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from azure.core.pipeline.policies import HTTPPolicy
 
@@ -15,20 +15,19 @@ from ._helpers import _enforce_https
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.pipeline import PipelineRequest, PipelineResponse
-    from typing import Optional
 
 
 class ContainerRegistryChallengePolicy(HTTPPolicy):
     """Authentication policy for ACR which accepts a challenge"""
 
-    def __init__(self, credential, endpoint):
-        # type: (TokenCredential, str) -> None
+    def __init__(self, credential, endpoint, **kwargs):
+        # type: (TokenCredential, str, **Any) -> None
         super(ContainerRegistryChallengePolicy, self).__init__()
         self._credential = credential
         if self._credential is None:
-            self._exchange_client = AnonymousACRExchangeClient(endpoint)
+            self._exchange_client = AnonymousACRExchangeClient(endpoint, **kwargs)
         else:
-            self._exchange_client = ACRExchangeClient(endpoint, self._credential)
+            self._exchange_client = ACRExchangeClient(endpoint, self._credential, **kwargs)
 
     def on_request(self, request):
         # type: (PipelineRequest) -> None
@@ -71,3 +70,10 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
         access_token = self._exchange_client.get_acr_access_token(challenge)
         request.http_request.headers["Authorization"] = "Bearer " + access_token
         return access_token is not None
+
+    def __enter__(self):
+        self._exchange_client.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        self._exchange_client.__exit__(*args)

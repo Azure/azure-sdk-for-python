@@ -45,7 +45,7 @@ class BMSPrepareDataMoveOperationResultOperations:
         vault_name: str,
         resource_group_name: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.VaultStorageConfigOperationResultResponse"]:
         """Fetches Operation Result for Prepare Data Move.
 
@@ -66,7 +66,7 @@ class BMSPrepareDataMoveOperationResultOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL

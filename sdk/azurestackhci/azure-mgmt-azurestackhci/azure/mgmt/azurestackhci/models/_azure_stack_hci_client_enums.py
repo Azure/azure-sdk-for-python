@@ -26,6 +26,32 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
+class ActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs.
+    """
+
+    INTERNAL = "Internal"
+
+class ArcSettingAggregateState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Aggregate state of Arc agent across the nodes in this HCI cluster.
+    """
+
+    NOT_SPECIFIED = "NotSpecified"
+    ERROR = "Error"
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+    CONNECTED = "Connected"
+    DISCONNECTED = "Disconnected"
+    DELETED = "Deleted"
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    MOVING = "Moving"
+    PARTIALLY_SUCCEEDED = "PartiallySucceeded"
+    PARTIALLY_CONNECTED = "PartiallyConnected"
+    IN_PROGRESS = "InProgress"
+
 class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of identity that created the resource.
     """
@@ -35,8 +61,71 @@ class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
+class ExtensionAggregateState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Aggregate state of Arc Extensions across the nodes in this HCI cluster.
+    """
+
+    NOT_SPECIFIED = "NotSpecified"
+    ERROR = "Error"
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+    CONNECTED = "Connected"
+    DISCONNECTED = "Disconnected"
+    DELETED = "Deleted"
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    MOVING = "Moving"
+    PARTIALLY_SUCCEEDED = "PartiallySucceeded"
+    PARTIALLY_CONNECTED = "PartiallyConnected"
+    IN_PROGRESS = "InProgress"
+
+class NodeArcState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """State of Arc agent in this node.
+    """
+
+    NOT_SPECIFIED = "NotSpecified"
+    ERROR = "Error"
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+    CONNECTED = "Connected"
+    DISCONNECTED = "Disconnected"
+    DELETED = "Deleted"
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    MOVING = "Moving"
+
+class NodeExtensionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """State of Arc Extension in this node.
+    """
+
+    NOT_SPECIFIED = "NotSpecified"
+    ERROR = "Error"
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+    CONNECTED = "Connected"
+    DISCONNECTED = "Disconnected"
+    DELETED = "Deleted"
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    MOVING = "Moving"
+
+class Origin(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
+    logs UX. Default value is "user,system"
+    """
+
+    USER = "user"
+    SYSTEM = "system"
+    USER_SYSTEM = "user,system"
+
 class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Provisioning state.
+    """Provisioning state of the ArcSetting proxy resource.
     """
 
     SUCCEEDED = "Succeeded"

@@ -3,7 +3,8 @@
   "language": "en",
   "languageId": "python",
   "dictionaries": [
-    "powershell"
+    "powershell",
+    "python"
   ],
   "ignorePaths": [
     "**/tests/recordings/**",

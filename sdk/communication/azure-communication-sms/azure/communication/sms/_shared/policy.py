@@ -51,7 +51,7 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
         if self._decode_url:
             query_url = urllib.parse.unquote(query_url)
 
-        signed_headers = "date;host;x-ms-content-sha256"
+        signed_headers = "x-ms-date;host;x-ms-content-sha256"
 
         utc_now = get_current_utc_time()
         if request.http_request.body is None:
@@ -76,7 +76,7 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
         signature = self._compute_hmac(string_to_sign)
 
         signature_header = {
-            "Date": utc_now,
+            "x-ms-date": utc_now,
             "x-ms-content-sha256": content_hash,
             "x-ms-return-client-request-id": "true",
             "Authorization": "HMAC-SHA256 SignedHeaders=" +\

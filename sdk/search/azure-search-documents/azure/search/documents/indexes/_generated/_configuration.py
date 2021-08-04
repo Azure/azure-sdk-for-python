@@ -38,7 +38,7 @@ class SearchClientConfiguration(Configuration):
         super(SearchClientConfiguration, self).__init__(**kwargs)
 
         self.endpoint = endpoint
-        self.api_version = "2020-06-30"
+        self.api_version = "2021-04-30-Preview"
         kwargs.setdefault('sdk_moniker', 'search-documents/{}'.format(VERSION))
         self._configure(**kwargs)
 

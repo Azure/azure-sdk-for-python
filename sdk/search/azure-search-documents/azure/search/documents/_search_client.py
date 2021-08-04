@@ -6,6 +6,7 @@
 from typing import cast, List, TYPE_CHECKING
 import six
 
+from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator import distributed_trace
 from ._api_versions import DEFAULT_VERSION
 from ._generated import SearchClient as SearchIndexClient
@@ -15,12 +16,13 @@ from ._index_documents_batch import IndexDocumentsBatch
 from ._paging import SearchItemPaged, SearchPageIterator
 from ._queries import AutocompleteQuery, SearchQuery, SuggestQuery
 from ._headers_mixin import HeadersMixin
+from ._utils import get_authentication_policy
 from ._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Union
-    from azure.core.credentials import AzureKeyCredential
+    from azure.core.credentials import TokenCredential
 
 
 def odata(statement, **kwargs):
@@ -59,7 +61,7 @@ class SearchClient(HeadersMixin):
     :param index_name: The name of the index to connect to
     :type index_name: str
     :param credential: A credential to authorize search client requests
-    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
     :keyword str api_version: The Search API version to use for requests.
 
     .. admonition:: Example:
@@ -75,18 +77,30 @@ class SearchClient(HeadersMixin):
     _ODATA_ACCEPT = "application/json;odata.metadata=none"  # type: str
 
     def __init__(self, endpoint, index_name, credential, **kwargs):
-        # type: (str, str, AzureKeyCredential, **Any) -> None
+        # type: (str, str, Union[AzureKeyCredential, TokenCredential], **Any) -> None
 
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._endpoint = endpoint  # type: str
         self._index_name = index_name  # type: str
-        self._credential = credential  # type: AzureKeyCredential
-        self._client = SearchIndexClient(
-            endpoint=endpoint,
-            index_name=index_name,
-            sdk_moniker=SDK_MONIKER,
-            api_version=self._api_version, **kwargs
-        )  # type: SearchIndexClient
+        self._credential = credential
+        if isinstance(credential, AzureKeyCredential):
+            self._aad = False
+            self._client = SearchIndexClient(
+                endpoint=endpoint,
+                index_name=index_name,
+                sdk_moniker=SDK_MONIKER,
+                api_version=self._api_version, **kwargs
+            )  # type: SearchIndexClient
+        else:
+            self._aad = True
+            authentication_policy = get_authentication_policy(credential)
+            self._client = SearchIndexClient(
+                endpoint=endpoint,
+                index_name=index_name,
+                authentication_policy=authentication_policy,
+                sdk_moniker=SDK_MONIKER,
+                api_version=self._api_version, **kwargs
+            )  # type: SearchIndexClient
 
     def __repr__(self):
         # type: () -> str
@@ -151,8 +165,8 @@ class SearchClient(HeadersMixin):
          expression contains a field name, optionally followed by a comma-separated list of name:value
          pairs.
         :keyword str filter: The OData $filter expression to apply to the search query.
-        :keyword list[str] highlight_fields: The list of field names to use for hit highlights. Only searchable
-         fields can be used for hit highlighting.
+        :keyword str highlight_fields: The comma-separated list of field names to use for hit highlights.
+         Only searchable fields can be used for hit highlighting.
         :keyword str highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
          highlightPreTag. Default is </em>.
         :keyword str highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
@@ -183,6 +197,15 @@ class SearchClient(HeadersMixin):
         :keyword search_mode: A value that specifies whether any or all of the search terms must be
          matched in order to count the document as a match. Possible values include: 'any', 'all'.
         :paramtype search_mode: str or ~azure.search.documents.models.SearchMode
+        :keyword query_language: A value that specifies the language of the search query. Possible values
+         include: "none", "en-us".
+        :paramtype query_language: str or ~azure.search.documents.models.QueryLanguage
+        :keyword speller: A value that specified the type of the speller to use to spell-correct
+         individual search query terms. Possible values include: "none", "lexicon".
+        :paramtype speller: str or ~azure.search.documents.models.Speller
+        :keyword answers: A value that specifies whether answers should be returned as part of the search
+         response. Possible values include: "none", "extractive".
+        :paramtype answers: str or ~azure.search.documents.models.Answers
         :keyword list[str] select: The list of fields to retrieve. If unspecified, all fields marked as retrievable
          in the schema are included.
         :keyword int skip: The number of search results to skip. This value cannot be greater than 100,000.
@@ -235,6 +258,9 @@ class SearchClient(HeadersMixin):
         search_fields = kwargs.pop("search_fields", None)
         search_fields_str = ",".join(search_fields) if search_fields else None
         search_mode = kwargs.pop("search_mode", None)
+        query_language = kwargs.pop("query_language", None)
+        speller = kwargs.pop("speller", None)
+        answers = kwargs.pop("answers", None)
         select = kwargs.pop("select", None)
         skip = kwargs.pop("skip", None)
         top = kwargs.pop("top", None)
@@ -253,6 +279,9 @@ class SearchClient(HeadersMixin):
             scoring_profile=scoring_profile,
             search_fields=search_fields_str,
             search_mode=search_mode,
+            query_language=query_language,
+            speller=speller,
+            answers=answers,
             select=select if isinstance(select, six.string_types) else None,
             skip=skip,
             top=top

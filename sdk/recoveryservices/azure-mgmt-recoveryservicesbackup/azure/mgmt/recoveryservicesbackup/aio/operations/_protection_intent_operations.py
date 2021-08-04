@@ -44,7 +44,7 @@ class ProtectionIntentOperations:
         self,
         azure_region: str,
         parameters: "_models.PreValidateEnableBackupRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PreValidateEnableBackupResponse":
         """It will validate followings
 
@@ -74,7 +74,7 @@ class ProtectionIntentOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -120,7 +120,7 @@ class ProtectionIntentOperations:
         resource_group_name: str,
         fabric_name: str,
         intent_object_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProtectionIntentResource":
         """Provides the details of the protection intent up item. This is an asynchronous operation. To
         know the status of the operation,
@@ -145,7 +145,7 @@ class ProtectionIntentOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -190,7 +190,7 @@ class ProtectionIntentOperations:
         fabric_name: str,
         intent_object_name: str,
         parameters: "_models.ProtectionIntentResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProtectionIntentResource":
         """Create Intent for Enabling backup of an item. This is a synchronous operation.
 
@@ -215,7 +215,7 @@ class ProtectionIntentOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -264,7 +264,7 @@ class ProtectionIntentOperations:
         resource_group_name: str,
         fabric_name: str,
         intent_object_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Used to remove intent from an item.
 
@@ -287,7 +287,7 @@ class ProtectionIntentOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore

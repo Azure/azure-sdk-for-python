@@ -1,9 +1,33 @@
 # Release History
 
-## 12.0.0 (unreleased)
+## 12.1.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+- Bumped dependency on `msrest` to `>=0.6.21`
+
+## 12.1.0 (2021-07-06)
+
+### Features Added
+* Storage Accounts only: `TableClient` and `TableServiceClient`s can now use `azure-identity` credentials for authentication. Note: A `TableClient` authenticated with a `TokenCredential` cannot use the `get_table_access_policy` or `set_table_access_policy` methods.
+
+## 12.0.0 (2021-06-08)
 **Breaking**
 * EdmType.Binary data in entities will now be deserialized as `bytes` in Python 3 and `str` in Python 2, rather than an `EdmProperty` instance. Likewise on serialization, `bytes` in Python 3 and `str` in Python 2 will be interpreted as binary (this is unchanged for Python 3, but breaking for Python 2, where `str` was previously serialized as EdmType.String)
 * `TableClient.create_table` now returns an instance of `TableItem`.
+* All optional parameters for model constructors are now keyword-only.
+* Storage service configuration models have now been prefixed with `Table`, including
+  `TableAccessPolicy`, `TableMetrics`, `TableRetentionPolicy`, `TableCorsRule`
+* All parameters for `TableServiceClient.set_service_properties` are now keyword-only.
+* The `credential` parameter for all Clients is now keyword-only.
+* The method `TableClient.get_access_policy` will now return `None` where previously it returned an "empty" access policy object.
+* Timestamp properties on `TableAccessPolicy` instances returned from `TableClient.get_access_policy` will now be deserialized to `datetime` instances.
 
 **Fixes**
 * Fixed support for Cosmos emulator endpoint, via URL/credential or connection string.
@@ -14,6 +38,7 @@
 * If the `prefer` header is added in the `create_entity` operation, the echo will be returned.
 * Errors raised on a 412 if-not-match error will now be a specific `azure.core.exceptions.ResourceModifiedError`.
 * `EdmType.DOUBLE` values are now explicitly typed in the request payload.
+* Fixed de/serialization of list attributes on `TableCorsRule`.
 
 ## 12.0.0b7 (2021-05-11)
 **Breaking**

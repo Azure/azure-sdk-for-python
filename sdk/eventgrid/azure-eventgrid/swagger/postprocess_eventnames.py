@@ -17,7 +17,6 @@ backward_compat = {
     'ResourceWriteSuccessEventName': "Microsoft.Resources.ResourceWriteSuccess",
     'ResourceActionSuccessEventName': "Microsoft.Resources.ResourceActionSuccess",
     'ResourceWriteCancelEventName': "Microsoft.Resources.ResourceWriteCancel",
-    'ServiceBusDeadletterMessagesAvailableWithNoListenerEventName': "Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListener",
     'ResourceActionFailureEventName': "Microsoft.Resources.ResourceActionFailure",
     'AcsChatMemberRemovedFromThreadWithUserEventName': "Microsoft.Communication.ChatMemberRemovedFromThreadWithUser",
     'IoTHubDeviceConnectedEventName': "Microsoft.Devices.DeviceConnected",
@@ -30,7 +29,7 @@ backward_compat = {
 def event_tuples(system_events):
     tup_list = []
     for event in system_events:
-        class_name = event[0].replace("Data", "Name")
+        class_name = "Name".join(event[0].rsplit('Data', 1))
         try:
             event_name = re.findall("Microsoft.[a-zA-Z]+.[a-zA-Z]+", event[1].__doc__)[0]
         except:
@@ -48,6 +47,9 @@ def generate_enum_content(tuples):
     print("# backward compat names end here.")
     for tup in tup_list:
         print(tup[0] + " = '" + tup[1] + "'\n")
+    print("# servicebus alias")
+    print("ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners'")
+
 system_events = [m for m in inspect.getmembers(models) if m[0].endswith('Data')]
 tup_list = event_tuples(system_events)
 

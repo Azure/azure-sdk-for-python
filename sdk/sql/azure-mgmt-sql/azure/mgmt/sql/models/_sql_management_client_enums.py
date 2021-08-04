@@ -376,6 +376,15 @@ class DayOfWeek(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FRIDAY = "Friday"
     SATURDAY = "Saturday"
 
+class DiffBackupIntervalInHours(with_metaclass(_CaseInsensitiveEnumMeta, int, Enum)):
+    """The differential backup interval in hours. This is how many interval hours between each
+    differential backup will be supported. This is only applicable to live databases but not
+    dropped databases.
+    """
+
+    TWELVE = 12
+    TWENTY_FOUR = 24
+
 class DnsRefreshConfigurationPropertiesStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The status of the DNS refresh operation.
     """
@@ -402,7 +411,7 @@ class EncryptionProtectorName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
 
     CURRENT = "current"
 
-class Enum81(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Enum77(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     ALL = "All"
     ERROR = "Error"
@@ -435,6 +444,7 @@ class IdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NONE = "None"
     SYSTEM_ASSIGNED = "SystemAssigned"
     USER_ASSIGNED = "UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
 
 class ImplementationMethod(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Gets the method in which this recommended action can be manually implemented. e.g., TSql,
@@ -818,6 +828,32 @@ class RecommendedSensitivityLabelUpdateKind(with_metaclass(_CaseInsensitiveEnumM
     ENABLE = "enable"
     DISABLE = "disable"
 
+class ReplicationLinkType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Link type (GEO, NAMED).
+    """
+
+    GEO = "GEO"
+    NAMED = "NAMED"
+
+class ReplicationRole(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Local replication role.
+    """
+
+    PRIMARY = "Primary"
+    SECONDARY = "Secondary"
+    NON_READABLE_SECONDARY = "NonReadableSecondary"
+    SOURCE = "Source"
+    COPY = "Copy"
+
+class ReplicationState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Replication state (PENDING, SEEDING, CATCHUP, SUSPENDED).
+    """
+
+    PENDING = "PENDING"
+    SEEDING = "SEEDING"
+    CATCH_UP = "CATCH_UP"
+    SUSPENDED = "SUSPENDED"
+
 class ReplicaType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     PRIMARY = "Primary"
@@ -931,7 +967,7 @@ class ServerKeyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SERVICE_MANAGED = "ServiceManaged"
     AZURE_KEY_VAULT = "AzureKeyVault"
 
-class ServerPublicNetworkAccess(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ServerNetworkAccessFlag(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Whether or not public endpoint access is allowed for this server.  Value is optional but if
     passed in, must be 'Enabled' or 'Disabled'
     """

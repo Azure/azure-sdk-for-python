@@ -244,9 +244,6 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             Specifies the name of the deleted filesystem to restore.
         :param str deleted_version:
             Specifies the version of the deleted filesystem to restore.
-        :keyword str new_name:
-            The new name for the deleted filesystem to be restored to.
-            If not specified "name" will be used as the restored filesystem name.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.filedatalake.FileSystemClient

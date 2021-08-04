@@ -62,7 +62,7 @@ class ClustersOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -133,7 +133,7 @@ class ClustersOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -146,7 +146,7 @@ class ClustersOperations(object):
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -208,14 +208,14 @@ class ClustersOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -271,7 +271,7 @@ class ClustersOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-01"
+        api_version = "2021-01-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -279,7 +279,7 @@ class ClustersOperations(object):
         url = self.create.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -317,7 +317,7 @@ class ClustersOperations(object):
         self,
         resource_group_name,  # type: str
         cluster_name,  # type: str
-        cluster,  # type: "_models.ClusterUpdate"
+        cluster,  # type: "_models.ClusterPatch"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.Cluster"
@@ -328,7 +328,7 @@ class ClustersOperations(object):
         :param cluster_name: The name of the cluster.
         :type cluster_name: str
         :param cluster: Details of the HCI cluster.
-        :type cluster: ~azure_stack_hci_client.models.ClusterUpdate
+        :type cluster: ~azure_stack_hci_client.models.ClusterPatch
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Cluster, or the result of cls(response)
         :rtype: ~azure_stack_hci_client.models.Cluster
@@ -339,7 +339,7 @@ class ClustersOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-01"
+        api_version = "2021-01-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -347,7 +347,7 @@ class ClustersOperations(object):
         url = self.update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -362,7 +362,7 @@ class ClustersOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(cluster, 'ClusterUpdate')
+        body_content = self._serialize.body(cluster, 'ClusterPatch')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -404,14 +404,14 @@ class ClustersOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)

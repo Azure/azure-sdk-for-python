@@ -1,10 +1,22 @@
 # Release History
 
-## 12.9.0b1 (Unreleased)
+## 12.9.0b1 (2021-07-27)
+**New Features**
+- Added support for object level immutability policy with versioning (Version Level WORM).
+- Added support for listing deleted root blobs that have versions.
+- Added OAuth support for sync copy blob source.
+
+**Fixes**
+- Fixed a bug for get_block_list (#16314)
+- Ensured that download fails if blob modified mid download
+- Enabled exists() for CPK encrypted blobs (#18041)
+
+**Notes**
+- Deprecated new_name in for undelete container operation
 
 ## 12.8.1 (2021-04-20)
 **Fixes**
-- Fixed retry on large block upload 
+- Fixed retry on large block upload
 - Make `AccountName`, `AccountKey` etc. in conn_str case insensitive
 - Fixed downloader.chunks() return chunks in different size (#9419, #15648)
 - Enabled `exists()` for CPK encrypted blobs (#18041)
@@ -102,7 +114,7 @@
 - Block size is increased to 4GB at maximum, max single put size is increased to 5GB.
 - For replication enabled account, users can get replication policies when get blob properties.
 
-## 12.3.2 
+## 12.3.2
 **Fixes**
 - Fixed issue where batch requests could not be combined with SAS (#9534)
 - Batch requests now support applying parameters to individual blobs within the request via passing in a dictionary.
@@ -133,7 +145,7 @@ of using the existing one in the `ContainerClient`.
 - The `StorageUserAgentPolicy` is now replaced with the `UserAgentPolicy` from azure-core. With this, the custom user agents are now added as a prefix instead of being appended.
 
 
-## 12.2.0 
+## 12.2.0
 
 **New features**
 - Added support for the 2019-07-07 service version, and added `api_version` parameter to clients.
@@ -319,7 +331,7 @@ https://aka.ms/azure-sdk-preview1-python.
 - Client and pipeline configuration is now available via keyword arguments at both the client level, and per-operation. See reference documentation for a full list of optional configuration arguments.
 - Authentication using `azure-identity` credentials
   - see the
-  [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md)
+  [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md)
   for more information
 - New error hierarchy:
     - All service errors will now use the base type: `azure.core.exceptions.HttpResponseError`
@@ -343,11 +355,11 @@ https://aka.ms/azure-sdk-preview1-python.
 - Operation `update_page` has been renamed to `upload_page`.
 - Operation `get_page_ranges_diff` has been replaced by an optional str flag in the `get_page_ranges` operation.
 
-## 2.0.1 
+## 2.0.1
 
 - Updated dependency on azure-storage-common.
 
-## 2.0.0 
+## 2.0.0
 
 - Support for 2018-11-09 REST version. Please see our REST API documentation and blog for information about the related added features.
 - Added support for append block from URL(synchronously) for append blobs.
@@ -355,40 +367,40 @@ https://aka.ms/azure-sdk-preview1-python.
 - Added support for generating and using blob snapshot SAS tokens.
 - Added support for generating user delegation SAS tokens.
 
-## 1.5.0 
+## 1.5.0
 
 - Added new method list_blob_names to efficiently list only blob names in an efficient way.
 
-## 1.4.0 
+## 1.4.0
 
 - azure-storage-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
 - copy_blob method added to BlockBlobService to enable support for deep sync copy.
 
-## 1.3.1 
+## 1.3.1
 
 - Fixed design flaw where get_blob_to_* methods buffer entire blob when max_connections is set to 1.
 - Added support for access conditions on append_blob_from_* methods.
 
-## 1.3.0 
+## 1.3.0
 
 - Support for 2018-03-28 REST version. Please see our REST API documentation and blog for information about the related added features.
 - Added support for setting static website service properties.
 - Added support for getting account information, such as SKU name and account kind.
 - Added support for put block from URL(synchronously).
 
-## 1.2.0rc1 
+## 1.2.0rc1
 
 - Support for 2017-11-09 REST version. Please see our REST API documentation and blog for information about the related added features.
 - Support for write-once read-many containers.
 - Added support for OAuth authentication for HTTPS requests(Please note that this feature is available in preview).
 
-## 1.1.0 
+## 1.1.0
 
 - Support for 2017-07-29 REST version. Please see our REST API documentation and blogs for information about the related added features.
 - Added support for soft delete feature. If a delete retention policy is enabled through the set service properties API, then blobs or snapshots could be deleted softly and retained for a specified number of days, before being permanently removed by garbage collection.
 - Error message now contains the ErrorCode from the x-ms-error-code header value.
 
-## 1.0.0 
+## 1.0.0
 
 - The package has switched from Apache 2.0 to the MIT license.
 - Fixed bug where get_blob_to_* cannot get a single byte when start_range and end_range are both equal to 0.
@@ -396,7 +408,7 @@ https://aka.ms/azure-sdk-preview1-python.
 - Added convenient method to generate container url (make_container_url).
 - Metadata keys are now case-preserving when fetched from the service. Previously they were made lower-case by the library.
 
-## 0.37.1 
+## 0.37.1
 
 - Enabling MD5 validation no longer uses the memory-efficient algorithm for large block blobs, since computing the MD5 hash requires reading the entire block into memory.
 - Fixed a bug in the _SubStream class which was at risk of causing data corruption when using the memory-efficient algorithm for large block blobs.

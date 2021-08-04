@@ -24,7 +24,7 @@ stages:
 
             pool:
               name: azsdk-pool-mms-ubuntu-1804-general
-              vmImage: MMSUbuntu18.04
+              vmImage: MMSUbuntu20.04
 
             strategy:
               runOnce:
@@ -66,7 +66,7 @@ stages:
 
               pool:
                 name: azsdk-pool-mms-ubuntu-1804-general
-                vmImage: MMSUbuntu18.04
+                vmImage: MMSUbuntu20.04
 
               strategy:
                 runOnce:
@@ -150,8 +150,8 @@ stages:
               dependsOn: PublishPackage
 
               pool:
-                name: azsdk-pool-mms-ubuntu-1804-general
-                vmImage: MMSUbuntu18.04
+                name: azsdk-pool-mms-ubuntu-2004-general
+                vmImage: MMSUbuntu20.04
 
               variables:
                 CIConfigs: "{'targets':[{'path_to_config':'ci-configs/packages-preview.json','Mode':'Preview','content_folder':'docs-ref-services/preview'},{'path_to_config':'ci-configs/packages-latest.json','mode':'Latest','content_folder':'docs-ref-services/latest'}]}"
@@ -197,8 +197,8 @@ stages:
               dependsOn: PublishPackage
 
               pool:
-                name: azsdk-pool-mms-ubuntu-1804-general
-                vmImage: MMSUbuntu18.04
+                name: azsdk-pool-mms-ubuntu-2004-general
+                vmImage: MMSUbuntu20.04
 
               strategy:
                 runOnce:
@@ -220,6 +220,7 @@ stages:
                           PRBranchName: increment-package-version-${{ parameters.ServiceDirectory }}-$(Build.BuildId)
                           CommitMsg: "Increment package version after release of ${{ artifact.name }}"
                           PRTitle: "Increment version for ${{ parameters.ServiceDirectory }} releases"
+                          PRLabels: "auto-merge"
                           CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
 
   - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
@@ -241,7 +242,7 @@ stages:
       condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
       pool:
         name: azsdk-pool-mms-ubuntu-1804-general
-        vmImage: MMSUbuntu18.04
+        vmImage: MMSUbuntu20.04
       steps:
       - checkout: none
       - download: current

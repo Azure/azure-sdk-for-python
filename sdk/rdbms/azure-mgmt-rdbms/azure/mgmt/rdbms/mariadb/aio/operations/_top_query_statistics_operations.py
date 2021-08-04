@@ -46,7 +46,7 @@ class TopQueryStatisticsOperations:
         resource_group_name: str,
         server_name: str,
         query_statistic_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.QueryStatistic":
         """Retrieve the query statistic for specified identifier.
 
@@ -108,7 +108,7 @@ class TopQueryStatisticsOperations:
         resource_group_name: str,
         server_name: str,
         parameters: "_models.TopQueryStatisticsInput",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TopQueryStatisticsResultList"]:
         """Retrieve the Query-Store top queries for specified metric and aggregation.
 

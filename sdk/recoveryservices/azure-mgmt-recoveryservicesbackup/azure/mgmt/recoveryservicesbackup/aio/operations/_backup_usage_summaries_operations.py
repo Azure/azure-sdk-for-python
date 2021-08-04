@@ -47,7 +47,7 @@ class BackupUsageSummariesOperations:
         resource_group_name: str,
         filter: Optional[str] = None,
         skip_token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BackupManagementUsageList"]:
         """Fetches the backup management usage summaries of the vault.
 
@@ -70,7 +70,7 @@ class BackupUsageSummariesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):

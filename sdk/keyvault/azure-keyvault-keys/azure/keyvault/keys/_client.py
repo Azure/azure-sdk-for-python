@@ -8,7 +8,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map as _error_map
 from ._shared._polling import DeleteRecoverPollingMethod, KeyVaultOperationPoller
-from ._models import KeyVaultKey, KeyProperties, DeletedKey
+from ._models import DeletedKey, KeyVaultKey, KeyProperties
 
 try:
     from typing import TYPE_CHECKING
@@ -47,7 +47,7 @@ class KeyClient(KeyVaultClientBase):
     @distributed_trace
     def create_key(self, name, key_type, **kwargs):
         # type: (str, Union[str, azure.keyvault.keys.KeyType], **Any) -> KeyVaultKey
-        """Create a key or, if `name` is already in use, create a new version of the key.
+        """Create a key or, if ``name`` is already in use, create a new version of the key.
 
         Requires keys/create permission.
 
@@ -94,7 +94,7 @@ class KeyClient(KeyVaultClientBase):
             key_ops=kwargs.pop("key_operations", None),
             tags=kwargs.pop("tags", None),
             curve=kwargs.pop("curve", None),
-            public_exponent=kwargs.pop("public_exponent", None)
+            public_exponent=kwargs.pop("public_exponent", None),
         )
 
         bundle = self._client.create_key(
@@ -109,7 +109,7 @@ class KeyClient(KeyVaultClientBase):
     @distributed_trace
     def create_rsa_key(self, name, **kwargs):
         # type: (str, **Any) -> KeyVaultKey
-        """Create a new RSA key or, if `name` is already in use, create a new version of the key
+        """Create a new RSA key or, if ``name`` is already in use, create a new version of the key
 
         Requires the keys/create permission.
 
@@ -143,7 +143,7 @@ class KeyClient(KeyVaultClientBase):
     @distributed_trace
     def create_ec_key(self, name, **kwargs):
         # type: (str, **Any) -> KeyVaultKey
-        """Create a new elliptic curve key or, if `name` is already in use, create a new version of the key.
+        """Create a new elliptic curve key or, if ``name`` is already in use, create a new version of the key.
 
         Requires the keys/create permission.
 
@@ -177,7 +177,7 @@ class KeyClient(KeyVaultClientBase):
     @distributed_trace
     def create_oct_key(self, name, **kwargs):
         # type: (str, **Any) -> KeyVaultKey
-        """Create a new octet sequence (symmetric) key or, if `name` is already in use, create a new version of the key.
+        """Create a new octet sequence (symmetric) key or, if ``name`` is in use, create a new version of the key.
 
         Requires the keys/create permission.
 
@@ -210,10 +210,11 @@ class KeyClient(KeyVaultClientBase):
     @distributed_trace
     def begin_delete_key(self, name, **kwargs):
         # type: (str, **Any) -> DeletedKey
-        """Delete all versions of a key and its cryptographic material. Requires keys/delete permission.
+        """Delete all versions of a key and its cryptographic material.
 
-        When this method returns Key Vault has begun deleting the key. Deletion may take several seconds in a vault
-        with soft-delete enabled. This method therefore returns a poller enabling you to wait for deletion to complete.
+        Requires keys/delete permission. When this method returns Key Vault has begun deleting the key. Deletion may
+        take several seconds in a vault with soft-delete enabled. This method therefore returns a poller enabling you to
+        wait for deletion to complete.
 
         :param str name: The name of the key to delete.
         :returns: A poller for the delete key operation. The poller's `result` method returns the
@@ -254,7 +255,9 @@ class KeyClient(KeyVaultClientBase):
     @distributed_trace
     def get_key(self, name, version=None, **kwargs):
         # type: (str, Optional[str], **Any) -> KeyVaultKey
-        """Get a key's attributes and, if it's an asymmetric key, its public material. Requires keys/get permission.
+        """Get a key's attributes and, if it's an asymmetric key, its public material.
+
+        Requires keys/get permission.
 
         :param str name: The name of the key to get.
         :param str version: (optional) A specific version of the key to get. If not specified, gets the latest version
@@ -278,7 +281,9 @@ class KeyClient(KeyVaultClientBase):
     @distributed_trace
     def get_deleted_key(self, name, **kwargs):
         # type: (str, **Any) -> DeletedKey
-        """Get a deleted key. Possible only in a vault with soft-delete enabled. Requires keys/get permission.
+        """Get a deleted key. Possible only in a vault with soft-delete enabled.
+
+        Requires keys/get permission.
 
         :param str name: The name of the key
         :returns: The deleted key
@@ -327,7 +332,9 @@ class KeyClient(KeyVaultClientBase):
     @distributed_trace
     def list_properties_of_keys(self, **kwargs):
         # type: (**Any) -> ItemPaged[KeyProperties]
-        """List identifiers and properties of all keys in the vault. Requires keys/list permission.
+        """List identifiers and properties of all keys in the vault.
+
+        Requires keys/list permission.
 
         :returns: An iterator of keys without their cryptographic material or version information
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.keys.KeyProperties]
@@ -351,7 +358,9 @@ class KeyClient(KeyVaultClientBase):
     @distributed_trace
     def list_properties_of_key_versions(self, name, **kwargs):
         # type: (str, **Any) -> ItemPaged[KeyProperties]
-        """List the identifiers and properties of a key's versions. Requires keys/list permission.
+        """List the identifiers and properties of a key's versions.
+
+        Requires keys/list permission.
 
         :param str name: The name of the key
         :returns: An iterator of keys without their cryptographic material
@@ -384,7 +393,6 @@ class KeyClient(KeyVaultClientBase):
         :py:attr:`~azure.keyvault.keys.KeyProperties.recovery_level` does not specify 'Purgeable'.
         This method is only necessary for purging a key before its
         :py:attr:`~azure.keyvault.keys.DeletedKey.scheduled_purge_date`.
-
 
         Requires keys/purge permission.
 
@@ -448,7 +456,9 @@ class KeyClient(KeyVaultClientBase):
     @distributed_trace
     def update_key_properties(self, name, version=None, **kwargs):
         # type: (str, Optional[str], **Any) -> KeyVaultKey
-        """Change a key's properties (not its cryptographic material). Requires keys/update permission.
+        """Change a key's properties (not its cryptographic material).
+
+        Requires keys/update permission.
 
         :param str name: The name of key to update
         :param str version: (optional) The version of the key to update. If unspecified, the latest version is updated.
@@ -484,7 +494,7 @@ class KeyClient(KeyVaultClientBase):
         parameters = self._models.KeyUpdateParameters(
             key_ops=kwargs.pop("key_operations", None),
             key_attributes=attributes,
-            tags=kwargs.pop("tags", None)
+            tags=kwargs.pop("tags", None),
         )
 
         bundle = self._client.update_key(
@@ -500,7 +510,9 @@ class KeyClient(KeyVaultClientBase):
     @distributed_trace
     def backup_key(self, name, **kwargs):
         # type: (str, **Any) -> bytes
-        """Back up a key in a protected form useable only by Azure Key Vault. Requires keys/backup permission.
+        """Back up a key in a protected form useable only by Azure Key Vault.
+
+        Requires keys/backup permission.
 
         This is intended to allow copying a key from one vault to another. Both vaults must be owned by the same Azure
         subscription. Also, backup / restore cannot be performed across geopolitical boundaries. For example, a backup
@@ -526,7 +538,9 @@ class KeyClient(KeyVaultClientBase):
     @distributed_trace
     def restore_key_backup(self, backup, **kwargs):
         # type: (bytes, **Any) -> KeyVaultKey
-        """Restore a key backup to the vault. Requires keys/restore permission.
+        """Restore a key backup to the vault.
+
+        Requires keys/restore permission.
 
         This imports all versions of the key, with its name, attributes, and access control policies. If the key's name
         is already in use, restoring it will fail. Also, the target vault must be owned by the same Microsoft Azure
@@ -558,9 +572,9 @@ class KeyClient(KeyVaultClientBase):
     @distributed_trace
     def import_key(self, name, key, **kwargs):
         # type: (str, JsonWebKey, **Any) -> KeyVaultKey
-        """Import a key created externally. Requires keys/import permission.
+        """Import a key created externally.
 
-        If `name` is already in use, the key will be imported as a new version.
+        Requires keys/import permission. If ``name`` is already in use, the key will be imported as a new version.
 
         :param str name: Name for the imported key
         :param key: The JSON web key to import
@@ -587,7 +601,7 @@ class KeyClient(KeyVaultClientBase):
             key=key._to_generated_model(),
             key_attributes=attributes,
             hsm=kwargs.pop("hardware_protected", None),
-            tags=kwargs.pop("tags", None)
+            tags=kwargs.pop("tags", None),
         )
 
         bundle = self._client.import_key(
@@ -598,3 +612,16 @@ class KeyClient(KeyVaultClientBase):
             **kwargs
         )
         return KeyVaultKey._from_key_bundle(bundle)
+
+    @distributed_trace
+    def get_random_bytes(self, count, **kwargs):
+        # type: (int, **Any) -> bytes
+        """Get the requested number of random bytes from a managed HSM.
+
+        :param int count: The requested number of random bytes.
+        :return: The random bytes.
+        :rtype: bytes
+        """
+        parameters = self._models.GetRandomBytesRequest(count=count)
+        result = self._client.get_random_bytes(vault_base_url=self._vault_url, parameters=parameters, **kwargs)
+        return result.value

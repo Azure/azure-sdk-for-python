@@ -3,18 +3,16 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import pytest
 import six
-from azure import containerregistry
 
+from azure.core.exceptions import ClientAuthenticationError
+from azure.core.paging import ItemPaged
 from azure.containerregistry import (
     ArtifactTagProperties,
     RepositoryProperties,
     ArtifactManifestProperties,
-    RegistryArtifact,
 )
-
-from azure.core.paging import ItemPaged
-from azure.core.pipeline.transport import RequestsTransport
 
 from testcase import ContainerRegistryTestClass
 from constants import HELLO_WORLD
@@ -24,6 +22,9 @@ from preparer import acr_preparer
 class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     def test_list_repository_names(self, containerregistry_anonregistry_endpoint):
+        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+            pytest.skip("Not a public endpoint")
+
         client = self.create_anon_client(containerregistry_anonregistry_endpoint)
         assert client._credential is None
 
@@ -42,6 +43,9 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
     @acr_preparer()
     def test_list_repository_names_by_page(self, containerregistry_anonregistry_endpoint):
+        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+            pytest.skip("Not a public endpoint")
+
         client = self.create_anon_client(containerregistry_anonregistry_endpoint)
         assert client._credential is None
 
@@ -61,80 +65,128 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             assert page_count <= results_per_page
             total_pages += 1
 
-        assert total_pages > 1
+        assert total_pages >= 1
 
     @acr_preparer()
-    def test_transport_closed_only_once(self, containerregistry_anonregistry_endpoint):
-        transport = RequestsTransport()
-        client = self.create_anon_client(containerregistry_anonregistry_endpoint, transport=transport)
-        assert client._credential is None
-        with client:
-            for r in client.list_repository_names():
-                pass
-            assert transport.session is not None
+    def test_get_repository_properties(self, containerregistry_anonregistry_endpoint):
+        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+            pytest.skip("Not a public endpoint")
 
-            with client.get_repository(HELLO_WORLD) as repo_client:
-                assert repo_client._credential is None
-                assert transport.session is not None
-
-            for r in client.list_repository_names():
-                pass
-            assert transport.session is not None
-
-    @acr_preparer()
-    def test_get_properties(self, containerregistry_anonregistry_endpoint):
         client = self.create_anon_client(containerregistry_anonregistry_endpoint)
         assert client._credential is None
 
-        container_repository = client.get_repository(HELLO_WORLD)
-        assert container_repository._credential is None
-
-        properties = container_repository.get_properties()
+        properties = client.get_repository_properties("library/hello-world")
 
         assert isinstance(properties, RepositoryProperties)
         assert properties.name == HELLO_WORLD
 
     @acr_preparer()
-    def test_list_manifests(self, containerregistry_anonregistry_endpoint):
+    def test_list_manifest_properties(self, containerregistry_anonregistry_endpoint):
+        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+            pytest.skip("Not a public endpoint")
+
         client = self.create_anon_client(containerregistry_anonregistry_endpoint)
         assert client._credential is None
 
-        container_repository = client.get_repository(HELLO_WORLD)
-        assert container_repository._credential is None
-
         count = 0
-        for manifest in container_repository.list_manifests():
+        for manifest in client.list_manifest_properties("library/hello-world"):
             assert isinstance(manifest, ArtifactManifestProperties)
             count += 1
         assert count > 0
 
     @acr_preparer()
-    def test_get_artifact(self, containerregistry_anonregistry_endpoint):
+    def test_get_manifest_properties(self, containerregistry_anonregistry_endpoint):
+        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+            pytest.skip("Not a public endpoint")
+
         client = self.create_anon_client(containerregistry_anonregistry_endpoint)
         assert client._credential is None
 
-        container_repository = client.get_repository(HELLO_WORLD)
-        assert container_repository._credential is None
+        registry_artifact = client.get_manifest_properties("library/hello-world", "latest")
 
-        registry_artifact = container_repository.get_artifact("latest")
-        assert registry_artifact._credential is None
-
-        assert isinstance(registry_artifact, RegistryArtifact)
+        assert isinstance(registry_artifact, ArtifactManifestProperties)
+        assert "latest" in registry_artifact.tags
+        assert registry_artifact.repository_name == "library/hello-world"
 
     @acr_preparer()
-    def test_list_tags(self, containerregistry_anonregistry_endpoint):
+    def test_list_tag_properties(self, containerregistry_anonregistry_endpoint):
+        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+            pytest.skip("Not a public endpoint")
+
         client = self.create_anon_client(containerregistry_anonregistry_endpoint)
         assert client._credential is None
 
-        container_repository = client.get_repository(HELLO_WORLD)
-        assert container_repository._credential is None
-
-        for manifest in container_repository.list_manifests():
-            registry_artifact = container_repository.get_artifact(manifest.digest)
-        assert registry_artifact._credential is None
-
         count = 0
-        for tag in registry_artifact.list_tags():
+        for tag in client.list_tag_properties("library/hello-world"):
             count += 1
             assert isinstance(tag, ArtifactTagProperties)
         assert count > 0
+
+    @acr_preparer()
+    def test_delete_repository(self, containerregistry_anonregistry_endpoint):
+        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+            pytest.skip("Not a public endpoint")
+
+        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
+        assert client._credential is None
+
+        with pytest.raises(ClientAuthenticationError):
+            client.delete_repository("library/hello-world")
+
+    @acr_preparer()
+    def test_delete_tag(self, containerregistry_anonregistry_endpoint):
+        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+            pytest.skip("Not a public endpoint")
+
+        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
+        assert client._credential is None
+
+        with pytest.raises(ClientAuthenticationError):
+            client.delete_tag("library/hello-world", "latest")
+
+    @acr_preparer()
+    def test_delete_manifest(self, containerregistry_anonregistry_endpoint):
+        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+            pytest.skip("Not a public endpoint")
+
+        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
+        assert client._credential is None
+
+        with pytest.raises(ClientAuthenticationError):
+            client.delete_manifest("library/hello-world", "latest")
+
+    @acr_preparer()
+    def test_update_repository_properties(self, containerregistry_anonregistry_endpoint):
+        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+            pytest.skip("Not a public endpoint")
+
+        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
+
+        properties = client.get_repository_properties(HELLO_WORLD)
+
+        with pytest.raises(ClientAuthenticationError):
+            client.update_repository_properties(HELLO_WORLD, properties, can_delete=True)
+
+    @acr_preparer()
+    def test_update_tag_properties(self, containerregistry_anonregistry_endpoint):
+        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+            pytest.skip("Not a public endpoint")
+
+        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
+
+        properties = client.get_tag_properties(HELLO_WORLD, "latest")
+
+        with pytest.raises(ClientAuthenticationError):
+            client.update_tag_properties(HELLO_WORLD, "latest", properties, can_delete=True)
+
+    @acr_preparer()
+    def test_update_manifest_properties(self, containerregistry_anonregistry_endpoint):
+        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+            pytest.skip("Not a public endpoint")
+
+        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
+
+        properties = client.get_manifest_properties(HELLO_WORLD, "latest")
+
+        with pytest.raises(ClientAuthenticationError):
+            client.update_manifest_properties(HELLO_WORLD, "latest", properties, can_delete=True)

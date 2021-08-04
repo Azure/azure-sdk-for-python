@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class FirewallRulesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -41,12 +41,12 @@ class FirewallRulesOperations:
         self._deserialize = deserializer
         self._config = config
 
-    def list_by_redis_resource(
+    def list(
         self,
         resource_group_name: str,
         cache_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.RedisFirewallRuleListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.RedisFirewallRuleListResult"]:
         """Gets all firewall rules in the specified redis cache.
 
         :param resource_group_name: The name of the resource group.
@@ -58,12 +58,12 @@ class FirewallRulesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.redis.models.RedisFirewallRuleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RedisFirewallRuleListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RedisFirewallRuleListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-01"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -73,7 +73,7 @@ class FirewallRulesOperations:
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_redis_resource.metadata['url']  # type: ignore
+                url = self.list.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -105,24 +105,25 @@ class FirewallRulesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_by_redis_resource.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{cacheName}/firewallRules'}  # type: ignore
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/{cacheName}/firewallRules'}  # type: ignore
 
     async def create_or_update(
         self,
         resource_group_name: str,
         cache_name: str,
         rule_name: str,
-        parameters: "models.RedisFirewallRuleCreateParameters",
-        **kwargs
-    ) -> "models.RedisFirewallRule":
+        parameters: "_models.RedisFirewallRule",
+        **kwargs: Any
+    ) -> "_models.RedisFirewallRule":
         """Create or update a redis cache firewall rule.
 
         :param resource_group_name: The name of the resource group.
@@ -132,18 +133,18 @@ class FirewallRulesOperations:
         :param rule_name: The name of the firewall rule.
         :type rule_name: str
         :param parameters: Parameters supplied to the create or update redis firewall rule operation.
-        :type parameters: ~azure.mgmt.redis.models.RedisFirewallRuleCreateParameters
+        :type parameters: ~azure.mgmt.redis.models.RedisFirewallRule
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RedisFirewallRule, or the result of cls(response)
         :rtype: ~azure.mgmt.redis.models.RedisFirewallRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RedisFirewallRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RedisFirewallRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-01"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -167,7 +168,7 @@ class FirewallRulesOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'RedisFirewallRuleCreateParameters')
+        body_content = self._serialize.body(parameters, 'RedisFirewallRule')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -175,7 +176,8 @@ class FirewallRulesOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
             deserialized = self._deserialize('RedisFirewallRule', pipeline_response)
@@ -187,15 +189,15 @@ class FirewallRulesOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{cacheName}/firewallRules/{ruleName}'}  # type: ignore
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/{cacheName}/firewallRules/{ruleName}'}  # type: ignore
 
     async def get(
         self,
         resource_group_name: str,
         cache_name: str,
         rule_name: str,
-        **kwargs
-    ) -> "models.RedisFirewallRule":
+        **kwargs: Any
+    ) -> "_models.RedisFirewallRule":
         """Gets a single firewall rule in a specified redis cache.
 
         :param resource_group_name: The name of the resource group.
@@ -209,12 +211,12 @@ class FirewallRulesOperations:
         :rtype: ~azure.mgmt.redis.models.RedisFirewallRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RedisFirewallRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RedisFirewallRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-01"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -241,7 +243,8 @@ class FirewallRulesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RedisFirewallRule', pipeline_response)
 
@@ -249,14 +252,14 @@ class FirewallRulesOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{cacheName}/firewallRules/{ruleName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/{cacheName}/firewallRules/{ruleName}'}  # type: ignore
 
     async def delete(
         self,
         resource_group_name: str,
         cache_name: str,
         rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a single firewall rule in a specified redis cache.
 
@@ -276,7 +279,8 @@ class FirewallRulesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-01"
+        api_version = "2020-12-01"
+        accept = "application/json"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
@@ -294,6 +298,7 @@ class FirewallRulesOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -301,9 +306,10 @@ class FirewallRulesOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{cacheName}/firewallRules/{ruleName}'}  # type: ignore
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/{cacheName}/firewallRules/{ruleName}'}  # type: ignore

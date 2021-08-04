@@ -123,6 +123,7 @@ class MgmtAppConfigurationTest(AzureMgmtAsyncTestCase):
 
         return result.result()
 
+    @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_appconfiguration_list_key_values(self, resource_group):
         CONFIGURATION_STORE_NAME = self.get_resource_name("configuration")
@@ -170,6 +171,7 @@ class MgmtAppConfigurationTest(AzureMgmtAsyncTestCase):
             self.mgmt_client.configuration_stores.list_key_value(resource_group.name, CONFIGURATION_STORE_NAME, BODY)
         )
 
+    @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_appconfiguration(self, resource_group):
 

@@ -48,7 +48,7 @@ class ProtectedItemOperationResultsOperations:
         container_name: str,
         protected_item_name: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ProtectedItemResource"]:
         """Fetches the result of any operation on the backup item.
 
@@ -76,7 +76,7 @@ class ProtectedItemOperationResultsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
