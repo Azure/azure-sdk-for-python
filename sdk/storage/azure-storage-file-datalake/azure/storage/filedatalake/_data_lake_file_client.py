@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from io import BytesIO
-from typing import Any
+from typing import Any, TypeVar
 
 try:
     from urllib.parse import quote, unquote
@@ -26,6 +26,8 @@ from ._serialize import get_mod_conditions, get_path_http_headers, get_access_co
     convert_datetime_to_rfc1123
 from ._deserialize import process_storage_error, deserialize_file_properties
 from ._models import FileProperties, DataLakeFileQueryError
+
+ClassType = TypeVar("ClassType")
 
 
 class DataLakeFileClient(PathClient):
@@ -76,12 +78,13 @@ class DataLakeFileClient(PathClient):
 
     @classmethod
     def from_connection_string(
-            cls, conn_str,  # type: str
+            cls,  # type: Type[ClassType]
+            conn_str,  # type: str
             file_system_name,  # type: str
             file_path,  # type: str
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
-        ):  # type: (...) -> DataLakeFileClient
+        ):  # type: (...) -> ClassType
         """
         Create DataLakeFileClient from a Connection String.
 

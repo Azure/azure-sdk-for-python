@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, TypeVar
 
 try:
     from urllib.parse import urlparse
@@ -21,6 +21,8 @@ from ._data_lake_directory_client import DataLakeDirectoryClient
 from ._data_lake_file_client import DataLakeFileClient
 from ._models import UserDelegationKey, FileSystemPropertiesPaged, LocationMode
 from ._serialize import convert_dfs_url_to_blob_url
+
+ClassType = TypeVar("ClassType")
 
 
 class DataLakeServiceClient(StorageAccountHostsMixin):
@@ -116,10 +118,11 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
 
     @classmethod
     def from_connection_string(
-            cls, conn_str,  # type: str
+            cls,  # type: Type[ClassType]
+            conn_str,  # type: str
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
-        ):  # type: (...) -> DataLakeServiceClient
+        ):  # type: (...) -> ClassType
         """
         Create DataLakeServiceClient from a Connection String.
 
