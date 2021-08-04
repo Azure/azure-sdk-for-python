@@ -11,11 +11,11 @@ jobs:
       DocRepoOwner: MicrosoftDocs
       DocRepoName: azure-docs-sdk-python
     steps:
-      # Docs CI uses Python 3.6.8
+      # Docs CI uses Python 3.6.8 but that is not available on this image
       - task: UsePythonVersion@0
-        displayName: 'Use Python 3.6.8'
+        displayName: 'Use Python 3.6'
         inputs:
-          versionSpec: '3.6.8'
+          versionSpec: '3.6'
 
       # Docs CI upgrades pip, wheel, and setuptools
       - pwsh: pip install --upgrade pip wheel setuptools
