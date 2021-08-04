@@ -5,6 +5,7 @@
 ### Features Added
 
 - Cut hard dependency on requests library
+- Added a `from_json` method which now accepts storage QueueMessage, eventhub's EventData or ServiceBusMessage or simply json bytes to return a `CloudEvent`
 
 ### Fixed
 
