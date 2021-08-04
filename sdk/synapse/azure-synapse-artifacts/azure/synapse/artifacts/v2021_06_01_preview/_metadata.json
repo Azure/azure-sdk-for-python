@@ -97,8 +97,6 @@
         "sql_script": "SqlScriptOperations",
         "spark_job_definition": "SparkJobDefinitionOperations",
         "notebook": "NotebookOperations",
-        "kql_scripts": "KqlScriptsOperations",
-        "kql_script": "KqlScriptOperations",
         "notebook_operation_result": "NotebookOperationResultOperations",
         "spark_configuration": "SparkConfigurationOperations",
         "big_data_pools": "BigDataPoolsOperations",

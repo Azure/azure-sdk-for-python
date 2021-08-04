@@ -17,8 +17,6 @@ from ._data_flow_debug_session_operations import DataFlowDebugSessionOperations
 from ._sql_script_operations import SqlScriptOperations
 from ._spark_job_definition_operations import SparkJobDefinitionOperations
 from ._notebook_operations import NotebookOperations
-from ._kql_scripts_operations import KqlScriptsOperations
-from ._kql_script_operations import KqlScriptOperations
 from ._notebook_operation_result_operations import NotebookOperationResultOperations
 from ._spark_configuration_operations import SparkConfigurationOperations
 from ._big_data_pools_operations import BigDataPoolsOperations
@@ -42,8 +40,6 @@ __all__ = [
     'SqlScriptOperations',
     'SparkJobDefinitionOperations',
     'NotebookOperations',
-    'KqlScriptsOperations',
-    'KqlScriptOperations',
     'NotebookOperationResultOperations',
     'SparkConfigurationOperations',
     'BigDataPoolsOperations',
