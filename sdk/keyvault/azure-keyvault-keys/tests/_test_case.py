@@ -6,7 +6,8 @@ import functools
 import json
 import os
 
-from azure.core import PipelineClient
+from azure.core.pipeline import Pipeline
+from azure.core.pipeline.transport import HttpRequest, RequestsTransport
 from azure.keyvault.keys import KeyReleasePolicy
 from azure.keyvault.keys._shared import HttpChallengeCache
 from azure.keyvault.keys._shared.client_base import ApiVersion, DEFAULT_VERSION
@@ -38,10 +39,10 @@ def client_setup(testcase_func):
 
 
 def get_attestation_token(attestation_uri):
-    pipeline_client = PipelineClient(attestation_uri)
-    request = pipeline_client.get("/generate-test-token")
-    response = pipeline_client.send_request(request)
-    return json.loads(response.text())["token"]
+    request = HttpRequest("GET", "{}/generate-test-token".format(attestation_uri))
+    with Pipeline(transport=RequestsTransport()) as pipeline:
+        response = pipeline.run(request)
+        return json.loads(response.http_response.text())["token"]
 
 
 def get_decorator(only_hsm=False, only_vault=False, api_versions=None, **kwargs):
@@ -60,14 +61,13 @@ def get_release_policy(attestation_uri):
                 "anyOf": [
                     {
                         "claim": "sdk-test",
-                        "condition": "equals",
-                        "value": True
+                        "equals": True
                     }
                 ],
-                "authority": attestation_uri
+                "authority": attestation_uri.rstrip("/") + "/"
             }
         ],
-        "version": "1.0"
+        "version": "1.0.0"
     }
     policy_string = json.dumps(release_policy_json).encode()
     return KeyReleasePolicy(policy_string)

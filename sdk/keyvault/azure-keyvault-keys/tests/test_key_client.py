@@ -9,10 +9,9 @@ import json
 import logging
 import time
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.keyvault.keys import ApiVersion, JsonWebKey, KeyClient
-import pytest
+from azure.keyvault.keys import ApiVersion, JsonWebKey, KeyClient, KeyReleasePolicy
 from six import byte2int
 
 from _shared.test_case import KeyVaultTestCase
@@ -99,15 +98,19 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
             "Missing required date attributes.",
         )
 
-    def _update_key_properties(self, client, key):
+    def _update_key_properties(self, client, key, release_policy=None):
         expires = date_parse.parse("2050-01-02T08:00:00.000Z")
         tags = {"foo": "updated tag"}
         key_ops = ["decrypt", "encrypt"]
-        key_bundle = client.update_key_properties(key.name, key_operations=key_ops, expires_on=expires, tags=tags)
-        self.assertEqual(tags, key_bundle.properties.tags)
-        self.assertEqual(key.id, key_bundle.id)
-        self.assertNotEqual(key.properties.updated_on, key_bundle.properties.updated_on)
-        self.assertEqual(sorted(key_ops), sorted(key_bundle.key_operations))
+        key_bundle = client.update_key_properties(
+            key.name, key_operations=key_ops, expires_on=expires, tags=tags, release_policy=release_policy
+        )
+        assert tags == key_bundle.properties.tags
+        assert key.id == key_bundle.id
+        assert key.properties.updated_on != key_bundle.properties.updated_on
+        assert sorted(key_ops) == sorted(key_bundle.key_operations)
+        if release_policy:
+            assert key.properties.release_policy.data != key_bundle.properties.release_policy.data
         return key_bundle
 
     def _import_test_key(self, client, name, hardware_protected=False, **kwargs):
@@ -473,22 +476,33 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
 
     @only_hsm_7_3_preview()
     @client_setup
-    def test_exportable_without_release_policy_error(self, client, **kwargs):
-        """A key cannot be created as exportable without having a release policy"""
-        key_name = self.get_resource_name("key-name")
-        with pytest.raises(HttpResponseError):
-            client.create_ec_key(key_name, exportable=True)
-
-    @only_hsm_7_3_preview()
-    @client_setup
-    def test_release_policy_not_exportable_error(self, client, **kwargs):
-        """A key cannot have a release policy without being exportable"""
+    def test_update_release_policy(self, client, **kwargs):
         attestation_uri = self._get_attestation_uri()
         release_policy = get_release_policy(attestation_uri)
-
         key_name = self.get_resource_name("key-name")
-        with pytest.raises(HttpResponseError):
-            client.create_oct_key(key_name, release_policy=release_policy)
+        key = self._create_rsa_key(
+            client, key_name, hardware_protected=True, exportable=True, release_policy=release_policy
+        )
+        assert key.properties.release_policy.data
+
+        new_release_policy_json = {
+            "anyOf": [
+                {
+                    "anyOf": [
+                        {
+                            "claim": "sdk-test",
+                            "equals": False
+                        }
+                    ],
+                    "authority": attestation_uri.rstrip("/") + "/"
+                }
+            ],
+            "version": "1.0.0"
+        }
+        policy_string = json.dumps(new_release_policy_json).encode()
+        new_release_policy = KeyReleasePolicy(policy_string)
+
+        self._update_key_properties(client, key, new_release_policy)
 
 
 def test_positive_bytes_count_required():
