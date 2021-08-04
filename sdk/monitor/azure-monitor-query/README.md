@@ -306,7 +306,7 @@ for metric in response.metrics:
 
 #### Query multiple workspaces
 
-The same query can be executed across multiple Log Analytics workspaces. In addition to the KQL query, the following parameters are required:
+The same log query can be executed across multiple Log Analytics workspaces. In addition to the KQL query, the following parameters are required:
 
 - `workspace_id` - The first (primary) workspace ID.
 - `additional_workspaces` - A list of workspaces, excluding the workspace provided in the `workspace_id` parameter. The parameter's list items may consist of the following identifier formats:
