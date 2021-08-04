@@ -179,6 +179,7 @@ class AutoLockRenewer(object):
                         # Renewable is a message
                         receiver.renew_message_lock(renewable)  # type: ignore
                 time.sleep(self._sleep_time)
+            if self._renewable(renewable):
                 self._renew_tasks.put(
                     (
                         receiver,
