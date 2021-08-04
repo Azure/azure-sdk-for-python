@@ -33,20 +33,22 @@ class ContainerRegistryBaseClient(object):
     """
 
     def __init__(self, endpoint: str, credential: Optional["AsyncTokenCredential"] = None, **kwargs) -> None:
-        auth_policy = ContainerRegistryChallengePolicy(credential, endpoint, **kwargs)
+        self._auth_policy = ContainerRegistryChallengePolicy(credential, endpoint, **kwargs)
         self._client = ContainerRegistry(
             credential=credential,
             url=endpoint,
             sdk_moniker=USER_AGENT,
-            authentication_policy=auth_policy,
+            authentication_policy=self._auth_policy,
             **kwargs
         )
 
     async def __aenter__(self):
+        await self._auth_policy.__aenter__()
         await self._client.__aenter__()
         return self
 
     async def __aexit__(self, *args):
+        await self._auth_policy.__aexit__(*args)
         await self._client.__aexit__(*args)
 
     async def close(self) -> None:

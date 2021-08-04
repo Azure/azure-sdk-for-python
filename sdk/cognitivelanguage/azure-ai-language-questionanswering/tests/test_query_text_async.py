@@ -13,7 +13,7 @@ from testcase import (
 )
 
 from azure.ai.language.questionanswering.aio import QuestionAnsweringClient
-from azure.ai.language.questionanswering.rest import *
+from azure.ai.language.questionanswering._rest import *
 from azure.ai.language.questionanswering.models import (
     TextQueryOptions,
     TextRecord

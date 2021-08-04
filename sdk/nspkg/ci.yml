@@ -40,6 +40,9 @@ extends:
     - name: azure-ai-translation-nspkg
       safeName: azureaitranslationnspkg
       skipVerifyChangeLog: true
+    - name: azure-ai-language-nspkg
+      safeName: azureailanguagenspkg
+      skipVerifyChangeLog: true
     - name: azure-communication-nspkg
       safeName: azurecommunicationnspkg
       skipVerifyChangeLog: true

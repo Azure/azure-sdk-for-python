@@ -48,7 +48,7 @@ class SubscriptionOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SubscriptionCollection"]:
         """Lists all subscriptions of the API Management service instance.
 
@@ -130,7 +130,7 @@ class SubscriptionOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -146,7 +146,7 @@ class SubscriptionOperations:
         resource_group_name: str,
         service_name: str,
         sid: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Gets the entity state (Etag) version of the apimanagement subscription specified by its
         identifier.
@@ -195,7 +195,7 @@ class SubscriptionOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -212,7 +212,7 @@ class SubscriptionOperations:
         resource_group_name: str,
         service_name: str,
         sid: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SubscriptionContract":
         """Gets the specified Subscription entity.
 
@@ -260,7 +260,7 @@ class SubscriptionOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -282,7 +282,7 @@ class SubscriptionOperations:
         notify: Optional[bool] = None,
         if_match: Optional[str] = None,
         app_type: Optional[Union[str, "_models.AppType"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SubscriptionContract":
         """Creates or updates the subscription of specified user to the specified product.
 
@@ -355,7 +355,7 @@ class SubscriptionOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -382,7 +382,7 @@ class SubscriptionOperations:
         parameters: "_models.SubscriptionUpdateParameters",
         notify: Optional[bool] = None,
         app_type: Optional[Union[str, "_models.AppType"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SubscriptionContract":
         """Updates the details of a subscription specified by its identifier.
 
@@ -454,7 +454,7 @@ class SubscriptionOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -473,7 +473,7 @@ class SubscriptionOperations:
         service_name: str,
         sid: str,
         if_match: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the specified subscription.
 
@@ -525,7 +525,7 @@ class SubscriptionOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -538,7 +538,7 @@ class SubscriptionOperations:
         resource_group_name: str,
         service_name: str,
         sid: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Regenerates primary key of existing subscription of the API Management service instance.
 
@@ -586,7 +586,7 @@ class SubscriptionOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -599,7 +599,7 @@ class SubscriptionOperations:
         resource_group_name: str,
         service_name: str,
         sid: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Regenerates secondary key of existing subscription of the API Management service instance.
 
@@ -647,7 +647,7 @@ class SubscriptionOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -660,7 +660,7 @@ class SubscriptionOperations:
         resource_group_name: str,
         service_name: str,
         sid: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SubscriptionKeysContract":
         """Gets the specified Subscription keys.
 
@@ -708,7 +708,7 @@ class SubscriptionOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}

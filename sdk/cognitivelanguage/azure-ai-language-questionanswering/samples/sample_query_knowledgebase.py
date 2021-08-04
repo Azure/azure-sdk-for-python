@@ -46,8 +46,8 @@ def sample_query_knowledgebase():
         )
 
         output = client.query_knowledgebase(
+            input,
             project_name=knowledgebase_project,
-            knowledge_base_query_options=input,
             deployment_name="test"
         )
         best_candidate = [a for a in output.answers if a.confidence_score > 0.9][0]
