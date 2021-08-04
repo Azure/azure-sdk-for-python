@@ -96,8 +96,10 @@ class AutoLockRenewer(object):
         :type max_workers: Optional[int]
         """
         self._executor = executor or ThreadPoolExecutor(max_workers=max_workers)
+        # None indicates it's unknown whether the provided executor has max worker > 1
+        self._is_max_workers_greater_than_one = None if executor else (max_workers is None or max_workers > 1)
         self._shutdown = threading.Event()
-        self._sleep_time = 1
+        self._sleep_time = 0.5
         self._renew_period = 10
         self._running = threading.Event()  # indicate whether the main worker thread is running
         self._last_activity_timestamp = None  # the last timestamp when the main worker is active dealing with tasks
@@ -105,6 +107,8 @@ class AutoLockRenewer(object):
         self._max_lock_renewal_duration = max_lock_renewal_duration
         self._on_lock_renew_failure = on_lock_renew_failure
         self._renew_tasks = queue.Queue()  # type: ignore
+        self._infer_max_workers_time = 1
+        self._infer_max_workers_flags = [0, 0]
 
     def __enter__(self):
         if self._shutdown.is_set():
@@ -113,14 +117,17 @@ class AutoLockRenewer(object):
                 " auto lock renewing."
             )
 
-        if not self._running.is_set():
-            self._running.set()
-            self._executor.submit(self._main_worker)
-
+        self._init_workers()
         return self
 
     def __exit__(self, *args):
         self.close()
+
+    def _init_workers(self):
+        self._infer_max_workers_greater_than_one_if_needed()
+        if not self._running.is_set():
+            self._running.set()
+            self._executor.submit(self._dispatch_worker)
 
     def _renewable(self, renewable):
         # pylint: disable=protected-access
@@ -134,17 +141,33 @@ class AutoLockRenewer(object):
             return False
         return True
 
-    def _main_worker(self):
+    def _infer_max_workers_greater_than_one_if_needed(self):
+        if self._is_max_workers_greater_than_one is None:
+            end_time = time.time() + self._infer_max_workers_time
+            self._executor.submit(self._infer_max_workers_value_worker, 0, end_time)
+            self._executor.submit(self._infer_max_workers_value_worker, 1, end_time)
+            self._is_max_workers_greater_than_one = (sum(self._infer_max_workers_flags) == 2)
+
+    def _infer_max_workers_value_worker(self, flag_idx, stop_time):
+        while time.time() < stop_time:
+            self._infer_max_workers_flags[flag_idx] = 1
+            time.sleep(0.05)
+
+    def _dispatch_worker(self):
         self._last_activity_timestamp = time.time()
         while not self._shutdown.is_set() and self._running.is_set():
             while not self._renew_tasks.empty():
                 renew_task = self._renew_tasks.get()
-                self._executor.submit(self._auto_lock_renew_task, *renew_task)
+                if self._is_max_workers_greater_than_one:
+                    self._executor.submit(self._auto_lock_renew_task, *renew_task)
+                else:
+                    self._auto_lock_renew_task(*renew_task)
                 self._renew_tasks.task_done()
                 self._last_activity_timestamp = time.time()
 
-            # no renew tasks during the past _idle_timeout seconds
-            # let the main worker thread exit which could be started again if new tasks get registered
+            # let the main ono renew tasks during the past _idle_timeout seconds
+            # ensure the main worker thread could exit, not blocking the main python thread
+            # the main worker thread could be started again if new tasks get registered
             if time.time() - self._last_activity_timestamp >= self._idle_timeout:
                 self._running.clear()
                 self._last_activity_timestamp = None
@@ -273,9 +296,7 @@ class AutoLockRenewer(object):
             "Running lock auto-renew for %r for %r seconds", renewable, max_lock_renewal_duration
         )
 
-        if not self._running.is_set():
-            self._running.set()
-            self._executor.submit(self._main_worker)
+        self._init_workers()
 
         self._renew_tasks.put(
             (

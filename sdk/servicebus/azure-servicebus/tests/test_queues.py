@@ -1002,7 +1002,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             renewer.close()
             assert len(messages) == 11
 
-            renewer = AutoLockRenewer(max_workers=4)
+            renewer = AutoLockRenewer(max_workers=8)
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 for i in range(10):
                     message = ServiceBusMessage("{}".format(i))
