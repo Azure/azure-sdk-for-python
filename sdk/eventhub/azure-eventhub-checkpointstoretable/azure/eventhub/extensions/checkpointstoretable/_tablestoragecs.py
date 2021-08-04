@@ -2,10 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-import datetime
 import time
 import logging
 import calendar
+import datetime
 import dateutil.parser
 from azure.data.tables import TableClient, UpdateMode
 from azure.core import MatchConditions
