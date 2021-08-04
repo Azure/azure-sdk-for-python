@@ -2,12 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from azure.data.tables import TableClient, UpdateMode
 import datetime
 import time
 import logging
 import calendar
 import dateutil.parser
+from azure.data.tables import TableClient, UpdateMode
 from azure.core import MatchConditions
 from azure.data.tables._base_client import parse_connection_str
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError, ResourceNotFoundError
