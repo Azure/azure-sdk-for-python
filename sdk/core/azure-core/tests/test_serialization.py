@@ -6,6 +6,7 @@ import base64
 from datetime import date, datetime, time, timedelta, tzinfo
 from enum import Enum
 import json
+import sys
 
 from azure.core.serialization import AzureJSONEncoder, NULL
 import pytest
@@ -128,13 +129,14 @@ def test_model_basic(json_dumps_with_encoder):
             self.bytes_data = b"data as bytes"
 
     expected = BasicModel()
+    expected_bytes = "data as bytes" if sys.version_info.major == 2 else "ZGF0YSBhcyBieXRlcw=="
     expected_dict = {
         "string": "myid",
         "number": 42,
         "boolean": True,
         "list_of_ints": [1, 2, 3],
         "dictionary_of_number": {"pi": 3.14},
-        "bytes_data": "ZGF0YSBhcyBieXRlcw==",
+        "bytes_data": expected_bytes,
     }
     assert json.loads(json_dumps_with_encoder(expected.to_dict())) == expected_dict
 
@@ -199,6 +201,7 @@ def test_model_key_vault(json_dumps_with_encoder):
             self._tags = None
 
     expected = Properties()
+    expected_bytes = "thumbprint bytes" if sys.version_info.major == 2 else "dGh1bWJwcmludCBieXRlcw=="
     expected_dict = {
         "_attributes": {
             "enabled": True,
@@ -216,7 +219,7 @@ def test_model_key_vault(json_dumps_with_encoder):
                 "version": None,
             },
         },
-        "_thumbprint": "dGh1bWJwcmludCBieXRlcw==",
+        "_thumbprint": expected_bytes,
         "_tags": None,
     }
     assert json.loads(json_dumps_with_encoder(expected.to_dict())) == expected_dict
