@@ -78,14 +78,14 @@ jobs:
           --user "anything:$(USR_TOKEN)" \
           -d "{\
                   \"title\":\"[AutoRelease] $new_branch(Do not merge)\",\
-                  # \"body\":\"$test_result $(ISSUE_LINK) \",\
-                  \"body\":\"issue link \" [$(ISSUE_LINK)](url),\
+                  \"body\":\"issue link  $(ISSUE_LINK) \",\
                   \"head\":\"$(USR_NAME):$new_branch\",\
                   \"base\":\"$target_branch\"\
               }" \
               https://api.github.com/repos/Azure/azure-sdk-for-python/pulls
 
         echo "\'[AutoRelease] $new_branch \' has been created!!!"
+        
 
         # if test fail, still push and crete PR. But pipeline would fail to remind user
         if [ -f "$output_path/live_test_fail.txt" ]; then
