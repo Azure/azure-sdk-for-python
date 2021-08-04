@@ -47,7 +47,7 @@ class WorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.QuantumWorkspace":
         """Returns the Workspace resource associated with the given name.
 
@@ -91,7 +91,7 @@ class WorkspacesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('QuantumWorkspace', pipeline_response)
@@ -107,7 +107,7 @@ class WorkspacesOperations:
         resource_group_name: str,
         workspace_name: str,
         quantum_workspace: "_models.QuantumWorkspace",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.QuantumWorkspace":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.QuantumWorkspace"]
         error_map = {
@@ -145,7 +145,7 @@ class WorkspacesOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -165,7 +165,7 @@ class WorkspacesOperations:
         resource_group_name: str,
         workspace_name: str,
         quantum_workspace: "_models.QuantumWorkspace",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.QuantumWorkspace"]:
         """Creates or updates a workspace resource.
 
@@ -177,8 +177,8 @@ class WorkspacesOperations:
         :type quantum_workspace: ~azure.mgmt.quantum.models.QuantumWorkspace
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either QuantumWorkspace or the result of cls(response)
@@ -236,7 +236,7 @@ class WorkspacesOperations:
         resource_group_name: str,
         workspace_name: str,
         workspace_tags: "_models.TagsObject",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.QuantumWorkspace":
         """Updates an existing workspace's tags.
 
@@ -287,7 +287,7 @@ class WorkspacesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('QuantumWorkspace', pipeline_response)
@@ -302,7 +302,7 @@ class WorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -335,7 +335,7 @@ class WorkspacesOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -347,7 +347,7 @@ class WorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a Workspace resource.
 
@@ -357,8 +357,8 @@ class WorkspacesOperations:
         :type workspace_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -409,7 +409,7 @@ class WorkspacesOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.WorkspaceListResult"]:
         """Gets the list of Workspaces within a Subscription.
 
@@ -463,7 +463,7 @@ class WorkspacesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -477,7 +477,7 @@ class WorkspacesOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.WorkspaceListResult"]:
         """Gets the list of Workspaces within a resource group.
 
@@ -534,7 +534,7 @@ class WorkspacesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
