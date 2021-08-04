@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 def _utc_to_local(utc_dt):
     timestamp = calendar.timegm(utc_dt.timetuple())
-    local_dt = datetime.fromtimestamp(timestamp)
+    local_dt = datetime.datetime.fromtimestamp(timestamp)
     return local_dt.replace(microsecond=utc_dt.microsecond)
 
 def _to_timestamp(date):
