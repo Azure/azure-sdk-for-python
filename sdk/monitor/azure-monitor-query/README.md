@@ -101,12 +101,13 @@ Each set of metric values is a time series with the following characteristics:
 
 - [Single logs query](#single-logs-query)
   - [Specify duration](#specify-duration)
-  - [Query multiple workspaces](#query-multiple-workspaces)
   - [Set logs query timeout](#set-logs-query-timeout)
 - [Batch logs query](#batch-logs-query)
 - [Query metrics](#query-metrics)
 - [Handle metrics response](#handle-metrics-response)
   - [Example of handling response](#example-of-handling-response)
+- [Advanced scenarios](#advanced-scenarios)
+  - [Query multiple workspaces](#query-multiple-workspaces)
 
 ### Single logs query
 
@@ -301,21 +302,29 @@ for metric in response.metrics:
                 )
 ```
 
-### Advacned Scenarios
+### Advanced scenarios
 
 #### Query multiple workspaces
 
-One of the more advanced scenarios is to query the same query on multiple workspaces. The `additional_workspaces` parameter can be used to pass a list of workspaces that are included in the query when querying a single query over multiple workspaces. The parameter's list items can be qualified workspace names, workspace IDs, or Azure resource IDs. A primary workspace ID must be provided when querying multiple workspaces, as in the following example:
+The same log query can be executed across multiple Log Analytics workspaces. In addition to the KQL query, the following parameters are required:
+
+- `workspace_id` - The first (primary) workspace ID.
+- `additional_workspaces` - A list of workspaces, excluding the workspace provided in the `workspace_id` parameter. The parameter's list items may consist of the following identifier formats:
+  - Qualified workspace names
+  - Workspace IDs
+  - Azure resource IDs
+
+For example, the following query executes in three workspaces:
 
 ```python
- client.query(
-    <primary_workspace_id>,
+client.query(
+    <workspace_id>,
     query,
-    additional_workspaces=['<workspace 1>', '<workspace 2>']
+    additional_workspaces=['<workspace 2>', '<workspace 3>']
     )
 ```
 
-The full sample can be found [here](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_log_query_multiple_workspaces.py).
+A full sample can be found [here](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_log_query_multiple_workspaces.py).
 
 ## Troubleshooting
 
