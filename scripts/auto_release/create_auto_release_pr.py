@@ -10,7 +10,7 @@ NEW_BRANCH = ''
 TARGET_BRANCH = ''
 
 _LOG = logging.getLogger()
-USER_TOKEN = os.getenv('USR_ TOKEN')
+USER_TOKEN = os.getenv('USR_TOKEN')
 
 
 def create_auto_release_pr(api):
