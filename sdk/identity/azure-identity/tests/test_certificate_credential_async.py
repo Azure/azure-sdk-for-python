@@ -191,11 +191,11 @@ async def test_request_body(cert_path, cert_password):
 def test_token_cache(cert_path, cert_password):
     """the credential should optionally use a persistent cache, and default to an in memory cache"""
 
-    with patch("azure.identity._persistent_cache.msal_extensions") as mock_msal_extensions:
+    with patch(CertificateCredential.__module__ + "._load_persistent_cache") as load_persistent_cache:
         with patch(CertificateCredential.__module__ + ".msal") as mock_msal:
             CertificateCredential("tenant", "client-id", cert_path, password=cert_password)
         assert mock_msal.TokenCache.call_count == 1
-        assert not mock_msal_extensions.PersistedTokenCache.called
+        assert not load_persistent_cache.called
 
         CertificateCredential(
             "tenant",
@@ -204,7 +204,7 @@ def test_token_cache(cert_path, cert_password):
             password=cert_password,
             cache_persistence_options=TokenCachePersistenceOptions(),
         )
-        assert mock_msal_extensions.PersistedTokenCache.call_count == 1
+        assert load_persistent_cache.call_count == 1
 
 
 @pytest.mark.asyncio
