@@ -8,6 +8,7 @@ from azure.storage.blob import BlobClient
 
 _NULL = ' '
 _FILE_OUT = 'release_issue_status.csv'
+_PYTHON_SDK_ADMINISTRATORS = ['msyyc', 'RAY-316', 'BigCat20196']
 
 
 def my_print(cmd):
@@ -32,6 +33,9 @@ class IssueStatus:
     comment_num = 0
     language = _NULL
     author_latest_comment = _NULL
+    whether_author_comment = True
+    issue_object = _NULL
+    labels = _NULL
 
     def output(self):
         return '{},{},{},{},{},{},{},{},{},{}\n'.format(self.language, self.link, self.author,
@@ -79,6 +83,14 @@ def _extract_author_latest_comment(comments):
     return _NULL if not q else q[-1][1]
 
 
+def _whether_author_comment(comments):
+    q = set(comment.user.login for comment in comments)
+    for administrators in _PYTHON_SDK_ADMINISTRATORS:
+        q.discard(administrators)
+
+    return True if len(q) > 0 else False
+
+
 def main():
     # get latest issue status
     g = Github(os.getenv('TOKEN'))  # please fill user_token
@@ -103,6 +115,9 @@ def main():
         issue.comment_num = item.comments
         issue.language = _extract_language(item.labels)
         issue.author_latest_comment = _extract_author_latest_comment(item.get_comments())
+        issue.whether_author_comment = _whether_author_comment(item.get_comments())
+        issue.issue_object = item
+        issue.labels = [label.name for label in item.labels]
 
         issue_status.append(issue)
         key = (issue.language, issue.package)
@@ -115,6 +130,8 @@ def main():
     # rule3: if comment num is 0, it is new issue, better to deal with it asap
     # rule4: if delay from latest update is over 7 days, better to deal with it soon.
     # rule5: if delay from created date is over 30 days, better to close.
+    # rule6: if delay from created date is over 30 days and owner never reply, close it.
+    # rule7: if delay from created date is over 15 days and owner never reply, remind owner to handle it.
     for item in issue_status:
         if item.status == 'release':
             item.bot_advice = 'better to release asap.'
@@ -124,9 +141,19 @@ def main():
             item.bot_advice = 'new issue and better to confirm quickly.'
         elif item.delay_from_latest_update >= 7:
             item.bot_advice = 'delay for a long time and better to handle now.'
-        elif item.delay_from_create_date >= 30:
-            item.bot_advice = 'delay for a month and better to close.'
-
+            
+            
+        if item.delay_from_create_date >= 30 and item.language == 'Python' and not item.whether_author_comment and '30days attention' not in item.labels:
+            item.labels.append('30days attention')
+            item.issue_object.set_labels(*item.labels)
+            issue.issue_object.edit(state='close')
+        elif item.delay_from_create_date >= 15 and item.language == 'Python' and not item.whether_author_comment and '15days attention' not in item.labels:
+            item.issue_object.create_comment('hi @{} ,this release-request has been delayed more than 15 days,'
+                                             ' please deal with it ASAP'.format(item.author))
+            item.labels.append('15days attention')
+            item.issue_object.set_labels(*item.labels)
+            
+            
         # judge whether there is duplicated issue for same package
         if item.package != _NULL and duplicated_issue.get((item.language, item.package)) > 1:
             item.bot_advice = f'Warning:There is duplicated issue for {item.package}. ' + item.bot_advice
