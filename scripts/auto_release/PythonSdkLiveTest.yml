@@ -74,21 +74,21 @@ jobs:
         # create PR
         new_branch=`sed -n '1p' $output_path/output.txt`
         target_branch=`sed -n '2p' $output_path/output.txt`
-        # curl \
-        #   --user "anything:$(USR_TOKEN)" \
-        #   -d "{\
-        #           \"title\":\"[AutoRelease] $new_branch(Do not merge)\",\
-        #           \"body\":\"issue link  $(ISSUE_LINK) \",\
-        #           \"head\":\"$(USR_NAME):$new_branch\",\
-        #           \"base\":\"$target_branch\"\
-        #       }" \
-        #       https://api.github.com/repos/Azure/azure-sdk-for-python/pulls
+        curl \
+          --user "anything:$(UPDATE_TOKEN)" \
+          -d "{\
+                  \"title\":\"[AutoRelease] $new_branch(Do not merge)\",\
+                  \"body\":\"issue link  $(ISSUE_LINK) \",\
+                  \"head\":\"$(USR_NAME):$new_branch\",\
+                  \"base\":\"$target_branch\"\
+              }" \
+              https://api.github.com/repos/Azure/azure-sdk-for-python/pulls
 
-        python $script_path/create_auto_release_pr.py "$new_branch" "$target_branch" $USR_NAME $(ISSUE_LINK)
-        echo "new_branch: $new_branch"
-        echo "target_branch: $target_branch"
-        echo "USER_NAME: $USR_NAME"
-        echo "ISSUE_LINK: $(ISSUE_LINK)"
+        # python $script_path/create_auto_release_pr.py "$new_branch" "$target_branch" $USR_NAME $(ISSUE_LINK)
+        # echo "new_branch: $new_branch"
+        # echo "target_branch: $target_branch"
+        # echo "USER_NAME: $USR_NAME"
+        # echo "ISSUE_LINK: $(ISSUE_LINK)"
 
 
         echo "\'[AutoRelease] $new_branch \' has been created!!!"
