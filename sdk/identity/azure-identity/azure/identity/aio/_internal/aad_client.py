@@ -5,25 +5,15 @@
 import time
 from typing import TYPE_CHECKING
 
-from azure.core.configuration import Configuration
-from azure.core.pipeline import AsyncPipeline
-from azure.core.pipeline.policies import (
-    ProxyPolicy,
-    NetworkTraceLoggingPolicy,
-    AsyncRetryPolicy,
-    UserAgentPolicy,
-    DistributedTracingPolicy,
-    HttpLoggingPolicy,
-)
 from ..._internal import AadClientBase
-from ..._internal.user_agent import USER_AGENT
+from ..._internal.pipeline import build_async_pipeline
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Iterable, List, Optional, Union
+    from typing import Any, Iterable, Optional, Union
     from azure.core.credentials import AccessToken
+    from azure.core.pipeline import AsyncPipeline
     from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
-    from azure.core.pipeline.transport import AsyncHttpTransport
     from ..._internal import AadClientCertificate
 
     Policy = Union[AsyncHTTPPolicy, SansIOHTTPPolicy]
@@ -82,34 +72,5 @@ class AadClient(AadClientBase):
         return self._process_response(response, now)
 
     # pylint:disable=no-self-use
-    def _build_pipeline(
-        self,
-        config: Configuration = None,
-        policies: "Optional[List[Policy]]" = None,
-        transport: "Optional[AsyncHttpTransport]" = None,
-        **kwargs: "Any"
-    ) -> AsyncPipeline:
-        config = config or _create_config(**kwargs)
-        policies = policies or [
-            config.user_agent_policy,
-            config.proxy_policy,
-            config.retry_policy,
-            config.logging_policy,
-            DistributedTracingPolicy(**kwargs),
-            HttpLoggingPolicy(**kwargs),
-        ]
-        if not transport:
-            from azure.core.pipeline.transport import AioHttpTransport
-
-            transport = AioHttpTransport(configuration=config)
-
-        return AsyncPipeline(transport=transport, policies=policies)
-
-
-def _create_config(**kwargs: "Any") -> Configuration:
-    config = Configuration(**kwargs)
-    config.proxy_policy = ProxyPolicy(**kwargs)
-    config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
-    config.retry_policy = AsyncRetryPolicy(**kwargs)
-    config.user_agent_policy = UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
-    return config
+    def _build_pipeline(self, **kwargs: "Any") -> "AsyncPipeline":
+        return build_async_pipeline(**kwargs)

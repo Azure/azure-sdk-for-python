@@ -16,6 +16,11 @@
   ([#19943](https://github.com/Azure/azure-sdk-for-python/issues/19943))
 
 ### Other Changes
+- Added `CustomHookPolicy` to credential HTTP pipelines. This allows applications
+  to initialize credentials with `raw_request_hook` and `raw_response_hook`
+  keyword arguments. The value of these arguments should be a callback taking a
+  `PipelineRequest` and `PipelineResponse`, respectively. For example:
+  `ManagedIdentityCredential(raw_request_hook=lambda request: print(request.http_request.url))`
 - Reduced redundant `ChainedTokenCredential` and `DefaultAzureCredential`
   logging. On Python 3.7+, credentials invoked by these classes now log debug
   rather than info messages.
@@ -24,6 +29,7 @@
   workarounds when importing transitive dependencies such as pywin32
   fails
   ([#19989](https://github.com/Azure/azure-sdk-for-python/issues/19989))
+
 
 ## 1.7.0b2 (2021-07-08)
 ### Features Added
