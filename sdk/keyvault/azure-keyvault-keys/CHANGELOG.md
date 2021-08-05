@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 ### Other Changes
+- `KeyClient.get_random_bytes` now returns a `RandomBytes` model
 
 ## 4.5.0b1 (2021-07-08)
 Beginning with this release, this library requires Python 2.7 or 3.6+.
