@@ -97,7 +97,9 @@ class KeyClient(KeyVaultClientBase):
         not_before = kwargs.pop("not_before", None)
         expires_on = kwargs.pop("expires_on", None)
         exportable = kwargs.pop("exportable", None)
-        attributes = self._get_attributes(enabled, not_before, expires_on, exportable)
+        attributes = self._get_attributes(
+            enabled=enabled, not_before=not_before, expires_on=expires_on, exportable=exportable
+        )
 
         policy = kwargs.pop("release_policy", None)
         if policy is not None:
@@ -526,7 +528,7 @@ class KeyClient(KeyVaultClientBase):
         enabled = kwargs.pop("enabled", None)
         not_before = kwargs.pop("not_before", None)
         expires_on = kwargs.pop("expires_on", None)
-        attributes = self._get_attributes(enabled, not_before, expires_on)
+        attributes = self._get_attributes(enabled=enabled, not_before=not_before, expires_on=expires_on)
 
         policy = kwargs.pop("release_policy", None)
         if policy is not None:
@@ -641,7 +643,9 @@ class KeyClient(KeyVaultClientBase):
         not_before = kwargs.pop("not_before", None)
         expires_on = kwargs.pop("expires_on", None)
         exportable = kwargs.pop("exportable", None)
-        attributes = self._get_attributes(enabled, not_before, expires_on, exportable)
+        attributes = self._get_attributes(
+            enabled=enabled, not_before=not_before, expires_on=expires_on, exportable=exportable
+        )
 
         policy = kwargs.pop("release_policy", None)
         if policy is not None:
