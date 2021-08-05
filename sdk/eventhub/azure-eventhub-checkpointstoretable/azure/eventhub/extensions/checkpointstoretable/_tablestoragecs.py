@@ -114,7 +114,7 @@ class TableCheckpointStore(CheckpointStore):
             u'sequencenumber' : checkpoint['sequence_number'],}
         return checkpoint_entity
 
-    def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group):
+    def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs):
         """Retrieves a complete ownership list from the storage table.
         :param str fully_qualified_namespace: The fully qualified namespace that the Event Hub belongs to.
          The format is like "<namespace>.servicebus.windows.net".
@@ -136,7 +136,7 @@ class TableCheckpointStore(CheckpointStore):
         partition_key = "{} {} {} Ownership".format(fully_qualified_namespace,
         eventhub_name, consumer_group)
         my_filter = "PartitionKey eq '"+ partition_key + "'"
-        entities = self.table_client.query_entities(my_filter)
+        entities = self.table_client.query_entities(my_filter, **kwargs)
         ownershiplist = []
         for entity in entities:
             dic = {}
@@ -150,7 +150,7 @@ class TableCheckpointStore(CheckpointStore):
             ownershiplist.append(dic)
         return ownershiplist
 
-    def list_checkpoints(self, fully_qualified_namespace, eventhub_name, consumer_group):
+    def list_checkpoints(self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs):
         """List the updated checkpoints from the storage table.
         :param str fully_qualified_namespace: The fully qualified namespace that the Event Hub belongs to.
          The format is like "<namespace>.servicebus.windows.net".
@@ -170,7 +170,7 @@ class TableCheckpointStore(CheckpointStore):
         partition_key = "{} {} {} Checkpoint".format(fully_qualified_namespace,
         eventhub_name, consumer_group)
         my_filter = "PartitionKey eq '"+ partition_key + "'"
-        entities = self.table_client.query_entities(my_filter)
+        entities = self.table_client.query_entities(my_filter, **kwargs)
         checkpointslist = []
         for entity in entities:
             dic = {}
@@ -183,7 +183,7 @@ class TableCheckpointStore(CheckpointStore):
             checkpointslist.append(dic)
         return checkpointslist
 
-    def update_checkpoint(self, checkpoint):
+    def update_checkpoint(self, checkpoint, **kwargs):
         """Updates the checkpoint using the given information for the offset, associated partition and
         consumer group in the storage table.
         Note: If you plan to implement a custom checkpoint store with the intention of running between
@@ -203,9 +203,9 @@ class TableCheckpointStore(CheckpointStore):
         """
         checkpoint_entity = self._create_checkpoint_entity(checkpoint)
         try:
-            self.table_client.update_entity(mode=UpdateMode.REPLACE, entity=checkpoint_entity)
+            self.table_client.update_entity(mode=UpdateMode.REPLACE, entity=checkpoint_entity, **kwargs)
         except ResourceNotFoundError:
-            self.table_client.create_entity(entity=checkpoint_entity)
+            self.table_client.create_entity(entity=checkpoint_entity, **kwargs)
 
     def _update_ownership(self, ownership):
         """_update_ownership mutates the passed in ownership."""
@@ -250,7 +250,7 @@ class TableCheckpointStore(CheckpointStore):
             )
             return newownership  # Keep the ownership if an unexpected error happens
 
-    def claim_ownership(self, ownershiplist):
+    def claim_ownership(self, ownership_list, **kwargs):
         # type: (Iterable[Dict[str, Any]], Any) -> Iterable[Dict[str, Any]]
         """Tries to claim ownership for a list of specified partitions.
         :param Iterable[Dict[str,Any]] ownership_list: Iterable of dictionaries containing all the ownerships to claim.
@@ -267,6 +267,6 @@ class TableCheckpointStore(CheckpointStore):
                   on storage implementation.
         """
         newlist = []
-        for x in ownershiplist:
+        for x in ownership_list:
             newlist.append(self._claim_one_partition(x))
         return newlist
