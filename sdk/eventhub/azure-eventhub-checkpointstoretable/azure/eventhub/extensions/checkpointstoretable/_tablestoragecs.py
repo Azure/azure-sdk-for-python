@@ -99,7 +99,7 @@ class TableCheckpointStore():
             u'PartitionKey': "{} {} {} Ownership".format(ownership["fully_qualified_namespace"],
         ownership["eventhub_name"], ownership['consumer_group']),
             u'RowKey': ownership['partition_id'],
-            u'owner_id' : ownership['owner_id'],
+            u'ownerid' : ownership['owner_id'],
         }
         return ownership_entity
 
