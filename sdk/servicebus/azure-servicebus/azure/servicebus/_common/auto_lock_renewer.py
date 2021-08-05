@@ -8,7 +8,7 @@ import datetime
 import logging
 import threading
 import time
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, TimeoutError
 from typing import TYPE_CHECKING
 
 from .._servicebus_receiver import ServiceBusReceiver
@@ -108,7 +108,6 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
         self._on_lock_renew_failure = on_lock_renew_failure
         self._renew_tasks = queue.Queue()  # type: ignore
         self._infer_max_workers_time = 1
-        self._infer_max_workers_flags = [0, 0]
 
     def __enter__(self):
         if self._shutdown.is_set():
@@ -132,20 +131,17 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
     def _infer_max_workers_greater_than_one_if_needed(self):
         # infer max_workers value if executor is passed in
         if self._is_max_workers_greater_than_one is None:
-            # submit two tasks to the thread pool at the same time and
-            # judges whether max_workers > 1 based on the sum of the flags
-            end_time = time.time() + self._infer_max_workers_time
-            self._executor.submit(self._infer_max_workers_value_worker, 0, end_time)
-            self._executor.submit(self._infer_max_workers_value_worker, 1, end_time)
-            time.sleep(self._infer_max_workers_time)
-            # if max_workers > 1, then the two submitted work load would be in run in parallel
-            # sum(self._infer_max_workers_flags) == 2, otherwise the sum would just be 1
-            self._is_max_workers_greater_than_one = (sum(self._infer_max_workers_flags) == 2)
+            self._executor.submit(self._infer_max_workers_value_worker)
 
-    def _infer_max_workers_value_worker(self, flag_idx, stop_time):
-        while time.time() < stop_time:
-            self._infer_max_workers_flags[flag_idx] = 1
-            time.sleep(0.05)
+    def _infer_max_workers_value_worker(self):
+        max_workers_checker = self._executor.submit(pow, 1, 1)
+        # This will never complete because there is only one worker thread and
+        # it is executing this function.
+        try:
+            max_workers_checker.result(timeout=self._infer_max_workers_time)
+            self._is_max_workers_greater_than_one = True
+        except TimeoutError:
+            self._is_max_workers_greater_than_one = False
 
     def _renewable(self, renewable):
         # pylint: disable=protected-access
