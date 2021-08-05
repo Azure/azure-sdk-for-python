@@ -84,7 +84,11 @@ jobs:
         #       }" \
         #       https://api.github.com/repos/Azure/azure-sdk-for-python/pulls
 
-        python $script_path/create_auto_release_pr.py "$(new_branch)" "$(target_branch)" $(USER_NAME) $(ISSUE_LINK)
+        python $script_path/create_auto_release_pr.py "$new_branch" "$target_branch" $USER_NAME $(ISSUE_LINK)
+        echo "new_branch: $new_branch"
+        echo "target_branch: $target_branch"
+        echo "USER_NAME: $USER_NAME"
+        echo "ISSUE_LINK: $(ISSUE_LINK)"
 
 
         echo "\'[AutoRelease] $new_branch \' has been created!!!"
