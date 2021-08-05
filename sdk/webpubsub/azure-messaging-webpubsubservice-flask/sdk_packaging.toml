@@ -1,5 +1,5 @@
 [packaging]
-package_name = "azure-messaging-webpubsubservice-flask"
+package_name = "azure-messaging-webpubsubservice_flask"
 package_nspkg = "azure-messaging-nspkg"
 package_pprint_name = "Azure Web PubSub Service"
 package_doc_id = ""

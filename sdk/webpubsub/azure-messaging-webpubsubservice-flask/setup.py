@@ -14,7 +14,7 @@ from setuptools import setup, find_packages
 
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "azure-messaging-webpubsubservice-flask"
+PACKAGE_NAME = "azure-messaging-webpubsubservice_flask"
 PACKAGE_PPRINT_NAME = "Azure WebPubSub Service"
 
 # a-b-c => a/b/c
