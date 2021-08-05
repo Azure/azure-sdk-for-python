@@ -146,7 +146,7 @@ class TableCheckpointStore():
             dic[u'eventhub_name'] = eventhub_name
             dic[u'consumer_group'] = consumer_group
             dic[u'partition_id'] = entity[u'RowKey']
-            dic[u'owner_id'] = entity[u'owner_id']
+            dic[u'owner_id'] = entity[u'ownerid']
             dic[u'last_modified_time'] = _to_timestamp(entity.metadata.get('timestamp'))
             dic[u'etag'] = entity.metadata.get('etag')
             ownershiplist.append(dic)
