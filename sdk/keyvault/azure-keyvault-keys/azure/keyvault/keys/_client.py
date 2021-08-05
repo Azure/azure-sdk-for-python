@@ -8,7 +8,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map as _error_map
 from ._shared._polling import DeleteRecoverPollingMethod, KeyVaultOperationPoller
-from ._models import DeletedKey, KeyVaultKey, KeyProperties
+from ._models import DeletedKey, KeyVaultKey, KeyProperties, RandomBytes
 
 try:
     from typing import TYPE_CHECKING
@@ -615,13 +615,18 @@ class KeyClient(KeyVaultClientBase):
 
     @distributed_trace
     def get_random_bytes(self, count, **kwargs):
-        # type: (int, **Any) -> bytes
+        # type: (int, **Any) -> RandomBytes
         """Get the requested number of random bytes from a managed HSM.
 
         :param int count: The requested number of random bytes.
         :return: The random bytes.
-        :rtype: bytes
+        :rtype: ~azure.keyvault.keys.RandomBytes
+        :raises:
+            :class:`ValueError` if less than one random byte is requested,
+            :class:`~azure.core.exceptions.HttpResponseError` for other errors
         """
+        if count < 1:
+            raise ValueError("At least one random byte must be requested")
         parameters = self._models.GetRandomBytesRequest(count=count)
         result = self._client.get_random_bytes(vault_base_url=self._vault_url, parameters=parameters, **kwargs)
-        return result.value
+        return RandomBytes(value=result.value)
