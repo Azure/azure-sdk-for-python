@@ -7,6 +7,7 @@ import time
 import logging
 import calendar
 import dateutil.parser
+from azure.eventhub._eventprocessor.checkpoint_store import CheckpointStore
 from azure.data.tables import TableClient, UpdateMode
 from azure.data.tables._base_client import parse_connection_str
 from azure.core import MatchConditions
@@ -31,7 +32,7 @@ def _to_timestamp(date):
         timestamp += date.microsecond / 1e6
     return timestamp
 
-class TableCheckpointStore():
+class TableCheckpointStore(CheckpointStore):
     """A CheckpointStore that uses Azure Table Storage to store the partition ownership and checkpoint data.
     This class implements methods list_ownership, claim_ownership, update_checkpoint and list_checkpoints.
     :param str table_account_url:
@@ -45,9 +46,7 @@ class TableCheckpointStore():
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
     :keyword str api_version:
-            The Storage API version to use for requests. Default value is '2019-07-07'.
-    :keyword str secondary_hostname:
-        The hostname of the secondary endpoint.
+            The Storage API version to use for requests. Default value is '2018-03-28'.
     """
 
     def __init__(self, table_account_url, table_name, credential=None, **kwargs):
@@ -80,8 +79,7 @@ class TableCheckpointStore():
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
         :keyword str api_version:
-            The Storage API version to use for requests. Default value is '2019-07-07'.
-        :keyword str secondary_hostname:
+            The Storage API version to use for requests. Default value is '2018-03-28'.
         :returns: A table checkpoint store.
         :rtype: ~azure.eventhub.extensions.checkpointstoretable.TableCheckpointStore
         """
@@ -180,7 +178,7 @@ class TableCheckpointStore():
             dic[u'eventhub_name'] = eventhub_name
             dic[u'consumer_group'] = consumer_group
             dic[u'partition_id'] = entity[u'RowKey']
-            dic[u'sequence_number'] = entity[u'sequence_number']
+            dic[u'sequence_number'] = entity[u'sequencenumber']
             dic[u'offset'] = str(entity[u'offset'])
             checkpointslist.append(dic)
         return checkpointslist
@@ -210,6 +208,7 @@ class TableCheckpointStore():
             self.table_client.create_entity(entity=checkpoint_entity)
 
     def _update_ownership(self, ownership):
+        """_update_ownership mutates the passed in ownership."""
         ownership_entity = self._create_ownership_entity(ownership)
         try:
             if ownership['etag'] is None:
@@ -222,9 +221,9 @@ class TableCheckpointStore():
             metadata = self.table_client.update_entity(mode=UpdateMode.REPLACE, entity=ownership_entity,
             etag=ownership['etag'], match_condition=MatchConditions.IfNotModified)
             ownership['etag'] = metadata['etag']
-            entities = self.table_client.get_entity(partition_key=ownership_entity['PartitionKey']
+            updated_entity = self.table_client.get_entity(partition_key=ownership_entity['PartitionKey']
             , row_key=ownership_entity['RowKey'])
-            ownership['last_modified_time'] = _to_timestamp(entities.metadata.get('timestamp'))
+            ownership['last_modified_time'] = _to_timestamp(updated_entity.metadata.get('timestamp'))
             return ownership
         except (ResourceModifiedError, ResourceExistsError, ResourceNotFoundError):
             raise OwnershipLostError()
