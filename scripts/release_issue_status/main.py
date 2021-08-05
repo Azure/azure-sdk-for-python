@@ -85,10 +85,9 @@ def _extract_author_latest_comment(comments):
 
 def _whether_author_comment(comments):
     q = set(comment.user.login for comment in comments)
-    for administrators in _PYTHON_SDK_ADMINISTRATORS:
-        q.discard(administrators)
+    diff = q.difference(_PYTHON_SDK_ADMINISTRATORS)
 
-    return True if len(q) > 0 else False
+    return True if len(diff) > 0 else False
 
 
 def main():
@@ -129,7 +128,6 @@ def main():
     # rule2: if latest comment is from author, need response asap
     # rule3: if comment num is 0, it is new issue, better to deal with it asap
     # rule4: if delay from latest update is over 7 days, better to deal with it soon.
-    # rule5: if delay from created date is over 30 days, better to close.
     # rule6: if delay from created date is over 30 days and owner never reply, close it.
     # rule7: if delay from created date is over 15 days and owner never reply, remind owner to handle it.
     for item in issue_status:
@@ -141,15 +139,14 @@ def main():
             item.bot_advice = 'new issue and better to confirm quickly.'
         elif item.delay_from_latest_update >= 7:
             item.bot_advice = 'delay for a long time and better to handle now.'
-            
-            
+  
         if item.delay_from_create_date >= 30 and item.language == 'Python' and not item.whether_author_comment and '30days attention' not in item.labels:
             item.labels.append('30days attention')
             item.issue_object.set_labels(*item.labels)
             issue.issue_object.edit(state='close')
         elif item.delay_from_create_date >= 15 and item.language == 'Python' and not item.whether_author_comment and '15days attention' not in item.labels:
             item.issue_object.create_comment('hi @{} ,this release-request has been delayed more than 15 days,'
-                                             ' please deal with it ASAP'.format(item.author))
+                                             ' please deal with it ASAP,we will close the issue if there is still no response after 15 days!'.format(item.author))
             item.labels.append('15days attention')
             item.issue_object.set_labels(*item.labels)
             
