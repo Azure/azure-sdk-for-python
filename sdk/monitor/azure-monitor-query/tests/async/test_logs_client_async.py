@@ -113,4 +113,4 @@ async def test_logs_batch_query_additional_workspaces():
     assert len(response) == 3
 
     for resp in response:
-        assert len(resp.body.tables[0].rows) == 2
+        assert len(resp.tables[0].rows) == 2

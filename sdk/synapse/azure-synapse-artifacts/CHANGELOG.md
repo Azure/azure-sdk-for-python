@@ -2,8 +2,9 @@
 
 ## 0.8.0 (2021-08-10)
 
-- Updated API version to "2020-12-01"
+- Updated API version to "2020-12-01" which is the default API version
 - Added `NotebookOperationResultOperations`, `OperationResultOperations`, `OperationStatusOperations`
+- Added API version "2021-06-01-preview" support
 
 ## 0.7.0 (2021-05-11)
 

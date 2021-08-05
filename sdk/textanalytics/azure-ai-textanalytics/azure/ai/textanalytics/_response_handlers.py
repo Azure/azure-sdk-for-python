@@ -32,6 +32,7 @@ from ._models import (
     RecognizePiiEntitiesResult,
     PiiEntity,
     AnalyzeHealthcareEntitiesResult,
+    ExtractSummaryResult,
     _AnalyzeActionsType,
 )
 
@@ -236,6 +237,15 @@ def healthcare_result(
     )
 
 
+@prepare_result
+def summary_result(
+    summary, results, *args, **kwargs
+):  # pylint: disable=unused-argument
+    return ExtractSummaryResult._from_generated(  # pylint: disable=protected-access
+        summary
+    )
+
+
 def healthcare_extract_page_data(
     doc_id_order, obj, response_headers, health_job_state
 ):  # pylint: disable=unused-argument
@@ -256,6 +266,8 @@ def _get_deserialization_callback_from_task_type(task_type):
         return linked_entities_result
     if task_type == _AnalyzeActionsType.ANALYZE_SENTIMENT:
         return sentiment_result
+    if task_type == _AnalyzeActionsType.EXTRACT_SUMMARY:
+        return summary_result
     return key_phrases_result
 
 
@@ -268,6 +280,8 @@ def _get_property_name_from_task_type(task_type):
         return "entity_linking_tasks"
     if task_type == _AnalyzeActionsType.ANALYZE_SENTIMENT:
         return "sentiment_analysis_tasks"
+    if task_type == _AnalyzeActionsType.EXTRACT_SUMMARY:
+        return "extractive_summarization_tasks"
     return "key_phrase_extraction_tasks"
 
 

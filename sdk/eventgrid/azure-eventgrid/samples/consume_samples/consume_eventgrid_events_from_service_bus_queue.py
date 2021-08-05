@@ -30,7 +30,7 @@ with ServiceBusClient.from_connection_string(connection_str) as sb_client:
     payload =  sb_client.get_queue_receiver(queue_name).receive_messages()
 
     ## deserialize payload into a list of typed Events
-    events = [EventGridEvent.from_dict(json.loads(next(msg.body).decode('utf-8'))) for msg in payload]
+    events = [EventGridEvent.from_json(msg) for msg in payload]
 
     for event in events:
         print(type(event)) ## EventGridEvent

@@ -5,8 +5,7 @@
 ### Features Added
 
 - Added a new enum value `Microsoft.ContainerService.NewKubernetesVersionAvailable` to `SystemEvents`.
-- `EventGridEvent` now has a `from_json` method that takes in a json payload or a message type
-from servicebus, eventhub, storage queue to return a typed object.
+- Added a `from_json` method which now accepts storage QueueMessage, eventhub's EventData or ServiceBusMessage or simply json bytes to return an `EventGridEvent`
 
 ## 4.4.0 (2021-07-19)
 

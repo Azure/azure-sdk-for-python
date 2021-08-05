@@ -20,7 +20,8 @@ if TYPE_CHECKING:
     from typing import Any, Optional
     from azure.core.credentials import AccessToken
 
-IMDS_URL = "http://169.254.169.254/metadata/identity/oauth2/token"
+IMDS_AUTHORITY = "http://169.254.169.254"
+IMDS_TOKEN_PATH = "/metadata/identity/oauth2/token"
 
 PIPELINE_SETTINGS = {
     "connection_timeout": 2,
@@ -33,7 +34,11 @@ PIPELINE_SETTINGS = {
 
 
 def get_request(scope, identity_config):
-    request = HttpRequest("GET", os.environ.get(EnvironmentVariables.AZURE_POD_IDENTITY_TOKEN_URL, IMDS_URL))
+    url = (
+        os.environ.get(EnvironmentVariables.AZURE_POD_IDENTITY_AUTHORITY_HOST, IMDS_AUTHORITY).strip("/")
+        + IMDS_TOKEN_PATH
+    )
+    request = HttpRequest("GET", url)
     request.format_parameters(dict({"api-version": "2018-02-01", "resource": scope}, **identity_config))
     return request
 
@@ -44,7 +49,7 @@ class ImdsCredential(GetTokenMixin):
         super(ImdsCredential, self).__init__()
 
         self._client = ManagedIdentityClient(get_request, **dict(PIPELINE_SETTINGS, **kwargs))
-        if EnvironmentVariables.AZURE_POD_IDENTITY_TOKEN_URL in os.environ:
+        if EnvironmentVariables.AZURE_POD_IDENTITY_AUTHORITY_HOST in os.environ:
             self._endpoint_available = True  # type: Optional[bool]
         else:
             self._endpoint_available = None

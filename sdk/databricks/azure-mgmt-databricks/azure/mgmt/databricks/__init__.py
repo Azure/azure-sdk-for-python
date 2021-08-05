@@ -6,11 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._databricks_client import DatabricksClient
+from ._azure_databricks_management_client import AzureDatabricksManagementClient
 from ._version import VERSION
 
 __version__ = VERSION
-__all__ = ['DatabricksClient']
+__all__ = ['AzureDatabricksManagementClient']
 
 try:
     from ._patch import patch_sdk  # type: ignore
