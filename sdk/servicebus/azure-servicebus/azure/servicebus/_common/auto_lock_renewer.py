@@ -8,7 +8,7 @@ import datetime
 import logging
 import threading
 import time
-from concurrent.futures import ThreadPoolExecutor, TimeoutError
+from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
 from typing import TYPE_CHECKING
 
 from .._servicebus_receiver import ServiceBusReceiver
@@ -140,7 +140,7 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
         try:
             max_workers_checker.result(timeout=self._infer_max_workers_time)
             self._is_max_workers_greater_than_one = True
-        except TimeoutError:
+        except FuturesTimeoutError:
             self._is_max_workers_greater_than_one = False
 
     def _renewable(self, renewable):
