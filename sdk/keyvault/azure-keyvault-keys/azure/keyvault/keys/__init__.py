@@ -4,7 +4,7 @@
 # -------------------------------------
 from ._enums import KeyCurveName, KeyOperation, KeyType
 from ._shared.client_base import ApiVersion
-from ._models import DeletedKey, JsonWebKey, KeyProperties, KeyVaultKey, KeyVaultKeyIdentifier
+from ._models import DeletedKey, JsonWebKey, KeyProperties, KeyVaultKey, KeyVaultKeyIdentifier, RandomBytes
 from ._client import KeyClient
 
 __all__ = [
@@ -18,6 +18,7 @@ __all__ = [
     "KeyType",
     "DeletedKey",
     "KeyProperties",
+    "RandomBytes",
 ]
 
 from ._version import VERSION
