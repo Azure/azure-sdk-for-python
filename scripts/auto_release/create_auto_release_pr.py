@@ -4,14 +4,13 @@ import logging
 
 from ghapi.all import GhApi
 
-
 ISSUE_LINK = ''
 PULL_NUMBER = 0
 NEW_BRANCH = ''
 TARGET_BRANCH = ''
 
 _LOG = logging.getLogger()
-USER_TOKEN = os.getenv('USER_TOKEN', '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')
+USER_TOKEN = os.getenv('USR_ TOKEN')
 
 
 def create_auto_release_pr(api):
@@ -38,7 +37,6 @@ def main():
     # api.pulls.update(pull_number=PULL_NUMBER, body=ISSUE_LINK)
 
 
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Add Issue link',
@@ -58,7 +56,6 @@ if __name__ == '__main__':
     TARGET_BRANCH = args.target_branch
     USER_NAME = args.user_name
     ISSUE_LINK = args.issue_link
-
 
     main()
 # python create_auto_release_pr.py "$(new_branch)" "$(target_branch)" $USER_NAME $ISSUE_LINK
