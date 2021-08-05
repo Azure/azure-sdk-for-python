@@ -51,6 +51,7 @@ class OnBehalfOfCredential(object):
     """
 
     def __init__(self, tenant_id, client_id, client_secret, **kwargs):
+        # type: (str, str, str, **Any) -> None
         validate_tenant_id(tenant_id)
         self._resolve_tenant = functools.partial(
             resolve_tenant, tenant_id, kwargs.pop("allow_multitenant_authentication", False)
