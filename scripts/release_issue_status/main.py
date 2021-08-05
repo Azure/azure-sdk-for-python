@@ -128,8 +128,8 @@ def main():
     # rule2: if latest comment is from author, need response asap
     # rule3: if comment num is 0, it is new issue, better to deal with it asap
     # rule4: if delay from latest update is over 7 days, better to deal with it soon.
-    # rule6: if delay from created date is over 30 days and owner never reply, close it.
-    # rule7: if delay from created date is over 15 days and owner never reply, remind owner to handle it.
+    # rule5: if delay from created date is over 30 days and owner never reply, close it.
+    # rule6: if delay from created date is over 15 days and owner never reply, remind owner to handle it.
     for item in issue_status:
         if item.status == 'release':
             item.bot_advice = 'better to release asap.'
