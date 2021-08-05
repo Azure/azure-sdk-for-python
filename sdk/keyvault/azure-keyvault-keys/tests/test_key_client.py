@@ -12,6 +12,7 @@ import time
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.keyvault.keys import ApiVersion, JsonWebKey, KeyClient, KeyReleasePolicy
+import pytest
 from six import byte2int
 
 from _shared.test_case import KeyVaultTestCase

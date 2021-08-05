@@ -13,6 +13,7 @@ from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.keyvault.keys import ApiVersion, JsonWebKey, KeyReleasePolicy
 from azure.keyvault.keys.aio import KeyClient
+import pytest
 from six import byte2int
 
 from _shared.test_case_async import KeyVaultTestCase
