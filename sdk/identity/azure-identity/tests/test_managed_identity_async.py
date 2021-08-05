@@ -27,12 +27,13 @@ MANAGED_IDENTITY_ENVIRON = "azure.identity.aio._credentials.managed_identity.os.
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("environ", ALL_ENVIRONMENTS)
-async def test_response_hook(environ):
-    """The credential should call raw_response_hook with all responses"""
+async def test_custom_hooks(environ):
+    """The credential's pipeline should include azure-core's CustomHookPolicy"""
 
     scope = "scope"
     expected_token = "***"
-    hook = mock.Mock()
+    request_hook = mock.Mock()
+    response_hook = mock.Mock()
     now = int(time.time())
     expected_response = mock_response(
         json_payload={
@@ -48,19 +49,23 @@ async def test_response_hook(environ):
     transport = async_validating_transport(requests=[Request()] * 2, responses=[expected_response] * 2)
 
     with mock.patch.dict(MANAGED_IDENTITY_ENVIRON, environ, clear=True):
-        credential = ManagedIdentityCredential(transport=transport, raw_response_hook=hook)
+        credential = ManagedIdentityCredential(
+            transport=transport, raw_request_hook=request_hook, raw_response_hook=response_hook
+        )
     await credential.get_token(scope)
 
     if environ:
-        # some environment variables are set, so we're not mocking IMDS and should expect 1 response
-        assert hook.call_count == 1
-        args, kwargs = hook.call_args
+        # some environment variables are set, so we're not mocking IMDS and should expect 1 request
+        assert request_hook.call_count == 1
+        assert response_hook.call_count == 1
+        args, kwargs = response_hook.call_args
         pipeline_response = args[0]
         assert pipeline_response.http_response == expected_response
     else:
-        # we're mocking IMDS and should expect 2 responses
-        assert hook.call_count == 2
-        responses = [args[0].http_response for args, _ in hook.call_args_list]
+        # we're mocking IMDS and should expect 2 requests
+        assert request_hook.call_count == 2
+        assert response_hook.call_count == 2
+        responses = [args[0].http_response for args, _ in response_hook.call_args_list]
         assert responses == [expected_response] * 2
 
 
@@ -483,7 +488,7 @@ async def test_client_id_none():
     assert token.token == expected_access_token
 
     with mock.patch.dict(
-        MANAGED_IDENTITY_ENVIRON, {EnvironmentVariables.MSI_ENDPOINT: "https://localhost"}, clear=True,
+        MANAGED_IDENTITY_ENVIRON, {EnvironmentVariables.MSI_ENDPOINT: "https://localhost"}, clear=True
     ):
         credential = ManagedIdentityCredential(client_id=None, transport=mock.Mock(send=send))
         token = await credential.get_token(scope)
