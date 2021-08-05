@@ -1,6 +1,7 @@
 import os
 import argparse
 import logging
+import sys
 
 from ghapi.all import GhApi
 
