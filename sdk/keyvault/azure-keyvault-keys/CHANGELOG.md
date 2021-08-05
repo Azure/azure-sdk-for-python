@@ -5,6 +5,10 @@
 ### Features Added
 
 ### Breaking Changes
+> These changes do not impact the API of stable versions such as 4.4.0.
+> Only code written against a beta version such as 4.5.0b1 may be affected.
+- `KeyClient.get_random_bytes` now returns a `RandomBytes` model with bytes in a `value`
+  property, rather than returning the bytes directly
 
 ### Bugs Fixed
 

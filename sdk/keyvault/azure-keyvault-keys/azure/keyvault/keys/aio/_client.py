@@ -11,7 +11,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from .._shared._polling_async import AsyncDeleteRecoverPollingMethod
 from .._shared import AsyncKeyVaultClientBase
 from .._shared.exceptions import error_map as _error_map
-from .. import DeletedKey, JsonWebKey, KeyVaultKey, KeyProperties
+from .. import DeletedKey, JsonWebKey, KeyVaultKey, KeyProperties, RandomBytes
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
@@ -590,13 +590,26 @@ class KeyClient(AsyncKeyVaultClientBase):
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace_async
-    async def get_random_bytes(self, count: int, **kwargs: "Any") -> bytes:
+    async def get_random_bytes(self, count: int, **kwargs: "Any") -> RandomBytes:
         """Get the requested number of random bytes from a managed HSM.
 
         :param int count: The requested number of random bytes.
         :return: The random bytes.
-        :rtype: bytes
+        :rtype: ~azure.keyvault.keys.RandomBytes
+        :raises:
+            :class:`ValueError` if less than one random byte is requested,
+            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+
+        Example:
+            .. literalinclude:: ../tests/test_keys_async.py
+                :start-after: [START get_random_bytes]
+                :end-before: [END get_random_bytes]
+                :language: python
+                :caption: Get random bytes
+                :dedent: 12
         """
+        if count < 1:
+            raise ValueError("At least one random byte must be requested")
         parameters = self._models.GetRandomBytesRequest(count=count)
         result = await self._client.get_random_bytes(vault_base_url=self._vault_url, parameters=parameters, **kwargs)
-        return result.value
+        return RandomBytes(value=result.value)

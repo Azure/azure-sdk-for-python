@@ -13,6 +13,7 @@ from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.keyvault.keys import ApiVersion, JsonWebKey
 from azure.keyvault.keys.aio import KeyClient
+import pytest
 from six import byte2int
 
 from _shared.test_case_async import KeyVaultTestCase
@@ -452,10 +453,23 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
 
         generated_random_bytes = []
         for i in range(5):
-            random_bytes = await client.get_random_bytes(count=8)
+            # [START get_random_bytes]
+            # get eight random bytes from a managed HSM
+            result = await client.get_random_bytes(count=8)
+            random_bytes = result.value
+            # [END get_random_bytes]
             assert len(random_bytes) == 8
-            assert all([random_bytes != rb] for rb in generated_random_bytes)
+            assert all(random_bytes != rb for rb in generated_random_bytes)
             generated_random_bytes.append(random_bytes)
+
+
+@pytest.mark.asyncio
+async def test_positive_bytes_count_required():
+    client = KeyClient("...", object())
+    with pytest.raises(ValueError):
+        await client.get_random_bytes(count=0)
+    with pytest.raises(ValueError):
+        await client.get_random_bytes(count=-1)
 
 
 def test_service_headers_allowed_in_logs():
