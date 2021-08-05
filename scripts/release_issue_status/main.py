@@ -8,7 +8,7 @@ from azure.storage.blob import BlobClient
 
 _NULL = ' '
 _FILE_OUT = 'release_issue_status.csv'
-_PYTHON_SDK_ADMINISTRATORS = ['msyyc', 'RAY-316', 'BigCat20196']
+_PYTHON_SDK_ADMINISTRATORS = {'msyyc', 'RAY-316', 'BigCat20196'}
 
 
 def my_print(cmd):
@@ -87,7 +87,7 @@ def _whether_author_comment(comments):
     q = set(comment.user.login for comment in comments)
     diff = q.difference(_PYTHON_SDK_ADMINISTRATORS)
 
-    return True if len(diff) > 0 else False
+    return  len(diff) > 0
 
 
 def main():
@@ -146,7 +146,7 @@ def main():
             issue.issue_object.edit(state='close')
         elif item.delay_from_create_date >= 15 and item.language == 'Python' and not item.whether_author_comment and '15days attention' not in item.labels:
             item.issue_object.create_comment('hi @{} ,this release-request has been delayed more than 15 days,'
-                                             ' please deal with it ASAP,we will close the issue if there is still no response after 15 days!'.format(item.author))
+                                             ' please deal with it ASAP. We will close the issue if there is still no response after 15 days!'.format(item.author))
             item.labels.append('15days attention')
             item.issue_object.set_labels(*item.labels)
             
