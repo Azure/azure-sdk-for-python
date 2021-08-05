@@ -130,13 +130,16 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
             self._executor.submit(self._dispatch_worker)
 
     def _infer_max_workers_greater_than_one_if_needed(self):
-        # submit two tasks to the thread pool at the same time and
-        # judges whether max_workers > 1 based on the flag
+        # infer max_workers value if executor is passed in
         if self._is_max_workers_greater_than_one is None:
+            # submit two tasks to the thread pool at the same time and
+            # judges whether max_workers > 1 based on the sum of the flags
             end_time = time.time() + self._infer_max_workers_time
             self._executor.submit(self._infer_max_workers_value_worker, 0, end_time)
             self._executor.submit(self._infer_max_workers_value_worker, 1, end_time)
             time.sleep(self._infer_max_workers_time)
+            # if max_workers > 1, then the two submitted work load would be in run in parallel
+            # sum(self._infer_max_workers_flags) == 2, otherwise the sum would just be 1
             self._is_max_workers_greater_than_one = (sum(self._infer_max_workers_flags) == 2)
 
     def _infer_max_workers_value_worker(self, flag_idx, stop_time):
@@ -167,9 +170,8 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
                     self._auto_lock_renew_task(*renew_task)
                 self._renew_tasks.task_done()
                 self._last_activity_timestamp = time.time()
-
-            # let the main ono renew tasks during the past _idle_timeout seconds
-            # ensure the main worker thread could exit, not blocking the main python thread
+            # If there's no activity in the past self._idle_timeout seconds, exit the method
+            # This ensures the dispatching thread could exit, not blocking the main python thread
             # the main worker thread could be started again if new tasks get registered
             if time.time() - self._last_activity_timestamp >= self._idle_timeout:
                 self._running.clear()
@@ -217,6 +219,7 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
                         receiver.renew_message_lock(renewable)  # type: ignore
                 time.sleep(self._sleep_time)
             if self._renewable(renewable):
+                # enqueue a new task, keeping renewing the renewable
                 self._renew_tasks.put(
                     (
                         receiver,
