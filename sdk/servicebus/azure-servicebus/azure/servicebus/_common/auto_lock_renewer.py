@@ -136,6 +136,7 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
             end_time = time.time() + self._infer_max_workers_time
             self._executor.submit(self._infer_max_workers_value_worker, 0, end_time)
             self._executor.submit(self._infer_max_workers_value_worker, 1, end_time)
+            time.sleep(self._infer_max_workers_time)
             self._is_max_workers_greater_than_one = (sum(self._infer_max_workers_flags) == 2)
 
     def _infer_max_workers_value_worker(self, flag_idx, stop_time):
