@@ -235,7 +235,7 @@ class TableCheckpointStore():
             self._update_ownership(newownership, **kwargs)
             return newownership
         except OwnershipLostError:
-            raise OwnershipLostError
+            raise OwnershipLostError()
         except Exception as error:  # pylint:disable=broad-except
             logger.warning(
                 "An exception occurred when EventProcessor instance %r claim_ownership for "
