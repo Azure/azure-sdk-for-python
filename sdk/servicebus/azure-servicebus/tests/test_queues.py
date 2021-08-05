@@ -7,6 +7,7 @@
 import logging
 import sys
 import os
+from concurrent.futures import ThreadPoolExecutor
 import types
 import pytest
 import time
@@ -953,7 +954,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT5S')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT10S')
     def test_queue_by_queue_client_conn_str_receive_handler_with_autolockrenew(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         
         with ServiceBusClient.from_connection_string(
@@ -974,12 +975,12 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     if not messages:
                         messages.append(message)
                         assert not message._lock_expired
-                        renewer.register(receiver, message, max_lock_renewal_duration=10)
+                        renewer.register(receiver, message, max_lock_renewal_duration=20)
                         print("Registered lock renew thread", message.locked_until_utc, utc_now())
-                        time.sleep(10)
+                        time.sleep(20)
                         print("Finished first sleep", message.locked_until_utc)
                         assert not message._lock_expired
-                        time.sleep(15) #generate autolockrenewtimeout error by going one iteration past.
+                        time.sleep(30) #generate autolockrenewtimeout error by going one iteration past.
                         sleep_until_expired(message)
                         print("Finished second sleep", message.locked_until_utc, utc_now())
                         assert message._lock_expired
@@ -1002,7 +1003,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             renewer.close()
             assert len(messages) == 11
 
-            renewer = AutoLockRenewer(max_workers=8)
+            renewer = AutoLockRenewer(max_workers=5)
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 for i in range(10):
                     message = ServiceBusMessage("{}".format(i))
@@ -1014,12 +1015,56 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                                                  prefetch_count=10) as receiver:
                 received_msgs = receiver.receive_messages(max_message_count=10, max_wait_time=5)
                 for msg in received_msgs:
-                    renewer.register(receiver, msg, max_lock_renewal_duration=20)
-                time.sleep(20)
+                    renewer.register(receiver, msg, max_lock_renewal_duration=30)
+                time.sleep(30)
 
                 for msg in received_msgs:
                     receiver.complete_message(msg)
             assert len(received_msgs) == 10
+            renewer.close()
+
+            executor = ThreadPoolExecutor(max_workers=1)
+            renewer = AutoLockRenewer(executor=executor)
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                for i in range(3):
+                    message = ServiceBusMessage("{}".format(i))
+                    sender.send_messages(message)
+
+            with sb_client.get_queue_receiver(servicebus_queue.name,
+                                                 max_wait_time=5,
+                                                 receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
+                                                 prefetch_count=3) as receiver:
+                received_msgs = receiver.receive_messages(max_message_count=3, max_wait_time=5)
+                for msg in received_msgs:
+                    renewer.register(receiver, msg, max_lock_renewal_duration=30)
+                time.sleep(30)
+
+                for msg in received_msgs:
+                    receiver.complete_message(msg)
+            assert len(received_msgs) == 3
+            assert not renewer._is_max_workers_greater_than_one
+            renewer.close()
+
+            executor = ThreadPoolExecutor(max_workers=2)
+            renewer = AutoLockRenewer(executor=executor)
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                for i in range(3):
+                    message = ServiceBusMessage("{}".format(i))
+                    sender.send_messages(message)
+
+            with sb_client.get_queue_receiver(servicebus_queue.name,
+                                                 max_wait_time=5,
+                                                 receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
+                                                 prefetch_count=3) as receiver:
+                received_msgs = receiver.receive_messages(max_message_count=3, max_wait_time=5)
+                for msg in received_msgs:
+                    renewer.register(receiver, msg, max_lock_renewal_duration=30)
+                time.sleep(30)
+
+                for msg in received_msgs:
+                    receiver.complete_message(msg)
+            assert len(received_msgs) == 3
+            assert renewer._is_max_workers_greater_than_one
             renewer.close()
 
     @pytest.mark.liveTest

@@ -36,7 +36,7 @@ SHORT_RENEW_SCALING_FACTOR = (
 )
 
 
-class AutoLockRenewer(object):
+class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
     """Auto renew locks for messages and sessions using a background thread pool.
 
     :param max_lock_renewal_duration: A time in seconds that locks registered to this renewer
@@ -129,6 +129,20 @@ class AutoLockRenewer(object):
             self._running.set()
             self._executor.submit(self._dispatch_worker)
 
+    def _infer_max_workers_greater_than_one_if_needed(self):
+        # submit two tasks to the thread pool at the same time and
+        # judges whether max_workers > 1 based on the flag
+        if self._is_max_workers_greater_than_one is None:
+            end_time = time.time() + self._infer_max_workers_time
+            self._executor.submit(self._infer_max_workers_value_worker, 0, end_time)
+            self._executor.submit(self._infer_max_workers_value_worker, 1, end_time)
+            self._is_max_workers_greater_than_one = (sum(self._infer_max_workers_flags) == 2)
+
+    def _infer_max_workers_value_worker(self, flag_idx, stop_time):
+        while time.time() < stop_time:
+            self._infer_max_workers_flags[flag_idx] = 1
+            time.sleep(0.05)
+
     def _renewable(self, renewable):
         # pylint: disable=protected-access
         if self._shutdown.is_set():
@@ -140,18 +154,6 @@ class AutoLockRenewer(object):
         if renewable._lock_expired:
             return False
         return True
-
-    def _infer_max_workers_greater_than_one_if_needed(self):
-        if self._is_max_workers_greater_than_one is None:
-            end_time = time.time() + self._infer_max_workers_time
-            self._executor.submit(self._infer_max_workers_value_worker, 0, end_time)
-            self._executor.submit(self._infer_max_workers_value_worker, 1, end_time)
-            self._is_max_workers_greater_than_one = (sum(self._infer_max_workers_flags) == 2)
-
-    def _infer_max_workers_value_worker(self, flag_idx, stop_time):
-        while time.time() < stop_time:
-            self._infer_max_workers_flags[flag_idx] = 1
-            time.sleep(0.05)
 
     def _dispatch_worker(self):
         self._last_activity_timestamp = time.time()
