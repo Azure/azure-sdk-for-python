@@ -459,7 +459,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
             random_bytes = result.value
             # [END get_random_bytes]
             assert len(random_bytes) == 8
-            assert all([random_bytes != rb] for rb in generated_random_bytes)
+            assert all(random_bytes != rb for rb in generated_random_bytes)
             generated_random_bytes.append(random_bytes)
 
 
