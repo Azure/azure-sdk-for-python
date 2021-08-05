@@ -44,6 +44,14 @@ class KeyClient(AsyncKeyVaultClientBase):
 
     # pylint:disable=protected-access
 
+    def _get_attributes(self, enabled, not_before, expires_on, exportable=None):
+        """Return a KeyAttributes object if none-None attributes are provided, or None otherwise"""
+        if enabled is not None or not_before is not None or expires_on is not None or exportable is not None:
+            return self._models.KeyAttributes(
+                enabled=enabled, not_before=not_before, expires=expires_on, exportable=exportable
+            )
+        return None
+
     @distributed_trace_async
     async def create_key(self, name: str, key_type: "Union[str, KeyType]", **kwargs: "Any") -> KeyVaultKey:
         """Create a key or, if ``name`` is already in use, create a new version of the key.

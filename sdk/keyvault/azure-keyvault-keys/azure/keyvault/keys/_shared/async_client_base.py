@@ -73,14 +73,6 @@ class AsyncKeyVaultClientBase(object):
                 + "Supported versions: {}".format(", ".join(v.value for v in ApiVersion))
             )
 
-    def _get_attributes(self, enabled, not_before, expires_on, exportable=None):
-        """Return a KeyAttributes object if none-None attributes are provided, or None otherwise"""
-        if enabled is not None or not_before is not None or expires_on is not None or exportable is not None:
-            return self._models.KeyAttributes(
-                enabled=enabled, not_before=not_before, expires=expires_on, exportable=exportable
-            )
-        return None
-
     @property
     def vault_url(self) -> str:
         return self._vault_url
