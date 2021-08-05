@@ -1,5 +1,13 @@
 # Release History
 
+## 4.5.0 (2021-08-10)
+
+### Features Added
+
+- Added a new enum value `Microsoft.ContainerService.NewKubernetesVersionAvailable` to `SystemEvents`.
+- `EventGridEvent` now has a `from_json` method that takes in a json payload or a message type
+from servicebus, eventhub, storage queue to return a typed object.
+
 ## 4.4.0 (2021-07-19)
 
 - Bumped `msrest` dependency to `0.6.21` to align with mgmt package.
