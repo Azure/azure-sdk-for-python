@@ -168,7 +168,9 @@ function ValidatePackage($packageName, $packageVersion, $workingDirectory) {
   $installTargetFolder = Join-Path $workingDirectory $packageName
   New-Item -ItemType Directory -Force -Path $installTargetFolder | Out-Null
 
-  # TODO: Additional checks for package validation in docs build.
+  # Add more validation by replicating as much of the docs CI process as
+  # possible
+  # https://github.com/Azure/azure-sdk-for-python/issues/20109
   try {
     Write-Host "pip install $packageExpression --no-cache-dir --target $installTargetFolder"
     $pipInstallOutput = pip `
