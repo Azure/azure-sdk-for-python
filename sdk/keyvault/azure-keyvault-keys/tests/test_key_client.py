@@ -423,7 +423,11 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
 
         generated_random_bytes = []
         for i in range(5):
-            random_bytes = client.get_random_bytes(count=8).value
+            # [START get_random_bytes]
+            # get eight random bytes from a managed HSM
+            result = client.get_random_bytes(count=8)
+            random_bytes = result.value
+            # [END get_random_bytes]
             assert len(random_bytes) == 8
             assert all([random_bytes != rb] for rb in generated_random_bytes)
             generated_random_bytes.append(random_bytes)

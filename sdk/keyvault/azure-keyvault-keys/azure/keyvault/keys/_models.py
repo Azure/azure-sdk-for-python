@@ -441,7 +441,7 @@ class DeletedKey(KeyVaultKey):
 
 
 class RandomBytes(object):
-    """Contains random bytes returned from :func:`~azure.keyvault.keys.KeyClient.get_random_bytes`.
+    """Contains random bytes returned from a managed HSM.
 
     :param bytes value: the random bytes
     """

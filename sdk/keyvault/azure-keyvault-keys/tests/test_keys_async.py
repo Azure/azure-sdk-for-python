@@ -453,11 +453,14 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
 
         generated_random_bytes = []
         for i in range(5):
-            random_bytes = await client.get_random_bytes(count=8)
-            bytes_value = random_bytes.value
-            assert len(bytes_value) == 8
-            assert all([bytes_value != rb] for rb in generated_random_bytes)
-            generated_random_bytes.append(bytes_value)
+            # [START get_random_bytes]
+            # get eight random bytes from a managed HSM
+            result = await client.get_random_bytes(count=8)
+            random_bytes = result.value
+            # [END get_random_bytes]
+            assert len(random_bytes) == 8
+            assert all([random_bytes != rb] for rb in generated_random_bytes)
+            generated_random_bytes.append(random_bytes)
 
 
 @pytest.mark.asyncio

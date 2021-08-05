@@ -624,6 +624,14 @@ class KeyClient(KeyVaultClientBase):
         :raises:
             :class:`ValueError` if less than one random byte is requested,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
+
+        Example:
+            .. literalinclude:: ../tests/test_key_client.py
+                :start-after: [START get_random_bytes]
+                :end-before: [END get_random_bytes]
+                :language: python
+                :caption: Get random bytes
+                :dedent: 12
         """
         if count < 1:
             raise ValueError("At least one random byte must be requested")
