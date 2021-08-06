@@ -66,7 +66,7 @@ jobs:
           exit 1
         fi
 
-        test_result=""
+        test_result="Live test success"
         if [ -f "$output_path/live_test_fail.txt" ]; then
           test_result="Live test fail, detailed info is in pipeline log(search keyword FAILED)!!!\n"
         fi
@@ -78,25 +78,11 @@ jobs:
         export USR_NAME=$(USR_NAME)
         export USR_TOKEN=$(USR_TOKEN)
         export UPDATE_TOKEN=$(UPDATE_TOKEN)
-        # curl \
-        #   --user "anything:$(UPDATE_TOKEN)" \
-        #   -d "{\
-        #           \"title\":\"[AutoRelease] $new_branch(Do not merge)\",\
-        #           \"body\":\"issue link  $(ISSUE_LINK) \",\
-        #           \"head\":\"$(USR_NAME):$new_branch\",\
-        #           \"base\":\"$target_branch\"\
-        #       }" \
-        #       https://api.github.com/repos/Azure/azure-sdk-for-python/pulls
+        export TEST_RESULT=$test_result
 
         python $script_path/create_auto_release_pr.py
-        echo "new_branch: $new_branch"
-        echo "target_branch: $target_branch"
-        echo "USER_NAME: $USR_NAME"
-        echo "ISSUE_LINK: $(ISSUE_LINK)"
-
 
         echo "\'[AutoRelease] $new_branch \' has been created!!!"
-
 
         # if test fail, still push and crete PR. But pipeline would fail to remind user
         if [ -f "$output_path/live_test_fail.txt" ]; then
