@@ -33,7 +33,7 @@ if TYPE_CHECKING:
 
 class QuestionAnsweringClientOperationsMixin(object):
     @overload
-    def query_knowledgebase(
+    def query_knowledge_base(
         self,
         knowledge_base_query_options,  # type: "_models.KnowledgeBaseQueryOptions"
         **kwargs  # type: Any
@@ -56,7 +56,7 @@ class QuestionAnsweringClientOperationsMixin(object):
         pass
 
     @overload
-    def query_knowledgebase(
+    def query_knowledge_base(
         self,
         **kwargs  # type: Any
     ):
@@ -97,7 +97,7 @@ class QuestionAnsweringClientOperationsMixin(object):
         """
         pass
 
-    def query_knowledgebase(
+    def query_knowledge_base(
         self,
         *args,  # type: "_models.KnowledgeBaseQueryOptions"
         **kwargs  # type: Any
@@ -164,12 +164,12 @@ class QuestionAnsweringClientOperationsMixin(object):
 
         json = self._serialize.body(knowledge_base_query_options, "KnowledgeBaseQueryOptions")
 
-        request = rest.build_query_knowledgebase_request(
+        request = rest.build_query_knowledge_base_request(
             content_type=content_type,
             project_name=project_name,
             deployment_name=deployment_name,
             json=json,
-            template_url=self.query_knowledgebase.metadata["url"],
+            template_url=self.query_knowledge_base.metadata["url"],
         )._to_pipeline_transport_request()
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -191,7 +191,7 @@ class QuestionAnsweringClientOperationsMixin(object):
 
         return deserialized
 
-    query_knowledgebase.metadata = {"url": "/:query-knowledgebases"}  # type: ignore
+    query_knowledge_base.metadata = {"url": "/:query-knowledgebases"}  # type: ignore
 
     @overload
     def query_text(
