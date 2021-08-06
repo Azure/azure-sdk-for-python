@@ -19,7 +19,7 @@ def create_auto_release_pr(api):
 
 # Add issue link on PR
 def add_comment(api, pr_number):
-    api.issues.create_comment(pull_number=pr_number, body='issue link:{}'.format(ISSUE_LINK))
+    api.issues.create_comment(issue_number=pr_number, body='issue link:{}'.format(ISSUE_LINK))
 
 
 def main():
