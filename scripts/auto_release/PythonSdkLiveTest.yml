@@ -81,6 +81,7 @@ jobs:
         export TEST_RESULT=$test_result
 
         python $script_path/create_auto_release_pr.py
+
         echo "\'[AutoRelease] $new_branch \' has been created!!!"
 
         # if test fail, still push and crete PR. But pipeline would fail to remind user
