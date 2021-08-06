@@ -11,12 +11,10 @@ except ImportError:  # python < 3.3
     import mock  # type: ignore
 
 from azure.core.credentials import AccessToken
-from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import ManagedIdentityCredential
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._credentials.imds import IMDS_AUTHORITY, IMDS_TOKEN_PATH
-from azure.identity._internal.managed_identity_client import ManagedIdentityClient
 from azure.identity._internal.user_agent import USER_AGENT
 import pytest
 
@@ -34,6 +32,11 @@ ALL_ENVIRONMENTS = (
         EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT: "...",
     },
     {EnvironmentVariables.IDENTITY_ENDPOINT: "...", EnvironmentVariables.IMDS_ENDPOINT: "..."},  # Arc
+    {  # token exchange
+        EnvironmentVariables.AZURE_CLIENT_ID: "...",
+        EnvironmentVariables.AZURE_TENANT_ID: "...",
+        EnvironmentVariables.TOKEN_FILE_PATH: __file__,
+    },
     {},  # IMDS
 )
 
@@ -547,9 +550,7 @@ def test_client_id_none():
 
     # Cloud Shell
     with mock.patch.dict(
-        MANAGED_IDENTITY_ENVIRON,
-        {EnvironmentVariables.MSI_ENDPOINT: "https://localhost"},
-        clear=True,
+        MANAGED_IDENTITY_ENVIRON, {EnvironmentVariables.MSI_ENDPOINT: "https://localhost"}, clear=True
     ):
         credential = ManagedIdentityCredential(client_id=None, transport=mock.Mock(send=send))
         token = credential.get_token(scope)
@@ -733,18 +734,56 @@ def test_azure_arc_client_id():
         credential.get_token("scope")
 
 
-def test_managed_identity_client_retry():
-    """ManagedIdentityClient should retry token requests"""
+def test_token_exchange(tmpdir):
+    exchange_token = "exchange-token"
+    token_file = tmpdir.join("token")
+    token_file.write(exchange_token)
+    access_token = "***"
+    authority = "https://localhost"
+    client_id = "client_id"
+    tenant = "tenant_id"
+    scope = "scope"
 
-    message = "can't connect"
-    transport = mock.Mock(send=mock.Mock(side_effect=ServiceRequestError(message)))
-    request_factory = mock.Mock()
+    transport = validating_transport(
+        requests=[
+            Request(
+                base_url=authority,
+                method="POST",
+                required_data={
+                    "client_assertion": exchange_token,
+                    "client_assertion_type": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+                    "client_id": client_id,
+                    "grant_type": "client_credentials",
+                    "scope": scope,
+                },
+            )
+        ],
+        responses=[
+            mock_response(
+                json_payload={
+                    "access_token": access_token,
+                    "expires_in": 3600,
+                    "ext_expires_in": 3600,
+                    "expires_on": int(time.time()) + 3600,
+                    "not_before": int(time.time()),
+                    "resource": scope,
+                    "token_type": "Bearer",
+                }
+            )
+        ],
+    )
 
-    client = ManagedIdentityClient(request_factory, transport=transport)
+    with mock.patch.dict(
+        "os.environ",
+        {
+            EnvironmentVariables.AZURE_AUTHORITY_HOST: authority,
+            EnvironmentVariables.AZURE_CLIENT_ID: client_id,
+            EnvironmentVariables.AZURE_TENANT_ID: tenant,
+            EnvironmentVariables.TOKEN_FILE_PATH: token_file.strpath,
+        },
+        clear=True,
+    ):
+        credential = ManagedIdentityCredential(transport=transport)
+        token = credential.get_token(scope)
 
-    for method in ("GET", "POST"):
-        request_factory.return_value = HttpRequest(method, "https://localhost")
-        with pytest.raises(ServiceRequestError, match=message):
-            client.request_token("scope")
-        assert transport.send.call_count > 1
-        transport.send.reset_mock()
+    assert token.token == access_token
