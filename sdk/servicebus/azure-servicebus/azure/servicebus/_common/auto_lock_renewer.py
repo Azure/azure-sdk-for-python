@@ -79,10 +79,12 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
         max_workers=None,
     ):
         # type: (float, Optional[LockRenewFailureCallback], Optional[ThreadPoolExecutor], Optional[int]) -> None
-        """Auto renew locks for messages and sessions using a background thread pool.
+        """Auto renew locks for messages and sessions using a background thread pool. It is recommended
+        setting max_worker to a large number or passing ThreadPoolExecutor of large max_workers number when
+        AutoLockRenewer is supposed to deal with multiple messages or sessions simultaneously.
 
         :param max_lock_renewal_duration: A time in seconds that locks registered to this renewer
-          should be maintained for. Default value is 300 (5 minutes).
+         should be maintained for. Default value is 300 (5 minutes).
         :type max_lock_renewal_duration: float
         :param on_lock_renew_failure: A callback may be specified to be called when the lock is lost on the renewable
          that is being registered. Default value is None (no callback).
@@ -96,14 +98,14 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
         :type max_workers: Optional[int]
         """
         self._executor = executor or ThreadPoolExecutor(max_workers=max_workers)
-        # None indicates it's unknown whether the provided executor has max worker > 1
+        # None indicates it's unknown whether the provided executor has max workers > 1
         self._is_max_workers_greater_than_one = None if executor else (max_workers is None or max_workers > 1)
         self._shutdown = threading.Event()
         self._sleep_time = 0.5
         self._renew_period = 10
-        self._running = threading.Event()  # indicate whether the main worker thread is running
-        self._last_activity_timestamp = None  # the last timestamp when the main worker is active dealing with tasks
-        self._idle_timeout = 10  # the idle time that main worker thread should exist if there's no activity
+        self._running_dispatcher = threading.Event()  # indicate whether the dispatcher is running
+        self._last_activity_timestamp = None  # the last timestamp when the dispatcher is active dealing with tasks
+        self._dispatcher_timeout = 5  # the idle time that dispatcher should exit if there's no activity
         self._max_lock_renewal_duration = max_lock_renewal_duration
         self._on_lock_renew_failure = on_lock_renew_failure
         self._renew_tasks = queue.Queue()  # type: ignore
@@ -123,9 +125,9 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
         self.close()
 
     def _init_workers(self):
-        self._infer_max_workers_greater_than_one_if_needed()
-        if not self._running.is_set():
-            self._running.set()
+        if not self._running_dispatcher.is_set():
+            self._infer_max_workers_greater_than_one_if_needed()
+            self._running_dispatcher.set()
             self._executor.submit(self._dispatch_worker)
 
     def _infer_max_workers_greater_than_one_if_needed(self):
@@ -158,7 +160,7 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
 
     def _dispatch_worker(self):
         self._last_activity_timestamp = time.time()
-        while not self._shutdown.is_set() and self._running.is_set():
+        while not self._shutdown.is_set() and self._running_dispatcher.is_set():
             while not self._renew_tasks.empty():
                 renew_task = self._renew_tasks.get()
                 if self._is_max_workers_greater_than_one:
@@ -170,8 +172,8 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
             # If there's no activity in the past self._idle_timeout seconds, exit the method
             # This ensures the dispatching thread could exit, not blocking the main python thread
             # the main worker thread could be started again if new tasks get registered
-            if time.time() - self._last_activity_timestamp >= self._idle_timeout:
-                self._running.clear()
+            if time.time() - self._last_activity_timestamp >= self._dispatcher_timeout:
+                self._running_dispatcher.clear()
                 self._last_activity_timestamp = None
                 return
 
@@ -320,6 +322,6 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
 
         :rtype: None
         """
-        self._running.clear()
+        self._running_dispatcher.clear()
         self._shutdown.set()
         self._executor.shutdown(wait=wait)
