@@ -25,8 +25,8 @@ class LogsQueryResultTable(object):
     :type name: str
     :param columns: Required. The list of columns in this table.
     :type columns: list[~azure.monitor.query.LogsQueryResultColumn]
-    :keyword rows: Required. The resulting rows from this query.
-    :paramtype rows: list[list[str]]
+    :param rows: Required. The resulting rows from this query.
+    :type rows: list[list[str]]
     """
     def __init__(self, name, columns, rows):
         # type: (str, List[LogsQueryResultColumn], List[List[str]]) -> None
@@ -46,10 +46,10 @@ class LogsQueryResultTable(object):
 class LogsQueryResultColumn(InternalColumn):
     """A column in a table.
 
-    :keyword name: The name of this column.
-    :paramtype name: str
-    :keyword type: The data type of this column.
-    :paramtype type: str
+    :ivar name: The name of this column.
+    :vartype name: str
+    :ivar type: The data type of this column.
+    :vartype type: str
     """
 
     _attribute_map = {
@@ -214,7 +214,7 @@ class LogsBatchQueryRequest(object):
 
     def _to_generated(self):
         return InternalLogQueryRequest(
-            id = self.id,
+            id=self.id,
             body=self.body,
             headers=self.headers,
             workspace=self.workspace
@@ -307,7 +307,7 @@ class MetricNamespace(object):
     :keyword name: The name of the namespace.
     :paramtype name: str
     :keyword metric_namespace_name: The fully qualified namespace name.
-    :paramtype properties: str
+    :paramtype metric_namespace_name: str
     """
     def __init__(
         self,
@@ -407,19 +407,19 @@ class MetricValue(object):
 
     All required parameters must be populated in order to send to Azure.
 
-    :keyword time_stamp: Required. the timestamp for the metric value in ISO 8601 format.
-    :paramtype time_stamp: ~datetime.datetime
-    :keyword average: the average value in the time range.
-    :paramtype average: float
-    :keyword minimum: the least value in the time range.
-    :paramtype minimum: float
-    :keyword maximum: the greatest value in the time range.
-    :paramtype maximum: float
-    :keyword total: the sum of all of the values in the time range.
-    :paramtype total: float
-    :keyword count: the number of samples in the time range. Can be used to determine the number of
+    :ivar time_stamp: Required. the timestamp for the metric value in ISO 8601 format.
+    :vartype time_stamp: ~datetime.datetime
+    :ivar average: the average value in the time range.
+    :vartype average: float
+    :ivar minimum: the least value in the time range.
+    :vartype minimum: float
+    :ivar maximum: the greatest value in the time range.
+    :vartype maximum: float
+    :ivar total: the sum of all of the values in the time range.
+    :vartype total: float
+    :ivar count: the number of samples in the time range. Can be used to determine the number of
      values that contributed to the average value.
-    :paramtype count: float
+    :vartype count: float
     """
     def __init__(
         self,
@@ -451,18 +451,18 @@ class Metric(object):
 
     All required parameters must be populated in order to send to Azure.
 
-    :keyword id: Required. the metric Id.
-    :paramtype id: str
-    :keyword type: Required. the resource type of the metric resource.
-    :paramtype type: str
-    :keyword name: Required. the name of the metric.
-    :paramtype name: str
-    :keyword unit: Required. the unit of the metric. Possible values include: "Count", "Bytes",
+    :ivar id: Required. the metric Id.
+    :vartype id: str
+    :ivar type: Required. the resource type of the metric resource.
+    :vartype type: str
+    :ivar name: Required. the name of the metric.
+    :vartype name: str
+    :ivar unit: Required. the unit of the metric. Possible values include: "Count", "Bytes",
      "Seconds", "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds",
      "Unspecified", "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
-    :paramtype unit: str
-    :keyword timeseries: Required. the time series returned when a data query is performed.
-    :paramtype timeseries: list[~monitor_query_client.models.TimeSeriesElement]
+    :vartype unit: str
+    :ivar timeseries: Required. the time series returned when a data query is performed.
+    :vartype timeseries: list[~monitor_query_client.models.TimeSeriesElement]
     """
     def __init__(
         self,
@@ -493,11 +493,11 @@ class Metric(object):
 class TimeSeriesElement(object):
     """A time series result type. The discriminator value is always TimeSeries in this case.
 
-    :keyword metadata_values: the metadata values returned if $filter was specified in the call.
-    :paramtype metadata_values: list[~monitor_query_client.models.MetadataValue]
-    :keyword data: An array of data points representing the metric values. This is only returned if
+    :ivar metadata_values: the metadata values returned if $filter was specified in the call.
+    :vartype metadata_values: list[~monitor_query_client.models.MetadataValue]
+    :ivar data: An array of data points representing the metric values. This is only returned if
      a result type of data is specified.
-    :paramtype data: list[~monitor_query_client.models.MetricValue]
+    :vartype data: list[~monitor_query_client.models.MetricValue]
     """
 
     _attribute_map = {
@@ -529,10 +529,10 @@ class TimeSeriesElement(object):
 class MetricsMetadataValue(object):
     """Represents a metric metadata value.
 
-    :keyword name: the name of the metadata.
-    :paramtype name: str
-    :keyword value: the value of the metadata.
-    :paramtype value: str
+    :ivar name: the name of the metadata.
+    :vartype name: str
+    :ivar value: the value of the metadata.
+    :vartype value: str
     """
     def __init__(
         self,
@@ -582,7 +582,7 @@ class MetricAvailability(object):
 
 
 class AggregationType(str, Enum):
-    """the aggregation type of the metric.
+    """The aggregation type of the metric.
     """
 
     NONE = "None"
