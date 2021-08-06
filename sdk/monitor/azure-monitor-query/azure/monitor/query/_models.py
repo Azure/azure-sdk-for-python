@@ -109,22 +109,22 @@ class MetricsResult(object):
 
     All required parameters must be populated in order to send to Azure.
 
-    :keyword cost: The integer value representing the cost of the query, for data case.
-    :paramtype cost: int
-    :keyword timespan: Required. The timespan for which the data was retrieved. Its value consists of
+    :ivar cost: The integer value representing the cost of the query, for data case.
+    :vartype cost: int
+    :ivar timespan: Required. The timespan for which the data was retrieved. Its value consists of
      two datetimes concatenated, separated by '/'. This may be adjusted in the future and returned
      back from what was originally requested.
-    :paramtype timespan: str
-    :keyword interval: The interval (window size) for which the metric data was returned in. This
+    :vartype timespan: str
+    :ivar interval: The interval (window size) for which the metric data was returned in. This
      may be adjusted in the future and returned back from what was originally requested. This is
      not present if a metadata request was made.
-    :paramtype interval: ~datetime.timedelta
-    :keyword namespace: The namespace of the metrics been queried.
-    :paramtype namespace: str
-    :keyword resourceregion: The region of the resource been queried for metrics.
-    :paramtype resourceregion: str
-    :keyword metrics: Required. the value of the collection.
-    :paramtype metrics: list[~monitor_query_client.models.Metric]
+    :vartype interval: ~datetime.timedelta
+    :ivar namespace: The namespace of the metrics been queried.
+    :vartype namespace: str
+    :ivar resourceregion: The region of the resource been queried for metrics.
+    :vartype resourceregion: str
+    :ivar metrics: Required. the value of the collection.
+    :vartype metrics: list[~monitor_query_client.models.Metric]
     """
     def __init__(self, **kwargs):
         # type: (Any) -> None
@@ -148,7 +148,7 @@ class MetricsResult(object):
             metrics=[Metric._from_generated(m) for m in generated.value] # pylint: disable=protected-access
         )
 
-class LogsBatchQueryRequest(InternalLogQueryRequest):
+class LogsBatchQueryRequest(object):
     """A single request in a batch.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -212,6 +212,14 @@ class LogsBatchQueryRequest(InternalLogQueryRequest):
         self.headers = headers
         self.workspace = workspace_id
 
+    def _to_generated(self):
+        return InternalLogQueryRequest(
+            id = self.id,
+            body=self.body,
+            headers=self.headers,
+            workspace=self.workspace
+        )
+
 class LogsBatchQueryResult(object):
     """The LogsBatchQueryResult.
 
@@ -265,12 +273,12 @@ class LogsBatchQueryResult(object):
 class LogsBatchResultError(object):
     """Error response for a batch request.
 
-    :param message: The error message describing the cause of the error.
-    :type message: str
+    :ivar message: The error message describing the cause of the error.
+    :vartype message: str
     :param code: The error code.
-    :type code: str
+    :vartype code: str
     :param details: The details of the error.
-    :type inner_error: list[~azure.monitor.query.ErrorDetails]
+    :vartype inner_error: list[~azure.monitor.query.ErrorDetails]
     """
     def __init__(self, **kwargs):
         # type: (Any) -> None

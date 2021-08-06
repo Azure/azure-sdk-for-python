@@ -134,6 +134,7 @@ class LogsQueryClient(object):
             queries = [LogsBatchQueryRequest(**q) for q in queries]
         except (KeyError, TypeError):
             pass
+        queries = [q._to_generated() for q in queries]
         try:
             request_order = [req.id for req in queries]
         except AttributeError:

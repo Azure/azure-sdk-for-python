@@ -22,11 +22,6 @@ if TYPE_CHECKING:
 class LogsQueryClient(object):
     """LogsQueryClient
 
-    :param credential: The credential to authenticate the client
-    :type credential: ~azure.core.credentials.TokenCredential
-    :keyword endpoint: The endpoint to connect to. Defaults to 'https://api.loganalytics.io'.
-    :paramtype endpoint: str
-
     .. admonition:: Example:
 
     .. literalinclude:: ../samples/sample_log_query_client.py
@@ -35,6 +30,11 @@ class LogsQueryClient(object):
         :language: python
         :dedent: 0
         :caption: Creating the LogsQueryClient with a TokenCredential.
+
+    :param credential: The credential to authenticate the client
+    :type credential: ~azure.core.credentials.TokenCredential
+    :keyword endpoint: The endpoint to connect to. Defaults to 'https://api.loganalytics.io'.
+    :paramtype endpoint: str
     """
 
     def __init__(self, credential, **kwargs):
@@ -139,7 +139,7 @@ class LogsQueryClient(object):
 
         :param queries: The list of queries that should be processed
         :type queries: list[dict] or list[~azure.monitor.query.LogsBatchQueryRequest]
-        :return: BatchResponse, or the result of cls(response)
+        :return: List of LogsBatchQueryResult, or the result of cls(response)
         :rtype: ~list[~azure.monitor.query.LogsBatchQueryResult]
         :raises: ~azure.core.exceptions.HttpResponseError
 
@@ -156,6 +156,7 @@ class LogsQueryClient(object):
             queries = [LogsBatchQueryRequest(**q) for q in queries]
         except (KeyError, TypeError):
             pass
+        queries = [q._to_generated() for q in queries]
         try:
             request_order = [req.id for req in queries]
         except AttributeError:
