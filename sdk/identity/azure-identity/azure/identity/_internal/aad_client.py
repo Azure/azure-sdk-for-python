@@ -40,6 +40,13 @@ class AadClient(AadClientBase):
         response = self._pipeline.run(request, stream=False, retry_on_methods=self._POST, **kwargs)
         return self._process_response(response, now)
 
+    def obtain_token_by_jwt_assertion(self, scopes, assertion, **kwargs):
+        # type: (Iterable[str], str, **Any) -> AccessToken
+        request = self._get_jwt_assertion_request(scopes, assertion)
+        now = int(time.time())
+        response = self._pipeline.run(request, stream=False, retry_on_methods=self._POST, **kwargs)
+        return self._process_response(response, now)
+
     def obtain_token_by_refresh_token(self, scopes, refresh_token, **kwargs):
         # type: (Iterable[str], str, **Any) -> AccessToken
         request = self._get_refresh_token_request(scopes, refresh_token, **kwargs)
