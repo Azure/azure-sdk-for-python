@@ -103,7 +103,7 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
         self._renew_period = 10
         self._running = threading.Event()  # indicate whether the main worker thread is running
         self._last_activity_timestamp = None  # the last timestamp when the main worker is active dealing with tasks
-        self._idle_timeout = 10  # the idle time that main worker thead should exist if there's no activity
+        self._idle_timeout = 10  # the idle time that main worker thread should exist if there's no activity
         self._max_lock_renewal_duration = max_lock_renewal_duration
         self._on_lock_renew_failure = on_lock_renew_failure
         self._renew_tasks = queue.Queue()  # type: ignore
@@ -131,7 +131,8 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
     def _infer_max_workers_greater_than_one_if_needed(self):
         # infer max_workers value if executor is passed in
         if self._is_max_workers_greater_than_one is None:
-            self._executor.submit(self._infer_max_workers_value_worker)
+            max_wokers_checker = self._executor.submit(self._infer_max_workers_value_worker)
+            max_wokers_checker.result()
 
     def _infer_max_workers_value_worker(self):
         max_workers_checker = self._executor.submit(pow, 1, 1)
@@ -214,7 +215,6 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
                         # Renewable is a message
                         receiver.renew_message_lock(renewable)  # type: ignore
                 time.sleep(self._sleep_time)
-            if self._renewable(renewable):
                 # enqueue a new task, keeping renewing the renewable
                 self._renew_tasks.put(
                     (

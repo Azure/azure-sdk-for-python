@@ -1026,7 +1026,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             executor = ThreadPoolExecutor(max_workers=1)
             renewer = AutoLockRenewer(executor=executor)
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                for i in range(3):
+                for i in range(2):
                     message = ServiceBusMessage("{}".format(i))
                     sender.send_messages(message)
 
@@ -1041,7 +1041,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
                 for msg in received_msgs:
                     receiver.complete_message(msg)
-            assert len(received_msgs) == 3
+            assert len(received_msgs) == 2
             assert not renewer._is_max_workers_greater_than_one
             renewer.close()
 
