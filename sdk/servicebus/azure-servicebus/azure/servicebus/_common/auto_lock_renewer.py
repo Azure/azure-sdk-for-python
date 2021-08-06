@@ -216,16 +216,17 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
                         receiver.renew_message_lock(renewable)  # type: ignore
                 time.sleep(self._sleep_time)
                 # enqueue a new task, keeping renewing the renewable
-                self._renew_tasks.put(
-                    (
-                        receiver,
-                        renewable,
-                        starttime,
-                        max_lock_renewal_duration,
-                        on_lock_renew_failure,
-                        renew_period_override
+                if self._renewable(renewable):
+                    self._renew_tasks.put(
+                        (
+                            receiver,
+                            renewable,
+                            starttime,
+                            max_lock_renewal_duration,
+                            on_lock_renew_failure,
+                            renew_period_override
+                        )
                     )
-                )
             clean_shutdown = not renewable._lock_expired
         except AutoLockRenewTimeout as e:
             error = e
