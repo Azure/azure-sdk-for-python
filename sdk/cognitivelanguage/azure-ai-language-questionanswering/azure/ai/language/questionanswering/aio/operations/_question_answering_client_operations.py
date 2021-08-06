@@ -21,6 +21,7 @@ from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 
 from ... import models as _models, _rest as rest
+from ..._patch import _validate_text_records
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -286,6 +287,11 @@ class QuestionAnsweringClientOperationsMixin:
                 language=kwargs.pop("language", None),
                 string_index_type=kwargs.pop("string_index_type", "TextElements_v8")
             )
+        try:
+            text_query_options['records'] = _validate_text_records(text_query_options['records'])
+        except TypeError:
+            text_query_options.records = _validate_text_records(text_query_options.records)
+
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.TextAnswers"]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
