@@ -119,11 +119,11 @@ class MetricsResult(object):
      may be adjusted in the future and returned back from what was originally requested. This is
      not present if a metadata request was made.
     :vartype interval: ~datetime.timedelta
-    :ivar namespace: The namespace of the metrics been queried.
+    :ivar namespace: The namespace of the metrics that has been queried.
     :vartype namespace: str
-    :ivar resourceregion: The region of the resource been queried for metrics.
+    :ivar resourceregion: The region of the resource that has been queried for metrics.
     :vartype resourceregion: str
-    :ivar metrics: Required. the value of the collection.
+    :ivar metrics: Required. The value of the collection.
     :vartype metrics: list[~monitor_query_client.models.Metric]
     """
     def __init__(self, **kwargs):
@@ -407,17 +407,17 @@ class MetricValue(object):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar time_stamp: Required. the timestamp for the metric value in ISO 8601 format.
+    :ivar time_stamp: Required. The timestamp for the metric value in ISO 8601 format.
     :vartype time_stamp: ~datetime.datetime
-    :ivar average: the average value in the time range.
+    :ivar average: The average value in the time range.
     :vartype average: float
-    :ivar minimum: the least value in the time range.
+    :ivar minimum: The least value in the time range.
     :vartype minimum: float
-    :ivar maximum: the greatest value in the time range.
+    :ivar maximum: The greatest value in the time range.
     :vartype maximum: float
-    :ivar total: the sum of all of the values in the time range.
+    :ivar total: The sum of all of the values in the time range.
     :vartype total: float
-    :ivar count: the number of samples in the time range. Can be used to determine the number of
+    :ivar count: The number of samples in the time range. Can be used to determine the number of
      values that contributed to the average value.
     :vartype count: float
     """
@@ -451,17 +451,17 @@ class Metric(object):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Required. the metric Id.
+    :ivar id: Required. The metric Id.
     :vartype id: str
-    :ivar type: Required. the resource type of the metric resource.
+    :ivar type: Required. The resource type of the metric resource.
     :vartype type: str
-    :ivar name: Required. the name of the metric.
+    :ivar name: Required. The name of the metric.
     :vartype name: str
-    :ivar unit: Required. the unit of the metric. Possible values include: "Count", "Bytes",
+    :ivar unit: Required. The unit of the metric. Possible values include: "Count", "Bytes",
      "Seconds", "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds",
      "Unspecified", "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
     :vartype unit: str
-    :ivar timeseries: Required. the time series returned when a data query is performed.
+    :ivar timeseries: Required. The time series returned when a data query is performed.
     :vartype timeseries: list[~monitor_query_client.models.TimeSeriesElement]
     """
     def __init__(
@@ -493,7 +493,7 @@ class Metric(object):
 class TimeSeriesElement(object):
     """A time series result type. The discriminator value is always TimeSeries in this case.
 
-    :ivar metadata_values: the metadata values returned if $filter was specified in the call.
+    :ivar metadata_values: The metadata values returned if $filter was specified in the call.
     :vartype metadata_values: list[~monitor_query_client.models.MetadataValue]
     :ivar data: An array of data points representing the metric values. This is only returned if
      a result type of data is specified.
@@ -529,9 +529,9 @@ class TimeSeriesElement(object):
 class MetricsMetadataValue(object):
     """Represents a metric metadata value.
 
-    :ivar name: the name of the metadata.
+    :ivar name: The name of the metadata.
     :vartype name: str
-    :ivar value: the value of the metadata.
+    :ivar value: The value of the metadata.
     :vartype value: str
     """
     def __init__(

@@ -31,7 +31,7 @@ class LogsQueryClient(object):
         :dedent: 0
         :caption: Creating the LogsQueryClient with a TokenCredential.
 
-    :param credential: The credential to authenticate the client
+    :param credential: The credential to authenticate the client.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword endpoint: The endpoint to connect to. Defaults to 'https://api.loganalytics.io'.
     :paramtype endpoint: str
