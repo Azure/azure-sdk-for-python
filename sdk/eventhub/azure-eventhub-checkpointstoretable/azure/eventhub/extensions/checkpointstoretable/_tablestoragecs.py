@@ -131,6 +131,7 @@ class TableCheckpointStore():
 
     def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs):
         """Retrieves a complete ownership list from the storage table.
+        
         :param str fully_qualified_namespace: The fully qualified namespace that the Event Hub belongs to.
          The format is like "<namespace>.servicebus.windows.net".
         :param str eventhub_name: The name of the specific Event Hub the partition ownerships are associated with,
