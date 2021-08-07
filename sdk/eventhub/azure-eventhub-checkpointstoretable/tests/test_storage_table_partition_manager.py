@@ -11,7 +11,7 @@ STORAGE_CONN_STR = [os.environ.get("AZURE_STORAGE_CONN_STR", "Azure Storage Conn
 
 def get_live_storage_table_client(storage_connection_str):
     try:
-        table_name = chr(random.randint(ord('a'), ord('z'))) +(uuid.uuid4().hex)
+        table_name = `table_{}`.format(uuid.uuid4())
         table_service_client = TableServiceClient.from_connection_string(storage_connection_str)
         table_service_client.create_table_if_not_exists(table_name)
         return storage_connection_str, table_name
