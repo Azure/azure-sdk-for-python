@@ -108,10 +108,10 @@ class TableCheckpointStore():
         Create a dictionary with the `ownership` attributes.
         """
         ownership_entity = {
-            u'PartitionKey': "{} {} {} Ownership".format(ownership["fully_qualified_namespace"],
+            'PartitionKey': "{} {} {} Ownership".format(ownership["fully_qualified_namespace"],
         ownership["eventhub_name"], ownership['consumer_group']),
-            u'RowKey': ownership['partition_id'],
-            u'ownerid' : ownership['owner_id'],
+            'RowKey': ownership['partition_id'],
+            'ownerid' : ownership['owner_id'],
         }
         return ownership_entity
 
@@ -121,11 +121,11 @@ class TableCheckpointStore():
         Create a dictionary with `checkpoint` attributes.
         """
         checkpoint_entity = {
-            u'PartitionKey': "{} {} {} Checkpoint".format(checkpoint["fully_qualified_namespace"],
+            'PartitionKey': "{} {} {} Checkpoint".format(checkpoint["fully_qualified_namespace"],
         checkpoint["eventhub_name"], checkpoint['consumer_group']),
-            u'RowKey': checkpoint['partition_id'],
-            u'offset' : checkpoint['offset'],
-            u'sequencenumber' : checkpoint['sequence_number'],
+            'RowKey': checkpoint['partition_id'],
+            'offset' : checkpoint['offset'],
+            'sequencenumber' : checkpoint['sequence_number'],
         }
         return checkpoint_entity
 
@@ -133,29 +133,44 @@ class TableCheckpointStore():
         """_update_ownership mutates the passed in ownership."""
         ownership_entity = self._create_ownership_entity(ownership)
         try:
-            if ownership['etag'] is None:
-                metadata = self._table_client.create_entity(entity=ownership_entity,
-                headers={'Prefer': 'return-content'})
-                ownership['etag'] = metadata['etag']
-                ownership['last_modified_time'] = _to_timestamp(dateutil.parser.isoparse
-                (metadata['content']['Timestamp']))
-                return ownership
-            metadata = self._table_client.update_entity(mode=UpdateMode.REPLACE, entity=ownership_entity,
-            etag=ownership['etag'], match_condition=MatchConditions.IfNotModified)
+            metadata = self._table_client.update_entity(mode=UpdateMode.REPLACE,
+            entity=ownership_entity,
+            etag=ownership['etag'],
+            match_condition=MatchConditions.IfNotModified
+            )
             ownership['etag'] = metadata['etag']
-            updated_entity = self._table_client.get_entity(partition_key=ownership_entity['PartitionKey']
-            , row_key=ownership_entity['RowKey'])
+            updated_entity = self._table_client.get_entity(
+                partition_key=ownership_entity['PartitionKey'],
+                row_key=ownership_entity['RowKey']
+            )
             ownership['last_modified_time'] = _to_timestamp(updated_entity.metadata.get('timestamp'))
             return ownership
-        except (ResourceModifiedError, ResourceExistsError, ResourceNotFoundError):
-            raise OwnershipLostError()
+        except (ResourceNotFoundError, ValueError):
+            metadata = self._table_client.create_entity(
+            entity=ownership_entity,
+            headers={'Prefer': 'return-content'}
+            )
+            ownership['etag'] = metadata['etag']
+            ownership['last_modified_time'] = _to_timestamp(
+            dateutil.parser.isoparse(metadata['content']['Timestamp'])
+            )
+            return ownership
 
     def _claim_one_partition(self, ownership, **kwargs):
         new_ownership = ownership.copy()
         try:
             self._update_ownership(new_ownership, **kwargs)
             return new_ownership
-        except OwnershipLostError:
+        except (ResourceModifiedError, ResourceExistsError):
+            logger.info(
+                "EventProcessor instance %r of namespace %r eventhub %r consumer group %r "
+                "lost ownership to partition %r",
+                new_ownership['owner_id'],
+                new_ownership['fully_qualified_namespace'],
+                new_ownership['eventhub_name'],
+                new_ownership['consumer_group'],
+                new_ownership['partition_id'],
+            )
             raise OwnershipLostError()
         except Exception as error:  # pylint:disable=broad-except
             logger.warning(
@@ -193,8 +208,10 @@ class TableCheckpointStore():
                   on storage implementation.
         """
         try:
-            partition_key = "{} {} {} Ownership".format(fully_qualified_namespace,
-            eventhub_name, consumer_group)
+            partition_key = "{} {} {} Ownership".format(
+            fully_qualified_namespace,
+            eventhub_name,
+            consumer_group)
             partition_key_filter = "PartitionKey eq '{}'".format(partition_key)
             entities = self._table_client.query_entities(partition_key_filter, **kwargs)
             result = []
@@ -203,7 +220,7 @@ class TableCheckpointStore():
                     "eventhub_name": eventhub_name,
                     "consumer_group": consumer_group,
                     "partition_id": entity[u'RowKey'],
-                    "owner_id": entity[u'RowKey'],
+                    "owner_id": entity[u'ownerid'],
                     "last_modified_time": _to_timestamp(entity.metadata.get('timestamp')),
                     "etag": entity.metadata.get('etag'),
                 }
@@ -224,7 +241,7 @@ class TableCheckpointStore():
 
     def list_checkpoints(self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs):
         """List the updated checkpoints from the storage table.
-        
+
         :param str fully_qualified_namespace: The fully qualified namespace that the Event Hub belongs to.
          The format is like "<namespace>.servicebus.windows.net".
         :param str eventhub_name: The name of the specific Event Hub the checkpoints are associated with, relative to
@@ -261,7 +278,7 @@ class TableCheckpointStore():
     def update_checkpoint(self, checkpoint, **kwargs):
         """Updates the checkpoint using the given information for the offset, associated partition and
         consumer group in the storage table.
-        
+
         Note: If you plan to implement a custom checkpoint store with the intention of running between
         cross-language EventHubs SDKs, it is recommended to persist the offset value as an integer.
         :param Dict[str,Any] checkpoint: A dict containing checkpoint information:
@@ -281,11 +298,14 @@ class TableCheckpointStore():
         try:
             self._table_client.update_entity(mode=UpdateMode.REPLACE, entity=checkpoint_entity, **kwargs)
         except ResourceNotFoundError:
+            logger.info("Upload checkpoint blob %r because it hasn't existed in the container yet.",
+            checkpoint_entity)
             self._table_client.create_entity(entity=checkpoint_entity, **kwargs)
 
     def claim_ownership(self, ownership_list, **kwargs):
         # type: (Iterable[Dict[str, Any]], Any) -> Iterable[Dict[str, Any]]
         """Tries to claim ownership for a list of specified partitions.
+
         :param Iterable[Dict[str,Any]] ownership_list: Iterable of dictionaries containing all the ownerships to claim.
         :rtype: Iterable[Dict[str,Any]], Iterable of dictionaries containing partition ownership information:
                 - `fully_qualified_namespace` (str): The fully qualified namespace that the Event Hub belongs to.
@@ -299,7 +319,7 @@ class TableCheckpointStore():
                 - `etag` (str): The Etag value for the last time this ownership was modified. Optional depending
                   on storage implementation.
         """
-        new_list = []
+        gathered_results = []
         for x in ownership_list:
-            new_list.append(self._claim_one_partition(x))
-        return new_list
+            gathered_results.append(self._claim_one_partition(x))
+        return gathered_results

@@ -1,10 +1,10 @@
 import pytest
-from azure.eventhub.extensions.checkpointstoretable import TableCheckpointStore
-from azure.data.tables import TableServiceClient
 import uuid
 import warnings
 import random
 import os
+from azure.data.tables import TableServiceClient
+from azure.eventhub.extensions.checkpointstoretable import TableCheckpointStore
 from azure.eventhub.exceptions import OwnershipLostError
 
 STORAGE_CONN_STR = [os.environ.get("AZURE_STORAGE_CONN_STR", "Azure Storage Connection String")]
@@ -52,12 +52,13 @@ def _claim_ownership_exception_test(storage_connection_str, table_name):
     assert ownership_list[0]['owner_id'] == 'Bill'
 
     ownership = [{'fully_qualified_namespace': 'test_namespace', 'eventhub_name': 'eventhub', 'consumer_group': '$default',
-     'owner_id': 'Jack', 'partition_id': '0', 'etag': 'W/"datetime\'2021-08-02T00%3A46%3A51.7645424Z\'"', 'last_modified_time': newownershiplist[0]['last_modified_time']}]
-    with pytest.raises(OwnershipLostError) as e_info:
-            checkpoint_store.claim_ownership(ownership)
+     'owner_id': 'Jack', 'partition_id': '10', 'etag': 'W/"datetime\'2021-08-02T00%3A46%3A51.7645424Z\'"', 'last_modified_time': newownershiplist[0]['last_modified_time']}]
+    result_ownership = checkpoint_store.claim_ownership(ownership)
+    list_ownership =  checkpoint_store.list_ownership(fully_qualified_namespace, eventhub_name, consumer_group)
+    assert result_ownership[0] in list_ownership
 
     ownership = [{'fully_qualified_namespace': 'test_namespace', 'eventhub_name': 'eventhub', 'consumer_group': '$default',
-     'owner_id': 'Jack', 'partition_id': '10', 'etag': 'W/"datetime\'2021-08-02T00%3A46%3A51.7645424Z\'"', 'last_modified_time': newownershiplist[0]['last_modified_time']}]
+     'owner_id': 'Bill', 'partition_id': '0', 'etag': 'W/"datetime\'2021-08-02T00%3A46%3A51.7645424Z\'"', 'last_modified_time': newownershiplist[0]['last_modified_time']}]
     with pytest.raises(OwnershipLostError) as e_info:
             checkpoint_store.claim_ownership(ownership)
 
@@ -88,6 +89,7 @@ def _claim_and_list_ownership(storage_connection_str, table_name):
             ownership['last_modified_time'] = None
             ownership_list.append(ownership)
     newownershiplist = checkpoint_store.claim_ownership(ownership_list)
+
     assert ownership_list != newownershiplist
     assert len(newownershiplist) == len(ownership_list)
     for i in range(len(ownership_list)):
