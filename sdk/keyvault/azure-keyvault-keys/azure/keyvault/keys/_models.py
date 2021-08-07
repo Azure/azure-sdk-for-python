@@ -71,6 +71,7 @@ class KeyProperties(object):
         self._vault_id = KeyVaultKeyIdentifier(key_id)
         self._managed = kwargs.get("managed", None)
         self._tags = kwargs.get("tags", None)
+        self._release_policy = kwargs.pop("release_policy", None)
 
     def __repr__(self):
         # type () -> str
@@ -80,8 +81,19 @@ class KeyProperties(object):
     def _from_key_bundle(cls, key_bundle):
         # type: (_models.KeyBundle) -> KeyProperties
         """Construct a KeyProperties from an autorest-generated KeyBundle"""
+        # release_policy was added in 7.3-preview
+        release_policy = None
+        if hasattr(key_bundle, "release_policy") and key_bundle.release_policy is not None:
+            release_policy = KeyReleasePolicy(
+                data=key_bundle.release_policy.data, content_type=key_bundle.release_policy.content_type
+            )
+
         return cls(
-            key_bundle.key.kid, attributes=key_bundle.attributes, managed=key_bundle.managed, tags=key_bundle.tags
+            key_bundle.key.kid,
+            attributes=key_bundle.attributes,
+            managed=key_bundle.managed,
+            tags=key_bundle.tags,
+            release_policy=release_policy,
         )
 
     @classmethod
@@ -179,8 +191,8 @@ class KeyProperties(object):
         :rtype: int
         """
         # recoverable_days was added in 7.1-preview
-        if self._attributes and hasattr(self._attributes, "recoverable_days"):
-            return self._attributes.recoverable_days
+        if self._attributes:
+            return getattr(self._attributes, "recoverable_days", None)
         return None
 
     @property
@@ -209,6 +221,55 @@ class KeyProperties(object):
         :rtype: bool
         """
         return self._managed
+
+    @property
+    def exportable(self):
+        # type: () -> Optional[bool]
+        """Whether the private key can be exported
+
+        :rtype: bool
+        """
+        # exportable was added in 7.3-preview
+        if self._attributes:
+            return getattr(self._attributes, "exportable", None)
+        return None
+
+    @property
+    def release_policy(self):
+        # type: () -> Optional[KeyReleasePolicy]
+        """The :class:`~azure.keyvault.keys.KeyReleasePolicy` specifying the rules under which the key can be exported.
+
+        :rtype: ~azure.keyvault.keys.KeyReleasePolicy
+        """
+        return self._release_policy
+
+
+class KeyReleasePolicy(object):
+    """The policy rules under which a key can be exported.
+
+    :param data: Blob encoding the policy rules under which the key can be released.
+    :type data: bytes
+
+    :keyword content_type: Content type and version of the release policy. Defaults to "application/json; charset=utf-8"
+        if omitted.
+    :paramtype content_type: str
+    """
+
+    def __init__(self, data, **kwargs):
+        # type: (bytes, **Any) -> None
+        self.data = data
+        self.content_type = kwargs.get("content_type", None)
+
+
+class ReleaseKeyResult(object):
+    """The result of a key release operation.
+
+    :ivar str value: A signed token containing the released key.
+    """
+
+    def __init__(self, value):
+        # type: (str) -> None
+        self.value = value
 
 
 class KeyVaultKey(object):
