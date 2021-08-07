@@ -35,7 +35,9 @@ def _to_timestamp(date):
 
 class TableCheckpointStore():
     """A CheckpointStore that uses Azure Table Storage to store the partition ownership and checkpoint data.
+    
     This class implements methods list_ownership, claim_ownership, update_checkpoint and list_checkpoints.
+    
     :param str table_account_url:
         The URI to the storage account.
     :param table_name:
