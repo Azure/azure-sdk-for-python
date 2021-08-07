@@ -8,12 +8,12 @@ import logging
 import calendar
 import dateutil.parser
 
-from azure.eventhub import CheckpointStore
+#from azure.eventhub import CheckpointStore
+from azure.eventhub.exceptions import OwnershipLostError
 from azure.data.tables import TableClient, UpdateMode
 from azure.data.tables._base_client import parse_connection_str
 from azure.core import MatchConditions
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError, ResourceNotFoundError
-from azure.eventhub.exceptions import OwnershipLostError
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +33,7 @@ def _to_timestamp(date):
         timestamp += date.microsecond / 1e6
     return timestamp
 
-class TableCheckpointStore(CheckpointStore):
+class TableCheckpointStore():
     """A CheckpointStore that uses Azure Table Storage to store the partition ownership and checkpoint data.
     This class implements methods list_ownership, claim_ownership, update_checkpoint and list_checkpoints.
     :param str table_account_url:
