@@ -8,7 +8,7 @@ import logging
 import calendar
 import dateutil.parser
 
-from azure.eventhub._eventprocessor.checkpoint_store import CheckpointStore
+from azure.eventhub import CheckpointStore
 from azure.data.tables import TableClient, UpdateMode
 from azure.data.tables._base_client import parse_connection_str
 from azure.core import MatchConditions
