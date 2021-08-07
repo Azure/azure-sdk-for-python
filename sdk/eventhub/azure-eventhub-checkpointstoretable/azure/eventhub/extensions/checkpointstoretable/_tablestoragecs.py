@@ -105,7 +105,7 @@ class TableCheckpointStore():
     @classmethod
     def _create_ownership_entity(cls, ownership):
         """
-        create a dictionary with the new ownership attributes so that it can be updated in tables
+        Create a dictionary with the `ownership` attributes.
         """
         ownership_entity = {
             u'PartitionKey': "{} {} {} Ownership".format(ownership["fully_qualified_namespace"],
