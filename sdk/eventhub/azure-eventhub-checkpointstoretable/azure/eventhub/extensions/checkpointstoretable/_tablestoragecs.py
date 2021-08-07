@@ -153,7 +153,7 @@ class TableCheckpointStore():
         eventhub_name, consumer_group)
         my_filter = "PartitionKey eq '"+ partition_key + "'"
         entities = self.table_client.query_entities(my_filter, **kwargs)
-        ownershiplist = []
+        result = []
         for entity in entities:
             dic = {}
             dic[u'fully_qualified_namespace'] = fully_qualified_namespace
