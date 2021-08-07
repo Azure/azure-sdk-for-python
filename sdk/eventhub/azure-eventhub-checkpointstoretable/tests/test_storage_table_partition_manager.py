@@ -187,7 +187,7 @@ def test_claim_and_list_ownership(storage_connection_str):
     finally:
         remove_live_storage_table_client(storage_connection_str, table_name)
 
-@pytest.mark.parametrize("storage_connection_str",STORAGE_CONN_STR)
+@pytest.mark.parametrize("storage_connection_str", STORAGE_CONN_STR)
 def test_update_checkpoint(storage_connection_str):
     storage_connection_str, table_name = get_live_storage_table_client(storage_connection_str)
     try:
