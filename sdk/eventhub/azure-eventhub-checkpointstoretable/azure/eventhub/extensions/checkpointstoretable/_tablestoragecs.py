@@ -125,7 +125,8 @@ class TableCheckpointStore():
         checkpoint["eventhub_name"], checkpoint['consumer_group']),
             u'RowKey': checkpoint['partition_id'],
             u'offset' : checkpoint['offset'],
-            u'sequencenumber' : checkpoint['sequence_number'],}
+            u'sequencenumber' : checkpoint['sequence_number'],
+        }
         return checkpoint_entity
 
     def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs):
