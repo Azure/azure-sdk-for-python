@@ -73,6 +73,7 @@ class TableCheckpointStore():
     def from_connection_string(cls, conn_str, table_name, credential=None, **kwargs):
          # type: (str, str, Optional[Any], Any) -> TableCheckpointStore
         """Create TableCheckpointStore from a storage connection string.
+        
         :param str conn_str:
             A connection string to an Azure Storage account.
         :param table_name:
