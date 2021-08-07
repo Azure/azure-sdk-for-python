@@ -94,7 +94,7 @@ def _claim_and_list_ownership(storage_connection_str, table_name):
         assert ownership_list[i]['etag'] != newownershiplist[i]['etag']
         assert ownership_list[i]['last_modified_time'] != newownershiplist[i]['last_modified_time']
 
-    ownership_list = checkpoint_store.list_ownership(fully_qualified_namespace,eventhub_name,consumer_group)
+    ownership_list = checkpoint_store.list_ownership(fully_qualified_namespace, eventhub_name, consumer_group)
     assert len(ownership_list) == ownership_cnt
     assert len(ownership_list) == len(newownershiplist)
     for i in range(len(newownershiplist)):
