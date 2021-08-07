@@ -56,7 +56,7 @@ class TableCheckpointStore():
     def __init__(self, table_account_url, table_name, credential=None, **kwargs):
         # type(str, str, Optional[Any], Any) -> None
         self._table_client = kwargs.pop("table_client", None)
-        if not self.table_client:
+        if not self._table_client:
             api_version = kwargs.pop("api_version", None)
             if api_version:
                 headers = kwargs.get("headers")
@@ -64,7 +64,7 @@ class TableCheckpointStore():
                     headers["x-ms-version"] = api_version
                 else:
                     kwargs["headers"] = {"x-ms-version": api_version}
-            self.table_client = TableClient(
+            self._table_client = TableClient(
                 table_account_url, table_name, credential=credential, **kwargs
             )
             self._cached_table_clients = defaultdict()  # type: Dict[str, TableClient]
@@ -73,7 +73,7 @@ class TableCheckpointStore():
     def from_connection_string(cls, conn_str, table_name, credential=None, **kwargs):
          # type: (str, str, Optional[Any], Any) -> TableCheckpointStore
         """Create TableCheckpointStore from a storage connection string.
-        
+
         :param str conn_str:
             A connection string to an Azure Storage account.
         :param table_name:
@@ -98,7 +98,7 @@ class TableCheckpointStore():
     def _get_table_client(self, table_name):
         result = self._cached_table_clients.get(table_name)
         if not result:
-            result = self.table_client.get_table_client(table_name)
+            result = self._table_client.get_table_client(table_name)
             self._cached_blob_clients[table_name] = result
         return result
 
@@ -131,7 +131,7 @@ class TableCheckpointStore():
 
     def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs):
         """Retrieves a complete ownership list from the storage table.
-        
+
         :param str fully_qualified_namespace: The fully qualified namespace that the Event Hub belongs to.
          The format is like "<namespace>.servicebus.windows.net".
         :param str eventhub_name: The name of the specific Event Hub the partition ownerships are associated with,
@@ -149,10 +149,10 @@ class TableCheckpointStore():
                 - `etag` (str): The Etag value for the last time this ownership was modified. Optional depending
                   on storage implementation.
         """
-        partition_key = "{}/{}/{}/ownership".format(fully_qualified_namespace,
+        partition_key = "{} {} {} Ownership".format(fully_qualified_namespace,
         eventhub_name, consumer_group)
         my_filter = "PartitionKey eq '"+ partition_key + "'"
-        entities = self.table_client.query_entities(my_filter, **kwargs)
+        entities = self._table_client.query_entities(my_filter, **kwargs)
         result = []
         for entity in entities:
             dic = {}
@@ -163,8 +163,8 @@ class TableCheckpointStore():
             dic[u'owner_id'] = entity[u'ownerid']
             dic[u'last_modified_time'] = _to_timestamp(entity.metadata.get('timestamp'))
             dic[u'etag'] = entity.metadata.get('etag')
-            ownershiplist.append(dic)
-        return ownershiplist
+            result.append(dic)
+        return result
 
     def list_checkpoints(self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs):
         """List the updated checkpoints from the storage table.
@@ -186,8 +186,8 @@ class TableCheckpointStore():
         partition_key = "{} {} {} Checkpoint".format(fully_qualified_namespace,
         eventhub_name, consumer_group)
         my_filter = "PartitionKey eq '"+ partition_key + "'"
-        entities = self.table_client.query_entities(my_filter, **kwargs)
-        checkpointslist = []
+        entities = self._table_client.query_entities(my_filter, **kwargs)
+        checkpoints_list = []
         for entity in entities:
             dic = {}
             dic[u'fully_qualified_namespace'] = fully_qualified_namespace
@@ -196,8 +196,8 @@ class TableCheckpointStore():
             dic[u'partition_id'] = entity[u'RowKey']
             dic[u'sequence_number'] = entity[u'sequencenumber']
             dic[u'offset'] = str(entity[u'offset'])
-            checkpointslist.append(dic)
-        return checkpointslist
+            checkpoints_list.append(dic)
+        return checkpoints_list
 
     def update_checkpoint(self, checkpoint, **kwargs):
         """Updates the checkpoint using the given information for the offset, associated partition and
@@ -219,25 +219,25 @@ class TableCheckpointStore():
         """
         checkpoint_entity = self._create_checkpoint_entity(checkpoint)
         try:
-            self.table_client.update_entity(mode=UpdateMode.REPLACE, entity=checkpoint_entity, **kwargs)
+            self._table_client.update_entity(mode=UpdateMode.REPLACE, entity=checkpoint_entity, **kwargs)
         except ResourceNotFoundError:
-            self.table_client.create_entity(entity=checkpoint_entity, **kwargs)
+            self._table_client.create_entity(entity=checkpoint_entity, **kwargs)
 
     def _update_ownership(self, ownership):
         """_update_ownership mutates the passed in ownership."""
         ownership_entity = self._create_ownership_entity(ownership)
         try:
             if ownership['etag'] is None:
-                metadata = self.table_client.create_entity(entity=ownership_entity,
+                metadata = self._table_client.create_entity(entity=ownership_entity,
                 headers={'Prefer': 'return-content'})
                 ownership['etag'] = metadata['etag']
                 ownership['last_modified_time'] = _to_timestamp(dateutil.parser.isoparse
                 (metadata['content']['Timestamp']))
                 return ownership
-            metadata = self.table_client.update_entity(mode=UpdateMode.REPLACE, entity=ownership_entity,
+            metadata = self._table_client.update_entity(mode=UpdateMode.REPLACE, entity=ownership_entity,
             etag=ownership['etag'], match_condition=MatchConditions.IfNotModified)
             ownership['etag'] = metadata['etag']
-            updated_entity = self.table_client.get_entity(partition_key=ownership_entity['PartitionKey']
+            updated_entity = self._table_client.get_entity(partition_key=ownership_entity['PartitionKey']
             , row_key=ownership_entity['RowKey'])
             ownership['last_modified_time'] = _to_timestamp(updated_entity.metadata.get('timestamp'))
             return ownership
@@ -245,10 +245,10 @@ class TableCheckpointStore():
             raise OwnershipLostError()
 
     def _claim_one_partition(self, ownership, **kwargs):
-        newownership = ownership.copy()
+        new_ownership = ownership.copy()
         try:
-            self._update_ownership(newownership, **kwargs)
-            return newownership
+            self._update_ownership(new_ownership, **kwargs)
+            return new_ownership
         except OwnershipLostError:
             raise OwnershipLostError()
         except Exception as error:  # pylint:disable=broad-except
@@ -257,14 +257,14 @@ class TableCheckpointStore():
                 "namespace %r eventhub %r consumer group %r partition %r. "
                 "The ownership is now lost. Exception "
                 "is %r",
-                newownership['owner_id'],
-                newownership['fully_qualified_namespace'],
-                newownership['eventhub_name'],
-                newownership['consumer_group'],
-                newownership['partition_id'],
+                new_ownership['owner_id'],
+                new_ownership['fully_qualified_namespace'],
+                new_ownership['eventhub_name'],
+                new_ownership['consumer_group'],
+                new_ownership['partition_id'],
                 error,
             )
-            return newownership  # Keep the ownership if an unexpected error happens
+            return new_ownership  # Keep the ownership if an unexpected error happens
 
     def claim_ownership(self, ownership_list, **kwargs):
         # type: (Iterable[Dict[str, Any]], Any) -> Iterable[Dict[str, Any]]
@@ -282,7 +282,7 @@ class TableCheckpointStore():
                 - `etag` (str): The Etag value for the last time this ownership was modified. Optional depending
                   on storage implementation.
         """
-        newlist = []
+        new_list = []
         for x in ownership_list:
-            newlist.append(self._claim_one_partition(x))
-        return newlist
+            new_list.append(self._claim_one_partition(x))
+        return new_list
