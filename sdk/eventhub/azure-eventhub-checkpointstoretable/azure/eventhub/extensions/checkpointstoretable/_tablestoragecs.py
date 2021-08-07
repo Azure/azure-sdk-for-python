@@ -224,6 +224,7 @@ class TableCheckpointStore():
 
     def list_checkpoints(self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs):
         """List the updated checkpoints from the storage table.
+        
         :param str fully_qualified_namespace: The fully qualified namespace that the Event Hub belongs to.
          The format is like "<namespace>.servicebus.windows.net".
         :param str eventhub_name: The name of the specific Event Hub the checkpoints are associated with, relative to
