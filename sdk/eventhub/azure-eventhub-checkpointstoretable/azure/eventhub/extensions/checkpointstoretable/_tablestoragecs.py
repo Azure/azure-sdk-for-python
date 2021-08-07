@@ -7,6 +7,7 @@ import time
 import logging
 import calendar
 import dateutil.parser
+from collections import defaultdict
 
 #from azure.eventhub import CheckpointStore
 from azure.eventhub.exceptions import OwnershipLostError
@@ -64,9 +65,11 @@ class TableCheckpointStore():
             self.table_client = TableClient(
                 table_account_url, table_name, credential=credential, **kwargs
             )
+            self._cached_table_clients = defaultdict()  # type: Dict[str, TableClient]
 
     @classmethod
     def from_connection_string(cls, conn_str, table_name, credential=None, **kwargs):
+         # type: (str, str, Optional[Any], Any) -> BlobCheckpointStore
         """Create TableCheckpointStore from a storage connection string.
         :param str conn_str:
             A connection string to an Azure Storage account.
@@ -88,6 +91,13 @@ class TableCheckpointStore():
             conn_str=conn_str, credential=None, keyword_args=kwargs
         )
         return cls(endpoint, table_name=table_name, credential=credential, **kwargs)
+
+    def _get_table_client(self, table_name):
+        result = self._cached_table_clients.get(table_name)
+        if not result:
+            result = self.table_client.get_table_client(table_name)
+            self._cached_blob_clients[table_name] = result
+        return result
 
     @classmethod
     def _create_ownership_entity(cls, ownership):
