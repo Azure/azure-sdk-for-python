@@ -149,7 +149,7 @@ class TableCheckpointStore():
                 - `etag` (str): The Etag value for the last time this ownership was modified. Optional depending
                   on storage implementation.
         """
-        partition_key = "{} {} {} Ownership".format(fully_qualified_namespace,
+        partition_key = "{}/{}/{}/ownership".format(fully_qualified_namespace,
         eventhub_name, consumer_group)
         my_filter = "PartitionKey eq '"+ partition_key + "'"
         entities = self.table_client.query_entities(my_filter, **kwargs)
