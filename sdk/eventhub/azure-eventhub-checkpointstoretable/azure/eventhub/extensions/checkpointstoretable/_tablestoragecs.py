@@ -129,100 +129,6 @@ class TableCheckpointStore():
         }
         return checkpoint_entity
 
-    def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs):
-        """Retrieves a complete ownership list from the storage table.
-
-        :param str fully_qualified_namespace: The fully qualified namespace that the Event Hub belongs to.
-         The format is like "<namespace>.servicebus.windows.net".
-        :param str eventhub_name: The name of the specific Event Hub the partition ownerships are associated with,
-         relative to the Event Hubs namespace that contains it.
-        :param str consumer_group: The name of the consumer group the ownerships are associated with.
-        :rtype: Iterable[Dict[str, Any]], Iterable of dictionaries containing partition ownership information:
-                - `fully_qualified_namespace` (str): The fully qualified namespace that the Event Hub belongs to.
-                  The format is like "<namespace>.servicebus.windows.net".
-                - `eventhub_name` (str): The name of the specific Event Hub the checkpoint is associated with,
-                  relative to the Event Hubs namespace that contains it.
-                - `consumer_group` (str): The name of the consumer group the ownership are associated with.
-                - `partition_id` (str): The partition ID which the checkpoint is created for.
-                - `owner_id` (str): A UUID representing the current owner of this partition.
-                - `last_modified_time` (float): The last time this ownership was claimed.
-                - `etag` (str): The Etag value for the last time this ownership was modified. Optional depending
-                  on storage implementation.
-        """
-        partition_key = "{} {} {} Ownership".format(fully_qualified_namespace,
-        eventhub_name, consumer_group)
-        my_filter = "PartitionKey eq '"+ partition_key + "'"
-        entities = self._table_client.query_entities(my_filter, **kwargs)
-        result = []
-        for entity in entities:
-            dic = {}
-            dic[u'fully_qualified_namespace'] = fully_qualified_namespace
-            dic[u'eventhub_name'] = eventhub_name
-            dic[u'consumer_group'] = consumer_group
-            dic[u'partition_id'] = entity[u'RowKey']
-            dic[u'owner_id'] = entity[u'ownerid']
-            dic[u'last_modified_time'] = _to_timestamp(entity.metadata.get('timestamp'))
-            dic[u'etag'] = entity.metadata.get('etag')
-            result.append(dic)
-        return result
-
-    def list_checkpoints(self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs):
-        """List the updated checkpoints from the storage table.
-        :param str fully_qualified_namespace: The fully qualified namespace that the Event Hub belongs to.
-         The format is like "<namespace>.servicebus.windows.net".
-        :param str eventhub_name: The name of the specific Event Hub the checkpoints are associated with, relative to
-         the Event Hubs namespace that contains it.
-        :param str consumer_group: The name of the consumer group the checkpoints are associated with.
-        :rtype: Iterable[Dict[str,Any]], Iterable of dictionaries containing partition checkpoint information:
-                - `fully_qualified_namespace` (str): The fully qualified namespace that the Event Hub belongs to.
-                  The format is like "<namespace>.servicebus.windows.net".
-                - `eventhub_name` (str): The name of the specific Event Hub the checkpoints are associated with,
-                  relative to the Event Hubs namespace that contains it.
-                - `consumer_group` (str): The name of the consumer group the checkpoints are associated with.
-                - `partition_id` (str): The partition ID which the checkpoint is created for.
-                - `sequence_number` (int): The sequence number of the :class:`EventData<azure.eventhub.EventData>`.
-                - `offset` (str): The offset of the :class:`EventData<azure.eventhub.EventData>`.
-        """
-        partition_key = "{} {} {} Checkpoint".format(fully_qualified_namespace,
-        eventhub_name, consumer_group)
-        my_filter = "PartitionKey eq '"+ partition_key + "'"
-        entities = self._table_client.query_entities(my_filter, **kwargs)
-        checkpoints_list = []
-        for entity in entities:
-            dic = {}
-            dic[u'fully_qualified_namespace'] = fully_qualified_namespace
-            dic[u'eventhub_name'] = eventhub_name
-            dic[u'consumer_group'] = consumer_group
-            dic[u'partition_id'] = entity[u'RowKey']
-            dic[u'sequence_number'] = entity[u'sequencenumber']
-            dic[u'offset'] = str(entity[u'offset'])
-            checkpoints_list.append(dic)
-        return checkpoints_list
-
-    def update_checkpoint(self, checkpoint, **kwargs):
-        """Updates the checkpoint using the given information for the offset, associated partition and
-        consumer group in the storage table.
-        Note: If you plan to implement a custom checkpoint store with the intention of running between
-        cross-language EventHubs SDKs, it is recommended to persist the offset value as an integer.
-        :param Dict[str,Any] checkpoint: A dict containing checkpoint information:
-                - `fully_qualified_namespace` (str): The fully qualified namespace that the Event Hub belongs to.
-                  The format is like "<namespace>.servicebus.windows.net".
-                - `eventhub_name` (str): The name of the specific Event Hub the checkpoint is associated with,
-                  relative to the Event Hubs namespace that contains it.
-                - `consumer_group` (str): The name of the consumer group the checkpoint is associated with.
-                - `partition_id` (str): The partition ID which the checkpoint is created for.
-                - `sequence_number` (int): The sequence number of the :class:`EventData<azure.eventhub.EventData>`
-                  the new checkpoint will be associated with.
-                - `offset` (str): The offset of the :class:`EventData<azure.eventhub.EventData>`
-                  the new checkpoint will be associated with.
-        :rtype: None
-        """
-        checkpoint_entity = self._create_checkpoint_entity(checkpoint)
-        try:
-            self._table_client.update_entity(mode=UpdateMode.REPLACE, entity=checkpoint_entity, **kwargs)
-        except ResourceNotFoundError:
-            self._table_client.create_entity(entity=checkpoint_entity, **kwargs)
-
     def _update_ownership(self, ownership):
         """_update_ownership mutates the passed in ownership."""
         ownership_entity = self._create_ownership_entity(ownership)
@@ -265,6 +171,112 @@ class TableCheckpointStore():
                 error,
             )
             return new_ownership  # Keep the ownership if an unexpected error happens
+
+    def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs):
+        """Retrieves a complete ownership list from the storage table.
+
+        :param str fully_qualified_namespace: The fully qualified namespace that the Event Hub belongs to.
+         The format is like "<namespace>.servicebus.windows.net".
+        :param str eventhub_name: The name of the specific Event Hub the partition ownerships are associated with,
+         relative to the Event Hubs namespace that contains it.
+        :param str consumer_group: The name of the consumer group the ownerships are associated with.
+        :rtype: Iterable[Dict[str, Any]], Iterable of dictionaries containing partition ownership information:
+                - `fully_qualified_namespace` (str): The fully qualified namespace that the Event Hub belongs to.
+                  The format is like "<namespace>.servicebus.windows.net".
+                - `eventhub_name` (str): The name of the specific Event Hub the checkpoint is associated with,
+                  relative to the Event Hubs namespace that contains it.
+                - `consumer_group` (str): The name of the consumer group the ownership are associated with.
+                - `partition_id` (str): The partition ID which the checkpoint is created for.
+                - `owner_id` (str): A UUID representing the current owner of this partition.
+                - `last_modified_time` (float): The last time this ownership was claimed.
+                - `etag` (str): The Etag value for the last time this ownership was modified. Optional depending
+                  on storage implementation.
+        """
+        try:
+            partition_key = "{} {} {} Ownership".format(fully_qualified_namespace,
+            eventhub_name, consumer_group)
+            partition_key_filter = "PartitionKey eq '{}'".format(partition_key)
+            entities = self._table_client.query_entities(partition_key_filter, **kwargs)
+            result = []
+            for entity in entities:
+                ownership = {"fully_qualified_namespace": fully_qualified_namespace,
+                    "eventhub_name": eventhub_name,
+                    "consumer_group": consumer_group,
+                    "partition_id": entity[u'RowKey'],
+                    "owner_id": entity[u'RowKey'],
+                    "last_modified_time": _to_timestamp(entity.metadata.get('timestamp')),
+                    "etag": entity.metadata.get('etag'),
+                }
+                result.append(ownership)
+            return result
+        except Exception as error:
+                logger.warning(
+                "An exception occurred during list_ownership for "
+                "namespace %r eventhub %r consumer group %r. "
+                "Exception is %r",
+                fully_qualified_namespace,
+                eventhub_name,
+                consumer_group,
+                error,)
+                raise
+
+
+
+    def list_checkpoints(self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs):
+        """List the updated checkpoints from the storage table.
+        :param str fully_qualified_namespace: The fully qualified namespace that the Event Hub belongs to.
+         The format is like "<namespace>.servicebus.windows.net".
+        :param str eventhub_name: The name of the specific Event Hub the checkpoints are associated with, relative to
+         the Event Hubs namespace that contains it.
+        :param str consumer_group: The name of the consumer group the checkpoints are associated with.
+        :rtype: Iterable[Dict[str,Any]], Iterable of dictionaries containing partition checkpoint information:
+                - `fully_qualified_namespace` (str): The fully qualified namespace that the Event Hub belongs to.
+                  The format is like "<namespace>.servicebus.windows.net".
+                - `eventhub_name` (str): The name of the specific Event Hub the checkpoints are associated with,
+                  relative to the Event Hubs namespace that contains it.
+                - `consumer_group` (str): The name of the consumer group the checkpoints are associated with.
+                - `partition_id` (str): The partition ID which the checkpoint is created for.
+                - `sequence_number` (int): The sequence number of the :class:`EventData<azure.eventhub.EventData>`.
+                - `offset` (str): The offset of the :class:`EventData<azure.eventhub.EventData>`.
+        """
+        partition_key = "{} {} {} Checkpoint".format(fully_qualified_namespace,
+        eventhub_name, consumer_group)
+        partition_key_filter = "PartitionKey eq '{}'".format(partition_key)
+        entities = self._table_client.query_entities(partition_key_filter, **kwargs)
+        checkpoints_list = []
+        for entity in entities:
+            checkpoint = {'fully_qualified_namespace': fully_qualified_namespace,
+            'eventhub_name' : eventhub_name,
+            'consumer_group' : consumer_group,
+            'partition_id' : entity[u'RowKey'],
+            'sequence_number' : entity[u'sequencenumber'],
+            'offset' : str(entity[u'offset']),}
+            checkpoints_list.append(checkpoint)
+        return checkpoints_list
+
+    def update_checkpoint(self, checkpoint, **kwargs):
+        """Updates the checkpoint using the given information for the offset, associated partition and
+        consumer group in the storage table.
+        Note: If you plan to implement a custom checkpoint store with the intention of running between
+        cross-language EventHubs SDKs, it is recommended to persist the offset value as an integer.
+        :param Dict[str,Any] checkpoint: A dict containing checkpoint information:
+                - `fully_qualified_namespace` (str): The fully qualified namespace that the Event Hub belongs to.
+                  The format is like "<namespace>.servicebus.windows.net".
+                - `eventhub_name` (str): The name of the specific Event Hub the checkpoint is associated with,
+                  relative to the Event Hubs namespace that contains it.
+                - `consumer_group` (str): The name of the consumer group the checkpoint is associated with.
+                - `partition_id` (str): The partition ID which the checkpoint is created for.
+                - `sequence_number` (int): The sequence number of the :class:`EventData<azure.eventhub.EventData>`
+                  the new checkpoint will be associated with.
+                - `offset` (str): The offset of the :class:`EventData<azure.eventhub.EventData>`
+                  the new checkpoint will be associated with.
+        :rtype: None
+        """
+        checkpoint_entity = self._create_checkpoint_entity(checkpoint)
+        try:
+            self._table_client.update_entity(mode=UpdateMode.REPLACE, entity=checkpoint_entity, **kwargs)
+        except ResourceNotFoundError:
+            self._table_client.create_entity(entity=checkpoint_entity, **kwargs)
 
     def claim_ownership(self, ownership_list, **kwargs):
         # type: (Iterable[Dict[str, Any]], Any) -> Iterable[Dict[str, Any]]
