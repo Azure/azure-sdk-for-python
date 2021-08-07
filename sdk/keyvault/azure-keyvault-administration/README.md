@@ -158,7 +158,7 @@ A `KeyVaultAccessControlClient` manages role definitions and role assignments.
 A `KeyVaultBackupClient` performs full key backups, full key restores, and selective key restores.
 
 ## Examples
-This section conntains code snippets covering common tasks:
+This section contains code snippets covering common tasks:
 * Access Control
     * [List all role definitions](#list-all-role-definitions "List all role definitions")
     * [Set, Get, and Delete a role definition](#set-get-and-delete-a-role-defintion "Set, Get, and Delete a role definition")
