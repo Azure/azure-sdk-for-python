@@ -261,6 +261,7 @@ class TableCheckpointStore():
     def update_checkpoint(self, checkpoint, **kwargs):
         """Updates the checkpoint using the given information for the offset, associated partition and
         consumer group in the storage table.
+        
         Note: If you plan to implement a custom checkpoint store with the intention of running between
         cross-language EventHubs SDKs, it is recommended to persist the offset value as an integer.
         :param Dict[str,Any] checkpoint: A dict containing checkpoint information:
