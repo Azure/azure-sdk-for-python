@@ -118,7 +118,7 @@ class TableCheckpointStore():
     @classmethod
     def _create_checkpoint_entity(cls, checkpoint):
         """
-        create a dictionary with the new checkpoint attributes so that it can be updated in tables
+        Create a dictionary with `checkpoint` attributes.
         """
         checkpoint_entity = {
             u'PartitionKey': "{} {} {} Checkpoint".format(checkpoint["fully_qualified_namespace"],
