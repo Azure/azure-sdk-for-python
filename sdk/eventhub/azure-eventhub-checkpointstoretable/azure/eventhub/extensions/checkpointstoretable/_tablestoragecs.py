@@ -240,8 +240,11 @@ class TableCheckpointStore():
                 - `sequence_number` (int): The sequence number of the :class:`EventData<azure.eventhub.EventData>`.
                 - `offset` (str): The offset of the :class:`EventData<azure.eventhub.EventData>`.
         """
-        partition_key = "{} {} {} Checkpoint".format(fully_qualified_namespace,
-        eventhub_name, consumer_group)
+        partition_key = "{} {} {} Checkpoint".format(
+            fully_qualified_namespace,
+            eventhub_name,
+            consumer_group
+        )
         partition_key_filter = "PartitionKey eq '{}'".format(partition_key)
         entities = self._table_client.query_entities(partition_key_filter, **kwargs)
         checkpoints_list = []
