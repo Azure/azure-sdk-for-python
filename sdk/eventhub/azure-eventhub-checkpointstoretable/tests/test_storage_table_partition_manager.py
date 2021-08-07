@@ -45,7 +45,7 @@ def _claim_ownership_exception_test(storage_connection_str, table_name):
             ownership['last_modified_time'] = None
             ownership_list.append(ownership)
 
-    newownershiplist = checkpoint_store.claim_ownership(ownership_list)
+    new_ownership_list = checkpoint_store.claim_ownership(ownership_list)
     ownership = [{'fully_qualified_namespace': 'test_namespace', 'eventhub_name': 'eventhub', 'consumer_group': '$default',
      'owner_id': 'Bill', 'partition_id': '0', 'etag': newownershiplist[0]['etag'], 'last_modified_time': newownershiplist[0]['last_modified_time']}]
     ownership_list = checkpoint_store.claim_ownership(ownership)
