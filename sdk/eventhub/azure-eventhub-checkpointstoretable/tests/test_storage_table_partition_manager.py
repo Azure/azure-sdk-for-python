@@ -135,7 +135,6 @@ def _update_and_list_checkpoint(storage_connection_str, table_name):
     assert len(checkpoint_list) == 0
     for i in range(partition_cnt):
             checkpoint = _create_checkpoint(fully_qualified_namespace, eventhub_name, consumer_group, i, 2, 20)
-            print(checkpoint)
             checkpoint_store.update_checkpoint(checkpoint)
 
     checkpoint_list = checkpoint_store.list_checkpoints(
