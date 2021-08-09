@@ -1,7 +1,7 @@
 # Release History
 
 
-## 1.0.0b3 (Unreleased)
+## 1.0.0b3 (2021-08-09)
 
 ### Features Added
 
@@ -17,10 +17,6 @@
 - `LogsQueryRequest` is renamed to `LogsBatchQueryRequest`
 - `LogsQueryResults` is now renamed to `LogsQueryResult`
 - `LogsBatchQueryResult` now has 4 additional attributes - `tables`, `error`, `statistics` and `render` instead of `body` attribute.
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.0.0b2 (2021-07-06)
 
