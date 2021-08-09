@@ -12,7 +12,7 @@ from ._generated._monitor_query_client import MonitorQueryClient
 
 from ._generated.models import BatchRequest, QueryBody as LogsQueryBody
 from ._helpers import get_authentication_policy, process_error, construct_iso8601, order_results
-from ._models import LogsQueryResult, LogsBatchQueryRequest, LogsBatchQueryResult
+from ._models import LogsQueryResult, LogsBatchQuery, LogsBatchQueryResult
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential

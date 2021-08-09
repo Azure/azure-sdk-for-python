@@ -183,12 +183,12 @@ credential = DefaultAzureCredential()
 client = LogsQueryClient(credential)
 
 requests = [
-    LogsBatchQueryRequest(
+    LogsBatchQuery(
         query="AzureActivity | summarize count()",
         duration=timedelta(hours=1),
         workspace_id=os.environ['LOG_WORKSPACE_ID']
     ),
-    LogsBatchQueryRequest(
+    LogsBatchQuery(
         query= """AppRequests | take 10  |
             summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId""",
         duration=timedelta(hours=1),
