@@ -1,8 +1,6 @@
 # Release History
 
-## 1.7.0b3 (Unreleased)
-
-### Features Added
+## 1.7.0b3 (2020-08-10)
 
 ### Breaking Changes
 > These changes do not impact the API of stable versions such as 1.6.0.
