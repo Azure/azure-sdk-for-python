@@ -8,10 +8,10 @@ from typing import TYPE_CHECKING
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 def get_authentication_policy(
-        credential: 'TokenCredential'
+        credential: 'AsyncTokenCredential'
 ) -> AsyncBearerTokenCredentialPolicy:
     """Returns the correct authentication policy
     """
@@ -24,7 +24,7 @@ def get_authentication_policy(
     raise TypeError("Unsupported credential")
 
 def get_metrics_authentication_policy(
-        credential: 'TokenCredential'
+        credential: 'AsyncTokenCredential'
 ) -> AsyncBearerTokenCredentialPolicy:
     """Returns the correct authentication policy
     """

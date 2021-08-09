@@ -206,7 +206,7 @@ class LogsBatchQueryRequest(InternalLogQueryRequest):
         timespan = construct_iso8601(start, end, duration)
         additional_workspaces = kwargs.pop("additional_workspaces", None)
         self.id = kwargs.get("request_id", str(uuid.uuid4()))
-        self.body = {
+        self.body = { # type: ignore
             "query": query, "timespan": timespan, "workspaces": additional_workspaces
         }
         self.headers = headers

@@ -120,15 +120,12 @@ class LogsQueryClient(object):
             **kwargs
         )
 
-        try:
-            return LogsQueryResult._from_generated(self._query_op.execute( # pylint: disable=protected-access
-                workspace_id=workspace_id,
-                body=body,
-                prefer=prefer,
-                **kwargs
-            ))
-        except HttpResponseError as e:
-            process_error(e)
+        return LogsQueryResult._from_generated(self._query_op.execute( # pylint: disable=protected-access
+            workspace_id=workspace_id,
+            body=body,
+            prefer=prefer,
+            **kwargs
+        ))
 
     def batch_query(self, queries, **kwargs):
         # type: (Union[Sequence[Dict], Sequence[LogsBatchQueryRequest]], Any) -> Sequence[LogsBatchQueryResult]
@@ -153,7 +150,7 @@ class LogsQueryClient(object):
             :caption: Get a response for multiple Log Queries.
         """
         try:
-            queries = [LogsBatchQueryRequest(**q) for q in queries]
+            queries = [LogsBatchQueryRequest(**q) for q in queries] # type: ignore
         except (KeyError, TypeError):
             pass
         try:
