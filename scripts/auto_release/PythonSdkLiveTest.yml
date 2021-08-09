@@ -78,6 +78,7 @@ jobs:
         export USR_NAME=$(USR_NAME)
         export USR_TOKEN=$(USR_TOKEN)
         export TEST_RESULT=$test_result
+        export UPDATE_TOKEN=$(UPDATE_TOKEN)
 
         python $script_path/create_auto_release_pr.py
         echo "\'[AutoRelease] $new_branch \' has been created!!!"
