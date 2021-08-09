@@ -101,7 +101,10 @@ def prepare_result(func):
             for idx, item in enumerate(results):
                 if hasattr(item, "error"):
                     results[idx] = DocumentError(
-                        id=item.id, error=TextAnalyticsError._from_generated(item.error)  # pylint: disable=protected-access
+                        id=item.id,
+                        error=TextAnalyticsError._from_generated(  # pylint: disable=protected-access
+                            item.error
+                        ),
                     )
                 else:
                     results[idx] = func(item, results)
@@ -124,7 +127,8 @@ def language_result(language, results):  # pylint: disable=unused-argument
             language.detected_language
         ),
         warnings=[
-            TextAnalyticsWarning._from_generated(w) for w in language.warnings  # pylint: disable=protected-access
+            TextAnalyticsWarning._from_generated(w)  # pylint: disable=protected-access
+            for w in language.warnings
         ],
         statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
             language.statistics
@@ -139,10 +143,12 @@ def entities_result(
     return RecognizeEntitiesResult(
         id=entity.id,
         entities=[
-            CategorizedEntity._from_generated(e) for e in entity.entities  # pylint: disable=protected-access
+            CategorizedEntity._from_generated(e)  # pylint: disable=protected-access
+            for e in entity.entities
         ],
         warnings=[
-            TextAnalyticsWarning._from_generated(w) for w in entity.warnings  # pylint: disable=protected-access
+            TextAnalyticsWarning._from_generated(w)  # pylint: disable=protected-access
+            for w in entity.warnings
         ],
         statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
             entity.statistics
@@ -157,10 +163,12 @@ def linked_entities_result(
     return RecognizeLinkedEntitiesResult(
         id=entity.id,
         entities=[
-            LinkedEntity._from_generated(e) for e in entity.entities  # pylint: disable=protected-access
+            LinkedEntity._from_generated(e)  # pylint: disable=protected-access
+            for e in entity.entities
         ],
         warnings=[
-            TextAnalyticsWarning._from_generated(w) for w in entity.warnings  # pylint: disable=protected-access
+            TextAnalyticsWarning._from_generated(w)  # pylint: disable=protected-access
+            for w in entity.warnings
         ],
         statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
             entity.statistics
@@ -176,7 +184,8 @@ def key_phrases_result(
         id=phrases.id,
         key_phrases=phrases.key_phrases,
         warnings=[
-            TextAnalyticsWarning._from_generated(w) for w in phrases.warnings  # pylint: disable=protected-access
+            TextAnalyticsWarning._from_generated(w)  # pylint: disable=protected-access
+            for w in phrases.warnings
         ],
         statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
             phrases.statistics
@@ -192,7 +201,8 @@ def sentiment_result(
         id=sentiment.id,
         sentiment=sentiment.sentiment,
         warnings=[
-            TextAnalyticsWarning._from_generated(w) for w in sentiment.warnings  # pylint: disable=protected-access
+            TextAnalyticsWarning._from_generated(w)  # pylint: disable=protected-access
+            for w in sentiment.warnings
         ],
         statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
             sentiment.statistics
@@ -201,7 +211,9 @@ def sentiment_result(
             sentiment.confidence_scores
         ),
         sentences=[
-            SentenceSentiment._from_generated(s, results, sentiment)  # pylint: disable=protected-access
+            SentenceSentiment._from_generated(  # pylint: disable=protected-access
+                s, results, sentiment
+            )
             for s in sentiment.sentences
         ],
     )
@@ -214,13 +226,15 @@ def pii_entities_result(
     return RecognizePiiEntitiesResult(
         id=entity.id,
         entities=[
-            PiiEntity._from_generated(e) for e in entity.entities  # pylint: disable=protected-access
+            PiiEntity._from_generated(e)  # pylint: disable=protected-access
+            for e in entity.entities
         ],
         redacted_text=entity.redacted_text
         if hasattr(entity, "redacted_text")
         else None,
         warnings=[
-            TextAnalyticsWarning._from_generated(w) for w in entity.warnings  # pylint: disable=protected-access
+            TextAnalyticsWarning._from_generated(w)  # pylint: disable=protected-access
+            for w in entity.warnings
         ],
         statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
             entity.statistics
