@@ -2,6 +2,7 @@ import pytest
 import uuid
 import warnings
 import os
+
 from azure.data.tables import TableServiceClient
 from azure.eventhub.extensions.checkpointstoretable import TableCheckpointStore
 from azure.eventhub.exceptions import OwnershipLostError
