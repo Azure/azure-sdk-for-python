@@ -77,7 +77,6 @@ jobs:
         export ISSUE_LINK=$(ISSUE_LINK)
         export USR_NAME=$(USR_NAME)
         export USR_TOKEN=$(USR_TOKEN)
-        export UPDATE_TOKEN=$(UPDATE_TOKEN)
         export TEST_RESULT=$test_result
 
         python $script_path/create_auto_release_pr.py
