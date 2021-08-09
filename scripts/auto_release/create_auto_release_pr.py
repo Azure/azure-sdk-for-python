@@ -9,12 +9,7 @@ def main():
     pr_head = "{}:{}".format(os.getenv('USR_NAME'), os.getenv('NEW_BRANCH'))
     pr_base = os.getenv('TARGET_BRANCH')
     pr_body = "{} \n{}".format(os.getenv('ISSUE_LINK'), os.getenv('TEST_RESULT'))
-    res_create = api.pulls.create(pr_title, pr_head, pr_base, pr_body)
-    pr_number = res_create.number
-
-    # Add issue link on PR
-    api = GhApi(owner='Azure', repo='azure-sdk-for-python', token=os.getenv('UPDATE_TOKEN'))
-    api.issues.create_comment(issue_number=pr_number, body='issue link:{}'.format(os.getenv('ISSUE_LINK')))
+    api.pulls.create(pr_title, pr_head, pr_base, pr_body)
 
 if __name__ == '__main__':
     main()
