@@ -290,7 +290,7 @@ class _AbstractTransport(object):
         #             pack('ll', sec, usec),
         #         )
         self._setup_transport()
-        self.sock.settimeout(0.1)  # set socket back to non-blocking mode
+        self.sock.settimeout(5)  # set socket back to non-blocking mode
 
     def _get_tcp_socket_defaults(self, sock):
         tcp_opts = {}
