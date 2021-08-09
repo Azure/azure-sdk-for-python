@@ -138,21 +138,18 @@ def send_batch_message_in_parallel(single_message_size, parallel_count=4, run_ti
 
 if __name__ == '__main__':
     logger.info('------------------- START OF TEST -------------------')
-    print('-------------------  sending fixed amount large message  ------------------------')
-    send_batch_message(100_000, 4096, description='single thread large message')
-    print('-------------------  sending fixed amount small message  ------------------------')
-    send_batch_message(100_000, 10, description='single thread small message')
-    for i in range(5):
-        print('-------------------  multiple threads sending large messages for a while ------------------------')
-        send_batch_message_in_parallel(
-            4096,
-            parallel_count=pow(2, i),
-            description='multiple threads sending large messages'
-        )
-        print('-------------------  multiple threads sending small messages for a while ------------------------')
-        send_batch_message_in_parallel(
-            10,
-            parallel_count=pow(2, i),
-            description='multiple threads sending small messages'
-        )
+
+    for i in range(1, 6):
+        print('-------------------  sending fixed amount large message  ------------------------')
+        send_batch_message(50_000, pow(2, i), description='sending fixed amount message')
+
+    for i in range(1, 6):
+        for j in range(1, 6):
+            print('-------------------  multiple threads sending messages for a while ------------------------')
+            send_batch_message_in_parallel(
+                pow(2, j),
+                parallel_count=pow(2, i),
+                description='multiple threads sending messages'
+            )
+
     logger.info('------------------- END OF TEST -------------------')
