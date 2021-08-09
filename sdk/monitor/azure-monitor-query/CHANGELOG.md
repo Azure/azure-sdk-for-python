@@ -18,10 +18,6 @@
 - `LogsQueryResults` is now renamed to `LogsQueryResult`
 - `LogsBatchQueryResult` now has 4 additional attributes - `tables`, `error`, `statistics` and `render` instead of `body` attribute.
 
-### Bugs Fixed
-
-### Other Changes
-
 ## 1.0.0b2 (2021-07-06)
 
 ### Breaking Changes
