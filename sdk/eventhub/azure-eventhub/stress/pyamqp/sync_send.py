@@ -56,10 +56,11 @@ def send_batch_message(num_of_events, single_message_size, run_times=1, descript
     client.close()
     avg_perf = sum(perf_records) / len(perf_records)
     logger.info(
-        "Method: {}, The average performance is {} events/s. Run times: {}.\n"
+        "Method: {}, The average performance is {} events/s, throughput: {} bytes/s, run times: {}.\n"
         "Configs are: Num of events: {} events, Single message size: {} bytes.".format(
             description or "send_batch_message",
             avg_perf,
+            avg_perf * single_message_size,
             run_times,
             num_of_events,
             single_message_size
@@ -122,10 +123,11 @@ def send_batch_message_in_parallel(single_message_size, parallel_count=4, run_ti
     avg_perf = sum(perf_records) / len(perf_records)
 
     logger.info(
-        "Method: {}, The average performance is {} events/s. Run times: {}.\n"
+        "Method: {}, The average performance is {} events/s, throughput: {} bytes/s, run times: {}.\n"
         "Configs are: Single message size: {} bytes, Parallel count: {} threads, Run duration: {} seconds.".format(
             description or "send_batch_message_in_parallel",
             avg_perf,
+            avg_perf * single_message_size,
             run_times,
             single_message_size,
             parallel_count,
