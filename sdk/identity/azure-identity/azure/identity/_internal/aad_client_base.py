@@ -81,6 +81,10 @@ class AadClientBase(ABC):
         pass
 
     @abc.abstractmethod
+    def obtain_token_by_jwt_assertion(self, scopes, assertion, **kwargs):
+        pass
+
+    @abc.abstractmethod
     def obtain_token_by_client_certificate(self, scopes, certificate, **kwargs):
         pass
 
@@ -93,12 +97,14 @@ class AadClientBase(ABC):
         pass
 
     @abc.abstractmethod
-    def _build_pipeline(self, config=None, policies=None, transport=None, **kwargs):
+    def _build_pipeline(self, **kwargs):
         pass
 
     def _process_response(self, response, request_time):
         # type: (PipelineResponse, int) -> AccessToken
-        content = ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
+        content = response.context.get(
+            ContentDecodePolicy.CONTEXT_NAME
+        ) or ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
 
         if response.http_request.body.get("grant_type") == "refresh_token":
             if content.get("error") == "invalid_grant":
@@ -163,10 +169,8 @@ class AadClientBase(ABC):
         request = self._post(data, **kwargs)
         return request
 
-    def _get_client_certificate_request(self, scopes, certificate, **kwargs):
-        # type: (Iterable[str], AadClientCertificate, **Any) -> HttpRequest
-        audience = self._get_token_url(**kwargs)
-        assertion = self._get_jwt_assertion(certificate, audience)
+    def _get_jwt_assertion_request(self, scopes, assertion, **kwargs):
+        # type: (Iterable[str], str, **Any) -> HttpRequest
         data = {
             "client_assertion": assertion,
             "client_assertion_type": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
@@ -178,19 +182,8 @@ class AadClientBase(ABC):
         request = self._post(data, **kwargs)
         return request
 
-    def _get_client_secret_request(self, scopes, secret, **kwargs):
-        # type: (Iterable[str], str, **Any) -> HttpRequest
-        data = {
-            "client_id": self._client_id,
-            "client_secret": secret,
-            "grant_type": "client_credentials",
-            "scope": " ".join(scopes),
-        }
-        request = self._post(data, **kwargs)
-        return request
-
-    def _get_jwt_assertion(self, certificate, audience):
-        # type: (AadClientCertificate, str) -> str
+    def _get_client_certificate_request(self, scopes, certificate, **kwargs):
+        # type: (Iterable[str], AadClientCertificate, **Any) -> HttpRequest
         now = int(time.time())
         header = six.ensure_binary(
             json.dumps({"typ": "JWT", "alg": "RS256", "x5t": certificate.thumbprint}), encoding="utf-8"
@@ -199,7 +192,7 @@ class AadClientBase(ABC):
             json.dumps(
                 {
                     "jti": str(uuid4()),
-                    "aud": audience,
+                    "aud": self._get_token_url(**kwargs),
                     "iss": self._client_id,
                     "sub": self._client_id,
                     "nbf": now,
@@ -211,8 +204,20 @@ class AadClientBase(ABC):
         jws = base64.urlsafe_b64encode(header) + b"." + base64.urlsafe_b64encode(payload)
         signature = certificate.sign(jws)
         jwt_bytes = jws + b"." + base64.urlsafe_b64encode(signature)
+        assertion = jwt_bytes.decode("utf-8")
 
-        return jwt_bytes.decode("utf-8")
+        return self._get_jwt_assertion_request(scopes, assertion, **kwargs)
+
+    def _get_client_secret_request(self, scopes, secret, **kwargs):
+        # type: (Iterable[str], str, **Any) -> HttpRequest
+        data = {
+            "client_id": self._client_id,
+            "client_secret": secret,
+            "grant_type": "client_credentials",
+            "scope": " ".join(scopes),
+        }
+        request = self._post(data, **kwargs)
+        return request
 
     def _get_refresh_token_request(self, scopes, refresh_token, **kwargs):
         # type: (Iterable[str], str, **Any) -> HttpRequest

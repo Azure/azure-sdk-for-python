@@ -46,7 +46,7 @@ class ActivityRunsOperations:
         factory_name: str,
         run_id: str,
         filter_parameters: "_models.RunFilterParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ActivityRunsQueryResponse":
         """Query activity runs based on input filter conditions.
 
