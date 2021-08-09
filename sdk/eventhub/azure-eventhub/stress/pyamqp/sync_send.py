@@ -100,24 +100,24 @@ def send_batch_message_in_parallel(single_message_size, parallel_count=4, run_ti
         for client in clients:
             pre_prepare_client(client, data)
 
-        executor = ThreadPoolExecutor(max_workers=parallel_count)
-        run_flag = [True]
-        for _ in range(parallel_count):
-            futures.append(
-                executor.submit(
-                    send_batch_message_worker_thread,
-                    clients[i],
-                    data,
-                    run_flag
+        with ThreadPoolExecutor(max_workers=parallel_count) as executor:
+            run_flag = [True]
+            for _ in range(parallel_count):
+                futures.append(
+                    executor.submit(
+                        send_batch_message_worker_thread,
+                        clients[i],
+                        data,
+                        run_flag
+                    )
                 )
-            )
 
-        time.sleep(run_duration)
-        run_flag[0] = False
-        perf_records.append(sum([future.result() for future in futures]) / run_duration)
+            time.sleep(run_duration)
+            run_flag[0] = False
+            perf_records.append(sum([future.result() for future in futures]) / run_duration)
 
-        for client in clients:
-            client.close()
+            for client in clients:
+                client.close()
 
     avg_perf = sum(perf_records) / len(perf_records)
 
