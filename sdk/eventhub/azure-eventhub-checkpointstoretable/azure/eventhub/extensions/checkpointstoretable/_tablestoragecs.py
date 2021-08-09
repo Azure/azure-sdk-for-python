@@ -6,9 +6,8 @@ import datetime
 import time
 import logging
 import calendar
-from collections import defaultdict
 import dateutil.parser
-
+from azure.eventhub import CheckpointStore
 from azure.eventhub.exceptions import OwnershipLostError
 from azure.data.tables import TableClient, UpdateMode
 from azure.data.tables._base_client import parse_connection_str
@@ -33,7 +32,7 @@ def _to_timestamp(date):
         timestamp += date.microsecond / 1e6
     return timestamp
 
-class TableCheckpointStore():
+class TableCheckpointStore(CheckpointStore):
     """A CheckpointStore that uses Azure Table Storage to store the partition ownership and checkpoint data.
 
     This class implements methods list_ownership, claim_ownership, update_checkpoint and list_checkpoints.
@@ -66,7 +65,6 @@ class TableCheckpointStore():
             self._table_client = TableClient(
                 table_account_url, table_name, credential=credential, **kwargs
             )
-            self._cached_table_clients = defaultdict()  # type: Dict[str, TableClient]
 
     @classmethod
     def from_connection_string(cls, conn_str, table_name, credential=None, **kwargs):
@@ -100,13 +98,6 @@ class TableCheckpointStore():
 
     def __exit__(self, *args):
         self._table_client.__exit__(*args)
-
-    def _get_table_client(self, table_name):
-        result = self._cached_table_clients.get(table_name)
-        if not result:
-            result = self._table_client.get_table_client(table_name)
-            self._cached_table_clients[table_name] = result
-        return result
 
     @classmethod
     def _create_ownership_entity(cls, ownership):
@@ -152,7 +143,7 @@ class TableCheckpointStore():
             )
             ownership['last_modified_time'] = _to_timestamp(updated_entity.metadata.get('timestamp'))
             return ownership
-        except (ResourceNotFoundError, ValueError):
+        except (ResourceNotFoundError):
             metadata = self._table_client.create_entity(
             entity=ownership_entity,
             headers={'Prefer': 'return-content'}, **kwargs
