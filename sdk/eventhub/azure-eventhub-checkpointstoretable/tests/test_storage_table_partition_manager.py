@@ -24,7 +24,7 @@ def remove_live_storage_table_client(storage_connection_str, table_name):
     except:
         warnings.warn(UserWarning("storage table teardown failed"))
 
-def create_checkpoint(fully_qualified_namespace, eventhub_name, consumer_group,
+def _create_checkpoint(fully_qualified_namespace, eventhub_name, consumer_group,
  partition_id, offset, sequence_number):
     return {
     'fully_qualified_namespace': fully_qualified_namespace,
@@ -35,7 +35,7 @@ def create_checkpoint(fully_qualified_namespace, eventhub_name, consumer_group,
     'sequence_number': sequence_number
             }
 
-def create_ownership(fully_qualified_namespace, eventhub_name, consumer_group,
+def _create_ownership(fully_qualified_namespace, eventhub_name, consumer_group,
  partition_id, owner_id, etag, last_modified_time):
     return  {
     'fully_qualified_namespace': fully_qualified_namespace,
@@ -57,7 +57,7 @@ def _claim_ownership_exception_test(storage_connection_str, table_name):
         storage_connection_str, table_name)
     ownership_list = []
     for i in range(ownership_cnt):
-            ownership = create_ownership(fully_qualified_namespace, eventhub_name, consumer_group, str(i), 'owner_id', None, None)
+            ownership = _create_ownership(fully_qualified_namespace, eventhub_name, consumer_group, str(i), 'owner_id', None, None)
             ownership_list.append(ownership)
     result_ownership_list = checkpoint_store.claim_ownership(ownership_list)
     assert result_ownership_list[0]['owner_id']  == 'owner_id'
@@ -134,7 +134,7 @@ def _update_and_list_checkpoint(storage_connection_str, table_name):
             consumer_group)
     assert len(checkpoint_list) == 0
     for i in range(partition_cnt):
-            checkpoint = create_checkpoint(fully_qualified_namespace, eventhub_name, consumer_group, i, 2, 20)
+            checkpoint = _create_checkpoint(fully_qualified_namespace, eventhub_name, consumer_group, i, 2, 20)
             print(checkpoint)
             checkpoint_store.update_checkpoint(checkpoint)
 
@@ -147,7 +147,7 @@ def _update_and_list_checkpoint(storage_connection_str, table_name):
             assert checkpoint['offset'] == '2'
             assert checkpoint['sequence_number'] == 20
 
-    checkpoint = create_checkpoint(fully_qualified_namespace, eventhub_name, consumer_group, 0, '30', 42)
+    checkpoint = _create_checkpoint(fully_qualified_namespace, eventhub_name, consumer_group, 0, '30', 42)
     checkpoint_store.update_checkpoint(checkpoint)
 
     checkpoint_list = checkpoint_store.list_checkpoints(

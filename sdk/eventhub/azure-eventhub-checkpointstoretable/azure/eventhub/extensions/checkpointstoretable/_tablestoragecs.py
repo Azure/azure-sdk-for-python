@@ -6,10 +6,9 @@ import datetime
 import time
 import logging
 import calendar
-import dateutil.parser
 from collections import defaultdict
+import dateutil.parser
 
-#from azure.eventhub import CheckpointStore
 from azure.eventhub.exceptions import OwnershipLostError
 from azure.data.tables import TableClient, UpdateMode
 from azure.data.tables._base_client import parse_connection_str
@@ -95,11 +94,18 @@ class TableCheckpointStore():
         )
         return cls(endpoint, table_name=table_name, credential=credential, **kwargs)
 
+    def __enter__(self):
+        self._table_client.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        self._table_client.__exit__(*args)
+
     def _get_table_client(self, table_name):
         result = self._cached_table_clients.get(table_name)
         if not result:
             result = self._table_client.get_table_client(table_name)
-            self._cached_blob_clients[table_name] = result
+            self._cached_table_clients[table_name] = result
         return result
 
     @classmethod
@@ -129,26 +135,27 @@ class TableCheckpointStore():
         }
         return checkpoint_entity
 
-    def _update_ownership(self, ownership):
+    def _update_ownership(self, ownership, **kwargs):
         """_update_ownership mutates the passed in ownership."""
-        ownership_entity = self._create_ownership_entity(ownership)
         try:
+            ownership_entity = TableCheckpointStore._create_ownership_entity(ownership)
             metadata = self._table_client.update_entity(mode=UpdateMode.REPLACE,
             entity=ownership_entity,
             etag=ownership['etag'],
-            match_condition=MatchConditions.IfNotModified
+            match_condition=MatchConditions.IfNotModified,
+            **kwargs
             )
             ownership['etag'] = metadata['etag']
             updated_entity = self._table_client.get_entity(
                 partition_key=ownership_entity['PartitionKey'],
-                row_key=ownership_entity['RowKey']
+                row_key=ownership_entity['RowKey'], **kwargs
             )
             ownership['last_modified_time'] = _to_timestamp(updated_entity.metadata.get('timestamp'))
             return ownership
         except (ResourceNotFoundError, ValueError):
             metadata = self._table_client.create_entity(
             entity=ownership_entity,
-            headers={'Prefer': 'return-content'}
+            headers={'Prefer': 'return-content'}, **kwargs
             )
             ownership['etag'] = metadata['etag']
             ownership['last_modified_time'] = _to_timestamp(
@@ -227,7 +234,7 @@ class TableCheckpointStore():
                 result.append(ownership)
             return result
         except Exception as error:
-                logger.warning(
+            logger.warning(
                 "An exception occurred during list_ownership for "
                 "namespace %r eventhub %r consumer group %r. "
                 "Exception is %r",
@@ -235,7 +242,7 @@ class TableCheckpointStore():
                 eventhub_name,
                 consumer_group,
                 error,)
-                raise
+            raise
 
 
 
@@ -294,8 +301,8 @@ class TableCheckpointStore():
                   the new checkpoint will be associated with.
         :rtype: None
         """
-        checkpoint_entity = self._create_checkpoint_entity(checkpoint)
         try:
+            checkpoint_entity = TableCheckpointStore._create_checkpoint_entity(checkpoint)
             self._table_client.update_entity(mode=UpdateMode.REPLACE, entity=checkpoint_entity, **kwargs)
         except ResourceNotFoundError:
             logger.info("Upload checkpoint blob %r because it hasn't existed in the container yet.",
@@ -321,5 +328,5 @@ class TableCheckpointStore():
         """
         gathered_results = []
         for x in ownership_list:
-            gathered_results.append(self._claim_one_partition(x))
+            gathered_results.append(self._claim_one_partition(x), **kwargs)
         return gathered_results
