@@ -6,6 +6,9 @@
 
 ### Breaking Changes
 
+- Rename `batch_query` to `query_batch`.
+- Rename `LogsBatchQueryRequest` to `LogsBatchQuery`.
+
 ### Bugs Fixed
 
 ### Other Changes

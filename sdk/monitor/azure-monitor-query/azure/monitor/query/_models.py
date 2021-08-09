@@ -148,7 +148,7 @@ class MetricsResult(object):
             metrics=[Metric._from_generated(m) for m in generated.value] # pylint: disable=protected-access
         )
 
-class LogsBatchQueryRequest(object):
+class LogsBatchQuery(object):
     """A single request in a batch.
 
     Variables are only populated by the server, and will be ignored when sending a request.

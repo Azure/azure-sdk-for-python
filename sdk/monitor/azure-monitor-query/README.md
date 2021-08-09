@@ -200,7 +200,7 @@ requests = [
         workspace_id=os.environ['LOG_WORKSPACE_ID']
     ),
 ]
-response = client.batch_query(requests)
+response = client.query_batch(requests)
 
 for rsp in response:
     body = rsp.body

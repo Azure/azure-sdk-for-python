@@ -62,7 +62,7 @@ def test_logs_server_timeout():
     assert 'Gateway timeout' in e.value.message
 
 @pytest.mark.live_test_only
-def test_logs_batch_query():
+def test_logs_query_batch():
     client = LogsQueryClient(_credential())
 
     requests = [
@@ -82,7 +82,7 @@ def test_logs_batch_query():
             workspace_id= os.environ['LOG_WORKSPACE_ID']
         ),
     ]
-    response = client.batch_query(requests)
+    response = client.query_batch(requests)
 
     assert len(response) == 3
 
@@ -98,7 +98,7 @@ def test_logs_single_query_with_statistics():
     assert response.statistics is not None
 
 @pytest.mark.live_test_only
-def test_logs_batch_query_with_statistics_in_some():
+def test_logs_query_batch_with_statistics_in_some():
     client = LogsQueryClient(_credential())
 
     requests = [
@@ -120,7 +120,7 @@ def test_logs_batch_query_with_statistics_in_some():
             include_statistics=True
         ),
     ]
-    response = client.batch_query(requests)
+    response = client.query_batch(requests)
 
     assert len(response) == 3
     assert response[0].statistics is None
@@ -145,7 +145,7 @@ def test_logs_single_query_additional_workspaces():
 
 @pytest.mark.live_test_only
 @pytest.mark.skip('https://github.com/Azure/azure-sdk-for-python/issues/19382')
-def test_logs_batch_query_additional_workspaces():
+def test_logs_query_batch_additional_workspaces():
     client = LogsQueryClient(_credential())
     query = "union * | where TimeGenerated > ago(100d) | project TenantId | summarize count() by TenantId"
 
@@ -168,7 +168,7 @@ def test_logs_batch_query_additional_workspaces():
             additional_workspaces=[os.environ['SECONDARY_WORKSPACE_ID']]
         ),
     ]
-    response = client.batch_query(requests)
+    response = client.query_batch(requests)
 
     for resp in response:
         assert len(resp.tables[0].rows) == 2

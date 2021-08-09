@@ -12,7 +12,7 @@ credential  = DefaultAzureCredential()
 
 client = LogsQueryClient(credential)
 
-# [START send_batch_query]
+# [START send_query_batch]
 requests = [
     LogsBatchQuery(
         query="AzureActivity | summarize count()",
@@ -32,7 +32,7 @@ requests = [
         include_statistics=True
     ),
 ]
-responses = client.batch_query(requests)
+responses = client.query_batch(requests)
 
 for response in responses:
     try:
@@ -42,4 +42,4 @@ for response in responses:
     except TypeError:
         print(response.error)
 
-# [END send_batch_query]
+# [END send_query_batch]

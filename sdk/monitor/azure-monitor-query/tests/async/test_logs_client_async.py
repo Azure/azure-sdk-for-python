@@ -40,7 +40,7 @@ async def test_logs_server_timeout():
         assert e.message.contains('Gateway timeout')
 
 @pytest.mark.live_test_only
-async def test_logs_batch_query():
+async def test_logs_query_batch():
     client = LogsQueryClient(_credential())
 
     requests = [
@@ -60,7 +60,7 @@ async def test_logs_batch_query():
             workspace_id= os.environ['LOG_WORKSPACE_ID']
         ),
     ]
-    response = await client.batch_query(requests)
+    response = await client.query_batch(requests)
 
     assert len(response) == 3
 
@@ -85,7 +85,7 @@ async def test_logs_single_query_additional_workspaces_async():
 @pytest.mark.skip('https://github.com/Azure/azure-sdk-for-python/issues/19382')
 @pytest.mark.live_test_only
 @pytest.mark.asyncio
-async def test_logs_batch_query_additional_workspaces():
+async def test_logs_query_batch_additional_workspaces():
     client = LogsQueryClient(_credential())
     query = "union * | where TimeGenerated > ago(100d) | project TenantId | summarize count() by TenantId"
 
@@ -108,7 +108,7 @@ async def test_logs_batch_query_additional_workspaces():
             additional_workspaces=[os.environ['SECONDARY_WORKSPACE_ID']]
         ),
     ]
-    response = await client.batch_query(requests)
+    response = await client.query_batch(requests)
 
     assert len(response) == 3
 

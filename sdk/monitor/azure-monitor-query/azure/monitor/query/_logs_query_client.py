@@ -130,15 +130,15 @@ class LogsQueryClient(object):
         except HttpResponseError as e:
             process_error(e)
 
-    def batch_query(self, queries, **kwargs):
-        # type: (Union[Sequence[Dict], Sequence[LogsBatchQueryRequest]], Any) -> Sequence[LogsBatchQueryResult]
+    def query_batch(self, queries, **kwargs):
+        # type: (Union[Sequence[Dict], Sequence[LogsBatchQuery]], Any) -> Sequence[LogsBatchQueryResult]
         """Execute a list of analytics queries. Each request can be either a LogQueryRequest
         object or an equivalent serialized model.
 
         The response is returned in the same order as that of the requests sent.
 
         :param queries: The list of queries that should be processed
-        :type queries: list[dict] or list[~azure.monitor.query.LogsBatchQueryRequest]
+        :type queries: list[dict] or list[~azure.monitor.query.LogsBatchQuery]
         :return: List of LogsBatchQueryResult, or the result of cls(response)
         :rtype: ~list[~azure.monitor.query.LogsBatchQueryResult]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -146,14 +146,14 @@ class LogsQueryClient(object):
         .. admonition:: Example:
 
         .. literalinclude:: ../samples/sample_batch_query.py
-            :start-after: [START send_batch_query]
-            :end-before: [END send_batch_query]
+            :start-after: [START send_query_batch]
+            :end-before: [END send_query_batch]
             :language: python
             :dedent: 0
             :caption: Get a response for multiple Log Queries.
         """
         try:
-            queries = [LogsBatchQueryRequest(**q) for q in queries]
+            queries = [LogsBatchQuery(**q) for q in queries]
         except (KeyError, TypeError):
             pass
         queries = [q._to_generated() for q in queries] # pylint: disable=protected-access
