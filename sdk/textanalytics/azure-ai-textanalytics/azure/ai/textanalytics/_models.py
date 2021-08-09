@@ -2080,7 +2080,7 @@ class RecognizeLinkedEntitiesAction(DictMixin):
 
 class ExtractSummaryAction(DictMixin):
     """ExtractSummaryAction encapsulates the parameters for starting a long-running Extractive
-     Text Summarization operation.
+    Text Summarization operation.
 
     :keyword str model_version: The model version to use for the analysis.
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
