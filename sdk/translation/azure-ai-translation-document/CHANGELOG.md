@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b4 (Unreleased)
+## 1.0.0b4 (2021-08-10)
 
 ### Features Added
 
@@ -13,10 +13,7 @@
 for `list_all_document_statuses`.
 - Changed: renamed `order_by` sorting query option `createdDateTimeUtc` to `created_on` for `list_all_translation_statuses` and
 `list_all_document_statuses`.
-
-### Bugs Fixed
-
-### Other Changes
+  
 
 ## 1.0.0b3 (2021-07-07)
 
