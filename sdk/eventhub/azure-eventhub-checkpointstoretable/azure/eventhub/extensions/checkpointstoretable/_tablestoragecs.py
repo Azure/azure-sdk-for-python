@@ -9,10 +9,10 @@ import calendar
 import dateutil.parser
 from azure.eventhub import CheckpointStore
 from azure.eventhub.exceptions import OwnershipLostError
-from _vendor import TableClient, UpdateMode
-from _vendor import parse_connection_str
 from azure.core import MatchConditions
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError, ResourceNotFoundError
+from _vendor.data.tables import TableClient, UpdateMode
+from _vendor.data.tables import parse_connection_str
 
 logger = logging.getLogger(__name__)
 
