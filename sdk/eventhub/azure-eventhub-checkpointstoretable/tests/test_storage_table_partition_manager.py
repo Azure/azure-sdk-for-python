@@ -24,6 +24,29 @@ def remove_live_storage_table_client(storage_connection_str, table_name):
     except:
         warnings.warn(UserWarning("storage table teardown failed"))
 
+def create_checkpoint(fully_qualified_namespace, eventhub_name, consumer_group,
+ partition_id, offset, sequence_number):
+    return {
+    'fully_qualified_namespace': fully_qualified_namespace,
+    'eventhub_name': eventhub_name,
+    'consumer_group': consumer_group,
+    'partition_id': str(partition_id),
+    'offset': offset,
+    'sequence_number': sequence_number
+            }
+
+def create_ownership(fully_qualified_namespace, eventhub_name, consumer_group,
+ partition_id, owner_id, etag, last_modified_time):
+    return  {
+    'fully_qualified_namespace': fully_qualified_namespace,
+    'eventhub_name': eventhub_name,
+    'consumer_group': consumer_group,
+    'partition_id': str(partition_id),
+    'owner_id': owner_id,
+    'etag': etag,
+    'last_modified_time': last_modified_time
+            }
+
 def _claim_ownership_exception_test(storage_connection_str, table_name):
     fully_qualified_namespace = 'test_namespace'
     eventhub_name = 'eventhub'
@@ -34,32 +57,26 @@ def _claim_ownership_exception_test(storage_connection_str, table_name):
         storage_connection_str, table_name)
     ownership_list = []
     for i in range(ownership_cnt):
-            ownership = {}
-            ownership['fully_qualified_namespace'] = fully_qualified_namespace
-            ownership['eventhub_name'] = eventhub_name
-            ownership['consumer_group'] = consumer_group
-            ownership['owner_id'] = 'owner_id'
-            ownership['partition_id'] = str(i)
-            ownership['etag'] = None
-            ownership['last_modified_time'] = None
+            ownership = create_ownership(fully_qualified_namespace, eventhub_name, consumer_group, str(i), 'owner_id', None, None)
             ownership_list.append(ownership)
-
     result_ownership_list = checkpoint_store.claim_ownership(ownership_list)
-    ownership = [{'fully_qualified_namespace': 'test_namespace', 'eventhub_name': 'eventhub', 'consumer_group': '$default',
-     'owner_id': 'Bill', 'partition_id': '0', 'etag': result_ownership_list[0]['etag'], 'last_modified_time': result_ownership_list[0]['last_modified_time']}]
-    ownership_list = checkpoint_store.claim_ownership(ownership)
+    single_ownership = [result_ownership_list[0].copy()]
+    single_ownership[0]['owner_id'] = "Bill"
+    ownership_list = checkpoint_store.claim_ownership(single_ownership)
     assert ownership_list[0]['owner_id'] == 'Bill'
 
-    ownership = [{'fully_qualified_namespace': 'test_namespace', 'eventhub_name': 'eventhub', 'consumer_group': '$default',
-     'owner_id': 'Jack', 'partition_id': '10', 'etag': 'W/"datetime\'2021-08-02T00%3A46%3A51.7645424Z\'"', 'last_modified_time': result_ownership_list[0]['last_modified_time']}]
-    result_ownership = checkpoint_store.claim_ownership(ownership)
+    single_ownership = [result_ownership_list[0].copy()]
+    single_ownership[0]['etag'] =  'W/"datetime\'2021-08-02T00%3A46%3A51.7645424Z\'"'
+    single_ownership[0]['owner_id'] = 'Jack'
+    single_ownership[0]['partition_id'] = '10'
+    result_ownership = checkpoint_store.claim_ownership(single_ownership)
     list_ownership =  checkpoint_store.list_ownership(fully_qualified_namespace, eventhub_name, consumer_group)
     assert result_ownership[0] in list_ownership
 
-    ownership = [{'fully_qualified_namespace': 'test_namespace', 'eventhub_name': 'eventhub', 'consumer_group': '$default',
-     'owner_id': 'Bill', 'partition_id': '0', 'etag': 'W/"datetime\'2021-08-02T00%3A46%3A51.7645424Z\'"', 'last_modified_time': result_ownership_list[0]['last_modified_time']}]
+    single_ownership = [result_ownership_list[0].copy()]
+    single_ownership[0]['etag'] =  'W/"datetime\'2021-08-02T00%3A46%3A51.7645424Z\'"'
     with pytest.raises(OwnershipLostError) as e_info:
-            checkpoint_store.claim_ownership(ownership)
+            checkpoint_store.claim_ownership(single_ownership)
 
 def _claim_and_list_ownership(storage_connection_str, table_name):
     fully_qualified_namespace = 'test_namespace'
@@ -116,14 +133,8 @@ def _update_and_list_checkpoint(storage_connection_str, table_name):
             consumer_group)
     assert len(checkpoint_list) == 0
     for i in range(partition_cnt):
-            checkpoint = {
-                'fully_qualified_namespace': fully_qualified_namespace,
-                'eventhub_name': eventhub_name,
-                'consumer_group': consumer_group,
-                'partition_id': str(i),
-                'offset': 2,
-                'sequence_number': 20
-            }
+            checkpoint = create_checkpoint(fully_qualified_namespace, eventhub_name, consumer_group, i, 2, 20)
+            print(checkpoint)
             checkpoint_store.update_checkpoint(checkpoint)
 
     checkpoint_list = checkpoint_store.list_checkpoints(
@@ -135,14 +146,7 @@ def _update_and_list_checkpoint(storage_connection_str, table_name):
             assert checkpoint['offset'] == '2'
             assert checkpoint['sequence_number'] == 20
 
-    checkpoint = {
-                'fully_qualified_namespace': fully_qualified_namespace,
-                'eventhub_name': eventhub_name,
-                'consumer_group': consumer_group,
-                'partition_id': str(0),
-                'offset': '30',
-                'sequence_number': 42
-    }
+    checkpoint = create_checkpoint(fully_qualified_namespace, eventhub_name, consumer_group, 0, '30', 42)
     checkpoint_store.update_checkpoint(checkpoint)
 
     checkpoint_list = checkpoint_store.list_checkpoints(
@@ -151,26 +155,6 @@ def _update_and_list_checkpoint(storage_connection_str, table_name):
             consumer_group)
     assert len(checkpoint_list) == partition_cnt
     assert checkpoint_list[0]['offset'] == '30'
-
-    for i in range(partition_cnt):
-            checkpoint = {
-                'fully_qualified_namespace': fully_qualified_namespace,
-                'eventhub_name': eventhub_name,
-                'consumer_group': consumer_group,
-                'partition_id': str(i),
-                'offset': 29,
-                'sequence_number': 42
-            }
-            checkpoint_store.update_checkpoint(checkpoint)
-
-    checkpoint_list = checkpoint_store.list_checkpoints(
-            fully_qualified_namespace,
-            eventhub_name,
-            consumer_group)
-    assert len(checkpoint_list) == partition_cnt
-    for checkpoint in checkpoint_list:
-            assert checkpoint['offset'] == '29'
-            assert checkpoint['sequence_number'] == 42
 
 @pytest.mark.parametrize("storage_connection_str", STORAGE_CONN_STR)
 def test_claim_ownership_exception(storage_connection_str):
