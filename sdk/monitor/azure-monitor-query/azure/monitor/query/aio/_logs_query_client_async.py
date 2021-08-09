@@ -12,7 +12,7 @@ from .._generated.aio._monitor_query_client import MonitorQueryClient
 
 from .._generated.models import BatchRequest, QueryBody as LogsQueryBody
 from .._helpers import process_error, construct_iso8601, order_results
-from .._models import LogsQueryResult, LogsBatchQueryRequest, LogsBatchQueryResult
+from .._models import LogsQueryResult, LogsBatchQuery, LogsBatchQueryResult
 from ._helpers_asyc import get_authentication_policy
 
 if TYPE_CHECKING:
@@ -114,9 +114,9 @@ class LogsQueryClient(object):
         except HttpResponseError as e:
             process_error(e)
 
-    async def batch_query(
+    async def query_batch(
         self,
-        queries: Union[Sequence[Dict], Sequence[LogsBatchQueryRequest]],
+        queries: Union[Sequence[Dict], Sequence[LogsBatchQuery]],
         **kwargs: Any
         ) -> Sequence[LogsBatchQueryResult]:
         """Execute a list of analytics queries. Each request can be either a LogQueryRequest
@@ -125,13 +125,13 @@ class LogsQueryClient(object):
         The response is returned in the same order as that of the requests sent.
 
         :param queries: The list of queries that should be processed
-        :type queries: list[dict] or list[~azure.monitor.query.LogsBatchQueryRequest]
+        :type queries: list[dict] or list[~azure.monitor.query.LogsBatchQuery]
         :return: BatchResponse, or the result of cls(response)
         :rtype: ~list[~azure.monitor.query.LogsBatchQueryResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         try:
-            queries = [LogsBatchQueryRequest(**q) for q in queries]
+            queries = [LogsBatchQuery(**q) for q in queries]
         except (KeyError, TypeError):
             pass
         queries = [q._to_generated() for q in queries] # pylint: disable=protected-access

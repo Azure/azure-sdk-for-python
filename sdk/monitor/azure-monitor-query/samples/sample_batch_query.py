@@ -4,7 +4,7 @@
 from datetime import datetime, timedelta
 import os
 import pandas as pd
-from azure.monitor.query import LogsQueryClient, LogsBatchQueryRequest
+from azure.monitor.query import LogsQueryClient, LogsBatchQuery
 from azure.identity import DefaultAzureCredential
 
 
@@ -12,27 +12,27 @@ credential  = DefaultAzureCredential()
 
 client = LogsQueryClient(credential)
 
-# [START send_batch_query]
+# [START send_query_batch]
 requests = [
-    LogsBatchQueryRequest(
+    LogsBatchQuery(
         query="AzureActivity | summarize count()",
         duration=timedelta(hours=1),
         workspace_id= os.environ['LOG_WORKSPACE_ID']
     ),
-    LogsBatchQueryRequest(
+    LogsBatchQuery(
         query= """AppRequests | take 10  |
             summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId""",
         duration=timedelta(hours=1),
         start_time=datetime(2021, 6, 2),
         workspace_id= os.environ['LOG_WORKSPACE_ID']
     ),
-    LogsBatchQueryRequest(
+    LogsBatchQuery(
         query= "AppRequestss | take 5",
         workspace_id= os.environ['LOG_WORKSPACE_ID'],
         include_statistics=True
     ),
 ]
-responses = client.batch_query(requests)
+responses = client.query_batch(requests)
 
 for response in responses:
     try:
@@ -42,4 +42,4 @@ for response in responses:
     except TypeError:
         print(response.error)
 
-# [END send_batch_query]
+# [END send_query_batch]

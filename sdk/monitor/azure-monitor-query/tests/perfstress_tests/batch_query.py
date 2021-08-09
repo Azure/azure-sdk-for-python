@@ -65,7 +65,7 @@ class LogsBatchPerfTest(PerfStressTest):
         Avoid putting any ancilliary logic (e.g. generating UUIDs), and put this in the setup/init instead
         so that we're only measuring the client API call.
         """
-        self.logs_client.batch_query(
+        self.logs_client.query_batch(
             self.requests
             )
 
@@ -76,6 +76,6 @@ class LogsBatchPerfTest(PerfStressTest):
         Avoid putting any ancilliary logic (e.g. generating UUIDs), and put this in the setup/init instead
         so that we're only measuring the client API call.
         """
-        await self.async_logs_client.batch_query(
+        await self.async_logs_client.query_batch(
             self.requests
             )
