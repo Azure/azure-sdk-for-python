@@ -15,9 +15,6 @@ try:
     from ._models_py3 import AgentPoolUpgradeProfilePropertiesUpgradesItem
     from ._models_py3 import AgentPoolUpgradeSettings
     from ._models_py3 import CloudErrorBody
-    from ._models_py3 import Components1Q1Og48SchemasManagedclusterAllof1
-    from ._models_py3 import Components1Umhcm8SchemasManagedclusteridentityPropertiesUserassignedidentitiesAdditionalproperties
-    from ._models_py3 import ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties
     from ._models_py3 import ContainerServiceDiagnosticsProfile
     from ._models_py3 import ContainerServiceLinuxProfile
     from ._models_py3 import ContainerServiceMasterProfile
@@ -50,6 +47,8 @@ try:
     from ._models_py3 import ManagedClusterLoadBalancerProfileManagedOutboundIPs
     from ._models_py3 import ManagedClusterLoadBalancerProfileOutboundIPPrefixes
     from ._models_py3 import ManagedClusterLoadBalancerProfileOutboundIPs
+    from ._models_py3 import ManagedClusterManagedOutboundIPProfile
+    from ._models_py3 import ManagedClusterNATGatewayProfile
     from ._models_py3 import ManagedClusterPodIdentity
     from ._models_py3 import ManagedClusterPodIdentityException
     from ._models_py3 import ManagedClusterPodIdentityProfile
@@ -60,9 +59,12 @@ try:
     from ._models_py3 import ManagedClusterPoolUpgradeProfileUpgradesItem
     from ._models_py3 import ManagedClusterPropertiesAutoScalerProfile
     from ._models_py3 import ManagedClusterSKU
+    from ._models_py3 import ManagedClusterSecurityProfile
+    from ._models_py3 import ManagedClusterSecurityProfileAzureDefender
     from ._models_py3 import ManagedClusterServicePrincipalProfile
     from ._models_py3 import ManagedClusterUpgradeProfile
     from ._models_py3 import ManagedClusterWindowsProfile
+    from ._models_py3 import ManagedServiceIdentityUserAssignedIdentitiesValue
     from ._models_py3 import OSOptionProfile
     from ._models_py3 import OSOptionProperty
     from ._models_py3 import OperationListResult
@@ -96,9 +98,6 @@ except (SyntaxError, ImportError):
     from ._models import AgentPoolUpgradeProfilePropertiesUpgradesItem  # type: ignore
     from ._models import AgentPoolUpgradeSettings  # type: ignore
     from ._models import CloudErrorBody  # type: ignore
-    from ._models import Components1Q1Og48SchemasManagedclusterAllof1  # type: ignore
-    from ._models import Components1Umhcm8SchemasManagedclusteridentityPropertiesUserassignedidentitiesAdditionalproperties  # type: ignore
-    from ._models import ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties  # type: ignore
     from ._models import ContainerServiceDiagnosticsProfile  # type: ignore
     from ._models import ContainerServiceLinuxProfile  # type: ignore
     from ._models import ContainerServiceMasterProfile  # type: ignore
@@ -131,6 +130,8 @@ except (SyntaxError, ImportError):
     from ._models import ManagedClusterLoadBalancerProfileManagedOutboundIPs  # type: ignore
     from ._models import ManagedClusterLoadBalancerProfileOutboundIPPrefixes  # type: ignore
     from ._models import ManagedClusterLoadBalancerProfileOutboundIPs  # type: ignore
+    from ._models import ManagedClusterManagedOutboundIPProfile  # type: ignore
+    from ._models import ManagedClusterNATGatewayProfile  # type: ignore
     from ._models import ManagedClusterPodIdentity  # type: ignore
     from ._models import ManagedClusterPodIdentityException  # type: ignore
     from ._models import ManagedClusterPodIdentityProfile  # type: ignore
@@ -141,9 +142,12 @@ except (SyntaxError, ImportError):
     from ._models import ManagedClusterPoolUpgradeProfileUpgradesItem  # type: ignore
     from ._models import ManagedClusterPropertiesAutoScalerProfile  # type: ignore
     from ._models import ManagedClusterSKU  # type: ignore
+    from ._models import ManagedClusterSecurityProfile  # type: ignore
+    from ._models import ManagedClusterSecurityProfileAzureDefender  # type: ignore
     from ._models import ManagedClusterServicePrincipalProfile  # type: ignore
     from ._models import ManagedClusterUpgradeProfile  # type: ignore
     from ._models import ManagedClusterWindowsProfile  # type: ignore
+    from ._models import ManagedServiceIdentityUserAssignedIdentitiesValue  # type: ignore
     from ._models import OSOptionProfile  # type: ignore
     from ._models import OSOptionProperty  # type: ignore
     from ._models import OperationListResult  # type: ignore
@@ -196,6 +200,7 @@ from ._container_service_client_enums import (
     OutboundType,
     PrivateEndpointConnectionProvisioningState,
     ResourceIdentityType,
+    ScaleDownMode,
     ScaleSetEvictionPolicy,
     ScaleSetPriority,
     UpgradeChannel,
@@ -211,9 +216,6 @@ __all__ = [
     'AgentPoolUpgradeProfilePropertiesUpgradesItem',
     'AgentPoolUpgradeSettings',
     'CloudErrorBody',
-    'Components1Q1Og48SchemasManagedclusterAllof1',
-    'Components1Umhcm8SchemasManagedclusteridentityPropertiesUserassignedidentitiesAdditionalproperties',
-    'ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties',
     'ContainerServiceDiagnosticsProfile',
     'ContainerServiceLinuxProfile',
     'ContainerServiceMasterProfile',
@@ -246,6 +248,8 @@ __all__ = [
     'ManagedClusterLoadBalancerProfileManagedOutboundIPs',
     'ManagedClusterLoadBalancerProfileOutboundIPPrefixes',
     'ManagedClusterLoadBalancerProfileOutboundIPs',
+    'ManagedClusterManagedOutboundIPProfile',
+    'ManagedClusterNATGatewayProfile',
     'ManagedClusterPodIdentity',
     'ManagedClusterPodIdentityException',
     'ManagedClusterPodIdentityProfile',
@@ -256,9 +260,12 @@ __all__ = [
     'ManagedClusterPoolUpgradeProfileUpgradesItem',
     'ManagedClusterPropertiesAutoScalerProfile',
     'ManagedClusterSKU',
+    'ManagedClusterSecurityProfile',
+    'ManagedClusterSecurityProfileAzureDefender',
     'ManagedClusterServicePrincipalProfile',
     'ManagedClusterUpgradeProfile',
     'ManagedClusterWindowsProfile',
+    'ManagedServiceIdentityUserAssignedIdentitiesValue',
     'OSOptionProfile',
     'OSOptionProperty',
     'OperationListResult',
@@ -309,6 +316,7 @@ __all__ = [
     'OutboundType',
     'PrivateEndpointConnectionProvisioningState',
     'ResourceIdentityType',
+    'ScaleDownMode',
     'ScaleSetEvictionPolicy',
     'ScaleSetPriority',
     'UpgradeChannel',
