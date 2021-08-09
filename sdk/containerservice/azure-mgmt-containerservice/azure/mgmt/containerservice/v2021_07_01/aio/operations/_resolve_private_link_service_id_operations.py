@@ -25,7 +25,7 @@ class ResolvePrivateLinkServiceIdOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.containerservice.v2021_05_01.models
+    :type models: ~azure.mgmt.containerservice.v2021_07_01.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -56,10 +56,10 @@ class ResolvePrivateLinkServiceIdOperations:
         :param resource_name: The name of the managed cluster resource.
         :type resource_name: str
         :param parameters: Parameters required in order to resolve a private link service ID.
-        :type parameters: ~azure.mgmt.containerservice.v2021_05_01.models.PrivateLinkResource
+        :type parameters: ~azure.mgmt.containerservice.v2021_07_01.models.PrivateLinkResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateLinkResource, or the result of cls(response)
-        :rtype: ~azure.mgmt.containerservice.v2021_05_01.models.PrivateLinkResource
+        :rtype: ~azure.mgmt.containerservice.v2021_07_01.models.PrivateLinkResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkResource"]
@@ -67,7 +67,7 @@ class ResolvePrivateLinkServiceIdOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-07-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

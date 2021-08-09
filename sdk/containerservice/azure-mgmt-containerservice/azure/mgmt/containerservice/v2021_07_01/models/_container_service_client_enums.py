@@ -452,6 +452,11 @@ class OutboundType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: network configuration. For more information see `outbound type userDefinedRouting
     #: <https://docs.microsoft.com/azure/aks/egress-outboundtype#outbound-type-of-userdefinedrouting>`_.
     USER_DEFINED_ROUTING = "userDefinedRouting"
+    #: The AKS-managed NAT gateway is used for egress.
+    MANAGED_NAT_GATEWAY = "managedNATGateway"
+    #: The user-assigned NAT gateway associated to the cluster subnet is used for egress. This is an
+    #: advanced scenario and requires proper network configuration.
+    USER_ASSIGNED_NAT_GATEWAY = "userAssignedNATGateway"
 
 class PrivateEndpointConnectionProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The current provisioning state.
@@ -477,6 +482,17 @@ class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     USER_ASSIGNED = "UserAssigned"
     #: Do not use a managed identity for the Managed Cluster, service principal will be used instead.
     NONE = "None"
+
+class ScaleDownMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Describes how VMs are added to or removed from Agent Pools. See `billing states
+    <https://docs.microsoft.com/azure/virtual-machines/states-billing>`_.
+    """
+
+    #: Create new instances during scale up and remove instances during scale down.
+    DELETE = "Delete"
+    #: Attempt to start deallocated instances (if they exist) during scale up and deallocate instances
+    #: during scale down.
+    DEALLOCATE = "Deallocate"
 
 class ScaleSetEvictionPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The eviction policy specifies what to do with the VM when it is evicted. The default is Delete.

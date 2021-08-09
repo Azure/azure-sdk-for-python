@@ -32,7 +32,7 @@ class AgentPoolsOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.containerservice.v2021_05_01.models
+    :type models: ~azure.mgmt.containerservice.v2021_07_01.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -64,7 +64,7 @@ class AgentPoolsOperations(object):
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AgentPoolListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerservice.v2021_05_01.models.AgentPoolListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerservice.v2021_07_01.models.AgentPoolListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AgentPoolListResult"]
@@ -72,7 +72,7 @@ class AgentPoolsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-07-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -144,7 +144,7 @@ class AgentPoolsOperations(object):
         :type agent_pool_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AgentPool, or the result of cls(response)
-        :rtype: ~azure.mgmt.containerservice.v2021_05_01.models.AgentPool
+        :rtype: ~azure.mgmt.containerservice.v2021_07_01.models.AgentPool
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AgentPool"]
@@ -152,7 +152,7 @@ class AgentPoolsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-07-01"
         accept = "application/json"
 
         # Construct URL
@@ -203,7 +203,7 @@ class AgentPoolsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-07-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -269,7 +269,7 @@ class AgentPoolsOperations(object):
         :param agent_pool_name: The name of the agent pool.
         :type agent_pool_name: str
         :param parameters: The agent pool to create or update.
-        :type parameters: ~azure.mgmt.containerservice.v2021_05_01.models.AgentPool
+        :type parameters: ~azure.mgmt.containerservice.v2021_07_01.models.AgentPool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling.
@@ -277,7 +277,7 @@ class AgentPoolsOperations(object):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either AgentPool or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerservice.v2021_05_01.models.AgentPool]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerservice.v2021_07_01.models.AgentPool]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
@@ -341,7 +341,7 @@ class AgentPoolsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-07-01"
         accept = "application/json"
 
         # Construct URL
@@ -467,7 +467,7 @@ class AgentPoolsOperations(object):
         :type agent_pool_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AgentPoolUpgradeProfile, or the result of cls(response)
-        :rtype: ~azure.mgmt.containerservice.v2021_05_01.models.AgentPoolUpgradeProfile
+        :rtype: ~azure.mgmt.containerservice.v2021_07_01.models.AgentPoolUpgradeProfile
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AgentPoolUpgradeProfile"]
@@ -475,7 +475,7 @@ class AgentPoolsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-07-01"
         accept = "application/json"
 
         # Construct URL
@@ -531,7 +531,7 @@ class AgentPoolsOperations(object):
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AgentPoolAvailableVersions, or the result of cls(response)
-        :rtype: ~azure.mgmt.containerservice.v2021_05_01.models.AgentPoolAvailableVersions
+        :rtype: ~azure.mgmt.containerservice.v2021_07_01.models.AgentPoolAvailableVersions
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AgentPoolAvailableVersions"]
@@ -539,7 +539,7 @@ class AgentPoolsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-07-01"
         accept = "application/json"
 
         # Construct URL
@@ -588,7 +588,7 @@ class AgentPoolsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-07-01"
         accept = "application/json"
 
         # Construct URL
