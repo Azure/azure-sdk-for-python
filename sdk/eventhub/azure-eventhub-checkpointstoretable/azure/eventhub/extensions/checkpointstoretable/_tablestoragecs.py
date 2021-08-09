@@ -9,8 +9,8 @@ import calendar
 import dateutil.parser
 from azure.eventhub import CheckpointStore
 from azure.eventhub.exceptions import OwnershipLostError
-from azure.data.tables import TableClient, UpdateMode
-from azure.data.tables._base_client import parse_connection_str
+from _vendor import TableClient, UpdateMode
+from _vendor import parse_connection_str
 from azure.core import MatchConditions
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError, ResourceNotFoundError
 
@@ -143,7 +143,7 @@ class TableCheckpointStore(CheckpointStore):
             )
             ownership['last_modified_time'] = _to_timestamp(updated_entity.metadata.get('timestamp'))
             return ownership
-        except (ResourceNotFoundError):
+        except ResourceNotFoundError:
             metadata = self._table_client.create_entity(
             entity=ownership_entity,
             headers={'Prefer': 'return-content'}, **kwargs
