@@ -60,6 +60,7 @@ def _claim_ownership_exception_test(storage_connection_str, table_name):
             ownership = create_ownership(fully_qualified_namespace, eventhub_name, consumer_group, str(i), 'owner_id', None, None)
             ownership_list.append(ownership)
     result_ownership_list = checkpoint_store.claim_ownership(ownership_list)
+    assert result_ownership_list[0]['owner_id']  == 'owner_id'
     single_ownership = [result_ownership_list[0].copy()]
     single_ownership[0]['owner_id'] = "Bill"
     ownership_list = checkpoint_store.claim_ownership(single_ownership)
