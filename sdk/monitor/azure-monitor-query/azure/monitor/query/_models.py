@@ -72,9 +72,9 @@ class LogsQueryResult(object):
     :ivar statistics: This will include a statistics property in the response that describes various
      performance statistics such as query execution time and resource usage.
     :vartype statistics: object
-    :ivar render: This will include a render property in the response that specifies the type of
+    :ivar visualization: This will include a visualization property in the response that specifies the type of
      visualization selected by the query and any properties for that visualization.
-    :vartype render: object
+    :vartype visualization: object
     :ivar error: Any error info.
     :vartype error: object
     """
@@ -82,7 +82,7 @@ class LogsQueryResult(object):
         # type: (Any) -> None
         self.tables = kwargs.get("tables", None)
         self.statistics = kwargs.get("statistics", None)
-        self.render = kwargs.get("render", None)
+        self.visualization = kwargs.get("visualization", None)
         self.error = kwargs.get("error", None)
 
     @classmethod
@@ -99,7 +99,7 @@ class LogsQueryResult(object):
         return cls(
             tables=tables,
             statistics=generated.statistics,
-            render=generated.render,
+            visualization=generated.render,
             error=generated.error
         )
 
@@ -173,8 +173,9 @@ class LogsBatchQuery(object):
     :keyword int server_timeout: the server timeout. The default timeout is 3 minutes,
      and the maximum timeout is 10 minutes.
     :keyword bool include_statistics: To get information about query statistics.
-    :keyword bool include_render: In the query language, it is possible to specify different render options.
-     By default, the API does not return information regarding the type of visualization to show.
+    :keyword bool include_visualization: In the query language, it is possible to specify different
+     visualization options. By default, the API does not return information regarding the type of
+     visualization to show.
     :keyword headers: Dictionary of :code:`<string>`.
     :paramtype headers: dict[str, str]
     """
@@ -182,18 +183,18 @@ class LogsBatchQuery(object):
     def __init__(self, query, workspace_id, duration=None, **kwargs): #pylint: disable=super-init-not-called
         # type: (str, str, Optional[str], Any) -> None
         include_statistics = kwargs.pop("include_statistics", False)
-        include_render = kwargs.pop("include_render", False)
+        include_visualization = kwargs.pop("include_visualization", False)
         server_timeout = kwargs.pop("server_timeout", None)
         prefer = ""
         if server_timeout:
             prefer += "wait=" + str(server_timeout)
         if include_statistics:
             if len(prefer) > 0:
-                prefer += " "
+                prefer += ","
             prefer += "include-statistics=true"
-        if include_render:
+        if include_visualization:
             if len(prefer) > 0:
-                prefer += " "
+                prefer += ","
             prefer += "include-render=true"
 
         headers = kwargs.get("headers", None)
@@ -232,9 +233,9 @@ class LogsBatchQueryResult(object):
     :ivar statistics: This will include a statistics property in the response that describes various
      performance statistics such as query execution time and resource usage.
     :vartype statistics: object
-    :ivar render: This will include a render property in the response that specifies the type of
+    :ivar visualization: This will include a visualization property in the response that specifies the type of
      visualization selected by the query and any properties for that visualization.
-    :vartype render: object
+    :vartype visualization: object
     :ivar error: Any error info.
     :vartype error: object
     """
@@ -247,7 +248,7 @@ class LogsBatchQueryResult(object):
         self.tables = kwargs.get('tables', None)
         self.error = kwargs.get('error', None)
         self.statistics = kwargs.get('statistics', None)
-        self.render = kwargs.get('render', None)
+        self.visualization = kwargs.get('visualization', None)
 
     @classmethod
     def _from_generated(cls, generated):
@@ -265,7 +266,7 @@ class LogsBatchQueryResult(object):
             status=generated.status,
             tables=tables,
             statistics=generated.body.statistics,
-            render=generated.body.render,
+            visualization=generated.body.render,
             error=generated.body.error
         )
 

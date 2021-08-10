@@ -223,7 +223,7 @@ LogsQueryResult / LogsBatchQueryResult
 |---id (this exists in `LogsBatchQueryResult` object only)
 |---status (this exists in `LogsBatchQueryResult` object only)
 |---statistics
-|---render
+|---visualization
 |---error
 |---tables (list of `LogsQueryResultTable` objects)
     |---name
