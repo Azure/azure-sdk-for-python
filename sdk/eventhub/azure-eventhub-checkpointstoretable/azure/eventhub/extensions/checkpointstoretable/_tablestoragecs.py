@@ -11,8 +11,8 @@ from azure.eventhub import CheckpointStore
 from azure.eventhub.exceptions import OwnershipLostError
 from azure.core import MatchConditions
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError, ResourceNotFoundError
-from _vendor.data.tables import TableClient, UpdateMode
-from _vendor.data.tables import parse_connection_str
+from ._vendor.data.tables import TableClient, UpdateMode
+from ._vendor.data.tables._base_client import parse_connection_str
 
 logger = logging.getLogger(__name__)
 
