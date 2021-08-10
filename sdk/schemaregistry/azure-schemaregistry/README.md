@@ -20,7 +20,7 @@ pip install azure-schemaregistry azure-identity
 To use this package, you must have:
 * Azure subscription - [Create a free account][azure_sub]
 * [Azure Schema Registry][schemaregistry_service]
-* Python 2.7, 3.5 or later - [Install Python][python]
+* Python 2.7, 3.6 or later - [Install Python][python]
 
 ### Authenticate the client
 Interaction with Schema Registry starts with an instance of SchemaRegistryClient class. You need the endpoint and AAD credential to instantiate the client object.
