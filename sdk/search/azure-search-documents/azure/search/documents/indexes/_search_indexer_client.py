@@ -337,8 +337,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         kwargs.update(access_condition)
         name = data_source_connection.name
         packed_data_source = (
-            data_source_connection._to_generated()
-        )  # pylint:disable=protected-access
+            data_source_connection._to_generated()  # pylint:disable=protected-access
+        )
         result = self._client.data_sources.create_or_update(
             data_source_name=name,
             data_source=packed_data_source,
@@ -369,9 +369,9 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.data_sources.get(name, **kwargs)
-        return SearchIndexerDataSourceConnection._from_generated(
+        return SearchIndexerDataSourceConnection._from_generated(  # pylint:disable=protected-access
             result
-        )  # pylint:disable=protected-access
+        )
 
     @distributed_trace
     def get_data_source_connections(self, **kwargs):

@@ -631,8 +631,8 @@ class SearchIndex(msrest.serialization.Model):
             tokenizers = None
         if search_index.fields:
             fields = [
-                SearchField._from_generated(x) for x in search_index.fields
-            ]  # pylint:disable=protected-access
+                SearchField._from_generated(x) for x in search_index.fields  # pylint:disable=protected-access
+            ]
         else:
             fields = None
         try:

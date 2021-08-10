@@ -303,8 +303,8 @@ class SearchIndexClient(HeadersMixin):
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.indexes.analyze(
             index_name=index_name,
-            request=analyze_request._to_analyze_request(),
-            **kwargs  # pylint:disable=protected-access
+            request=analyze_request._to_analyze_request(),  # pylint:disable=protected-access
+            **kwargs
         )
         return result
 
@@ -431,8 +431,8 @@ class SearchIndexClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         patched_synonym_map = (
-            synonym_map._to_generated()
-        )  # pylint:disable=protected-access
+            synonym_map._to_generated()  # pylint:disable=protected-access
+        )
         result = await self._client.synonym_maps.create(patched_synonym_map, **kwargs)
         return SynonymMap._from_generated(result)  # pylint:disable=protected-access
 
@@ -456,8 +456,8 @@ class SearchIndexClient(HeadersMixin):
         )
         kwargs.update(access_condition)
         patched_synonym_map = (
-            synonym_map._to_generated()
-        )  # pylint:disable=protected-access
+            synonym_map._to_generated()  # pylint:disable=protected-access
+        )
         result = await self._client.synonym_maps.create_or_update(
             synonym_map_name=synonym_map.name,
             synonym_map=patched_synonym_map,
