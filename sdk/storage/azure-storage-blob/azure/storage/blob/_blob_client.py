@@ -1446,7 +1446,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     @distributed_trace
     def set_legal_hold(self, legal_hold, **kwargs):
-        # type: (**Any) -> Dict[str, Union[str, datetime, bool]]
+        # type: (bool, **Any) -> Dict[str, Union[str, datetime, bool]]
         """The Set Legal Hold operation sets a legal hold on the blob.
 
         .. versionadded:: 12.10.0
@@ -1457,7 +1457,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Key value pairs of blob tags.
-        :rtype: Dict[str, str]
+        :rtype: Dict[str, Union[str, datetime, bool]]
         """
 
         return self._client.blob.set_legal_hold(legal_hold, cls=return_response_headers, **kwargs)
