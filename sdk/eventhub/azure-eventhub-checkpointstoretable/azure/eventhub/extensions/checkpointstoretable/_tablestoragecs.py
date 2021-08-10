@@ -12,7 +12,11 @@ from azure.eventhub.exceptions import OwnershipLostError
 from azure.core import MatchConditions
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError, ResourceNotFoundError
 from ._vendor.data.tables import TableClient, UpdateMode
+<<<<<<< HEAD
 from ._vendor.data.tables._base_client import parse_connection_str
+=======
+from ._vendor.data.tables import parse_connection_str
+>>>>>>> f97b399e3cbaea6796e1e9aced99c6ca99c6fe70
 
 logger = logging.getLogger(__name__)
 
