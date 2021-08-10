@@ -1,5 +1,5 @@
 -e ../../../tools/azure-sdk-tools
 ../../core/azure-core
-azure-eventhub
+../azure-eventhub
 ../../tables/azure-data-tables
 -e ../../../tools/azure-devtools
