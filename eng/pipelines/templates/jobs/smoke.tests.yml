@@ -16,6 +16,7 @@ jobs:
         name: "azsdk-pool-mms-ubuntu-2004-general"
         vmImage: "MMSUbuntu20.04"
       steps:
+<<<<<<< HEAD
         - ${{ if and(ne(variables['Skip.Release'], 'true'), ne(parameters.Artifact.skipPublishPackage, 'true')) }}:
           - pwsh: |
               $packages = Get-Content $(Build.SourcesDirectory)/common/smoketest/requirements-release.txt
@@ -25,6 +26,17 @@ jobs:
               }
             name: check_smoke_tests_${{ parameters.Artifact.safeName }}
             displayName: Check smoke test eligibility for ${{ parameters.Artifact.name }}
+=======
+        - ${{ if and(ne(variables['Skip.Release'], 'true'), ne(artifact.skipPublishPackage, 'true')) }}:
+          - pwsh: |
+              $packages = Get-Content $(Build.SourcesDirectory)/common/smoketest/requirements-release.txt
+              if ($packages | Where-Object { $_ -match "${{ replace(artifact.name, '_', '-') }}" }) {
+                Write-Host "Smoke tests will run for ${{ artifact.name }}"
+                Write-Host "##vso[task.setvariable variable=RunSmokeTests;]true"
+              }
+            name: check_smoke_tests_${{ artifact.safeName }}
+            displayName: Check smoke test eligibility for ${{ artifact.name }}
+>>>>>>> 26b0d3d9fc (Passing in single artifact for smoke test)
 
         - pwsh: |
             Write-Host "Setting RunSmokeTests to $($env:RunSmokeTests)"
