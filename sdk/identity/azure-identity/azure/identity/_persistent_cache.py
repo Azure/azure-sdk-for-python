@@ -90,7 +90,7 @@ def _get_persistence(allow_unencrypted, account_name, cache_name):
             if not allow_unencrypted:
                 raise ValueError(
                     "PyGObject is required to encrypt the persistent cache. Please install that library or "
-                    + 'specify "allow_unencrypted_cache=True" to store the cache without encryption.'
+                    + 'specify "allow_unencrypted_storage=True" to store the cache without encryption.'
                 )
             return msal_extensions.FilePersistence(file_path)
 

@@ -9873,7 +9873,7 @@ class TaskExecutionInformation(Model):
     :param last_requeue_time: This property is set only if the requeueCount is
      nonzero.
     :type last_requeue_time: datetime
-    :param result: The result of the Task execution. If the value is 'failed',
+    :param result: The result of the Task execution. If the value is 'failure',
      then the details of the failure can be found in the failureInfo property.
      Possible values include: 'success', 'failure'
     :type result: str or ~azure.batch.models.TaskExecutionResult

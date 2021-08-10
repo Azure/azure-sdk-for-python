@@ -1,6 +1,16 @@
 # Release History
 
-## 4.5.0b2 (Unreleased)
+## 4.5.0b3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 4.5.0b2 (2021-08-10)
 
 ### Features Added
 - Added support for secure key release from a Managed HSM
@@ -16,10 +26,7 @@
 > Only code written against a beta version such as 4.5.0b1 may be affected.
 - `KeyClient.get_random_bytes` now returns a `RandomBytes` model with bytes in a `value`
   property, rather than returning the bytes directly
-
-### Bugs Fixed
-
-### Other Changes
+  ([#19895](https://github.com/Azure/azure-sdk-for-python/issues/19895))
 
 ## 4.5.0b1 (2021-07-08)
 Beginning with this release, this library requires Python 2.7 or 3.6+.
