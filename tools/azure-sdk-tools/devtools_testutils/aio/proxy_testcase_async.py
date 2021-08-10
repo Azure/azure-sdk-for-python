@@ -1,7 +1,11 @@
-import asyncio
-import functools
-from contextlib import contextmanager
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+from azure.core.pipeline.transport import AioHttpTransport
 
+from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 from ..proxy_testcase import (
     get_test_id,
     start_record_or_playback,
@@ -9,9 +13,6 @@ from ..proxy_testcase import (
     stop_record_or_playback,
 )
 
-from azure.core.pipeline.transport import AioHttpTransport
-
-from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 
 def RecordedByProxyAsync(func):
     async def record_wrap(*args, **kwargs):
@@ -39,9 +40,6 @@ def RecordedByProxyAsync(func):
         async def combined_call(*args, **kwargs):
             adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
             req = adjusted_args[1]
-            print("HEADERS: ", req.headers)
-            print("BODY: ", req.body)
-            print("METHOD: ", req.method)
             return await original_func(*adjusted_args, **adjusted_kwargs)
 
         AioHttpTransport.send = combined_call
