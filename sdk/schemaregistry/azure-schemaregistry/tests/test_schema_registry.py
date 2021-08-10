@@ -41,7 +41,11 @@ class SchemaRegistryTests(AzureTestCase):
         schema_name = self.get_resource_name('test-schema-basic')
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         serialization_type = "Avro"
+        assert len(client._id_to_schema) == 0
+        assert len(client._description_to_properties) == 0
         schema_properties = client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
+        assert len(client._id_to_schema) == 1
+        assert len(client._description_to_properties) == 1
 
         assert schema_properties.schema_id is not None
         assert schema_properties.location is not None
@@ -58,7 +62,23 @@ class SchemaRegistryTests(AzureTestCase):
         assert returned_schema.schema_properties.serialization_type == "Avro"
         assert returned_schema.schema_content == schema_str
 
+        # check that same cached properties object is returned by get_schema_id
+        cached_properties = client.get_schema_id(schemaregistry_group, schema_name, serialization_type, schema_str)
+        assert client.get_schema_id(schemaregistry_group, schema_name, serialization_type, schema_str) == cached_properties
+
+        # check if schema is added to cache when it does not exist in the cache
+        cached_properties = client._description_to_properties[
+            (schemaregistry_group, schema_name, serialization_type, schema_str)
+        ]
+        properties_cache_length = len(client._description_to_properties)
+        del client._description_to_properties[
+            (schemaregistry_group, schema_name, serialization_type, schema_str)
+        ]
+        assert len(client._description_to_properties) == properties_cache_length - 1
+
         returned_schema_properties = client.get_schema_id(schemaregistry_group, schema_name, serialization_type, schema_str)
+        assert len(client._description_to_properties) == properties_cache_length
+        assert cached_properties != returned_schema_properties # assert not same object after deletion from cache
 
         assert returned_schema_properties.schema_id == schema_properties.schema_id
         assert returned_schema_properties.location is not None
@@ -89,7 +109,19 @@ class SchemaRegistryTests(AzureTestCase):
         assert new_schema_properties.version == schema_properties.version + 1
         assert new_schema_properties.serialization_type == "Avro"
 
+        # check that same cached schema object is returned by get_schema
+        cached_schema = client.get_schema(schema_id=new_schema_properties.schema_id)
+        assert client.get_schema(schema_id=new_schema_properties.schema_id) == cached_schema
+
+        # check if schema is added to cache when it does not exist in the cache
+        cached_schema = client._id_to_schema[new_schema_properties.schema_id]
+        schema_cache_length = len(client._id_to_schema)
+        del client._id_to_schema[new_schema_properties.schema_id]
+        assert len(client._id_to_schema) == schema_cache_length - 1
+
         new_schema = client.get_schema(schema_id=new_schema_properties.schema_id)
+        assert len(client._id_to_schema) == schema_cache_length
+        assert cached_schema != new_schema  # assert not same object after deletion from cache
 
         assert new_schema.schema_properties.schema_id != schema_properties.schema_id
         assert new_schema.schema_properties.schema_id == new_schema_properties.schema_id
@@ -106,8 +138,14 @@ class SchemaRegistryTests(AzureTestCase):
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"age","type":["int","null"]},{"name":"city","type":["string","null"]}]}"""
         serialization_type = "Avro"
         schema_properties = client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
+        schema_cache_length = len(client._id_to_schema)
+        desc_cache_length = len(client._description_to_properties)
         schema_properties_second = client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
+        schema_cache_second_length = len(client._id_to_schema)
+        desc_cache_second_length = len(client._description_to_properties)
         assert schema_properties.schema_id == schema_properties_second.schema_id
+        assert schema_cache_length == schema_cache_second_length
+        assert desc_cache_length == desc_cache_second_length
 
     @SchemaRegistryPowerShellPreparer()
     def test_schema_negative_wrong_credential(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
