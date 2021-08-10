@@ -2,7 +2,7 @@ import pytest
 import os
 from azure.identity import ClientSecretCredential
 from azure.core.exceptions import HttpResponseError
-from azure.monitor.query import LogsQueryClient, LogsBatchQueryRequest
+from azure.monitor.query import LogsQueryClient, LogsBatchQuery
 
 def _credential():
     credential  = ClientSecretCredential(
@@ -62,27 +62,27 @@ def test_logs_server_timeout():
     assert 'Gateway timeout' in e.value.message
 
 @pytest.mark.live_test_only
-def test_logs_batch_query():
+def test_logs_query_batch():
     client = LogsQueryClient(_credential())
 
     requests = [
-        LogsBatchQueryRequest(
+        LogsBatchQuery(
             query="AzureActivity | summarize count()",
             timespan="PT1H",
             workspace_id= os.environ['LOG_WORKSPACE_ID']
         ),
-        LogsBatchQueryRequest(
+        LogsBatchQuery(
             query= """AppRequests | take 10  |
                 summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId""",
             timespan="PT1H",
             workspace_id= os.environ['LOG_WORKSPACE_ID']
         ),
-        LogsBatchQueryRequest(
+        LogsBatchQuery(
             query= "AppRequests | take 2",
             workspace_id= os.environ['LOG_WORKSPACE_ID']
         ),
     ]
-    response = client.batch_query(requests)
+    response = client.query_batch(requests)
 
     assert len(response) == 3
 
@@ -98,33 +98,33 @@ def test_logs_single_query_with_statistics():
     assert response.statistics is not None
 
 @pytest.mark.live_test_only
-def test_logs_batch_query_with_statistics_in_some():
+def test_logs_query_batch_with_statistics_in_some():
     client = LogsQueryClient(_credential())
 
     requests = [
-        LogsBatchQueryRequest(
+        LogsBatchQuery(
             query="AzureActivity | summarize count()",
             timespan="PT1H",
             workspace_id= os.environ['LOG_WORKSPACE_ID']
         ),
-        LogsBatchQueryRequest(
+        LogsBatchQuery(
             query= """AppRequests|
                 summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId""",
             timespan="PT1H",
             workspace_id= os.environ['LOG_WORKSPACE_ID'],
             include_statistics=True
         ),
-        LogsBatchQueryRequest(
+        LogsBatchQuery(
             query= "AppRequests",
             workspace_id= os.environ['LOG_WORKSPACE_ID'],
             include_statistics=True
         ),
     ]
-    response = client.batch_query(requests)
+    response = client.query_batch(requests)
 
     assert len(response) == 3
-    assert response[0].body.statistics is None
-    assert response[2].body.statistics is not None
+    assert response[0].statistics is None
+    assert response[2].statistics is not None
 
 @pytest.mark.skip('https://github.com/Azure/azure-sdk-for-python/issues/19382')
 @pytest.mark.live_test_only
@@ -145,30 +145,30 @@ def test_logs_single_query_additional_workspaces():
 
 @pytest.mark.live_test_only
 @pytest.mark.skip('https://github.com/Azure/azure-sdk-for-python/issues/19382')
-def test_logs_batch_query_additional_workspaces():
+def test_logs_query_batch_additional_workspaces():
     client = LogsQueryClient(_credential())
     query = "union * | where TimeGenerated > ago(100d) | project TenantId | summarize count() by TenantId"
 
     requests = [
-        LogsBatchQueryRequest(
+        LogsBatchQuery(
             query,
             timespan="PT1H",
             workspace_id= os.environ['LOG_WORKSPACE_ID'],
             additional_workspaces=[os.environ['SECONDARY_WORKSPACE_ID']]
         ),
-        LogsBatchQueryRequest(
+        LogsBatchQuery(
             query,
             timespan="PT1H",
             workspace_id= os.environ['LOG_WORKSPACE_ID'],
             additional_workspaces=[os.environ['SECONDARY_WORKSPACE_ID']]
         ),
-        LogsBatchQueryRequest(
+        LogsBatchQuery(
             query,
             workspace_id= os.environ['LOG_WORKSPACE_ID'],
             additional_workspaces=[os.environ['SECONDARY_WORKSPACE_ID']]
         ),
     ]
-    response = client.batch_query(requests)
+    response = client.query_batch(requests)
 
     for resp in response:
-        assert len(resp.body.tables[0].rows) == 2
+        assert len(resp.tables[0].rows) == 2

@@ -12,7 +12,7 @@ from ._generated._monitor_query_client import MonitorQueryClient
 
 from ._generated.models import BatchRequest, QueryBody as LogsQueryBody
 from ._helpers import get_authentication_policy, process_error, construct_iso8601, order_results
-from ._models import LogsQueryResult, LogsBatchQueryRequest, LogsBatchQueryResult
+from ._models import LogsQueryResult, LogsBatchQuery, LogsBatchQueryResult
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -22,11 +22,6 @@ if TYPE_CHECKING:
 class LogsQueryClient(object):
     """LogsQueryClient
 
-    :param credential: The credential to authenticate the client
-    :type credential: ~azure.core.credentials.TokenCredential
-    :keyword endpoint: The endpoint to connect to. Defaults to 'https://api.loganalytics.io'.
-    :paramtype endpoint: str
-
     .. admonition:: Example:
 
     .. literalinclude:: ../samples/sample_log_query_client.py
@@ -35,6 +30,11 @@ class LogsQueryClient(object):
         :language: python
         :dedent: 0
         :caption: Creating the LogsQueryClient with a TokenCredential.
+
+    :param credential: The credential to authenticate the client.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :keyword endpoint: The endpoint to connect to. Defaults to 'https://api.loganalytics.io'.
+    :paramtype endpoint: str
     """
 
     def __init__(self, credential, **kwargs):
@@ -130,32 +130,33 @@ class LogsQueryClient(object):
         except HttpResponseError as e:
             process_error(e)
 
-    def batch_query(self, queries, **kwargs):
-        # type: (Union[Sequence[Dict], Sequence[LogsBatchQueryRequest]], Any) -> Sequence[LogsBatchQueryResult]
+    def query_batch(self, queries, **kwargs):
+        # type: (Union[Sequence[Dict], Sequence[LogsBatchQuery]], Any) -> Sequence[LogsBatchQueryResult]
         """Execute a list of analytics queries. Each request can be either a LogQueryRequest
         object or an equivalent serialized model.
 
         The response is returned in the same order as that of the requests sent.
 
         :param queries: The list of queries that should be processed
-        :type queries: list[dict] or list[~azure.monitor.query.LogsBatchQueryRequest]
-        :return: BatchResponse, or the result of cls(response)
+        :type queries: list[dict] or list[~azure.monitor.query.LogsBatchQuery]
+        :return: List of LogsBatchQueryResult, or the result of cls(response)
         :rtype: ~list[~azure.monitor.query.LogsBatchQueryResult]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
 
         .. literalinclude:: ../samples/sample_batch_query.py
-            :start-after: [START send_batch_query]
-            :end-before: [END send_batch_query]
+            :start-after: [START send_query_batch]
+            :end-before: [END send_query_batch]
             :language: python
             :dedent: 0
             :caption: Get a response for multiple Log Queries.
         """
         try:
-            queries = [LogsBatchQueryRequest(**q) for q in queries]
+            queries = [LogsBatchQuery(**q) for q in queries]
         except (KeyError, TypeError):
             pass
+        queries = [q._to_generated() for q in queries] # pylint: disable=protected-access
         try:
             request_order = [req.id for req in queries]
         except AttributeError:

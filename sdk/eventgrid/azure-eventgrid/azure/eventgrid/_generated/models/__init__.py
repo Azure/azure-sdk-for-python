@@ -55,6 +55,7 @@ try:
     from ._models_py3 import ContainerRegistryEventTarget
     from ._models_py3 import ContainerRegistryImageDeletedEventData
     from ._models_py3 import ContainerRegistryImagePushedEventData
+    from ._models_py3 import ContainerServiceNewKubernetesVersionAvailableEventData
     from ._models_py3 import DeviceConnectionStateEventInfo
     from ._models_py3 import DeviceConnectionStateEventProperties
     from ._models_py3 import DeviceLifeCycleEventProperties
@@ -220,6 +221,7 @@ except (SyntaxError, ImportError):
     from ._models import ContainerRegistryEventTarget  # type: ignore
     from ._models import ContainerRegistryImageDeletedEventData  # type: ignore
     from ._models import ContainerRegistryImagePushedEventData  # type: ignore
+    from ._models import ContainerServiceNewKubernetesVersionAvailableEventData  # type: ignore
     from ._models import DeviceConnectionStateEventInfo  # type: ignore
     from ._models import DeviceConnectionStateEventProperties  # type: ignore
     from ._models import DeviceLifeCycleEventProperties  # type: ignore
@@ -398,6 +400,7 @@ __all__ = [
     'ContainerRegistryEventTarget',
     'ContainerRegistryImageDeletedEventData',
     'ContainerRegistryImagePushedEventData',
+    'ContainerServiceNewKubernetesVersionAvailableEventData',
     'DeviceConnectionStateEventInfo',
     'DeviceConnectionStateEventProperties',
     'DeviceLifeCycleEventProperties',

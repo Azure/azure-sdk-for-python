@@ -43,7 +43,7 @@ class Operations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.OperationListResponse"]:
         """Lists the available Azure Data Factory API operations.
 

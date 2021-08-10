@@ -25,10 +25,11 @@ response = client.query(
     additional_workspaces=[os.environ["SECONDARY_WORKSPACE_ID"]],
     )
 
-if not response.tables:
-    print("No results for the query")
-
-for table in response.tables:
+try:
+    table = response.tables[0]
     df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
     print(df)
+except TypeError:
+    print(response.error)
+
 
