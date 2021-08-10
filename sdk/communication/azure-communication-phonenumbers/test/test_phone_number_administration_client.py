@@ -231,5 +231,5 @@ class PhoneNumbersClientTest(CommunicationTestCase):
                 polling = True
             )
         
-        assert str(ex.value.status_code) == "403"
+        assert str(ex.value.status_code) == "404"
         assert ex.value.message is not None
