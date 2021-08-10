@@ -173,8 +173,9 @@ class LogsBatchQuery(object):
     :keyword int server_timeout: the server timeout. The default timeout is 3 minutes,
      and the maximum timeout is 10 minutes.
     :keyword bool include_statistics: To get information about query statistics.
-    :keyword bool include_visualization: In the query language, it is possible to specify different visualization options.
-     By default, the API does not return information regarding the type of visualization to show.
+    :keyword bool include_visualization: In the query language, it is possible to specify different
+     visualization options. By default, the API does not return information regarding the type of
+     visualization to show.
     :keyword headers: Dictionary of :code:`<string>`.
     :paramtype headers: dict[str, str]
     """
