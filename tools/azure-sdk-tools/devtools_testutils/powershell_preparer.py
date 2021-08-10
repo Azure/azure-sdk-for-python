@@ -65,9 +65,11 @@ class PowerShellPreparer(AzureMgmtPreparer):
                     scrubbed_value = self.fake_values[key]
                     if scrubbed_value:
                         self.real_values[key.lower()] = os.environ[key.upper()]
-                        self.test_class_instance.scrubber.register_name_pair(
-                            self.real_values[key.lower()], scrubbed_value
-                        )
+                        # Adding this for new proxy testcase
+                        if hasattr(self.test_class_instance, "scrubber"):
+                            self.test_class_instance.scrubber.register_name_pair(
+                                self.real_values[key.lower()], scrubbed_value
+                            )
                     else:
                         template = 'To pass a live ID you must provide the scrubbed value for recordings to \
                             prevent secrets from being written to files. {} was not given. For example: \

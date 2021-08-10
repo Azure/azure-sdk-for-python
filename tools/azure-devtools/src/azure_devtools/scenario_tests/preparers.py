@@ -135,7 +135,9 @@ You must specify use_cache=True in the preparer decorator""".format(
                         )
 
             if test_class_instance.is_live:
-                test_class_instance.scrubber.register_name_pair(resource_name, self.moniker)
+                # Adding this for new proxy testcase
+                if hasattr(test_class_instance, "scrubber"):
+                    test_class_instance.scrubber.register_name_pair(resource_name, self.moniker)
 
             # We shouldn't trim the same kwargs that we use for deletion,
             # we may remove some of the variables we needed to do the delete.
