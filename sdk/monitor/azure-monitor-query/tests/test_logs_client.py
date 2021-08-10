@@ -98,6 +98,29 @@ def test_logs_single_query_with_statistics():
     assert response.statistics is not None
 
 @pytest.mark.live_test_only
+def test_logs_single_query_with_render():
+    credential = _credential()
+    client = LogsQueryClient(credential)
+    query = """AppRequests"""
+
+    # returns LogsQueryResult 
+    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, include_visualization=True)
+
+    assert response.visualization is not None
+
+@pytest.mark.live_test_only
+def test_logs_single_query_with_render_and_stats():
+    credential = _credential()
+    client = LogsQueryClient(credential)
+    query = """AppRequests"""
+
+    # returns LogsQueryResult 
+    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, include_visualization=True, include_statistics=True)
+
+    assert response.visualization is not None
+    assert response.statistics is not None
+
+@pytest.mark.live_test_only
 def test_logs_query_batch_with_statistics_in_some():
     client = LogsQueryClient(_credential())
 

@@ -74,7 +74,7 @@ class LogsQueryClient(object):
         :keyword int server_timeout: the server timeout in seconds. The default timeout is 3 minutes,
          and the maximum timeout is 10 minutes.
         :keyword bool include_statistics: To get information about query statistics.
-        :keyword bool include_render: In the query language, it is possible to specify different render options.
+        :keyword bool include_visualization: In the query language, it is possible to specify different visualization options.
          By default, the API does not return information regarding the type of visualization to show.
          If your client requires this information, specify the preference
         :keyword additional_workspaces: A list of workspaces that are included in the query.
@@ -97,7 +97,7 @@ class LogsQueryClient(object):
         end = kwargs.pop('end_time', None)
         timespan = construct_iso8601(start, end, duration)
         include_statistics = kwargs.pop("include_statistics", False)
-        include_render = kwargs.pop("include_render", False)
+        include_visualization = kwargs.pop("include_visualization", False)
         server_timeout = kwargs.pop("server_timeout", None)
         workspaces = kwargs.pop("additional_workspaces", None)
 
@@ -106,11 +106,11 @@ class LogsQueryClient(object):
             prefer += "wait=" + str(server_timeout)
         if include_statistics:
             if len(prefer) > 0:
-                prefer += " "
+                prefer += ","
             prefer += "include-statistics=true"
-        if include_render:
+        if include_visualization:
             if len(prefer) > 0:
-                prefer += " "
+                prefer += ","
             prefer += "include-render=true"
 
         body = LogsQueryBody(
