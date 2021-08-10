@@ -45,6 +45,7 @@ from ._helpers import (
     decode_to_text,
 )
 from ..exceptions import ResponseNotReadError
+
 if TYPE_CHECKING:
     from typing import (
         Iterable,
@@ -55,14 +56,15 @@ if TYPE_CHECKING:
         Dict,
     )
     from ._helpers import HeadersType
+
     ByteStream = Iterable[bytes]
     ContentType = Union[str, bytes, ByteStream]
 
     from ._helpers import HeadersType, ContentTypeBase as ContentType
 
 
-
 ################################## CLASSES ######################################
+
 
 class HttpRequest(object):
     """Provisional object that represents an HTTP request.
@@ -130,8 +132,7 @@ class HttpRequest(object):
 
     def _set_body(self, content, data, files, json):
         # type: (Optional[ContentType], Optional[dict], Optional[FilesType], Any) -> HeadersType
-        """Sets the body of the request, and returns the default headers
-        """
+        """Sets the body of the request, and returns the default headers"""
         default_headers = {}
         if data is not None and not isinstance(data, dict):
             # should we warn?
@@ -167,9 +168,7 @@ class HttpRequest(object):
 
     def __repr__(self):
         # type: (...) -> str
-        return "<HttpRequest [{}], url: '{}'>".format(
-            self.method, self.url
-        )
+        return "<HttpRequest [{}], url: '{}'>".format(self.method, self.url)
 
     def __deepcopy__(self, memo=None):
         try:
@@ -191,8 +190,8 @@ class HttpRequest(object):
     def _from_pipeline_transport_request(cls, pipeline_transport_request):
         return from_pipeline_transport_request_helper(cls, pipeline_transport_request)
 
-class _HttpResponseBase(object):  # pylint: disable=too-many-instance-attributes
 
+class _HttpResponseBase(object):  # pylint: disable=too-many-instance-attributes
     def __init__(self, **kwargs):
         # type: (Any) -> None
         self.request = kwargs.pop("request")
@@ -288,6 +287,7 @@ class _HttpResponseBase(object):  # pylint: disable=too-many-instance-attributes
             self.status_code, self.reason, content_type_str
         )
 
+
 class HttpResponse(_HttpResponseBase):  # pylint: disable=too-many-instance-attributes
     """**Provisional** object that represents an HTTP response.
 
@@ -346,20 +346,17 @@ class HttpResponse(_HttpResponseBase):  # pylint: disable=too-many-instance-attr
 
     def iter_raw(self):
         # type: () -> Iterator[bytes]
-        """Iterate over the raw response bytes
-        """
+        """Iterate over the raw response bytes"""
         raise NotImplementedError()
 
     def iter_bytes(self):
         # type: () -> Iterator[bytes]
-        """Iterate over the response bytes
-        """
+        """Iterate over the response bytes"""
         raise NotImplementedError()
 
     def iter_text(self):
         # type: () -> Iterator[str]
-        """Iterate over the response text
-        """
+        """Iterate over the response text"""
         for byte in self.iter_bytes():
             text = byte.decode(self.encoding or "utf-8")
             yield text

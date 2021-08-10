@@ -60,7 +60,7 @@ from typing import (
     Optional,
     Tuple,
     Iterator,
-    Type
+    Type,
 )
 
 from six.moves.http_client import HTTPConnection, HTTPResponse as _HTTPResponse
@@ -129,8 +129,7 @@ def _urljoin(base_url, stub_url):
 
 
 class _HTTPSerializer(HTTPConnection, object):
-    """Hacking the stdlib HTTPConnection to serialize HTTP request as strings.
-    """
+    """Hacking the stdlib HTTPConnection to serialize HTTP request as strings."""
 
     def __init__(self, *args, **kwargs):
         self.buffer = b""
@@ -160,8 +159,7 @@ def _serialize_request(http_request):
 class HttpTransport(
     AbstractContextManager, ABC, Generic[HTTPRequestType, HTTPResponseType]
 ):  # type: ignore
-    """An http sender ABC.
-    """
+    """An http sender ABC."""
 
     @abc.abstractmethod
     def send(self, request, **kwargs):
@@ -209,9 +207,7 @@ class HttpRequest(object):
         self.multipart_mixed_info = None  # type: Optional[Tuple]
 
     def __repr__(self):
-        return "<HttpRequest [{}], url: '{}'>".format(
-            self.method, self.url
-        )
+        return "<HttpRequest [{}], url: '{}'>".format(self.method, self.url)
 
     def __deepcopy__(self, memo=None):
         try:
@@ -400,7 +396,7 @@ class HttpRequest(object):
             requests,
             kwargs.pop("policies", []),
             kwargs.pop("boundary", None),
-            kwargs
+            kwargs,
         )
 
     def prepare_multipart_body(self, content_index=0):
@@ -432,10 +428,10 @@ class HttpRequest(object):
             part_message = Message()
             if req.multipart_mixed_info:
                 content_index = req.prepare_multipart_body(content_index=content_index)
-                part_message.add_header("Content-Type", req.headers['Content-Type'])
+                part_message.add_header("Content-Type", req.headers["Content-Type"])
                 payload = req.serialize()
                 # We need to remove the ~HTTP/1.1 prefix along with the added content-length
-                payload = payload[payload.index(b'--'):]
+                payload = payload[payload.index(b"--") :]
             else:
                 part_message.add_header("Content-Type", "application/http")
                 part_message.add_header("Content-Transfer-Encoding", "binary")
@@ -473,6 +469,7 @@ class HttpRequest(object):
         """
         return _serialize_request(self)
 
+
 class _HttpResponseBase(object):
     """Represent a HTTP response.
 
@@ -498,8 +495,7 @@ class _HttpResponseBase(object):
 
     def body(self):
         # type: () -> bytes
-        """Return the whole body as bytes in memory.
-        """
+        """Return the whole body as bytes in memory."""
         raise NotImplementedError()
 
     def text(self, encoding=None):
@@ -527,10 +523,15 @@ class _HttpResponseBase(object):
                         http_response_type=http_response_type,
                     )
                 )
-            elif content_type == "multipart/mixed" and requests[index].multipart_mixed_info:
+            elif (
+                content_type == "multipart/mixed"
+                and requests[index].multipart_mixed_info
+            ):
                 # The message batch contains one or more change sets
                 changeset_requests = requests[index].multipart_mixed_info[0]  # type: ignore
-                changeset_responses = self._decode_parts(raw_reponse, http_response_type, changeset_requests)
+                changeset_responses = self._decode_parts(
+                    raw_reponse, http_response_type, changeset_requests
+                )
                 responses.extend(changeset_responses)
             else:
                 raise ValueError(
@@ -603,7 +604,9 @@ class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
 
         responses = self._get_raw_parts()
         if self.request.multipart_mixed_info:
-            policies = self.request.multipart_mixed_info[1]  # type: List[SansIOHTTPPolicy]
+            policies = self.request.multipart_mixed_info[
+                1
+            ]  # type: List[SansIOHTTPPolicy]
 
             # Apply on_response concurrently to all requests
             import concurrent.futures
@@ -617,7 +620,9 @@ class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
                 )
 
                 for policy in policies:
-                    _await_result(policy.on_response, pipeline_request, pipeline_response)
+                    _await_result(
+                        policy.on_response, pipeline_request, pipeline_response
+                    )
 
             with concurrent.futures.ThreadPoolExecutor() as executor:
                 # List comprehension to raise exceptions if happened

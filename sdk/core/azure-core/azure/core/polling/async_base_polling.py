@@ -37,8 +37,7 @@ __all__ = ["AsyncLROBasePolling"]
 
 
 class AsyncLROBasePolling(LROBasePolling):
-    """A subclass or LROBasePolling that redefine "run" as async.
-    """
+    """A subclass or LROBasePolling that redefine "run" as async."""
 
     async def run(self):  # pylint:disable=invalid-overridden-method
         try:
@@ -47,8 +46,7 @@ class AsyncLROBasePolling(LROBasePolling):
         except BadStatus as err:
             self._status = "Failed"
             raise HttpResponseError(
-                response=self._pipeline_response.http_response,
-                error=err
+                response=self._pipeline_response.http_response, error=err
             )
 
         except BadResponse as err:
@@ -56,13 +54,12 @@ class AsyncLROBasePolling(LROBasePolling):
             raise HttpResponseError(
                 response=self._pipeline_response.http_response,
                 message=str(err),
-                error=err
+                error=err,
             )
 
         except OperationFailed as err:
             raise HttpResponseError(
-                response=self._pipeline_response.http_response,
-                error=err
+                response=self._pipeline_response.http_response, error=err
             )
 
     async def _poll(self):  # pylint:disable=invalid-overridden-method
@@ -99,15 +96,16 @@ class AsyncLROBasePolling(LROBasePolling):
         await self._sleep(delay)
 
     async def update_status(self):  # pylint:disable=invalid-overridden-method
-        """Update the current status of the LRO.
-        """
+        """Update the current status of the LRO."""
         self._pipeline_response = await self.request_status(
             self._operation.get_polling_url()
         )
         _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
         self._status = self._operation.get_status(self._pipeline_response)
 
-    async def request_status(self, status_link):  # pylint:disable=invalid-overridden-method
+    async def request_status(
+        self, status_link
+    ):  # pylint:disable=invalid-overridden-method
         """Do a simple GET to this status link.
 
         This method re-inject 'x-ms-client-request-id'.
@@ -115,7 +113,9 @@ class AsyncLROBasePolling(LROBasePolling):
         :rtype: azure.core.pipeline.PipelineResponse
         """
         if self._path_format_arguments:
-            status_link = self._client.format_url(status_link, **self._path_format_arguments)
+            status_link = self._client.format_url(
+                status_link, **self._path_format_arguments
+            )
         request = self._client.get(status_link)
         # Re-inject 'x-ms-client-request-id' while polling
         if "request_id" not in self._operation_config:
@@ -124,6 +124,5 @@ class AsyncLROBasePolling(LROBasePolling):
             request, stream=False, **self._operation_config
         )
 
-__all__ = [
-    'AsyncLROBasePolling'
-]
+
+__all__ = ["AsyncLROBasePolling"]

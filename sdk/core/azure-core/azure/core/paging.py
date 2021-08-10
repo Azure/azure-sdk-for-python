@@ -117,7 +117,9 @@ class ItemPaged(Iterator[ReturnType]):
         )
 
     def __repr__(self):
-        return "<iterator object azure.core.paging.ItemPaged at {}>".format(hex(id(self)))
+        return "<iterator object azure.core.paging.ItemPaged at {}>".format(
+            hex(id(self))
+        )
 
     def __iter__(self):
         """Return 'self'."""

@@ -11,9 +11,9 @@
 # ==========================================================================
 
 
-
 import json
 from azure.core.exceptions import raise_with_traceback
+
 
 def _get_json_content(obj):
     """Event mixin to have methods that are common to different Event types
@@ -34,7 +34,7 @@ def _get_json_content(obj):
             return json.loads(next(obj.body))
         except ValueError as err:
             raise_with_traceback(ValueError, msg, err)
-        except: # pylint: disable=bare-except
+        except:  # pylint: disable=bare-except
             try:
                 return json.loads(obj)
             except ValueError as err:

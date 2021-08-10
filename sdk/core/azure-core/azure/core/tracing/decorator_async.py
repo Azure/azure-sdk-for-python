@@ -45,7 +45,7 @@ def distributed_trace_async(
 
 @overload
 def distributed_trace_async(  # pylint:disable=function-redefined
-    **kwargs: Any  # pylint:disable=unused-argument
+    **kwargs: Any,  # pylint:disable=unused-argument
 ) -> Callable[[Callable[..., Awaitable[T]]], Callable[..., Awaitable[T]]]:
     pass
 

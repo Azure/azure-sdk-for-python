@@ -43,5 +43,5 @@ class BiggerBlockSizeHTTPAdapter(HTTPAdapter):
         if system_version[:2] >= (3, 7):
             if not conn.conn_kw:
                 conn.conn_kw = {}
-            conn.conn_kw['blocksize'] = 32768
+            conn.conn_kw["blocksize"] = 32768
         return conn

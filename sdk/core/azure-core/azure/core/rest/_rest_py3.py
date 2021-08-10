@@ -32,7 +32,8 @@ from typing import (
     AsyncIterable,
     AsyncIterator,
     Dict,
-    Iterable, Iterator,
+    Iterable,
+    Iterator,
     Optional,
     Type,
     Union,
@@ -63,8 +64,8 @@ from ..exceptions import ResponseNotReadError
 
 ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
 
-class _AsyncContextManager(collections.abc.Awaitable):
 
+class _AsyncContextManager(collections.abc.Awaitable):
     def __init__(self, wrapped: collections.abc.Awaitable):
         super().__init__()
         self.wrapped = wrapped
@@ -83,7 +84,9 @@ class _AsyncContextManager(collections.abc.Awaitable):
     async def close(self):
         await self.response.close()
 
+
 ################################## CLASSES ######################################
+
 
 class HttpRequest:
     """**Provisional** object that represents an HTTP request.
@@ -165,8 +168,7 @@ class HttpRequest:
         files: Optional[FilesType],
         json: Any,
     ) -> HeadersType:
-        """Sets the body of the request, and returns the default headers
-        """
+        """Sets the body of the request, and returns the default headers"""
         default_headers = {}  # type: HeadersType
         if data is not None and not isinstance(data, dict):
             # should we warn?
@@ -180,7 +182,9 @@ class HttpRequest:
         if files:
             default_headers, self._files = set_multipart_body(files)
         if data:
-            default_headers, self._data = set_urlencoded_body(data, has_files=bool(files))
+            default_headers, self._data = set_urlencoded_body(
+                data, has_files=bool(files)
+            )
         return default_headers
 
     @property
@@ -193,9 +197,7 @@ class HttpRequest:
         return self._data or self._files
 
     def __repr__(self) -> str:
-        return "<HttpRequest [{}], url: '{}'>".format(
-            self.method, self.url
-        )
+        return "<HttpRequest [{}], url: '{}'>".format(self.method, self.url)
 
     def __deepcopy__(self, memo=None) -> "HttpRequest":
         try:
@@ -217,14 +219,9 @@ class HttpRequest:
     def _from_pipeline_transport_request(cls, pipeline_transport_request):
         return from_pipeline_transport_request_helper(cls, pipeline_transport_request)
 
-class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
 
-    def __init__(
-        self,
-        *,
-        request: HttpRequest,
-        **kwargs
-    ):
+class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
+    def __init__(self, *, request: HttpRequest, **kwargs):
         self.request = request
         self._internal_response = kwargs.pop("internal_response")
         self.status_code = None
@@ -301,6 +298,7 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
         if self._content is None:
             raise ResponseNotReadError(self)
         return self._content
+
 
 class HttpResponse(_HttpResponseBase):
     """**Provisional** object that represents an HTTP response.
@@ -404,6 +402,7 @@ class HttpResponse(_HttpResponseBase):
         return "<HttpResponse: {} {}{}>".format(
             self.status_code, self.reason, content_type_str
         )
+
 
 class AsyncHttpResponse(_HttpResponseBase):
     """**Provisional** object that represents an Async HTTP response.

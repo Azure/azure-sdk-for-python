@@ -13,7 +13,12 @@ except ImportError:
 if TYPE_CHECKING:
     from typing import Any, Sequence, Dict, Optional, Union, Callable, ContextManager
 
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse, AsyncHttpResponse
+    from azure.core.pipeline.transport import (
+        HttpRequest,
+        HttpResponse,
+        AsyncHttpResponse,
+    )
+
     HttpResponseType = Union[HttpResponse, AsyncHttpResponse]
     AttributeValue = Union[
         str,
@@ -45,7 +50,9 @@ class SpanKind(Enum):
 class AbstractSpan(Protocol):
     """Wraps a span from a distributed tracing implementation."""
 
-    def __init__(self, span=None, name=None, **kwargs):  # pylint: disable=super-init-not-called
+    def __init__(
+        self, span=None, name=None, **kwargs
+    ):  # pylint: disable=super-init-not-called
         # type: (Optional[Any], Optional[str], Any) -> None
         """
         If a span is given wraps the span. Else a new span is created.
@@ -195,6 +202,7 @@ class AbstractSpan(Protocol):
         :rtype: callable
         """
 
+
 # https://github.com/python/mypy/issues/5837
 if TYPE_CHECKING:
     _MIXIN_BASE = AbstractSpan
@@ -203,8 +211,8 @@ else:
 
 
 class HttpSpanMixin(_MIXIN_BASE):
-    """Can be used to get HTTP span attributes settings for free.
-    """
+    """Can be used to get HTTP span attributes settings for free."""
+
     _SPAN_COMPONENT = "component"
     _HTTP_USER_AGENT = "http.user_agent"
     _HTTP_METHOD = "http.method"
@@ -233,6 +241,7 @@ class HttpSpanMixin(_MIXIN_BASE):
         else:
             self.add_attribute(self._HTTP_STATUS_CODE, 504)
 
+
 class Link(object):
     """
     This is a wrapper class to link the context to the current tracer.
@@ -241,6 +250,7 @@ class Link(object):
     :param attributes: Any additional attributes that should be added to link
     :type attributes: dict
     """
+
     def __init__(self, headers, attributes=None):
         # type: (Dict[str, str], Attributes) -> None
         self.headers = headers

@@ -28,62 +28,76 @@ import sys
 from ._base import HttpTransport, HttpRequest, HttpResponse
 
 __all__ = [
-    'HttpTransport',
-    'HttpRequest',
-    'HttpResponse',
+    "HttpTransport",
+    "HttpRequest",
+    "HttpResponse",
 ]
 
 # pylint: disable=unused-import, redefined-outer-name
 try:
     from ._requests_basic import RequestsTransport, RequestsTransportResponse
-    __all__.extend([
-        'RequestsTransport',
-        'RequestsTransportResponse',
-    ])
+
+    __all__.extend(
+        [
+            "RequestsTransport",
+            "RequestsTransportResponse",
+        ]
+    )
     try:
         from ._base_async import AsyncHttpTransport, AsyncHttpResponse
-        from ._requests_asyncio import AsyncioRequestsTransport, AsyncioRequestsTransportResponse
+        from ._requests_asyncio import (
+            AsyncioRequestsTransport,
+            AsyncioRequestsTransportResponse,
+        )
 
-        __all__.extend([
-            'AsyncHttpTransport',
-            'AsyncHttpResponse',
-            'AsyncioRequestsTransport',
-            'AsyncioRequestsTransportResponse'
-        ])
+        __all__.extend(
+            [
+                "AsyncHttpTransport",
+                "AsyncHttpResponse",
+                "AsyncioRequestsTransport",
+                "AsyncioRequestsTransportResponse",
+            ]
+        )
 
         if sys.version_info >= (3, 7):
-            __all__.extend([
-                'TrioRequestsTransport',
-                'TrioRequestsTransportResponse',
-                'AioHttpTransport',
-                'AioHttpTransportResponse',
-            ])
+            __all__.extend(
+                [
+                    "TrioRequestsTransport",
+                    "TrioRequestsTransportResponse",
+                    "AioHttpTransport",
+                    "AioHttpTransportResponse",
+                ]
+            )
 
             def __dir__():
                 return __all__
 
             def __getattr__(name):
-                if name == 'AioHttpTransport':
+                if name == "AioHttpTransport":
                     try:
                         from ._aiohttp import AioHttpTransport
+
                         return AioHttpTransport
                     except ImportError:
                         raise ImportError("aiohttp package is not installed")
-                if name == 'AioHttpTransportResponse':
+                if name == "AioHttpTransportResponse":
                     try:
                         from ._aiohttp import AioHttpTransportResponse
+
                         return AioHttpTransportResponse
                     except ImportError:
                         raise ImportError("aiohttp package is not installed")
-                if name == 'TrioRequestsTransport':
+                if name == "TrioRequestsTransport":
                     try:
                         from ._requests_trio import TrioRequestsTransport
+
                         return TrioRequestsTransport
                     except ImportError:
                         raise ImportError("trio package is not installed")
-                if name == 'TrioRequestsTransportResponse':
+                if name == "TrioRequestsTransportResponse":
                     try:
                         from ._requests_trio import TrioRequestsTransportResponse
+
                         return TrioRequestsTransportResponse
                     except ImportError:
                         raise ImportError("trio package is not installed")
@@ -91,22 +105,26 @@ try:
 
         else:
             try:
-                from ._requests_trio import TrioRequestsTransport, TrioRequestsTransportResponse
+                from ._requests_trio import (
+                    TrioRequestsTransport,
+                    TrioRequestsTransportResponse,
+                )
 
-                __all__.extend([
-                    'TrioRequestsTransport',
-                    'TrioRequestsTransportResponse'
-                ])
+                __all__.extend(
+                    ["TrioRequestsTransport", "TrioRequestsTransportResponse"]
+                )
             except ImportError:
                 pass  # Trio not installed
 
             try:
                 from ._aiohttp import AioHttpTransport, AioHttpTransportResponse
 
-                __all__.extend([
-                    'AioHttpTransport',
-                    'AioHttpTransportResponse',
-                ])
+                __all__.extend(
+                    [
+                        "AioHttpTransport",
+                        "AioHttpTransportResponse",
+                    ]
+                )
             except ImportError:
                 pass  # Aiohttp not installed
     except (ImportError, SyntaxError):
@@ -116,30 +134,37 @@ except (ImportError, SyntaxError):
     # requests library is not installed
     try:
         from ._base_async import AsyncHttpTransport, AsyncHttpResponse
-        __all__.extend([
-            'AsyncHttpTransport',
-            'AsyncHttpResponse',
-        ])
+
+        __all__.extend(
+            [
+                "AsyncHttpTransport",
+                "AsyncHttpResponse",
+            ]
+        )
 
         if sys.version_info >= (3, 7):
-            __all__.extend([
-                'AioHttpTransport',
-                'AioHttpTransportResponse',
-            ])
+            __all__.extend(
+                [
+                    "AioHttpTransport",
+                    "AioHttpTransportResponse",
+                ]
+            )
 
             def __dir__():
                 return __all__
 
             def __getattr__(name):
-                if name == 'AioHttpTransport':
+                if name == "AioHttpTransport":
                     try:
                         from ._aiohttp import AioHttpTransport
+
                         return AioHttpTransport
                     except ImportError:
                         raise ImportError("aiohttp package is not installed")
-                if name == 'AioHttpTransportResponse':
+                if name == "AioHttpTransportResponse":
                     try:
                         from ._aiohttp import AioHttpTransportResponse
+
                         return AioHttpTransportResponse
                     except ImportError:
                         raise ImportError("aiohttp package is not installed")
@@ -148,10 +173,13 @@ except (ImportError, SyntaxError):
         else:
             try:
                 from ._aiohttp import AioHttpTransport, AioHttpTransportResponse
-                __all__.extend([
-                    'AioHttpTransport',
-                    'AioHttpTransportResponse',
-                ])
+
+                __all__.extend(
+                    [
+                        "AioHttpTransport",
+                        "AioHttpTransportResponse",
+                    ]
+                )
             except ImportError:
                 pass  # Aiohttp not installed
     except (ImportError, SyntaxError):

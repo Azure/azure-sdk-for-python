@@ -43,9 +43,12 @@ try:
     from ._rest_py3 import (  # pylint: disable=unused-import
         AsyncHttpResponse,
     )
-    __all__.extend([
-        "AsyncHttpResponse",
-    ])
+
+    __all__.extend(
+        [
+            "AsyncHttpResponse",
+        ]
+    )
 
 except (SyntaxError, ImportError):
     pass
