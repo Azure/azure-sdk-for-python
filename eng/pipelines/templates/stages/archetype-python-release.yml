@@ -227,6 +227,7 @@ stages:
               parameters:
                 Daily: false
                 ArtifactName: ${{artifact.name}}
+                Artifact: ${{artifact}}
 
 
   - stage: Integration
