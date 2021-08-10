@@ -34,6 +34,10 @@ PLAYBACK_STOP_URL = "{}/playback/stop".format(PROXY_URL)
 # this should also fire the admin mapping updates, and start/end the session for commiting recording updates
 
 
+IS_LIVE = os.getenv("AZURE_TEST_RUN_LIVE") == "true" or os.getenv("AZURE_TEST_RUN_LIVE") == "yes"
+IS_PLAYBACK = os.getenv("AZURE_TEST_RUN_LIVE") == "false" or os.getenv("AZURE_TEST_RUN_LIVE") == "no"
+
+
 def get_test_id():
     # pytest sets the current running test in an environment variable
     return os.getenv("PYTEST_CURRENT_TEST").split(" ")[0].replace("::", ".")
@@ -47,14 +51,14 @@ def get_current_sha():
 
 
 def start_record_or_playback(test_id):
-    if os.getenv("AZURE_RECORD_MODE") == "record":
+    if IS_LIVE:
         result = requests.post(
             RECORDING_START_URL,
             headers={"x-recording-file": test_id, "x-recording-sha": get_current_sha()},
             verify=False,
         )
         recording_id = result.headers["x-recording-id"]
-    elif os.getenv("AZURE_RECORD_MODE") == "playback":
+    elif IS_PLAYBACK:
         result = requests.post(
             PLAYBACK_START_URL,
             # headers={"x-recording-file": test_id, "x-recording-id": recording_id},
@@ -66,14 +70,14 @@ def start_record_or_playback(test_id):
 
 
 def stop_record_or_playback(test_id, recording_id):
-    if os.getenv("AZURE_RECORD_MODE") == "record":
-        result = requests.post(
+    if IS_LIVE:
+        requests.post(
             RECORDING_STOP_URL,
             headers={"x-recording-file": test_id, "x-recording-id": recording_id, "x-recording-save": "true"},
             verify=False,
         )
-    elif os.getenv("AZURE_RECORD_MODE") == "playback":
-        result = requests.post(
+    elif IS_PLAYBACK:
+        requests.post(
             PLAYBACK_STOP_URL,
             headers={"x-recording-file": test_id, "x-recording-id": recording_id},
             verify=False,
@@ -87,17 +91,16 @@ def get_proxy_netloc():
 
 def transform_request(request, recording_id):
     """Redirect the request to the test proxy, and store the original request URI in a header"""
-    upstream_url = request.url.replace("//text", "/text")
     headers = request.headers
 
     # quiet passthrough if neither are set
-    if os.getenv("AZURE_RECORD_MODE") == "record" or os.getenv("AZURE_RECORD_MODE") == "playback":
+    if IS_LIVE or IS_PLAYBACK:
         parsed_result = url_parse.urlparse(request.url)
         updated_target = parsed_result._replace(**get_proxy_netloc()).geturl()
         if headers.get("x-recording-upstream-base-uri", None) is None:
             headers["x-recording-upstream-base-uri"] = "{}://{}".format(parsed_result.scheme, parsed_result.netloc)
         headers["x-recording-id"] = recording_id
-        headers["x-recording-mode"] = os.getenv("AZURE_RECORD_MODE")
+        headers["x-recording-mode"] = "record" if IS_LIVE else "playback"
         request.url = updated_target
 
 

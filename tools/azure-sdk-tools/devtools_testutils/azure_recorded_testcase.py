@@ -13,11 +13,11 @@ import time
 from dotenv import load_dotenv, find_dotenv
 
 from azure_devtools.scenario_tests import AzureTestError
+from azure_devtools.scenario_tests.config import TestConfig
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 
-from .config import TEST_SETTING_FILENAME
 from . import mgmt_settings_fake as fake_settings
-from .azure_testcase import is_live, _is_autorest_v3, get_resource_name, get_qualified_method_name
+from .azure_testcase import _is_autorest_v3, get_resource_name, get_qualified_method_name
 
 try:
     # Try to import the AsyncFakeCredential, if we cannot assume it is Python 2
@@ -27,6 +27,14 @@ except SyntaxError:
 
 
 load_dotenv(find_dotenv())
+
+
+def is_live():
+    """A module version of is_live, that could be used in pytest marker."""
+    if not hasattr(is_live, "_cache"):
+        is_live._cache = TestConfig().record_mode
+    return is_live._cache
+
 
 class AzureRecordedTestCase(object):
 
@@ -60,7 +68,7 @@ class AzureRecordedTestCase(object):
 
     @property
     def in_recording(self):
-        return os.getenv("AZURE_RECORD_MODE") == "record"
+        return self.is_live
 
     # TODO: This needs to be removed, recording processors are handled on the proxy side, but
     # this is needed for the preparers
