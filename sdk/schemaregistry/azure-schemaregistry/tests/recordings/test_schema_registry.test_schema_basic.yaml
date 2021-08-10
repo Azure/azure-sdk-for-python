@@ -20,12 +20,12 @@ interactions:
     uri: https://fake_resource.servicebus.windows.net$schemagroups/fakegroup/schemas/test-schema-basic31c70f88?api-version=2017-04
   response:
     body:
-      string: '{"id":"c5518de7b4904db9af272e637db19936"}'
+      string: '{"id":"1f1e7704c0394f0499ccd3331052dc68"}'
     headers:
       content-type:
       - application/json
       date:
-      - Tue, 10 Aug 2021 17:44:31 GMT
+      - Tue, 10 Aug 2021 23:08:57 GMT
       location:
       - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-basic31c70f88/versions/1?api-version=2017-04
       server:
@@ -35,9 +35,9 @@ interactions:
       transfer-encoding:
       - chunked
       x-schema-id:
-      - c5518de7b4904db9af272e637db19936
+      - 1f1e7704c0394f0499ccd3331052dc68
       x-schema-id-location:
-      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/c5518de7b4904db9af272e637db19936?api-version=2017-04
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/1f1e7704c0394f0499ccd3331052dc68?api-version=2017-04
       x-schema-type:
       - Avro
       x-schema-version:
@@ -68,12 +68,12 @@ interactions:
     uri: https://fake_resource.servicebus.windows.net$schemagroups/fakegroup/schemas/test-schema-basic31c70f88?api-version=2017-04
   response:
     body:
-      string: '{"id":"c5518de7b4904db9af272e637db19936"}'
+      string: '{"id":"1f1e7704c0394f0499ccd3331052dc68"}'
     headers:
       content-type:
       - application/json
       date:
-      - Tue, 10 Aug 2021 17:44:32 GMT
+      - Tue, 10 Aug 2021 23:08:57 GMT
       location:
       - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-basic31c70f88/versions/1?api-version=2017-04
       server:
@@ -83,9 +83,9 @@ interactions:
       transfer-encoding:
       - chunked
       x-schema-id:
-      - c5518de7b4904db9af272e637db19936
+      - 1f1e7704c0394f0499ccd3331052dc68
       x-schema-id-location:
-      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/c5518de7b4904db9af272e637db19936?api-version=2017-04
+      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/1f1e7704c0394f0499ccd3331052dc68?api-version=2017-04
       x-schema-type:
       - Avro
       x-schema-version:
