@@ -21,6 +21,7 @@ from azure.core.pipeline.transport import RequestsTransport
 
 # the trimming function to clean up incoming arguments to the test function we are wrapping
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
+from devtools_testutils.azure_recorded_testcase import is_live
 
 # defaults
 PROXY_URL = "http://localhost:5000"
@@ -32,10 +33,6 @@ PLAYBACK_STOP_URL = "{}/playback/stop".format(PROXY_URL)
 # TODO, create a pytest scope="session" implementation that can be added to a fixture such that unit tests can
 # startup/shutdown the local test proxy
 # this should also fire the admin mapping updates, and start/end the session for commiting recording updates
-
-
-IS_LIVE = os.getenv("AZURE_TEST_RUN_LIVE") == "true" or os.getenv("AZURE_TEST_RUN_LIVE") == "yes"
-IS_PLAYBACK = os.getenv("AZURE_TEST_RUN_LIVE") == "false" or os.getenv("AZURE_TEST_RUN_LIVE") == "no"
 
 
 def get_test_id():
@@ -51,14 +48,14 @@ def get_current_sha():
 
 
 def start_record_or_playback(test_id):
-    if IS_LIVE:
+    if is_live:
         result = requests.post(
             RECORDING_START_URL,
             headers={"x-recording-file": test_id, "x-recording-sha": get_current_sha()},
             verify=False,
         )
         recording_id = result.headers["x-recording-id"]
-    elif IS_PLAYBACK:
+    else:
         result = requests.post(
             PLAYBACK_START_URL,
             # headers={"x-recording-file": test_id, "x-recording-id": recording_id},
@@ -70,13 +67,13 @@ def start_record_or_playback(test_id):
 
 
 def stop_record_or_playback(test_id, recording_id):
-    if IS_LIVE:
+    if is_live:
         requests.post(
             RECORDING_STOP_URL,
             headers={"x-recording-file": test_id, "x-recording-id": recording_id, "x-recording-save": "true"},
             verify=False,
         )
-    elif IS_PLAYBACK:
+    else:
         requests.post(
             PLAYBACK_STOP_URL,
             headers={"x-recording-file": test_id, "x-recording-id": recording_id},
@@ -93,15 +90,13 @@ def transform_request(request, recording_id):
     """Redirect the request to the test proxy, and store the original request URI in a header"""
     headers = request.headers
 
-    # quiet passthrough if neither are set
-    if IS_LIVE or IS_PLAYBACK:
-        parsed_result = url_parse.urlparse(request.url)
-        updated_target = parsed_result._replace(**get_proxy_netloc()).geturl()
-        if headers.get("x-recording-upstream-base-uri", None) is None:
-            headers["x-recording-upstream-base-uri"] = "{}://{}".format(parsed_result.scheme, parsed_result.netloc)
-        headers["x-recording-id"] = recording_id
-        headers["x-recording-mode"] = "record" if IS_LIVE else "playback"
-        request.url = updated_target
+    parsed_result = url_parse.urlparse(request.url)
+    updated_target = parsed_result._replace(**get_proxy_netloc()).geturl()
+    if headers.get("x-recording-upstream-base-uri", None) is None:
+        headers["x-recording-upstream-base-uri"] = "{}://{}".format(parsed_result.scheme, parsed_result.netloc)
+    headers["x-recording-id"] = recording_id
+    headers["x-recording-mode"] = "record" if is_live else "playback"
+    request.url = updated_target
 
 
 def RecordedByProxy(func):
