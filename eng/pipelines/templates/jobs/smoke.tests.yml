@@ -1,9 +1,9 @@
 parameters:
   - name: Daily
     default: true
-  - name: Artifacts
+  - name: Artifact
     type: object
-    default: []
+    default: {}
   - name: ArtifactName
     type: string
     default: "not-specified"
@@ -16,16 +16,15 @@ jobs:
         name: "azsdk-pool-mms-ubuntu-2004-general"
         vmImage: "MMSUbuntu20.04"
       steps:
-        - ${{ each artifact in parameters.Artifacts }}:
-          - ${{ if and(ne(variables['Skip.Release'], 'true'), ne(artifact.skipPublishPackage, 'true')) }}:
-            - pwsh: |
-                $packages = Get-Content $(Build.SourcesDirectory)/common/smoketest/requirements-release.txt
-                if ($packages | Where-Object { $_ -match "${{ replace(artifact.name, '_', '-') }}" }) {
-                  Write-Host "Smoke tests will run for ${{ artifact.name }}"
-                  Write-Host "##vso[task.setvariable variable=RunSmokeTests;]true"
-                }
-              name: check_smoke_tests_${{ artifact.safeName }}
-              displayName: Check smoke test eligibility for ${{ artifact.name }}
+        - ${{ if and(ne(variables['Skip.Release'], 'true'), ne(artifact.skipPublishPackage, 'true')) }}:
+          - pwsh: |
+              $packages = Get-Content $(Build.SourcesDirectory)/common/smoketest/requirements-release.txt
+              if ($packages | Where-Object { $_ -match "${{ replace(artifact.name, '_', '-') }}" }) {
+                Write-Host "Smoke tests will run for ${{ artifact.name }}"
+                Write-Host "##vso[task.setvariable variable=RunSmokeTests;]true"
+              }
+            name: check_smoke_tests_${{ artifact.safeName }}
+            displayName: Check smoke test eligibility for ${{ artifact.name }}
 
         - pwsh: |
             Write-Host "Setting RunSmokeTests to $($env:RunSmokeTests)"
