@@ -60,6 +60,8 @@ class SchemaRegistryClient(object):
         **kwargs: Any
     ) -> None:
         self._generated_client = AzureSchemaRegistry(credential, endpoint, **kwargs)
+        self._description_to_properties = {}
+        self._id_to_schema = {}
 
     async def __aenter__(self):
         await self._generated_client.__aenter__()
@@ -110,7 +112,7 @@ class SchemaRegistryClient(object):
         except AttributeError:
             pass
 
-        return await self._generated_client.schema.register(
+        schema_properties = await self._generated_client.schema.register(
             group_name=schema_group,
             schema_name=schema_name,
             schema_content=schema_content,
@@ -118,6 +120,18 @@ class SchemaRegistryClient(object):
             cls=_parse_response_schema_id,
             **kwargs
         )
+        schema_description = (
+            schema_group,
+            schema_name,
+            serialization_type,
+            schema_content,
+        )
+        self._id_to_schema[schema_properties.schema_id] = Schema(
+            schema_content, schema_properties
+        )
+        self._description_to_properties[schema_description] = schema_properties
+
+        return schema_properties
 
     async def get_schema(
         self,
@@ -141,11 +155,16 @@ class SchemaRegistryClient(object):
                 :caption: Get schema by id.
 
         """
-        return await self._generated_client.schema.get_by_id(
-            schema_id=schema_id,
-            cls=_parse_response_schema,
-            **kwargs
-        )
+        try:
+            return self._id_to_schema[schema_id]
+        except KeyError:
+            schema = await self._generated_client.schema.get_by_id(
+                schema_id=schema_id,
+                cls=_parse_response_schema,
+                **kwargs
+            )
+            self._id_to_schema[schema_id] = schema
+            return schema
 
     async def get_schema_id(
         self,
@@ -181,11 +200,21 @@ class SchemaRegistryClient(object):
         except AttributeError:
             pass
 
-        return await self._generated_client.schema.query_id_by_content(
-            group_name=schema_group,
-            schema_name=schema_name,
-            schema_content=schema_content,
-            x_schema_type=serialization_type,
-            cls=_parse_response_schema_id,
-            **kwargs
-        )
+        try:
+            return self._description_to_properties[
+                (schema_group, schema_name, serialization_type, schema_content)
+            ]
+        except KeyError:
+            schema_properties = await self._generated_client.schema.query_id_by_content(
+                group_name=schema_group,
+                schema_name=schema_name,
+                schema_content=schema_content,
+                x_schema_type=serialization_type,
+                cls=_parse_response_schema_id,
+                **kwargs
+            )
+            self._description_to_properties[
+                (schema_group, schema_name, serialization_type, schema_content)
+            ] = schema_properties
+            self._id_to_schema[schema_properties.schema_id] = Schema(schema_content, schema_properties)
+            return schema_properties
