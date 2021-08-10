@@ -46,7 +46,6 @@ from typing import (
 )
 import xml.etree.ElementTree as ET
 import six
-
 try:
     from urlparse import urlparse  # type: ignore
 except ImportError:
@@ -66,10 +65,12 @@ FileType = Union[
     Tuple[Optional[str], FileContent],
 ]
 
-FilesType = Union[Mapping[str, FileType], Sequence[Tuple[str, FileType]]]
+FilesType = Union[
+    Mapping[str, FileType],
+    Sequence[Tuple[str, FileType]]
+]
 
 ContentTypeBase = Union[str, bytes, Iterable[bytes]]
-
 
 class HttpVerbs(str, Enum):
     GET = "GET"
@@ -80,12 +81,11 @@ class HttpVerbs(str, Enum):
     DELETE = "DELETE"
     MERGE = "MERGE"
 
-
 ########################### ERRORS SECTION #################################
 
 
-########################### HELPER SECTION #################################
 
+########################### HELPER SECTION #################################
 
 def _verify_data_object(name, value):
     if not isinstance(name, str):
@@ -100,7 +100,6 @@ def _verify_data_object(name, value):
                 type(name), name
             )
         )
-
 
 def _format_data(data):
     # type: (Union[str, IO]) -> Union[Tuple[None, str], Tuple[Optional[str], IO, str]]
@@ -121,7 +120,6 @@ def _format_data(data):
         return (data_name, data, "application/octet-stream")
     return (None, cast(str, data))
 
-
 def set_urlencoded_body(data, has_files):
     body = {}
     default_headers = {}
@@ -140,11 +138,11 @@ def set_urlencoded_body(data, has_files):
         default_headers["Content-Type"] = "application/x-www-form-urlencoded"
     return default_headers, body
 
-
 def set_multipart_body(files):
-    formatted_files = {f: _format_data(d) for f, d in files.items() if d is not None}
+    formatted_files = {
+        f: _format_data(d) for f, d in files.items() if d is not None
+    }
     return {}, formatted_files
-
 
 def set_xml_body(content):
     headers = {}
@@ -153,7 +151,6 @@ def set_xml_body(content):
     if body:
         headers["Content-Length"] = str(len(body))
     return headers, body
-
 
 def _shared_set_content_body(content):
     # type: (Any) -> Tuple[HeadersType, Optional[ContentTypeBase]]
@@ -174,22 +171,22 @@ def _shared_set_content_body(content):
         return {}, content
     return headers, None
 
-
 def set_content_body(content):
     headers, body = _shared_set_content_body(content)
     if body is not None:
         return headers, body
     raise TypeError(
-        "Unexpected type for 'content': '{}'. ".format(type(content))
-        + "We expect 'content' to either be str, bytes, or an Iterable"
+        "Unexpected type for 'content': '{}'. ".format(type(content)) +
+        "We expect 'content' to either be str, bytes, or an Iterable"
     )
-
 
 def set_json_body(json):
     # type: (Any) -> Tuple[Dict[str, str], Any]
     body = dumps(json)
-    return {"Content-Type": "application/json", "Content-Length": str(len(body))}, body
-
+    return {
+        "Content-Type": "application/json",
+        "Content-Length": str(len(body))
+    }, body
 
 def format_parameters(url, params):
     """Format parameters into a valid query string.
@@ -220,7 +217,6 @@ def format_parameters(url, params):
     url += query
     return url
 
-
 def lookup_encoding(encoding):
     # type: (str) -> bool
     # including check for whether encoding is known taken from httpx
@@ -229,7 +225,6 @@ def lookup_encoding(encoding):
         return True
     except LookupError:
         return False
-
 
 def parse_lines_from_text(text):
     # largely taken from httpx's LineDecoder code
@@ -242,17 +237,17 @@ def parse_lines_from_text(text):
             next_char = None if idx == len(text) - 1 else text[idx + 1]
             if curr_char == "\n":
                 lines.append(text[: idx + 1])
-                text = text[idx + 1 :]
+                text = text[idx + 1: ]
                 break
             if curr_char == "\r" and next_char == "\n":
                 # if it ends with \r\n, we only do \n
                 lines.append(text[:idx] + "\n")
-                text = text[idx + 2 :]
+                text = text[idx + 2:]
                 break
             if curr_char == "\r" and next_char is not None:
                 # if it's \r then a normal character, we switch \r to \n
                 lines.append(text[:idx] + "\n")
-                text = text[idx + 1 :]
+                text = text[idx + 1:]
                 break
             if next_char is None:
                 last_chunk_of_text += text
@@ -265,18 +260,15 @@ def parse_lines_from_text(text):
         lines.append(last_chunk_of_text)
     return lines
 
-
 def to_pipeline_transport_request_helper(rest_request):
     from ..pipeline.transport import HttpRequest as PipelineTransportHttpRequest
-
     return PipelineTransportHttpRequest(
         method=rest_request.method,
         url=rest_request.url,
         headers=rest_request.headers,
         files=rest_request._files,  # pylint: disable=protected-access
-        data=rest_request._data,  # pylint: disable=protected-access
+        data=rest_request._data  # pylint: disable=protected-access
     )
-
 
 def from_pipeline_transport_request_helper(request_class, pipeline_transport_request):
     return request_class(
@@ -284,9 +276,8 @@ def from_pipeline_transport_request_helper(request_class, pipeline_transport_req
         url=pipeline_transport_request.url,
         headers=pipeline_transport_request.headers,
         files=pipeline_transport_request.files,
-        data=pipeline_transport_request.data,
+        data=pipeline_transport_request.data
     )
-
 
 def get_charset_encoding(response):
     # type: (...) -> Optional[str]
@@ -295,11 +286,10 @@ def get_charset_encoding(response):
     if not content_type:
         return None
     _, params = cgi.parse_header(content_type)
-    encoding = params.get("charset")  # -> utf-8
+    encoding = params.get('charset') # -> utf-8
     if encoding is None or not lookup_encoding(encoding):
         return None
     return encoding
-
 
 def decode_to_text(encoding, content):
     # type: (Optional[str], bytes) -> str

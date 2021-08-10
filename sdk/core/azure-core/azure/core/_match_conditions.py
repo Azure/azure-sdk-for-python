@@ -26,10 +26,8 @@
 
 from enum import Enum
 
-
 class MatchConditions(Enum):
     """An enum to describe match conditions. """
-
     Unconditionally = 1
     IfNotModified = 2
     IfModified = 3

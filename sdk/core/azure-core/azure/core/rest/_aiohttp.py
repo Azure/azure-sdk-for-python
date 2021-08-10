@@ -43,7 +43,7 @@ class RestAioHttpTransportResponse(AsyncHttpResponse):
         self.status_code = internal_response.status
         self.headers = CIMultiDict(internal_response.headers)  # type: ignore
         self.reason = internal_response.reason
-        self.content_type = internal_response.headers.get("content-type")
+        self.content_type = internal_response.headers.get('content-type')
 
     async def iter_raw(self) -> AsyncIterator[bytes]:
         """Asynchronously iterates over the response's bytes. Will not decompress in the process
@@ -62,7 +62,9 @@ class RestAioHttpTransportResponse(AsyncHttpResponse):
         :rtype: AsyncIterator[bytes]
         """
         async for part in iter_bytes_helper(
-            AioHttpStreamDownloadGenerator, self, content=self._content
+            AioHttpStreamDownloadGenerator,
+            self,
+            content=self._content
         ):
             yield part
         await self.close()
@@ -70,10 +72,8 @@ class RestAioHttpTransportResponse(AsyncHttpResponse):
     def __getstate__(self):
         state = self.__dict__.copy()
         # Remove the unpicklable entries.
-        state[
-            "internal_response"
-        ] = None  # aiohttp response are not pickable (see headers comments)
-        state["headers"] = CIMultiDict(self.headers)  # MultiDictProxy is not pickable
+        state['internal_response'] = None  # aiohttp response are not pickable (see headers comments)
+        state['headers'] = CIMultiDict(self.headers)  # MultiDictProxy is not pickable
         return state
 
     async def close(self) -> None:

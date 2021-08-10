@@ -41,8 +41,8 @@ if TYPE_CHECKING:
 
 
 __all__ = [
-    "change_context",
-    "with_current_context",
+    'change_context',
+    'with_current_context',
 ]
 
 
@@ -60,11 +60,8 @@ def get_function_and_class_name(func, *args):
         return func.__qualname__
     except AttributeError:
         if args:
-            return "{}.{}".format(
-                args[0].__class__.__name__, func.__name__
-            )  # pylint: disable=protected-access
+            return "{}.{}".format(args[0].__class__.__name__, func.__name__)  # pylint: disable=protected-access
         return func.__name__
-
 
 @contextmanager
 def change_context(span):
@@ -89,10 +86,7 @@ def change_context(span):
                 yield
         except AttributeError:
             # This plugin does not support "change_context"
-            warnings.warn(
-                'Your tracing plugin should be updated to support "change_context"',
-                DeprecationWarning,
-            )
+            warnings.warn('Your tracing plugin should be updated to support "change_context"', DeprecationWarning)
             original_span = span_impl_type.get_current_span()
             try:
                 span_impl_type.set_current_span(span)

@@ -25,7 +25,6 @@
 # --------------------------------------------------------------------------
 
 from ._version import VERSION
-
 __version__ = VERSION
 
 from ._pipeline_client import PipelineClient
@@ -40,10 +39,7 @@ __all__ = [
 ]
 
 try:
-    from ._pipeline_client_async import (
-        AsyncPipelineClient,
-    )  # pylint: disable=unused-import
-
+    from ._pipeline_client_async import AsyncPipelineClient #pylint: disable=unused-import
     __all__.extend(["AsyncPipelineClient"])
-except (ImportError, SyntaxError):  # Python <= 3.5
+except (ImportError, SyntaxError): # Python <= 3.5
     pass

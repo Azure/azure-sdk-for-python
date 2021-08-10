@@ -53,7 +53,7 @@ def _convert_to_isoformat(date_time):
         sign, offset = date_time[-6], date_time[-5:]
         delta = int(sign + offset[:1]) * 60 + int(sign + offset[-2:])
 
-    check_decimal = timestamp.split(".")
+    check_decimal = timestamp.split('.')
     if len(check_decimal) > 1:
         decimal_str = ""
         for digit in check_decimal[1]:
@@ -80,7 +80,6 @@ def _convert_to_isoformat(date_time):
     deserialized = deserialized.replace(tzinfo=tzinfo)
     return deserialized
 
-
 def _case_insensitive_dict(*args, **kwargs):
     """Return a case-insensitive dict from a structure that a dict would have accepted.
 
@@ -101,9 +100,7 @@ def _case_insensitive_dict(*args, **kwargs):
         from multidict import CIMultiDict
 
         if len(kwargs) == 0 and len(args) == 1 and (not args[0]):
-            return (
-                CIMultiDict()
-            )  # in case of case_insensitive_dict(None), we don't want to raise exception
+            return CIMultiDict()    # in case of case_insensitive_dict(None), we don't want to raise exception
         return CIMultiDict(*args, **kwargs)
     except ImportError:
         raise ValueError(

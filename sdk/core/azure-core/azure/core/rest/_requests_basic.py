@@ -32,7 +32,6 @@ from ..pipeline.transport._requests_basic import StreamDownloadGenerator
 if TYPE_CHECKING:
     from typing import Iterator, Optional
 
-
 def _has_content(response):
     try:
         response.content  # pylint: disable=pointless-statement
@@ -40,21 +39,18 @@ def _has_content(response):
     except ResponseNotReadError:
         return False
 
-
 class _RestRequestsTransportResponseBase(_HttpResponseBase):
     def __init__(self, **kwargs):
         super(_RestRequestsTransportResponseBase, self).__init__(**kwargs)
         self.status_code = self._internal_response.status_code
         self.headers = self._internal_response.headers
         self.reason = self._internal_response.reason
-        self.content_type = self._internal_response.headers.get("content-type")
+        self.content_type = self._internal_response.headers.get('content-type')
 
     @property
     def content(self):
         # type: () -> bytes
-        if (
-            not self._internal_response._content_consumed
-        ):  # pylint: disable=protected-access
+        if not self._internal_response._content_consumed:  # pylint: disable=protected-access
             # if we just call .content, requests will read in the content.
             # we want to read it in our own way
             raise ResponseNotReadError(self)
@@ -75,7 +71,6 @@ class _RestRequestsTransportResponseBase(_HttpResponseBase):
             # - https://github.com/psf/requests/issues/1737
             # - https://github.com/psf/requests/issues/2086
             from codecs import BOM_UTF8
-
             if self._internal_response.content[:3] == BOM_UTF8:
                 retval = "utf-8-sig"
         if retval:
@@ -96,7 +91,6 @@ class _RestRequestsTransportResponseBase(_HttpResponseBase):
         self.content  # pylint: disable=pointless-statement
         return self._internal_response.text
 
-
 def _stream_download_helper(decompress, response):
     if response.is_stream_consumed:
         raise StreamConsumedError(response)
@@ -112,8 +106,8 @@ def _stream_download_helper(decompress, response):
     for part in stream_download:
         yield part
 
-
 class RestRequestsTransportResponse(HttpResponse, _RestRequestsTransportResponseBase):
+
     def iter_bytes(self):
         # type: () -> Iterator[bytes]
         """Iterates over the response's bytes. Will decompress in the process
@@ -153,7 +147,5 @@ class RestRequestsTransportResponse(HttpResponse, _RestRequestsTransportResponse
         :rtype: bytes
         """
         if not _has_content(self):
-            self._internal_response._content = b"".join(
-                self.iter_bytes()
-            )  # pylint: disable=protected-access
+            self._internal_response._content = b"".join(self.iter_bytes())  # pylint: disable=protected-access
         return self.content

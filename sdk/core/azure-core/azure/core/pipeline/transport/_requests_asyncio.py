@@ -28,24 +28,23 @@ from collections.abc import AsyncIterator
 import functools
 import logging
 from typing import Any, Union, Optional, AsyncIterator as AsyncIteratorType
-import urllib3  # type: ignore
+import urllib3 # type: ignore
 
 import requests
 
-from azure.core.exceptions import ServiceRequestError, ServiceResponseError
+from azure.core.exceptions import (
+    ServiceRequestError,
+    ServiceResponseError
+)
 from azure.core.pipeline import Pipeline
 from ._base import HttpRequest
 from ._base_async import (
     AsyncHttpResponse,
     _ResponseStopIteration,
-    _iterate_response_content,
-)
+    _iterate_response_content)
 from ._requests_basic import RequestsTransportResponse, _read_raw_stream
 from ._base_requests_async import RequestsAsyncTransportBase
-from .._tools import (
-    get_block_size as _get_block_size,
-    get_internal_response as _get_internal_response,
-)
+from .._tools import get_block_size as _get_block_size, get_internal_response as _get_internal_response
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -55,15 +54,13 @@ def _get_running_loop():
     try:
         return asyncio.get_running_loop()
     except AttributeError:  # 3.5 / 3.6
-        loop = (
-            asyncio._get_running_loop()
-        )  # pylint: disable=protected-access, no-member
+        loop = asyncio._get_running_loop()  # pylint: disable=protected-access, no-member
         if loop is None:
-            raise RuntimeError("No running event loop")
+            raise RuntimeError('No running event loop')
         return loop
 
 
-# pylint: disable=too-many-ancestors
+#pylint: disable=too-many-ancestors
 class AsyncioRequestsTransport(RequestsAsyncTransportBase):
     """Identical implementation as the synchronous RequestsTransport wrapped in a class with
     asynchronous methods. Uses the built-in asyncio event loop.
@@ -77,7 +74,6 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
             :dedent: 4
             :caption: Asynchronous transport with asyncio.
     """
-
     async def __aenter__(self):
         return super(AsyncioRequestsTransport, self).__enter__()
 
@@ -102,7 +98,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         self.open()
         loop = kwargs.get("loop", _get_running_loop())
         response = None
-        error = None  # type: Optional[Union[ServiceRequestError, ServiceResponseError]]
+        error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError]]
         data_to_send = await self._retrieve_request_data(request)
         try:
             response = await loop.run_in_executor(
@@ -114,17 +110,11 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
                     headers=request.headers,
                     data=data_to_send,
                     files=request.files,
-                    verify=kwargs.pop(
-                        "connection_verify", self.connection_config.verify
-                    ),
-                    timeout=kwargs.pop(
-                        "connection_timeout", self.connection_config.timeout
-                    ),
-                    cert=kwargs.pop("connection_cert", self.connection_config.cert),
+                    verify=kwargs.pop('connection_verify', self.connection_config.verify),
+                    timeout=kwargs.pop('connection_timeout', self.connection_config.timeout),
+                    cert=kwargs.pop('connection_cert', self.connection_config.cert),
                     allow_redirects=False,
-                    **kwargs
-                ),
-            )
+                    **kwargs))
 
         except urllib3.exceptions.NewConnectionError as err:
             error = ServiceRequestError(err, error=err)
@@ -141,9 +131,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         if error:
             raise error
 
-        return AsyncioRequestsTransportResponse(
-            request, response, self.connection_config.data_block_size
-        )
+        return AsyncioRequestsTransportResponse(request, response, self.connection_config.data_block_size)
 
 
 class AsyncioStreamDownloadGenerator(AsyncIterator):
@@ -154,27 +142,20 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
     :keyword bool decompress: If True which is default, will attempt to decode the body based
             on the *content-encoding* header.
     """
-
-    def __init__(
-        self, pipeline: Pipeline, response: AsyncHttpResponse, **kwargs
-    ) -> None:
+    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, **kwargs) -> None:
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
         self.block_size = _get_block_size(response)
         decompress = kwargs.pop("decompress", True)
         if len(kwargs) > 0:
-            raise TypeError(
-                "Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0])
-            )
+            raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
         internal_response = _get_internal_response(response)
         if decompress:
             self.iter_content_func = internal_response.iter_content(self.block_size)
         else:
-            self.iter_content_func = _read_raw_stream(
-                internal_response, self.block_size
-            )
-        self.content_length = int(response.headers.get("Content-Length", 0))
+            self.iter_content_func = _read_raw_stream(internal_response, self.block_size)
+        self.content_length = int(response.headers.get('Content-Length', 0))
 
     def __len__(self):
         return self.content_length
@@ -202,9 +183,9 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
             raise
 
 
-class AsyncioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse):  # type: ignore
-    """Asynchronous streaming of data from the response."""
-
-    def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:  # type: ignore
+class AsyncioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse): # type: ignore
+    """Asynchronous streaming of data from the response.
+    """
+    def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]: # type: ignore
         """Generator for streaming request body data."""
-        return AsyncioStreamDownloadGenerator(pipeline, self, **kwargs)  # type: ignore
+        return AsyncioStreamDownloadGenerator(pipeline, self, **kwargs) # type: ignore

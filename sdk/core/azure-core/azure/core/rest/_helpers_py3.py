@@ -32,26 +32,28 @@ from typing import (
     Union,
     Callable,
     Optional,
-    AsyncIterator as AsyncIteratorType,
+    AsyncIterator as AsyncIteratorType
 )
 from ..exceptions import StreamConsumedError, StreamClosedError
 
-from ._helpers import _shared_set_content_body, HeadersType
-
+from ._helpers import (
+    _shared_set_content_body,
+    HeadersType
+)
 ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
 
-
-def set_content_body(content: ContentType) -> Tuple[HeadersType, ContentType]:
+def set_content_body(content: ContentType) -> Tuple[
+    HeadersType, ContentType
+]:
     headers, body = _shared_set_content_body(content)
     if body is not None:
         return headers, body
     if isinstance(content, collections.abc.AsyncIterable):
         return {}, content
     raise TypeError(
-        "Unexpected type for 'content': '{}'. ".format(type(content))
-        + "We expect 'content' to either be str, bytes, or an Iterable / AsyncIterable"
+        "Unexpected type for 'content': '{}'. ".format(type(content)) +
+        "We expect 'content' to either be str, bytes, or an Iterable / AsyncIterable"
     )
-
 
 def _stream_download_helper(
     decompress: bool,
@@ -70,16 +72,13 @@ def _stream_download_helper(
         decompress=decompress,
     )
 
-
 async def iter_bytes_helper(
     stream_download_generator: Callable,
     response,
     content: Optional[bytes],
 ) -> AsyncIteratorType[bytes]:
     if content:
-        chunk_size = (
-            response._connection_data_block_size
-        )  # pylint: disable=protected-access
+        chunk_size = response._connection_data_block_size  # pylint: disable=protected-access
         for i in range(0, len(content), chunk_size):
             yield content[i : i + chunk_size]
     else:
@@ -89,7 +88,6 @@ async def iter_bytes_helper(
             response=response,
         ):
             yield part
-
 
 async def iter_raw_helper(
     stream_download_generator: Callable,

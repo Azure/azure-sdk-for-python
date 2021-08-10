@@ -30,9 +30,9 @@ from . import AsyncHttpResponse
 from ._requests_basic import _RestRequestsTransportResponseBase, _has_content
 from ..pipeline.transport._requests_asyncio import AsyncioStreamDownloadGenerator
 
-
-class RestAsyncioRequestsTransportResponse(AsyncHttpResponse, _RestRequestsTransportResponseBase):  # type: ignore
-    """Asynchronous streaming of data from the response."""
+class RestAsyncioRequestsTransportResponse(AsyncHttpResponse, _RestRequestsTransportResponseBase): # type: ignore
+    """Asynchronous streaming of data from the response.
+    """
 
     async def iter_raw(self) -> AsyncIterator[bytes]:
         """Asynchronously iterates over the response's bytes. Will not decompress in the process
@@ -54,7 +54,7 @@ class RestAsyncioRequestsTransportResponse(AsyncHttpResponse, _RestRequestsTrans
         async for part in iter_bytes_helper(
             AsyncioStreamDownloadGenerator,
             self,
-            content=self.content if _has_content(self) else None,
+            content=self.content if _has_content(self) else None
         ):
             yield part
         await self.close()
@@ -79,7 +79,5 @@ class RestAsyncioRequestsTransportResponse(AsyncHttpResponse, _RestRequestsTrans
             parts = []
             async for part in self.iter_bytes():  # type: ignore
                 parts.append(part)
-            self._internal_response._content = b"".join(
-                parts
-            )  # pylint: disable=protected-access
+            self._internal_response._content = b"".join(parts)  # pylint: disable=protected-access
         return self.content

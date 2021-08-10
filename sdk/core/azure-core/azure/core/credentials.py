@@ -31,12 +31,7 @@ else:
 AzureNamedKey = namedtuple("AzureNamedKey", ["name", "key"])
 
 
-__all__ = [
-    "AzureKeyCredential",
-    "AzureSasCredential",
-    "AccessToken",
-    "AzureNamedKeyCredential",
-]
+__all__ = ["AzureKeyCredential", "AzureSasCredential", "AccessToken", "AzureNamedKeyCredential"]
 
 
 class AzureKeyCredential(object):
@@ -127,12 +122,9 @@ class AzureNamedKeyCredential(object):
     :param str key: The key used to authenticate to an Azure service.
     :raises: TypeError
     """
-
     def __init__(self, name, key):
         # type: (str, str) -> None
-        if not isinstance(name, six.string_types) or not isinstance(
-            key, six.string_types
-        ):
+        if not isinstance(name, six.string_types) or not isinstance(key, six.string_types):
             raise TypeError("Both name and key must be strings.")
         self._credential = AzureNamedKey(name, key)
 
@@ -155,8 +147,6 @@ class AzureNamedKeyCredential(object):
         :param str name: The name of the credential used to authenticate to an Azure service.
         :param str key: The key used to authenticate to an Azure service.
         """
-        if not isinstance(name, six.string_types) or not isinstance(
-            key, six.string_types
-        ):
+        if not isinstance(name, six.string_types) or not isinstance(key, six.string_types):
             raise TypeError("Both name and key must be strings.")
         self._credential = AzureNamedKey(name, key)

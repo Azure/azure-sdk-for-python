@@ -26,22 +26,10 @@
 import sys
 
 from ._poller import LROPoller, NoPolling, PollingMethod
+__all__ = ['LROPoller', 'NoPolling', 'PollingMethod']
 
-__all__ = ["LROPoller", "NoPolling", "PollingMethod"]
-
-# pylint: disable=unused-import
+#pylint: disable=unused-import
 if sys.version_info >= (3, 5, 2):
     # Not executed on old Python, no syntax error
-    from ._async_poller import (
-        AsyncNoPolling,
-        AsyncPollingMethod,
-        async_poller,
-        AsyncLROPoller,
-    )
-
-    __all__ += [
-        "AsyncNoPolling",
-        "AsyncPollingMethod",
-        "async_poller",
-        "AsyncLROPoller",
-    ]
+    from ._async_poller import AsyncNoPolling, AsyncPollingMethod, async_poller, AsyncLROPoller
+    __all__ += ['AsyncNoPolling', 'AsyncPollingMethod', 'async_poller', 'AsyncLROPoller']

@@ -52,18 +52,16 @@ except ImportError:  # Python <= 3.7
             """Raise any exception triggered within the runtime context."""
             return None
 
-
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
-
 
 class _ResponseStopIteration(Exception):
     pass
 
 
 def _iterate_response_content(iterator):
-    """ "To avoid:
+    """"To avoid:
     TypeError: StopIteration interacts badly with generators and cannot be raised into a Future
     """
     try:
@@ -165,13 +163,15 @@ class AsyncHttpClientTransportResponse(_HttpClientTransportResponse, AsyncHttpRe
 class AsyncHttpTransport(
     AbstractAsyncContextManager,
     abc.ABC,
-    Generic[HTTPRequestType, AsyncHTTPResponseType],
+    Generic[HTTPRequestType, AsyncHTTPResponseType]
 ):
-    """An http sender ABC."""
+    """An http sender ABC.
+    """
 
     @abc.abstractmethod
     async def send(self, request, **kwargs):
-        """Send the request using this HTTP sender."""
+        """Send the request using this HTTP sender.
+        """
 
     @abc.abstractmethod
     async def open(self):
