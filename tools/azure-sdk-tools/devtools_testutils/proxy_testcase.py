@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
 import os
 import requests
 
@@ -22,6 +21,7 @@ from azure.core.pipeline.transport import RequestsTransport
 # the trimming function to clean up incoming arguments to the test function we are wrapping
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 from devtools_testutils.azure_recorded_testcase import is_live
+
 
 # defaults
 PROXY_URL = "http://localhost:5000"

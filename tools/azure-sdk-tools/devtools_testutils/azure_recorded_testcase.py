@@ -37,16 +37,13 @@ def is_live():
 
 
 class AzureRecordedTestCase(object):
-
     @property
     def settings(self):
         if self.is_live:
             if self._real_settings:
                 return self._real_settings
             else:
-                raise AzureTestError(
-                    "Need a mgmt_settings_real.py file to run tests live."
-                )
+                raise AzureTestError("Need a mgmt_settings_real.py file to run tests live.")
         else:
             return self._fake_settings
 
@@ -82,11 +79,7 @@ class AzureRecordedTestCase(object):
     def get_settings_value(self, key):
         key_value = os.environ.get("AZURE_" + key, None)
 
-        if (
-            key_value
-            and self._real_settings
-            and getattr(self._real_settings, key) != key_value
-        ):
+        if key_value and self._real_settings and getattr(self._real_settings, key) != key_value:
             raise ValueError(
                 "You have both AZURE_{key} env variable and mgmt_settings_real.py for {key} to different values".format(
                     key=key
@@ -102,16 +95,9 @@ class AzureRecordedTestCase(object):
         return key_value
 
     def get_credential(self, client_class, **kwargs):
-
-        tenant_id = os.environ.get(
-            "AZURE_TENANT_ID", getattr(self._real_settings, "TENANT_ID", None)
-        )
-        client_id = os.environ.get(
-            "AZURE_CLIENT_ID", getattr(self._real_settings, "CLIENT_ID", None)
-        )
-        secret = os.environ.get(
-            "AZURE_CLIENT_SECRET", getattr(self._real_settings, "CLIENT_SECRET", None)
-        )
+        tenant_id = os.environ.get("AZURE_TENANT_ID", getattr(self._real_settings, "TENANT_ID", None))
+        client_id = os.environ.get("AZURE_CLIENT_ID", getattr(self._real_settings, "CLIENT_ID", None))
+        secret = os.environ.get("AZURE_CLIENT_SECRET", getattr(self._real_settings, "CLIENT_SECRET", None))
         is_async = kwargs.pop("is_async", False)
 
         if tenant_id and client_id and secret and self.is_live:
@@ -121,24 +107,21 @@ class AzureRecordedTestCase(object):
 
                 if is_async:
                     from azure.identity.aio import ClientSecretCredential
-                return ClientSecretCredential(
-                    tenant_id=tenant_id, client_id=client_id, client_secret=secret
-                )
+                return ClientSecretCredential(tenant_id=tenant_id, client_id=client_id, client_secret=secret)
             else:
                 # Create msrestazure class
                 from msrestazure.azure_active_directory import (
                     ServicePrincipalCredentials,
                 )
 
-                return ServicePrincipalCredentials(
-                    tenant=tenant_id, client_id=client_id, secret=secret
-                )
+                return ServicePrincipalCredentials(tenant=tenant_id, client_id=client_id, secret=secret)
         else:
             if _is_autorest_v3(client_class):
                 if is_async:
                     if self.is_live:
                         raise ValueError(
-                            "Async live doesn't support mgmt_setting_real, please set AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET"
+                            "Async live doesn't support mgmt_setting_real, please set AZURE_TENANT_ID,"
+                            "AZURE_CLIENT_ID, AZURE_CLIENT_SECRET"
                         )
                     return AsyncFakeCredential()
                 else:
@@ -160,9 +143,7 @@ class AzureRecordedTestCase(object):
 
         if self.is_playback():
             try:
-                client._config.polling_interval = (
-                    0  # FIXME in azure-mgmt-core, make this a kwargs
-                )
+                client._config.polling_interval = 0  # FIXME in azure-mgmt-core, make this a kwargs
             except AttributeError:
                 pass
 
@@ -193,7 +174,7 @@ class AzureRecordedTestCase(object):
         return self.create_random_name(name)
 
     def get_replayable_random_resource_name(self, name):
-        """In a replay scenario, (is not live) gives the static moniker.  In the random scenario, gives generated name."""
+        """In a replay scenario (not live), gives the static moniker. In the random scenario, gives generated name."""
         if self.is_live:
             created_name = self.create_random_name(name)
             self.scrubber.register_name_pair(created_name, name)
@@ -204,9 +185,7 @@ class AzureRecordedTestCase(object):
 
         If prefix is a blank string, use the fully qualified test name instead.
         This is what legacy tests do for resource groups."""
-        return self.get_resource_name(
-            prefix #or self.qualified_test_name.replace(".", "_")
-        )
+        return self.get_resource_name(prefix)  # or self.qualified_test_name.replace(".", "_")
 
     @staticmethod
     def await_prepared_test(test_fn):
