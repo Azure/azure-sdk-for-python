@@ -40,9 +40,6 @@ def RecordedByProxyAsync(func):
         async def combined_call(*args, **kwargs):
             adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
             req = adjusted_args[1]
-            print("HEADERS: ", req.headers)
-            print("BODY: ", req.body)
-            print("METHOD: ", req.method)
             return await original_func(*adjusted_args, **adjusted_kwargs)
 
         AioHttpTransport.send = combined_call

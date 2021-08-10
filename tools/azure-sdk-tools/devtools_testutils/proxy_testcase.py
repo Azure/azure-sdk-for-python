@@ -134,7 +134,6 @@ def RecordedByProxy(func):
             value = func(*args, **trimmed_kwargs)
         finally:
             RequestsTransport.send = original_transport_func
-            # print("Exiting patch context. RequestsTransport.send is at {}".format(id(RequestsTransport.send)))
             stop_record_or_playback(test_id, recording_id)
 
         return value

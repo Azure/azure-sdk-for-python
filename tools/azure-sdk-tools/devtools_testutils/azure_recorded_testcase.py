@@ -7,6 +7,7 @@ import functools
 import logging
 import os
 import os.path
+import six
 import sys
 import time
 
@@ -89,9 +90,8 @@ class AzureRecordedTestCase(object):
         if not key_value:
             try:
                 key_value = getattr(self.settings, key)
-            except Exception:
-                print("Could not get {}".format(key))
-                raise
+            except Exception as ex:
+                six.raise_from(ValueError("Could not get {}".format(key)), ex)
         return key_value
 
     def get_credential(self, client_class, **kwargs):
@@ -166,7 +166,6 @@ class AzureRecordedTestCase(object):
 
     def create_random_name(self, name):
         unique_test_name = os.getenv("PYTEST_CURRENT_TEST").encode("utf-8")
-        print(unique_test_name)
         return get_resource_name(name, unique_test_name)
 
     def get_resource_name(self, name):
