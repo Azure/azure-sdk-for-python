@@ -223,8 +223,7 @@ stages:
                           PRLabels: "auto-merge"
                           CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
           - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
-            - displayname: Smoke Test Release Package
-              template: /eng/pipelines/templates/jobs/smoke.tests.yml
+            - template: /eng/pipelines/templates/jobs/smoke.tests.yml
               parameters:
                 Daily: false
                 ArtifactName: ${{artifact.name}}
