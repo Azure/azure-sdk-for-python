@@ -38,7 +38,7 @@ jobs:
       dependsOn: smoke_test_eligibility
       condition: and(succeeded(), eq(dependencies.smoke_test_eligibility.outputs['output_eligibility.RunSmokeTests'], true))
     strategy:
-      ${{ if eq(parameters.Daily, false) }}:
+      ${{ if eq(parameters.Daily, true) }}:
         matrix:
           Python_27_Linux (AzureCloud):
             PythonVersion: '2.7'
@@ -116,7 +116,7 @@ jobs:
             SubscriptionConfiguration: $(sub-config-cn-test-resources)
             Location: 'chinanorth'
             ArmTemplateParameters: $(azureChinaCloudArmParameters)
-      ${{ if eq(parameters.Daily, true) }}:
+      ${{ if eq(parameters.Daily, false) }}:
         matrix:
           Python_38_Linux (AzureCloud):
             PythonVersion: '3.8'
