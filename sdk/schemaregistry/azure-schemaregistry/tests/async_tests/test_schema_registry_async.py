@@ -32,7 +32,7 @@ from devtools_testutils.azure_testcase import _is_autorest_v3
 
 from azure.core.credentials import AccessToken
 
-SchemaRegistryPowerShellPreparer = functools.partial(PowerShellPreparer, "schemaregistry", schemaregistry_endpoint="fake_resource.servicebus.windows.net", schemaregistry_group="fakegroup")
+SchemaRegistryPowerShellPreparer = functools.partial(PowerShellPreparer, "schemaregistry", schemaregistry_endpoint="fake_resource.servicebus.windows.net/", schemaregistry_group="fakegroup")
 
 class SchemaRegistryAsyncTests(AzureTestCase):
 

@@ -17,7 +17,7 @@ interactions:
       X-Schema-Type:
       - Avro
     method: PUT
-    uri: https://fake_resource.servicebus.windows.net$schemagroups/fakegroup/schemas/test-schema-twice863b11a7?api-version=2017-04
+    uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7?api-version=2017-04
   response:
     body:
       string: '{"id":"64d4f94971a845dbbe981291eda8c43b"}'
@@ -25,7 +25,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Tue, 10 Aug 2021 23:09:06 GMT
+      - Wed, 11 Aug 2021 16:27:53 GMT
       location:
       - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7/versions/1?api-version=2017-04
       server:
@@ -65,7 +65,7 @@ interactions:
       X-Schema-Type:
       - Avro
     method: PUT
-    uri: https://fake_resource.servicebus.windows.net$schemagroups/fakegroup/schemas/test-schema-twice863b11a7?api-version=2017-04
+    uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7?api-version=2017-04
   response:
     body:
       string: '{"id":"64d4f94971a845dbbe981291eda8c43b"}'
@@ -73,7 +73,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Tue, 10 Aug 2021 23:09:07 GMT
+      - Wed, 11 Aug 2021 16:27:53 GMT
       location:
       - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7/versions/1?api-version=2017-04
       server:
