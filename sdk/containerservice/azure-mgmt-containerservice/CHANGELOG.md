@@ -1,5 +1,15 @@
 # Release History
 
+## 16.1.0 (2021-08-06)
+
+**Features**
+
+  - Model ManagedClusterAgentPoolProfile has a new parameter scale_down_mode
+  - Model ContainerServiceNetworkProfile has a new parameter nat_gateway_profile
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter scale_down_mode
+  - Model ManagedCluster has a new parameter security_profile
+  - Model AgentPool has a new parameter scale_down_mode
+
 ## 16.0.0 (2021-06-17)
 
 **Features**

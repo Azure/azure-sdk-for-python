@@ -17,6 +17,7 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from ...documents.models import AnswerResult
 
+
 class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
     def __init__(self, *args, **kwargs):
         super(AsyncSearchItemPaged, self).__init__(*args, **kwargs)
@@ -44,9 +45,7 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
         return self._first_page_iterator_instance
 
     async def get_facets(self) -> Union[dict, None]:
-        """Return any facet results if faceting was requested.
-
-        """
+        """Return any facet results if faceting was requested."""
         return await self._first_iterator_instance().get_facets()
 
     async def get_coverage(self):
@@ -112,7 +111,9 @@ class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
         )
 
     async def _extract_data_cb(self, response):  # pylint:disable=no-self-use
-        continuation_token = pack_continuation_token(response, api_version=self._api_version)
+        continuation_token = pack_continuation_token(
+            response, api_version=self._api_version
+        )
         results = [convert_search_result(r) for r in response.results]
         return continuation_token, results
 

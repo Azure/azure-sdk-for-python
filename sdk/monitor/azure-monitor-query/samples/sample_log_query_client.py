@@ -22,15 +22,18 @@ summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _Resour
 
 end_time = datetime.now(UTC())
 
-# returns LogsQueryResults 
+# returns LogsQueryResult 
 response = client.query(os.environ['LOG_WORKSPACE_ID'], query, duration=timedelta(days=1), end_time=end_time)
 
 if not response.tables:
     print("No results for the query")
 
-for table in response.tables:
+try:
+    table = response.tables[0]
     df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
     print(df)
+except TypeError:
+    print(response.error)
 # [END send_logs_query]
 """
     TimeGenerated                                        _ResourceId          avgRequestDuration

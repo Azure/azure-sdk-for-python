@@ -60,9 +60,9 @@ class QuotaByCounterKeysOperations(object):
         :param service_name: The name of the API Management service.
         :type service_name: str
         :param quota_counter_key: Quota counter key identifier.This is the result of expression defined
-         in counter-key attribute of the quota-by-key policy.For Example, if you specify counter-
-         key="boo" in the policy, then it’s accessible by "boo" counter key. But if it’s defined as
-         counter-key="@("b"+"a")" then it will be accessible by "ba" key.
+         in counter-key attribute of the quota-by-key policy.For Example, if you specify
+         counter-key="boo" in the policy, then it’s accessible by "boo" counter key. But if it’s defined
+         as counter-key="@("b"+"a")" then it will be accessible by "ba" key.
         :type quota_counter_key: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: QuotaCounterCollection, or the result of cls(response)
@@ -101,7 +101,7 @@ class QuotaByCounterKeysOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('QuotaCounterCollection', pipeline_response)
@@ -129,9 +129,9 @@ class QuotaByCounterKeysOperations(object):
         :param service_name: The name of the API Management service.
         :type service_name: str
         :param quota_counter_key: Quota counter key identifier.This is the result of expression defined
-         in counter-key attribute of the quota-by-key policy.For Example, if you specify counter-
-         key="boo" in the policy, then it’s accessible by "boo" counter key. But if it’s defined as
-         counter-key="@("b"+"a")" then it will be accessible by "ba" key.
+         in counter-key attribute of the quota-by-key policy.For Example, if you specify
+         counter-key="boo" in the policy, then it’s accessible by "boo" counter key. But if it’s defined
+         as counter-key="@("b"+"a")" then it will be accessible by "ba" key.
         :type quota_counter_key: str
         :param parameters: The value of the quota counter to be applied to all quota counter periods.
         :type parameters: ~azure.mgmt.apimanagement.models.QuotaCounterValueUpdateContract
@@ -177,7 +177,7 @@ class QuotaByCounterKeysOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('QuotaCounterCollection', pipeline_response)

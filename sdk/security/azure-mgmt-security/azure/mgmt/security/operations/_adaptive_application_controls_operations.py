@@ -17,7 +17,7 @@ from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
+    from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -46,17 +46,17 @@ class AdaptiveApplicationControlsOperations(object):
 
     def list(
         self,
-        include_path_recommendations=None,  # type: Optional[Union[bool, "_models.Enum37"]]
-        summary=None,  # type: Optional[Union[bool, "_models.Enum38"]]
+        include_path_recommendations=None,  # type: Optional[bool]
+        summary=None,  # type: Optional[bool]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.AdaptiveApplicationControlGroups"
         """Gets a list of application control machine groups for the subscription.
 
         :param include_path_recommendations: Include the policy rules.
-        :type include_path_recommendations: str or ~azure.mgmt.security.models.Enum37
+        :type include_path_recommendations: bool
         :param summary: Return output in a summarized form.
-        :type summary: str or ~azure.mgmt.security.models.Enum38
+        :type summary: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AdaptiveApplicationControlGroups, or the result of cls(response)
         :rtype: ~azure.mgmt.security.models.AdaptiveApplicationControlGroups

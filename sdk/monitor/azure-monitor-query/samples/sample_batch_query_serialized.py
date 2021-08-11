@@ -39,13 +39,12 @@ requests = [
         "workspace": os.environ['LOG_WORKSPACE_ID']
     }
 ]
-response = client.batch_query(requests)
+responses = client.query_batch(requests)
 
-for response in response.responses:
-    body = response.body
-    if not body.tables:
-        print("Something is wrong")
-    else:
-        for table in body.tables:
-            df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
-            print(df)
+for response in responses:
+    try:
+        table = response.tables[0]
+        df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
+        print(df)
+    except TypeError:
+        print(response.error)

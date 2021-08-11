@@ -7,9 +7,6 @@
 # --------------------------------------------------------------------------
 
 from ._vnet_client import VnetClient
-from ._version import VERSION
-
-__version__ = VERSION
 __all__ = ['VnetClient']
 
 try:
