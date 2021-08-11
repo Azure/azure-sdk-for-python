@@ -77,10 +77,12 @@ def get_access_conditions(model, match_condition=MatchConditions.Unconditionally
 
 def normalize_endpoint(endpoint):
     try:
-        if not endpoint.lower().startswith('http'):
+        if not endpoint.lower().startswith("http"):
             endpoint = "https://" + endpoint
-        elif not endpoint.lower().startswith('https'):
-            raise ValueError("Bearer token authentication is not permitted for non-TLS protected (non-https) URLs.")
+        elif not endpoint.lower().startswith("https"):
+            raise ValueError(
+                "Bearer token authentication is not permitted for non-TLS protected (non-https) URLs."
+            )
         return endpoint
     except AttributeError:
         raise ValueError("Endpoint must be a string.")
