@@ -20,15 +20,6 @@ ALL_VARIABLES = {
 }
 
 
-def test_close_incomplete_configuration():
-    EnvironmentCredential().close()
-
-
-def test_context_manager_incomplete_configuration():
-    with EnvironmentCredential():
-        pass
-
-
 def test_incomplete_configuration():
     """get_token should raise CredentialUnavailableError for incomplete configuration."""
 

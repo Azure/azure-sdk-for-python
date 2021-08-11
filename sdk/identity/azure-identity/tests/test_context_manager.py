@@ -110,7 +110,9 @@ def test_exit_args(fixture):
 )
 def test_no_op(cls):
     """Credentials that don't allow custom transports, or require initialization or optional config, should have no-op methods"""
-    credential = cls()
+    with patch.dict("os.environ", {}, clear=True):
+        credential = cls()
+
     with credential:
         pass
     credential.close()
