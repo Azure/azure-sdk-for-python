@@ -28,7 +28,7 @@ class WorkspacesOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.databricks.models
+    :type models: ~azure_databricks_management_client.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -47,7 +47,7 @@ class WorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Workspace":
         """Gets the workspace.
 
@@ -57,7 +57,7 @@ class WorkspacesOperations:
         :type workspace_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Workspace, or the result of cls(response)
-        :rtype: ~azure.mgmt.databricks.models.Workspace
+        :rtype: ~azure_databricks_management_client.models.Workspace
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Workspace"]
@@ -65,7 +65,7 @@ class WorkspacesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-04-01"
+        api_version = "2021-04-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -91,7 +91,7 @@ class WorkspacesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Workspace', pipeline_response)
@@ -106,14 +106,14 @@ class WorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-04-01"
+        api_version = "2021-04-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -139,7 +139,7 @@ class WorkspacesOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -151,7 +151,7 @@ class WorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the workspace.
 
@@ -161,8 +161,8 @@ class WorkspacesOperations:
         :type workspace_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -216,14 +216,14 @@ class WorkspacesOperations:
         resource_group_name: str,
         workspace_name: str,
         parameters: "_models.Workspace",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Workspace":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Workspace"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-04-01"
+        api_version = "2021-04-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -254,7 +254,7 @@ class WorkspacesOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -274,7 +274,7 @@ class WorkspacesOperations:
         resource_group_name: str,
         workspace_name: str,
         parameters: "_models.Workspace",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Workspace"]:
         """Creates a new workspace.
 
@@ -283,15 +283,15 @@ class WorkspacesOperations:
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
         :param parameters: Parameters supplied to the create or update a workspace.
-        :type parameters: ~azure.mgmt.databricks.models.Workspace
+        :type parameters: ~azure_databricks_management_client.models.Workspace
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Workspace or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.databricks.models.Workspace]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure_databricks_management_client.models.Workspace]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -345,14 +345,14 @@ class WorkspacesOperations:
         resource_group_name: str,
         workspace_name: str,
         parameters: "_models.WorkspaceUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.Workspace"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Workspace"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-04-01"
+        api_version = "2021-04-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -383,7 +383,7 @@ class WorkspacesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -401,7 +401,7 @@ class WorkspacesOperations:
         resource_group_name: str,
         workspace_name: str,
         parameters: "_models.WorkspaceUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Workspace"]:
         """Updates a workspace.
 
@@ -410,15 +410,15 @@ class WorkspacesOperations:
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
         :param parameters: The update to the workspace.
-        :type parameters: ~azure.mgmt.databricks.models.WorkspaceUpdate
+        :type parameters: ~azure_databricks_management_client.models.WorkspaceUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Workspace or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.databricks.models.Workspace]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure_databricks_management_client.models.Workspace]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -470,7 +470,7 @@ class WorkspacesOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.WorkspaceListResult"]:
         """Gets all the workspaces within a resource group.
 
@@ -478,7 +478,7 @@ class WorkspacesOperations:
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either WorkspaceListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.databricks.models.WorkspaceListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure_databricks_management_client.models.WorkspaceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkspaceListResult"]
@@ -486,7 +486,7 @@ class WorkspacesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-04-01"
+        api_version = "2021-04-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -527,7 +527,7 @@ class WorkspacesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -540,13 +540,13 @@ class WorkspacesOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.WorkspaceListResult"]:
         """Gets all the workspaces within a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either WorkspaceListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.databricks.models.WorkspaceListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure_databricks_management_client.models.WorkspaceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkspaceListResult"]
@@ -554,7 +554,7 @@ class WorkspacesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-04-01"
+        api_version = "2021-04-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -594,7 +594,7 @@ class WorkspacesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

@@ -48,8 +48,8 @@ class PrivateLinkResourcesOperations:
     ) -> "_models.PrivateLinkResourcesListResult":
         """Gets a list of private link resources in the specified managed cluster.
 
-        Gets a list of private link resources in the specified managed cluster. The operation returns
-        properties of each private link resource.
+        To learn more about private clusters, see:
+        https://docs.microsoft.com/azure/aks/private-clusters.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

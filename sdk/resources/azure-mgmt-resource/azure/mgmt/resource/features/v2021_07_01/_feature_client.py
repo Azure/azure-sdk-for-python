@@ -36,8 +36,6 @@ class FeatureClient(FeatureClientOperationsMixin):
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The Azure subscription ID.
     :type subscription_id: str
-    :param provider_namespace: The provider namespace.
-    :type provider_namespace: str
     :param str base_url: Service URL
     """
 
@@ -45,14 +43,13 @@ class FeatureClient(FeatureClientOperationsMixin):
         self,
         credential,  # type: "TokenCredential"
         subscription_id,  # type: str
-        provider_namespace,  # type: str
         base_url=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         if not base_url:
             base_url = 'https://management.azure.com'
-        self._config = FeatureClientConfiguration(credential, subscription_id, provider_namespace, **kwargs)
+        self._config = FeatureClientConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -77,7 +74,6 @@ class FeatureClient(FeatureClientOperationsMixin):
         """
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'providerNamespace': self._serialize.url("self._config.provider_namespace", self._config.provider_namespace, 'str'),
         }
         http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
         stream = kwargs.pop("stream", True)

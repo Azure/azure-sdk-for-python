@@ -5,10 +5,11 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from enum import Enum
 import uuid
 from typing import Any, Optional, List
 
-from ._helpers import order_results, construct_iso8601
+from ._helpers import construct_iso8601
 from ._generated.models import (
     Column as InternalColumn,
     BatchQueryRequest as InternalLogQueryRequest,
@@ -24,8 +25,8 @@ class LogsQueryResultTable(object):
     :type name: str
     :param columns: Required. The list of columns in this table.
     :type columns: list[~azure.monitor.query.LogsQueryResultColumn]
-    :keyword rows: Required. The resulting rows from this query.
-    :paramtype rows: list[list[str]]
+    :param rows: Required. The resulting rows from this query.
+    :type rows: list[list[str]]
     """
     def __init__(self, name, columns, rows):
         # type: (str, List[LogsQueryResultColumn], List[List[str]]) -> None
@@ -45,10 +46,10 @@ class LogsQueryResultTable(object):
 class LogsQueryResultColumn(InternalColumn):
     """A column in a table.
 
-    :keyword name: The name of this column.
-    :paramtype name: str
-    :keyword type: The data type of this column.
-    :paramtype type: str
+    :ivar name: The name of this column.
+    :vartype name: str
+    :ivar type: The data type of this column.
+    :vartype type: str
     """
 
     _attribute_map = {
@@ -63,21 +64,26 @@ class LogsQueryResultColumn(InternalColumn):
         self.type = kwargs.get("type", None)
 
 
-class LogsQueryResults(object):
+class LogsQueryResult(object):
     """Contains the tables, columns & rows resulting from a query.
 
-    :keyword tables: The list of tables, columns and rows.
-    :paramtype tables: list[~azure.monitor.query.LogsQueryResultTable]
-    :keyword statistics: Any object.
-    :paramtype statistics: object
-    :keyword render: Any object.
-    :paramtype render: object
+    :ivar tables: The list of tables, columns and rows.
+    :vartype tables: list[~azure.monitor.query.LogsQueryResultTable]
+    :ivar statistics: This will include a statistics property in the response that describes various
+     performance statistics such as query execution time and resource usage.
+    :vartype statistics: object
+    :ivar visualization: This will include a visualization property in the response that specifies the type of
+     visualization selected by the query and any properties for that visualization.
+    :vartype visualization: object
+    :ivar error: Any error info.
+    :vartype error: object
     """
     def __init__(self, **kwargs):
         # type: (Any) -> None
         self.tables = kwargs.get("tables", None)
         self.statistics = kwargs.get("statistics", None)
-        self.render = kwargs.get("render", None)
+        self.visualization = kwargs.get("visualization", None)
+        self.error = kwargs.get("error", None)
 
     @classmethod
     def _from_generated(cls, generated):
@@ -93,7 +99,8 @@ class LogsQueryResults(object):
         return cls(
             tables=tables,
             statistics=generated.statistics,
-            render=generated.render
+            visualization=generated.render,
+            error=generated.error
         )
 
 
@@ -102,22 +109,22 @@ class MetricsResult(object):
 
     All required parameters must be populated in order to send to Azure.
 
-    :keyword cost: The integer value representing the cost of the query, for data case.
-    :paramtype cost: int
-    :keyword timespan: Required. The timespan for which the data was retrieved. Its value consists of
-     two datetimes concatenated, separated by '/'.  This may be adjusted in the future and returned
+    :ivar cost: The integer value representing the cost of the query, for data case.
+    :vartype cost: int
+    :ivar timespan: Required. The timespan for which the data was retrieved. Its value consists of
+     two datetimes concatenated, separated by '/'. This may be adjusted in the future and returned
      back from what was originally requested.
-    :paramtype timespan: str
-    :keyword interval: The interval (window size) for which the metric data was returned in.  This
-     may be adjusted in the future and returned back from what was originally requested.  This is
+    :vartype timespan: str
+    :ivar interval: The interval (window size) for which the metric data was returned in. This
+     may be adjusted in the future and returned back from what was originally requested. This is
      not present if a metadata request was made.
-    :paramtype interval: ~datetime.timedelta
-    :keyword namespace: The namespace of the metrics been queried.
-    :paramtype namespace: str
-    :keyword resourceregion: The region of the resource been queried for metrics.
-    :paramtype resourceregion: str
-    :keyword metrics: Required. the value of the collection.
-    :paramtype metrics: list[~monitor_query_client.models.Metric]
+    :vartype interval: ~datetime.timedelta
+    :ivar namespace: The namespace of the metrics that has been queried.
+    :vartype namespace: str
+    :ivar resourceregion: The region of the resource that has been queried for metrics.
+    :vartype resourceregion: str
+    :ivar metrics: Required. The value of the collection.
+    :vartype metrics: list[~monitor_query_client.models.Metric]
     """
     def __init__(self, **kwargs):
         # type: (Any) -> None
@@ -141,7 +148,7 @@ class MetricsResult(object):
             metrics=[Metric._from_generated(m) for m in generated.value] # pylint: disable=protected-access
         )
 
-class LogsQueryRequest(InternalLogQueryRequest):
+class LogsBatchQuery(object):
     """A single request in a batch.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -159,15 +166,16 @@ class LogsQueryRequest(InternalLogQueryRequest):
     :keyword datetime end_time: The end time till which to query the data. This should be accompanied
      with either start_time or duration.
     :keyword additional_workspaces: A list of workspaces that are included in the query.
-     These can be qualified workspace names, workspsce Ids or Azure resource Ids.
+     These can be qualified workspace names, workspace Ids, or Azure resource Ids.
     :paramtype additional_workspaces: list[str]
     :keyword request_id: The error details.
     :paramtype request_id: str
     :keyword int server_timeout: the server timeout. The default timeout is 3 minutes,
      and the maximum timeout is 10 minutes.
     :keyword bool include_statistics: To get information about query statistics.
-    :keyword bool include_render: In the query language, it is possible to specify different render options.
-     By default, the API does not return information regarding the type of visualization to show.
+    :keyword bool include_visualization: In the query language, it is possible to specify different
+     visualization options. By default, the API does not return information regarding the type of
+     visualization to show.
     :keyword headers: Dictionary of :code:`<string>`.
     :paramtype headers: dict[str, str]
     """
@@ -175,18 +183,18 @@ class LogsQueryRequest(InternalLogQueryRequest):
     def __init__(self, query, workspace_id, duration=None, **kwargs): #pylint: disable=super-init-not-called
         # type: (str, str, Optional[str], Any) -> None
         include_statistics = kwargs.pop("include_statistics", False)
-        include_render = kwargs.pop("include_render", False)
+        include_visualization = kwargs.pop("include_visualization", False)
         server_timeout = kwargs.pop("server_timeout", None)
         prefer = ""
         if server_timeout:
             prefer += "wait=" + str(server_timeout)
         if include_statistics:
             if len(prefer) > 0:
-                prefer += " "
+                prefer += ","
             prefer += "include-statistics=true"
-        if include_render:
+        if include_visualization:
             if len(prefer) > 0:
-                prefer += " "
+                prefer += ","
             prefer += "include-render=true"
 
         headers = kwargs.get("headers", None)
@@ -205,15 +213,31 @@ class LogsQueryRequest(InternalLogQueryRequest):
         self.headers = headers
         self.workspace = workspace_id
 
-class LogsQueryResult(object):
-    """The LogsQueryResult.
+    def _to_generated(self):
+        return InternalLogQueryRequest(
+            id=self.id,
+            body=self.body,
+            headers=self.headers,
+            workspace=self.workspace
+        )
 
-    :param id:
-    :type id: str
-    :param status:
-    :type status: int
-    :param body: Contains the tables, columns & rows resulting from a query.
-    :type body: ~azure.monitor.query.LogsQueryResults
+class LogsBatchQueryResult(object):
+    """The LogsBatchQueryResult.
+
+    :ivar id: the request id of the request that was sent.
+    :vartype id: str
+    :ivar status: status code of the response.
+    :vartype status: int
+    :ivar tables: The list of tables, columns and rows.
+    :vartype tables: list[~azure.monitor.query.LogsQueryResultTable]
+    :ivar statistics: This will include a statistics property in the response that describes various
+     performance statistics such as query execution time and resource usage.
+    :vartype statistics: object
+    :ivar visualization: This will include a visualization property in the response that specifies the type of
+     visualization selected by the query and any properties for that visualization.
+    :vartype visualization: object
+    :ivar error: Any error info.
+    :vartype error: object
     """
     def __init__(
         self,
@@ -221,51 +245,41 @@ class LogsQueryResult(object):
     ):
         self.id = kwargs.get('id', None)
         self.status = kwargs.get('status', None)
-        self.body = kwargs.get('body', None)
+        self.tables = kwargs.get('tables', None)
+        self.error = kwargs.get('error', None)
+        self.statistics = kwargs.get('statistics', None)
+        self.visualization = kwargs.get('visualization', None)
 
     @classmethod
     def _from_generated(cls, generated):
         if not generated:
             return cls()
+        tables = None
+        if generated.body.tables is not None:
+            tables = [
+                LogsQueryResultTable._from_generated( # pylint: disable=protected-access
+                    table
+                    ) for table in generated.body.tables
+                ]
         return cls(
             id=generated.id,
             status=generated.status,
-            body=LogsQueryResults._from_generated(generated.body) # pylint: disable=protected-access
-        )
-
-class LogsBatchResults(object):
-    """Response to a batch.
-
-    :keyword responses: An array of responses corresponding to each individual request in a batch.
-    :paramtype responses: list[azure.monitor.query.LogsQueryResult]
-    :keyword error: Error response for a batch request.
-    :paramtype error: ~azure.monitor.query.LogsBatchResultError
-    """
-    def __init__(self, **kwargs):
-        # type: (Any) -> None
-        self.responses = kwargs.get("responses", None)
-        self.error = kwargs.get("error", None)
-
-    @classmethod
-    def _from_generated(cls, generated, request_order):
-        if not generated:
-            return cls()
-        return cls(
-            responses=order_results(request_order, [
-                LogsQueryResult._from_generated(rsp) for rsp in generated.responses # pylint: disable=protected-access
-                ])
+            tables=tables,
+            statistics=generated.body.statistics,
+            visualization=generated.body.render,
+            error=generated.body.error
         )
 
 
 class LogsBatchResultError(object):
     """Error response for a batch request.
 
-    :param message: The error message describing the cause of the error.
-    :type message: str
+    :ivar message: The error message describing the cause of the error.
+    :vartype message: str
     :param code: The error code.
-    :type code: str
+    :vartype code: str
     :param details: The details of the error.
-    :type inner_error: list[~azure.monitor.query.ErrorDetails]
+    :vartype inner_error: list[~azure.monitor.query.ErrorDetails]
     """
     def __init__(self, **kwargs):
         # type: (Any) -> None
@@ -294,7 +308,7 @@ class MetricNamespace(object):
     :keyword name: The name of the namespace.
     :paramtype name: str
     :keyword metric_namespace_name: The fully qualified namespace name.
-    :paramtype properties: str
+    :paramtype metric_namespace_name: str
     """
     def __init__(
         self,
@@ -394,19 +408,19 @@ class MetricValue(object):
 
     All required parameters must be populated in order to send to Azure.
 
-    :keyword time_stamp: Required. the timestamp for the metric value in ISO 8601 format.
-    :paramtype time_stamp: ~datetime.datetime
-    :keyword average: the average value in the time range.
-    :paramtype average: float
-    :keyword minimum: the least value in the time range.
-    :paramtype minimum: float
-    :keyword maximum: the greatest value in the time range.
-    :paramtype maximum: float
-    :keyword total: the sum of all of the values in the time range.
-    :paramtype total: float
-    :keyword count: the number of samples in the time range. Can be used to determine the number of
+    :ivar time_stamp: Required. The timestamp for the metric value in ISO 8601 format.
+    :vartype time_stamp: ~datetime.datetime
+    :ivar average: The average value in the time range.
+    :vartype average: float
+    :ivar minimum: The least value in the time range.
+    :vartype minimum: float
+    :ivar maximum: The greatest value in the time range.
+    :vartype maximum: float
+    :ivar total: The sum of all of the values in the time range.
+    :vartype total: float
+    :ivar count: The number of samples in the time range. Can be used to determine the number of
      values that contributed to the average value.
-    :paramtype count: float
+    :vartype count: float
     """
     def __init__(
         self,
@@ -438,18 +452,18 @@ class Metric(object):
 
     All required parameters must be populated in order to send to Azure.
 
-    :keyword id: Required. the metric Id.
-    :paramtype id: str
-    :keyword type: Required. the resource type of the metric resource.
-    :paramtype type: str
-    :keyword name: Required. the name of the metric.
-    :paramtype name: str
-    :keyword unit: Required. the unit of the metric. Possible values include: "Count", "Bytes",
+    :ivar id: Required. The metric Id.
+    :vartype id: str
+    :ivar type: Required. The resource type of the metric resource.
+    :vartype type: str
+    :ivar name: Required. The name of the metric.
+    :vartype name: str
+    :ivar unit: Required. The unit of the metric. Possible values include: "Count", "Bytes",
      "Seconds", "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds",
      "Unspecified", "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
-    :paramtype unit: str
-    :keyword timeseries: Required. the time series returned when a data query is performed.
-    :paramtype timeseries: list[~monitor_query_client.models.TimeSeriesElement]
+    :vartype unit: str
+    :ivar timeseries: Required. The time series returned when a data query is performed.
+    :vartype timeseries: list[~monitor_query_client.models.TimeSeriesElement]
     """
     def __init__(
         self,
@@ -480,11 +494,11 @@ class Metric(object):
 class TimeSeriesElement(object):
     """A time series result type. The discriminator value is always TimeSeries in this case.
 
-    :keyword metadata_values: the metadata values returned if $filter was specified in the call.
-    :paramtype metadata_values: list[~monitor_query_client.models.MetadataValue]
-    :keyword data: An array of data points representing the metric values.  This is only returned if
+    :ivar metadata_values: The metadata values returned if $filter was specified in the call.
+    :vartype metadata_values: list[~monitor_query_client.models.MetadataValue]
+    :ivar data: An array of data points representing the metric values. This is only returned if
      a result type of data is specified.
-    :paramtype data: list[~monitor_query_client.models.MetricValue]
+    :vartype data: list[~monitor_query_client.models.MetricValue]
     """
 
     _attribute_map = {
@@ -516,10 +530,10 @@ class TimeSeriesElement(object):
 class MetricsMetadataValue(object):
     """Represents a metric metadata value.
 
-    :keyword name: the name of the metadata.
-    :paramtype name: str
-    :keyword value: the value of the metadata.
-    :paramtype value: str
+    :ivar name: The name of the metadata.
+    :vartype name: str
+    :ivar value: The value of the metadata.
+    :vartype value: str
     """
     def __init__(
         self,
@@ -546,7 +560,7 @@ class MetricAvailability(object):
     :keyword time_grain: the time grain specifies the aggregation interval for the metric. Expressed
      as a duration 'PT1M', 'P1D', etc.
     :paramtype time_grain: ~datetime.timedelta
-    :keyword retention: the retention period for the metric at the specified timegrain.  Expressed as
+    :keyword retention: the retention period for the metric at the specified timegrain. Expressed as
      a duration 'PT1M', 'P1D', etc.
     :paramtype retention: ~datetime.timedelta
     """
@@ -566,3 +580,15 @@ class MetricAvailability(object):
             time_grain=generated.time_grain,
             retention=generated.retention
         )
+
+
+class AggregationType(str, Enum):
+    """The aggregation type of the metric.
+    """
+
+    NONE = "None"
+    AVERAGE = "Average"
+    COUNT = "Count"
+    MINIMUM = "Minimum"
+    MAXIMUM = "Maximum"
+    TOTAL = "Total"

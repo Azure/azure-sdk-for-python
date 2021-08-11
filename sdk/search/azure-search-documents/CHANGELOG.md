@@ -1,14 +1,10 @@
 # Release History
 
-## 11.3.0b2 (Unreleased)
+## 11.3.0b2 (2021-08-10)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added new skills: `SentimentSkillV3`, `EntityLinkingSkill`, `EntityRecognitionSkillV3`
 
 ## 11.3.0b1 (2021-07-07)
 

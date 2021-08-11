@@ -458,6 +458,6 @@ contact opencode@microsoft.com with any additional questions or comments.
 [crypto_client_docs]: https://aka.ms/azsdk/python/keyvault-keys/crypto/docs
 [key_client_src]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys/azure/keyvault/keys
 [key_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys/samples
-[soft_delete]: https://docs.microsoft.com/azure/key-vault/key-vault-ovw-soft-delete
+[soft_delete]: https://docs.microsoft.com/azure/key-vault/general/soft-delete-overview
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fkeyvault%2Fazure-keyvault-keys%2FREADME.png)

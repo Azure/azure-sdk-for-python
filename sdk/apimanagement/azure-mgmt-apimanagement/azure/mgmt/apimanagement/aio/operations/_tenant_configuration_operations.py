@@ -48,7 +48,7 @@ class TenantConfigurationOperations:
         service_name: str,
         configuration_name: Union[str, "_models.ConfigurationIdName"],
         parameters: "_models.DeployConfigurationParameters",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.OperationResultContract"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationResultContract"]]
         error_map = {
@@ -87,7 +87,7 @@ class TenantConfigurationOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -106,7 +106,7 @@ class TenantConfigurationOperations:
         service_name: str,
         configuration_name: Union[str, "_models.ConfigurationIdName"],
         parameters: "_models.DeployConfigurationParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.OperationResultContract"]:
         """This operation applies changes from the specified Git branch to the configuration database.
         This is a long running operation and could take several minutes to complete.
@@ -121,8 +121,8 @@ class TenantConfigurationOperations:
         :type parameters: ~azure.mgmt.apimanagement.models.DeployConfigurationParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OperationResultContract or the result of cls(response)
@@ -183,7 +183,7 @@ class TenantConfigurationOperations:
         service_name: str,
         configuration_name: Union[str, "_models.ConfigurationIdName"],
         parameters: "_models.SaveConfigurationParameter",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.OperationResultContract"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationResultContract"]]
         error_map = {
@@ -222,7 +222,7 @@ class TenantConfigurationOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -241,7 +241,7 @@ class TenantConfigurationOperations:
         service_name: str,
         configuration_name: Union[str, "_models.ConfigurationIdName"],
         parameters: "_models.SaveConfigurationParameter",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.OperationResultContract"]:
         """This operation creates a commit with the current configuration snapshot to the specified branch
         in the repository. This is a long running operation and could take several minutes to complete.
@@ -256,8 +256,8 @@ class TenantConfigurationOperations:
         :type parameters: ~azure.mgmt.apimanagement.models.SaveConfigurationParameter
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OperationResultContract or the result of cls(response)
@@ -318,7 +318,7 @@ class TenantConfigurationOperations:
         service_name: str,
         configuration_name: Union[str, "_models.ConfigurationIdName"],
         parameters: "_models.DeployConfigurationParameters",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.OperationResultContract"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationResultContract"]]
         error_map = {
@@ -357,7 +357,7 @@ class TenantConfigurationOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -376,7 +376,7 @@ class TenantConfigurationOperations:
         service_name: str,
         configuration_name: Union[str, "_models.ConfigurationIdName"],
         parameters: "_models.DeployConfigurationParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.OperationResultContract"]:
         """This operation validates the changes in the specified Git branch. This is a long running
         operation and could take several minutes to complete.
@@ -391,8 +391,8 @@ class TenantConfigurationOperations:
         :type parameters: ~azure.mgmt.apimanagement.models.DeployConfigurationParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OperationResultContract or the result of cls(response)
@@ -452,7 +452,7 @@ class TenantConfigurationOperations:
         resource_group_name: str,
         service_name: str,
         configuration_name: Union[str, "_models.ConfigurationIdName"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TenantConfigurationSyncStateContract":
         """Gets the status of the most recent synchronization between the configuration database and the
         Git repository.
@@ -500,7 +500,7 @@ class TenantConfigurationOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('TenantConfigurationSyncStateContract', pipeline_response)

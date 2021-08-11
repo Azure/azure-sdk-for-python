@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
@@ -23,11 +23,11 @@ interactions:
         text is empty."}}}],"modelVersion":"2021-01-15"}'
     headers:
       apim-request-id:
-      - 1ced9a26-0ec6-4728-9e45-cf3b2db7a02a
+      - 4ff1defc-3b0f-4af3-8667-d8eb61c56bfc
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 23 Jun 2021 01:56:59 GMT
+      - Mon, 02 Aug 2021 21:18:56 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -35,7 +35,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '3'
+      - '4'
     status:
       code: 200
       message: OK

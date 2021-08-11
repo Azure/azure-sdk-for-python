@@ -47,12 +47,15 @@ class SubscriptionFeatureRegistrationsOperations(object):
 
     def get(
         self,
+        provider_namespace,  # type: str
         feature_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.SubscriptionFeatureRegistration"
         """Returns a feature registration.
 
+        :param provider_namespace: The provider namespace.
+        :type provider_namespace: str
         :param feature_name: The feature name.
         :type feature_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -72,7 +75,7 @@ class SubscriptionFeatureRegistrationsOperations(object):
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'providerNamespace': self._serialize.url("self._config.provider_namespace", self._config.provider_namespace, 'str'),
+            'providerNamespace': self._serialize.url("provider_namespace", provider_namespace, 'str'),
             'featureName': self._serialize.url("feature_name", feature_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -104,6 +107,7 @@ class SubscriptionFeatureRegistrationsOperations(object):
 
     def create_or_update(
         self,
+        provider_namespace,  # type: str
         feature_name,  # type: str
         subscription_feature_registration_type=None,  # type: Optional["_models.SubscriptionFeatureRegistration"]
         **kwargs  # type: Any
@@ -111,6 +115,8 @@ class SubscriptionFeatureRegistrationsOperations(object):
         # type: (...) -> "_models.SubscriptionFeatureRegistration"
         """Create or update a feature registration.
 
+        :param provider_namespace: The provider namespace.
+        :type provider_namespace: str
         :param feature_name: The feature name.
         :type feature_name: str
         :param subscription_feature_registration_type: Subscription Feature Registration Type details.
@@ -133,7 +139,7 @@ class SubscriptionFeatureRegistrationsOperations(object):
         url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'providerNamespace': self._serialize.url("self._config.provider_namespace", self._config.provider_namespace, 'str'),
+            'providerNamespace': self._serialize.url("provider_namespace", provider_namespace, 'str'),
             'featureName': self._serialize.url("feature_name", feature_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -172,12 +178,15 @@ class SubscriptionFeatureRegistrationsOperations(object):
 
     def delete(
         self,
+        provider_namespace,  # type: str
         feature_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Deletes a feature registration.
 
+        :param provider_namespace: The provider namespace.
+        :type provider_namespace: str
         :param feature_name: The feature name.
         :type feature_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -197,7 +206,7 @@ class SubscriptionFeatureRegistrationsOperations(object):
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'providerNamespace': self._serialize.url("self._config.provider_namespace", self._config.provider_namespace, 'str'),
+            'providerNamespace': self._serialize.url("provider_namespace", provider_namespace, 'str'),
             'featureName': self._serialize.url("feature_name", feature_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -226,11 +235,14 @@ class SubscriptionFeatureRegistrationsOperations(object):
 
     def list_by_subscription(
         self,
+        provider_namespace,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.SubscriptionFeatureRegistrationList"]
         """Returns subscription feature registrations for given subscription and provider namespace.
 
+        :param provider_namespace: The provider namespace.
+        :type provider_namespace: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SubscriptionFeatureRegistrationList or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.features.v2021_07_01.models.SubscriptionFeatureRegistrationList]
@@ -254,7 +266,7 @@ class SubscriptionFeatureRegistrationsOperations(object):
                 url = self.list_by_subscription.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                    'providerNamespace': self._serialize.url("self._config.provider_namespace", self._config.provider_namespace, 'str'),
+                    'providerNamespace': self._serialize.url("provider_namespace", provider_namespace, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters

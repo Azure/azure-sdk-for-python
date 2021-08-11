@@ -1,14 +1,38 @@
 # Release History
 
-## 1.0.0b3 (Unreleased)
+## 1.0.0b4 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
+- Rename `batch_query` to `query_batch`.
+- Rename `LogsBatchQueryRequest` to `LogsBatchQuery`.
+- `include_render` is now renamed to `include_visualization` in the query API.
+- `LogsQueryResult` and `LogsBatchQueryResult` now return `visualization` instead of `render`.
+
 ### Bugs Fixed
 
+- `include_statistics` and `include_visualization` args can now work together.
+
 ### Other Changes
+
+## 1.0.0b3 (2021-08-09)
+
+### Features Added
+
+- Added enum `AggregationType` which can be used to specify aggregations in the query API.
+- Added `LogsBatchQueryResult` model that is returned for a logs batch query.
+- Added `error` attribute to `LogsQueryResult`.
+
+### Breaking Changes
+
+- `aggregation` param in the query API is renamed to `aggregations`
+- `batch_query` API now returns a list of responses.
+- `LogsBatchResults` model is now removed.
+- `LogsQueryRequest` is renamed to `LogsBatchQueryRequest`
+- `LogsQueryResults` is now renamed to `LogsQueryResult`
+- `LogsBatchQueryResult` now has 4 additional attributes - `tables`, `error`, `statistics` and `render` instead of `body` attribute.
 
 ## 1.0.0b2 (2021-07-06)
 

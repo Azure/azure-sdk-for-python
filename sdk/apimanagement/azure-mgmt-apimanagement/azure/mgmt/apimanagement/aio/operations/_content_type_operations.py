@@ -45,9 +45,10 @@ class ContentTypeOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ContentTypeCollection"]:
-        """Returns list of content types.
+        """Lists the developer portal's content types. Content types describe content items' properties,
+        validation rules, and constraints.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -105,7 +106,7 @@ class ContentTypeOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -121,9 +122,10 @@ class ContentTypeOperations:
         resource_group_name: str,
         service_name: str,
         content_type_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ContentTypeContract":
-        """Gets API Management content type details.
+        """Gets the details of the developer portal's content type. Content types describe content items'
+        properties, validation rules, and constraints.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -168,7 +170,7 @@ class ContentTypeOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -187,9 +189,11 @@ class ContentTypeOperations:
         service_name: str,
         content_type_id: str,
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ContentTypeContract":
-        """Creates or updates an Content Type.
+        """Creates or updates the developer portal's content type. Content types describe content items'
+        properties, validation rules, and constraints. Custom content types' identifiers need to start
+        with the ``c-`` prefix. Built-in content types can't be modified.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -239,7 +243,7 @@ class ContentTypeOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -263,9 +267,11 @@ class ContentTypeOperations:
         service_name: str,
         content_type_id: str,
         if_match: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
-        """Removes specified content type.
+        """Removes the specified developer portal's content type. Content types describe content items'
+        properties, validation rules, and constraints. Built-in content types (with identifiers
+        starting with the ``c-`` prefix) can't be removed.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -314,7 +320,7 @@ class ContentTypeOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

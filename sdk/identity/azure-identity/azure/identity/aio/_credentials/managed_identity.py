@@ -62,6 +62,16 @@ class ManagedIdentityCredential(AsyncContextManager):
                 from .azure_arc import AzureArcCredential
 
                 self._credential = AzureArcCredential(**kwargs)
+        elif all(os.environ.get(var) for var in EnvironmentVariables.TOKEN_EXCHANGE_VARS):
+            _LOGGER.info("%s will use token exchange", self.__class__.__name__)
+            from .token_exchange import TokenExchangeCredential
+
+            self._credential = TokenExchangeCredential(
+                tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
+                client_id=os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
+                token_file_path=os.environ[EnvironmentVariables.TOKEN_FILE_PATH],
+                **kwargs
+            )
         else:
             from .imds import ImdsCredential
 

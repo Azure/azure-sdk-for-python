@@ -44,7 +44,7 @@ class PolicyOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyCollection":
         """Lists all the Global Policy definitions of the Api Management service.
 
@@ -88,7 +88,7 @@ class PolicyOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PolicyCollection', pipeline_response)
@@ -104,7 +104,7 @@ class PolicyOperations:
         resource_group_name: str,
         service_name: str,
         policy_id: Union[str, "_models.PolicyIdName"],
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Gets the entity state (Etag) version of the Global policy definition in the Api Management
         service.
@@ -152,7 +152,7 @@ class PolicyOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -170,7 +170,7 @@ class PolicyOperations:
         service_name: str,
         policy_id: Union[str, "_models.PolicyIdName"],
         format: Optional[Union[str, "_models.PolicyExportFormat"]] = "xml",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyContract":
         """Get the Global policy definition of the Api Management service.
 
@@ -221,7 +221,7 @@ class PolicyOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -241,7 +241,7 @@ class PolicyOperations:
         policy_id: Union[str, "_models.PolicyIdName"],
         parameters: "_models.PolicyContract",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyContract":
         """Creates or updates the global policy configuration of the Api Management service.
 
@@ -300,7 +300,7 @@ class PolicyOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -324,7 +324,7 @@ class PolicyOperations:
         service_name: str,
         policy_id: Union[str, "_models.PolicyIdName"],
         if_match: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the global policy configuration of the Api Management Service.
 
@@ -375,7 +375,7 @@ class PolicyOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
