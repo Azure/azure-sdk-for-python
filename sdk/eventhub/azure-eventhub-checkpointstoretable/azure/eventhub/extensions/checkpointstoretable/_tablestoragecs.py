@@ -143,7 +143,7 @@ class TableCheckpointStore(CheckpointStore):
             )
             ownership['last_modified_time'] = _to_timestamp(updated_entity.metadata.get('timestamp'))
             return ownership
-        except ResourceNotFoundError:
+        except (ResourceNotFoundError, ValueError):
             metadata = self._table_client.create_entity(
             entity=ownership_entity,
             headers={'Prefer': 'return-content'}, **kwargs
