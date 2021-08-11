@@ -107,7 +107,6 @@ def _claim_and_list_ownership(storage_connection_str, table_name):
             ownership['last_modified_time'] = None
             ownership_list.append(ownership)
     result_ownership_list = checkpoint_store.claim_ownership(ownership_list)
-
     assert ownership_list != result_ownership_list
     assert len(result_ownership_list) == len(ownership_list)
     for i in range(len(ownership_list)):
