@@ -32,7 +32,7 @@ class AzureArcCredential(AsyncManagedIdentityBase):
         return None
 
     def get_unavailable_message(self) -> str:
-        return "Service Fabric managed identity configuration not found in environment"
+        return "Azure Arc managed identity configuration not found in environment"
 
 
 class ArcChallengeAuthPolicy(AsyncHTTPPolicy):
