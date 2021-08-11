@@ -17,7 +17,7 @@ def test_response_hook_policy_in_init():
         raise ValueError()
 
     transport = mock.MagicMock(spec=HttpTransport)
-    url = "http://127.0.0.1"
+    url = "http://localhost"
     custom_hook_policy = CustomHookPolicy(raw_response_hook=test_callback)
     policies = [
         UserAgentPolicy("myuseragent"),
@@ -33,7 +33,7 @@ def test_response_hook_policy_in_request():
         raise ValueError()
 
     transport = mock.MagicMock(spec=HttpTransport)
-    url = "http://127.0.0.1"
+    url = "http://localhost"
     custom_hook_policy = CustomHookPolicy()
     policies = [
         UserAgentPolicy("myuseragent"),
@@ -52,7 +52,7 @@ def test_response_hook_policy_in_both():
         raise TypeError()
 
     transport = mock.MagicMock(spec=HttpTransport)
-    url = "http://127.0.0.1"
+    url = "http://localhost"
     custom_hook_policy = CustomHookPolicy(raw_response_hook=test_callback)
     policies = [
         UserAgentPolicy("myuseragent"),
@@ -68,7 +68,7 @@ def test_request_hook_policy_in_init():
         raise ValueError()
 
     transport = mock.MagicMock(spec=HttpTransport)
-    url = "http://127.0.0.1"
+    url = "http://localhost"
     custom_hook_policy = CustomHookPolicy(raw_request_hook=test_callback)
     policies = [
         UserAgentPolicy("myuseragent"),
@@ -84,7 +84,7 @@ def test_request_hook_policy_in_request():
         raise ValueError()
 
     transport = mock.MagicMock(spec=HttpTransport)
-    url = "http://127.0.0.1"
+    url = "http://localhost"
     custom_hook_policy = CustomHookPolicy()
     policies = [
         UserAgentPolicy("myuseragent"),
@@ -103,7 +103,7 @@ def test_request_hook_policy_in_both():
         raise TypeError()
 
     transport = mock.MagicMock(spec=HttpTransport)
-    url = "http://127.0.0.1"
+    url = "http://localhost"
     custom_hook_policy = CustomHookPolicy(raw_request_hook=test_callback)
     policies = [
         UserAgentPolicy("myuseragent"),
