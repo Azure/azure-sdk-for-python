@@ -32,7 +32,6 @@ from ._common._response_handlers import (
     _parse_response_schema_id,
 )
 from ._generated._azure_schema_registry import AzureSchemaRegistry
-from azure.core.exceptions import ResourceNotFoundError
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -74,7 +73,7 @@ class SchemaRegistryClient(object):
     def __exit__(self, *exc_details):
         # type: (Any) -> None
         self._generated_client.__exit__(*exc_details)
-    
+
     def close(self):
         # type: () -> None
         """This method is to close the sockets opened by the client.
