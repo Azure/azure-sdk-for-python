@@ -7,7 +7,6 @@ import re
 PACKAGE_NAME = "azure-eventhub-checkpointstoretable"
 PACKAGE_PPRINT_NAME = "Event Hubs checkpointer implementation with Azure Table Storage"
 
-
 package_folder_path = "azure/eventhub/extensions/checkpointstoretable"
 
 namespace_name = "azure.eventhub.extensions.checkpointstoretable"
