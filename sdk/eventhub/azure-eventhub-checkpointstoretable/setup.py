@@ -62,6 +62,7 @@ setup(
             # For example, for storage, this would mean adding 'azure.storage'
             # in addition to the default 'azure' that is seen here.
             "azure",
+            'azure-eventhub<6.0.0,>=5.0.0',
         ]
     ),
     install_requires=[
