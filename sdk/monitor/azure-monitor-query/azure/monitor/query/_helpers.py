@@ -68,8 +68,6 @@ def construct_iso8601(timespan=None):
     iso_str = None
     if start is not None:
         start = Serializer.serialize_iso(start)
-        if end and duration:
-            raise ValueError("start_time can only be provided with duration or end_time, but not both.")
         if end is not None:
             end = Serializer.serialize_iso(end)
             iso_str = start + '/' + end
@@ -77,11 +75,6 @@ def construct_iso8601(timespan=None):
             iso_str = start + '/' + duration
         else:
             raise ValueError("Start time must be provided along with duration or end time.")
-    elif end is not None:
-        if not duration:
-            raise ValueError("End time must be provided along with duration or start time.")
-        end = Serializer.serialize_iso(end)
-        iso_str = duration + '/' + end
     else:
         iso_str = duration
     return iso_str

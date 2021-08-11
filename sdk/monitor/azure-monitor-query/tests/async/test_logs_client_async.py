@@ -60,7 +60,8 @@ async def test_logs_query_batch():
         ),
         LogsBatchQuery(
             query= "AppRequests | take 2",
-            workspace_id= os.environ['LOG_WORKSPACE_ID']
+            workspace_id= os.environ['LOG_WORKSPACE_ID'],
+            timespan=None
         ),
     ]
     response = await client.query_batch(requests)

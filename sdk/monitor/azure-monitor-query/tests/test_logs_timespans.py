@@ -95,11 +95,5 @@ def test_duration_to_iso8601():
     assert construct_iso8601(timespan=d5) == 'PT0.001S'
     assert construct_iso8601(timespan=d7) == 'PT172800.0S'
 
-    with pytest.raises(ValueError, match="End time must be provided along with duration or start time."):
-        construct_iso8601(end=datetime.now(UTC()))
-
     with pytest.raises(ValueError, match="Start time must be provided along with duration or end time."):
-        construct_iso8601(start=datetime.now(UTC()))
-
-    with pytest.raises(ValueError, match="start_time can only be provided with duration or end_time, but not both."):
-        construct_iso8601(end=datetime.now(UTC()), start=datetime(2020, 10, 10), duration=d3)
+        construct_iso8601(timespan=datetime.now(UTC()))
