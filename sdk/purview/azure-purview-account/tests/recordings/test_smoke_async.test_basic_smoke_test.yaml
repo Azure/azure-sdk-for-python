@@ -10,10 +10,10 @@ interactions:
     uri: https://fake_account.account.purview.azure.com/listkeys?api-version=2019-11-01-preview
   response:
     body:
-      string: private message
+      string: '{"atlasKafkaPrimaryEndpoint":"Endpoint=000"}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Wed, 11 Aug 2021 03:39:08 GMT
+      date: Wed, 11 Aug 2021 05:43:27 GMT
       server: Kestrel
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked

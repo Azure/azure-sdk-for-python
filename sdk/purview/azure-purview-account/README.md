@@ -4,7 +4,7 @@ Azure Purview Account is a fully managed cloud service.
 
 **Please rely heavily on the [service's documentation][account_product_documentation] and our [client docs][request_builders_and_client] to use this library**
 
-[Source code][source_code] | [Product documentation][account_product_documentation]
+[Source code][source_code] |  [Package (PyPI)][account_pypi] | [API reference documentation][account_ref_docs]| [Product documentation][account_product_documentation]
 
 ## Getting started
 
@@ -145,6 +145,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 <!-- LINKS -->
 
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/purview/
+[account_pypi]: https://pypi.org/project/azure-purview-catalog/#history
+[account_ref_docs]: https://azure.github.io/azure-sdk-for-python/
 [account_product_documentation]: https://azure.microsoft.com/services/purview/
 [azure_subscription]: https://azure.microsoft.com/free/
 [purview_resource]: https://docs.microsoft.com/azure/purview/create-catalog-portal
