@@ -207,8 +207,11 @@ class SchemaRegistryClient(object):
                 cls=_parse_response_schema_id,
                 **kwargs
             )
+            if not self._id_to_schema.get(schema_properties.schema_id):
+                self._id_to_schema[schema_properties.schema_id] = Schema(schema_content, schema_properties)
+            else:
+                schema_properties = self._id_to_schema[schema_properties.schema_id].schema_properties
             self._description_to_properties[
                 (schema_group, schema_name, serialization_type, schema_content)
             ] = schema_properties
-            self._id_to_schema[schema_properties.schema_id] = Schema(schema_content, schema_properties)
             return schema_properties

@@ -85,7 +85,6 @@ class SchemaRegistryAsyncTests(AzureTestCase):
 
             returned_schema_properties = await client.get_schema_id(schemaregistry_group, schema_name, serialization_type, schema_str)
             assert len(client._description_to_properties) == properties_cache_length
-            assert cached_properties != returned_schema_properties # assert not same object after deletion from cache
 
             assert returned_schema_properties.schema_id == schema_properties.schema_id
             assert returned_schema_properties.location is not None
@@ -131,7 +130,6 @@ class SchemaRegistryAsyncTests(AzureTestCase):
 
             new_schema = await client.get_schema(schema_id=new_schema_properties.schema_id)
             assert len(client._id_to_schema) == schema_cache_length
-            assert cached_schema != new_schema  # assert not same object after deletion from cache
 
             assert new_schema.schema_properties.schema_id != schema_properties.schema_id
             assert new_schema.schema_properties.schema_id == new_schema_properties.schema_id
@@ -140,6 +138,13 @@ class SchemaRegistryAsyncTests(AzureTestCase):
             assert new_schema.schema_content == schema_str_new
             assert new_schema.schema_properties.version == schema_properties.version + 1
             assert new_schema.schema_properties.serialization_type == "Avro"
+
+            # check that properties object is the same in caches
+            client._id_to_schema = {}
+            client._description_to_properties = {}
+            new_schema = await client.get_schema(schema_id=new_schema_properties.schema_id)
+            new_schema_properties = await client.get_schema_id(schemaregistry_group, schema_name, serialization_type, schema_str_new)
+            assert new_schema.schema_properties == new_schema_properties
         await client._generated_client._config.credential.close()
 
     @SchemaRegistryPowerShellPreparer()

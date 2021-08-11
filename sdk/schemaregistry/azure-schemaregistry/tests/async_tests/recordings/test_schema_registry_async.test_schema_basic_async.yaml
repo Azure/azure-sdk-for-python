@@ -16,16 +16,16 @@ interactions:
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-basic-asynce5e1482?api-version=2017-04
   response:
     body:
-      string: '{"id":"fcf0c4ae8130497aab2f29c493b980b6"}'
+      string: '{"id":"fd9460aaf2a34a05a5e66fd6741fd843"}'
     headers:
       content-type: application/json
-      date: Wed, 11 Aug 2021 16:27:56 GMT
+      date: Wed, 11 Aug 2021 21:42:43 GMT
       location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-basic-asynce5e1482/versions/1?api-version=2017-04
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked
-      x-schema-id: fcf0c4ae8130497aab2f29c493b980b6
-      x-schema-id-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/fcf0c4ae8130497aab2f29c493b980b6?api-version=2017-04
+      x-schema-id: fd9460aaf2a34a05a5e66fd6741fd843
+      x-schema-id-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/fd9460aaf2a34a05a5e66fd6741fd843?api-version=2017-04
       x-schema-type: Avro
       x-schema-version: '1'
       x-schema-versions-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/swathip-test-schema/schemas/test-schema-basic-asynce5e1482/versions?api-version=2017-04
@@ -50,16 +50,16 @@ interactions:
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-basic-asynce5e1482?api-version=2017-04
   response:
     body:
-      string: '{"id":"fcf0c4ae8130497aab2f29c493b980b6"}'
+      string: '{"id":"fd9460aaf2a34a05a5e66fd6741fd843"}'
     headers:
       content-type: application/json
-      date: Wed, 11 Aug 2021 16:27:56 GMT
+      date: Wed, 11 Aug 2021 21:42:43 GMT
       location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-basic-asynce5e1482/versions/1?api-version=2017-04
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked
-      x-schema-id: fcf0c4ae8130497aab2f29c493b980b6
-      x-schema-id-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/fcf0c4ae8130497aab2f29c493b980b6?api-version=2017-04
+      x-schema-id: fd9460aaf2a34a05a5e66fd6741fd843
+      x-schema-id-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/getschemabyid/fd9460aaf2a34a05a5e66fd6741fd843?api-version=2017-04
       x-schema-type: Avro
       x-schema-version: '1'
       x-schema-versions-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/swathip-test-schema/schemas/test-schema-basic-asynce5e1482/versions?api-version=2017-04
