@@ -60,13 +60,16 @@ setup(
             # Exclude packages that will be covered by PEP420 or nspkg
             # This means any folder structure that only consists of a __init__.py.
             # For example, for storage, this would mean adding 'azure.storage'
-            # in addition to the default 'azure' that is seen here.
-            "azure",
-            'azure-eventhub<6.0.0,>=5.0.0',
+            'samples',
+            # Exclude packages that will be covered by PEP420 or nspkg
+            'azure',
+            'azure.eventhub',
+            'azure.eventhub.extensions',
         ]
     ),
     install_requires=[
         "azure-core<2.0.0,>=1.14.0",
+        'azure-eventhub<6.0.0,>=5.0.0',
     ],
     extras_require={
         ":python_version<'3.0'": ["azure-nspkg"],
