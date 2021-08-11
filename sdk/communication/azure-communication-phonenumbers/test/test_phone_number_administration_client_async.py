@@ -253,7 +253,7 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
         if self.is_playback():
             phone_number = "sanitized"
         else:
-            phone_number = "+14255550123"
+            phone_number = "+14255555111"
 
         with pytest.raises(Exception) as ex:
             async with self.phone_number_client:
@@ -264,5 +264,5 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
                     polling = True
                 )
         
-        assert str(ex.value.status_code) == "403"
+        assert str(ex.value.status_code) == "404"
         assert ex.value.message is not None
