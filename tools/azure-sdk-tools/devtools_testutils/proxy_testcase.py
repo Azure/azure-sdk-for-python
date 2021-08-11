@@ -21,10 +21,10 @@ from azure.core.pipeline.transport import RequestsTransport
 # the trimming function to clean up incoming arguments to the test function we are wrapping
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 from devtools_testutils.azure_recorded_testcase import is_live
+from .config import PROXY_URL
 
 
 # defaults
-PROXY_URL = "http://localhost:5000"
 RECORDING_START_URL = "{}/record/start".format(PROXY_URL)
 RECORDING_STOP_URL = "{}/record/stop".format(PROXY_URL)
 PLAYBACK_START_URL = "{}/playback/start".format(PROXY_URL)
@@ -108,10 +108,10 @@ def RecordedByProxy(func):
             copied_positional_args = list(args)
             request = copied_positional_args[1]
 
-            # TODO, get the test-proxy server a real SSL certificate. The issue here is that SSL Certificates are
-            # normally associated with a domain name. Need to talk to the //SSLAdmin folks (or someone else) and get
-            # a recommendation for how to get a valid SSL Cert for localhost
-            kwargs["connection_verify"] = False
+            # # TODO, get the test-proxy server a real SSL certificate. The issue here is that SSL Certificates are
+            # # normally associated with a domain name. Need to talk to the //SSLAdmin folks (or someone else) and get
+            # # a recommendation for how to get a valid SSL Cert for localhost
+            # kwargs["connection_verify"] = False
 
             transform_request(request, recording_id)
 
