@@ -32,7 +32,7 @@ from . import HttpRequest, AsyncHttpResponse
 from ._helpers_py3 import iter_raw_helper, iter_bytes_helper
 from ..pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
 
-class _MyItemsView(collections.abc.ItemsView):
+class _ItemsView(collections.abc.ItemsView):
     def __init__(self, ref):
         super().__init__(ref)
         self._ref = ref
@@ -53,7 +53,7 @@ class _MyItemsView(collections.abc.ItemsView):
         return f"dict_items({list(self.__iter__())})"
 
 
-class MyCIMultiDict(CIMultiDict):
+class _CIMultiDict(CIMultiDict):
     """Dictionary with the support for duplicate case-insensitive keys."""
 
     def __iter__(self):
@@ -65,7 +65,7 @@ class MyCIMultiDict(CIMultiDict):
 
     def items(self):
         """Return a new view of the dictionary's keys."""
-        return _MyItemsView(super().items())
+        return _ItemsView(super().items())
 
     def values(self):
         """Return a new view of the dictionary's values."""
@@ -89,7 +89,7 @@ class RestAioHttpTransportResponse(AsyncHttpResponse):
     ):
         super().__init__(request=request, internal_response=internal_response)
         self.status_code = internal_response.status
-        self.headers = MyCIMultiDict(internal_response.headers)  # type: ignore
+        self.headers = _CIMultiDict(internal_response.headers)  # type: ignore
         self.reason = internal_response.reason
         self.content_type = internal_response.headers.get('content-type')
 
