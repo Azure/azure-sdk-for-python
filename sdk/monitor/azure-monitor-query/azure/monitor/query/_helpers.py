@@ -54,6 +54,7 @@ def construct_iso8601(timespan=None):
     if not timespan:
         return
     try:
+        start, end, duration = None, None, None
         if isinstance(timespan[1], datetime):
             start, end = timespan[0], timespan[1]
         elif isinstance(timespan[1], timedelta):
