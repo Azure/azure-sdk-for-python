@@ -13,7 +13,7 @@ class PurviewAccountSmokeTestAsync(PurviewAccountTestAsync):
 
     @PurviewAccountPowerShellPreparer()
     async def test_basic_smoke_test(self, purviewaccount_endpoint):
-        request = accounts.build_get_request()
+        request = accounts.build_list_keys_request()
 
         client = self.create_async_client(endpoint=purviewaccount_endpoint)
         response = await client.send_request(request)

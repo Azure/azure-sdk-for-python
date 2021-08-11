@@ -16,12 +16,12 @@ interactions:
     uri: https://fake_account.account.purview.azure.com/listkeys?api-version=2019-11-01-preview
   response:
     body:
-      string: '{"atlasKafkaPrimaryEndpoint":"Endpoint=sb://atlas-973337bd-f2fb-4b36-8a94-ee0a6f369239.servicebus.windows.net/;SharedAccessKeyName=AlternateSharedAccessKey;SharedAccessKey=7UDz9OuDHgr5W8p8v0HtnVNAbiPTZyHE2MUTR4XBSDc=","atlasKafkaSecondaryEndpoint":"Endpoint=sb://atlas-973337bd-f2fb-4b36-8a94-ee0a6f369239.servicebus.windows.net/;SharedAccessKeyName=AlternateSharedAccessKey;SharedAccessKey=c475ODX7PnYD1uM8kk1NHZ78fE2E4aToSpXBJvt4ot8="}'
+      string: private message
     headers:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Aug 2021 02:13:44 GMT
+      - Wed, 11 Aug 2021 03:39:01 GMT
       server:
       - Kestrel
       strict-transport-security:

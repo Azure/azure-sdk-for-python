@@ -6,11 +6,13 @@
 # --------------------------------------------------------------------------
 from devtools_testutils import AzureTestCase
 from azure.purview.account.aio import PurviewAccountClient as AsyncPurviewAccountClient
+from _util import PurviewAccountRecordingProcessor
 
 
 class PurviewAccountTestAsync(AzureTestCase):
 
     def create_async_client(self, endpoint):
+        self.recording_processors.append(PurviewAccountRecordingProcessor())
         credential = self.get_credential(AsyncPurviewAccountClient, is_async=True)
         return self.create_client_from_credential(
             AsyncPurviewAccountClient,

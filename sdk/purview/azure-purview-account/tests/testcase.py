@@ -7,11 +7,13 @@
 import functools
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 from azure.purview.account import PurviewAccountClient
+from _util import PurviewAccountRecordingProcessor
 
 
 class PurviewAccountTest(AzureTestCase):
 
     def create_client(self, endpoint):
+        self.recording_processors.append(PurviewAccountRecordingProcessor())
         credential = self.get_credential(PurviewAccountClient)
         return self.create_client_from_credential(
             PurviewAccountClient,
