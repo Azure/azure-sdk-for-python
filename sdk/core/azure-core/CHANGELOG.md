@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- UnboundLocalError when SansIOHTTPPolicy handles an exception    #15222
+
 ### Other Changes
 
 ## 1.17.0 (2021-08-05)
@@ -20,7 +22,6 @@
 ### Fixed
 
 - Not override "x-ms-client-request-id" if it already exists in the header.    #17757
-- UnboundLocalError when SansIOHTTPPolicy handles an exception    #15222
 
 ### Breaking Changes in the Provisional `azure.core.rest` package
 
