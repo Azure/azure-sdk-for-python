@@ -114,10 +114,10 @@ def RecordedByProxy(func):
             copied_positional_args = list(args)
             request = copied_positional_args[1]
 
-            # TODO, get the test-proxy server a real SSL certificate. The issue here is that SSL Certificates are
-            # normally associated with a domain name. Need to talk to the //SSLAdmin folks (or someone else) and get
-            # a recommendation for how to get a valid SSL Cert for localhost
-            kwargs["connection_verify"] = False
+            # # TODO, get the test-proxy server a real SSL certificate. The issue here is that SSL Certificates are
+            # # normally associated with a domain name. Need to talk to the //SSLAdmin folks (or someone else) and get
+            # # a recommendation for how to get a valid SSL Cert for localhost
+            # kwargs["connection_verify"] = False
 
             transform_request(request, recording_id)
 
