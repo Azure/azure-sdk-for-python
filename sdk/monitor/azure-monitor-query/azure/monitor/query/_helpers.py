@@ -4,6 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
 from msrest import Serializer
 from azure.core.exceptions import HttpResponseError
@@ -49,7 +50,18 @@ def order_results(request_order, responses):
     ordered = [mapping[id] for id in request_order]
     return ordered
 
-def construct_iso8601(start=None, end=None, duration=None):
+def construct_iso8601(timespan=None):
+    if not timespan:
+        return
+    try:
+        if isinstance(timespan[1], datetime):
+            start, end = timespan[0], timespan[1]
+        elif isinstance(timespan[1], timedelta):
+            start, duration = timespan[0], timespan[1]
+        else:
+            raise ValueError('Tuple must be a start datetime with a timedelta or an end datetime.')
+    except TypeError:
+        duration = timespan
     if duration is not None:
         duration = 'PT{}S'.format(duration.total_seconds())
     iso_str = None

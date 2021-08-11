@@ -49,14 +49,11 @@ class LogsQueryClient(object):
         )
         self._query_op = self._client.query
 
-    def query(self, workspace_id, query, duration=None, **kwargs):
+    def query(self, workspace_id, query, timespan=None, **kwargs):
         # type: (str, str, Optional[timedelta], Any) -> LogsQueryResult
         """Execute an Analytics query.
 
         Executes an Analytics query for data.
-
-        **Note**: Although the start_time, end_time, duration are optional parameters, it is highly
-        recommended to specify the timespan. If not, the entire dataset is queried.
 
         :param workspace_id: ID of the workspace. This is Workspace ID from the Properties blade in the
          Azure portal.
@@ -64,13 +61,10 @@ class LogsQueryClient(object):
         :param query: The Analytics query. Learn more about the `Analytics query syntax
          <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
         :type query: str
-        :param ~datetime.timedelta duration: The duration for which to query the data. This can also be accompanied
-         with either start_time or end_time. If start_time or end_time is not provided, the current time is
-         taken as the end time.
-        :keyword datetime start_time: The start time from which to query the data. This should be accompanied
-         with either end_time or duration.
-        :keyword datetime end_time: The end time till which to query the data. This should be accompanied
-         with either start_time or duration.
+        :param timespan: The timespan for which to query the data. This can be a timedelta,
+         a timedelta and a start datetime, or a start datetime/end datetime.
+        :type timespan: ~datetime.timedelta or tuple[~datetime.datetime, ~datetime.timedelta]
+         or tuple[~datetime.datetime, ~datetime.datetime]
         :keyword int server_timeout: the server timeout in seconds. The default timeout is 3 minutes,
          and the maximum timeout is 10 minutes.
         :keyword bool include_statistics: To get information about query statistics.
@@ -93,9 +87,7 @@ class LogsQueryClient(object):
             :dedent: 0
             :caption: Get a response for a single Log Query
         """
-        start = kwargs.pop('start_time', None)
-        end = kwargs.pop('end_time', None)
-        timespan = construct_iso8601(start, end, duration)
+        timespan = construct_iso8601(timespan)
         include_statistics = kwargs.pop("include_statistics", False)
         include_visualization = kwargs.pop("include_visualization", False)
         server_timeout = kwargs.pop("server_timeout", None)
