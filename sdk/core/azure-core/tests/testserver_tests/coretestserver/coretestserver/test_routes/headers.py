@@ -52,3 +52,9 @@ def duplicate_commas():
         headers=[("Set-Cookie", "a,  b"), ("Set-Cookie", "c")]
     )
 
+@headers_api.route("/ordered", methods=['GET'])
+def ordered():
+    return Response(
+        status=200,
+        headers={"a": "a", "b": "b", "c": "c"},
+    )

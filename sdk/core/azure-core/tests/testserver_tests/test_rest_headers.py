@@ -92,8 +92,8 @@ def test_headers_insert_retains_ordering(get_request_headers, get_response_heade
             assert list(h.values()) == ["a", "123", "c"]
         else:
             assert set(list(h.values())) == set(["a", "123", "c"])
-    _header_check(get_request_headers([("a", "123"), ("a", "456"), ("b", "789")]))
-    _header_check(get_response_headers(HttpRequest("GET", "/headers/duplicate/numbers")))
+    _header_check(get_request_headers({"a": "a", "b": "b", "c": "c"}))
+    _header_check(get_response_headers(HttpRequest("GET", "/headers/ordered")))
 
 
 def test_headers_insert_appends_if_new(get_request_headers, get_response_headers):

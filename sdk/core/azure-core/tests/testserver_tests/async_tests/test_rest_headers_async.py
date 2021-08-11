@@ -44,6 +44,39 @@ async def test_headers_response(get_response_headers):
     assert dict(h) == {"a": "123, 456", "b": "789"}
 
 @pytest.mark.asyncio
+async def test_headers_response_keys(get_response_headers):
+    h = await get_response_headers(HttpRequest("GET", "/headers/duplicate/numbers"))
+    # basically want to make sure this behaves like dict {"a": "123, 456", "b": "789"}
+    ref_dict = {"a": "123, 456", "b": "789"}
+    assert list(h.keys()) == list(ref_dict.keys())
+    assert repr(h.keys()) == repr(ref_dict.keys())
+    assert "a" in h.keys()
+    assert "b" in h.keys()
+    assert set(h.keys()) == set(ref_dict.keys())
+
+@pytest.mark.asyncio
+async def test_headers_response_values(get_response_headers):
+    h = await get_response_headers(HttpRequest("GET", "/headers/duplicate/numbers"))
+    # basically want to make sure this behaves like dict {"a": "123, 456", "b": "789"}
+    ref_dict = {"a": "123, 456", "b": "789"}
+    assert list(h.values()) == list(ref_dict.values())
+    assert repr(h.values()) == repr(ref_dict.values())
+    assert '123, 456' in h.values()
+    assert '789' in h.values()
+    assert set(h.values()) == set(ref_dict.values())
+
+@pytest.mark.asyncio
+async def test_headers_response_items(get_response_headers):
+    h = await get_response_headers(HttpRequest("GET", "/headers/duplicate/numbers"))
+    # basically want to make sure this behaves like dict {"a": "123, 456", "b": "789"}
+    ref_dict = {"a": "123, 456", "b": "789"}
+    assert list(h.items()) == list(ref_dict.items())
+    assert repr(h.items()) == repr(ref_dict.items())
+    assert ("a", '123, 456') in h.items()
+    assert ("b", '789') in h.items()
+    assert set(h.items()) == set(ref_dict.items())
+
+@pytest.mark.asyncio
 async def test_header_mutations(get_response_headers):
     h = await get_response_headers(HttpRequest("GET", "/headers/empty"))
     assert dict(h) == {}
@@ -67,7 +100,7 @@ async def test_copy_headers_method(get_response_headers):
 
 @pytest.mark.asyncio
 async def test_headers_insert_retains_ordering(get_response_headers):
-    h = await get_response_headers(HttpRequest("GET", "/headers/duplicate/numbers"))
+    h = await get_response_headers(HttpRequest("GET", "/headers/ordered"))
     h["b"] = "123"
     assert list(h.values()) == ["a", "123", "c"]
 

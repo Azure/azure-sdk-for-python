@@ -23,14 +23,62 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-
+import collections.abc
 import asyncio
+from itertools import groupby
 from typing import AsyncIterator
 from multidict import CIMultiDict
 from . import HttpRequest, AsyncHttpResponse
 from ._helpers_py3 import iter_raw_helper, iter_bytes_helper
 from ..pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
 
+class _MyItemsView(collections.abc.ItemsView):
+    def __init__(self, ref):
+        super().__init__(ref)
+        self._ref = ref
+
+    def __iter__(self):
+        for key, groups in groupby(self._ref.__iter__(), lambda x: x[0]):
+            yield tuple([key, ", ".join(group[1] for group in groups)])
+
+    def __contains__(self, item):
+        assert isinstance(item, (list, tuple))
+        assert len(item) == 2
+        for k, v in self.__iter__():
+            if item[0] == k and item[1] == v:
+                return True
+        return False
+
+    def __repr__(self):
+        return f"dict_items({list(self.__iter__())})"
+
+
+class MyCIMultiDict(CIMultiDict):
+    """Dictionary with the support for duplicate case-insensitive keys."""
+
+    def __iter__(self):
+        return iter(self.keys())
+
+    def keys(self):
+        """Return a new view of the dictionary's keys."""
+        return {k: v for k, v in self.items()}.keys()  # pylint: disable=unnecessary-comprehension
+
+    def items(self):
+        """Return a new view of the dictionary's keys."""
+        return _MyItemsView(super().items())
+
+    def values(self):
+        """Return a new view of the dictionary's values."""
+        return {k: v for k, v in self.items()}.values()  # pylint: disable=unnecessary-comprehension
+
+    def __getitem__(self, key: str) -> str:
+        return ", ".join(self.getall(key))
+
+    def get(self, key, default=None):
+        values = self.getall(key, default)
+        if values:
+            return ", ".join(values)
+        return values
 
 class RestAioHttpTransportResponse(AsyncHttpResponse):
     def __init__(
@@ -41,7 +89,7 @@ class RestAioHttpTransportResponse(AsyncHttpResponse):
     ):
         super().__init__(request=request, internal_response=internal_response)
         self.status_code = internal_response.status
-        self.headers = CIMultiDict(internal_response.headers)  # type: ignore
+        self.headers = MyCIMultiDict(internal_response.headers)  # type: ignore
         self.reason = internal_response.reason
         self.content_type = internal_response.headers.get('content-type')
 

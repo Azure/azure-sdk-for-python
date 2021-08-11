@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- `azure.core.rest.AsyncHttpResponse`s returned with our `aiohttp` transport can now handle duplicate case-insensitive keys, we return a comma separated string of those values.
+
 ### Other Changes
 
 ## 1.17.0 (2021-08-05)
