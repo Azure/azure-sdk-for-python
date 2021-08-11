@@ -4,7 +4,7 @@ Azure Purview Account is a fully managed cloud service.
 
 **Please rely heavily on the [service's documentation][account_product_documentation] and our [client docs][request_builders_and_client] to use this library**
 
-[Source code][source_code] | [Package (PyPI)][account_pypi] | [API reference documentation][account_ref_docs]| [Product documentation][account_product_documentation]
+[Source code][source_code] | [Product documentation][account_product_documentation]
 
 ## Getting started
 
@@ -48,7 +48,7 @@ from azure.purview.account import PurviewAccountClient
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
-client = PurviewAccountClient(endpoint="https://<my-account-name>.account.purview.azure.com", credential=credential)
+client = PurviewAccountClient(endpoint="https://<my-account-name>.purview.azure.com", credential=credential)
 ```
 
 ## Key concepts
@@ -60,11 +60,11 @@ For more information on how to use request builders and our clients, see [here][
 
 ## Examples
 
-The following section shows you how to initialize and authenticate your client, then list all of your data sources.
+The following section shows you how to initialize and authenticate your client, then list all of your keys.
 
-- [List All Data Sources](#list-all-data-sources "List All Data Sources")
+- [List All Keys](#list-all-keys "List All Keys")
 
-### List All Data Sources
+### List All Keys
 
 ```python
 from azure.purview.account import PurviewAccountClient
@@ -73,18 +73,14 @@ from azure.purview.account.rest import accounts
 from azure.core.exceptions import HttpResponseError
 
 credential = DefaultAzureCredential()
-client = PurviewAccountClient(endpoint="https://<my-account-name>.account.purview.azure.com", credential=credential)
+client = PurviewAccountClient(endpoint="https://<my-account-name>.purview.azure.com", credential=credential)
 
 request = accounts.build_list_keys_request()
 
 response = client.send_request(request)
 try:
     response.raise_for_status()
-    json_response = response.json()
-
-    assert len(json_response['value']) == json_response['count']
-    for value in json_response['value']:
-        print(value)
+    assert response.status_code == 200
 
 except HttpResponseError as e:
     print(e)
@@ -120,7 +116,7 @@ logger.setLevel(logging.DEBUG)
 handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
-endpoint = "https://<my-account-name>.account.purview.azure.com"
+endpoint = "https://<my-account-name>.purview.azure.com"
 credential = DefaultAzureCredential()
 
 # This client will log detailed information about its HTTP sessions, at DEBUG level
@@ -148,9 +144,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 <!-- LINKS -->
 
-[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/purview/azure-purview-account/azure/purview/account
-[account_pypi]: https://aka.ms/azsdk/python/purviewaccount/pypi
-[account_ref_docs]: https://aka.ms/azsdk/python/purviewaccount/ref-docs
+[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/purview/
 [account_product_documentation]: https://azure.microsoft.com/services/purview/
 [azure_subscription]: https://azure.microsoft.com/free/
 [purview_resource]: https://docs.microsoft.com/azure/purview/create-catalog-portal

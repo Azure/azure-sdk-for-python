@@ -6,4 +6,4 @@ is_stable = false
 is_arm = false
 
 # Package owners should uncomment and set this doc id.
-# package_doc_id = "purview-scanning"
+# package_doc_id = "purview-account"

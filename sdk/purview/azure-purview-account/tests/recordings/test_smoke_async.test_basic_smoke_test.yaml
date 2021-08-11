@@ -1,0 +1,25 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-purview-account/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://fake_account.account.purview.azure.com/?api-version=2019-11-01-preview
+  response:
+    body:
+      string: '{"sku":{"name":"Standard","capacity":4},"properties":{"cloudConnectors":{"awsExternalId":"433aea88-7240-49b0-9c85-5503d04d0a00"},"friendlyName":"purview-msyyc","createdBy":"yuchaoyan@microsoft.com","createdByObjectId":"3bd37d68-b234-4fcd-bc83-0fedb27ccf5c","createdAt":"2021-08-09T09:38:47.7292859Z","endpoints":{"catalog":"https://purview-msyyc.catalog.purview.azure.com","scan":"https://purview-msyyc.scan.purview.azure.com","guardian":"https://purview-msyyc.guardian.purview.azure.com"},"provisioningState":"Succeeded","privateEndpointConnections":[],"managedResources":{"resourceGroup":"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/managed-rg-purview-msyyc","storageAccount":"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/managed-rg-purview-msyyc/providers/Microsoft.Storage/storageAccounts/scaneastusxdfcgyf","eventHubNamespace":"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/managed-rg-purview-msyyc/providers/Microsoft.EventHub/namespaces/Atlas-973337bd-f2fb-4b36-8a94-ee0a6f369239"},"publicNetworkAccess":"Enabled","managedResourceGroupName":"managed-rg-purview-msyyc"},"id":"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/python-sdk-test/providers/Microsoft.Purview/accounts/purview-msyyc","name":"purview-msyyc","type":"Microsoft.Purview/accounts","location":"eastus","identity":{"type":"SystemAssigned","principalId":"b1a06e0f-bbe7-4506-a9c4-4d602d8e4e1c","tenantId":"54826b22-38d6-4fb2-bad9-b7b93a3e9c5a"},"tags":{},"systemData":{"createdBy":"yuchaoyan@microsoft.com","createdByType":"User","createdAt":"2021-08-09T09:38:47.7292859Z","lastModifiedBy":"yuchaoyan@microsoft.com","lastModifiedByType":"User","lastModifiedAt":"2021-08-09T09:38:47.7292859Z"}}'
+    headers:
+      content-type: application/json; charset=utf-8
+      date: Wed, 11 Aug 2021 02:14:54 GMT
+      server: Kestrel
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+      x-ms-account-status: Succeeded
+    status:
+      code: 200
+      message: OK
+    url: https://purview-msyyc.purview.azure.com/?api-version=2019-11-01-preview
+version: 1

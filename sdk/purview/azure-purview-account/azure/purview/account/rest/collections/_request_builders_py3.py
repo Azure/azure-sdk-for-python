@@ -59,7 +59,7 @@ def build_get_request(
     # Construct URL
     url = kwargs.pop("template_url", '/collections/{collectionName}')
     path_format_arguments = {
-        'collectionName': _SERIALIZER.url("collection_name", collection_name, 'str'),
+        "collectionName": _SERIALIZER.url("collection_name", collection_name, 'str'),
     }
 
     url = _format_url_section(url, **path_format_arguments)
@@ -157,7 +157,7 @@ def build_create_or_update_request(
     # Construct URL
     url = kwargs.pop("template_url", '/collections/{collectionName}')
     path_format_arguments = {
-        'collectionName': _SERIALIZER.url("collection_name", collection_name, 'str'),
+        "collectionName": _SERIALIZER.url("collection_name", collection_name, 'str'),
     }
 
     url = _format_url_section(url, **path_format_arguments)
@@ -205,7 +205,7 @@ def build_delete_request(
     # Construct URL
     url = kwargs.pop("template_url", '/collections/{collectionName}')
     path_format_arguments = {
-        'collectionName': _SERIALIZER.url("collection_name", collection_name, 'str'),
+        "collectionName": _SERIALIZER.url("collection_name", collection_name, 'str'),
     }
 
     url = _format_url_section(url, **path_format_arguments)
@@ -339,7 +339,7 @@ def build_get_child_collection_names_request(
     # Construct URL
     url = kwargs.pop("template_url", '/collections/{collectionName}/getChildCollectionNames')
     path_format_arguments = {
-        'collectionName': _SERIALIZER.url("collection_name", collection_name, 'str'),
+        "collectionName": _SERIALIZER.url("collection_name", collection_name, 'str'),
     }
 
     url = _format_url_section(url, **path_format_arguments)
@@ -402,7 +402,7 @@ def build_get_collection_path_request(
     # Construct URL
     url = kwargs.pop("template_url", '/collections/{collectionName}/getCollectionPath')
     path_format_arguments = {
-        'collectionName': _SERIALIZER.url("collection_name", collection_name, 'str'),
+        "collectionName": _SERIALIZER.url("collection_name", collection_name, 'str'),
     }
 
     url = _format_url_section(url, **path_format_arguments)

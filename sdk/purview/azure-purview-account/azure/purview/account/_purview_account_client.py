@@ -26,16 +26,20 @@ class PurviewAccountClient(object):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
+    :param endpoint: The account endpoint of your Purview account. Example:
+     https://{accountName}.purview.azure.com.
+    :type endpoint: str
     """
 
     def __init__(
         self,
         credential,  # type: "TokenCredential"
+        endpoint,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        base_url = 'None'
-        self._config = PurviewAccountClientConfiguration(credential, **kwargs)
+        base_url = '{endpoint}'
+        self._config = PurviewAccountClientConfiguration(credential, endpoint, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         self._serialize = Serializer()
@@ -73,7 +77,11 @@ class PurviewAccountClient(object):
         """
 
         request_copy = deepcopy(request)
-        request_copy.url = self._client.format_url(request_copy.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, **kwargs)
 
     def close(self):

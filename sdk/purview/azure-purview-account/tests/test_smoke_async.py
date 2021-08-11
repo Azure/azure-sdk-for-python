@@ -4,8 +4,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from .testcase import PurviewAccountPowerShellPreparer
-from .testcase_async import PurviewAccountTestAsync
+from testcase import PurviewAccountPowerShellPreparer
+from testcase_async import PurviewAccountTestAsync
 from azure.purview.account.rest import accounts
 
 
@@ -19,6 +19,3 @@ class PurviewAccountSmokeTestAsync(PurviewAccountTestAsync):
         response = await client.send_request(request)
         response.raise_for_status()
         assert response.status_code == 200
-        json_response = response.json()
-        assert set(json_response.keys()) == set(['value', 'count'])
-        assert len(json_response['value']) == json_response['count']
