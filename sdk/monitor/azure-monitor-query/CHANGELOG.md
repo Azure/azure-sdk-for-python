@@ -8,8 +8,12 @@
 
 - Rename `batch_query` to `query_batch`.
 - Rename `LogsBatchQueryRequest` to `LogsBatchQuery`.
+- `include_render` is now renamed to `include_visualization` in the query API.
+- `LogsQueryResult` and `LogsBatchQueryResult` now return `visualization` instead of `render`.
 
 ### Bugs Fixed
+
+- `include_statistics` and `include_visualization` args can now work together.
 
 ### Other Changes
 
