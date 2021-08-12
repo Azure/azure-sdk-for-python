@@ -10,7 +10,7 @@ from _shared.testcase import TableTestCase
 from preparers import tables_decorator
 
 # --Test Class -----------------------------------------------------------------
-class TableServiceStatsTest(AzureTestCase, TableTestCase):
+class TestTableServiceStats(AzureTestCase, TableTestCase):
 
     # --Test cases per service ---------------------------------------
     @tables_decorator

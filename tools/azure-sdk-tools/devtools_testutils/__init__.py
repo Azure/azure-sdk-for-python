@@ -16,6 +16,7 @@ from .storage_testcase import (
 from .keyvault_preparer import KeyVaultPreparer
 from .powershell_preparer import PowerShellPreparer
 from .proxy_testcase import RecordedByProxy
+from .enums import ProxyRecordingSanitizer
 from .helpers import ResponseCallback, RetryCounter
 from .fake_credential import FakeTokenCredential
 
@@ -36,6 +37,7 @@ __all__ = [
     "RandomNameResourceGroupPreparer",
     "CachedResourceGroupPreparer",
     "PowerShellPreparer",
+    "ProxyRecordingSanitizer",
     "RecordedByProxy",
     "ResponseCallback",
     "RetryCounter",
