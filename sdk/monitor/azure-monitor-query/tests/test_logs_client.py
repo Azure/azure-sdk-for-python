@@ -143,6 +143,7 @@ def test_logs_query_batch_with_statistics_in_some():
         LogsBatchQuery(
             query= "AppRequests",
             workspace_id= os.environ['LOG_WORKSPACE_ID'],
+            timespan=None,
             include_statistics=True
         ),
     ]
