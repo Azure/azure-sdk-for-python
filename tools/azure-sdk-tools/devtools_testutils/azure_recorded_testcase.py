@@ -91,7 +91,6 @@ class AzureRecordedTestCase(object):
                     "regex": regex or "[a-z]+(?=(?:-secondary)\\.(?:table|blob|queue)\\.core\\.windows\\.net)",
                     "value": value or "fakevalue"
                 },
-                verify=False
             )
 
     def is_playback(self):
