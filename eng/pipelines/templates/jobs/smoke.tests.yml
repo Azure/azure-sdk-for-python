@@ -161,8 +161,8 @@ jobs:
         - pwsh: |
             $packages = Get-ChildItem "$(Pipeline.Workspace)/${{ parameters.ArtifactName }}/*.zip"
             Write-Host "Artifacts found:"
-            Write-Host: "Pipeline workspace: ${{Pipeline.Workspace}}"
-            Write-Host: "ArtifactName: ${{parameters.ArtifactName}}"
+            Write-Host "Pipeline workspace: ${{Pipeline.Workspace}}"
+            Write-Host "ArtifactName: ${{parameters.ArtifactName}}"
             Write-Host "Packages: ${{packages}}"
             $artifacts = $packages | ForEach-Object {
               if ($_.Name -match "([a-zA-Z\-]+)\-(.*).zip") {
