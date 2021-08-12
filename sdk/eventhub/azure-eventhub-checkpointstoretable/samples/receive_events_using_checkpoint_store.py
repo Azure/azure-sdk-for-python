@@ -5,7 +5,7 @@ from azure.eventhub.extensions.checkpointstoretable import TableCheckpointStore
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
-TABLE_CONTAINER_NAME = "secondtable"  # Please make sure the table container resource exists.
+TABLE_NAME = "your-table-name"  # Please make sure the table resource exists.
 
 
 def on_event(partition_context, event):
