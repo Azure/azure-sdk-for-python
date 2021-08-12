@@ -55,15 +55,15 @@ def construct_iso8601(timespan=None):
         return None
     try:
         start, end, duration = None, None, None
-        if isinstance(timespan[1], datetime):
+        if isinstance(timespan[1], datetime): # we treat thi as start_time, end_time
             start, end = timespan[0], timespan[1]
-        elif isinstance(timespan[1], timedelta):
+        elif isinstance(timespan[1], timedelta): # we treat this as start_time, duration
             start, duration = timespan[0], timespan[1]
         else:
             raise ValueError('Tuple must be a start datetime with a timedelta or an end datetime.')
     except TypeError:
-        duration = timespan
-    if duration is not None:
+        duration = timespan # it means only duration (timedelta) is provideds
+    if duration:
         try:
             duration = 'PT{}S'.format(duration.total_seconds())
         except AttributeError:
@@ -76,7 +76,7 @@ def construct_iso8601(timespan=None):
             iso_str = start + '/' + end
         elif duration is not None:
             iso_str = start + '/' + duration
-        else:
+        else: # means that an invalid value is provided with start_time
             raise ValueError("Start time must be provided along with duration or end time.")
     else:
         iso_str = duration
