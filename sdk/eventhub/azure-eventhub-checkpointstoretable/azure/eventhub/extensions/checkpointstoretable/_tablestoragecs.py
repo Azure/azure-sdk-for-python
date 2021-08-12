@@ -296,7 +296,7 @@ class TableCheckpointStore(CheckpointStore):
             checkpoint_entity = TableCheckpointStore._create_checkpoint_entity(checkpoint)
             self._table_client.update_entity(mode=UpdateMode.REPLACE, entity=checkpoint_entity, **kwargs)
         except ResourceNotFoundError:
-            logger.info("Upload checkpoint blob %r because it hasn't existed in the container yet.",
+            logger.info("Create checkpoint entity %r because it hasn't existed in the table yet.",
             checkpoint_entity)
             self._table_client.create_entity(entity=checkpoint_entity, **kwargs)
 
