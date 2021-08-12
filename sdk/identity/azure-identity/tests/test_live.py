@@ -45,7 +45,6 @@ def test_certificate_credential(certificate_fixture, request):
     get_token(credential)
 
 
-@pytest.mark.skip("...")
 def test_client_secret_credential(live_service_principal):
     credential = ClientSecretCredential(
         live_service_principal["tenant_id"],
@@ -55,7 +54,6 @@ def test_client_secret_credential(live_service_principal):
     get_token(credential)
 
 
-@pytest.mark.skip("...")
 def test_default_credential(live_service_principal):
     credential = DefaultAzureCredential()
     get_token(credential)
