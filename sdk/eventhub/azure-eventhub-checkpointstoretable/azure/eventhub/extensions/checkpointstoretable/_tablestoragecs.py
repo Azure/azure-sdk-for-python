@@ -235,8 +235,6 @@ class TableCheckpointStore(CheckpointStore):
                 error,)
             raise
 
-
-
     def list_checkpoints(self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs):
         """List the updated checkpoints from the storage table.
 
