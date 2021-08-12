@@ -33,7 +33,8 @@ jobs:
           env:
             RunSmokeTests: $(RunSmokeTests)
 
-  - job:
+  - job: run_smoke_test
+    displayName: Run Smoke Test
     ${{ if eq(parameters.Daily, false) }}:
       dependsOn: smoke_test_eligibility
       condition: and(succeeded(), eq(dependencies.smoke_test_eligibility.outputs['output_eligibility.RunSmokeTests'], true))
