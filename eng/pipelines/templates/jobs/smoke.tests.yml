@@ -39,8 +39,14 @@ jobs:
       dependsOn: smoke_test_eligibility
       condition: and(succeeded(), eq(dependencies.smoke_test_eligibility.outputs['output_eligibility.RunSmokeTests'], true))
     strategy:
-      ${{ if eq(parameters.Daily, true) }}:
-        matrix:
+      matrix:
+        Python_38_Linux (AzureCloud):
+          PythonVersion: '3.8'
+          Pool: "azsdk-pool-mms-ubuntu-2004-general"
+          OSVmImage: "MMSUbuntu20.04"
+          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+          ArmTemplateParameters: $(azureCloudArmParameters)
+        ${{ if eq(parameters.Daily, true) }}:
           Python_27_Linux (AzureCloud):
             PythonVersion: '2.7'
             SkipAsyncInstall: true
@@ -50,12 +56,6 @@ jobs:
             ArmTemplateParameters: $(azureCloudArmParameters)
           Python_37_Linux (AzureCloud):
             PythonVersion: '3.7'
-            Pool: "azsdk-pool-mms-ubuntu-2004-general"
-            OSVmImage: "MMSUbuntu20.04"
-            SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-            ArmTemplateParameters: $(azureCloudArmParameters)
-          Python_38_Linux (AzureCloud):
-            PythonVersion: '3.8'
             Pool: "azsdk-pool-mms-ubuntu-2004-general"
             OSVmImage: "MMSUbuntu20.04"
             SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
@@ -117,14 +117,7 @@ jobs:
             SubscriptionConfiguration: $(sub-config-cn-test-resources)
             Location: 'chinanorth'
             ArmTemplateParameters: $(azureChinaCloudArmParameters)
-      ${{ if eq(parameters.Daily, false) }}:
-        matrix:
-          Python_38_Linux (AzureCloud):
-            PythonVersion: '3.8'
-            Pool: "azsdk-pool-mms-ubuntu-2004-general"
-            OSVmImage: "MMSUbuntu20.04"
-            SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-            ArmTemplateParameters: $(azureCloudArmParameters)
+        
     pool:
       name: $(Pool)
       vmImage: $(OSVmImage)
