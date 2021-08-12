@@ -76,8 +76,8 @@ def construct_iso8601(timespan=None):
             iso_str = start + '/' + end
         elif duration is not None:
             iso_str = start + '/' + duration
-        else: # means that an invalid value is provided with start_time
-            raise ValueError("Start time must be provided along with duration or end time.")
+        else: # means that an invalid value None that is provided with start_time
+            raise ValueError("Duration or end_time cannot be None when provided with start_time.")
     else:
         iso_str = duration
     return iso_str
