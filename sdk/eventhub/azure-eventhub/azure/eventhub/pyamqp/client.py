@@ -382,7 +382,8 @@ class SendClient(AMQPClient):
             if error_response.condition == b'com.microsoft:server-busy':
                 # TODO: max retries
                 time.sleep(4)
-                self._transfer_message(message_delivery, message_delivery.expiry - time.time())
+                timeout = (message_delivery.expiry - time.time()) if message_delivery.expiry else 0
+                self._transfer_message(message_delivery, timeout)
                 message_delivery.state = MessageDeliveryState.WaitingToBeSent
             else:
                 message_delivery.state = MessageDeliveryState.Error
