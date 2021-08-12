@@ -52,7 +52,7 @@ def order_results(request_order, responses):
 
 def construct_iso8601(timespan=None):
     if not timespan:
-        return
+        return None
     try:
         start, end, duration = None, None, None
         if isinstance(timespan[1], datetime):
@@ -64,7 +64,10 @@ def construct_iso8601(timespan=None):
     except TypeError:
         duration = timespan
     if duration is not None:
-        duration = 'PT{}S'.format(duration.total_seconds())
+        try:
+            duration = 'PT{}S'.format(duration.total_seconds())
+        except AttributeError:
+            raise ValueError('timespan must be a timedelta or a tuple.')
     iso_str = None
     if start is not None:
         start = Serializer.serialize_iso(start)
