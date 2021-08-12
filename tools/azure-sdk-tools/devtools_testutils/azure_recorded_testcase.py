@@ -91,7 +91,6 @@ class AzureRecordedTestCase(object):
                     "regex": regex or "[a-z]+(?=(?:-secondary)\\.(?:table|blob|queue)\\.core\\.windows\\.net)",
                     "value": value or "fakevalue"
                 },
-                verify=False
             )
 
     def is_playback(self):
@@ -204,7 +203,7 @@ class AzureRecordedTestCase(object):
 
         If prefix is a blank string, use the fully qualified test name instead.
         This is what legacy tests do for resource groups."""
-        return self.get_resource_name(prefix)  # or self.qualified_test_name.replace(".", "_")
+        return self.get_resource_name(prefix)
 
     @staticmethod
     def await_prepared_test(test_fn):

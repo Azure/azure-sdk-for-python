@@ -13,7 +13,7 @@ from preparers import tables_decorator
 class TestTableServiceStats(AzureRecordedTestCase, TableTestCase):
 
     def setup_method(self):
-        self.add_sanitizer(ProxyRecordingSanitizer.URI)
+        self.add_sanitizer(ProxyRecordingSanitizer.URI, value="faketableaccount")
 
     # --Test cases per service ---------------------------------------
     @tables_decorator

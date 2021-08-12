@@ -23,11 +23,6 @@ def RecordedByProxyAsync(func):
             copied_positional_args = list(args)
             request = copied_positional_args[1]
 
-            # TODO, get the test-proxy server a real SSL certificate. The issue here is that SSL Certificates are
-            # normally associated with a domain name. Need to talk to the //SSLAdmin folks (or someone else) and get
-            # a recommendation for how to get a valid SSL Cert for localhost
-            kwargs["connection_verify"] = False
-
             transform_request(request, recording_id)
 
             return tuple(copied_positional_args), kwargs
@@ -39,7 +34,7 @@ def RecordedByProxyAsync(func):
 
         async def combined_call(*args, **kwargs):
             adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
-            req = adjusted_args[1]
+            adjusted_args[1]
             return await original_func(*adjusted_args, **adjusted_kwargs)
 
         AioHttpTransport.send = combined_call
