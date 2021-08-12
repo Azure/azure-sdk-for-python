@@ -31,8 +31,7 @@ def remove_live_storage_table_client(storage_connection_str, table_name):
     except:
         warnings.warn(UserWarning("storage table teardown failed"))
 
-def _create_checkpoint(fully_qualified_namespace, eventhub_name, consumer_group,
- partition_id, offset, sequence_number):
+def _create_checkpoint(fully_qualified_namespace, eventhub_name, consumer_group, **kwargs):
     return {
     'fully_qualified_namespace': fully_qualified_namespace,
     'eventhub_name': eventhub_name,
