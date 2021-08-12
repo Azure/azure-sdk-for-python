@@ -10,6 +10,9 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._generated.aio.operations import CallConnectionsOperations
 
+from ._generated.models import CancelAllMediaOperationsRequest, PlayAudioRequest, AddParticipantRequest
+
+from azure.communication.callingserver._shared.models import CommunicationIdentifier, PhoneNumberIdentifier
 
 class CallConnection(object):
     def __init__(
@@ -33,6 +36,82 @@ class CallConnection(object):
             call_connection_id=self.call_connection_id,
             **kwargs
         )
+
+    
+    @distributed_trace()
+    def cancel_all_media_operations(self,
+    operationContext,
+    **kwargs # type: Any
+    ):
+
+        request = CancelAllMediaOperationsRequest(operationContext)
+
+        return self.call_connection_client.cancel_all_media_operations(
+            call_connection_id=self.call_connection_id,
+            cancel_all_media_operation_request=request,
+            **kwargs
+            )
+        
+
+    @distributed_trace()
+    def play_audio(
+        self,
+        audio_file_uri: str,
+        audio_File_id: str,
+        callback_uri: str,
+        operation_context: str,
+        **kwargs: Any
+    ):
+        try:
+            if not audio_file_uri.lower().startswith('http'):
+                audio_file_uri = "https://" + audio_file_uri
+        except AttributeError:
+            raise ValueError("URL must be a string.")
+
+        if not audio_File_id:
+            raise ValueError("audio_File_id can not be None")
+
+        try:
+            if not callback_uri.lower().startswith('http'):
+                callback_uri = "https://" + callback_uri
+        except AttributeError:
+            raise ValueError("URL must be a string.")
+
+        if not operation_context:
+            raise ValueError("operation_context can not be None")
+
+        request = PlayAudioRequest(
+            audio_file_uri=audio_file_uri,
+            loop = kwargs.get('loop', False),
+            operation_context=operation_context,
+            audio_file_id=audio_File_id,
+            callback_uri=callback_uri,
+            **kwargs
+        )
+
+        return self.call_connection_client.play_audio(
+            call_connection_id=self.call_connection_id,
+            request=request,
+        )
+
+
+    @distributed_trace()
+    def add_participant(self,
+    participant: CommunicationIdentifier,
+    alternate_call_id: PhoneNumberIdentifier,
+    operation_context: str,
+    **kwargs: Any
+    ):
+
+        request = AddParticipantRequest(alternate_caller_id=alternate_call_id,
+        participant=participant,
+        operation_context=operation_context,
+        callback_uri=None, 
+        **kwargs)
+
+        return self.call_connection_client.add_participant(call_connection_id=self.call_connection_id, 
+        add_participant_request=request)
+
 
     def close(self):
         # type: () -> None

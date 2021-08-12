@@ -91,3 +91,14 @@ class ToneValue(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     C = "c"
     D = "d"
     FLASH = "flash"
+
+class CallingServerEventType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The calling server event type values.
+    """
+
+    CALL_CONNECTION_STATE_CHANGED_EVENT = "Microsoft.Communication.CallConnectionStateChanged"
+    ADD_PARTICIPANT_RESULT_EVENT = "Microsoft.Communication.AddParticipantResult"
+    CALL_RECORDING_STATE_CHANGED_EVENT = "Microsoft.Communication.CallRecordingStateChanged"
+    PLAY_AUDIO_RESULT_EVENT = "Microsoft.Communication.PlayAudioResult"
+    PARTICIPANTS_UPDATED_EVENT = "Microsoft.Communication.ParticipantsUpdated"
+    TONE_RECEIVED_EVENT = "Microsoft.Communication.DtmfReceived"
