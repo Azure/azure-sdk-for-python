@@ -139,7 +139,7 @@ class AzureRecordedTestCase(object):
                 if is_async:
                     if self.is_live:
                         raise ValueError(
-                            "Async live doesn't support mgmt_setting_real, please set AZURE_TENANT_ID,"
+                            "Async live doesn't support mgmt_setting_real, please set AZURE_TENANT_ID, "
                             "AZURE_CLIENT_ID, AZURE_CLIENT_SECRET"
                         )
                     return AsyncFakeCredential()

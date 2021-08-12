@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import logging
 import os
 
 from . import AzureMgmtPreparer
@@ -69,6 +70,12 @@ class PowerShellPreparer(AzureMgmtPreparer):
                         if hasattr(self.test_class_instance, "scrubber"):
                             self.test_class_instance.scrubber.register_name_pair(
                                 self.real_values[key.lower()], scrubbed_value
+                            )
+                        else:
+                            logger = logging.getLogger()
+                            logger.info(
+                                "This test class instance has no scrubber, so the PowerShellPreparer will not scrub "
+                                "the value of {} in recordings.".format(key)
                             )
                     else:
                         template = 'To pass a live ID you must provide the scrubbed value for recordings to \
