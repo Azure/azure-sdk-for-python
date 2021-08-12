@@ -20,8 +20,8 @@ from azure.core.pipeline.transport import RequestsTransport
 
 # the trimming function to clean up incoming arguments to the test function we are wrapping
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
+from .azure_recorded_testcase import is_live
 from .config import PROXY_URL
-from .helpers import is_live
 
 
 # defaults
@@ -48,7 +48,7 @@ def get_current_sha():
 
 
 def start_record_or_playback(test_id):
-    if is_live:
+    if is_live():
         result = requests.post(
             RECORDING_START_URL,
             headers={"x-recording-file": test_id, "x-recording-sha": get_current_sha()},
@@ -65,7 +65,7 @@ def start_record_or_playback(test_id):
 
 
 def stop_record_or_playback(test_id, recording_id):
-    if is_live:
+    if is_live():
         requests.post(
             RECORDING_STOP_URL,
             headers={"x-recording-file": test_id, "x-recording-id": recording_id, "x-recording-save": "true"},
@@ -91,7 +91,7 @@ def transform_request(request, recording_id):
     if headers.get("x-recording-upstream-base-uri", None) is None:
         headers["x-recording-upstream-base-uri"] = "{}://{}".format(parsed_result.scheme, parsed_result.netloc)
     headers["x-recording-id"] = recording_id
-    headers["x-recording-mode"] = "record" if is_live else "playback"
+    headers["x-recording-mode"] = "record" if is_live() else "playback"
     request.url = updated_target
 
 
@@ -115,7 +115,6 @@ def RecordedByProxy(func):
 
         def combined_call(*args, **kwargs):
             adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
-            adjusted_args[1]
             return original_transport_func(*adjusted_args, **adjusted_kwargs)
 
         RequestsTransport.send = combined_call
