@@ -11,22 +11,13 @@ import os
 from io import open
 import re
 
-# example setup.py Feel free to copy the entire "azure-template" folder into a package folder named
-# with "azure-<yourpackagename>". Ensure that the below arguments to setup() are updated to reflect
-# your package.
-
-# this setup.py is set up in a specific way to keep the azure* and azure-mgmt-* namespaces WORKING all the way
-# up from python 2.7. Reference here: https://github.com/Azure/azure-sdk-for-python/wiki/Azure-packaging
-
 PACKAGE_NAME = "azure-eventhub-checkpointstoretable"
 PACKAGE_PPRINT_NAME = "Event Hubs checkpointer implementation with Azure Table Storage"
 
 # a-b-c => a/b/c
-package_folder_path = PACKAGE_NAME.replace("-", "/")
-# a-b-c => a.b.c
-namespace_name = PACKAGE_NAME.replace("-", ".")
-
 package_folder_path = "azure/eventhub/extensions/checkpointstoretable"
+# a-b-c => a.b.c
+namespace_name = "azure.eventhub.extensions.checkpointstoretable"
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, "_version.py"), "r") as fd:
@@ -77,9 +68,13 @@ setup(
     install_requires=[
         "azure-core<2.0.0,>=1.14.0",
         'azure-eventhub<6.0.0,>=5.0.0',
+        "msrest>=0.6.21",
     ],
     extras_require={
         ":python_version<'3.0'": ["azure-nspkg"],
+        ":python_version<'3.0'": ['futures', 'azure-data-nspkg<2.0.0,>=1.0.0'],
+        ":python_version<'3.4'": ['enum34>=1.0.4'],
+        ":python_version<'3.5'": ["typing"],
     },
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
