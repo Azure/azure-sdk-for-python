@@ -37,7 +37,11 @@ PLAYBACK_STOP_URL = "{}/playback/stop".format(PROXY_URL)
 
 def get_test_id():
     # pytest sets the current running test in an environment variable
-    return os.getenv("PYTEST_CURRENT_TEST").split(" ")[0].replace("::", ".")
+    path_to_test = os.getenv("PYTEST_CURRENT_TEST").split(" ")[0].replace("::", ".")
+    beginning, end = path_to_test.split("/tests/")
+    full = beginning + "/tests/recordings/" + end
+    print(full)
+    return full
 
 
 def get_current_sha():
