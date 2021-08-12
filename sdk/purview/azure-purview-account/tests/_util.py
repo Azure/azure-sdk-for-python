@@ -9,5 +9,5 @@ from azure_devtools.scenario_tests import RecordingProcessor
 
 class PurviewAccountRecordingProcessor(RecordingProcessor):
     def process_response(self, response):
-        response["body"]["string"] = '{"atlasKafkaPrimaryEndpoint":"Endpoint=000"}'
+        response["body"]["string"] = '{"atlasKafkaPrimaryEndpoint":"000","atlasKafkaSecondaryEndpoint":"000"}'
         return response

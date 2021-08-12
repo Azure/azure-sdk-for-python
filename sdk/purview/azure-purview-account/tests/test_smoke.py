@@ -17,3 +17,5 @@ class PurviewAccountSmokeTest(PurviewAccountTest):
         response = client.send_request(request)
         response.raise_for_status()
         assert response.status_code == 200
+        json_response = response.json()
+        assert set(json_response.keys()) == set(['atlasKafkaPrimaryEndpoint', 'atlasKafkaSecondaryEndpoint'])
