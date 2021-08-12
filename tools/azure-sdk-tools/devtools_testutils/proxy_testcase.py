@@ -57,7 +57,6 @@ def start_record_or_playback(test_id):
     else:
         result = requests.post(
             PLAYBACK_START_URL,
-            # headers={"x-recording-file": test_id, "x-recording-id": recording_id},
             headers={"x-recording-file": test_id, "x-recording-sha": get_current_sha()},
         )
         recording_id = result.headers["x-recording-id"]
