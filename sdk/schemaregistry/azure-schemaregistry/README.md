@@ -40,7 +40,7 @@ schema_registry_client = SchemaRegistryClient(endpoint, credential)
 
 - Schema: Schema is the organization or structure for data.
 
-- SchemaRegistryClient: `SchemaRegistryClient ` provides the API for storing and retrieving schemas in schema registry.
+- SchemaRegistryClient: `SchemaRegistryClient` provides the API for storing and retrieving schemas in schema registry.
 
 ## Examples
 
