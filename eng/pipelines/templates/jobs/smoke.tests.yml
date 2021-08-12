@@ -16,6 +16,7 @@ jobs:
         name: "azsdk-pool-mms-ubuntu-2004-general"
         vmImage: "MMSUbuntu20.04"
       steps:
+        - ${{ if and(ne(variables['Skip.Release'], 'true'), ne(parameters.Artifact.skipPublishPackage, 'true')) }}:
           - pwsh: |
               $packages = Get-Content $(Build.SourcesDirectory)/common/smoketest/requirements-release.txt
               if ($packages | Where-Object { $_ -match "${{ replace(parameters.Artifact.name, '_', '-') }}" }) {
