@@ -159,7 +159,7 @@ jobs:
           timeoutInMinutes: 5
 
         - pwsh: |
-            $packages = Get-ChildItem "$(Pipeline.Workspace)/${{ parameters.ArtifactName }}/*.zip"
+            $packages = Get-ChildItem "$(Pipeline.Workspace)/${{ parameters.ArtifactName }}/*/*.zip"
             Write-Host "Artifacts found:"
             $artifacts = $packages | ForEach-Object {
               if ($_.Name -match "([a-zA-Z\-]+)\-(.*).zip") {
@@ -185,7 +185,22 @@ jobs:
           env:
             REQUIREMENTS: $(requirements)
 
-        - pwsh: pip install -r "$env:REQUIREMENTS" --no-deps --upgrade
+        - pwsh: |
+            $timeout = New-TimeSpan -Seconds 600
+            $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+            do {
+              $failure = $false
+              try {
+                $ErrorActionPreference = "Stop"
+                pip --retries 10 install -r "$env:REQUIREMENTS" --no-deps --upgrade --no-cache-dir 2>&1
+              } catch {
+                $failure = $true
+                Write-Host "Installation failed, retrying in 3 minutes..."
+                sleep 180
+              } finally {
+                $ErrorActionPreference = "Continue"
+              }
+            } while (($stopwatch.elapsed -lt $timeout) -and ($failure))
           displayName: Install requirements without dependencies
           env:
             REQUIREMENTS: $(requirements)
