@@ -14,7 +14,7 @@ from azure.eventhub.extensions.checkpointstoretable import TableCheckpointStore
 from azure.eventhub.exceptions import OwnershipLostError
 
 STORAGE_CONN_STR = [
-    os.environ.get("AZURE_STORAGE_CONN_STR", "Azure Storage Connection String"),
+    #os.environ.get("AZURE_STORAGE_CONN_STR", "Azure Storage Connection String"),
     os.environ.get("AZURE_COSMOS_CONN_STR", "Azure Storage Connection String"),
 ]
 
