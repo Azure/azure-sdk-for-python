@@ -32,6 +32,7 @@ steps:
         --add-source https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json `
         --version 1.0.0-dev.20210811.2
     displayName: "Install test-proxy - windows"
+    condition: and(succeeded(), eq(variables['Agent.OS'],'Windows_NT'))
 
   - pwsh: |
       Start-Process $(Build.BinariesDirectory)/test-proxy/test-proxy.exe `
@@ -59,14 +60,16 @@ steps:
         --global `
         --add-source https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json `
         --version 1.0.0-dev.20210811.2
-    displayName: "Install test-proxy - linux/mac"
+
+      sudo nohup test-proxy &
+    displayName: "Install and run test-proxy - linux/mac"
     condition: and(succeeded(), ne(variables['Agent.OS'],'Windows_NT'))
 
-  - bash: |
-      sudo nohup /root/.dotnet/tools/test-proxy &
-    displayName: "Run the testproxy - linux/mac"
-    condition: and(succeeded(), ne(variables['Agent.OS'],'Windows_NT'))
-    workingDirectory: "${{ parameters.rootFolder }}"
+  # - bash: |
+      
+  #   displayName: "Run the testproxy - linux/mac"
+  #   condition: and(succeeded(), ne(variables['Agent.OS'],'Windows_NT'))
+  #   workingDirectory: "${{ parameters.rootFolder }}"
 
   - pwsh: |
       Write-Host "##vso[task.setvariable variable=PATH]$(OriginalPath)"
