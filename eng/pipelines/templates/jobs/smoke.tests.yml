@@ -168,6 +168,8 @@ jobs:
             $pck = Get-ChildItem "$(Pipeline.Workspace)/${{ parameters.ArtifactName }}/*"
             Write-Host "ARTS: $($arts)"
             Write-Host "PCK: $($pck)"
+            $a_t = Get-ChildItem "$(Pipeline.Workspace)/${{ parameters.ArtifactName }}/azure-template/*"
+            Write-Host "A_T: $($a_t)"
             $artifacts = $packages | ForEach-Object {
               if ($_.Name -match "([a-zA-Z\-]+)\-(.*).zip") {
                 Write-Host "$($matches[1]): $($matches[2])"
