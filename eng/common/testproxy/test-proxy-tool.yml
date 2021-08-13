@@ -63,7 +63,7 @@ steps:
     condition: and(succeeded(), ne(variables['Agent.OS'],'Windows_NT'))
 
   - bash: |
-      nohup /root/.dotnet/tools/test-proxy &
+      sudo nohup /root/.dotnet/tools/test-proxy &
     displayName: "Run the testproxy - linux/mac"
     condition: and(succeeded(), ne(variables['Agent.OS'],'Windows_NT'))
     workingDirectory: "${{ parameters.rootFolder }}"
