@@ -13,7 +13,7 @@ jobs:
         displayName: 'Use Python $(PythonVersion)'
         inputs:
           versionSpec: $(PythonVersion)
-      - template: /eng/common/test-proxy-docker.yml
+      - template: /eng/common/testproxy/test-proxy-docker.yml
       - template : /eng/pipelines/templates/steps/check-availability.yml
 
   - job: 'win2019tool'
@@ -25,7 +25,7 @@ jobs:
         displayName: 'Use Python $(PythonVersion)'
         inputs:
           versionSpec: $(PythonVersion)
-      - template: /eng/common/test-proxy-tool.yml
+      - template: /eng/common/testproxy/test-proxy-tool.yml
       - template : /eng/pipelines/templates/steps/check-availability.yml
 
   - job: 'linux2020docker'
@@ -37,7 +37,7 @@ jobs:
         displayName: 'Use Python $(PythonVersion)'
         inputs:
           versionSpec: $(PythonVersion)
-      - template: /eng/common/test-proxy-docker.yml
+      - template: /eng/common/testproxy/test-proxy-docker.yml
       - template : /eng/pipelines/templates/steps/check-availability.yml
 
   - job: 'linux2020tool'
@@ -49,5 +49,5 @@ jobs:
         displayName: 'Use Python $(PythonVersion)'
         inputs:
           versionSpec: $(PythonVersion)
-      - template: /eng/common/test-proxy-tool.yml
+      - template: /eng/common/testproxy/test-proxy-tool.yml
       - template : /eng/pipelines/templates/steps/check-availability.yml
