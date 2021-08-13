@@ -9,7 +9,7 @@ import logging
 import calendar
 import dateutil.parser
 from azure.eventhub import CheckpointStore  # type: ignore  # pylint: disable=no-name-in-module
-from azure.eventhub.exceptions import OwnershipLostError
+from azure.eventhub.exceptions import OwnershipLostError  # type: ignore 
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     ResourceModifiedError,
