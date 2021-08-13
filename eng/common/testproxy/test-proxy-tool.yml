@@ -41,10 +41,17 @@ steps:
       }
       else {
         nohup $(Build.BinariesDirectory)/test-proxy/test-proxy `
-          --storage-location "${{ parameters.rootFolder }}"
+          --storage-location "${{ parameters.rootFolder }}" &
       }
+
     displayName: 'Run the testproxy via dotnet tool'
-  
+
+  - pwsh: |
+      cat nohup.txt
+    displayName: 'Check Progress'
+    condition: and(succeeded(), ne(variables['Agent.OS'],'Windows_NT'))
+
+
   - pwsh: |
       Write-Host "##vso[task.setvariable variable=PATH]$(OriginalPath)"
     displayName: 'Restore .NET version by resetting path'
