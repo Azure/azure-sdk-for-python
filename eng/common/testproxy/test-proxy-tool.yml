@@ -40,7 +40,7 @@ steps:
           -NoNewWindow -PassThru
       }
       else {
-        Write-Host ("Running in " + Get-Location)
+        Write-Host Get-Location
         Write-Host "nohup $(Build.BinariesDirectory)/test-proxy/test-proxy --storage-location '${{ parameters.rootFolder }}' &"
         nohup $(Build.BinariesDirectory)/test-proxy/test-proxy --storage-location "${{ parameters.rootFolder }}" &
       }
