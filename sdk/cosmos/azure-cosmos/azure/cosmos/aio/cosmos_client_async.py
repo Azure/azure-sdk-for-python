@@ -119,7 +119,7 @@ def _build_connection_policy(kwargs):
 
 
 
-class AsyncCosmosClient(object):
+class CosmosClient(object):
     """A client-side logical representation of an Azure Cosmos DB account.
 
     Use this client to configure and execute requests to the Azure Cosmos DB service.
@@ -128,26 +128,6 @@ class AsyncCosmosClient(object):
     :param credential: Can be the account key, or a dictionary of resource tokens.
     :type credential: str or dict[str, str]
     :param str consistency_level: Consistency level to use for the session. The default value is "Session".
-    :keyword int timeout: An absolute timeout in seconds, for the combined HTTP request and response processing.
-    :keyword int request_timeout: The HTTP request timeout in milliseconds.
-    :keyword str connection_mode: The connection mode for the client - currently only supports 'Gateway'.
-    :keyword proxy_config: Connection proxy configuration.
-    :paramtype proxy_config: ~azure.cosmos.ProxyConfiguration
-    :keyword ssl_config: Connection SSL configuration.
-    :paramtype ssl_config: ~azure.cosmos.SSLConfiguration
-    :keyword bool connection_verify: Whether to verify the connection, default value is True.
-    :keyword str connection_cert: An alternative certificate to verify the connection.
-    :keyword int retry_total: Maximum retry attempts.
-    :keyword int retry_backoff_max: Maximum retry wait time in seconds.
-    :keyword int retry_fixed_interval: Fixed retry interval in milliseconds.
-    :keyword int retry_read: Maximum number of socket read retry attempts.
-    :keyword int retry_connect: Maximum number of connection error retry attempts.
-    :keyword int retry_status: Maximum number of retry attempts on error status codes.
-    :keyword list[int] retry_on_status_codes: A list of specific status codes to retry on.
-    :keyword float retry_backoff_factor: Factor to calculate wait time between retry attempts.
-    :keyword bool enable_endpoint_discovery: Enable endpoint discovery for
-        geo-replicated database accounts. (Default: True)
-    :keyword list[str] preferred_locations: The preferred locations for geo-replicated database accounts.
 
     .. admonition:: Example:
 
@@ -160,10 +140,11 @@ class AsyncCosmosClient(object):
             :name: create_client
     """
 
-    def __init__(self, url, credential, consistency_level="Session", **kwargs):
+    def __init__(self, url, credential, **kwargs):
         # type: (str, Any, str, Any) -> None
         """Instantiate a new CosmosClient."""
         auth = _build_auth(credential)
+        consistency_level = kwargs.get('consistency_level', 'Session')
         connection_policy = _build_connection_policy(kwargs)
         self.client_connection = CosmosClientConnection(
             url, auth=auth, consistency_level=consistency_level, connection_policy=connection_policy, **kwargs
@@ -202,255 +183,3 @@ class AsyncCosmosClient(object):
             consistency_level=consistency_level,
             **kwargs
         )
-
-    @staticmethod
-    def _get_database_link(database_or_id):
-        # type: (Union[DatabaseProxy, str, Dict[str, str]]) -> str
-        if isinstance(database_or_id, six.string_types):
-            return "dbs/{}".format(database_or_id)
-        try:
-            return cast("DatabaseProxy", database_or_id).database_link
-        except AttributeError:
-            pass
-        database_id = cast("Dict[str, str]", database_or_id)["id"]
-        return "dbs/{}".format(database_id)
-
-    @distributed_trace
-    def create_database(  # pylint: disable=redefined-builtin
-        self,
-        id,  # type: str
-        populate_query_metrics=None,  # type: Optional[bool]
-        offer_throughput=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> DatabaseProxy
-        """
-        Create a new database with the given ID (name).
-
-        :param id: ID (name) of the database to create.
-        :param bool populate_query_metrics: Enable returning query metrics in response headers.
-        :param int offer_throughput: The provisioned throughput for this offer.
-        :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
-            has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: A DatabaseProxy instance representing the new database.
-        :rtype: ~azure.cosmos.DatabaseProxy
-        :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: Database with the given ID already exists.
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/examples.py
-                :start-after: [START create_database]
-                :end-before: [END create_database]
-                :language: python
-                :dedent: 0
-                :caption: Create a database in the Cosmos DB account:
-                :name: create_database
-        """
-
-        request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
-        if populate_query_metrics is not None:
-            request_options["populateQueryMetrics"] = populate_query_metrics
-        if offer_throughput is not None:
-            request_options["offerThroughput"] = offer_throughput
-
-        result = self.client_connection.CreateDatabase(database=dict(id=id), options=request_options, **kwargs)
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers)
-        return DatabaseProxy(self.client_connection, id=result["id"], properties=result)
-
-    @distributed_trace
-    def create_database_if_not_exists(  # pylint: disable=redefined-builtin
-        self,
-        id,  # type: str
-        populate_query_metrics=None,  # type: Optional[bool]
-        offer_throughput=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> DatabaseProxy
-        """
-        Create the database if it does not exist already.
-
-        If the database already exists, the existing settings are returned.
-
-        ..note::
-            This function does not check or update existing database settings or
-            offer throughput if they differ from what is passed in.
-
-        :param id: ID (name) of the database to read or create.
-        :param bool populate_query_metrics: Enable returning query metrics in response headers.
-        :param int offer_throughput: The provisioned throughput for this offer.
-        :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
-            has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: A DatabaseProxy instance representing the database.
-        :rtype: ~azure.cosmos.DatabaseProxy
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
-        """
-        try:
-            database_proxy = self.get_database_client(id)
-            database_proxy.read(
-                populate_query_metrics=populate_query_metrics,
-                **kwargs
-            )
-            return database_proxy
-        except CosmosResourceNotFoundError:
-            return self.create_database(
-                id,
-                populate_query_metrics=populate_query_metrics,
-                offer_throughput=offer_throughput,
-                **kwargs
-            )
-
-    def get_database_client(self, database):
-        # type: (Union[str, DatabaseProxy, Dict[str, Any]]) -> DatabaseProxy
-        """Retrieve an existing database with the ID (name) `id`.
-
-        :param database: The ID (name), dict representing the properties or
-            `DatabaseProxy` instance of the database to read.
-        :type database: str or dict(str, str) or ~azure.cosmos.DatabaseProxy
-        :returns: A `DatabaseProxy` instance representing the retrieved database.
-        :rtype: ~azure.cosmos.DatabaseProxy
-        """
-        if isinstance(database, DatabaseProxy):
-            id_value = database.id
-        else:
-            try:
-                id_value = database["id"]
-            except TypeError:
-                id_value = database
-
-        return DatabaseProxy(self.client_connection, id_value)
-
-    @distributed_trace
-    def list_databases(
-        self,
-        max_item_count=None,  # type: Optional[int]
-        populate_query_metrics=None,  # type: Optional[bool]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable[Dict[str, Any]]
-        """List the databases in a Cosmos DB SQL database account.
-
-        :param int max_item_count: Max number of items to be returned in the enumeration operation.
-        :param bool populate_query_metrics: Enable returning query metrics in response headers.
-        :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: An Iterable of database properties (dicts).
-        :rtype: Iterable[dict[str, str]]
-        """
-        feed_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
-        if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
-        if populate_query_metrics is not None:
-            feed_options["populateQueryMetrics"] = populate_query_metrics
-
-        result = self.client_connection.ReadDatabases(options=feed_options, **kwargs)
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers)
-        return result
-
-    @distributed_trace
-    def query_databases(
-        self,
-        query=None,  # type: Optional[str]
-        parameters=None,  # type: Optional[List[str]]
-        enable_cross_partition_query=None,  # type: Optional[bool]
-        max_item_count=None,  # type:  Optional[int]
-        populate_query_metrics=None,  # type: Optional[bool]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable[Dict[str, Any]]
-        """Query the databases in a Cosmos DB SQL database account.
-
-        :param str query: The Azure Cosmos DB SQL query to execute.
-        :param list[str] parameters: Optional array of parameters to the query. Ignored if no query is provided.
-        :param bool enable_cross_partition_query: Allow scan on the queries which couldn't be
-            served as indexing was opted out on the requested paths.
-        :param int max_item_count: Max number of items to be returned in the enumeration operation.
-        :param bool populate_query_metrics: Enable returning query metrics in response headers.
-        :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: An Iterable of database properties (dicts).
-        :rtype: Iterable[dict[str, str]]
-        """
-        feed_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
-        if enable_cross_partition_query is not None:
-            feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
-        if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
-        if populate_query_metrics is not None:
-            feed_options["populateQueryMetrics"] = populate_query_metrics
-
-        if query:
-            # This is currently eagerly evaluated in order to capture the headers
-            # from the call.
-            # (just returning a generator did not initiate the first network call, so
-            # the headers were misleading)
-            # This needs to change for "real" implementation
-            query = query if parameters is None else dict(query=query, parameters=parameters)  # type: ignore
-            result = self.client_connection.QueryDatabases(query=query, options=feed_options, **kwargs)
-        else:
-            result = self.client_connection.ReadDatabases(options=feed_options, **kwargs)
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers)
-        return result
-
-    @distributed_trace
-    def delete_database(
-        self,
-        database,  # type: Union[str, DatabaseProxy, Dict[str, Any]]
-        populate_query_metrics=None,  # type: Optional[bool]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        """Delete the database with the given ID (name).
-
-        :param database: The ID (name), dict representing the properties or :class:`DatabaseProxy`
-            instance of the database to delete.
-        :type database: str or dict(str, str) or ~azure.cosmos.DatabaseProxy
-        :param bool populate_query_metrics: Enable returning query metrics in response headers.
-        :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
-            has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the database couldn't be deleted.
-        :rtype: None
-        """
-        request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
-        if populate_query_metrics is not None:
-            request_options["populateQueryMetrics"] = populate_query_metrics
-
-        database_link = self._get_database_link(database)
-        self.client_connection.DeleteDatabase(database_link, options=request_options, **kwargs)
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers)
-
-    @distributed_trace
-    def get_database_account(self, **kwargs):
-        # type: (Any) -> DatabaseAccount
-        """Retrieve the database account information.
-
-        :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account.
-        :rtype: ~azure.cosmos.DatabaseAccount
-        """
-        response_hook = kwargs.pop('response_hook', None)
-        result = self.client_connection.GetDatabaseAccount(**kwargs)
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers)
-        return result
