@@ -31,18 +31,18 @@ steps:
         --tool-path $(Build.BinariesDirectory)/test-proxy `
         --add-source https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json `
         --version 1.0.0-dev.20210811.2
-    displayName: "Install test-proxy - windows"
+    displayName: "Install test-proxy"
 
   - pwsh: |
       Start-Process $(Build.BinariesDirectory)/test-proxy/test-proxy.exe `
         -ArgumentList "--storage-location '${{ parameters.rootFolder }}'" `
         -NoNewWindow -PassThru
-    displayName: 'Run the testproxy via dotnet tool - windows'
+    displayName: 'Run the testproxy - windows'
     condition: and(succeeded(), eq(variables['Agent.OS'],'Windows_NT'))
 
   - bash: |
       sudo nohup $(Build.BinariesDirectory)/test-proxy/test-proxy &
-    displayName: "Check Running Processes"
+    displayName: "Run the testproxy - linux/mac"
     condition: and(succeeded(), ne(variables['Agent.OS'],'Windows_NT'))
     workingDirectory: "${{ parameters.rootFolder }}"
 
