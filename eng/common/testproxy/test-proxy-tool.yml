@@ -38,17 +38,36 @@ steps:
     displayName: "Install test-proxy"
 
   - pwsh: |
-      if ($IsWindows) {
-        Start-Process $(Build.BinariesDirectory)/test-proxy/test-proxy.exe `
-          -ArgumentList "--storage-location '${{ parameters.rootFolder }}'" `
-          -NoNewWindow -PassThru
-      }
-      else {
-        Get-Location
-        nohup $(Build.SourcesDirectory)/eng/common/testproxy/invoke-proxy.sh &
-      }
+      Start-Process $(Build.BinariesDirectory)/test-proxy/test-proxy.exe `
+        -ArgumentList "--storage-location '${{ parameters.rootFolder }}'" `
+        -NoNewWindow -PassThru
     displayName: 'Run the testproxy via dotnet tool'
+    condition: and(succeeded(), eq(variables['Agent.OS'],'Windows_NT'))
+
+  # - pwsh: |
+  #     if ($IsWindows) {
+  #       Start-Process $(Build.BinariesDirectory)/test-proxy/test-proxy.exe `
+  #         -ArgumentList "--storage-location '${{ parameters.rootFolder }}'" `
+  #         -NoNewWindow -PassThru
+  #     }
+  #     else {
+  #       Get-Location
+  #       nohup $(Build.SourcesDirectory)/eng/common/testproxy/invoke-proxy.sh &
+  #     }
+  #   displayName: 'Run the testproxy via dotnet tool'
+  #   workingDirectory: "${{ parameters.rootFolder }}"
+
+  - bash: |
+      nohup $(Build.BinariesDirectory)/test-proxy/test-proxy &
+    displayName: "Run the testproxy via dotnet tool"
+    condition: and(succeeded(), ne(variables['Agent.OS'],'Windows_NT'))
     workingDirectory: "${{ parameters.rootFolder }}"
+
+  # - pwsh: |
+  #     cat nohup.out
+  #   displayName: 'Check Progress'
+  #   condition: and(succeeded(), ne(variables['Agent.OS'],'Windows_NT'))
+
 
   - pwsh: |
       Write-Host "##vso[task.setvariable variable=PATH]$(OriginalPath)"
