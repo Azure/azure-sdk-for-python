@@ -51,11 +51,5 @@ steps:
     workingDirectory: "${{ parameters.rootFolder }}"
 
   - pwsh: |
-      cat nohup.out
-    displayName: 'Check Progress'
-    condition: and(succeeded(), ne(variables['Agent.OS'],'Windows_NT'))
-
-
-  - pwsh: |
       Write-Host "##vso[task.setvariable variable=PATH]$(OriginalPath)"
     displayName: 'Restore .NET version by resetting path'
