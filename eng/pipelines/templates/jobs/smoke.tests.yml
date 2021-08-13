@@ -185,7 +185,7 @@ jobs:
           env:
             REQUIREMENTS: $(requirements)
 
-        - pwsh: pip install -r "$env:REQUIREMENTS" --no-deps --upgrade
+        - pwsh: pip --retries 10 install -r "$env:REQUIREMENTS" --no-deps --upgrade --no-cache-dir
           displayName: Install requirements without dependencies
           env:
             REQUIREMENTS: $(requirements)
