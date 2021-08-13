@@ -324,7 +324,7 @@ class TableCheckpointStore(CheckpointStore):
         except ResourceNotFoundError:
             logger.info(
                 "Create checkpoint entity %r because it hasn't existed in the table yet.",
-                checkpoint_entity,
+                entity_name,
             )
             self._table_client.create_entity(entity=checkpoint_entity, **kwargs)
 
