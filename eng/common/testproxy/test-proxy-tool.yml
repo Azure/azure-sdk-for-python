@@ -27,10 +27,14 @@ steps:
       version: 5.0.205
 
   - pwsh: |
+      $toolLocation = "$(Build.BinariesDirectory)/test-proxy"
+
       dotnet tool install azure.sdk.tools.testproxy `
-        --tool-path $(Build.BinariesDirectory)/test-proxy `
+        --tool-path $toolLocation`
         --add-source https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json `
         --version 1.0.0-dev.20210811.2
+
+      Write-Host "##vso[task.setvariable variable=TEST_PROXY_LOC]$toolLocation"
     displayName: "Install test-proxy"
 
   - pwsh: |
@@ -40,12 +44,11 @@ steps:
           -NoNewWindow -PassThru
       }
       else {
-        Write-Host Get-Location
-        Write-Host "nohup $(Build.BinariesDirectory)/test-proxy/test-proxy --storage-location '${{ parameters.rootFolder }}' &"
-        nohup $(Build.BinariesDirectory)/test-proxy/test-proxy --storage-location "${{ parameters.rootFolder }}" &
+        Get-Location
+        nohup $(Build.SourcesDirectory)/eng/common/testproxy/invoke-proxy.sh &
       }
-
     displayName: 'Run the testproxy via dotnet tool'
+    workingDirectory: "${{ parameters.rootFolder }}"
 
   - pwsh: |
       cat nohup.out
