@@ -12,7 +12,7 @@ from ._generated.aio.operations import CallConnectionsOperations
 
 from ._generated.models import CancelAllMediaOperationsRequest, PlayAudioRequest, AddParticipantRequest
 
-from azure.communication.callingserver._shared.models import CommunicationIdentifier, PhoneNumberIdentifier
+from ._generated.models import CancelAllMediaOperationsRequest, PlayAudioRequest, AddParticipantRequest, PhoneNumberIdentifierModel, CommunicationIdentifierModel
 
 class CallConnection(object):
     def __init__(
@@ -40,17 +40,17 @@ class CallConnection(object):
     
     @distributed_trace()
     def cancel_all_media_operations(self,
-    operationContext,
+    operation_context,
     **kwargs # type: Any
     ):
 
-        request = CancelAllMediaOperationsRequest(operationContext)
+        request = CancelAllMediaOperationsRequest(**kwargs)
 
         return self.call_connection_client.cancel_all_media_operations(
             call_connection_id=self.call_connection_id,
-            cancel_all_media_operation_request=request,
-            **kwargs
-            )
+             cancel_all_media_operation_request=request,
+             **kwargs
+             )
         
 
     @distributed_trace()
@@ -60,6 +60,7 @@ class CallConnection(object):
         audio_File_id: str,
         callback_uri: str,
         operation_context: str,
+        loop: bool,
         **kwargs: Any
     ):
         try:
@@ -82,7 +83,7 @@ class CallConnection(object):
 
         request = PlayAudioRequest(
             audio_file_uri=audio_file_uri,
-            loop = kwargs.get('loop', False),
+            loop = loop,
             operation_context=operation_context,
             audio_file_id=audio_File_id,
             callback_uri=callback_uri,
@@ -97,8 +98,8 @@ class CallConnection(object):
 
     @distributed_trace()
     def add_participant(self,
-    participant: CommunicationIdentifier,
-    alternate_call_id: PhoneNumberIdentifier,
+    participant: CommunicationIdentifierModel,
+    alternate_call_id: PhoneNumberIdentifierModel,
     operation_context: str,
     **kwargs: Any
     ):
@@ -111,6 +112,19 @@ class CallConnection(object):
 
         return self.call_connection_client.add_participant(call_connection_id=self.call_connection_id, 
         add_participant_request=request)
+
+
+    @distributed_trace()
+    def remove_participant(self,
+    participant_id: str,
+    **kwargs: Any
+    ):
+        if not participant_id:
+            raise ValueError("participant_id can not be None")
+
+        return self.call_connection_client.remove_participant(call_connection_id=self.call_connection_id,
+        participant_id=participant_id,
+        **kwargs)
 
 
     def close(self):
