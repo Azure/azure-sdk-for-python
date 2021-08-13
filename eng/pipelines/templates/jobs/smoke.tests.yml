@@ -159,7 +159,7 @@ jobs:
           timeoutInMinutes: 5
 
         - pwsh: |
-            $packages = Get-ChildItem "$(Pipeline.Workspace)/${{ parameters.ArtifactName }}/*.zip"
+            $packages = Get-ChildItem "$(Pipeline.Workspace)/${{ parameters.ArtifactName }}/*/*.zip"
             Write-Host "Artifacts found:"
             Write-Host "Pipeline workspace: $(Pipeline.Workspace)"
             Write-Host "ArtifactName: ${{parameters.ArtifactName}}"
