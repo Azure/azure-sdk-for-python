@@ -4,41 +4,41 @@ variables:
   PythonVersion: '3.9'
 
 jobs:
-  - job: 'win2019docker'
-    displayName: 'Windows Docker Run'
-    pool:
-      vmImage: 'windows-2019'
-    steps:
-      - task: UsePythonVersion@0
-        displayName: 'Use Python $(PythonVersion)'
-        inputs:
-          versionSpec: $(PythonVersion)
-      - template: /eng/common/testproxy/test-proxy-docker.yml
-      - template : /eng/pipelines/templates/steps/check-availability.yml
+  # - job: 'win2019docker'
+  #   displayName: 'Windows Docker Run'
+  #   pool:
+  #     vmImage: 'windows-2019'
+  #   steps:
+  #     - task: UsePythonVersion@0
+  #       displayName: 'Use Python $(PythonVersion)'
+  #       inputs:
+  #         versionSpec: $(PythonVersion)
+  #     - template: /eng/common/testproxy/test-proxy-docker.yml
+  #     - template : /eng/pipelines/templates/steps/check-availability.yml
 
-  - job: 'win2019tool'
-    displayName: 'Windows Tool Run'
-    pool:
-      vmImage: 'windows-2019'
-    steps:
-      - task: UsePythonVersion@0
-        displayName: 'Use Python $(PythonVersion)'
-        inputs:
-          versionSpec: $(PythonVersion)
-      - template: /eng/common/testproxy/test-proxy-tool.yml
-      - template : /eng/pipelines/templates/steps/check-availability.yml
+  # - job: 'win2019tool'
+  #   displayName: 'Windows Tool Run'
+  #   pool:
+  #     vmImage: 'windows-2019'
+  #   steps:
+  #     - task: UsePythonVersion@0
+  #       displayName: 'Use Python $(PythonVersion)'
+  #       inputs:
+  #         versionSpec: $(PythonVersion)
+  #     - template: /eng/common/testproxy/test-proxy-tool.yml
+  #     - template : /eng/pipelines/templates/steps/check-availability.yml
 
-  - job: 'linux2020docker'
-    displayName: 'Linux Docker Run'
-    pool:
-      vmImage: 'ubuntu-20.04'
-    steps:
-      - task: UsePythonVersion@0
-        displayName: 'Use Python $(PythonVersion)'
-        inputs:
-          versionSpec: $(PythonVersion)
-      - template: /eng/common/testproxy/test-proxy-docker.yml
-      - template : /eng/pipelines/templates/steps/check-availability.yml
+  # - job: 'linux2020docker'
+  #   displayName: 'Linux Docker Run'
+  #   pool:
+  #     vmImage: 'ubuntu-20.04'
+  #   steps:
+  #     - task: UsePythonVersion@0
+  #       displayName: 'Use Python $(PythonVersion)'
+  #       inputs:
+  #         versionSpec: $(PythonVersion)
+  #     - template: /eng/common/testproxy/test-proxy-docker.yml
+  #     - template : /eng/pipelines/templates/steps/check-availability.yml
 
   - job: 'linux2020tool'
     displayName: 'Linux Tool Run'
