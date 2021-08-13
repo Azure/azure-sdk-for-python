@@ -64,7 +64,7 @@ steps:
     condition: and(succeeded(), ne(variables['Agent.OS'],'Windows_NT'))
 
   - bash: |
-      sudo nohup $(Build.BinariesDirectory)/test-proxy &
+      sudo nohup $(Build.BinariesDirectory)/test-proxy/test-proxy &
     displayName: "Check Running Processes"
     condition: and(succeeded(), ne(variables['Agent.OS'],'Windows_NT'))
     workingDirectory: "${{ parameters.rootFolder }}"
