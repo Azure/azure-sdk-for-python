@@ -2,7 +2,3 @@ steps:
   - pwsh: |
       Invoke-WebRequest -Uri "http://localhost:5000/Info/Available"
     displayName: 'http://localhost:5000/Info/Available'
-
-  - pwsh: |
-      Invoke-WebRequest -Uri "https://localhost:5001/Info/Available" -SkipCertificateCheck
-    displayName: 'https://localhost:5001/Info/Available'
