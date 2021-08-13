@@ -60,7 +60,7 @@ class TableCheckpointStore(CheckpointStore):
     """
 
     def __init__(self, table_account_url, table_name, credential=None, **kwargs):
-        # type(str, str, Optional[Any], Any) -> None
+        # type: (str, str, Optional[Any], Any) -> None
         self._table_client = kwargs.pop("table_client", None)
         if not self._table_client:
             api_version = kwargs.pop("api_version", None)
