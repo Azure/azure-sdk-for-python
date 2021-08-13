@@ -2,14 +2,14 @@ parameters:
   rootFolder: '$(Build.SourcesDirectory)'
 
 steps:
-  - pwsh: |
-        . $(Build.SourcesDirectory)/eng/common/scripts/common.ps1
+  # - pwsh: |
+  #       . $(Build.SourcesDirectory)/eng/common/scripts/common.ps1
 
-        if ($FindArtifactForApiReviewFn -and (Test-Path "Function:$FindArtifactForApiReviewFn"))
-        {
-            &$FindArtifactForApiReviewFn
-        }
-    displayName: 'Language Specific Certificate Trust'
+  #       if ($FindArtifactForApiReviewFn -and (Test-Path "Function:$FindArtifactForApiReviewFn"))
+  #       {
+  #           &$FindArtifactForApiReviewFn
+  #       }
+  #   displayName: 'Language Specific Certificate Trust'
 
   - pwsh: |
       Write-Host "##vso[task.setvariable variable=ASPNETCORE_Kestrel__Certificates__Default__Path]$(Build.SourcesDirectory)/eng/common/testproxy/dotnet-devcert.pfx"

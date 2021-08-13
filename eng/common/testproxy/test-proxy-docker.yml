@@ -2,14 +2,14 @@ parameters:
     rootFolder: '$(Build.SourcesDirectory)'
 
 steps:
-  - pwsh: |
-        . $(Build.SourcesDirectory)/eng/common/scripts/common.ps1
+  # - pwsh: |
+  #       . $(Build.SourcesDirectory)/eng/common/scripts/common.ps1
 
-        if ($FindArtifactForApiReviewFn -and (Test-Path "Function:$FindArtifactForApiReviewFn"))
-        {
-            &$FindArtifactForApiReviewFn
-        }
-    displayName: 'Language Specific Certificate Trust'
+  #       if ($FindArtifactForApiReviewFn -and (Test-Path "Function:$FindArtifactForApiReviewFn"))
+  #       {
+  #           &$FindArtifactForApiReviewFn
+  #       }
+  #   displayName: 'Language Specific Certificate Trust'
 
   - pwsh: |
       $(Build.SourcesDirectory)/eng/common/scripts/docker-start-proxy.ps1 -Mode start -TargetFolder "${{ parameters.rootFolder }}"
