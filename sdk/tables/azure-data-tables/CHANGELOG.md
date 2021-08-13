@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Resolved bug where strings couldn't be used instead of enum value for entity Update Mode (#20247).
+
 ### Other Changes
 
 - Bumped dependency on `msrest` to `>=0.6.21`
