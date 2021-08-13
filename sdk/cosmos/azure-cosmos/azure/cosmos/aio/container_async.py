@@ -29,13 +29,13 @@ import asyncio
 import time
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
-from ._cosmos_client_connection import CosmosClientConnection
-from ._base import build_options
-from .exceptions import CosmosResourceNotFoundError
-from .http_constants import StatusCodes
-from .offer import Offer
-from .scripts import ScriptsProxy
-from .partition_key import NonePartitionKeyValue
+from ._cosmos_client_connection_async import CosmosClientConnection
+from .._base import build_options
+from ..exceptions import CosmosResourceNotFoundError
+from ..http_constants import StatusCodes
+from ..offer import Offer
+from ..scripts import ScriptsProxy
+from ..partition_key import NonePartitionKeyValue
 
 __all__ = ("ContainerProxy",)
 
@@ -154,7 +154,7 @@ class ContainerProxy(object):
         return cast('Dict[str, Any]', self._properties)
 
     @distributed_trace
-    def read_item(
+    async def read_item(
         self,
         item,  # type: Union[str, Dict[str, Any]]
         partition_key,  # type: Any
@@ -197,7 +197,7 @@ class ContainerProxy(object):
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
 
-        result = self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
+        result = await self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
@@ -518,6 +518,7 @@ class ContainerProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         print(f"Create item took {(time.time() - start) * 1000} ms")
+        print("ASYNC CONTAINER USED")
         return result
 
     @distributed_trace
