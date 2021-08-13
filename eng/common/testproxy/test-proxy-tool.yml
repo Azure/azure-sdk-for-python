@@ -40,8 +40,9 @@ steps:
           -NoNewWindow -PassThru
       }
       else {
-        nohup $(Build.BinariesDirectory)/test-proxy/test-proxy `
-          --storage-location "${{ parameters.rootFolder }}" &
+        Write-Host ("Running in " + Get-Location)
+        Write-Host "nohup $(Build.BinariesDirectory)/test-proxy/test-proxy --storage-location '${{ parameters.rootFolder }}' &"
+        nohup $(Build.BinariesDirectory)/test-proxy/test-proxy --storage-location "${{ parameters.rootFolder }}" &
       }
 
     displayName: 'Run the testproxy via dotnet tool'
