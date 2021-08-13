@@ -12,5 +12,5 @@ steps:
   #   displayName: 'Language Specific Certificate Trust'
 
   - pwsh: |
-      $(Build.SourcesDirectory)/eng/common/scripts/docker-start-proxy.ps1 -Mode start -TargetFolder "${{ parameters.rootFolder }}"
+      $(Build.SourcesDirectory)/eng/common/testproxy/docker-start-proxy.ps1 -Mode start -TargetFolder "${{ parameters.rootFolder }}"
     displayName: 'Run the docker container'
