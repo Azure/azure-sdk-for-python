@@ -203,6 +203,7 @@ class TableCheckpointStore(CheckpointStore):
     def list_ownership(
         self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs
     ):
+    # type: (str, str, str, Any) -> Iterable[Dict[str, Any]]
         """Retrieves a complete ownership list from the storage table.
 
         :param str fully_qualified_namespace: The fully qualified namespace that the Event Hub belongs to.
