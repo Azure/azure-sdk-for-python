@@ -296,6 +296,7 @@ class TableCheckpointStore(CheckpointStore):
         return checkpoints_list
 
     def update_checkpoint(self, checkpoint, **kwargs):
+    # type: (Dict[str, Optional[Union[str, int]]], Any) -> None
         """Updates the checkpoint using the given information for the offset, associated partition and
         consumer group in the storage table.
 
