@@ -16,5 +16,5 @@ steps:
     displayName: 'Run the docker container'
 
   - pwsh: |
-      docker container ls -A
+      docker container ls -a
     displayName: Check running container
