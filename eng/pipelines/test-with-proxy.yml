@@ -4,77 +4,50 @@ variables:
   PythonVersion: '3.9'
 
 jobs:
-  - job: 'rpat'
-    displayName: 'Run Proxy and Test'
-
+  - job: 'win2019docker'
+    displayName: 'Windows Docker Run'
     pool:
       vmImage: 'windows-2019'
-
     steps:
       - task: UsePythonVersion@0
         displayName: 'Use Python $(PythonVersion)'
         inputs:
           versionSpec: $(PythonVersion)
+      - template: /eng/common/testproxy-test-proxy-docker.yml
+      - template : /eng/pipelines/templates/steps/check-availability.yml
 
-      - pwsh: |
-          choco --version
-        displayName: "Is Choco available?"
-        continueOnError: true
+  - job: 'win2019tool'
+    displayName: 'Windows Tool Run'
+    pool:
+      vmImage: 'windows-2019'
+    steps:
+      - task: UsePythonVersion@0
+        displayName: 'Use Python $(PythonVersion)'
+        inputs:
+          versionSpec: $(PythonVersion)
+      - template: /eng/common/testproxy-test-proxy-docker.yml
+      - template : /eng/pipelines/templates/steps/check-availability.yml
 
-      - pwsh: |
-          dir env:
-        displayName: "Dump Env"
+  - job: 'linux2020docker'
+    displayName: 'Linux Docker Run'
+    pool:
+      vmImage: 'ubuntu-20.04'
+    steps:
+      - task: UsePythonVersion@0
+        displayName: 'Use Python $(PythonVersion)'
+        inputs:
+          versionSpec: $(PythonVersion)
+      - template: /eng/common/testproxy-test-proxy-docker.yml
+      - template : /eng/pipelines/templates/steps/check-availability.yml
 
-      - pwsh: |
-          Get-ChildItem -Recurse "C:/Program Files/Docker"
-        displayName: 'Dump Details of Docker Install'
-        continueOnError: true
-
-      - pwsh: |
-          choco install docker-desktop
-        displayName: 'Install docker-cli only'
-
-      - pwsh: |
-          cd "C:\Program Files\Docker\Docker\"
-          ./DockerCli.exe -SwitchDaemon
-        displayName: 'Install docker-cli only'
-        continueOnError: true
-      
-      - pwsh: |
-          cd "C:\Program Files\Docker\Docker\"
-          ./DockerCli.exe -SwitchLinuxEngine
-        displayName: 'Install docker-cli only'
-
-      - pwsh: |
-          docker run `
-            --detach `
-            -v $(Build.SourcesDirectory):/etc/testproxy `
-            -p 5001:5001 `
-            -p 5000:5000 `
-            azsdkengsys.azurecr.io/engsys/ubuntu_testproxy_server:latest
-        displayName: 'Run the docker container'
-
-      - pwsh: |
-          docker container ls -a
-        displayName: "View running docker containers"
-        continueOnError: true
-
-      - pwsh: |
-          Invoke-WebRequest -Uri "http://localhost:5000/Info/Available"
-        displayName: 'http://localhost:5000/Info/Available'
-        continueOnError: true
-
-      - pwsh: |
-          Invoke-WebRequest -Uri "https://localhost:5000/Info/Available"
-        displayName: 'https://localhost:5000/Info/Available'
-        continueOnError: true
-
-      - pwsh: |
-          Invoke-WebRequest -Uri "http://localhost:5001/Info/Available"
-        displayName: 'http://localhost:5001/Info/Available'
-        continueOnError: true
-
-      - pwsh: |
-          Invoke-WebRequest -Uri "https://localhost:5001/Info/Available"
-        displayName: 'https://localhost:5001/Info/Available'
-        continueOnError: true
+  - job: 'linux2020tool'
+    displayName: 'Linux Tool Run'
+    pool:
+      vmImage: 'ubuntu-20.04'
+    steps:
+      - task: UsePythonVersion@0
+        displayName: 'Use Python $(PythonVersion)'
+        inputs:
+          versionSpec: $(PythonVersion)
+      - template: /eng/common/testproxy-test-proxy-docker.yml
+      - template : /eng/pipelines/templates/steps/check-availability.yml

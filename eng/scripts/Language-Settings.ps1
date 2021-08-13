@@ -282,3 +282,8 @@ function GetExistingPackageVersions ($PackageName, $GroupId=$null)
     return $null
   }
 }
+
+function Import-Dev-Cert-python()
+{
+  Write-Host "Certificate action here!"
+}
