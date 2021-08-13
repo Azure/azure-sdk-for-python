@@ -32,7 +32,7 @@ steps:
         --add-source https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json `
         --version 1.0.0-dev.20210811.2
 
-      Get-ChildItem -R $(Build.BinariesDirectory)
+      Get-ChildItem -R $(Build.BinariesDirectory)/test-proxy/
       # Write-Host "##vso[task.setvariable variable=TEST_PROXY_LOC]$toolLocation"
     displayName: "Install test-proxy"
 
