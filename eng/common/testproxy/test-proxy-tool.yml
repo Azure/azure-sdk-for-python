@@ -48,7 +48,7 @@ steps:
     displayName: 'Run the testproxy via dotnet tool'
 
   - pwsh: |
-      cat nohup.txt
+      cat nohup.out
     displayName: 'Check Progress'
     condition: and(succeeded(), ne(variables['Agent.OS'],'Windows_NT'))
 
