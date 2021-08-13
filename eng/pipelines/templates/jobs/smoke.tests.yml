@@ -164,6 +164,10 @@ jobs:
             Write-Host "Pipeline workspace: $(Pipeline.Workspace)"
             Write-Host "ArtifactName: ${{parameters.ArtifactName}}"
             Write-Host "Packages: $($packages)"
+            $arts = Get-ChildItem "$(Pipeline.Workspace)/*"
+            $pck = Get-ChildItem "$(Pipeline.Workspace)/${{ parameters.ArtifactName }}/*"
+            Write-Host "ARTS: $($arts)"
+            Write-Host "PCK: $($pck)"
             $artifacts = $packages | ForEach-Object {
               if ($_.Name -match "([a-zA-Z\-]+)\-(.*).zip") {
                 Write-Host "$($matches[1]): $($matches[2])"
