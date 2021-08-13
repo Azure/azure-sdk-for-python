@@ -34,23 +34,17 @@ steps:
     displayName: "Install test-proxy - windows"
 
   - pwsh: |
-      if ($IsWindows) {
-        Start-Process $(Build.BinariesDirectory)/test-proxy/test-proxy.exe `
-          -ArgumentList "--storage-location '${{ parameters.rootFolder }}'" `
-          -NoNewWindow -PassThru
-      }
-      else {
-        nohup $(Build.SourcesDirectory)/test-proxy/test-proxy &
-      }
-    displayName: 'Run the testproxy via dotnet tool'
+      Start-Process $(Build.BinariesDirectory)/test-proxy/test-proxy.exe `
+        -ArgumentList "--storage-location '${{ parameters.rootFolder }}'" `
+        -NoNewWindow -PassThru
+    displayName: 'Run the testproxy via dotnet tool - windows'
+    condition: and(succeeded(), eq(variables['Agent.OS'],'Windows_NT'))
+
+  - bash: |
+      sudo nohup $(Build.BinariesDirectory)/test-proxy/test-proxy &
+    displayName: "Check Running Processes"
+    condition: and(succeeded(), ne(variables['Agent.OS'],'Windows_NT'))
     workingDirectory: "${{ parameters.rootFolder }}"
-
-
-  # - bash: |
-  #     sudo nohup $(Build.BinariesDirectory)/test-proxy/test-proxy &
-  #   displayName: "Check Running Processes"
-  #   condition: and(succeeded(), ne(variables['Agent.OS'],'Windows_NT'))
-  #   workingDirectory: "${{ parameters.rootFolder }}"
 
   - pwsh: |
       Write-Host "##vso[task.setvariable variable=PATH]$(OriginalPath)"
