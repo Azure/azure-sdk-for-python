@@ -189,12 +189,15 @@ jobs:
             $timeout = New-TimeSpan -Seconds 600
             $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
             do {
+              $failure = $false
               try {
                 pip --retries 10 install -r "$env:REQUIREMENTS" --no-deps --upgrade --no-cache-dir
               } catch {
+                $failure = $true
+                Write-Host "Installation failed, retrying in 3 minutes..."
                 sleep 180
               }
-            } while ($stopwatch.elapsed -lt $timeout)
+            } while (($stopwatch.elapsed -lt $timeout) -and ($failure))
           displayName: Install requirements without dependencies
           env:
             REQUIREMENTS: $(requirements)
