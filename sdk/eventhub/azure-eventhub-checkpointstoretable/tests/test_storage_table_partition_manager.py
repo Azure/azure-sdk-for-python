@@ -18,7 +18,7 @@ STORAGE_CONN_STR = [
     os.environ.get("AZURE_COSMOS_CONN_STR", "Azure Storage Connection String"),
 ]
 
-
+#d
 def get_live_storage_table_client(storage_connection_str):
     try:
         table_name = "table{}".format(uuid.uuid4().hex)
