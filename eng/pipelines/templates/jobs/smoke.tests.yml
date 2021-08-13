@@ -185,7 +185,16 @@ jobs:
           env:
             REQUIREMENTS: $(requirements)
 
-        - pwsh: pip --retries 10 install -r "$env:REQUIREMENTS" --no-deps --upgrade --no-cache-dir
+        - pwsh: |
+            $timeout = New-TimeSpan -Seconds 600
+            $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+            do {
+              try {
+                pip --retries 10 install -r "$env:REQUIREMENTS" --no-deps --upgrade --no-cache-dir
+              } catch {
+                sleep 180
+              }
+            } while ($stopwatch.elapsed -lt $timeout)
           displayName: Install requirements without dependencies
           env:
             REQUIREMENTS: $(requirements)
