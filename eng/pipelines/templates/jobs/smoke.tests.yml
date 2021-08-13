@@ -155,7 +155,7 @@ jobs:
 
       - ${{ if eq(parameters.Daily, false) }}:
         - download: current
-          artifact: ${{ parameters.ArtifactName }}
+          # artifact: ${{ parameters.ArtifactName }}
           timeoutInMinutes: 5
 
         - pwsh: |
