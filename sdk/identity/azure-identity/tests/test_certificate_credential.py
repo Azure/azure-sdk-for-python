@@ -9,7 +9,7 @@ from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
 from azure.identity import CertificateCredential, RegionalAuthority, TokenCachePersistenceOptions
 from azure.identity._constants import EnvironmentVariables
-from azure.identity._credentials.certificate import pkcs12_to_pem
+from azure.identity._credentials.certificate import load_pkcs12_certificate
 from azure.identity._internal.user_agent import USER_AGENT
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
@@ -248,7 +248,7 @@ def validate_jwt(request, client_id, cert_bytes, cert_password, expect_x5c=False
     except ValueError:
         if cert_password:
             cert_password = six.ensure_binary(cert_password)
-        cert_bytes = pkcs12_to_pem(cert_bytes, cert_password)
+        cert_bytes = load_pkcs12_certificate(cert_bytes, cert_password).pem_bytes
         cert = x509.load_pem_x509_certificate(cert_bytes, default_backend())
 
     # jwt is of the form 'header.payload.signature'; 'signature' is 'header.payload' signed with cert's private key

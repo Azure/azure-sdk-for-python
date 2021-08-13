@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from binascii import hexlify
-from typing import cast, TYPE_CHECKING
+from typing import cast, NamedTuple, TYPE_CHECKING
 
 from cryptography import x509
 from cryptography.hazmat.primitives import hashes, serialization
@@ -77,26 +77,40 @@ def extract_cert_chain(pem_bytes):
     return b"".join(chain.splitlines())
 
 
-def pkcs12_to_pem(certificate_bytes, password):
-    # type: (bytes, Optional[bytes]) -> bytes
-    """Convert a cert in PKCS12 format to PEM format as required by MSAL"""
+_Cert = NamedTuple("_Cert", [("pem_bytes", bytes), ("private_key", "Any"), ("fingerprint", bytes)])
+
+
+def load_pem_certificate(certificate_data, password):
+    # type: (bytes, Optional[bytes]) -> _Cert
+    private_key = serialization.load_pem_private_key(certificate_data, password, backend=default_backend())
+    cert = x509.load_pem_x509_certificate(certificate_data, default_backend())
+    fingerprint = cert.fingerprint(hashes.SHA1())  # nosec
+    return _Cert(certificate_data, private_key, fingerprint)
+
+
+def load_pkcs12_certificate(certificate_data, password):
+    # type: (bytes, Optional[bytes]) -> _Cert
     from cryptography.hazmat.primitives.serialization import Encoding, NoEncryption, pkcs12, PrivateFormat
 
     private_key, cert, additional_certs = pkcs12.load_key_and_certificates(
-        certificate_bytes, password, backend=default_backend()
+        certificate_data, password, backend=default_backend()
     )
     if not private_key:
         raise ValueError("The certificate must include its private key")
     if not cert:
-        # mentioning PEM here because we raise this error when certificate_bytes is garbage
+        # mentioning PEM here because we raise this error when certificate_data is garbage
         raise ValueError("Failed to deserialize certificate in PEM or PKCS12 format")
 
     # This serializes the private key without any encryption it may have had. Doing so doesn't violate security
-    # boundaries because this representation of the key is kept in memory. If the given key was encrypted, we
-    # already have it and its password in memory.
+    # boundaries because this representation of the key is kept in memory. We already have the key and its
+    # password, if any, in memory.
     key_bytes = private_key.private_bytes(Encoding.PEM, PrivateFormat.PKCS8, NoEncryption())
     pem_sections = [key_bytes] + [c.public_bytes(Encoding.PEM) for c in [cert] + additional_certs]
-    return b"".join(pem_sections)
+    pem_bytes = b"".join(pem_sections)
+
+    fingerprint = cert.fingerprint(hashes.SHA1())  # nosec
+
+    return _Cert(pem_bytes, private_key, fingerprint)
 
 
 def get_client_credential(certificate_path, password=None, certificate_data=None, send_certificate_chain=False, **_):
@@ -116,25 +130,23 @@ def get_client_credential(certificate_path, password=None, certificate_data=None
         password = six.ensure_binary(password, "utf-8")
     password = cast("Optional[bytes]", password)
 
-    if not certificate_data.startswith(b"-----"):
-        certificate_data = pkcs12_to_pem(certificate_data, password)
-        password = None  # pkcs12_to_pem removed private key encryption
+    if certificate_data.startswith(b"-----"):
+        cert = load_pem_certificate(certificate_data, password)
+    else:
+        cert = load_pkcs12_certificate(certificate_data, password)
+        password = None  # load_pkcs12_certificate returns cert.pem_bytes decrypted
 
-    private_key = serialization.load_pem_private_key(certificate_data, password, backend=default_backend())
-    if not isinstance(private_key, RSAPrivateKey):
+    if not isinstance(cert.private_key, RSAPrivateKey):
         raise ValueError("CertificateCredential requires an RSA private key because it uses RS256 for signing")
 
-    cert = x509.load_pem_x509_certificate(certificate_data, default_backend())
-    fingerprint = cert.fingerprint(hashes.SHA1())  # nosec
-
-    client_credential = {"private_key": certificate_data, "thumbprint": hexlify(fingerprint).decode("utf-8")}
+    client_credential = {"private_key": cert.pem_bytes, "thumbprint": hexlify(cert.fingerprint).decode("utf-8")}
     if password:
         client_credential["passphrase"] = password
 
     if send_certificate_chain:
         try:
             # the JWT needs the whole chain but load_pem_x509_certificate deserializes only the signing cert
-            chain = extract_cert_chain(certificate_data)
+            chain = extract_cert_chain(cert.pem_bytes)
             client_credential["public_certificate"] = six.ensure_str(chain)
         except ValueError as ex:
             # we shouldn't land here--cryptography already loaded the cert and would have raised if it were malformed
