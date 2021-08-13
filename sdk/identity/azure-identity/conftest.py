@@ -55,7 +55,7 @@ def record_imds_test(request):
 
 
 @pytest.fixture()
-def live_service_principal():  # pylint:disable=inconsistent-return-statements
+def live_service_principal():
     """Fixture for live Identity tests. Skips them when environment configuration is incomplete."""
 
     missing_variables = [
@@ -100,7 +100,7 @@ def get_certificate_parameters(content, password_protected_content, password, ex
 
 
 @pytest.fixture()
-def live_pem_certificate(live_service_principal):  # pylint:disable=inconsistent-return-statements,redefined-outer-name
+def live_pem_certificate(live_service_principal):
     content = os.environ.get("PEM_CONTENT")
     password_protected_content = os.environ.get("PEM_CONTENT_PASSWORD_PROTECTED")
     password = os.environ.get("CERTIFICATE_PASSWORD")
@@ -113,7 +113,7 @@ def live_pem_certificate(live_service_principal):  # pylint:disable=inconsistent
 
 
 @pytest.fixture()
-def live_pfx_certificate(live_service_principal):  # pylint:disable=inconsistent-return-statements,redefined-outer-name
+def live_pfx_certificate(live_service_principal):
     # PFX bytes arrive base64 encoded because Key Vault secrets have string values
     encoded_content = os.environ.get("PFX_CONTENT")
     encoded_password_protected_content = os.environ.get("PFX_CONTENT_PASSWORD_PROTECTED")
