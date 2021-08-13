@@ -12,9 +12,19 @@ steps:
   #   displayName: 'Language Specific Certificate Trust'
 
   - pwsh: |
+      Write-Host "##vso[task.setvariable variable=OriginalPath]$env:PATH"
+    displayName: 'Store Path Value'
+
+  - pwsh: |
       Write-Host "##vso[task.setvariable variable=ASPNETCORE_Kestrel__Certificates__Default__Path]$(Build.SourcesDirectory)/eng/common/testproxy/dotnet-devcert.pfx"
       Write-Host "##vso[task.setvariable variable=ASPNETCORE_Kestrel__Certificates__Default__Password]password"
     displayName: 'Configure Kestrel Environment Variables'
+
+  - task: UseDotNet@2
+    displayName: "Use .NET Core SDK"
+    inputs:
+      packageType: sdk
+      version: 5.0.205
 
   - pwsh: |
       dotnet tool install azure.sdk.tools.testproxy `
@@ -34,3 +44,7 @@ steps:
           --storage-location "${{ parameters.rootFolder }}" &
       }
     displayName: 'Run the testproxy via dotnet tool'
+  
+  - pwsh: |
+      Write-Host "##vso[task.setvariable variable=PATH]$env:OriginalPath"
+    displayName: 'Restore .NET version by resetting path'
