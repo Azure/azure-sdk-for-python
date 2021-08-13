@@ -199,7 +199,8 @@ def test_claim_and_list_ownership(storage_connection_str):
         remove_live_storage_table_client(storage_connection_str, table_name)
 
 
-@pytest.mark.parametrize("storage_connection_str", STORAGE_CONN_STR)
+@pytest.mark.parametrize("storage_connection_str", [AZURE_STORAGE_CONN_STR, AZURE_COSMOS_CONN_STR])
+@pytest.mark.liveTest
 def test_update_checkpoint(storage_connection_str):
     storage_connection_str, table_name = get_live_storage_table_client(
         storage_connection_str
