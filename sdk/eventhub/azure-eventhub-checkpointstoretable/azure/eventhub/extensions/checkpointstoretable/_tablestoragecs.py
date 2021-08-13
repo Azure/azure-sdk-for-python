@@ -8,9 +8,9 @@ import time
 import logging
 import calendar
 import dateutil.parser
-from azure.eventhub import CheckpointStore  # type: ignore  # pylint: disable=no-name-in-module
-from azure.eventhub.exceptions import OwnershipLostError  # type: ignore 
 from azure.core import MatchConditions
+from azure.eventhub import CheckpointStore  # type: ignore  # pylint: disable=no-name-in-module
+from azure.eventhub.exceptions import OwnershipLostError  # type: ignore
 from azure.core.exceptions import (
     ResourceModifiedError,
     ResourceExistsError,
@@ -319,10 +319,10 @@ class TableCheckpointStore(CheckpointStore):
             checkpoint
         )
         entity_name = "{}/{}/{}/checkpoint/{}".format(
-            checkpoint_entity["fully_qualified_namespace"],
-            checkpoint_entity["eventhub_name"],
-            checkpoint_entity["consumer_group"],
-            checkpoint_entity["partition_id"],
+            checkpoint["fully_qualified_namespace"],
+            checkpoint["eventhub_name"],
+            checkpoint["consumer_group"],
+            checkpoint["partition_id"],
         )
         try:
             self._table_client.update_entity(
