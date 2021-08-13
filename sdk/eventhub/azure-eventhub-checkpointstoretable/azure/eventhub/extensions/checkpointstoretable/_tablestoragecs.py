@@ -168,7 +168,6 @@ class TableCheckpointStore(CheckpointStore):
             ownership["last_modified_time"] = _to_timestamp(
                 dateutil.parser.isoparse(metadata["content"]["Timestamp"])
             )
-            return ownership
 
     def _claim_one_partition(self, ownership, **kwargs):
         new_ownership = ownership.copy()
