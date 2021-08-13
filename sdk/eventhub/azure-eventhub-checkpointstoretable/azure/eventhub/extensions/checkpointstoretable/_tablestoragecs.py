@@ -348,7 +348,7 @@ class TableCheckpointStore(CheckpointStore):
         """
         gathered_results = []
         for x in ownership_list:
-            gathered_results.append(self._claim_one_partition(x), **kwargs)
+            gathered_results.append(self._claim_one_partition(x, **kwargs))
         return gathered_results
 
     def close(self):
