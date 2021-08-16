@@ -1,0 +1,57 @@
+{
+    "styles": [
+        {
+            "keyName": "s1",
+            "type": "boolean",
+            "rules": [
+                {
+                    "true": "#FF0000",
+                    "false": "#00FF00"
+                }
+            ]
+        },
+        {
+            "keyName": "s2",
+            "type": "number",
+            "rules": [
+                {
+                    "range": {
+                        "exclusiveMaximum": 50
+                    },
+                    "color": "#343deb"
+                },
+                {
+                    "range": {
+                        "minimum": 50,
+                        "exclusiveMaximum": 70
+                    },
+                    "color": "#34ebb1"
+                },
+                {
+                    "range": {
+                        "minimum": 70,
+                        "exclusiveMaximum": 90
+                    },
+                    "color": "#eba834"
+                },
+                {
+                    "range": {
+                        "minimum": 90
+                    },
+                    "color": "#eb3434"
+                }
+            ]
+        },
+        {
+            "keyName": "s3",
+            "type": "string",
+            "rules": [
+                {
+                    "stateValue1": "#FF0000",
+                    "stateValue2": "#FF00AA",
+                    "stateValueN": "#00FF00"
+                }
+            ]
+        }
+    ]
+}
