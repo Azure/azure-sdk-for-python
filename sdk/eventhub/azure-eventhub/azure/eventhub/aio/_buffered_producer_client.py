@@ -63,6 +63,12 @@ class EventHubBufferedProducerClient(object):
     :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
      authenticate the identity of the connection endpoint.
      Default is None in which case `certifi.where()` will be used.
+    :ivar fully_qualified_namespace:
+    :vartype fully_qualified_namespace: str
+    :ivar eventhub_name:
+    :vartype eventhub_name: str
+    :ivar total_buffered_event_count:
+    :vartype total_buffered_event_count: int
     """
 
     def __init__(
@@ -137,6 +143,7 @@ class EventHubBufferedProducerClient(object):
         :type events: Union[~azure.eventhub.EventData, List[~azure.eventhub.EventData]
         :keyword str partition_key:
         :keyword str partition_id:
+        :keyword int timeout:
         :rtype: None
         """
 
@@ -160,7 +167,7 @@ class EventHubBufferedProducerClient(object):
         # type: (str, Any) -> int
         """
 
-        :param partition_id:
+        :param int partition_id:
         :rtype: int
         """
         pass

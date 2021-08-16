@@ -63,6 +63,12 @@ class EventHubBufferedProducerClient(object):
     :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
      authenticate the identity of the connection endpoint.
      Default is None in which case `certifi.where()` will be used.
+    :ivar fully_qualified_namespace:
+    :vartype fully_qualified_namespace: str
+    :ivar eventhub_name:
+    :vartype eventhub_name: str
+    :ivar total_buffered_event_count:
+    :vartype total_buffered_event_count: int
     """
 
     def __init__(
@@ -89,7 +95,7 @@ class EventHubBufferedProducerClient(object):
         :keyword str eventhub_name: The path of the specific Event Hub to connect the client to.
         :keyword bool enable_idempotent_retries:
         :keyword int max_wait_time:
-        :keyword int max_pending_event_count:
+        :keyword int max_buffered_event_count:
         :keyword int max_concurrent_sends_per_partition:  # TBD, ordering? and python limitation of threading?
          https://docs.confluent.io/platform/current/installation/configuration/producer-configs.html#producerconfigs_max.in.flight.requests.per.connection
         :keyword on_send_failed:
@@ -167,7 +173,7 @@ class EventHubBufferedProducerClient(object):
         # type: (str, Any) -> int
         """
 
-        :param partition_id:
+        :param int partition_id:
         :rtype: int
         """
         pass
