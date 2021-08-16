@@ -85,10 +85,11 @@ class _RestRequestsTransportResponseBase(_HttpResponseBase):
         self._encoding = value
         self._internal_response.encoding = value
 
-    @property
-    def text(self):
+    def text(self, encoding=None):
         # this will trigger errors if response is not read in
         self.content  # pylint: disable=pointless-statement
+        if encoding:
+            self._internal_response.encoding = encoding
         return self._internal_response.text
 
 def _stream_download_helper(decompress, response):

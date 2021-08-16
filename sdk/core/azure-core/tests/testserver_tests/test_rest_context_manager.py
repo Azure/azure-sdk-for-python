@@ -11,7 +11,7 @@ from azure.core.exceptions import ResponseNotReadError
 def test_normal_call(client, port):
     def _raise_and_get_text(response):
         response.raise_for_status()
-        assert response.text == "Hello, world!"
+        assert response.text() == "Hello, world!"
         assert response.is_closed
     request = HttpRequest("GET", url="/basic/string")
     response = client.send_request(request)
@@ -30,9 +30,9 @@ def test_stream_call(client):
         response.raise_for_status()
         assert not response.is_closed
         with pytest.raises(ResponseNotReadError):
-            response.text
+            response.text()
         response.read()
-        assert response.text == "Hello, world!"
+        assert response.text() == "Hello, world!"
         assert response.is_closed
     request = HttpRequest("GET", url="/streams/basic")
     response = client.send_request(request, stream=True)
