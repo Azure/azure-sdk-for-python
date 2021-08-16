@@ -43,7 +43,7 @@ class TestDetectLanguage(TextAnalyticsTest):
         response = client.detect_language(docs, show_stats=True)
 
         self.assertEqual(response[0].primary_language.name, "English")
-        # self.assertEqual(response[1].primary_language.name, "Spanish")  # https://msazure.visualstudio.com/Cognitive%20Services/_workitems/edit/10363878
+        # self.assertEqual(response[1].primary_language.name, "Spanish") # https://msazure.visualstudio.com/Cognitive%20Services/_workitems/edit/10363878
         self.assertEqual(response[2].primary_language.name, "Japanese")
         self.assertEqual(response[3].primary_language.name, "German")
         self.assertEqual(response[0].primary_language.iso6391_name, "en")

@@ -28,6 +28,7 @@ multiapi: true
 batch:
   - tag: release_3_0
   - tag: release_3_1
+  - tag: release_3_2_preview.1
   - multiapiscript: true
 ```
 
@@ -35,8 +36,8 @@ batch:
 
 ```yaml $(multiapiscript)
 output-folder: ../azure/ai/textanalytics/_generated/
-default-api: v3_1
-clear-output-folder: false
+default-api: v3_2_preview_1
+clear-output-folder: true
 perform-load: false
 ```
 
@@ -58,6 +59,16 @@ These settings apply only when `--tag=release_3_1` is specified on the command l
 input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/specification/cognitiveservices/data-plane/TextAnalytics/stable/v3.1/TextAnalytics.json
 namespace: azure.ai.textanalytics.v3_1
 output-folder: ../azure/ai/textanalytics/_generated/v3_1
+```
+
+## Release 3.2-preview.1
+
+These settings apply only when `--tag=release_3_2_preview.1` is specified on the command line.
+
+```yaml $(tag) == 'release_3_2_preview.1'
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/specification/cognitiveservices/data-plane/TextAnalytics/preview/v3.2-preview.1/TextAnalytics.json
+namespace: azure.ai.textanalytics.v3_2_preview_1
+output-folder: ../azure/ai/textanalytics/_generated/v3_2_preview_1
 ```
 
 ### Override Analyze's pager poller
@@ -88,7 +99,7 @@ directive:
       $["x-python-custom-default-polling-method-async"] = ".....aio._lro_async.AsyncAnalyzeHealthcareEntitiesLROPollingMethod";
 ```
 
-### Override parameterizing the ApiVersion
+### Override parameterizing the ApiVersion v3.1
 
 ```yaml $(tag) == 'release_3_1'
 directive:
@@ -96,5 +107,16 @@ directive:
     where: '$["x-ms-parameterized-host"]'
     transform: >
       $["hostTemplate"] = "{Endpoint}/text/analytics/v3.1";
+      $["parameters"] = [{"$ref": "#/parameters/Endpoint"}];
+```
+
+### Override parameterizing the ApiVersion v3.2-preview.1
+
+```yaml $(tag) == 'release_3_2_preview.1'
+directive:
+  - from: swagger-document
+    where: '$["x-ms-parameterized-host"]'
+    transform: >
+      $["hostTemplate"] = "{Endpoint}/text/analytics/v3.2-preview.1";
       $["parameters"] = [{"$ref": "#/parameters/Endpoint"}];
 ```

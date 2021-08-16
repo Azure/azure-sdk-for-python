@@ -106,6 +106,8 @@ class SystemEventNames(str, Enum):
 
     ContainerRegistryImagePushedEventName = 'Microsoft.ContainerRegistry.ImagePushed'
 
+    ContainerServiceNewKubernetesVersionAvailableEventName = 'Microsoft.ContainerService.NewKubernetesVersionAvailable'
+
     EventHubCaptureFileCreatedEventName = 'Microsoft.EventHub.CaptureFileCreated'
 
     IotHubDeviceConnectedEventName = 'Microsoft.Devices.DeviceConnected'

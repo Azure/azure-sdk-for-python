@@ -138,7 +138,7 @@ def test_response_no_charset_with_ascii_content(send_request):
 
     assert response.headers["Content-Type"] == "text/plain"
     assert response.status_code == 200
-    assert response.encoding == 'ascii'
+    assert response.encoding is None
     assert response.text == "Hello, world!"
 
 
@@ -151,7 +151,7 @@ def test_response_no_charset_with_iso_8859_1_content(send_request):
         request=HttpRequest("GET", "/encoding/iso-8859-1"),
     )
     assert response.text == u"Accented: Österreich"
-    assert response.encoding == 'ISO-8859-1'
+    assert response.encoding is None
 
 def test_response_set_explicit_encoding(send_request):
     # Deliberately incorrect charset
@@ -168,7 +168,7 @@ def test_json(send_request):
         request=HttpRequest("GET", "/basic/json"),
     )
     assert response.json() == {"greeting": "hello", "recipient": "world"}
-    assert response.encoding == 'utf-8-sig'  # for requests, we use utf-8-sig instead of utf-8 bc of requests behavior
+    assert response.encoding is None
 
 def test_json_with_specified_encoding(send_request):
     response = send_request(

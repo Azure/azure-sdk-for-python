@@ -50,7 +50,7 @@ class SparkClient(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        base_url = '{endpoint}/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}'
+        base_url = '{endpoint}'
         self._config = SparkClientConfiguration(credential, endpoint, spark_pool_name, livy_api_version, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 

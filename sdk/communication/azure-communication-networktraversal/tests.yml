@@ -20,4 +20,4 @@ stages:
             SubscriptionConfigurations:
               - $(sub-config-communication-int-test-resources-common)
               - $(sub-config-communication-int-test-resources-python)
-      Clouds: Public,Int
+      Clouds: Public

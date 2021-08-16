@@ -24,11 +24,9 @@ from azure.eventhub import EventHubConsumerClient
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 EVENTHUB_NAME = os.environ["EVENT_HUB_NAME"]
-
-
 def on_event(partition_context, event):
-    dict_event = CloudEvent.from_dict(json.loads(event)[0])
-    print("data: {}\n".format(deserialized_event.data))
+    dict_event = CloudEvent.from_json(event)
+    print("data: {}\n".format(dict_event.data))
 
 consumer_client = EventHubConsumerClient.from_connection_string(
     conn_str=CONNECTION_STR,

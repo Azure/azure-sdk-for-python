@@ -14,7 +14,7 @@ from testcase import (
 )
 
 from azure.ai.language.questionanswering import QuestionAnsweringClient
-from azure.ai.language.questionanswering.rest import *
+from azure.ai.language.questionanswering._rest import *
 from azure.ai.language.questionanswering.models import (
     KnowledgeBaseQueryOptions,
     KnowledgeBaseAnswerRequestContext,
@@ -35,7 +35,7 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
                 "previousQnAId": 4
             }
         }
-        request = build_query_knowledgebase_request(
+        request = build_query_knowledge_base_request(
             json=json_content,
             project_name=qna_project,
             deployment_name='test'
@@ -84,7 +84,7 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
                 "topAnswersWithSpan": 1
             }
         }
-        request = build_query_knowledgebase_request(
+        request = build_query_knowledge_base_request(
             json=json_content,
             project_name=qna_project,
             deployment_name='test'
@@ -135,10 +135,10 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
         )
 
         with client:
-            output = client.query_knowledgebase(
+            output = client.query_knowledge_base(
+                query_params,
                 project_name=qna_project,
-                deployment_name='test',
-                knowledge_base_query_options=query_params
+                deployment_name='test'
             )
 
         assert output.answers
@@ -181,10 +181,10 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
         )
 
         with client:
-            output = client.query_knowledgebase(
+            output = client.query_knowledge_base(
+                query_params,
                 project_name=qna_project,
-                deployment_name='test',
-                knowledge_base_query_options=query_params
+                deployment_name='test'
             )
 
         assert output.answers
@@ -232,10 +232,34 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
         }
 
         with client:
-            output = client.query_knowledgebase(
+            output = client.query_knowledge_base(
+                query_params,
+                project_name=qna_project,
+                deployment_name='test'
+            )
+
+        assert len(output.answers) == 3
+        confident_answers = [a for a in output.answers if a.confidence_score > 0.9]
+        assert len(confident_answers) == 1
+        assert confident_answers[0].source == "surface-pro-4-user-guide-EN.pdf"
+
+    @GlobalQuestionAnsweringAccountPreparer()
+    def test_query_knowledgebase_overload(self, qna_account, qna_key, qna_project):
+        client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
+        with client:
+            output = client.query_knowledge_base(
                 project_name=qna_project,
                 deployment_name='test',
-                knowledge_base_query_options=query_params
+                question="How long should my Surface battery last?",
+                top=3,
+                user_id="sd53lsY=",
+                confidence_score_threshold=0.2,
+                answer_span_request=AnswerSpanRequest(
+                    enable=True,
+                    confidence_score_threshold=0.2,
+                    top_answers_with_span=1
+                ),
+                include_unstructured_sources=True
             )
 
         assert len(output.answers) == 3
@@ -260,10 +284,10 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
                 include_unstructured_sources=True
             )
 
-            output = client.query_knowledgebase(
+            output = client.query_knowledge_base(
+                query_params,
                 project_name=qna_project,
-                deployment_name='test',
-                knowledge_base_query_options=query_params
+                deployment_name='test'
             )
             confident_answers = [a for a in output.answers if a.confidence_score > 0.9]
             assert len(confident_answers) == 1
@@ -285,10 +309,10 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
                 ),
                 include_unstructured_sources=True
             )
-            output = client.query_knowledgebase(
+            output = client.query_knowledge_base(
+                query_params,
                 project_name=qna_project,
-                deployment_name='test',
-                knowledge_base_query_options=query_params
+                deployment_name='test'
             )
 
             assert len(output.answers) == 2
@@ -305,10 +329,10 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
                 qna_id=19
             )
 
-            output = client.query_knowledgebase(
+            output = client.query_knowledge_base(
+                query_params,
                 project_name=qna_project,
-                deployment_name='test',
-                knowledge_base_query_options=query_params
+                deployment_name='test'
             )
 
             assert len(output.answers) == 1
@@ -319,10 +343,10 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
         with client:
             query_params = {"qna_id": 19}
 
-            output = client.query_knowledgebase(
+            output = client.query_knowledge_base(
+                query_params,
                 project_name=qna_project,
-                deployment_name='test',
-                knowledge_base_query_options=query_params
+                deployment_name='test'
             )
 
             assert len(output.answers) == 1

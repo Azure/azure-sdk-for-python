@@ -6,7 +6,7 @@ from msrest.serialization import UTC
 
 from azure.identity import ClientSecretCredential
 from azure.core.exceptions import HttpResponseError
-from azure.monitor.query import LogsQueryClient, LogsQueryRequest
+from azure.monitor.query import LogsQueryClient, LogsBatchQuery
 
 from azure.monitor.query._helpers import construct_iso8601
 
@@ -29,7 +29,7 @@ def test_query_no_duration():
     def callback(request):
         dic = json.loads(request.http_request.body)
         assert dic.get('timespan') is None
-    # returns LogsQueryResults 
+    # returns LogsQueryResult 
     client.query(os.environ['LOG_WORKSPACE_ID'], query)
 
 @pytest.mark.live_test_only

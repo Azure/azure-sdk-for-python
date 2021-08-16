@@ -43,7 +43,7 @@ class ApiManagementSkusOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ApiManagementSkusResult"]:
         """Gets the list of Microsoft.ApiManagement SKUs available for your Subscription.
 
@@ -97,7 +97,7 @@ class ApiManagementSkusOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
