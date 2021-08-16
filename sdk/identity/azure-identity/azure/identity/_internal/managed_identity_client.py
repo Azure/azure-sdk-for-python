@@ -104,6 +104,17 @@ class ManagedIdentityClientBase(ABC):
 
 
 class ManagedIdentityClient(ManagedIdentityClientBase):
+    def __enter__(self):
+        self._pipeline.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        self._pipeline.__exit__(*args)
+
+    def close(self):
+        # type: () -> None
+        self.__exit__()
+
     def request_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         resource = _scopes_to_resource(*scopes)

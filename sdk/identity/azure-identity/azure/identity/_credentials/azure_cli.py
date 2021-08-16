@@ -44,6 +44,16 @@ class AzureCliCredential(object):
     def __init__(self, **kwargs):
         self._allow_multitenant = kwargs.get("allow_multitenant_authentication", False)
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        pass
+
+    def close(self):
+        # type: () -> None
+        """Calling this method is unnecessary."""
+
     @log_get_token("AzureCliCredential")
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken

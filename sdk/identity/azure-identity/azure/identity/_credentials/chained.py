@@ -53,6 +53,20 @@ class ChainedTokenCredential(object):
         self._successful_credential = None  # type: Optional[TokenCredential]
         self.credentials = credentials
 
+    def __enter__(self):
+        for credential in self.credentials:
+            credential.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        for credential in self.credentials:
+            credential.__exit__(*args)
+
+    def close(self):
+        # type: () -> None
+        """Close the transport session of each credential in the chain."""
+        self.__exit__()
+
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (*str, **Any) -> AccessToken
         """Request a token from each chained credential, in order, returning the first token received.

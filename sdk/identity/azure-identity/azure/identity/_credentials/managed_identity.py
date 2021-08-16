@@ -81,6 +81,18 @@ class ManagedIdentityCredential(object):
             _LOGGER.info("%s will use IMDS", self.__class__.__name__)
             self._credential = ImdsCredential(**kwargs)
 
+    def __enter__(self):
+        self._credential.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        self._credential.__exit__(*args)
+
+    def close(self):
+        # type: () -> None
+        """Close the credential's transport session."""
+        self.__exit__()
+
     @log_get_token("ManagedIdentityCredential")
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken

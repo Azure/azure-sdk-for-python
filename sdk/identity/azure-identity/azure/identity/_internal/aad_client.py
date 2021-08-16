@@ -17,6 +17,17 @@ if TYPE_CHECKING:
 
 
 class AadClient(AadClientBase):
+    def __enter__(self):
+        self._pipeline.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        self._pipeline.__exit__(*args)
+
+    def close(self):
+        # type: () -> None
+        self.__exit__()
+
     def obtain_token_by_authorization_code(self, scopes, code, redirect_uri, client_secret=None, **kwargs):
         # type: (Iterable[str], str, str, Optional[str], **Any) -> AccessToken
         request = self._get_auth_code_request(

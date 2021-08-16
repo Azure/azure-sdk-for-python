@@ -101,6 +101,20 @@ class EnvironmentCredential(object):
             else:
                 _LOGGER.info("No environment configuration found.")
 
+    def __enter__(self):
+        if self._credential:
+            self._credential.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        if self._credential:
+            self._credential.__exit__(*args)
+
+    def close(self):
+        # type: () -> None
+        """Close the credential's transport session."""
+        self.__exit__()
+
     @log_get_token("EnvironmentCredential")
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (*str, **Any) -> AccessToken
