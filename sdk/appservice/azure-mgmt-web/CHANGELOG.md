@@ -1,5 +1,124 @@
 # Release History
 
+## 4.0.0 (2021-08-16)
+
+**Features**
+
+  - Model AppServicePlan has a new parameter elastic_scale_enabled
+  - Model AppServicePlan has a new parameter zone_redundant
+  - Model AzureActiveDirectoryRegistration has a new parameter client_secret_certificate_issuer
+  - Model AzureActiveDirectoryRegistration has a new parameter client_secret_certificate_subject_alternative_name
+  - Model AzureActiveDirectoryValidation has a new parameter default_authorization_policy
+  - Model AseV3NetworkingConfiguration has a new parameter internal_inbound_ip_addresses
+  - Model AseV3NetworkingConfiguration has a new parameter external_inbound_ip_addresses
+  - Model AppServicePlanPatchResource has a new parameter zone_redundant
+  - Model AppServiceEnvironmentResource has a new parameter zone_redundant
+  - Model AppServiceEnvironment has a new parameter zone_redundant
+  - Model AppServiceEnvironmentPatchResource has a new parameter zone_redundant
+  - Model ErrorEntity has a new parameter target
+  - Model ErrorEntity has a new parameter details
+  - Added operation WebAppsOperations.list_basic_publishing_credentials_policies
+  - Added operation WebAppsOperations.create_or_update_swift_virtual_network_connection_with_check_slot
+  - Added operation WebAppsOperations.update_swift_virtual_network_connection_with_check
+  - Added operation WebAppsOperations.update_swift_virtual_network_connection_with_check_slot
+  - Added operation WebAppsOperations.list_basic_publishing_credentials_policies_slot
+
+**Breaking changes**
+
+  - Model OpenIdConnectConfig no longer has parameter type
+  - Model OpenIdConnectConfig no longer has parameter id
+  - Model OpenIdConnectConfig no longer has parameter name
+  - Model OpenIdConnectConfig no longer has parameter kind
+  - Model TokenStore no longer has parameter type
+  - Model TokenStore no longer has parameter id
+  - Model TokenStore no longer has parameter name
+  - Model TokenStore no longer has parameter kind
+  - Model Login no longer has parameter type
+  - Model Login no longer has parameter id
+  - Model Login no longer has parameter name
+  - Model Login no longer has parameter kind
+  - Model OpenIdConnectLogin no longer has parameter type
+  - Model OpenIdConnectLogin no longer has parameter id
+  - Model OpenIdConnectLogin no longer has parameter name
+  - Model OpenIdConnectLogin no longer has parameter kind
+  - Model OpenIdConnectRegistration no longer has parameter type
+  - Model OpenIdConnectRegistration no longer has parameter id
+  - Model OpenIdConnectRegistration no longer has parameter name
+  - Model OpenIdConnectRegistration no longer has parameter kind
+  - Model ForwardProxy no longer has parameter type
+  - Model ForwardProxy no longer has parameter id
+  - Model ForwardProxy no longer has parameter name
+  - Model ForwardProxy no longer has parameter kind
+  - Model DetectorDefinition no longer has parameter type
+  - Model DetectorDefinition no longer has parameter id
+  - Model DetectorDefinition no longer has parameter name
+  - Model DetectorDefinition no longer has parameter kind
+  - Model GlobalValidation no longer has parameter type
+  - Model GlobalValidation no longer has parameter id
+  - Model GlobalValidation no longer has parameter name
+  - Model GlobalValidation no longer has parameter kind
+  - Model TwitterRegistration no longer has parameter type
+  - Model TwitterRegistration no longer has parameter id
+  - Model TwitterRegistration no longer has parameter name
+  - Model TwitterRegistration no longer has parameter kind
+  - Model CookieExpiration no longer has parameter type
+  - Model CookieExpiration no longer has parameter id
+  - Model CookieExpiration no longer has parameter name
+  - Model CookieExpiration no longer has parameter kind
+  - Model AuthPlatform no longer has parameter type
+  - Model AuthPlatform no longer has parameter id
+  - Model AuthPlatform no longer has parameter name
+  - Model AuthPlatform no longer has parameter kind
+  - Model IdentityProviders no longer has parameter type
+  - Model IdentityProviders no longer has parameter id
+  - Model IdentityProviders no longer has parameter name
+  - Model IdentityProviders no longer has parameter kind
+  - Model AzureActiveDirectory no longer has parameter type
+  - Model AzureActiveDirectory no longer has parameter id
+  - Model AzureActiveDirectory no longer has parameter name
+  - Model AzureActiveDirectory no longer has parameter kind
+  - Model Facebook no longer has parameter type
+  - Model Facebook no longer has parameter id
+  - Model Facebook no longer has parameter name
+  - Model Facebook no longer has parameter kind
+  - Model ClientRegistration no longer has parameter type
+  - Model ClientRegistration no longer has parameter id
+  - Model ClientRegistration no longer has parameter name
+  - Model ClientRegistration no longer has parameter kind
+  - Model Nonce no longer has parameter type
+  - Model Nonce no longer has parameter id
+  - Model Nonce no longer has parameter name
+  - Model Nonce no longer has parameter kind
+  - Model TriggeredJobRun no longer has parameter type
+  - Model TriggeredJobRun no longer has parameter id
+  - Model TriggeredJobRun no longer has parameter name
+  - Model TriggeredJobRun no longer has parameter kind
+  - Model VnetInfo no longer has parameter type
+  - Model VnetInfo no longer has parameter id
+  - Model VnetInfo no longer has parameter name
+  - Model VnetInfo no longer has parameter kind
+  - Model HttpSettings no longer has parameter type
+  - Model HttpSettings no longer has parameter id
+  - Model HttpSettings no longer has parameter name
+  - Model HttpSettings no longer has parameter kind
+  - Model AppleRegistration no longer has parameter type
+  - Model AppleRegistration no longer has parameter id
+  - Model AppleRegistration no longer has parameter name
+  - Model AppleRegistration no longer has parameter kind
+  - Model JwtClaimChecks no longer has parameter type
+  - Model JwtClaimChecks no longer has parameter id
+  - Model JwtClaimChecks no longer has parameter name
+  - Model JwtClaimChecks no longer has parameter kind
+  - Removed operation WebAppsOperations.get_basic_publishing_credentials_policies
+  - Removed operation WebAppsOperations.get_basic_publishing_credentials_policies_slot
+  - Model OpenIdConnectClientCredential has a new signature
+  - Model AzureStaticWebAppsRegistration has a new signature
+  - Model AllowedAudiencesValidation has a new signature
+  - Model LoginScopes has a new signature
+  - Model HttpSettingsRoutes has a new signature
+  - Model FileSystemTokenStore has a new signature
+  - Model LoginRoutes has a new signature
+
 ## 3.0.0 (2021-05-25)
 
 **Features**
