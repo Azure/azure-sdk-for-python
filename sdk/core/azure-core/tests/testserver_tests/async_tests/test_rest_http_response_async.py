@@ -14,9 +14,10 @@ from azure.core.exceptions import HttpResponseError
 @pytest.fixture
 def send_request(client):
     async def _send_request(request):
-        response = await client.send_request(request, stream=False)
-        response.raise_for_status()
-        return response
+        async with client:
+            response = await client.send_request(request, stream=False)
+            response.raise_for_status()
+            return response
     return _send_request
 
 @pytest.mark.asyncio
@@ -251,6 +252,22 @@ async def test_send_request_return_pipeline_response(client):
     assert hasattr(response, "context")
     assert response.http_response.text() == "Hello, world!"
     assert hasattr(response.http_request, "content")
+
+@pytest.mark.asyncio
+async def test_text_and_encoding(send_request):
+    response = await send_request(
+        request=HttpRequest("GET", "/encoding/emoji"),
+    )
+    assert response.content == u"👩".encode("utf-8")
+    assert response.text() == u"👩"
+
+    # try setting encoding as a property
+    response.encoding = "utf-16"
+    assert response.text() == u"鿰ꦑ" == response.content.decode(response.encoding)
+
+    # assert latin-1 changes text decoding without changing encoding property
+    assert response.text("latin-1") == 'ð\x9f\x91©' == response.content.decode("latin-1")
+    assert response.encoding == "utf-16"
 
 # @pytest.mark.asyncio
 # async def test_multipart_encode_non_seekable_filelike(send_request):

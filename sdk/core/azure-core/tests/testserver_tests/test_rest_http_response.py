@@ -296,3 +296,18 @@ def test_send_request_return_pipeline_response(client):
     assert hasattr(response, "context")
     assert response.http_response.text() == "Hello, world!"
     assert hasattr(response.http_request, "content")
+
+def test_text_and_encoding(send_request):
+    response = send_request(
+        request=HttpRequest("GET", "/encoding/emoji"),
+    )
+    assert response.content == u"👩".encode("utf-8")
+    assert response.text() == u"👩"
+
+    # try setting encoding as a property
+    response.encoding = "utf-16"
+    assert response.text() == u"鿰ꦑ" == response.content.decode(response.encoding)
+
+    # assert latin-1 changes text decoding without changing encoding property
+    assert response.text("latin-1") == 'ð\x9f\x91©' == response.content.decode("latin-1")
+    assert response.encoding == "utf-16"
