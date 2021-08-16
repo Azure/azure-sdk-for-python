@@ -158,13 +158,10 @@ class LogsBatchQuery(object):
     :param query: The Analytics query. Learn more about the `Analytics query syntax
      <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
     :type query: str
-    :param ~datetime.timedelta duration: The duration for which to query the data. This can also be accompanied
-     with either start_time or end_time. If start_time or end_time is not provided, the current time is
-     taken as the end time.
-    :keyword datetime start_time: The start time from which to query the data. This should be accompanied
-     with either end_time or duration.
-    :keyword datetime end_time: The end time till which to query the data. This should be accompanied
-     with either start_time or duration.
+    :param timespan: The timespan for which to query the data. This can be a timedelta,
+     a timedelta and a start datetime, or a start datetime/end datetime.
+    :type timespan: ~datetime.timedelta or tuple[~datetime.datetime, ~datetime.timedelta]
+     or tuple[~datetime.datetime, ~datetime.datetime]
     :keyword additional_workspaces: A list of workspaces that are included in the query.
      These can be qualified workspace names, workspace Ids, or Azure resource Ids.
     :paramtype additional_workspaces: list[str]
@@ -180,7 +177,7 @@ class LogsBatchQuery(object):
     :paramtype headers: dict[str, str]
     """
 
-    def __init__(self, query, workspace_id, duration=None, **kwargs): #pylint: disable=super-init-not-called
+    def __init__(self, query, workspace_id, timespan, **kwargs): #pylint: disable=super-init-not-called
         # type: (str, str, Optional[str], Any) -> None
         include_statistics = kwargs.pop("include_statistics", False)
         include_visualization = kwargs.pop("include_visualization", False)
@@ -202,9 +199,7 @@ class LogsBatchQuery(object):
             headers['Prefer'] = prefer
         except TypeError:
             headers = {'Prefer': prefer}
-        start = kwargs.pop('start_time', None)
-        end = kwargs.pop('end_time', None)
-        timespan = construct_iso8601(start, end, duration)
+        timespan = construct_iso8601(timespan)
         additional_workspaces = kwargs.pop("additional_workspaces", None)
         self.id = kwargs.get("request_id", str(uuid.uuid4()))
         self.body = {
