@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added addition `display_description` and `error` attributes to the `Metric` type.
+
 ### Breaking Changes
 
 - Rename `batch_query` to `query_batch`.
@@ -16,6 +18,8 @@
 - `metric_namespace_name` is renamed to `fully_qualified_namespace`
 - `is_dimension_required` is renamed to `dimension_required`
 - `time_grain` is renamed to `granularity`
+- `interval` is renamed to `granularity`
+- `orderby` is renamed to `order_by`
 
 ### Bugs Fixed
 
