@@ -1,3 +1,4 @@
+from datetime import timedelta
 import pytest
 import os
 from azure.identity import ClientSecretCredential
@@ -34,7 +35,7 @@ def test_logs_single_query_with_non_200():
     where TimeGenerated > ago(12h)"""
 
     with pytest.raises(HttpResponseError) as e:
-        client.query(os.environ['LOG_WORKSPACE_ID'], query)
+        client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None)
 
     assert "SemanticError" in e.value.message
 
@@ -44,7 +45,7 @@ def test_logs_single_query_with_partial_success():
     client = LogsQueryClient(credential)
     query = "set truncationmaxrecords=1; union * | project TimeGenerated | take 10"
 
-    response = client.query(os.environ['LOG_WORKSPACE_ID'], query)
+    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None)
 
     assert response is not None
 
@@ -57,6 +58,7 @@ def test_logs_server_timeout():
         response = client.query(
             os.environ['LOG_WORKSPACE_ID'],
             "range x from 1 to 1000000000000000 step 1 | count",
+            timespan=None,
             server_timeout=1,
         )
     assert 'Gateway timeout' in e.value.message
@@ -68,18 +70,19 @@ def test_logs_query_batch():
     requests = [
         LogsBatchQuery(
             query="AzureActivity | summarize count()",
-            timespan="PT1H",
+            timespan=timedelta(hours=1),
             workspace_id= os.environ['LOG_WORKSPACE_ID']
         ),
         LogsBatchQuery(
             query= """AppRequests | take 10  |
                 summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId""",
-            timespan="PT1H",
+            timespan=timedelta(hours=1),
             workspace_id= os.environ['LOG_WORKSPACE_ID']
         ),
         LogsBatchQuery(
             query= "AppRequests | take 2",
-            workspace_id= os.environ['LOG_WORKSPACE_ID']
+            workspace_id= os.environ['LOG_WORKSPACE_ID'],
+            timespan=None
         ),
     ]
     response = client.query_batch(requests)
@@ -93,7 +96,7 @@ def test_logs_single_query_with_statistics():
     query = """AppRequests"""
 
     # returns LogsQueryResult 
-    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, include_statistics=True)
+    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None, include_statistics=True)
 
     assert response.statistics is not None
 
@@ -115,7 +118,7 @@ def test_logs_single_query_with_render_and_stats():
     query = """AppRequests"""
 
     # returns LogsQueryResult 
-    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, include_visualization=True, include_statistics=True)
+    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None, include_visualization=True, include_statistics=True)
 
     assert response.visualization is not None
     assert response.statistics is not None
@@ -127,19 +130,20 @@ def test_logs_query_batch_with_statistics_in_some():
     requests = [
         LogsBatchQuery(
             query="AzureActivity | summarize count()",
-            timespan="PT1H",
+            timespan=timedelta(hours=1),
             workspace_id= os.environ['LOG_WORKSPACE_ID']
         ),
         LogsBatchQuery(
             query= """AppRequests|
                 summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId""",
-            timespan="PT1H",
+            timespan=timedelta(hours=1),
             workspace_id= os.environ['LOG_WORKSPACE_ID'],
             include_statistics=True
         ),
         LogsBatchQuery(
             query= "AppRequests",
             workspace_id= os.environ['LOG_WORKSPACE_ID'],
+            timespan=None,
             include_statistics=True
         ),
     ]
@@ -160,6 +164,7 @@ def test_logs_single_query_additional_workspaces():
     response = client.query(
         os.environ['LOG_WORKSPACE_ID'],
         query,
+        timespan=None,
         additional_workspaces=[os.environ["SECONDARY_WORKSPACE_ID"]],
         )
 
@@ -175,13 +180,13 @@ def test_logs_query_batch_additional_workspaces():
     requests = [
         LogsBatchQuery(
             query,
-            timespan="PT1H",
+            timespan=timedelta(hours=1),
             workspace_id= os.environ['LOG_WORKSPACE_ID'],
             additional_workspaces=[os.environ['SECONDARY_WORKSPACE_ID']]
         ),
         LogsBatchQuery(
             query,
-            timespan="PT1H",
+            timespan=timedelta(hours=1),
             workspace_id= os.environ['LOG_WORKSPACE_ID'],
             additional_workspaces=[os.environ['SECONDARY_WORKSPACE_ID']]
         ),

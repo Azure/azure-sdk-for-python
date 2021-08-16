@@ -47,7 +47,6 @@ class MetricsQueryClient(object):
         self,
         resource_uri: str,
         metric_names: List,
-        duration: Optional[timedelta] = None,
         **kwargs: Any
         ) -> MetricsResult:
         """Lists the metric values for a resource.
@@ -59,13 +58,10 @@ class MetricsQueryClient(object):
         :type resource_uri: str
         :param metric_names: The names of the metrics to retrieve.
         :type metric_names: list
-        :param ~datetime.timedelta duration: The duration for which to query the data. This can also be accompanied
-         with either start_time or end_time. If start_time or end_time is not provided, the current time is
-         taken as the end time.
-        :keyword datetime start_time: The start time from which to query the data. This should be accompanied
-         with either end_time or duration.
-        :keyword datetime end_time: The end time till which to query the data. This should be accompanied
-         with either start_time or duration.
+        :keyword timespan: The timespan for which to query the data. This can be a timedelta,
+         a timedelta and a start datetime, or a start datetime/end datetime.
+        :paramtype timespan: ~datetime.timedelta or tuple[~datetime.datetime, ~datetime.timedelta]
+         or tuple[~datetime.datetime, ~datetime.datetime]
         :keyword interval: The interval (i.e. timegrain) of the query.
         :paramtype interval: ~datetime.timedelta
         :keyword aggregations: The list of aggregation types to retrieve. Use `azure.monitor.query.AggregationType`
@@ -98,9 +94,7 @@ class MetricsQueryClient(object):
         :rtype: ~azure.monitor.query.MetricsResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        start = kwargs.pop('start_time', None)
-        end = kwargs.pop('end_time', None)
-        timespan = construct_iso8601(start, end, duration)
+        timespan = construct_iso8601(kwargs.pop('timespan', None))
         kwargs.setdefault("metricnames", ",".join(metric_names))
         kwargs.setdefault("timespan", timespan)
         aggregations = kwargs.pop("aggregations", None)
