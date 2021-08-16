@@ -297,7 +297,7 @@ MetricsResult
 |---timespan
 |---cost
 |---namespace
-|---resourceregion
+|---resource_region
 |---metrics (list of `Metric` objects)
     |---id
     |---type

@@ -67,10 +67,10 @@ class MetricsQueryClient(object):
         :keyword aggregations: The list of aggregation types to retrieve. Use `azure.monitor.query.AggregationType`
          enum to get each aggregation type.
         :paramtype aggregations: list[str]
-        :keyword top: The maximum number of records to retrieve.
+        :keyword max_results: The maximum number of records to retrieve.
          Valid only if $filter is specified.
          Defaults to 10.
-        :paramtype top: int
+        :paramtype max_results: int
         :keyword orderby: The aggregation to use for sorting results and the direction of the sort.
          Only one order can be specified.
          Examples: sum asc.
@@ -97,6 +97,7 @@ class MetricsQueryClient(object):
         timespan = construct_iso8601(kwargs.pop('timespan', None))
         kwargs.setdefault("metricnames", ",".join(metric_names))
         kwargs.setdefault("timespan", timespan)
+        kwargs.setdefault("top", kwargs.pop("max_results", None))
         aggregations = kwargs.pop("aggregations", None)
         if aggregations:
             kwargs.setdefault("aggregation", ",".join(aggregations))

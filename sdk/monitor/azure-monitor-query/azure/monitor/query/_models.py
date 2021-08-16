@@ -121,8 +121,8 @@ class MetricsResult(object):
     :vartype interval: ~datetime.timedelta
     :ivar namespace: The namespace of the metrics that has been queried.
     :vartype namespace: str
-    :ivar resourceregion: The region of the resource that has been queried for metrics.
-    :vartype resourceregion: str
+    :ivar resource_region: The region of the resource that has been queried for metrics.
+    :vartype resource_region: str
     :ivar metrics: Required. The value of the collection.
     :vartype metrics: list[~monitor_query_client.models.Metric]
     """
@@ -132,7 +132,7 @@ class MetricsResult(object):
         self.timespan = kwargs["timespan"]
         self.interval = kwargs.get("interval", None)
         self.namespace = kwargs.get("namespace", None)
-        self.resourceregion = kwargs.get("resourceregion", None)
+        self.resource_region = kwargs.get("resource_region", None)
         self.metrics = kwargs["metrics"]
 
     @classmethod
@@ -144,7 +144,7 @@ class MetricsResult(object):
             timespan=generated.timespan,
             interval=generated.interval,
             namespace=generated.namespace,
-            resourceregion=generated.resourceregion,
+            resource_region=generated.resourceregion,
             metrics=[Metric._from_generated(m) for m in generated.value] # pylint: disable=protected-access
         )
 
@@ -302,8 +302,8 @@ class MetricNamespace(object):
     :paramtype type: str
     :keyword name: The name of the namespace.
     :paramtype name: str
-    :keyword metric_namespace_name: The fully qualified namespace name.
-    :paramtype metric_namespace_name: str
+    :keyword fully_qualified_namespace: The fully qualified namespace name.
+    :paramtype fully_qualified_namespace: str
     """
     def __init__(
         self,
@@ -312,27 +312,27 @@ class MetricNamespace(object):
         self.id = kwargs.get('id', None)
         self.type = kwargs.get('type', None)
         self.name = kwargs.get('name', None)
-        self.metric_namespace_name = kwargs.get('metric_namespace_name', None)
+        self.fully_qualified_namespace = kwargs.get('fully_qualified_namespace', None)
 
     @classmethod
     def _from_generated(cls, generated):
         if not generated:
             return cls()
-        metric_namespace_name = None
+        fully_qualified_namespace = None
         if generated.properties:
-            metric_namespace_name = generated.properties.metric_namespace_name
+            fully_qualified_namespace = generated.properties.metric_namespace_name
         return cls(
             id=generated.id,
             type=generated.type,
             name=generated.name,
-            metric_namespace_name=metric_namespace_name
+            fully_qualified_namespace=fully_qualified_namespace
         )
 
 class MetricDefinition(object):
     """Metric definition class specifies the metadata for a metric.
 
-    :keyword is_dimension_required: Flag to indicate whether the dimension is required.
-    :paramtype is_dimension_required: bool
+    :keyword dimension_required: Flag to indicate whether the dimension is required.
+    :paramtype dimension_required: bool
     :keyword resource_id: the resource identifier of the resource that emitted the metric.
     :paramtype resource_id: str
     :keyword namespace: the namespace the metric belongs to.
@@ -363,7 +363,7 @@ class MetricDefinition(object):
         **kwargs
     ):
         # type: (Any) -> None
-        self.is_dimension_required = kwargs.get('is_dimension_required', None) # type: Optional[bool]
+        self.dimension_required = kwargs.get('dimension_required', None) # type: Optional[bool]
         self.resource_id = kwargs.get('resource_id', None) # type: Optional[str]
         self.namespace = kwargs.get('namespace', None) # type: Optional[str]
         self.name = kwargs.get('name', None) # type: Optional[str]
@@ -382,7 +382,7 @@ class MetricDefinition(object):
         if generated.dimensions is not None:
             dimensions = [d.value for d in generated.dimensions]
         return cls(
-            is_dimension_required=generated.is_dimension_required,
+            dimension_required=generated.is_dimension_required,
             resource_id=generated.resource_id,
             namespace=generated.namespace,
             name=generated.name.value,
@@ -552,9 +552,9 @@ class MetricAvailability(object):
     """Metric availability specifies the time grain (aggregation interval or frequency)
     and the retention period for that time grain.
 
-    :keyword time_grain: the time grain specifies the aggregation interval for the metric. Expressed
+    :keyword granularity: the time grain specifies the aggregation interval for the metric. Expressed
      as a duration 'PT1M', 'P1D', etc.
-    :paramtype time_grain: ~datetime.timedelta
+    :paramtype granularity: ~datetime.timedelta
     :keyword retention: the retention period for the metric at the specified timegrain. Expressed as
      a duration 'PT1M', 'P1D', etc.
     :paramtype retention: ~datetime.timedelta
@@ -564,7 +564,7 @@ class MetricAvailability(object):
         **kwargs
     ):
         # type: (Any) -> None
-        self.time_grain = kwargs.get('time_grain', None)
+        self.granularity = kwargs.get('granularity', None)
         self.retention = kwargs.get('retention', None)
 
     @classmethod
@@ -572,7 +572,7 @@ class MetricAvailability(object):
         if not generated:
             return cls()
         return cls(
-            time_grain=generated.time_grain,
+            granularity=generated.time_grain,
             retention=generated.retention
         )
 
