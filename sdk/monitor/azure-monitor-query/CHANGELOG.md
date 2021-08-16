@@ -10,6 +10,7 @@
 - Rename `LogsBatchQueryRequest` to `LogsBatchQuery`.
 - `include_render` is now renamed to `include_visualization` in the query API.
 - `LogsQueryResult` and `LogsBatchQueryResult` now return `visualization` instead of `render`.
+- `start_time`, `duration` and `end_time` are now replaced with a single param called `timespan`
 
 ### Bugs Fixed
 

@@ -100,7 +100,7 @@ Each set of metric values is a time series with the following characteristics:
 ## Examples
 
 - [Single logs query](#single-logs-query)
-  - [Specify duration](#specify-duration)
+  - [Specify timespan](#specify-timespan)
   - [Set logs query timeout](#set-logs-query-timeout)
 - [Batch logs query](#batch-logs-query)
 - [Query metrics](#query-metrics)
@@ -113,9 +113,9 @@ Each set of metric values is a time series with the following characteristics:
 
 This example shows getting a log query. To handle the response and view it in a tabular form, the [pandas](https://pypi.org/project/pandas/) library is used. See the [samples][python-query-samples] if you choose not to use pandas.
 
-#### Specify duration
+#### Specify timespan
 
-The `duration` parameter specifies the time duration for which to query the data. This argument can also be accompanied with either `start_time` or `end_time`. If either `start_time` or `end_time` aren't provided, the current time is used as the end time. As an alternative, the `start_time` and `end_time` arguments can be provided together instead of the `duration` argument. For example:
+The `timespan` parameter specifies the time duration for which to query the data. The timespan for which to query the data. This can be a timedelta, a timedelta and a start datetime, or a start datetime/end datetime. For example:
 
 ```python
 import os
@@ -132,12 +132,14 @@ client = LogsQueryClient(credential)
 query = """AppRequests |
 summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
 
+start_time=datetime(2021, 7, 2)
+end_time=datetime.now()
+
 # returns LogsQueryResult
 response = client.query(
     os.environ['LOG_WORKSPACE_ID'],
     query,
-    start_time=datetime(2021, 6, 2),
-    end_time=datetime.now()
+    timespan=(start_time, end_time)
     )
 
 if not response.tables:
@@ -185,14 +187,13 @@ client = LogsQueryClient(credential)
 requests = [
     LogsBatchQuery(
         query="AzureActivity | summarize count()",
-        duration=timedelta(hours=1),
+        timespan=timedelta(hours=1),
         workspace_id=os.environ['LOG_WORKSPACE_ID']
     ),
     LogsBatchQuery(
         query= """AppRequests | take 10  |
             summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId""",
-        duration=timedelta(hours=1),
-        start_time=datetime(2021, 6, 2),
+        timespan=(datetime(2021, 6, 2), timedelta(hours=1)),
         workspace_id=os.environ['LOG_WORKSPACE_ID']
     ),
     LogsBatchQueryRequest(
@@ -270,13 +271,13 @@ from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
 client = MetricsQueryClient(credential)
-
+start_time = datetime(2021, 5, 25)
+duration = timedelta(days=1)
 metrics_uri = os.environ['METRICS_RESOURCE_URI']
 response = client.query(
     metrics_uri,
     metric_names=["PublishSuccessCount"],
-    start_time=datetime(2021, 5, 25),
-    duration=timedelta(days=1),
+    timespan=(start_time, duration)
     )
 
 for metric in response.metrics:
@@ -322,8 +323,6 @@ metrics_uri = os.environ['METRICS_RESOURCE_URI']
 response = client.query(
     metrics_uri,
     metric_names=["MatchedEventCount"],
-    start_time=datetime(2021, 6, 21),
-    duration=timedelta(days=1),
     aggregations=[AggregationType.COUNT]
     )
 

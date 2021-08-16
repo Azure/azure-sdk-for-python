@@ -4,6 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
 from msrest import Serializer
 from azure.core.exceptions import HttpResponseError
@@ -49,26 +50,34 @@ def order_results(request_order, responses):
     ordered = [mapping[id] for id in request_order]
     return ordered
 
-def construct_iso8601(start=None, end=None, duration=None):
-    if duration is not None:
-        duration = 'PT{}S'.format(duration.total_seconds())
+def construct_iso8601(timespan=None):
+    if not timespan:
+        return None
+    try:
+        start, end, duration = None, None, None
+        if isinstance(timespan[1], datetime): # we treat thi as start_time, end_time
+            start, end = timespan[0], timespan[1]
+        elif isinstance(timespan[1], timedelta): # we treat this as start_time, duration
+            start, duration = timespan[0], timespan[1]
+        else:
+            raise ValueError('Tuple must be a start datetime with a timedelta or an end datetime.')
+    except TypeError:
+        duration = timespan # it means only duration (timedelta) is provideds
+    if duration:
+        try:
+            duration = 'PT{}S'.format(duration.total_seconds())
+        except AttributeError:
+            raise ValueError('timespan must be a timedelta or a tuple.')
     iso_str = None
     if start is not None:
         start = Serializer.serialize_iso(start)
-        if end and duration:
-            raise ValueError("start_time can only be provided with duration or end_time, but not both.")
         if end is not None:
             end = Serializer.serialize_iso(end)
             iso_str = start + '/' + end
         elif duration is not None:
             iso_str = start + '/' + duration
-        else:
-            raise ValueError("Start time must be provided along with duration or end time.")
-    elif end is not None:
-        if not duration:
-            raise ValueError("End time must be provided along with duration or start time.")
-        end = Serializer.serialize_iso(end)
-        iso_str = duration + '/' + end
+        else: # means that an invalid value None that is provided with start_time
+            raise ValueError("Duration or end_time cannot be None when provided with start_time.")
     else:
         iso_str = duration
     return iso_str

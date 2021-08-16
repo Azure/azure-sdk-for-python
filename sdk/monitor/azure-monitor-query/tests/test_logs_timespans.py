@@ -30,7 +30,7 @@ def test_query_no_duration():
         dic = json.loads(request.http_request.body)
         assert dic.get('timespan') is None
     # returns LogsQueryResult 
-    client.query(os.environ['LOG_WORKSPACE_ID'], query)
+    client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None)
 
 @pytest.mark.live_test_only
 def test_query_start_and_end_time():
@@ -45,22 +45,7 @@ def test_query_start_and_end_time():
         dic = json.loads(request.http_request.body)
         assert dic.get('timespan') is not None
 
-    client.query(os.environ['LOG_WORKSPACE_ID'], query, start_time=start_time, end_time=end_time, raw_request_hook=callback)
-
-@pytest.mark.live_test_only
-def test_query_duration_and_end_time():
-    credential = _credential()
-    client = LogsQueryClient(credential)
-    query = "AppRequests | take 5"
-
-    end_time = datetime.now(UTC())
-    duration = timedelta(days=3)
-
-    def callback(request):
-        dic = json.loads(request.http_request.body)
-        assert 'PT259200.0S/' in dic.get('timespan')
-
-    client.query(os.environ['LOG_WORKSPACE_ID'], query, duration=duration, end_time=end_time, raw_request_hook=callback)
+    client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=(start_time, end_time), raw_request_hook=callback)
 
 @pytest.mark.live_test_only
 def test_query_duration_and_start_time():
@@ -76,7 +61,7 @@ def test_query_duration_and_start_time():
         dic = json.loads(request.http_request.body)
         assert '/PT259200.0S' in dic.get('timespan')
 
-    client.query(os.environ['LOG_WORKSPACE_ID'], query, duration=duration, start_time=start_time, raw_request_hook=callback)
+    client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=(start_time,duration), raw_request_hook=callback)
 
 
 @pytest.mark.live_test_only
@@ -91,7 +76,7 @@ def test_query_duration_only():
         dic = json.loads(request.http_request.body)
         assert 'PT259200.0S' in dic.get('timespan')
 
-    client.query(os.environ['LOG_WORKSPACE_ID'], query, duration=duration, raw_request_hook=callback)
+    client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=duration, raw_request_hook=callback)
 
 def test_duration_to_iso8601():
     d1 = timedelta(days=1)
@@ -102,19 +87,13 @@ def test_duration_to_iso8601():
     d6 = timedelta(milliseconds=100000)
     d7 = timedelta(hours=24, days=1)
 
-    assert construct_iso8601(duration=d1) == 'PT86400.0S'
-    assert construct_iso8601(duration=d2) == 'PT604800.0S'
-    assert construct_iso8601(duration=d3) == 'PT2160000.0S'
-    assert construct_iso8601(duration=d4) == 'PT10.0S'
-    assert construct_iso8601(duration=d5) == 'PT0.001S'
-    assert construct_iso8601(duration=d5) == 'PT0.001S'
-    assert construct_iso8601(duration=d7) == 'PT172800.0S'
+    assert construct_iso8601(timespan=d1) == 'PT86400.0S'
+    assert construct_iso8601(timespan=d2) == 'PT604800.0S'
+    assert construct_iso8601(timespan=d3) == 'PT2160000.0S'
+    assert construct_iso8601(timespan=d4) == 'PT10.0S'
+    assert construct_iso8601(timespan=d5) == 'PT0.001S'
+    assert construct_iso8601(timespan=d5) == 'PT0.001S'
+    assert construct_iso8601(timespan=d7) == 'PT172800.0S'
 
-    with pytest.raises(ValueError, match="End time must be provided along with duration or start time."):
-        construct_iso8601(end=datetime.now(UTC()))
-
-    with pytest.raises(ValueError, match="Start time must be provided along with duration or end time."):
-        construct_iso8601(start=datetime.now(UTC()))
-
-    with pytest.raises(ValueError, match="start_time can only be provided with duration or end_time, but not both."):
-        construct_iso8601(end=datetime.now(UTC()), start=datetime(2020, 10, 10), duration=d3)
+    with pytest.raises(ValueError, match="timespan must be a timedelta or a tuple."):
+        construct_iso8601(timespan=(datetime.now(UTC())))

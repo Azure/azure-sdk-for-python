@@ -49,8 +49,6 @@ class MetricsPerfTest(PerfStressTest):
         self.metrics_client.query(
             self.metrics_uri,
             self.names,
-            start_time=datetime(2021, 7, 25, 0, 0, 0, tzinfo=timezone.utc),
-            end_time=datetime(2021, 7, 26, 0, 0, 0, tzinfo=timezone.utc),
             aggregations=self.aggregations
             )
 
@@ -64,7 +62,5 @@ class MetricsPerfTest(PerfStressTest):
         await self.async_metrics_client.query(
             self.metrics_uri,
             self.names,
-            start_time=datetime(2021, 7, 25, 0, 0, 0, tzinfo=timezone.utc),
-            end_time=datetime(2021, 7, 26, 0, 0, 0, tzinfo=timezone.utc),
             aggregations=self.aggregations
             )
