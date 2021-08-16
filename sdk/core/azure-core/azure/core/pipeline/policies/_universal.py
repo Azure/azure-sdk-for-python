@@ -246,6 +246,8 @@ class UserAgentPolicy(SansIOHTTPPolicy):
 
 
 class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
+    MULTI_RECORD_LOG = "AZURE_MULTI_RECORD_LOG"
+
     """The logging policy in the pipeline is used to output HTTP network trace to the configured logger.
 
     This accepts both global configuration, and per-request level with "enable_http_logger"
@@ -280,27 +282,55 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
                 return
 
             try:
-                _LOGGER.debug("Request URL: %r", http_request.url)
-                _LOGGER.debug("Request method: %r", http_request.method)
-                _LOGGER.debug("Request headers:")
-                for header, value in http_request.headers.items():
-                    _LOGGER.debug("    %r: %r", header, value)
-                _LOGGER.debug("Request body:")
+                multi_record = os.environ.get(NetworkTraceLoggingPolicy.MULTI_RECORD_LOG, False)
+                if multi_record:
+                    _LOGGER.debug("Request URL: %r", http_request.url)
+                    _LOGGER.debug("Request method: %r", http_request.method)
+                    _LOGGER.debug("Request headers:")
+                    for header, value in http_request.headers.items():
+                        _LOGGER.debug("    %r: %r", header, value)
+                    _LOGGER.debug("Request body:")
 
-                # We don't want to log the binary data of a file upload.
-                if isinstance(http_request.body, types.GeneratorType):
-                    _LOGGER.debug("File upload")
-                    return
-                try:
-                    if isinstance(http_request.body, types.AsyncGeneratorType):
+                    # We don't want to log the binary data of a file upload.
+                    if isinstance(http_request.body, types.GeneratorType):
                         _LOGGER.debug("File upload")
                         return
-                except AttributeError:
-                    pass
-                if http_request.body:
-                    _LOGGER.debug(str(http_request.body))
-                    return
-                _LOGGER.debug("This request has no body")
+                    try:
+                        if isinstance(http_request.body, types.AsyncGeneratorType):
+                            _LOGGER.debug("File upload")
+                            return
+                    except AttributeError:
+                        pass
+                    if http_request.body:
+                        _LOGGER.debug(str(http_request.body))
+                        return
+                    _LOGGER.debug("This request has no body")
+                else:
+                    log_string = "Request URL: '{}'".format(http_request.url)
+                    log_string = "/nRequest method: '{}'".format(http_request.method)
+                    log_string += "/nRequest headers:"
+                    for header, value in http_request.headers.items():
+                        log_string += "/n    '{}': '{}'".format(header, value)
+                    log_string += "/nRequest body:"
+
+                    # We don't want to log the binary data of a file upload.
+                    if isinstance(http_request.body, types.GeneratorType):
+                        log_string += "/nFile upload"
+                        _LOGGER.debug(log_string)
+                        return
+                    try:
+                        if isinstance(http_request.body, types.AsyncGeneratorType):
+                            log_string += "/nFile upload"
+                            _LOGGER.debug(log_string)
+                            return
+                    except AttributeError:
+                        pass
+                    if http_request.body:
+                        log_string += "/n{}}d".format(str(http_request.body))
+                        _LOGGER.debug(log_string)
+                        return
+                    log_string += "/nThis request has no body"
+                    _LOGGER.debug(log_string)
             except Exception as err:  # pylint: disable=broad-except
                 _LOGGER.debug("Failed to log request: %r", err)
 
@@ -320,28 +350,54 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
                 if not _LOGGER.isEnabledFor(logging.DEBUG):
                     return
 
-                _LOGGER.debug("Response status: %r", http_response.status_code)
-                _LOGGER.debug("Response headers:")
-                for res_header, value in http_response.headers.items():
-                    _LOGGER.debug("    %r: %r", res_header, value)
+                multi_record = os.environ.get(NetworkTraceLoggingPolicy.MULTI_RECORD_LOG, False)
+                if multi_record:
+                    _LOGGER.debug("Response status: %r", http_response.status_code)
+                    _LOGGER.debug("Response headers:")
+                    for res_header, value in http_response.headers.items():
+                        _LOGGER.debug("    %r: %r", res_header, value)
 
-                # We don't want to log binary data if the response is a file.
-                _LOGGER.debug("Response content:")
-                pattern = re.compile(r'attachment; ?filename=["\w.]+', re.IGNORECASE)
-                header = http_response.headers.get('content-disposition')
+                    # We don't want to log binary data if the response is a file.
+                    _LOGGER.debug("Response content:")
+                    pattern = re.compile(r'attachment; ?filename=["\w.]+', re.IGNORECASE)
+                    header = http_response.headers.get('content-disposition')
 
-                if header and pattern.match(header):
-                    filename = header.partition('=')[2]
-                    _LOGGER.debug("File attachments: %s", filename)
-                elif http_response.headers.get("content-type", "").endswith("octet-stream"):
-                    _LOGGER.debug("Body contains binary data.")
-                elif http_response.headers.get("content-type", "").startswith("image"):
-                    _LOGGER.debug("Body contains image data.")
-                else:
-                    if response.context.options.get('stream', False):
-                        _LOGGER.debug("Body is streamable")
+                    if header and pattern.match(header):
+                        filename = header.partition('=')[2]
+                        _LOGGER.debug("File attachments: %s", filename)
+                    elif http_response.headers.get("content-type", "").endswith("octet-stream"):
+                        _LOGGER.debug("Body contains binary data.")
+                    elif http_response.headers.get("content-type", "").startswith("image"):
+                        _LOGGER.debug("Body contains image data.")
                     else:
-                        _LOGGER.debug(http_response.text())
+                        if response.context.options.get('stream', False):
+                            _LOGGER.debug("Body is streamable")
+                        else:
+                            _LOGGER.debug(http_response.text())
+                else:
+                    log_string = "Response status: '{}'".format(http_response.status_code)
+                    log_string += "/nResponse headers:"
+                    for res_header, value in http_response.headers.items():
+                        log_string += "/n    '{}': '{}'".format(res_header, value)
+
+                    # We don't want to log binary data if the response is a file.
+                    log_string += "/nResponse content:"
+                    pattern = re.compile(r'attachment; ?filename=["\w.]+', re.IGNORECASE)
+                    header = http_response.headers.get('content-disposition')
+
+                    if header and pattern.match(header):
+                        filename = header.partition('=')[2]
+                        log_string += "/nFile attachments: {}".format(filename)
+                    elif http_response.headers.get("content-type", "").endswith("octet-stream"):
+                        log_string += "/nBody contains binary data."
+                    elif http_response.headers.get("content-type", "").startswith("image"):
+                        log_string += "/nBody contains image data."
+                    else:
+                        if response.context.options.get('stream', False):
+                            log_string += "/nBody is streamable."
+                        else:
+                            log_string += "/n{}}".format(http_response.text())
+                    _LOGGER.debug(log_string)
         except Exception as err:  # pylint: disable=broad-except
             _LOGGER.debug("Failed to log response: %s", repr(err))
 
@@ -376,6 +432,7 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
         "User-Agent",
     ])
     REDACTED_PLACEHOLDER = "REDACTED"
+    MULTI_RECORD_LOG = "AZURE_MULTI_RECORD_LOG"
 
     def __init__(self, logger=None, **kwargs):  # pylint: disable=unused-argument
         self.logger = logger or logging.getLogger(
@@ -420,26 +477,54 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
             parsed_url[4] = "&".join(["=".join(part) for part in filtered_qp])
             redacted_url = urllib.parse.urlunparse(parsed_url)
 
-            logger.info("Request URL: %r", redacted_url)
-            logger.info("Request method: %r", http_request.method)
-            logger.info("Request headers:")
-            for header, value in http_request.headers.items():
-                value = self._redact_header(header, value)
-                logger.info("    %r: %r", header, value)
-            if isinstance(http_request.body, types.GeneratorType):
-                logger.info("File upload")
-                return
-            try:
-                if isinstance(http_request.body, types.AsyncGeneratorType):
+            multi_record = os.environ.get(HttpLoggingPolicy.MULTI_RECORD_LOG, False)
+            if multi_record:
+                logger.info("Request URL: %r", redacted_url)
+                logger.info("Request method: %r", http_request.method)
+                logger.info("Request headers:")
+                for header, value in http_request.headers.items():
+                    value = self._redact_header(header, value)
+                    logger.info("    %r: %r", header, value)
+                if isinstance(http_request.body, types.GeneratorType):
                     logger.info("File upload")
                     return
-            except AttributeError:
-                pass
-            if http_request.body:
-                logger.info("A body is sent with the request")
+                try:
+                    if isinstance(http_request.body, types.AsyncGeneratorType):
+                        logger.info("File upload")
+                        return
+                except AttributeError:
+                    pass
+                if http_request.body:
+                    logger.info("A body is sent with the request")
+                    return
+                logger.info("No body was attached to the request")
                 return
-            logger.info("No body was attached to the request")
-            return
+            else:
+                log_string = "Request URL: '{}'".format(redacted_url)
+                log_string += "/nRequest method: '{}'".format(http_request.method)
+                log_string += "/nRequest headers:"
+                for header, value in http_request.headers.items():
+                    value = self._redact_header(header, value)
+                    log_string += "/n    '{}': '{}'".format(header, value)
+                if isinstance(http_request.body, types.GeneratorType):
+                    log_string += "/nFile upload"
+                    logger.info(log_string)
+                    return
+                try:
+                    if isinstance(http_request.body, types.AsyncGeneratorType):
+                        log_string += "/nFile upload"
+                        logger.info(log_string)
+                        return
+                except AttributeError:
+                    pass
+                if http_request.body:
+                    log_string += "/nA body is sent with the request"
+                    logger.info(log_string)
+                    return
+                log_string += "/nNo body was attached to the request"
+                logger.info(log_string)
+                return
+
         except Exception as err:  # pylint: disable=broad-except
             logger.warning("Failed to log request: %s", repr(err))
 
@@ -453,14 +538,23 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
             if not logger.isEnabledFor(logging.INFO):
                 return
 
-            logger.info("Response status: %r", http_response.status_code)
-            logger.info("Response headers:")
-            for res_header, value in http_response.headers.items():
-                value = self._redact_header(res_header, value)
-                logger.info("    %r: %r", res_header, value)
+            multi_record = os.environ.get(HttpLoggingPolicy.MULTI_RECORD_LOG, False)
+            if multi_record:
+                logger.info("Response status: %r", http_response.status_code)
+                logger.info("Response headers:")
+                for res_header, value in http_response.headers.items():
+                    value = self._redact_header(res_header, value)
+                    logger.info("    %r: %r", res_header, value)
+            else:
+                log_string = "Response status: {}".format(http_response.status_code)
+                log_string += "/nResponse headers:"
+                for res_header, value in http_response.headers.items():
+                    value = self._redact_header(res_header, value)
+                    log_string += "/n    '{}': '{}'".format(res_header, value)
         except Exception as err:  # pylint: disable=broad-except
             logger.warning("Failed to log response: %s", repr(err))
 
+        logger.info(log_string)
 
 class ContentDecodePolicy(SansIOHTTPPolicy):
     """Policy for decoding unstreamed response content.
