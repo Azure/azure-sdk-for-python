@@ -192,7 +192,7 @@ jobs:
               $failure = $false
               try {
                 $ErrorActionPreference = "Stop"
-                pip --retries 10 install -r "$env:REQUIREMENTS" --no-deps --upgrade --no-cache-dir
+                pip --retries 10 install -r "$env:REQUIREMENTS" --no-deps --upgrade --no-cache-dir 2>&1
               } catch {
                 $failure = $true
                 Write-Host "Installation failed, retrying in 3 minutes..."
