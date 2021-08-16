@@ -18,6 +18,7 @@ from ._connection_string_parser import (
     parse_connection_string,
     EventHubConnectionStringProperties
 )
+from ._buffered_producer_client import EventHubBufferedProducerClient
 
 TransportType = constants.TransportType
 
@@ -33,5 +34,6 @@ __all__ = [
     "LoadBalancingStrategy",
     "PartitionContext",
     "parse_connection_string",
-    "EventHubConnectionStringProperties"
+    "EventHubConnectionStringProperties",
+    "EventHubBufferedProducerClient"
 ]

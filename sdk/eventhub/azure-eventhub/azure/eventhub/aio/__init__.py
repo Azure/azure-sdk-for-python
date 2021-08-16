@@ -7,6 +7,7 @@ from ._consumer_client_async import EventHubConsumerClient
 from ._producer_client_async import EventHubProducerClient
 from ._eventprocessor.checkpoint_store import CheckpointStore
 from ._eventprocessor.partition_context import PartitionContext
+from ._buffered_producer_client import EventHubBufferedProducerClient
 
 __all__ = [
     "EventHubSharedKeyCredential",
@@ -14,4 +15,5 @@ __all__ = [
     "EventHubProducerClient",
     "CheckpointStore",
     "PartitionContext",
+    "EventHubBufferedProducerClient"
 ]

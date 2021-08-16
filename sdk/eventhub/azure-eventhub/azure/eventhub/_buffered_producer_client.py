@@ -4,14 +4,14 @@
 # --------------------------------------------------------------------------------------------
 from typing import Any, Union, List, TYPE_CHECKING
 
-from .._common import EventData
+from ._common import EventData
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential, AzureSasCredential, AzureNamedKeyCredential
 
 
-class StreamingProducer(object):
-    """The StreamingProducer
+class EventHubBufferedProducerClient(object):
+    """The EventHubBufferedProducerClient
 
     :param str fully_qualified_namespace: The fully qualified host name for the Event Hubs namespace.
      This is likely to be similar to <yournamespace>.servicebus.windows.net
@@ -23,14 +23,21 @@ class StreamingProducer(object):
     :type credential: ~azure.core.credentials.TokenCredential or ~azure.core.credentials.AzureSasCredential
      or ~azure.core.credentials.AzureNamedKeyCredential
     :keyword bool enable_idempotent_retries:
+    :keyword int max_buffered_event_count:
     :keyword int max_wait_time:
-    :keyword int max_pending_event_count:
-    :keyword int max_concurrent_sends_per_partition:  # TBD, what does this parameter mean? kafka?
+    :keyword int max_concurrent_sends_per_partition:  # TBD, ordering? and python limitation of threading?
      https://docs.confluent.io/platform/current/installation/configuration/producer-configs.html#producerconfigs_max.in.flight.requests.per.connection
     :keyword on_send_failed:
     :paramtype on_send_failed: Callable[List[~azure.eventhub.EventData], Exception, Optional[str]]
     :keyword on_send_succeeded:
     :paramtype on_send_succeeded: Callable[List[~azure.eventhub.EventData], str]
+    :keyword executor: A user-specified thread pool. This cannot be combined with
+     setting `max_workers`.
+    :paramtype executor: Optional[~concurrent.futures.ThreadPoolExecutor]
+    :keyword max_workers: Specify the maximum workers in the thread pool. If not
+     specified the number used will be derived from the core count of the environment.
+     This cannot be combined with `executor`.
+    :paramtype max_workers: Optional[int]
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
     :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
      The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
@@ -67,14 +74,15 @@ class StreamingProducer(object):
     ):
         # type:(...) -> None
         self.eventhub_name = ''  # type: str
-        self.total_pending_event_count = 0  # type: int
+        self.total_buffered_event_count = 0  # type: int
 
+    @classmethod
     def from_connection_string(
         cls,
         conn_str,
         **kwargs
     ):
-        # type: (str, Any) -> StreamingProducer
+        # type: (str, Any) -> EventHubBufferedProducerClient
         """
 
         :param str conn_str: The connection string of an Event Hub.
@@ -83,10 +91,18 @@ class StreamingProducer(object):
         :keyword int max_wait_time:
         :keyword int max_pending_event_count:
         :keyword int max_concurrent_sends_per_partition:  # TBD, ordering? and python limitation of threading?
+         https://docs.confluent.io/platform/current/installation/configuration/producer-configs.html#producerconfigs_max.in.flight.requests.per.connection
         :keyword on_send_failed:
         :paramtype on_send_failed: Callable[List[~azure.eventhub.EventData], Exception, Optional[str]]
         :keyword on_send_succeeded:
         :paramtype on_send_succeeded: Callable[List[~azure.eventhub.EventData], str]
+        :keyword executor: A user-specified thread pool. This cannot be combined with
+         setting `max_workers`.
+        :paramtype executor: Optional[~concurrent.futures.ThreadPoolExecutor]
+        :keyword max_workers: Specify the maximum workers in the thread pool. If not
+         specified the number used will be derived from the core count of the environment.
+         This cannot be combined with `executor`.
+        :paramtype max_workers: Optional[int]
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
         :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
@@ -112,11 +128,11 @@ class StreamingProducer(object):
         :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
          authenticate the identity of the connection endpoint.
          Default is None in which case `certifi.where()` will be used.
-        :rtype: ~azure.eventhub.EventHubProducerClient
+        :rtype: ~azure.eventhub.EventHubBufferedProducerClient
         """
         pass
 
-    async def enqueue_events(
+    def enqueue_events(
         self,
         events,
         **kwargs
@@ -129,25 +145,40 @@ class StreamingProducer(object):
         :keyword str partition_key:
         :keyword str partition_id:
         :keyword int timeout:
+        :rtype: None
         """
 
-    async def flush(
+    def flush(
         self,
         **kwargs
     ):
         # type: (Any) -> None
         """
-
         :keyword int timeout:
+        :rtype: None
         """
         pass
 
-    async def close(
+    def get_partition_buffered_event_count(
+        self,
+        partition_id,
+        **kwargs
+    ):
+        # type: (str, Any) -> int
+        """
+
+        :param partition_id:
+        :rtype: int
+        """
+        pass
+
+    def close(
         self,
         **kwargs
     ):
         # type: (Any) -> None
         """
 
-        :keyword bool abandon_pending_events:
+        :keyword bool abandon_buffered_events:
+        :rtype: None
         """
