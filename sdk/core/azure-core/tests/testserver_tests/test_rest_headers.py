@@ -91,6 +91,59 @@ def test_headers_not_override():
     assert request.headers["Content-Length"] == "5000"
     assert request.headers["Content-Type"] == "application/my-content-type"
 
+def test_request_headers_case_insensitive():
+    request = HttpRequest(
+        "PUT",
+        "http://example.org",
+        headers={
+            "Content-Length": 5000,
+            "Content-Type": "application/my-content-type"
+        }
+    )
+    assert (
+        request.headers["Content-Length"] ==
+        request.headers["content-length"] ==
+        request.headers["CONTENT-LENGTH"] ==
+        request.headers["cOnTEnT-lEngTH"] ==
+        5000
+    )
+
+    assert(
+        request.headers["Content-Type"] ==
+        request.headers["content-type"] ==
+        request.headers["CONTENT-TYPE"] ==
+        request.headers["ConTENt-tYpE"] ==
+        "application/my-content-type"
+    )
+
+def test_response_headers_case_insensitive(client):
+    request = HttpRequest("GET", "/basic/headers")
+    response = client.send_request(request)
+    response.raise_for_status()
+    assert (
+        response.headers["lowercase-header"] ==
+        response.headers["LOWERCASE-HEADER"] ==
+        response.headers["Lowercase-Header"] ==
+        response.headers["lOwErCasE-HeADer"] ==
+        "lowercase"
+    )
+    assert (
+        response.headers["allcaps-header"] ==
+        response.headers["ALLCAPS-HEADER"] ==
+        response.headers["Allcaps-Header"] ==
+        response.headers["AlLCapS-HeADer"] ==
+        "ALLCAPS"
+    )
+    assert (
+        response.headers["camelcase-header"] ==
+        response.headers["CAMELCASE-HEADER"] ==
+        response.headers["CamelCase-Header"] ==
+        response.headers["cAMeLCaSE-hEadER"] ==
+        "camelCase"
+    )
+    return response
+
+
 # Can't support list of tuples. Will uncomment once we add that support
 
 # def test_multiple_headers():

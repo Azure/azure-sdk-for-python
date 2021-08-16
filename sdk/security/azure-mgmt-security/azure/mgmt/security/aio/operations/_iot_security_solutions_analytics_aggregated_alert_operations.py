@@ -46,7 +46,7 @@ class IotSecuritySolutionsAnalyticsAggregatedAlertOperations:
         resource_group_name: str,
         solution_name: str,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.IoTSecurityAggregatedAlertList"]:
         """Use this method to get the aggregated alert list of yours IoT Security solution.
 
@@ -126,7 +126,7 @@ class IotSecuritySolutionsAnalyticsAggregatedAlertOperations:
         resource_group_name: str,
         solution_name: str,
         aggregated_alert_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IoTSecurityAggregatedAlert":
         """Use this method to get a single the aggregated alert of yours IoT Security solution. This
         aggregation is performed by alert name.
@@ -190,7 +190,7 @@ class IotSecuritySolutionsAnalyticsAggregatedAlertOperations:
         resource_group_name: str,
         solution_name: str,
         aggregated_alert_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Use this method to dismiss an aggregated IoT Security Solution Alert.
 

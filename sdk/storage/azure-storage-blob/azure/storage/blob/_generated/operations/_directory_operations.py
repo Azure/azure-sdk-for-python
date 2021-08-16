@@ -60,13 +60,13 @@ class DirectoryOperations(object):
         """Create a directory. By default, the destination is overwritten and if the destination already
         exists and has a lease the lease is broken. This operation supports conditional HTTP requests.
         For more information, see `Specifying Conditional Headers for Blob Service Operations
-        <https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-
-        blob-service-operations>`_.  To fail if the destination already exists, use a conditional
-        request with If-None-Match: "*".
+        <https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
+        To fail if the destination already exists, use a conditional request with If-None-Match: "*".
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param directory_properties: Optional.  User-defined properties to be stored with the file or
          directory, in the format of a comma-separated list of name and value pairs "n1=v1, n2=v2, ...",
@@ -220,17 +220,17 @@ class DirectoryOperations(object):
         """Rename a directory. By default, the destination is overwritten and if the destination already
         exists and has a lease the lease is broken. This operation supports conditional HTTP requests.
         For more information, see `Specifying Conditional Headers for Blob Service Operations
-        <https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-
-        blob-service-operations>`_. To fail if the destination already exists, use a conditional
-        request with If-None-Match: "*".
+        <https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
+        To fail if the destination already exists, use a conditional request with If-None-Match: "*".
 
         :param rename_source: The file or directory to be renamed. The value must have the following
          format: "/{filesysystem}/{path}".  If "x-ms-properties" is specified, the properties will
          overwrite the existing properties; otherwise, the existing properties will be preserved.
         :type rename_source: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param marker: When renaming a directory, the number of paths that are renamed with each
          invocation is limited.  If the number of paths to be renamed exceeds this limit, a continuation
@@ -416,8 +416,9 @@ class DirectoryOperations(object):
          If "false" and the directory is non-empty, an error occurs.
         :type recursive_directory_delete: bool
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param marker: When renaming a directory, the number of paths that are renamed with each
          invocation is limited.  If the number of paths to be renamed exceeds this limit, a continuation
@@ -526,8 +527,9 @@ class DirectoryOperations(object):
         """Set the owner, group, permissions, or access control list for a directory.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param owner: Optional. The owner of the blob or directory.
         :type owner: str
@@ -648,8 +650,9 @@ class DirectoryOperations(object):
         """Get the owner, group, permissions, or access control list for a directory.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param upn: Optional. Valid only when Hierarchical Namespace is enabled for the account. If
          "true", the identity values returned in the x-ms-owner, x-ms-group, and x-ms-acl response

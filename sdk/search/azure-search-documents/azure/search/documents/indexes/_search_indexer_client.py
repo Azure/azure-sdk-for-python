@@ -28,7 +28,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
+class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
     """A client to interact with Azure search service Indexers.
 
     :param endpoint: The URL endpoint of an Azure search service
@@ -77,9 +77,7 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
 
     def close(self):
         # type: () -> None
-        """Close the :class:`~azure.search.documents.indexes.SearchIndexerClient` session.
-
-        """
+        """Close the :class:`~azure.search.documents.indexes.SearchIndexerClient` session."""
         return self._client.close()
 
     @distributed_trace
@@ -333,11 +331,14 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
-            data_source_connection, kwargs.pop("match_condition", MatchConditions.Unconditionally)
+            data_source_connection,
+            kwargs.pop("match_condition", MatchConditions.Unconditionally),
         )
         kwargs.update(access_condition)
         name = data_source_connection.name
-        packed_data_source = data_source_connection._to_generated() # pylint:disable=protected-access
+        packed_data_source = (
+            data_source_connection._to_generated()  # pylint:disable=protected-access
+        )
         result = self._client.data_sources.create_or_update(
             data_source_name=name,
             data_source=packed_data_source,
@@ -368,7 +369,9 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.data_sources.get(name, **kwargs)
-        return SearchIndexerDataSourceConnection._from_generated(result)    # pylint:disable=protected-access
+        return SearchIndexerDataSourceConnection._from_generated(  # pylint:disable=protected-access
+            result
+        )
 
     @distributed_trace
     def get_data_source_connections(self, **kwargs):
@@ -390,7 +393,10 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.data_sources.list(**kwargs)
         # pylint:disable=protected-access
-        return [SearchIndexerDataSourceConnection._from_generated(x) for x in result.data_sources]
+        return [
+            SearchIndexerDataSourceConnection._from_generated(x)
+            for x in result.data_sources
+        ]
 
     @distributed_trace
     def get_data_source_connection_names(self, **kwargs):
@@ -430,7 +436,8 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
-            data_source_connection, kwargs.pop("match_condition", MatchConditions.Unconditionally)
+            data_source_connection,
+            kwargs.pop("match_condition", MatchConditions.Unconditionally),
         )
         kwargs.update(access_condition)
         try:
@@ -580,5 +587,8 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         kwargs.update(access_condition)
 
         return self._client.skillsets.create_or_update(
-            skillset_name=skillset.name, skillset=skillset, error_map=error_map, **kwargs
+            skillset_name=skillset.name,
+            skillset=skillset,
+            error_map=error_map,
+            **kwargs
         )

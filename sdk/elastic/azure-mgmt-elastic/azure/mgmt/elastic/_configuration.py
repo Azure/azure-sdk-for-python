@@ -48,7 +48,7 @@ class MicrosoftElasticConfiguration(Configuration):
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.api_version = "2020-07-01-preview"
+        self.api_version = "2020-07-01"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-elastic/{}'.format(VERSION))
         self._configure(**kwargs)

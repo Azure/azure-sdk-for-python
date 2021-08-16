@@ -49,7 +49,7 @@ def sample_list_translations_with_filters():
     start = datetime(2021, 4, 12)
     end = datetime(2021, 4, 14)
     statuses = ["Cancelled", "Failed"]
-    order_by = ["createdDateTimeUtc desc"]
+    order_by = ["created_on desc"]
     results_per_page = 2
     skip = 3
 

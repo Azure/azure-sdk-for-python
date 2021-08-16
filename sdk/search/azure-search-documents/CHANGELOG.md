@@ -1,16 +1,26 @@
 # Release History
 
-## 11.3.0b2 (Unreleased)
+## 11.3.0b3 (Unreleased)
+
+### Features Added
+
+- Added new models: 
+  - `azure.search.documents.models.Captions`
+  - `azure.search.documents.models.CaptionResult`
+  - `azure.search.documents.indexes.models.CustomEntityLookupSkillLanguage`
+  - `azure.search.documents.indexes.models.LexicalNormalizerName`
+  - `azure.search.documents.indexes.models.PIIDetectionSkill`
+  - `azure.search.documents.indexes.models.PIIDetectionSkillMaskingMode`
+  - `azure.search.documents.indexes.models.SearchIndexerCache`
+  - `azure.search.documents.indexes.models.SearchIndexerDataIdentity`
+  - `azure.search.documents.indexes.models.SearchIndexerDataNoneIdentity`
+  - `azure.search.documents.indexes.models.SearchIndexerDataUserAssignedIdentity`
+
+## 11.3.0b2 (2021-08-10)
 
 ### Features Added
 
 - Added new skills: `SentimentSkillV3`, `EntityLinkingSkill`, `EntityRecognitionSkillV3`
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 11.3.0b1 (2021-07-07)
 

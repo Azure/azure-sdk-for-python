@@ -9,7 +9,7 @@ from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from .._generated.aio import TextAnalyticsClient as _TextAnalyticsClient
 from .._policies import TextAnalyticsResponseHookPolicy
 from .._user_agent import USER_AGENT
-from .._base_client import TextAnalyticsApiVersion
+from .._version import DEFAULT_API_VERSION
 
 
 def _authentication_policy(credential):
@@ -33,7 +33,7 @@ class AsyncTextAnalyticsClientBase(object):
         self._client = _TextAnalyticsClient(
             endpoint=endpoint,
             credential=credential,
-            api_version=kwargs.pop("api_version", TextAnalyticsApiVersion.V3_1),
+            api_version=kwargs.pop("api_version", DEFAULT_API_VERSION),
             sdk_moniker=USER_AGENT,
             authentication_policy=_authentication_policy(credential),
             custom_hook_policy=TextAnalyticsResponseHookPolicy(**kwargs),

@@ -46,7 +46,7 @@ class UserIdentitiesOperations:
         resource_group_name: str,
         service_name: str,
         user_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.UserIdentityCollection"]:
         """List of all user identities.
 
@@ -109,7 +109,7 @@ class UserIdentitiesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
