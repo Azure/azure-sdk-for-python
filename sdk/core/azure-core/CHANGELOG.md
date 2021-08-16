@@ -1,8 +1,11 @@
 # Release History
 
-## 1.17.1 (Unreleased)
+## 1.18.0 (Unreleased)
 
 ### Features Added
+
+- Added `AccessToken.refresh_on`, a timestamp after which the `AccessToken`
+  should be refreshed
 
 ### Breaking Changes
 
