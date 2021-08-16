@@ -8,10 +8,8 @@ from typing import TYPE_CHECKING
 import six
 
 if TYPE_CHECKING:
-    from typing import Any, NamedTuple
+    from typing import Any, Optional
     from typing_extensions import Protocol
-
-    AccessToken = NamedTuple("AccessToken", [("token", str), ("expires_on", int)])
 
     class TokenCredential(Protocol):
         """Protocol for classes able to provide OAuth tokens.
@@ -25,8 +23,34 @@ if TYPE_CHECKING:
             pass
 
 
-else:
-    AccessToken = namedtuple("AccessToken", ["token", "expires_on"])
+class AccessToken(namedtuple("_AccessToken", ["token", "expires_on"])):
+    """An access token.
+
+    :param str token: the access token itself
+    :param int expires_on: the Unix timestamp at which the token expires
+    :param int refresh_on: (optional) a Unix timestamp after which the token should be refreshed. Defaults to 5 minutes
+        before **expires_on**.
+    """
+
+    def __new__(cls, token, expires_on, refresh_on=None):  # pylint:disable=unused-argument
+        # type: (str, int, Optional[int]) -> AccessToken
+        # AccessToken began as a namedtuple with "token" and "expires_on" fields. This class inherits that namedtuple
+        # to maintain API compatibility. This override enables adding "refresh_on" to the class but not the namedtuple.
+        return super(AccessToken, cls).__new__(cls, token, expires_on)
+
+    def __init__(self, token, expires_on, refresh_on=None):  # pylint:disable=super-init-not-called,unused-argument
+        # type: (str, int, Optional[int]) -> None
+        self._refresh_on = refresh_on or max(0, expires_on - 300)
+
+    @property
+    def refresh_on(self):
+        # type: () -> int
+        """A Unix timestamp after which the token should be refreshed.
+
+        :rtype: int
+        """
+        return self._refresh_on
+
 
 AzureNamedKey = namedtuple("AzureNamedKey", ["name", "key"])
 
