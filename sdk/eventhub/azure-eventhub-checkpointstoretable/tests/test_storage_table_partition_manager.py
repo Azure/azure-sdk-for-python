@@ -177,7 +177,7 @@ def _update_and_list_checkpoint(storage_connection_str, table_name):
 
 
 @pytest.mark.parametrize("storage_connection_str", STORAGE_CONN_STR)
-@pytest.mark.liveTest
+@pytest.mark.skip("update after adding conn str env var")
 def test_claim_ownership_exception(storage_connection_str):
     storage_connection_str, table_name = get_live_storage_table_client(
         storage_connection_str
@@ -189,7 +189,7 @@ def test_claim_ownership_exception(storage_connection_str):
 
 
 @pytest.mark.parametrize("storage_connection_str", STORAGE_CONN_STR)
-@pytest.mark.liveTest
+@pytest.mark.skip("update after adding conn str env var")
 def test_claim_and_list_ownership(storage_connection_str):
     storage_connection_str, table_name = get_live_storage_table_client(
         storage_connection_str
@@ -201,7 +201,7 @@ def test_claim_and_list_ownership(storage_connection_str):
 
 
 @pytest.mark.parametrize("storage_connection_str", STORAGE_CONN_STR)
-@pytest.mark.liveTest
+@pytest.mark.skip("update after adding conn str env var")
 def test_update_checkpoint(storage_connection_str):
     storage_connection_str, table_name = get_live_storage_table_client(
         storage_connection_str

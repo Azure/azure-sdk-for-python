@@ -89,6 +89,9 @@ IGNORED_SAMPLES = {
         "iot_hub_connection_string_receive_async.py",
         "proxy_async.py"
     ],
+    "azure-eventhub-checkpointstoretable":[
+        "receive_events_using_checkpoint_store.py"
+    ],
     "azure-servicebus": [
         "mgmt_queue.py",
         "mgmt_rule.py",
