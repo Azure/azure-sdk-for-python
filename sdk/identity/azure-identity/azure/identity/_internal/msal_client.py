@@ -73,6 +73,17 @@ class MsalClient(object):
         self._local = threading.local()
         self._pipeline = build_pipeline(**kwargs)
 
+    def __enter__(self):
+        self._pipeline.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        self._pipeline.__exit__(*args)
+
+    def close(self):
+        # type: () -> None
+        self.__exit__()
+
     def post(self, url, params=None, data=None, headers=None, **kwargs):  # pylint:disable=unused-argument
         # type: (str, Optional[Dict[str, str]], RequestData, Optional[Dict[str, str]], **Any) -> MsalResponse
         request = HttpRequest("POST", url, headers=headers)
