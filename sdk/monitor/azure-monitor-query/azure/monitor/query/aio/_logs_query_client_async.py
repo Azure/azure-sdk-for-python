@@ -12,7 +12,7 @@ from .._generated.aio._monitor_query_client import MonitorQueryClient
 
 from .._generated.models import BatchRequest, QueryBody as LogsQueryBody
 from .._helpers import process_error, construct_iso8601, order_results
-from .._models import LogsQueryResult, LogsBatchQueryRequest, LogsBatchQueryResult
+from .._models import LogsQueryResult, LogsBatchQuery, LogsBatchQueryResult
 from ._helpers_asyc import get_authentication_policy
 
 if TYPE_CHECKING:
@@ -67,9 +67,9 @@ class LogsQueryClient(object):
         :keyword int server_timeout: the server timeout. The default timeout is 3 minutes,
          and the maximum timeout is 10 minutes.
         :keyword bool include_statistics: To get information about query statistics.
-        :keyword bool include_render: In the query language, it is possible to specify different render options.
-         By default, the API does not return information regarding the type of visualization to show.
-         If your client requires this information, specify the preference
+        :keyword bool include_visualization: In the query language, it is possible to specify different
+         visualization options. By default, the API does not return information regarding the type of
+         visualization to show. If your client requires this information, specify the preference
         :keyword additional_workspaces: A list of workspaces that are included in the query.
          These can be qualified workspace names, workspsce Ids or Azure resource Ids.
         :paramtype additional_workspaces: list[str]
@@ -81,7 +81,7 @@ class LogsQueryClient(object):
         end = kwargs.pop('end_time', None)
         timespan = construct_iso8601(start, end, duration)
         include_statistics = kwargs.pop("include_statistics", False)
-        include_render = kwargs.pop("include_render", False)
+        include_visualization = kwargs.pop("include_visualization", False)
         server_timeout = kwargs.pop("server_timeout", None)
         additional_workspaces = kwargs.pop("additional_workspaces", None)
 
@@ -90,11 +90,11 @@ class LogsQueryClient(object):
             prefer += "wait=" + str(server_timeout)
         if include_statistics:
             if len(prefer) > 0:
-                prefer += ";"
+                prefer += ","
             prefer += "include-statistics=true"
-        if include_render:
+        if include_visualization:
             if len(prefer) > 0:
-                prefer += ";"
+                prefer += ","
             prefer += "include-render=true"
 
         body = LogsQueryBody(
@@ -114,9 +114,9 @@ class LogsQueryClient(object):
         except HttpResponseError as e:
             process_error(e)
 
-    async def batch_query(
+    async def query_batch(
         self,
-        queries: Union[Sequence[Dict], Sequence[LogsBatchQueryRequest]],
+        queries: Union[Sequence[Dict], Sequence[LogsBatchQuery]],
         **kwargs: Any
         ) -> Sequence[LogsBatchQueryResult]:
         """Execute a list of analytics queries. Each request can be either a LogQueryRequest
@@ -125,15 +125,16 @@ class LogsQueryClient(object):
         The response is returned in the same order as that of the requests sent.
 
         :param queries: The list of queries that should be processed
-        :type queries: list[dict] or list[~azure.monitor.query.LogsBatchQueryRequest]
+        :type queries: list[dict] or list[~azure.monitor.query.LogsBatchQuery]
         :return: BatchResponse, or the result of cls(response)
         :rtype: ~list[~azure.monitor.query.LogsBatchQueryResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         try:
-            queries = [LogsBatchQueryRequest(**q) for q in queries]
+            queries = [LogsBatchQuery(**q) for q in queries]
         except (KeyError, TypeError):
             pass
+        queries = [q._to_generated() for q in queries] # pylint: disable=protected-access
         try:
             request_order = [req.id for req in queries]
         except AttributeError:

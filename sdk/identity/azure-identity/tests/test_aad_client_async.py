@@ -236,9 +236,13 @@ async def test_retries_token_requests():
     transport.send.reset_mock()
 
     with pytest.raises(ServiceRequestError, match=message):
-        await client.obtain_token_by_refresh_token("", "")
+        await client.obtain_token_by_jwt_assertion("", "")
     assert transport.send.call_count > 1
     transport.send.reset_mock()
+
+    with pytest.raises(ServiceRequestError, match=message):
+        await client.obtain_token_by_refresh_token("", "")
+    assert transport.send.call_count > 1
 
 
 async def test_shared_cache():

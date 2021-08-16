@@ -183,12 +183,12 @@ credential = DefaultAzureCredential()
 client = LogsQueryClient(credential)
 
 requests = [
-    LogsBatchQueryRequest(
+    LogsBatchQuery(
         query="AzureActivity | summarize count()",
         duration=timedelta(hours=1),
         workspace_id=os.environ['LOG_WORKSPACE_ID']
     ),
-    LogsBatchQueryRequest(
+    LogsBatchQuery(
         query= """AppRequests | take 10  |
             summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId""",
         duration=timedelta(hours=1),
@@ -200,7 +200,7 @@ requests = [
         workspace_id=os.environ['LOG_WORKSPACE_ID']
     ),
 ]
-response = client.batch_query(requests)
+response = client.query_batch(requests)
 
 for rsp in response:
     body = rsp.body
@@ -211,6 +211,44 @@ for rsp in response:
             df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
             print(df)
 ```
+
+#### Handling the response for Logs Query
+
+The `query` API returns the `LogsQueryResult` while the `batch_query` API returns the `LogsBatchQueryResult`.
+
+Here is a heirarchy of the response:
+
+```
+LogsQueryResult / LogsBatchQueryResult
+|---id (this exists in `LogsBatchQueryResult` object only)
+|---status (this exists in `LogsBatchQueryResult` object only)
+|---statistics
+|---visualization
+|---error
+|---tables (list of `LogsQueryResultTable` objects)
+    |---name
+    |---rows
+    |---columns (list of `LogsQueryResultColumn` objects)
+        |---name
+        |---type
+```
+
+So, to handle a response with tables and display it using pandas,
+
+```python
+table = response.tables[0]
+df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
+```
+A full sample can be found [here](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_log_query_client.py).
+
+In a very similar fashion, to handle a batch response, 
+
+```python
+for result in response:
+    table = result.tables[0]
+    df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
+```
+A full sample can be found [here](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_batch_query.py).
 
 ### Query metrics
 

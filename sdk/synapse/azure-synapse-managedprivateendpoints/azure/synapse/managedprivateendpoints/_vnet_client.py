@@ -66,7 +66,7 @@ class VnetClient(MultiApiClientMixin, _SDKClient):
         self,
         credential,  # type: "TokenCredential"
         endpoint,  # type: str
-        api_version=None, # type: Optional[str]
+        api_version=DEFAULT_API_VERSION, # type: Optional[str]
         profile=KnownProfiles.default, # type: KnownProfiles
         **kwargs  # type: Any
     ):

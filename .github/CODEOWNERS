@@ -28,8 +28,8 @@
 # PRLabel: %App Configuration
 /sdk/appconfiguration/                                               @xiangyan99 @seankane-msft
 
-/sdk/applicationinsights/azure-applicationinsights/                  @divya-jay @geneh @alongafni
-/sdk/loganalytics/azure-loganalytics/                                @divya-jay @geneh @alongafni
+/sdk/applicationinsights/azure-applicationinsights/                  @divyajay @geneh @alongafni
+/sdk/loganalytics/azure-loganalytics/                                @divyajay @geneh @alongafni
 
 /sdk/attestation/azure-security-attestation                          @larryosterman @anilba06 @Azure/azure-sdk-write-attestation
 
@@ -38,7 +38,7 @@
 /sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/  @areddish
 
 # PRLabel: %Communication
-/sdk/communication/                                                  @turalf @ankitarorabit @memontic-ms @Azure/azure-sdk-communication-code-reviewers
+/sdk/communication/                                                  @acsdevx-msft
 
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @schaabs @chlowell @mccoyp
@@ -119,7 +119,7 @@
 /sdk/translation/                                                    @kristapratico @mohamedshabanofficial
 
 # PRLabel: %Tables
-/sdk/tables/                                                         @seankane-msft
+/sdk/tables/                                                         @annatisch @YalinLi0312
 
 # PRLabel: %Media
 /sdk/media/                                                          @naiteeks @bennage @giakas
