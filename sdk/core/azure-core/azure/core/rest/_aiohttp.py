@@ -32,6 +32,8 @@ from . import HttpRequest, AsyncHttpResponse
 from ._helpers_py3 import iter_raw_helper, iter_bytes_helper
 from ..pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
 
+_SENTINEL = object()
+
 class _ItemsView(collections.abc.ItemsView):
     def __init__(self, ref):
         super().__init__(ref)
@@ -42,10 +44,10 @@ class _ItemsView(collections.abc.ItemsView):
             yield tuple([key, ", ".join(group[1] for group in groups)])
 
     def __contains__(self, item):
-        assert isinstance(item, (list, tuple))
-        assert len(item) == 2
+        if not (isinstance(item, (list, tuple)) and len(item) == 2):
+            return False
         for k, v in self.__iter__():
-            if item[0] == k and item[1] == v:
+            if item[0].lower() == k.lower() and item[1] == v:
                 return True
         return False
 
@@ -61,24 +63,22 @@ class _CIMultiDict(CIMultiDict):
 
     def keys(self):
         """Return a new view of the dictionary's keys."""
-        return {k: v for k, v in self.items()}.keys()  # pylint: disable=unnecessary-comprehension
+        return dict(self.items()).keys()
 
     def items(self):
-        """Return a new view of the dictionary's keys."""
+        """Return a new view of the dictionary's items."""
         return _ItemsView(super().items())
 
     def values(self):
         """Return a new view of the dictionary's values."""
-        return {k: v for k, v in self.items()}.values()  # pylint: disable=unnecessary-comprehension
+        return dict(self.items()).values()
 
     def __getitem__(self, key: str) -> str:
-        return ", ".join(self.getall(key))
+        return ", ".join(self.getall(key, []))
 
-    def get(self, key, default=None):
-        values = self.getall(key, default)
-        if values:
-            return ", ".join(values)
-        return values
+    def get(self, key, default=_SENTINEL):
+        values = ", ".join(self.getall(key, [])) or []
+        return values if default == _SENTINEL else default
 
 class RestAioHttpTransportResponse(AsyncHttpResponse):
     def __init__(

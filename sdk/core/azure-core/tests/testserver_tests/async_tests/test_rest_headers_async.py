@@ -34,8 +34,13 @@ async def test_headers_response(get_response_headers):
     assert "B" in h
     assert "c" not in h
     assert h["a"] == "123, 456"
+    assert h["A"] == "123, 456"
     assert h.get("a") == "123, 456"
+    assert h.get("A") == "123, 456"
+    assert h.get("nope") == []
+    assert h.get("nope", default="default") is "default"
     assert h.get("nope", default=None) is None
+    assert list(h) == ['a', 'b']
 
     assert list(h.keys()) == ["a", "b"]
     assert list(h.values()) == ["123, 456", "789"]
@@ -51,8 +56,15 @@ async def test_headers_response_keys(get_response_headers):
     assert list(h.keys()) == list(ref_dict.keys())
     assert repr(h.keys()) == repr(ref_dict.keys())
     assert "a" in h.keys()
+    assert "A" not in h.keys()
     assert "b" in h.keys()
+    assert "B" not in h.keys()
     assert set(h.keys()) == set(ref_dict.keys())
+
+    # test mutability
+    before_mutation_keys = h.keys()
+    h['c'] = '000'
+    assert 'c' not in before_mutation_keys
 
 @pytest.mark.asyncio
 async def test_headers_response_values(get_response_headers):
@@ -73,8 +85,13 @@ async def test_headers_response_items(get_response_headers):
     assert list(h.items()) == list(ref_dict.items())
     assert repr(h.items()) == repr(ref_dict.items())
     assert ("a", '123, 456') in h.items()
+    assert not ("a", '123, 456', '123, 456') in h.items()
+    assert not {"a": "blah", "123, 456": "blah"} in h.items()
+    assert ("A", '123, 456') in h.items()
     assert ("b", '789') in h.items()
+    assert ("B", '789') in h.items()
     assert set(h.items()) == set(ref_dict.items())
+
 
 @pytest.mark.asyncio
 async def test_header_mutations(get_response_headers):
