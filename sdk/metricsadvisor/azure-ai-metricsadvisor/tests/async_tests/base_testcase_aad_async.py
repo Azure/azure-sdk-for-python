@@ -164,7 +164,7 @@ class TestMetricsAdvisorAdministrationClientBaseAsync(AzureTestCase):
             name=name,
             source=SqlServerDataFeedSource(
                 connection_string=self.sql_server_connection_string,
-                query="select * from adsample2 where Timestamp = @StartTime"
+                query="select * from adsample2 where Timestamp = @StartTime"
             ),
             granularity="Daily",
             schema=DataFeedSchema(
@@ -210,7 +210,7 @@ class TestMetricsAdvisorAdministrationClientBaseAsync(AzureTestCase):
             name=data_feed_name,
             source=SqlServerDataFeedSource(
                 connection_string=self.sql_server_connection_string,
-                query=u"select * from adsample2 where Timestamp = @StartTime"
+                query=u"select * from adsample2 where Timestamp = @StartTime"
             ),
             granularity=DataFeedGranularity(
                 granularity_type="Daily",

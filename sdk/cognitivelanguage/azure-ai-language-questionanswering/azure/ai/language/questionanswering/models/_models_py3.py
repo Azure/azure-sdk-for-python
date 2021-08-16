@@ -210,8 +210,8 @@ class InnerErrorModel(msrest.serialization.Model):
         self.innererror = innererror
 
 
-class KnowledgebaseAnswer(msrest.serialization.Model):
-    """Represents Knowledgebase Answer.
+class KnowledgeBaseAnswer(msrest.serialization.Model):
+    """Represents knowledge base answer.
 
     :param questions: List of questions.
     :type questions: list[str]
@@ -227,7 +227,7 @@ class KnowledgebaseAnswer(msrest.serialization.Model):
      answers.
     :type metadata: dict[str, str]
     :param dialog: Dialog associated with Answer.
-    :type dialog: ~azure.ai.language.questionanswering.models.KnowledgebaseAnswerDialog
+    :type dialog: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerDialog
     :param answer_span: Answer span object of QnA with respect to user's question.
     :type answer_span: ~azure.ai.language.questionanswering.models.AnswerSpan
     """
@@ -243,7 +243,7 @@ class KnowledgebaseAnswer(msrest.serialization.Model):
         "id": {"key": "id", "type": "int"},
         "source": {"key": "source", "type": "str"},
         "metadata": {"key": "metadata", "type": "{str}"},
-        "dialog": {"key": "dialog", "type": "KnowledgebaseAnswerDialog"},
+        "dialog": {"key": "dialog", "type": "KnowledgeBaseAnswerDialog"},
         "answer_span": {"key": "answerSpan", "type": "AnswerSpan"},
     }
 
@@ -256,11 +256,11 @@ class KnowledgebaseAnswer(msrest.serialization.Model):
         id: Optional[int] = None,
         source: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
-        dialog: Optional["KnowledgebaseAnswerDialog"] = None,
+        dialog: Optional["KnowledgeBaseAnswerDialog"] = None,
         answer_span: Optional["AnswerSpan"] = None,
         **kwargs
     ):
-        super(KnowledgebaseAnswer, self).__init__(**kwargs)
+        super(KnowledgeBaseAnswer, self).__init__(**kwargs)
         self.questions = questions
         self.answer = answer
         self.confidence_score = confidence_score
@@ -271,7 +271,7 @@ class KnowledgebaseAnswer(msrest.serialization.Model):
         self.answer_span = answer_span
 
 
-class KnowledgebaseAnswerDialog(msrest.serialization.Model):
+class KnowledgeBaseAnswerDialog(msrest.serialization.Model):
     """Dialog associated with Answer.
 
     :param is_context_only: To mark if a prompt is relevant only with a previous question or not.
@@ -279,7 +279,7 @@ class KnowledgebaseAnswerDialog(msrest.serialization.Model):
      false, ignores context and includes this QnA in search result.
     :type is_context_only: bool
     :param prompts: List of 0 to 20 prompts associated with the answer.
-    :type prompts: list[~azure.ai.language.questionanswering.models.KnowledgebaseAnswerPrompt]
+    :type prompts: list[~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerPrompt]
     """
 
     _validation = {
@@ -288,22 +288,22 @@ class KnowledgebaseAnswerDialog(msrest.serialization.Model):
 
     _attribute_map = {
         "is_context_only": {"key": "isContextOnly", "type": "bool"},
-        "prompts": {"key": "prompts", "type": "[KnowledgebaseAnswerPrompt]"},
+        "prompts": {"key": "prompts", "type": "[KnowledgeBaseAnswerPrompt]"},
     }
 
     def __init__(
         self,
         *,
         is_context_only: Optional[bool] = None,
-        prompts: Optional[List["KnowledgebaseAnswerPrompt"]] = None,
+        prompts: Optional[List["KnowledgeBaseAnswerPrompt"]] = None,
         **kwargs
     ):
-        super(KnowledgebaseAnswerDialog, self).__init__(**kwargs)
+        super(KnowledgeBaseAnswerDialog, self).__init__(**kwargs)
         self.is_context_only = is_context_only
         self.prompts = prompts
 
 
-class KnowledgebaseAnswerPrompt(msrest.serialization.Model):
+class KnowledgeBaseAnswerPrompt(msrest.serialization.Model):
     """Prompt for an answer.
 
     :param display_order: Index of the prompt - used in ordering of the prompts.
@@ -332,13 +332,13 @@ class KnowledgebaseAnswerPrompt(msrest.serialization.Model):
         display_text: Optional[str] = None,
         **kwargs
     ):
-        super(KnowledgebaseAnswerPrompt, self).__init__(**kwargs)
+        super(KnowledgeBaseAnswerPrompt, self).__init__(**kwargs)
         self.display_order = display_order
         self.qna_id = qna_id
         self.display_text = display_text
 
 
-class KnowledgebaseAnswerRequestContext(msrest.serialization.Model):
+class KnowledgeBaseAnswerRequestContext(msrest.serialization.Model):
     """Context object with previous QnA's information.
 
     All required parameters must be populated in order to send to Azure.
@@ -359,31 +359,31 @@ class KnowledgebaseAnswerRequestContext(msrest.serialization.Model):
     }
 
     def __init__(self, *, previous_qna_id: int, previous_user_query: Optional[str] = None, **kwargs):
-        super(KnowledgebaseAnswerRequestContext, self).__init__(**kwargs)
+        super(KnowledgeBaseAnswerRequestContext, self).__init__(**kwargs)
         self.previous_qna_id = previous_qna_id
         self.previous_user_query = previous_user_query
 
 
-class KnowledgebaseAnswers(msrest.serialization.Model):
+class KnowledgeBaseAnswers(msrest.serialization.Model):
     """Represents List of Question Answers.
 
     :param answers: Represents Answer Result list.
-    :type answers: list[~azure.ai.language.questionanswering.models.KnowledgebaseAnswer]
+    :type answers: list[~azure.ai.language.questionanswering.models.KnowledgeBaseAnswer]
     """
 
     _attribute_map = {
-        "answers": {"key": "answers", "type": "[KnowledgebaseAnswer]"},
+        "answers": {"key": "answers", "type": "[KnowledgeBaseAnswer]"},
     }
 
-    def __init__(self, *, answers: Optional[List["KnowledgebaseAnswer"]] = None, **kwargs):
-        super(KnowledgebaseAnswers, self).__init__(**kwargs)
+    def __init__(self, *, answers: Optional[List["KnowledgeBaseAnswer"]] = None, **kwargs):
+        super(KnowledgeBaseAnswers, self).__init__(**kwargs)
         self.answers = answers
 
 
-class KnowledgebaseQueryParameters(msrest.serialization.Model):
-    """The question parameters to answer using a knowledgebase.
+class KnowledgeBaseQueryOptions(msrest.serialization.Model):
+    """The question parameters to answer using a knowledge base.
 
-    :param qna_id: Exact QnA ID to fetch from the knowledgebase, this field takes priority over
+    :param qna_id: Exact QnA ID to fetch from the knowledge base, this field takes priority over
      question.
     :type qna_id: int
     :param question: User question to query against the knowledge base.
@@ -396,11 +396,11 @@ class KnowledgebaseQueryParameters(msrest.serialization.Model):
      1.
     :type confidence_score_threshold: float
     :param context: Context object with previous QnA's information.
-    :type context: ~azure.ai.language.questionanswering.models.KnowledgebaseAnswerRequestContext
+    :type context: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerRequestContext
     :param ranker_type: (Optional) Set to 'QuestionOnly' for using a question only Ranker. Possible
      values include: "Default", "QuestionOnly".
     :type ranker_type: str or ~azure.ai.language.questionanswering.models.RankerType
-    :param strict_filters: Filter QnAs based on give metadata list and knowledgebase source names.
+    :param strict_filters: Filter QnAs based on give metadata list and knowledge base source names.
     :type strict_filters: ~azure.ai.language.questionanswering.models.StrictFilters
     :param answer_span_request: To configure Answer span prediction feature.
     :type answer_span_request: ~azure.ai.language.questionanswering.models.AnswerSpanRequest
@@ -418,7 +418,7 @@ class KnowledgebaseQueryParameters(msrest.serialization.Model):
         "top": {"key": "top", "type": "int"},
         "user_id": {"key": "userId", "type": "str"},
         "confidence_score_threshold": {"key": "confidenceScoreThreshold", "type": "float"},
-        "context": {"key": "context", "type": "KnowledgebaseAnswerRequestContext"},
+        "context": {"key": "context", "type": "KnowledgeBaseAnswerRequestContext"},
         "ranker_type": {"key": "rankerType", "type": "str"},
         "strict_filters": {"key": "strictFilters", "type": "StrictFilters"},
         "answer_span_request": {"key": "answerSpanRequest", "type": "AnswerSpanRequest"},
@@ -433,14 +433,14 @@ class KnowledgebaseQueryParameters(msrest.serialization.Model):
         top: Optional[int] = None,
         user_id: Optional[str] = None,
         confidence_score_threshold: Optional[float] = None,
-        context: Optional["KnowledgebaseAnswerRequestContext"] = None,
+        context: Optional["KnowledgeBaseAnswerRequestContext"] = None,
         ranker_type: Optional[Union[str, "RankerType"]] = None,
         strict_filters: Optional["StrictFilters"] = None,
         answer_span_request: Optional["AnswerSpanRequest"] = None,
         include_unstructured_sources: Optional[bool] = None,
         **kwargs
     ):
-        super(KnowledgebaseQueryParameters, self).__init__(**kwargs)
+        super(KnowledgeBaseQueryOptions, self).__init__(**kwargs)
         self.qna_id = qna_id
         self.question = question
         self.top = top
@@ -461,7 +461,7 @@ class MetadataFilter(msrest.serialization.Model):
     :param compound_operation: (Optional) Set to 'OR' for joining metadata using 'OR' operation.
      Possible values include: "AND", "OR".
     :type compound_operation: str or
-     ~azure.ai.language.questionanswering.models.CompoundOperationType
+     ~azure.ai.language.questionanswering.models.CompoundOperationKind
     """
 
     _attribute_map = {
@@ -473,7 +473,7 @@ class MetadataFilter(msrest.serialization.Model):
         self,
         *,
         metadata: Optional[Dict[str, str]] = None,
-        compound_operation: Optional[Union[str, "CompoundOperationType"]] = None,
+        compound_operation: Optional[Union[str, "CompoundOperationKind"]] = None,
         **kwargs
     ):
         super(MetadataFilter, self).__init__(**kwargs)
@@ -482,17 +482,17 @@ class MetadataFilter(msrest.serialization.Model):
 
 
 class StrictFilters(msrest.serialization.Model):
-    """filters over knowledgebase.
+    """filters over knowledge base.
 
     :param metadata_filter: Find QnAs that are associated with the given list of metadata.
     :type metadata_filter: ~azure.ai.language.questionanswering.models.MetadataFilter
-    :param source_filter: Find QnAs that are associated with the given list of sources in
-     knowledgebase.
+    :param source_filter: Find QnAs that are associated with the given list of sources in knowledge
+     base.
     :type source_filter: list[str]
     :param compound_operation: (Optional) Set to 'OR' for joining metadata using 'OR' operation.
      Possible values include: "AND", "OR".
     :type compound_operation: str or
-     ~azure.ai.language.questionanswering.models.CompoundOperationType
+     ~azure.ai.language.questionanswering.models.CompoundOperationKind
     """
 
     _attribute_map = {
@@ -506,7 +506,7 @@ class StrictFilters(msrest.serialization.Model):
         *,
         metadata_filter: Optional["MetadataFilter"] = None,
         source_filter: Optional[List[str]] = None,
-        compound_operation: Optional[Union[str, "CompoundOperationType"]] = None,
+        compound_operation: Optional[Union[str, "CompoundOperationKind"]] = None,
         **kwargs
     ):
         super(StrictFilters, self).__init__(**kwargs)
@@ -581,7 +581,55 @@ class TextAnswers(msrest.serialization.Model):
         self.answers = answers
 
 
-class TextInput(msrest.serialization.Model):
+class TextQueryOptions(msrest.serialization.Model):
+    """The question and text record parameters to answer.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param question: Required. User question to query against the given text records.
+    :type question: str
+    :param records: Required. Text records to be searched for given question.
+    :type records: list[~azure.ai.language.questionanswering.models.TextRecord]
+    :param language: Language of the text records. This is BCP-47 representation of a language. For
+     example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as
+     default.
+    :type language: str
+    :param string_index_type: Specifies the method used to interpret string offsets.  Defaults to
+     Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
+     https://aka.ms/text-analytics-offsets. Possible values include: "TextElements_v8",
+     "UnicodeCodePoint", "Utf16CodeUnit". Default value: "TextElements_v8".
+    :type string_index_type: str or ~azure.ai.language.questionanswering.models.StringIndexType
+    """
+
+    _validation = {
+        "question": {"required": True},
+        "records": {"required": True},
+    }
+
+    _attribute_map = {
+        "question": {"key": "question", "type": "str"},
+        "records": {"key": "records", "type": "[TextRecord]"},
+        "language": {"key": "language", "type": "str"},
+        "string_index_type": {"key": "stringIndexType", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        question: str,
+        records: List["TextRecord"],
+        language: Optional[str] = None,
+        string_index_type: Optional[Union[str, "StringIndexType"]] = "TextElements_v8",
+        **kwargs
+    ):
+        super(TextQueryOptions, self).__init__(**kwargs)
+        self.question = question
+        self.records = records
+        self.language = language
+        self.string_index_type = string_index_type
+
+
+class TextRecord(msrest.serialization.Model):
     """Represent input text record to be queried.
 
     All required parameters must be populated in order to send to Azure.
@@ -603,54 +651,6 @@ class TextInput(msrest.serialization.Model):
     }
 
     def __init__(self, *, id: str, text: str, **kwargs):
-        super(TextInput, self).__init__(**kwargs)
+        super(TextRecord, self).__init__(**kwargs)
         self.id = id
         self.text = text
-
-
-class TextQueryParameters(msrest.serialization.Model):
-    """The question and text record parameters to answer.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param question: Required. User question to query against the given text records.
-    :type question: str
-    :param records: Required. Text records to be searched for given question.
-    :type records: list[~azure.ai.language.questionanswering.models.TextInput]
-    :param language: Language of the text records. This is BCP-47 representation of a language. For
-     example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as
-     default.
-    :type language: str
-    :param string_index_type: Specifies the method used to interpret string offsets.  Defaults to
-     Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
-     https://aka.ms/text-analytics-offsets. Possible values include: "TextElements_v8",
-     "UnicodeCodePoint", "Utf16CodeUnit". Default value: "TextElements_v8".
-    :type string_index_type: str or ~azure.ai.language.questionanswering.models.StringIndexType
-    """
-
-    _validation = {
-        "question": {"required": True},
-        "records": {"required": True},
-    }
-
-    _attribute_map = {
-        "question": {"key": "question", "type": "str"},
-        "records": {"key": "records", "type": "[TextInput]"},
-        "language": {"key": "language", "type": "str"},
-        "string_index_type": {"key": "stringIndexType", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        question: str,
-        records: List["TextInput"],
-        language: Optional[str] = None,
-        string_index_type: Optional[Union[str, "StringIndexType"]] = "TextElements_v8",
-        **kwargs
-    ):
-        super(TextQueryParameters, self).__init__(**kwargs)
-        self.question = question
-        self.records = records
-        self.language = language
-        self.string_index_type = string_index_type

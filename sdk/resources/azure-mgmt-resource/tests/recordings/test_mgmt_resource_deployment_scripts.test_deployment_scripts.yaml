@@ -13,8 +13,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.8.10 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0 msrest_azure/0.6.4
+      - python/3.8.11 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0 msrest_azure/0.6.4
         azure-mgmt-msi/1.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
@@ -22,7 +22,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai?api-version=2018-11-30
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai","name":"uai","type":"Microsoft.ManagedIdentity/userAssignedIdentities","location":"westus","tags":{"key1":"value1"},"properties":{"tenantId":"00000000-0000-0000-0000-000000000000","principalId":"3e5852c5-22de-4de1-b294-1687c9c3eb89","clientId":"be60c8b4-192b-466d-a7a4-5ecd3d38c690"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai","name":"uai","type":"Microsoft.ManagedIdentity/userAssignedIdentities","location":"westus","tags":{"key1":"value1"},"properties":{"tenantId":"00000000-0000-0000-0000-000000000000","principalId":"d45cb09c-80a0-4ed2-91e6-10fab12e9428","clientId":"e97eda30-fdc6-432b-8290-fa703a971f78"}}'
     headers:
       cache-control:
       - no-cache
@@ -31,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Jul 2021 01:44:25 GMT
+      - Mon, 19 Jul 2021 08:35:56 GMT
       expires:
       - '-1'
       location:
@@ -66,8 +66,8 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/18.1.0 Python/3.8.10 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+      - azsdk-python-azure-mgmt-resource/19.0.0 Python/3.8.11 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest?api-version=2019-10-01-preview
   response:
@@ -75,24 +75,24 @@ interactions:
       string: "{\r\n  \"kind\": \"AzurePowerShell\",\r\n  \"identity\": {\r\n    \"type\":
         \"userAssigned\",\r\n    \"tenantId\": \"00000000-0000-0000-0000-000000000000\",\r\n
         \   \"userAssignedIdentities\": {\r\n      \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai\":
-        {\r\n        \"principalId\": \"3e5852c5-22de-4de1-b294-1687c9c3eb89\",\r\n
-        \       \"clientId\": \"be60c8b4-192b-466d-a7a4-5ecd3d38c690\"\r\n      }\r\n
-        \   }\r\n  },\r\n  \"location\": \"westus\",\r\n  \"systemData\": {\r\n    \"createdBy\":
-        \"8c41a920-007a-4844-a189-2d0efe39f51e\",\r\n    \"createdByType\": \"Application\",\r\n
-        \   \"createdAt\": \"2021-07-13T01:44:28.5324942Z\",\r\n    \"lastModifiedBy\":
-        \"8c41a920-007a-4844-a189-2d0efe39f51e\",\r\n    \"lastModifiedByType\": \"Application\",\r\n
-        \   \"lastModifiedAt\": \"2021-07-13T01:44:28.5324942Z\"\r\n  },\r\n  \"properties\":
-        {\r\n    \"provisioningState\": \"Creating\",\r\n    \"azPowerShellVersion\":
-        \"3.0\",\r\n    \"scriptContent\": \"Param([string]$Location,[string]$Name)
-        $deploymentScriptOutputs['test'] = 'value' Get-AzResourceGroup -Location $Location
-        -Name $Name\",\r\n    \"arguments\": \"-Location 'westus' -Name \\\"*rg2\\\"\",\r\n
-        \   \"retentionInterval\": \"P1DT2H\",\r\n    \"timeout\": \"PT30M\",\r\n
-        \   \"containerSettings\": {},\r\n    \"status\": {},\r\n    \"cleanupPreference\":
-        \"Always\"\r\n  },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest\",\r\n
+        {\r\n        \"principalId\": \"d45cb09c-80a0-4ed2-91e6-10fab12e9428\",\r\n
+        \       \"clientId\": \"e97eda30-fdc6-432b-8290-fa703a971f78\"\r\n      }\r\n
+        \   }\r\n  },\r\n  \"location\": \"westus\",\r\n  \"properties\": {\r\n    \"provisioningState\":
+        \"Creating\",\r\n    \"azPowerShellVersion\": \"3.0\",\r\n    \"scriptContent\":
+        \"Param([string]$Location,[string]$Name) $deploymentScriptOutputs['test']
+        = 'value' Get-AzResourceGroup -Location $Location -Name $Name\",\r\n    \"arguments\":
+        \"-Location 'westus' -Name \\\"*rg2\\\"\",\r\n    \"retentionInterval\": \"P1DT2H\",\r\n
+        \   \"timeout\": \"PT30M\",\r\n    \"containerSettings\": {},\r\n    \"status\":
+        {},\r\n    \"cleanupPreference\": \"Always\"\r\n  },\r\n  \"systemData\":
+        {\r\n    \"createdBy\": \"8c41a920-007a-4844-a189-2d0efe39f51e\",\r\n    \"createdByType\":
+        \"Application\",\r\n    \"createdAt\": \"2021-07-19T08:35:58.5399156Z\",\r\n
+        \   \"lastModifiedBy\": \"8c41a920-007a-4844-a189-2d0efe39f51e\",\r\n    \"lastModifiedByType\":
+        \"Application\",\r\n    \"lastModifiedAt\": \"2021-07-19T08:35:58.5399156Z\"\r\n
+        \ },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest\",\r\n
         \ \"type\": \"Microsoft.Resources/deploymentScripts\",\r\n  \"name\": \"scripttest\"\r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/locations/westus/deploymentScriptOperationResults/39d1ae12-b50b-421e-a0f0-007533824694?api-version=2019-10-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/locations/westus/deploymentScriptOperationResults/2ba95493-9d67-4598-a0a3-3d068e00cb35?api-version=2019-10-01-preview
       cache-control:
       - no-cache
       content-length:
@@ -100,7 +100,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Jul 2021 01:44:33 GMT
+      - Mon, 19 Jul 2021 08:36:02 GMT
       expires:
       - '-1'
       pragma:
@@ -126,16 +126,16 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/18.1.0 Python/3.8.10 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+      - azsdk-python-azure-mgmt-resource/19.0.0 Python/3.8.11 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/locations/westus/deploymentScriptOperationResults/39d1ae12-b50b-421e-a0f0-007533824694?api-version=2019-10-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/locations/westus/deploymentScriptOperationResults/2ba95493-9d67-4598-a0a3-3d068e00cb35?api-version=2019-10-01-preview
   response:
     body:
-      string: "{\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/locations/westus/deploymentScriptOperationResults/39d1ae12-b50b-421e-a0f0-007533824694\",\r\n
-        \ \"name\": \"39d1ae12-b50b-421e-a0f0-007533824694\",\r\n  \"status\": \"provisioningResources\",\r\n
+      string: "{\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/locations/westus/deploymentScriptOperationResults/2ba95493-9d67-4598-a0a3-3d068e00cb35\",\r\n
+        \ \"name\": \"2ba95493-9d67-4598-a0a3-3d068e00cb35\",\r\n  \"status\": \"provisioningResources\",\r\n
         \ \"error\": {\r\n    \"code\": \"DeploymentScriptOperationFailed\",\r\n    \"message\":
-        \"The client '3e5852c5-22de-4de1-b294-1687c9c3eb89' with object id '3e5852c5-22de-4de1-b294-1687c9c3eb89'
+        \"The client 'd45cb09c-80a0-4ed2-91e6-10fab12e9428' with object id 'd45cb09c-80a0-4ed2-91e6-10fab12e9428'
         does not have authorization to perform action 'Microsoft.Resources/subscriptions/providers/read'
         over scope '/subscriptions/00000000-0000-0000-0000-000000000000' or the scope
         is invalid. If access was recently granted, please refresh your credentials.\"\r\n
@@ -148,7 +148,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Jul 2021 01:44:51 GMT
+      - Mon, 19 Jul 2021 08:36:19 GMT
       expires:
       - '-1'
       pragma:
@@ -176,16 +176,16 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/18.1.0 Python/3.8.10 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+      - azsdk-python-azure-mgmt-resource/19.0.0 Python/3.8.11 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/locations/westus/deploymentScriptOperationResults/39d1ae12-b50b-421e-a0f0-007533824694?api-version=2019-10-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/locations/westus/deploymentScriptOperationResults/2ba95493-9d67-4598-a0a3-3d068e00cb35?api-version=2019-10-01-preview
   response:
     body:
-      string: "{\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/locations/westus/deploymentScriptOperationResults/39d1ae12-b50b-421e-a0f0-007533824694\",\r\n
-        \ \"name\": \"39d1ae12-b50b-421e-a0f0-007533824694\",\r\n  \"status\": \"provisioningResources\",\r\n
+      string: "{\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/locations/westus/deploymentScriptOperationResults/2ba95493-9d67-4598-a0a3-3d068e00cb35\",\r\n
+        \ \"name\": \"2ba95493-9d67-4598-a0a3-3d068e00cb35\",\r\n  \"status\": \"provisioningResources\",\r\n
         \ \"error\": {\r\n    \"code\": \"DeploymentScriptOperationFailed\",\r\n    \"message\":
-        \"The client '3e5852c5-22de-4de1-b294-1687c9c3eb89' with object id '3e5852c5-22de-4de1-b294-1687c9c3eb89'
+        \"The client 'd45cb09c-80a0-4ed2-91e6-10fab12e9428' with object id 'd45cb09c-80a0-4ed2-91e6-10fab12e9428'
         does not have authorization to perform action 'Microsoft.Resources/subscriptions/providers/read'
         over scope '/subscriptions/00000000-0000-0000-0000-000000000000' or the scope
         is invalid. If access was recently granted, please refresh your credentials.\"\r\n
@@ -198,7 +198,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Jul 2021 01:45:20 GMT
+      - Mon, 19 Jul 2021 08:36:49 GMT
       expires:
       - '-1'
       pragma:
@@ -226,16 +226,66 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/18.1.0 Python/3.8.10 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+      - azsdk-python-azure-mgmt-resource/19.0.0 Python/3.8.11 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/locations/westus/deploymentScriptOperationResults/39d1ae12-b50b-421e-a0f0-007533824694?api-version=2019-10-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/locations/westus/deploymentScriptOperationResults/2ba95493-9d67-4598-a0a3-3d068e00cb35?api-version=2019-10-01-preview
   response:
     body:
-      string: "{\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/locations/westus/deploymentScriptOperationResults/39d1ae12-b50b-421e-a0f0-007533824694\",\r\n
-        \ \"name\": \"39d1ae12-b50b-421e-a0f0-007533824694\",\r\n  \"status\": \"failed\",\r\n
+      string: "{\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/locations/westus/deploymentScriptOperationResults/2ba95493-9d67-4598-a0a3-3d068e00cb35\",\r\n
+        \ \"name\": \"2ba95493-9d67-4598-a0a3-3d068e00cb35\",\r\n  \"status\": \"provisioningResources\",\r\n
         \ \"error\": {\r\n    \"code\": \"DeploymentScriptOperationFailed\",\r\n    \"message\":
-        \"The client '3e5852c5-22de-4de1-b294-1687c9c3eb89' with object id '3e5852c5-22de-4de1-b294-1687c9c3eb89'
+        \"The client 'd45cb09c-80a0-4ed2-91e6-10fab12e9428' with object id 'd45cb09c-80a0-4ed2-91e6-10fab12e9428'
+        does not have authorization to perform action 'Microsoft.Resources/subscriptions/providers/read'
+        over scope '/subscriptions/00000000-0000-0000-0000-000000000000' or the scope
+        is invalid. If access was recently granted, please refresh your credentials.\"\r\n
+        \ }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '715'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Jul 2021 08:37:19 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-resource/19.0.0 Python/3.8.11 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/locations/westus/deploymentScriptOperationResults/2ba95493-9d67-4598-a0a3-3d068e00cb35?api-version=2019-10-01-preview
+  response:
+    body:
+      string: "{\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/locations/westus/deploymentScriptOperationResults/2ba95493-9d67-4598-a0a3-3d068e00cb35\",\r\n
+        \ \"name\": \"2ba95493-9d67-4598-a0a3-3d068e00cb35\",\r\n  \"status\": \"failed\",\r\n
+        \ \"error\": {\r\n    \"code\": \"DeploymentScriptOperationFailed\",\r\n    \"message\":
+        \"The client 'd45cb09c-80a0-4ed2-91e6-10fab12e9428' with object id 'd45cb09c-80a0-4ed2-91e6-10fab12e9428'
         does not have authorization to perform action 'Microsoft.Resources/subscriptions/providers/read'
         over scope '/subscriptions/00000000-0000-0000-0000-000000000000' or the scope
         is invalid. If access was recently granted, please refresh your credentials.\"\r\n
@@ -248,7 +298,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Jul 2021 01:45:50 GMT
+      - Mon, 19 Jul 2021 08:37:49 GMT
       expires:
       - '-1'
       pragma:
@@ -280,8 +330,8 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/18.1.0 Python/3.8.10 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+      - azsdk-python-azure-mgmt-resource/19.0.0 Python/3.8.11 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: PATCH
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest?api-version=2019-10-01-preview
   response:
@@ -289,28 +339,28 @@ interactions:
       string: "{\r\n  \"kind\": \"AzurePowerShell\",\r\n  \"identity\": {\r\n    \"type\":
         \"userAssigned\",\r\n    \"tenantId\": \"00000000-0000-0000-0000-000000000000\",\r\n
         \   \"userAssignedIdentities\": {\r\n      \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai\":
-        {\r\n        \"principalId\": \"3e5852c5-22de-4de1-b294-1687c9c3eb89\",\r\n
-        \       \"clientId\": \"be60c8b4-192b-466d-a7a4-5ecd3d38c690\"\r\n      }\r\n
+        {\r\n        \"principalId\": \"d45cb09c-80a0-4ed2-91e6-10fab12e9428\",\r\n
+        \       \"clientId\": \"e97eda30-fdc6-432b-8290-fa703a971f78\"\r\n      }\r\n
         \   }\r\n  },\r\n  \"location\": \"westus\",\r\n  \"tags\": {\r\n    \"key1\":
-        \"value1\"\r\n  },\r\n  \"systemData\": {\r\n    \"createdBy\": \"8c41a920-007a-4844-a189-2d0efe39f51e\",\r\n
-        \   \"createdByType\": \"Application\",\r\n    \"createdAt\": \"2021-07-13T01:44:28.5324942Z\",\r\n
-        \   \"lastModifiedBy\": \"8c41a920-007a-4844-a189-2d0efe39f51e\",\r\n    \"lastModifiedByType\":
-        \"Application\",\r\n    \"lastModifiedAt\": \"2021-07-13T01:45:51.7624242Z\"\r\n
-        \ },\r\n  \"properties\": {\r\n    \"provisioningState\": \"Failed\",\r\n
+        \"value1\"\r\n  },\r\n  \"properties\": {\r\n    \"provisioningState\": \"Failed\",\r\n
         \   \"azPowerShellVersion\": \"3.0\",\r\n    \"scriptContent\": \"Param([string]$Location,[string]$Name)
         $deploymentScriptOutputs['test'] = 'value' Get-AzResourceGroup -Location $Location
         -Name $Name\",\r\n    \"arguments\": \"-Location 'westus' -Name \\\"*rg2\\\"\",\r\n
         \   \"retentionInterval\": \"P1DT2H\",\r\n    \"timeout\": \"PT30M\",\r\n
         \   \"containerSettings\": {},\r\n    \"status\": {\r\n      \"startTime\":
-        \"2021-07-13T01:45:47.7344989Z\",\r\n      \"endTime\": \"2021-07-13T01:45:48.2501233Z\",\r\n
-        \     \"expirationTime\": \"2021-07-14T03:45:48.2501233Z\",\r\n      \"error\":
+        \"2021-07-19T08:37:21.0884022Z\",\r\n      \"endTime\": \"2021-07-19T08:37:21.6665736Z\",\r\n
+        \     \"expirationTime\": \"2021-07-20T10:37:21.6665736Z\",\r\n      \"error\":
         {\r\n        \"code\": \"DeploymentScriptOperationFailed\",\r\n        \"message\":
-        \"The client '3e5852c5-22de-4de1-b294-1687c9c3eb89' with object id '3e5852c5-22de-4de1-b294-1687c9c3eb89'
+        \"The client 'd45cb09c-80a0-4ed2-91e6-10fab12e9428' with object id 'd45cb09c-80a0-4ed2-91e6-10fab12e9428'
         does not have authorization to perform action 'Microsoft.Resources/subscriptions/providers/read'
         over scope '/subscriptions/00000000-0000-0000-0000-000000000000' or the scope
         is invalid. If access was recently granted, please refresh your credentials.\"\r\n
-        \     }\r\n    },\r\n    \"cleanupPreference\": \"Always\"\r\n  },\r\n  \"id\":
-        \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest\",\r\n
+        \     }\r\n    },\r\n    \"cleanupPreference\": \"Always\"\r\n  },\r\n  \"systemData\":
+        {\r\n    \"createdBy\": \"8c41a920-007a-4844-a189-2d0efe39f51e\",\r\n    \"createdByType\":
+        \"Application\",\r\n    \"createdAt\": \"2021-07-19T08:35:58.5399156Z\",\r\n
+        \   \"lastModifiedBy\": \"8c41a920-007a-4844-a189-2d0efe39f51e\",\r\n    \"lastModifiedByType\":
+        \"Application\",\r\n    \"lastModifiedAt\": \"2021-07-19T08:37:50.4860221Z\"\r\n
+        \ },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest\",\r\n
         \ \"type\": \"Microsoft.Resources/deploymentScripts\",\r\n  \"name\": \"scripttest\"\r\n}"
     headers:
       cache-control:
@@ -320,7 +370,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Jul 2021 01:45:52 GMT
+      - Mon, 19 Jul 2021 08:37:50 GMT
       expires:
       - '-1'
       pragma:
@@ -350,8 +400,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/18.1.0 Python/3.8.10 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+      - azsdk-python-azure-mgmt-resource/19.0.0 Python/3.8.11 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest?api-version=2019-10-01-preview
   response:
@@ -359,28 +409,28 @@ interactions:
       string: "{\r\n  \"kind\": \"AzurePowerShell\",\r\n  \"identity\": {\r\n    \"type\":
         \"userAssigned\",\r\n    \"tenantId\": \"00000000-0000-0000-0000-000000000000\",\r\n
         \   \"userAssignedIdentities\": {\r\n      \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai\":
-        {\r\n        \"principalId\": \"3e5852c5-22de-4de1-b294-1687c9c3eb89\",\r\n
-        \       \"clientId\": \"be60c8b4-192b-466d-a7a4-5ecd3d38c690\"\r\n      }\r\n
+        {\r\n        \"principalId\": \"d45cb09c-80a0-4ed2-91e6-10fab12e9428\",\r\n
+        \       \"clientId\": \"e97eda30-fdc6-432b-8290-fa703a971f78\"\r\n      }\r\n
         \   }\r\n  },\r\n  \"location\": \"westus\",\r\n  \"tags\": {\r\n    \"key1\":
-        \"value1\"\r\n  },\r\n  \"systemData\": {\r\n    \"createdBy\": \"8c41a920-007a-4844-a189-2d0efe39f51e\",\r\n
-        \   \"createdByType\": \"Application\",\r\n    \"createdAt\": \"2021-07-13T01:44:28.5324942Z\",\r\n
-        \   \"lastModifiedBy\": \"8c41a920-007a-4844-a189-2d0efe39f51e\",\r\n    \"lastModifiedByType\":
-        \"Application\",\r\n    \"lastModifiedAt\": \"2021-07-13T01:45:51.7624242Z\"\r\n
-        \ },\r\n  \"properties\": {\r\n    \"provisioningState\": \"Failed\",\r\n
+        \"value1\"\r\n  },\r\n  \"properties\": {\r\n    \"provisioningState\": \"Failed\",\r\n
         \   \"azPowerShellVersion\": \"3.0\",\r\n    \"scriptContent\": \"Param([string]$Location,[string]$Name)
         $deploymentScriptOutputs['test'] = 'value' Get-AzResourceGroup -Location $Location
         -Name $Name\",\r\n    \"arguments\": \"-Location 'westus' -Name \\\"*rg2\\\"\",\r\n
         \   \"retentionInterval\": \"P1DT2H\",\r\n    \"timeout\": \"PT30M\",\r\n
         \   \"containerSettings\": {},\r\n    \"status\": {\r\n      \"startTime\":
-        \"2021-07-13T01:45:47.7344989Z\",\r\n      \"endTime\": \"2021-07-13T01:45:48.2501233Z\",\r\n
-        \     \"expirationTime\": \"2021-07-14T03:45:48.2501233Z\",\r\n      \"error\":
+        \"2021-07-19T08:37:21.0884022Z\",\r\n      \"endTime\": \"2021-07-19T08:37:21.6665736Z\",\r\n
+        \     \"expirationTime\": \"2021-07-20T10:37:21.6665736Z\",\r\n      \"error\":
         {\r\n        \"code\": \"DeploymentScriptOperationFailed\",\r\n        \"message\":
-        \"The client '3e5852c5-22de-4de1-b294-1687c9c3eb89' with object id '3e5852c5-22de-4de1-b294-1687c9c3eb89'
+        \"The client 'd45cb09c-80a0-4ed2-91e6-10fab12e9428' with object id 'd45cb09c-80a0-4ed2-91e6-10fab12e9428'
         does not have authorization to perform action 'Microsoft.Resources/subscriptions/providers/read'
         over scope '/subscriptions/00000000-0000-0000-0000-000000000000' or the scope
         is invalid. If access was recently granted, please refresh your credentials.\"\r\n
-        \     }\r\n    },\r\n    \"cleanupPreference\": \"Always\"\r\n  },\r\n  \"id\":
-        \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest\",\r\n
+        \     }\r\n    },\r\n    \"cleanupPreference\": \"Always\"\r\n  },\r\n  \"systemData\":
+        {\r\n    \"createdBy\": \"8c41a920-007a-4844-a189-2d0efe39f51e\",\r\n    \"createdByType\":
+        \"Application\",\r\n    \"createdAt\": \"2021-07-19T08:35:58.5399156Z\",\r\n
+        \   \"lastModifiedBy\": \"8c41a920-007a-4844-a189-2d0efe39f51e\",\r\n    \"lastModifiedByType\":
+        \"Application\",\r\n    \"lastModifiedAt\": \"2021-07-19T08:37:50.4860221Z\"\r\n
+        \ },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest\",\r\n
         \ \"type\": \"Microsoft.Resources/deploymentScripts\",\r\n  \"name\": \"scripttest\"\r\n}"
     headers:
       cache-control:
@@ -390,7 +440,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Jul 2021 01:45:52 GMT
+      - Mon, 19 Jul 2021 08:37:50 GMT
       expires:
       - '-1'
       pragma:
@@ -418,8 +468,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/18.1.0 Python/3.8.10 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+      - azsdk-python-azure-mgmt-resource/19.0.0 Python/3.8.11 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest/logs/default?api-version=2019-10-01-preview
   response:
@@ -435,7 +485,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Jul 2021 01:45:52 GMT
+      - Mon, 19 Jul 2021 08:37:50 GMT
       expires:
       - '-1'
       pragma:
@@ -463,8 +513,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/18.1.0 Python/3.8.10 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+      - azsdk-python-azure-mgmt-resource/19.0.0 Python/3.8.11 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest/logs?api-version=2019-10-01-preview
   response:
@@ -481,7 +531,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Jul 2021 01:45:52 GMT
+      - Mon, 19 Jul 2021 08:37:50 GMT
       expires:
       - '-1'
       pragma:
@@ -511,8 +561,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/18.1.0 Python/3.8.10 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+      - azsdk-python-azure-mgmt-resource/19.0.0 Python/3.8.11 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest?api-version=2019-10-01-preview
   response:
@@ -524,7 +574,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 13 Jul 2021 01:45:59 GMT
+      - Mon, 19 Jul 2021 08:37:57 GMT
       expires:
       - '-1'
       pragma:

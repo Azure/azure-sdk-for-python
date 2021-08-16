@@ -33,23 +33,23 @@ class PostgreSQLManagementClient(object):
     """The Microsoft Azure management API provides create, read, update, and delete functionality for Azure PostgreSQL resources including servers, databases, firewall rules, VNET rules, security alert policies, log files and configurations with new business model.
 
     :ivar servers: ServersOperations operations
-    :vartype servers: postgre_sql_management_client.aio.operations.ServersOperations
+    :vartype servers: azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.ServersOperations
     :ivar firewall_rules: FirewallRulesOperations operations
-    :vartype firewall_rules: postgre_sql_management_client.aio.operations.FirewallRulesOperations
+    :vartype firewall_rules: azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.FirewallRulesOperations
     :ivar configurations: ConfigurationsOperations operations
-    :vartype configurations: postgre_sql_management_client.aio.operations.ConfigurationsOperations
+    :vartype configurations: azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.ConfigurationsOperations
     :ivar check_name_availability: CheckNameAvailabilityOperations operations
-    :vartype check_name_availability: postgre_sql_management_client.aio.operations.CheckNameAvailabilityOperations
+    :vartype check_name_availability: azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.CheckNameAvailabilityOperations
     :ivar location_based_capabilities: LocationBasedCapabilitiesOperations operations
-    :vartype location_based_capabilities: postgre_sql_management_client.aio.operations.LocationBasedCapabilitiesOperations
+    :vartype location_based_capabilities: azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.LocationBasedCapabilitiesOperations
     :ivar virtual_network_subnet_usage: VirtualNetworkSubnetUsageOperations operations
-    :vartype virtual_network_subnet_usage: postgre_sql_management_client.aio.operations.VirtualNetworkSubnetUsageOperations
+    :vartype virtual_network_subnet_usage: azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.VirtualNetworkSubnetUsageOperations
     :ivar operations: Operations operations
-    :vartype operations: postgre_sql_management_client.aio.operations.Operations
+    :vartype operations: azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.Operations
     :ivar databases: DatabasesOperations operations
-    :vartype databases: postgre_sql_management_client.aio.operations.DatabasesOperations
+    :vartype databases: azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.DatabasesOperations
     :ivar get_private_dns_zone_suffix: GetPrivateDnsZoneSuffixOperations operations
-    :vartype get_private_dns_zone_suffix: postgre_sql_management_client.aio.operations.GetPrivateDnsZoneSuffixOperations
+    :vartype get_private_dns_zone_suffix: azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.GetPrivateDnsZoneSuffixOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription.

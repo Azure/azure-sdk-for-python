@@ -45,7 +45,7 @@ class PipelinesOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PipelineListResponse"]:
         """Lists pipelines.
 
@@ -122,7 +122,7 @@ class PipelinesOperations:
         pipeline_name: str,
         pipeline: "_models.PipelineResource",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PipelineResource":
         """Creates or updates a pipeline.
 
@@ -197,7 +197,7 @@ class PipelinesOperations:
         factory_name: str,
         pipeline_name: str,
         if_none_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.PipelineResource"]:
         """Gets a pipeline.
 
@@ -266,7 +266,7 @@ class PipelinesOperations:
         resource_group_name: str,
         factory_name: str,
         pipeline_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a pipeline.
 
@@ -329,8 +329,8 @@ class PipelinesOperations:
         is_recovery: Optional[bool] = None,
         start_activity_name: Optional[str] = None,
         start_from_failure: Optional[bool] = None,
-        parameters: Optional[Dict[str, object]] = None,
-        **kwargs
+        parameters: Optional[Dict[str, Any]] = None,
+        **kwargs: Any
     ) -> "_models.CreateRunResponse":
         """Creates a run of a pipeline.
 
@@ -354,7 +354,7 @@ class PipelinesOperations:
         :type start_from_failure: bool
         :param parameters: Parameters of the pipeline run. These parameters will be used only if the
          runId is not specified.
-        :type parameters: dict[str, object]
+        :type parameters: dict[str, any]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CreateRunResponse, or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.CreateRunResponse

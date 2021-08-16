@@ -272,9 +272,9 @@ def validate_jwt(request, client_id, pem_bytes, expect_x5c=False):
 def test_token_cache(cert_path, cert_password):
     """the credential should optionally use a persistent cache, and default to an in memory cache"""
 
-    with patch("azure.identity._persistent_cache.msal_extensions") as mock_msal_extensions:
+    with patch("azure.identity._internal.msal_credentials._load_persistent_cache") as load_persistent_cache:
         credential = CertificateCredential("tenant", "client-id", cert_path, password=cert_password)
-        assert not mock_msal_extensions.PersistedTokenCache.called
+        assert not load_persistent_cache.called
         assert isinstance(credential._cache, TokenCache)
 
         CertificateCredential(
@@ -284,7 +284,7 @@ def test_token_cache(cert_path, cert_password):
             password=cert_password,
             cache_persistence_options=TokenCachePersistenceOptions(),
         )
-        assert mock_msal_extensions.PersistedTokenCache.call_count == 1
+        assert load_persistent_cache.call_count == 1
 
 
 @pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)

@@ -34,8 +34,8 @@ DEV_STATUS_REGEX = r'(classifiers=\[(\s)*)(["\']Development Status :: .*["\'])'
 
 logging.getLogger().setLevel(logging.INFO)
 
-def path_excluded(path):
-    return "-nspkg" in path or "tests" in path or "mgmt" in path or is_metapackage(path)
+def path_excluded(path, additional_excludes):
+    return any([excl in path for excl in additional_excludes]) or "tests" in path or is_metapackage(path)
 
 # Metapackages do not have an 'azure' folder within them
 def is_metapackage(package_path):
@@ -44,13 +44,13 @@ def is_metapackage(package_path):
     azure_path = path.join(dir_path, 'azure')
     return not path.exists(azure_path)
 
-def get_setup_py_paths(glob_string, base_path):
+def get_setup_py_paths(glob_string, base_path, additional_excludes):
     setup_paths = process_glob_string(glob_string, base_path)
-    filtered_paths = [path.join(p, 'setup.py') for p in setup_paths if not path_excluded(p)]
+    filtered_paths = [path.join(p, 'setup.py') for p in setup_paths if not path_excluded(p, additional_excludes)]
     return filtered_paths
 
 
-def get_packages(args, package_name = ""):
+def get_packages(args, package_name = "", additional_excludes = []):
     # This function returns list of path to setup.py and setup info like install requires, version for all packages discovered using glob
     # Followiong are the list of arguements expected and parsed by this method
     # service, glob_string
@@ -59,7 +59,7 @@ def get_packages(args, package_name = ""):
     else:
         target_dir = root_dir
 
-    paths = get_setup_py_paths(args.glob_string, target_dir)
+    paths = get_setup_py_paths(args.glob_string, target_dir, additional_excludes)
 
     # Check if package is excluded if a package name param is passed
     if package_name and not any(filter(lambda x: package_name == os.path.basename(os.path.dirname(x)), paths)):

@@ -48,7 +48,7 @@ class BackendOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BackendCollection"]:
         """Lists a collection of backends in the specified service instance.
 
@@ -124,7 +124,7 @@ class BackendOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -140,7 +140,7 @@ class BackendOperations:
         resource_group_name: str,
         service_name: str,
         backend_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Gets the entity state (Etag) version of the backend specified by its identifier.
 
@@ -188,7 +188,7 @@ class BackendOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -205,7 +205,7 @@ class BackendOperations:
         resource_group_name: str,
         service_name: str,
         backend_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BackendContract":
         """Gets the details of the backend specified by its identifier.
 
@@ -253,7 +253,7 @@ class BackendOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -273,7 +273,7 @@ class BackendOperations:
         backend_id: str,
         parameters: "_models.BackendContract",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BackendContract":
         """Creates or Updates a backend.
 
@@ -333,7 +333,7 @@ class BackendOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -358,7 +358,7 @@ class BackendOperations:
         backend_id: str,
         if_match: str,
         parameters: "_models.BackendUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BackendContract":
         """Updates an existing backend.
 
@@ -417,7 +417,7 @@ class BackendOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -436,7 +436,7 @@ class BackendOperations:
         service_name: str,
         backend_id: str,
         if_match: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the specified backend.
 
@@ -488,7 +488,7 @@ class BackendOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -502,7 +502,7 @@ class BackendOperations:
         service_name: str,
         backend_id: str,
         parameters: Optional["_models.BackendReconnectContract"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Notifies the APIM proxy to create a new connection to the backend after the specified timeout.
         If no timeout was specified, timeout of 2 minutes is used.
@@ -561,7 +561,7 @@ class BackendOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

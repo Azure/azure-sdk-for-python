@@ -158,71 +158,205 @@ function Get-python-GithubIoDocIndex()
   # Build up the artifact to service name mapping for GithubIo toc.
   $tocContent = Get-TocMapping -metadata $metadata -artifacts $artifacts
   # Generate yml/md toc files and build site.
-  GenerateDocfxTocContent -tocContent $tocContent -lang "Python"
+  GenerateDocfxTocContent -tocContent $tocContent -lang "Python" -campaignId "UA-62780441-36"
 }
 
-# Updates a python CI configuration json.
-# For "latest", the version attribute is cleared, as default behavior is to pull latest "non-preview".
-# For "preview", we update to >= the target releasing package version.
-function Update-python-CIConfig($pkgs, $ciRepo, $locationInDocRepo, $monikerId=$null)
-{
-  $pkgJsonLoc = (Join-Path -Path $ciRepo -ChildPath $locationInDocRepo)
+function ValidatePackage($packageName, $packageVersion, $workingDirectory) {
+  $packageExpression = "$packageName$packageVersion"
+  Write-Host "Validating $packageExpression"
 
-  if (-not (Test-Path $pkgJsonLoc)) {
-    Write-Error "Unable to locate package json at location $pkgJsonLoc, exiting."
-    exit(1)
+  $installTargetFolder = Join-Path $workingDirectory $packageName
+  New-Item -ItemType Directory -Force -Path $installTargetFolder | Out-Null
+
+  # Add more validation by replicating as much of the docs CI process as
+  # possible
+  # https://github.com/Azure/azure-sdk-for-python/issues/20109
+  try {
+    Write-Host "pip install $packageExpression --no-cache-dir --target $installTargetFolder"
+    $pipInstallOutput = pip `
+      install `
+      $packageExpression `
+      --no-cache-dir `
+      --target $installTargetFolder 2>&1
+    if ($LASTEXITCODE -ne 0) {
+      LogWarning "pip install failed for $packageExpression"
+      Write-Host $pipInstallOutput
+      return $false
+    }
+  } catch {
+    LogWarning "pip install failed for $packageExpression with exception"
+    LogWarning $_.Exception
+    LogWarning $_.Exception.StackTrace
+    return $false
   }
 
-  $allJson  = Get-Content $pkgJsonLoc | ConvertFrom-Json
-  $visibleInCI = @{}
+  return $true
+}
 
-  for ($i=0; $i -lt $allJson.packages.Length; $i++) {
-    $pkgDef = $allJson.packages[$i]
+$PackageExclusions = @{ 
+  'azure-mgmt-apimanagement' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18084';
+  'azure-mgmt-reservations' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18077';
+  'azure-mgmt-signalr' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18085';
+  'azure-mgmt-mixedreality' = 'Missing version info https://github.com/Azure/azure-sdk-for-python/issues/18457';
+  'azure-monitor-query' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/19417';
+  'azure-mgmt-network' = 'Manual process used to build';
+}
+function Update-python-DocsMsPackages($DocsRepoLocation, $DocsMetadata) {
+  Write-Host "Excluded packages:"
+  foreach ($excludedPackage in $PackageExclusions.Keys) {
+    Write-Host "  $excludedPackage - $($PackageExclusions[$excludedPackage])"
+  }
 
-    if ($pkgDef.package_info.name) {
-      $visibleInCI[$pkgDef.package_info.name] = $i
+  $FilteredMetadata = $DocsMetadata.Where({ !($PackageExclusions.ContainsKey($_.Package)) })
+
+  UpdateDocsMsPackages `
+    (Join-Path $DocsRepoLocation 'ci-configs/packages-preview.json') `
+    'preview' `
+    $FilteredMetadata
+
+  UpdateDocsMsPackages `
+    (Join-Path $DocsRepoLocation 'ci-configs/packages-latest.json') `
+    'latest' `
+    $FilteredMetadata
+}
+
+function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata) {
+  Write-Host "Updating configuration: $DocConfigFile with mode: $Mode"
+  $packageConfig = Get-Content $DocConfigFile -Raw | ConvertFrom-Json
+
+  $installValidationFolder = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
+  New-Item -ItemType Directory -Force -Path $installValidationFolder | Out-Null
+
+
+  $outputPackages = @()
+  foreach ($package in $packageConfig.packages) {
+    $packageName = $package.package_info.name
+
+    if (!$packageName) { 
+      Write-Host "Keeping package with no name: $($package.package_info)"
+      $outputPackages += $package
+      continue
+    }
+
+    if ($package.package_info.install_type -ne 'pypi') { 
+      Write-Host "Keeping package with install_type not 'pypi': $($package.package_info.name)"
+      $outputPackages += $package
+      continue
+    }
+
+    # Do not filter by GA/Preview status because we want differentiate between
+    # tracked and non-tracked packages
+    $matchingPublishedPackageArray = $DocsMetadata.Where( { $_.Package -eq $packageName })
+
+    # If this package does not match any published packages keep it in the list.
+    # This handles packages which are not tracked in metadata but still need to
+    # be built in Docs CI.
+    if ($matchingPublishedPackageArray.Count -eq 0) {
+      Write-Host "Keep non-tracked package: $packageName"
+      $outputPackages += $package
+      continue
+    }
+
+    if ($matchingPublishedPackageArray.Count -gt 1) { 
+      LogWarning "Found more than one matching published package in metadata for $packageName; only updating first entry"
+    }
+    $matchingPublishedPackage = $matchingPublishedPackageArray[0]
+
+    if ($Mode -eq 'preview' -and !$matchingPublishedPackage.VersionPreview.Trim()) { 
+      # If we are in preview mode and the package does not have a superseding
+      # preview version, remove the package from the list. 
+      Write-Host "Remove superseded preview package: $packageName"
+      continue
+    }
+
+    if ($Mode -eq 'latest' -and !$matchingPublishedPackage.VersionGA.Trim()) { 
+      LogWarning "Metadata is missing GA version for GA package $packageName. Keeping existing package."
+      $outputPackages += $package
+      continue
+    }
+
+    $packageVersion = "==$($matchingPublishedPackage.VersionGA)"
+    if ($Mode -eq 'preview') {
+      if (!$matchingPublishedPackage.VersionPreview.Trim()) { 
+        LogWarning "Metadata is missing preview version for preview package $packageName. Keeping existing package."
+        $outputPackages += $package
+        continue
+      }
+      $packageVersion = "==$($matchingPublishedPackage.VersionPreview)"
+    }
+
+    # If upgrading the package, run basic sanity checks against the package
+    if ($package.package_info.version -ne $packageVersion) {
+      Write-Host "New version detected for $packageName ($packageVersion)"
+      if (!(ValidatePackage -packageName $packageName -packageVersion $packageVersion -workingDirectory $installValidationFolder)) {
+        LogWarning "Package is not valid: $packageName. Keeping old version."
+        $outputPackages += $package
+        continue
+      }
+
+      $package.package_info = Add-Member `
+        -InputObject $package.package_info `
+        -MemberType NoteProperty `
+        -Name 'version' `
+        -Value $packageVersion `
+        -PassThru `
+        -Force 
+    }
+
+    Write-Host "Keeping tracked package: $packageName."
+    $outputPackages += $package
+  }
+
+  $outputPackagesHash = @{}
+  foreach ($package in $outputPackages) {
+    # In some cases there is no $package.package_info.name, only hash if the 
+    # name is set.
+    if ($package.package_info.name) { 
+      $outputPackagesHash[$package.package_info.name] = $true
     }
   }
 
-  foreach ($releasingPkg in $pkgs) {
-    if ($visibleInCI.ContainsKey($releasingPkg.PackageId)) {
-      $packagesIndex = $visibleInCI[$releasingPkg.PackageId]
-      $existingPackageDef = $allJson.packages[$packagesIndex]
-
-      if ($releasingPkg.IsPrerelease) {
-        if (-not $existingPackageDef.package_info.version) {
-          $existingPackageDef.package_info | Add-Member -NotePropertyName version -NotePropertyValue ""
-        }
-
-        $existingPackageDef.package_info.version = ">=$($releasingPkg.PackageVersion)"
-      }
-      else {
-        if ($existingPackageDef.package_info.version) {
-          $existingPackageDef.package_info.PSObject.Properties.Remove('version')
-        }
-      }
-    }
-    else {
-      $newItem = New-Object PSObject -Property @{
-        package_info = New-Object PSObject -Property @{
-          prefer_source_distribution = "true"
-          install_type = "pypi"
-          name=$releasingPkg.PackageId
-        }
-        exclude_path = @("test*","example*","sample*","doc*")
-      }
-
-      if ($releasingPkg.IsPrerelease) {
-        $newItem.package_info | Add-Member -NotePropertyName version -NotePropertyValue ">=$($releasingPkg.PackageVersion)"
-      }
-
-      $allJson.packages += $newItem
-    }
+  $remainingPackages = @() 
+  if ($Mode -eq 'preview') { 
+    $remainingPackages = $DocsMetadata.Where({
+      $_.VersionPreview.Trim() -and !$outputPackagesHash.ContainsKey($_.Package)
+    })
+  } else {
+    $remainingPackages = $DocsMetadata.Where({
+      $_.VersionGA.Trim() -and !$outputPackagesHash.ContainsKey($_.Package)
+    })
   }
 
-  $jsonContent = $allJson | ConvertTo-Json -Depth 10 | % {$_ -replace "(?m)  (?<=^(?:  )*)", "  " }
+  # Add packages that exist in the metadata but are not onboarded in docs config
+  foreach ($package in $remainingPackages) {
+    $packageName = $package.Package
+    $packageVersion = "==$($package.VersionGA)"
+    if ($Mode -eq 'preview') {
+      $packageVersion = "==$($package.VersionPreview)"
+    }
 
-  Set-Content -Path $pkgJsonLoc -Value $jsonContent
+    if (!(ValidatePackage -packageName $packageName -packageVersion $packageVersion -workingDirectory $installValidationFolder)) {
+      LogWarning "Package is not valid: $packageName. Cannot onboard."
+      continue
+    }
+
+    Write-Host "Add new package from metadata: $packageName"
+    $package = [ordered]@{
+        package_info = [ordered]@{
+          name = $packageName;
+          install_type = 'pypi';
+          prefer_source_distribution = 'true';
+          version = $packageVersion;
+        };
+        exclude_path = @("test*","example*","sample*","doc*");
+    }
+
+    $outputPackages += $package
+  }
+
+  $packageConfig.packages = $outputPackages
+  $packageConfig | ConvertTo-Json -Depth 100 | Set-Content $DocConfigFile
+  Write-Host "Onboarding configuration written to: $DocConfigFile"
 }
 
 # function is used to auto generate API View

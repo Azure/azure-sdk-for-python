@@ -7,6 +7,8 @@ import logging
 
 from azure.core.exceptions import ClientAuthenticationError
 
+from ..._internal import within_credential_chain
+
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -15,11 +17,20 @@ def log_get_token_async(fn):
     async def wrapper(*args, **kwargs):
         try:
             token = await fn(*args, **kwargs)
-            _LOGGER.info("%s succeeded", fn.__qualname__)
+            _LOGGER.log(
+                logging.DEBUG if within_credential_chain.get() else logging.INFO, "%s succeeded", fn.__qualname__
+            )
             return token
         except Exception as ex:
-            _LOGGER.warning("%s failed: %s", fn.__qualname__, ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
+            _LOGGER.log(
+                logging.DEBUG if within_credential_chain.get() else logging.WARNING,
+                "%s failed: %s",
+                fn.__qualname__,
+                ex,
+                exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
+            )
             raise
+
     return wrapper
 
 

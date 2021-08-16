@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.0b1 (Unreleased)
+## 1.1.0b1 (2021-08-16)
 
 ### Added
 - Added support to add `metadata` for `message`

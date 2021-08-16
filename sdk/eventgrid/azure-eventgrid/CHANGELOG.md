@@ -1,17 +1,19 @@
 # Release History
 
-## 4.3.1 (Unreleased)
+## 4.5.0 (2021-08-10)
+
+### Features Added
+
+- Added a new enum value `Microsoft.ContainerService.NewKubernetesVersionAvailable` to `SystemEvents`.
+- Added a `from_json` method which now accepts storage QueueMessage, eventhub's EventData or ServiceBusMessage or simply json bytes to return an `EventGridEvent`
+
+## 4.4.0 (2021-07-19)
 
 - Bumped `msrest` dependency to `0.6.21` to align with mgmt package.
 
 ### Features Added
 
-### Breaking Changes
-
-### Key Bugs Fixed
-
-### Fixed
-
+- `EventGridPublisherClient` now supports Azure Active Directory (AAD) for authentication.
 
 ## 4.3.0 (2021-06-09)
 

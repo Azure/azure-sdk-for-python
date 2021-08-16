@@ -724,16 +724,20 @@ class DataLakeFileClient(PathClient):
         :keyword file_format:
             Optional. Defines the serialization of the data currently stored in the file. The default is to
             treat the file data as CSV data formatted in the default dialect. This can be overridden with
-            a custom DelimitedTextDialect, or alternatively a DelimitedJsonDialect.
+            a custom DelimitedTextDialect, or DelimitedJsonDialect or "ParquetDialect" (passed as a string or enum).
+            These dialects can be passed through their respective classes, the QuickQueryDialect enum or as a string.
         :paramtype file_format:
-            ~azure.storage.filedatalake.DelimitedTextDialect or ~azure.storage.filedatalake.DelimitedJsonDialect
+            ~azure.storage.filedatalake.DelimitedTextDialect or ~azure.storage.filedatalake.DelimitedJsonDialect or
+            ~azure.storage.filedatalake.QuickQueryDialect or str
         :keyword output_format:
             Optional. Defines the output serialization for the data stream. By default the data will be returned
-            as it is represented in the file. By providing an output format, the file data will be reformatted
-            according to that profile. This value can be a DelimitedTextDialect or a DelimitedJsonDialect.
+            as it is represented in the file. By providing an output format,
+            the file data will be reformatted according to that profile.
+            This value can be a DelimitedTextDialect or a DelimitedJsonDialect or ArrowDialect.
+            These dialects can be passed through their respective classes, the QuickQueryDialect enum or as a string.
         :paramtype output_format:
-            ~azure.storage.filedatalake.DelimitedTextDialect, ~azure.storage.filedatalake.DelimitedJsonDialect
-            or list[~azure.storage.filedatalake.ArrowDialect]
+            ~azure.storage.filedatalake.DelimitedTextDialect or ~azure.storage.filedatalake.DelimitedJsonDialect
+            or list[~azure.storage.filedatalake.ArrowDialect] or ~azure.storage.filedatalake.QuickQueryDialect or str
         :keyword lease:
             Required if the file has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.

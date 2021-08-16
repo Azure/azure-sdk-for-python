@@ -49,7 +49,7 @@ def sample_list_document_statuses_with_filters():
     start = datetime(2021, 4, 12)
     end = datetime(2021, 4, 14)
     statuses = ["Cancelled", "Failed"]
-    order_by = ["createdDateTimeUtc desc"]
+    order_by = ["created_on desc"]
     results_per_page = 2
     skip = 3
 
@@ -57,8 +57,8 @@ def sample_list_document_statuses_with_filters():
         translation_id,
         # filters
         statuses=statuses,
-        translated_after=start,
-        translated_before=end,
+        created_after=start,
+        created_before=end,
         # ordering
         order_by=order_by,
         # paging

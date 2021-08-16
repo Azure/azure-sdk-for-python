@@ -1,5 +1,32 @@
 # Release History
 
+## 2.0.0 (2021-07-26)
+
+**Features**
+
+  - Model IaasVMRestoreRequest has a new parameter identity_info
+  - Model IaasVMRestoreWithRehydrationRequest has a new parameter identity_info
+
+**Breaking changes**
+
+  - Removed operation group BackupResourceStorageConfigsNonCRROperations
+
+## 1.1.0 (2021-07-22)
+
+**Features**
+
+  - Model AzureWorkloadPointInTimeRestoreRequest has a new parameter target_virtual_machine_id
+  - Model AzureWorkloadSAPHanaPointInTimeRestoreRequest has a new parameter target_virtual_machine_id
+  - Model AzureWorkloadSQLRestoreWithRehydrateRequest has a new parameter target_virtual_machine_id
+  - Model AzureWorkloadSQLPointInTimeRestoreRequest has a new parameter target_virtual_machine_id
+  - Model AzureWorkloadSQLRestoreRequest has a new parameter target_virtual_machine_id
+  - Model AzureWorkloadSAPHanaRestoreWithRehydrateRequest has a new parameter target_virtual_machine_id
+  - Model AzureWorkloadSAPHanaRestoreRequest has a new parameter target_virtual_machine_id
+  - Model AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest has a new parameter target_virtual_machine_id
+  - Model AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest has a new parameter target_virtual_machine_id
+  - Model AzureWorkloadRestoreRequest has a new parameter target_virtual_machine_id
+  - Added operation group BackupResourceStorageConfigsNonCRROperations
+
 ## 1.0.0 (2021-05-26)
 
 **Features**
