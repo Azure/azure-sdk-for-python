@@ -89,6 +89,12 @@ def _whether_author_comment(comments):
 
     return  len(diff) > 0
 
+def _latest_comment_time(comments, delay_from_create_date):
+    q = [(comment.updated_at.timestamp(), comment.user.login)
+         for comment in comments if comment.user.login not in _PYTHON_SDK_ADMINISTRATORS]
+    q.sort()
+
+    return delay_from_create_date if not q else int((time.time() - q[-1][0]) / 3600 / 24)
 
 def main():
     # get latest issue status
@@ -117,6 +123,7 @@ def main():
         issue.whether_author_comment = _whether_author_comment(item.get_comments())
         issue.issue_object = item
         issue.labels = [label.name for label in item.labels]
+        issue.days_from_latest_commit = _latest_comment_time(item.get_comments(), issue.delay_from_create_date)
 
         issue_status.append(issue)
         key = (issue.language, issue.package)
@@ -140,12 +147,12 @@ def main():
         elif item.delay_from_latest_update >= 7:
             item.bot_advice = 'delay for a long time and better to handle now.'
   
-        if item.delay_from_create_date >= 30 and item.language == 'Python' and not item.whether_author_comment and '30days attention' not in item.labels:
+        if item.delay_from_create_date >= 30 and item.language == 'Python' and '30days attention' not in item.labels:
             item.labels.append('30days attention')
             item.issue_object.set_labels(*item.labels)
             item.issue_object.create_comment(f'hi @{item.author}, the issue is closed since there is no reply for a long time. Please reopen it if necessary or create new one.')
-            issue.issue_object.edit(state='close')
-        elif item.delay_from_create_date >= 15 and item.language == 'Python' and not item.whether_author_comment and '15days attention' not in item.labels:
+            item.issue_object.edit(state='close')
+        elif item.delay_from_create_date >= 15 and item.language == 'Python' and '15days attention' not in item.labels:
             item.issue_object.create_comment(f'hi @{item.author}, this release-request has been delayed more than 15 days,'
                                              ' please deal with it ASAP. We will close the issue if there is still no response after 15 days!')
             item.labels.append('15days attention')
