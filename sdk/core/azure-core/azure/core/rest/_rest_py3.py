@@ -334,7 +334,6 @@ class HttpResponse(_HttpResponseBase):
     :ivar str text: The response body as a string.
     :ivar request: The request that resulted in this response.
     :vartype request: ~azure.core.rest.HttpRequest
-    :ivar internal_response: The object returned from the HTTP library.
     :ivar str content_type: The content type of the response
     :ivar bool is_closed: Whether the network connection has been closed yet
     :ivar bool is_stream_consumed: When getting a stream response, checks
@@ -427,7 +426,6 @@ class AsyncHttpResponse(_HttpResponseBase):
 
     :keyword request: The request that resulted in this response.
     :paramtype request: ~azure.core.rest.HttpRequest
-    :keyword internal_response: The object returned from the HTTP library.
     :ivar int status_code: The status code of this response
     :ivar mapping headers: The response headers
     :ivar str reason: The reason phrase for this response
@@ -438,7 +436,6 @@ class AsyncHttpResponse(_HttpResponseBase):
     :ivar str text: The response body as a string.
     :ivar request: The request that resulted in this response.
     :vartype request: ~azure.core.rest.HttpRequest
-    :ivar internal_response: The object returned from the HTTP library.
     :ivar str content_type: The content type of the response
     :ivar bool is_closed: Whether the network connection has been closed yet
     :ivar bool is_stream_consumed: When getting a stream response, checks
