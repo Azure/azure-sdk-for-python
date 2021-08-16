@@ -9,6 +9,8 @@ from enum import Enum
 import uuid
 from typing import Any, Optional, List
 
+from azure.core.exceptions import HttpResponseError
+
 from ._helpers import construct_iso8601
 from ._generated.models import (
     Column as InternalColumn,
@@ -115,10 +117,10 @@ class MetricsResult(object):
      two datetimes concatenated, separated by '/'. This may be adjusted in the future and returned
      back from what was originally requested.
     :vartype timespan: str
-    :ivar interval: The interval (window size) for which the metric data was returned in. This
+    :ivar granularity: The granularity (window size) for which the metric data was returned in. This
      may be adjusted in the future and returned back from what was originally requested. This is
      not present if a metadata request was made.
-    :vartype interval: ~datetime.timedelta
+    :vartype granularity: ~datetime.timedelta
     :ivar namespace: The namespace of the metrics that has been queried.
     :vartype namespace: str
     :ivar resource_region: The region of the resource that has been queried for metrics.
@@ -130,7 +132,7 @@ class MetricsResult(object):
         # type: (Any) -> None
         self.cost = kwargs.get("cost", None)
         self.timespan = kwargs["timespan"]
-        self.interval = kwargs.get("interval", None)
+        self.granularity = kwargs.get("granularity", None)
         self.namespace = kwargs.get("namespace", None)
         self.resource_region = kwargs.get("resource_region", None)
         self.metrics = kwargs["metrics"]
@@ -142,7 +144,7 @@ class MetricsResult(object):
         return cls(
             cost=generated.cost,
             timespan=generated.timespan,
-            interval=generated.interval,
+            granularity=generated.interval,
             namespace=generated.namespace,
             resource_region=generated.resourceregion,
             metrics=[Metric._from_generated(m) for m in generated.value] # pylint: disable=protected-access
@@ -459,6 +461,10 @@ class Metric(object):
     :vartype unit: str
     :ivar timeseries: Required. The time series returned when a data query is performed.
     :vartype timeseries: list[~monitor_query_client.models.TimeSeriesElement]
+    :ivar display_description: Detailed description of this metric.
+    :vartype display_description: str
+    :ivar error: Error message encountered querying this specific metric.
+    :vartype error: str
     """
     def __init__(
         self,
@@ -470,6 +476,9 @@ class Metric(object):
         self.name = kwargs['name']
         self.unit = kwargs['unit']
         self.timeseries = kwargs['timeseries']
+        self.display_description = kwargs['display_description']
+        self.error = kwargs['error']
+        self.error_message = kwargs['error_message']
 
     @classmethod
     def _from_generated(cls, generated):
@@ -482,7 +491,9 @@ class Metric(object):
             unit=generated.unit,
             timeseries=[
                 TimeSeriesElement._from_generated(t) for t in generated.timeseries # pylint: disable=protected-access
-                ]
+                ],
+            display_desription=generated.display_description,
+            error=HttpResponseError(messgae=generated.error_message) if  generated.error_message else None,
         )
 
 
