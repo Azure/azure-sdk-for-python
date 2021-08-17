@@ -251,7 +251,7 @@ class HttpRequestBackcompatMixin(object):
 
 class _HttpResponseBackcompatMixinBase(object):
 
-    def body():
+    def body(self):
         return self.content
 
     @property
@@ -261,11 +261,6 @@ class _HttpResponseBackcompatMixinBase(object):
     @property
     def block_size(self):
         return self._connection_data_block_size
-
-    def text(self, encoding=None):
-        if encoding:
-            self.encoding = encoding
-        return self.text
 
     def _decode_parts(self, message, http_response_type, requests):
         """Rebuild an HTTP response from pure string."""
