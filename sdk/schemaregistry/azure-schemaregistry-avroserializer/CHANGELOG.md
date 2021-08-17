@@ -1,14 +1,10 @@
 # Release History
 
-## 1.0.0b2 (2020-08-17)
+## 1.0.0b2 (2021-08-17)
 
 ### Features Added
 
 - Depends on `azure-schemaregistry==1.0.0b2` which supports client-level caching.
-
-### Breaking Changes
-
-### Bugs Fixed
 
 ### Other Changes
 
