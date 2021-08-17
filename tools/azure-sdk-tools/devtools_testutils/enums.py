@@ -3,7 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from enum import Enum
 
+class ProxyRecordingSanitizer(str, Enum):
+    """General-purpose sanitizers for sanitizing test proxy recordings"""
 
-PROXY_URL = "https://localhost:5001"
-TEST_SETTING_FILENAME = "testsettings_local.cfg"
+    URI = "UriRegexSanitizer"
