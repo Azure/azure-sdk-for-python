@@ -266,7 +266,7 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
     def __init__(self, logging_enable=False, **kwargs): # pylint: disable=unused-argument
         self.enable_http_logger = logging_enable
 
-    def on_request(self, request):
+    def on_request(self, request):  # pylint: disable=too-many-return-statements
         # type: (PipelineRequest) -> None
         """Logs HTTP request to the DEBUG logger.
 
@@ -453,7 +453,7 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
         ]
         return value if key.lower() in lower_case_allowed_header_names else HttpLoggingPolicy.REDACTED_PLACEHOLDER
 
-    def on_request(self, request):
+    def on_request(self, request):  # pylint: disable=too-many-return-statements
         # type: (PipelineRequest) -> None
         """Logs HTTP method, url and headers.
         :param request: The PipelineRequest object.
