@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/_catalog
   response:
@@ -30,7 +30,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 19 May 2021 21:04:14 GMT
+      - Tue, 17 Aug 2021 18:10:34 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -55,11 +55,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1343'
+      - '1347'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/exchange
   response:
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 19 May 2021 21:04:15 GMT
+      - Tue, 17 Aug 2021 18:10:35 GMT
       server:
       - openresty
       strict-transport-security:
@@ -79,7 +79,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.65'
+      - '166.316667'
     status:
       code: 200
       message: OK
@@ -93,11 +93,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1125'
+      - '1135'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/token
   response:
@@ -109,7 +109,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 19 May 2021 21:04:16 GMT
+      - Tue, 17 Aug 2021 18:10:35 GMT
       server:
       - openresty
       strict-transport-security:
@@ -117,7 +117,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.633333'
+      - '166.3'
     status:
       code: 200
       message: OK
@@ -131,21 +131,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/_catalog
   response:
     body:
-      string: '{"repositories": ["library/alpine", "library/busybox", "repo13cf14de",
-        "repo25ce0f5d", "repo26ab150f", "repo27331535", "repo28471541", "repo2915152d",
-        "repo2c591564", "repo2e8319c5", "repo308e19dd", "repo34ab0fa1", "repo3db51597",
-        "repo3dc21571", "repo3e8d15a3", "repo41a21dd2", "repo6969166d", "repo6a411679",
-        "repo7bda1b05", "repo7cee1b11", "repo80c61ece", "repo84e316ff", "repo8b5a11da",
-        "repo93d41b55", "repo99be175b", "repo9b321760", "repo9cb4121e", "repoaf17178c",
-        "repoaf8812b0", "repoaf9517b2", "repob0a917be", "repob22512e7", "repoc1b5131a",
-        "repoc1b812f4", "repoc28d1326", "repod2be1c42", "repodf771888", "repoe08b1894",
-        "repoeb7113db", "repof94c18ea", "repofa2418f6", "repos6ce51658", "reposetb7cc1bf8",
-        "reposetmani160e197b"]}'
+      string: '{"repositories": ["library/alpine", "library/busybox", "library/hello-world",
+        "repo26ab150f", "repo6969166d", "repo80c61ece", "repo93d41b55", "repoc1b812f4",
+        "repodf771888"]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -155,11 +148,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '695'
+      - '166'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 19 May 2021 21:04:16 GMT
+      - Tue, 17 Aug 2021 18:10:35 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

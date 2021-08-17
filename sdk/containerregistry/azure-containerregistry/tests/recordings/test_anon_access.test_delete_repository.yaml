@@ -11,7 +11,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: DELETE
     uri: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world
   response:
@@ -32,7 +32,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 28 May 2021 14:14:23 GMT
+      - Tue, 17 Aug 2021 18:06:52 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -48,7 +48,7 @@ interactions:
       code: 401
       message: Unauthorized
 - request:
-    body: service=seankaneanon.azurecr.io&scope=repository%3Alibrary%2Fhello-world%3Adelete&grant_type=password
+    body: service=yalinlitestsanon.azurecr.io&scope=repository%3Alibrary%2Fhello-world%3Adelete&grant_type=password
     headers:
       Accept:
       - application/json
@@ -57,11 +57,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '101'
+      - '105'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/token
   response:
@@ -73,7 +73,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 28 May 2021 14:14:23 GMT
+      - Tue, 17 Aug 2021 18:06:52 GMT
       server:
       - openresty
       strict-transport-security:
@@ -97,7 +97,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: DELETE
     uri: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world
   response:
@@ -118,7 +118,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 28 May 2021 14:14:24 GMT
+      - Tue, 17 Aug 2021 18:06:52 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
