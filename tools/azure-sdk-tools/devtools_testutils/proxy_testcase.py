@@ -50,24 +50,20 @@ def get_test_id():
     return os.sep.join(path_components).replace("::", "").replace("\\", "/")
 
 
-def get_current_sha():
-    result = subprocess.check_output(["git", "rev-parse", "HEAD"])
-
-    # TODO: is this compatible with py27?
-    return result.decode("utf-8").strip()
-
-
 def start_record_or_playback(test_id):
+    result = subprocess.check_output(["git", "rev-parse", "HEAD"])
+    current_sha = result.decode("utf-8").strip()
+
     if is_live():
         result = requests.post(
             RECORDING_START_URL,
-            headers={"x-recording-file": test_id, "x-recording-sha": get_current_sha()},
+            headers={"x-recording-file": test_id, "x-recording-sha": current_sha},
         )
         recording_id = result.headers["x-recording-id"]
     else:
         result = requests.post(
             PLAYBACK_START_URL,
-            headers={"x-recording-file": test_id, "x-recording-sha": get_current_sha()},
+            headers={"x-recording-file": test_id, "x-recording-sha": current_sha},
         )
         recording_id = result.headers["x-recording-id"]
     return recording_id
