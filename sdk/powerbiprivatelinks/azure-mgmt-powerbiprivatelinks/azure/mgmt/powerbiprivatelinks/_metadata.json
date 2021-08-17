@@ -1,0 +1,157 @@
+{
+    "chosen_version": "2020-06-01",
+    "total_api_version_list": ["2020-06-01"],
+    "client": {
+        "name": "PrivateLinkServicesForPowerBIClient",
+        "filename": "_private_link_services_for_power_bi_client",
+        "description": "Client to manage Power BI Private Link Service resources and connection members.",
+        "base_url": "\u0027https://management.azure.com\u0027",
+        "custom_base_url": null,
+        "azure_arm": true,
+        "has_lro_operations": true,
+        "client_side_validation": false,
+        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"PrivateLinkServicesForPowerBIClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"]}}}",
+        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"PrivateLinkServicesForPowerBIClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"]}}}"
+    },
+    "global_parameters": {
+        "sync": {
+            "credential": {
+                "signature": "credential,  # type: \"TokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials.TokenCredential",
+                "required": true
+            },
+            "subscription_id": {
+                "signature": "subscription_id,  # type: str",
+                "description": "The Azure subscription ID. This is a GUID-formatted string (e.g. 00000000-0000-0000-0000-000000000000).",
+                "docstring_type": "str",
+                "required": true
+            },
+            "resource_group_name": {
+                "signature": "resource_group_name,  # type: str",
+                "description": "The name of the resource group.",
+                "docstring_type": "str",
+                "required": true
+            },
+            "azure_resource_name": {
+                "signature": "azure_resource_name,  # type: str",
+                "description": "The name of the Azure resource.",
+                "docstring_type": "str",
+                "required": true
+            },
+            "private_endpoint_name": {
+                "signature": "private_endpoint_name,  # type: str",
+                "description": "The name of the private endpoint.",
+                "docstring_type": "str",
+                "required": true
+            },
+            "operation_id": {
+                "signature": "operation_id,  # type: str",
+                "description": "The id of Azure async operation.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "async": {
+            "credential": {
+                "signature": "credential: \"AsyncTokenCredential\",",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
+                "required": true
+            },
+            "subscription_id": {
+                "signature": "subscription_id: str,",
+                "description": "The Azure subscription ID. This is a GUID-formatted string (e.g. 00000000-0000-0000-0000-000000000000).",
+                "docstring_type": "str",
+                "required": true
+            },
+            "resource_group_name": {
+                "signature": "resource_group_name: str,",
+                "description": "The name of the resource group.",
+                "docstring_type": "str",
+                "required": true
+            },
+            "azure_resource_name": {
+                "signature": "azure_resource_name: str,",
+                "description": "The name of the Azure resource.",
+                "docstring_type": "str",
+                "required": true
+            },
+            "private_endpoint_name": {
+                "signature": "private_endpoint_name: str,",
+                "description": "The name of the private endpoint.",
+                "docstring_type": "str",
+                "required": true
+            },
+            "operation_id": {
+                "signature": "operation_id: str,",
+                "description": "The id of Azure async operation.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "constant": {
+        },
+        "call": "credential, subscription_id, resource_group_name, azure_resource_name, private_endpoint_name, operation_id",
+        "service_client_specific": {
+            "sync": {
+                "api_version": {
+                    "signature": "api_version=None, # type: Optional[str]",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "base_url": {
+                    "signature": "base_url=None,  # type: Optional[str]",
+                    "description": "Service URL",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "profile": {
+                    "signature": "profile=KnownProfiles.default, # type: KnownProfiles",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false
+                }
+            },
+            "async": {
+                "api_version": {
+                    "signature": "api_version: Optional[str] = None,",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "base_url": {
+                    "signature": "base_url: Optional[str] = None,",
+                    "description": "Service URL",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "profile": {
+                    "signature": "profile: KnownProfiles = KnownProfiles.default,",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false
+                }
+            }
+        }
+    },
+    "config": {
+        "credential": true,
+        "credential_scopes": ["https://management.azure.com/.default"],
+        "credential_default_policy_type": "BearerTokenCredentialPolicy",
+        "credential_default_policy_type_has_async_version": true,
+        "credential_key_header_name": null,
+        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\"]}, \"local\": {\"._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
+        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
+    },
+    "operation_groups": {
+        "operations": "Operations",
+        "private_link_services_for_power_bi": "PrivateLinkServicesForPowerBIOperations",
+        "private_link_service_resource_operation_results": "PrivateLinkServiceResourceOperationResultsOperations",
+        "private_link_services": "PrivateLinkServicesOperations",
+        "power_bi_resources": "PowerBIResourcesOperations",
+        "private_link_resources": "PrivateLinkResourcesOperations",
+        "private_endpoint_connections": "PrivateEndpointConnectionsOperations"
+    }
+}
