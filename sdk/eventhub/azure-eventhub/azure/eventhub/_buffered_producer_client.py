@@ -13,6 +13,13 @@ if TYPE_CHECKING:
 class EventHubBufferedProducerClient(object):
     """The EventHubBufferedProducerClient
 
+    :ivar fully_qualified_namespace:
+    :vartype fully_qualified_namespace: str
+    :ivar eventhub_name:
+    :vartype eventhub_name: str
+    :ivar total_buffered_event_count:
+    :vartype total_buffered_event_count: int
+
     :param str fully_qualified_namespace: The fully qualified host name for the Event Hubs namespace.
      This is likely to be similar to <yournamespace>.servicebus.windows.net
     :param str eventhub_name: The path of the specific Event Hub to connect the client to.
@@ -25,12 +32,11 @@ class EventHubBufferedProducerClient(object):
     :keyword bool enable_idempotent_retries:
     :keyword int max_buffered_event_count:
     :keyword int max_wait_time:
-    :keyword int max_concurrent_sends_per_partition:  # TBD, ordering? and python limitation of threading?
-     https://docs.confluent.io/platform/current/installation/configuration/producer-configs.html#producerconfigs_max.in.flight.requests.per.connection
-    :keyword on_send_failed:
-    :paramtype on_send_failed: Callable[List[~azure.eventhub.EventData], Exception, Optional[str]]
-    :keyword on_send_succeeded:
-    :paramtype on_send_succeeded: Callable[List[~azure.eventhub.EventData], str]
+    :keyword int max_concurrent_sends_per_partition:
+    :keyword on_error:
+    :paramtype on_error: Callable[List[~azure.eventhub.EventData], Exception, Optional[str]]
+    :keyword on_success:
+    :paramtype on_success: Callable[List[~azure.eventhub.EventData], str]
     :keyword executor: A user-specified thread pool. This cannot be combined with
      setting `max_workers`.
     :paramtype executor: Optional[~concurrent.futures.ThreadPoolExecutor]
@@ -63,12 +69,6 @@ class EventHubBufferedProducerClient(object):
     :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
      authenticate the identity of the connection endpoint.
      Default is None in which case `certifi.where()` will be used.
-    :ivar fully_qualified_namespace:
-    :vartype fully_qualified_namespace: str
-    :ivar eventhub_name:
-    :vartype eventhub_name: str
-    :ivar total_buffered_event_count:
-    :vartype total_buffered_event_count: int
     """
 
     def __init__(
@@ -96,12 +96,11 @@ class EventHubBufferedProducerClient(object):
         :keyword bool enable_idempotent_retries:
         :keyword int max_wait_time:
         :keyword int max_buffered_event_count:
-        :keyword int max_concurrent_sends_per_partition:  # TBD, ordering? and python limitation of threading?
-         https://docs.confluent.io/platform/current/installation/configuration/producer-configs.html#producerconfigs_max.in.flight.requests.per.connection
-        :keyword on_send_failed:
-        :paramtype on_send_failed: Callable[List[~azure.eventhub.EventData], Exception, Optional[str]]
-        :keyword on_send_succeeded:
-        :paramtype on_send_succeeded: Callable[List[~azure.eventhub.EventData], str]
+        :keyword int max_concurrent_sends_per_partition:
+        :keyword on_error:
+        :paramtype on_error: Callable[List[~azure.eventhub.EventData], Exception, Optional[str]]
+        :keyword on_success:
+        :paramtype on_success: Callable[List[~azure.eventhub.EventData], str]
         :keyword executor: A user-specified thread pool. This cannot be combined with
          setting `max_workers`.
         :paramtype executor: Optional[~concurrent.futures.ThreadPoolExecutor]
@@ -147,7 +146,7 @@ class EventHubBufferedProducerClient(object):
         """
 
         :param events:
-        :type events: Union[~azure.eventhub.EventData, List[~azure.eventhub.EventData]
+        :type events: Union[~azure.eventhub.EventData, List[~azure.eventhub.EventData]]
         :keyword str partition_key:
         :keyword str partition_id:
         :keyword int timeout:
@@ -160,6 +159,7 @@ class EventHubBufferedProducerClient(object):
     ):
         # type: (Any) -> None
         """
+
         :keyword int timeout:
         :rtype: None
         """
@@ -186,5 +186,6 @@ class EventHubBufferedProducerClient(object):
         """
 
         :keyword bool abandon_buffered_events:
+        :keyword int timeout:
         :rtype: None
         """
