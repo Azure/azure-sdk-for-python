@@ -215,6 +215,23 @@ async def test_bearer_policy_calls_sansio_methods():
     policy.on_exception.assert_called_once_with(policy.request)
 
 
+async def test_bearer_policy_token_refresh():
+    """AsyncBearerTokenCredentialPolicy should observe a token's refresh_on value"""
+    now = int(time.time())
+
+    async def get_token(*_, **__):
+        return AccessToken("***", expires_on=now + 3600, refresh_on=now)
+
+    credential = Mock(get_token=Mock(wraps=get_token))
+    policy = AsyncBearerTokenCredentialPolicy(credential, "scope")
+    pipeline = AsyncPipeline(transport=Mock(send=lambda *_, **__: get_completed_future(Mock())), policies=[policy])
+
+    # the policy should call get_token for every request because each token's refresh_on is past
+    for n in range(4):
+        assert credential.get_token.call_count == n
+        await pipeline.run(HttpRequest("GET", "https://localhost"))
+
+
 def get_completed_future(result=None):
     fut = asyncio.Future()
     fut.set_result(result)

@@ -252,6 +252,23 @@ def test_bearer_policy_calls_sansio_methods():
     policy.on_exception.assert_called_once_with(policy.request)
 
 
+def test_bearer_policy_token_refresh():
+    """BearerTokenCredentialPolicy should observe a token's refresh_on value"""
+    now = int(time.time())
+
+    def get_token(*_, **__):
+        return AccessToken("***", expires_on=now + 3600, refresh_on=now)
+
+    credential = Mock(get_token=Mock(wraps=get_token))
+    policy = BearerTokenCredentialPolicy(credential, "scope")
+    pipeline = Pipeline(transport=Mock(), policies=[policy])
+
+    # the policy should call get_token for every request because each token's refresh_on is past
+    for n in range(4):
+        assert credential.get_token.call_count == n
+        pipeline.run(HttpRequest("GET", "https://localhost"))
+
+
 @pytest.mark.skipif(azure.core.__version__ >= "2", reason="this test applies only to azure-core 1.x")
 def test_key_vault_regression():
     """Test for regression affecting azure-keyvault-* 4.0.0. This test must pass, unmodified, for all 1.x versions."""
