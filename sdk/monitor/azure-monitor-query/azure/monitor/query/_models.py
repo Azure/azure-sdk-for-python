@@ -478,7 +478,6 @@ class Metric(object):
         self.timeseries = kwargs['timeseries']
         self.display_description = kwargs['display_description']
         self.error = kwargs['error']
-        self.error_message = kwargs['error_message']
 
     @classmethod
     def _from_generated(cls, generated):
@@ -492,7 +491,7 @@ class Metric(object):
             timeseries=[
                 TimeSeriesElement._from_generated(t) for t in generated.timeseries # pylint: disable=protected-access
                 ],
-            display_desription=generated.display_description,
+            display_description=generated.display_description,
             error=HttpResponseError(messgae=generated.error_message) if  generated.error_message else None,
         )
 

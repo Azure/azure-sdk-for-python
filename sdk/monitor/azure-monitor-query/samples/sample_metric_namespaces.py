@@ -9,9 +9,9 @@ credential  = DefaultAzureCredential()
 
 client = MetricsQueryClient(credential)
 
-metrics_uri = os.environ['METRICS_RESOURCE_URI']
+metrics_uri = '/subscriptions/faa080af-c1d8-40ad-9cce-e1a450ca5b57/resourceGroups/sabhyrav-resourcegroup/providers/Microsoft.EventGrid/topics/rakshith-cloud'
 response = client.list_metric_namespaces(metrics_uri)
 
 for item in response:
-    print(item.metric_namespace_name)
+    print(item.fully_qualified_namespace)
     print(item.type)

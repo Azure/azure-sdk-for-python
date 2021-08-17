@@ -16,12 +16,11 @@ client = MetricsQueryClient(credential)
 # [END metrics_client_auth_with_token_cred]
 
 # [START send_metrics_query]
-metrics_uri = os.environ['METRICS_RESOURCE_URI']
+metrics_uri = "/subscriptions/faa080af-c1d8-40ad-9cce-e1a450ca5b57/resourceGroups/sabhyrav-resourcegroup/providers/Microsoft.EventGrid/topics/rakshith-cloud"
 response = client.query(
     metrics_uri,
-    metric_names=["MatchedEventCount"],
-    start_time=datetime(2021, 6, 21),
-    duration=timedelta(days=1),
+    metric_names=["MatchedEventCount", "DeliverySuccesssCount"],
+    timespan=timedelta(days=1),
     aggregations=[AggregationType.COUNT]
     )
 
