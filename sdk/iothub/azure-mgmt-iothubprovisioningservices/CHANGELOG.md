@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0 (2021-07-15)
+
+**Features**
+
+  - Model CertificateBodyDescription has a new parameter is_verified
+
 ## 1.0.0b1 (2021-05-14)
 
 This is beta preview version.
