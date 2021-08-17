@@ -186,11 +186,17 @@ jobs:
         - pwsh: |
             do {
               $failure = $false
-              pip --retries 10 install -r "$(requirements)" --no-deps --upgrade --no-cache-dir 2>&1
-              if ($LASTEXITCODE -ne 0) {
-                $failure = $true
-                Write-Host "Installation failed, retrying in 3 minutes..."
-                sleep 180
+              try {
+                $ErrorActionPreference = "Stop"
+                pip install -r "$(requirements)" --no-deps --upgrade --no-cache-dir 2>&1
+              } catch {
+                if ($LASTEXITCODE -ne 0) {
+                  $failure = $true
+                  Write-Host "Installation failed, retrying in 3 minutes..."
+                  sleep 180
+                }
+              } finally {
+                $ErrorActionPreference = "Continue"
               }
             } while (($retries++ -lt 4) -and ($failure))
           displayName: Install requirements without dependencies
