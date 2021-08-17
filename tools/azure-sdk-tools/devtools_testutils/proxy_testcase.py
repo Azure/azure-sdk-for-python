@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 import os
 import requests
+import pdb
 
 try:
     # py3
@@ -37,11 +38,17 @@ PLAYBACK_STOP_URL = "{}/playback/stop".format(PROXY_URL)
 
 def get_test_id():
     # pytest sets the current running test in an environment variable
-    path_to_test = os.getenv("PYTEST_CURRENT_TEST").split(" ")[0].replace("::", ".")
-    beginning, end = path_to_test.split("/tests/")
-    full = beginning + "/tests/recordings/" + end
-    print(full)
-    return full
+    setting_value = os.getenv("PYTEST_CURRENT_TEST")
+
+    path_to_test = os.path.normpath(setting_value.split(" ")[0])
+    path_components = path_to_test.split(os.sep)
+    
+    for idx, val in enumerate(path_components):
+        if val.startswith("test"):
+            path_components.insert(idx + 1, "recordings")
+            break
+    
+    return os.sep.join(path_components).replace("::", "").replace("\\", "/")
 
 
 def get_current_sha():
