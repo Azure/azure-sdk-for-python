@@ -291,7 +291,7 @@ class KeyVaultSecretTest(SecretsTestCase, KeyVaultTestCase):
 
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
-                messages_request = message.split("/n")
+                messages_request = message.message.split("/n")
                 for m in messages_request:
                     try:
                         body = json.loads(m)
@@ -317,7 +317,7 @@ class KeyVaultSecretTest(SecretsTestCase, KeyVaultTestCase):
 
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
-                messages_request = message.split("/n")
+                messages_request = message.message.split("/n")
                 for m in messages_request:
                     try:
                         body = json.loads(m)
