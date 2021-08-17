@@ -27,45 +27,15 @@ from typing import Any, Dict, Optional, Union, cast, Iterable, List  # pylint: d
 import six
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
+from ..cosmos_client import _parse_connection_str, _build_auth
 from ._cosmos_client_connection_async import CosmosClientConnection
 from .._base import build_options
-from .._retry_utility import ConnectionRetryPolicy
-from .database_async import DatabaseProxy
+from ._retry_utility import ConnectionRetryPolicy
+# from .database import DatabaseProxy
 from ..documents import ConnectionPolicy, DatabaseAccount
 from ..exceptions import CosmosResourceNotFoundError
 
 __all__ = ("CosmosClient",)
-
-
-def _parse_connection_str(conn_str, credential):
-    # type: (str, Optional[Any]) -> Dict[str, str]
-    conn_str = conn_str.rstrip(";")
-    conn_settings = dict(  # type: ignore  # pylint: disable=consider-using-dict-comprehension
-        s.split("=", 1) for s in conn_str.split(";")
-    )
-    if 'AccountEndpoint' not in conn_settings:
-        raise ValueError("Connection string missing setting 'AccountEndpoint'.")
-    if not credential and 'AccountKey' not in conn_settings:
-        raise ValueError("Connection string missing setting 'AccountKey'.")
-    return conn_settings
-
-
-def _build_auth(credential):
-    # type: (Any) -> Dict[str, Any]
-    auth = {}
-    if isinstance(credential, six.string_types):
-        auth['masterKey'] = credential
-    elif isinstance(credential, dict):
-        if any(k for k in credential.keys() if k in ['masterKey', 'resourceTokens', 'permissionFeed']):
-            return credential  # Backwards compatible
-        auth['resourceTokens'] = credential  # type: ignore
-    elif hasattr(credential, '__iter__'):
-        auth['permissionFeed'] = credential
-    else:
-        raise TypeError(
-            "Unrecognized credential type. Please supply the master key as str, "
-            "or a dictionary or resource tokens, or a list of permissions.")
-    return auth
 
 
 def _build_connection_policy(kwargs):
@@ -147,19 +117,24 @@ class CosmosClient(object):
         consistency_level = kwargs.get('consistency_level', 'Session')
         connection_policy = _build_connection_policy(kwargs)
         self.client_connection = CosmosClientConnection(
-            url, auth=auth, consistency_level=consistency_level, connection_policy=connection_policy, **kwargs
+            url,
+            auth=auth,
+            consistency_level=consistency_level,
+            connection_policy=connection_policy,
+            **kwargs
         )
 
-    def __repr__(self):  # pylint:disable=client-method-name-no-double-underscore
+    def __repr__(self):
         # type () -> str
         return "<CosmosClient [{}]>".format(self.client_connection.url_connection)[:1024]
 
-    def __enter__(self):
-        self.client_connection.pipeline_client.__enter__()
+    async def __aenter__(self):
+        await self.client_connection.pipeline_client.__enter__()
+        await self.client_connection._setup()
         return self
 
-    def __exit__(self, *args):
-        return self.client_connection.pipeline_client.__exit__(*args)
+    async def __aexit__(self, *args):
+        return await self.client_connection.pipeline_client.__exit__(*args)
 
     @classmethod
     def from_connection_string(cls, conn_str, credential=None, consistency_level="Session", **kwargs):
