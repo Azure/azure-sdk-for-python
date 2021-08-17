@@ -28,6 +28,26 @@ from typing import TYPE_CHECKING, cast
 from ..exceptions import ResponseNotReadError, StreamConsumedError, StreamClosedError
 from ._rest import _HttpResponseBase, HttpResponse
 from ..pipeline.transport._requests_basic import StreamDownloadGenerator
+from collections import ItemsView
+from requests.structures import CaseInsensitiveDict
+
+class _ItemsView(ItemsView):
+    def __contains__(self, item):
+        if not (isinstance(item, (list, tuple)) and len(item) == 2):
+            return False
+        for k, v in self.__iter__():
+            if item[0].lower() == k.lower() and item[1] == v:
+                return True
+        return False
+
+    def __repr__(self):
+        return 'ItemsView({0._mapping!r})'.format(self)
+
+class _CaseInsensitiveDict(CaseInsensitiveDict):
+
+    def items(self):
+        """Return a new view of the dictionary's items."""
+        return _ItemsView(self)
 
 if TYPE_CHECKING:
     from typing import Iterator, Optional
@@ -43,7 +63,7 @@ class _RestRequestsTransportResponseBase(_HttpResponseBase):
     def __init__(self, **kwargs):
         super(_RestRequestsTransportResponseBase, self).__init__(**kwargs)
         self.status_code = self._internal_response.status_code
-        self.headers = self._internal_response.headers
+        self.headers = _CaseInsensitiveDict(dict(self._internal_response.headers))
         self.reason = self._internal_response.reason
         self.content_type = self._internal_response.headers.get('content-type')
 

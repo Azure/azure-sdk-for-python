@@ -48,14 +48,61 @@ def test_headers_response(get_response_headers):
     assert "B" in h
     assert "c" not in h
     assert h["a"] == "123, 456"
+    assert h["A"] == "123, 456"
     assert h.get("a") == "123, 456"
+    assert h.get("A") == "123, 456"
+    assert h.get("nope") is None
+    assert h.get("nope", default="default") is "default"
     assert h.get("nope", default=None) is None
+    assert h.get("nope", default=[]) == []
+    assert list(h) == ['a', 'b']
 
     assert list(h.keys()) == ["a", "b"]
     assert list(h.values()) == ["123, 456", "789"]
     assert list(h.items()) == [("a", "123, 456"), ("b", "789")]
     assert list(h) == ["a", "b"]
     assert dict(h) == {"a": "123, 456", "b": "789"}
+
+def test_headers_response_keys(get_response_headers):
+    h = get_response_headers(HttpRequest("GET", "http://localhost:5000/headers/duplicate/numbers"))
+    # basically want to make sure this behaves like dict {"a": "123, 456", "b": "789"}
+    ref_dict = {"a": "123, 456", "b": "789"}
+    assert list(h.keys()) == list(ref_dict.keys())
+    assert repr(h.keys()) == "KeysView({'a': '123, 456', 'b': '789'})"
+    assert "a" in h.keys()
+    assert "A" not in h.keys()
+    assert "b" in h.keys()
+    assert "B" not in h.keys()
+    assert set(h.keys()) == set(ref_dict.keys())
+
+    # test mutability
+    before_mutation_keys = h.keys()
+    h['c'] = '000'
+    assert 'c' in before_mutation_keys
+
+def test_headers_response_values(get_response_headers):
+    h = get_response_headers(HttpRequest("GET", "/headers/duplicate/numbers"))
+    # basically want to make sure this behaves like dict {"a": "123, 456", "b": "789"}
+    ref_dict = {"a": "123, 456", "b": "789"}
+    assert list(h.values()) == list(ref_dict.values())
+    assert repr(h.values()) == "ValuesView({'a': '123, 456', 'b': '789'})"
+    assert '123, 456' in h.values()
+    assert '789' in h.values()
+    assert set(h.values()) == set(ref_dict.values())
+
+def test_headers_response_items(get_response_headers):
+    h = get_response_headers(HttpRequest("GET", "/headers/duplicate/numbers"))
+    # basically want to make sure this behaves like dict {"a": "123, 456", "b": "789"}
+    ref_dict = {"a": "123, 456", "b": "789"}
+    assert list(h.items()) == list(ref_dict.items())
+    assert repr(h.items()) == "ItemsView({'a': '123, 456', 'b': '789'})"
+    assert ("a", '123, 456') in h.items()
+    assert not ("a", '123, 456', '123, 456') in h.items()
+    assert not {"a": "blah", "123, 456": "blah"} in h.items()
+    assert ("A", '123, 456') in h.items()
+    assert ("b", '789') in h.items()
+    assert ("B", '789') in h.items()
+    assert set(h.items()) == set(ref_dict.items())
 
 def test_header_mutations(get_request_headers, get_response_headers):
     def _headers_check(h):

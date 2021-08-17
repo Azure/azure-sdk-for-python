@@ -38,6 +38,7 @@ class _ItemsView(collections.abc.ItemsView):
     def __init__(self, ref):
         super().__init__(ref)
         self._ref = ref
+        self._items = []
 
     def __iter__(self):
         for key, groups in groupby(self._ref.__iter__(), lambda x: x[0]):
@@ -76,9 +77,11 @@ class _CIMultiDict(CIMultiDict):
     def __getitem__(self, key: str) -> str:
         return ", ".join(self.getall(key, []))
 
-    def get(self, key, default=_SENTINEL):
-        values = ", ".join(self.getall(key, [])) or []
-        return values if default == _SENTINEL else default
+    def get(self, key, default=None):
+        values = self.getall(key, None)
+        if values:
+            values = ", ".join(values)
+        return values or default
 
 class RestAioHttpTransportResponse(AsyncHttpResponse):
     def __init__(

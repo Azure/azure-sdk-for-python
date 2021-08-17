@@ -37,9 +37,10 @@ async def test_headers_response(get_response_headers):
     assert h["A"] == "123, 456"
     assert h.get("a") == "123, 456"
     assert h.get("A") == "123, 456"
-    assert h.get("nope") == []
+    assert h.get("nope") is None
     assert h.get("nope", default="default") is "default"
     assert h.get("nope", default=None) is None
+    assert h.get("nope", default=[]) == []
     assert list(h) == ['a', 'b']
 
     assert list(h.keys()) == ["a", "b"]
@@ -50,7 +51,7 @@ async def test_headers_response(get_response_headers):
 
 @pytest.mark.asyncio
 async def test_headers_response_keys(get_response_headers):
-    h = await get_response_headers(HttpRequest("GET", "/headers/duplicate/numbers"))
+    h = await get_response_headers(HttpRequest("GET", "http://localhost:5000/headers/duplicate/numbers"))
     # basically want to make sure this behaves like dict {"a": "123, 456", "b": "789"}
     ref_dict = {"a": "123, 456", "b": "789"}
     assert list(h.keys()) == list(ref_dict.keys())
@@ -64,7 +65,7 @@ async def test_headers_response_keys(get_response_headers):
     # test mutability
     before_mutation_keys = h.keys()
     h['c'] = '000'
-    assert 'c' not in before_mutation_keys
+    assert 'c' in before_mutation_keys
 
 @pytest.mark.asyncio
 async def test_headers_response_values(get_response_headers):
