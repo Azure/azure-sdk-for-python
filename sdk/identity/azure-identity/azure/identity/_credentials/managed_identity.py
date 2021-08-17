@@ -65,11 +65,33 @@ class ManagedIdentityCredential(object):
                 from .azure_arc import AzureArcCredential
 
                 self._credential = AzureArcCredential(**kwargs)
+        elif all(os.environ.get(var) for var in EnvironmentVariables.TOKEN_EXCHANGE_VARS):
+            _LOGGER.info("%s will use token exchange", self.__class__.__name__)
+            from .token_exchange import TokenExchangeCredential
+
+            self._credential = TokenExchangeCredential(
+                tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
+                client_id=os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
+                token_file_path=os.environ[EnvironmentVariables.TOKEN_FILE_PATH],
+                **kwargs
+            )
         else:
             from .imds import ImdsCredential
 
             _LOGGER.info("%s will use IMDS", self.__class__.__name__)
             self._credential = ImdsCredential(**kwargs)
+
+    def __enter__(self):
+        self._credential.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        self._credential.__exit__(*args)
+
+    def close(self):
+        # type: () -> None
+        """Close the credential's transport session."""
+        self.__exit__()
 
     @log_get_token("ManagedIdentityCredential")
     def get_token(self, *scopes, **kwargs):

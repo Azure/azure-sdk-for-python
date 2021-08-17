@@ -249,7 +249,7 @@ class TasksOperations(object):
     def update_subscription_level_task_state(
         self,
         task_name,  # type: str
-        task_update_action_type,  # type: Union[str, "_models.Enum15"]
+        task_update_action_type,  # type: Union[str, "_models.Enum13"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -258,7 +258,7 @@ class TasksOperations(object):
         :param task_name: Name of the task object, will be a GUID.
         :type task_name: str
         :param task_update_action_type: Type of the action to do on the task.
-        :type task_update_action_type: str or ~azure.mgmt.security.models.Enum15
+        :type task_update_action_type: str or ~azure.mgmt.security.models.Enum13
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -446,7 +446,7 @@ class TasksOperations(object):
         self,
         resource_group_name,  # type: str
         task_name,  # type: str
-        task_update_action_type,  # type: Union[str, "_models.Enum15"]
+        task_update_action_type,  # type: Union[str, "_models.Enum13"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -458,7 +458,7 @@ class TasksOperations(object):
         :param task_name: Name of the task object, will be a GUID.
         :type task_name: str
         :param task_update_action_type: Type of the action to do on the task.
-        :type task_update_action_type: str or ~azure.mgmt.security.models.Enum15
+        :type task_update_action_type: str or ~azure.mgmt.security.models.Enum13
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None

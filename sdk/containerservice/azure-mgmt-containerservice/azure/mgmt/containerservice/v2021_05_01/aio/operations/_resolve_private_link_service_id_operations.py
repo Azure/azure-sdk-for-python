@@ -49,14 +49,13 @@ class ResolvePrivateLinkServiceIdOperations:
     ) -> "_models.PrivateLinkResource":
         """Gets the private link service ID for the specified managed cluster.
 
-        Gets the private link service ID the specified managed cluster.
+        Gets the private link service ID for the specified managed cluster.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param resource_name: The name of the managed cluster resource.
         :type resource_name: str
-        :param parameters: Parameters (name, groupId) supplied in order to resolve a private link
-         service ID.
+        :param parameters: Parameters required in order to resolve a private link service ID.
         :type parameters: ~azure.mgmt.containerservice.v2021_05_01.models.PrivateLinkResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateLinkResource, or the result of cls(response)

@@ -338,12 +338,6 @@ try:
     from ._models_py3 import JsonSink
     from ._models_py3 import JsonSource
     from ._models_py3 import JsonWriteSettings
-    from ._models_py3 import KqlScript
-    from ._models_py3 import KqlScriptContent
-    from ._models_py3 import KqlScriptContentCurrentConnection
-    from ._models_py3 import KqlScriptContentMetadata
-    from ._models_py3 import KqlScriptResource
-    from ._models_py3 import KqlScriptsResourceCollectionResponse
     from ._models_py3 import LibraryInfo
     from ._models_py3 import LibraryListResponse
     from ._models_py3 import LibraryRequirements
@@ -1005,12 +999,6 @@ except (SyntaxError, ImportError):
     from ._models import JsonSink  # type: ignore
     from ._models import JsonSource  # type: ignore
     from ._models import JsonWriteSettings  # type: ignore
-    from ._models import KqlScript  # type: ignore
-    from ._models import KqlScriptContent  # type: ignore
-    from ._models import KqlScriptContentCurrentConnection  # type: ignore
-    from ._models import KqlScriptContentMetadata  # type: ignore
-    from ._models import KqlScriptResource  # type: ignore
-    from ._models import KqlScriptsResourceCollectionResponse  # type: ignore
     from ._models import LibraryInfo  # type: ignore
     from ._models import LibraryListResponse  # type: ignore
     from ._models import LibraryRequirements  # type: ignore
@@ -1776,12 +1764,6 @@ __all__ = [
     'JsonSink',
     'JsonSource',
     'JsonWriteSettings',
-    'KqlScript',
-    'KqlScriptContent',
-    'KqlScriptContentCurrentConnection',
-    'KqlScriptContentMetadata',
-    'KqlScriptResource',
-    'KqlScriptsResourceCollectionResponse',
     'LibraryInfo',
     'LibraryListResponse',
     'LibraryRequirements',

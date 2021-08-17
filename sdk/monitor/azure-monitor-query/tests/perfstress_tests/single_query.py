@@ -46,11 +46,12 @@ class LogsPerfTest(PerfStressTest):
         Avoid putting any ancilliary logic (e.g. generating UUIDs), and put this in the setup/init instead
         so that we're only measuring the client API call.
         """
+        start_time=datetime(2021, 7, 25, 0, 0, 0, tzinfo=timezone.utc)
+        end_time=datetime(2021, 7, 26, 0, 0, 0, tzinfo=timezone.utc)
         self.logs_client.query(
             self.workspace_id,
             self.query,
-            start_time=datetime(2021, 7, 25, 0, 0, 0, tzinfo=timezone.utc),
-            end_time=datetime(2021, 7, 26, 0, 0, 0, tzinfo=timezone.utc),
+            timespan=(start_time, end_time)
             )
 
     async def run_async(self):
@@ -60,9 +61,10 @@ class LogsPerfTest(PerfStressTest):
         Avoid putting any ancilliary logic (e.g. generating UUIDs), and put this in the setup/init instead
         so that we're only measuring the client API call.
         """
+        start_time=datetime(2021, 7, 25, 0, 0, 0, tzinfo=timezone.utc)
+        end_time=datetime(2021, 7, 26, 0, 0, 0, tzinfo=timezone.utc)
         await self.async_logs_client.query(
             self.workspace_id,
             self.query,
-            start_time=datetime(2021, 7, 25, 0, 0, 0, tzinfo=timezone.utc),
-            end_time=datetime(2021, 7, 26, 0, 0, 0, tzinfo=timezone.utc),
+            timespan=(start_time, end_time)
             )

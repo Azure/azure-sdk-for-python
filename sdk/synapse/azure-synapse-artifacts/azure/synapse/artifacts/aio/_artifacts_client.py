@@ -65,7 +65,7 @@ class ArtifactsClient(MultiApiClientMixin, _SDKClient):
         self,
         credential: "AsyncTokenCredential",
         endpoint: str,
-        api_version: Optional[str] = None,
+        api_version: Optional[str] = DEFAULT_API_VERSION,
         profile: KnownProfiles = KnownProfiles.default,
         **kwargs  # type: Any
     ) -> None:
@@ -177,32 +177,6 @@ class ArtifactsClient(MultiApiClientMixin, _SDKClient):
             from ..v2021_06_01_preview.aio.operations import IntegrationRuntimesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'integration_runtimes'".format(api_version))
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
-
-    @property
-    def kql_script(self):
-        """Instance depends on the API version:
-
-           * 2021-06-01-preview: :class:`KqlScriptOperations<azure.synapse.artifacts.v2021_06_01_preview.aio.operations.KqlScriptOperations>`
-        """
-        api_version = self._get_api_version('kql_script')
-        if api_version == '2021-06-01-preview':
-            from ..v2021_06_01_preview.aio.operations import KqlScriptOperations as OperationClass
-        else:
-            raise ValueError("API version {} does not have operation group 'kql_script'".format(api_version))
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
-
-    @property
-    def kql_scripts(self):
-        """Instance depends on the API version:
-
-           * 2021-06-01-preview: :class:`KqlScriptsOperations<azure.synapse.artifacts.v2021_06_01_preview.aio.operations.KqlScriptsOperations>`
-        """
-        api_version = self._get_api_version('kql_scripts')
-        if api_version == '2021-06-01-preview':
-            from ..v2021_06_01_preview.aio.operations import KqlScriptsOperations as OperationClass
-        else:
-            raise ValueError("API version {} does not have operation group 'kql_scripts'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property

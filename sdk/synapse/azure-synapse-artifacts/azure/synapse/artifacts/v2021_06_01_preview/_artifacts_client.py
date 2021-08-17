@@ -30,8 +30,6 @@ from .operations import DataFlowDebugSessionOperations
 from .operations import SqlScriptOperations
 from .operations import SparkJobDefinitionOperations
 from .operations import NotebookOperations
-from .operations import KqlScriptsOperations
-from .operations import KqlScriptOperations
 from .operations import NotebookOperationResultOperations
 from .operations import SparkConfigurationOperations
 from .operations import BigDataPoolsOperations
@@ -70,10 +68,6 @@ class ArtifactsClient(object):
     :vartype spark_job_definition: azure.synapse.artifacts.v2021_06_01_preview.operations.SparkJobDefinitionOperations
     :ivar notebook: NotebookOperations operations
     :vartype notebook: azure.synapse.artifacts.v2021_06_01_preview.operations.NotebookOperations
-    :ivar kql_scripts: KqlScriptsOperations operations
-    :vartype kql_scripts: azure.synapse.artifacts.v2021_06_01_preview.operations.KqlScriptsOperations
-    :ivar kql_script: KqlScriptOperations operations
-    :vartype kql_script: azure.synapse.artifacts.v2021_06_01_preview.operations.KqlScriptOperations
     :ivar notebook_operation_result: NotebookOperationResultOperations operations
     :vartype notebook_operation_result: azure.synapse.artifacts.v2021_06_01_preview.operations.NotebookOperationResultOperations
     :ivar spark_configuration: SparkConfigurationOperations operations
@@ -138,10 +132,6 @@ class ArtifactsClient(object):
         self.spark_job_definition = SparkJobDefinitionOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.notebook = NotebookOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.kql_scripts = KqlScriptsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.kql_script = KqlScriptOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.notebook_operation_result = NotebookOperationResultOperations(
             self._client, self._config, self._serialize, self._deserialize)

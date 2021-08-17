@@ -39,7 +39,7 @@ requests = [
         "workspace": os.environ['LOG_WORKSPACE_ID']
     }
 ]
-responses = client.batch_query(requests)
+responses = client.query_batch(requests)
 
 for response in responses:
     try:

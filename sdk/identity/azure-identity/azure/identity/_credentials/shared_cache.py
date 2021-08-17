@@ -48,6 +48,18 @@ class SharedTokenCacheCredential(object):
         else:
             self._credential = _SharedTokenCacheCredential(username=username, **kwargs)
 
+    def __enter__(self):
+        self._credential.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        self._credential.__exit__(*args)
+
+    def close(self):
+        # type: () -> None
+        """Close the credential's transport session."""
+        self.__exit__()
+
     @log_get_token("SharedTokenCacheCredential")
     def get_token(self, *scopes, **kwargs):
         # type (*str, **Any) -> AccessToken
@@ -83,6 +95,15 @@ class SharedTokenCacheCredential(object):
 
 class _SharedTokenCacheCredential(SharedTokenCacheBase):
     """The original SharedTokenCacheCredential, which doesn't use msal.ClientApplication"""
+
+    def __enter__(self):
+        if self._client:
+            self._client.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        if self._client:
+            self._client.__exit__(*args)
 
     def get_token(self, *scopes, **kwargs):
         # type (*str, **Any) -> AccessToken

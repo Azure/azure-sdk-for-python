@@ -7,7 +7,6 @@
 from typing import TYPE_CHECKING, Any
 
 from azure.core.tracing.decorator import distributed_trace
-from azure.communication.identity import CommunicationUserIdentifier
 
 from ._generated._communication_network_traversal_client\
     import CommunicationNetworkTraversalClient\
@@ -18,6 +17,7 @@ from ._generated.models import CommunicationRelayConfiguration
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
+    from azure.communication.identity import CommunicationUserIdentifier
 
 class CommunicationRelayClient(object):
     """Azure Communication Services Relay client.

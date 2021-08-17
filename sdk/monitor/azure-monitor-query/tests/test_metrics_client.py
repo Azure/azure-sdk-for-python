@@ -19,8 +19,7 @@ def test_metrics_auth():
     response = client.query(
         os.environ['METRICS_RESOURCE_URI'],
         metric_names=["MatchedEventCount"],
-        start_time=datetime(2021, 6, 21),
-        duration=timedelta(days=1),
+        timespan=timedelta(days=1),
         aggregations=[AggregationType.COUNT]
         )
     assert response
