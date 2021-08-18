@@ -16,7 +16,6 @@ class PurviewAccountTest(AzureTestCase):
         self.recording_processors.append(PurviewAccountRecordingProcessor())
 
     def create_client(self, endpoint):
-        self.recording_processors.append(PurviewAccountRecordingProcessor())
         credential = self.get_credential(PurviewAccountClient)
         return self.create_client_from_credential(
             PurviewAccountClient,

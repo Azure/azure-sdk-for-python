@@ -13,6 +13,7 @@ from azure.core import PipelineClient
 from msrest import Deserializer, Serializer
 
 from ._configuration import PurviewAccountClientConfiguration
+from .operations import AccountsOperations, CollectionsOperations, ResourceSetRulesOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -24,6 +25,12 @@ if TYPE_CHECKING:
 class PurviewAccountClient(object):
     """Creates a Microsoft.Purview data plane account client.
 
+    :ivar accounts: AccountsOperations operations
+    :vartype accounts: azure.purview.account.operations.AccountsOperations
+    :ivar collections: CollectionsOperations operations
+    :vartype collections: azure.purview.account.operations.CollectionsOperations
+    :ivar resource_set_rules: ResourceSetRulesOperations operations
+    :vartype resource_set_rules: azure.purview.account.operations.ResourceSetRulesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param endpoint: The account endpoint of your Purview account. Example:
@@ -45,6 +52,9 @@ class PurviewAccountClient(object):
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
+        self.accounts = AccountsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.collections = CollectionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.resource_set_rules = ResourceSetRulesOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
     def send_request(
@@ -58,11 +68,6 @@ class PurviewAccountClient(object):
         We have helper methods to create requests specific to this service in `azure.purview.account.rest`.
         Use these helper methods to create the request you pass to this method.
 
-        >>> from azure.purview.account.rest import accounts
-        >>> request = accounts.build_get_account_properties_request(**kwargs)
-        <HttpRequest [GET], url: '/'>
-        >>> response = client.send_request(request)
-        <HttpResponse: 200 OK>
 
         For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
 

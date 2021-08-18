@@ -5,7 +5,6 @@
 # license information.
 # -------------------------------------------------------------------------
 from testcase import PurviewAccountTest, PurviewAccountPowerShellPreparer
-from azure.purview.account.rest import accounts
 
 
 class PurviewAccountSmokeTest(PurviewAccountTest):
@@ -13,9 +12,5 @@ class PurviewAccountSmokeTest(PurviewAccountTest):
     @PurviewAccountPowerShellPreparer()
     def test_basic_smoke_test(self, purviewaccount_endpoint):
         client = self.create_client(endpoint=purviewaccount_endpoint)
-        request = accounts.build_get_access_keys_request()
-        response = client.send_request(request)
-        response.raise_for_status()
-        assert response.status_code == 200
-        json_response = response.json()
-        assert set(json_response.keys()) == set(['atlasKafkaPrimaryEndpoint', 'atlasKafkaSecondaryEndpoint'])
+        response = client.accounts.get_access_keys()
+        assert set(response.keys()) == set(['atlasKafkaPrimaryEndpoint', 'atlasKafkaSecondaryEndpoint'])

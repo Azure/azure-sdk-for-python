@@ -29,7 +29,7 @@ clear-output-folder: true
 no-namespace-folders: true
 python: true
 title: PurviewAccountClient
-low-level-client: true
+version-tolerant: true
 package-version: 1.0.0b1
 add-credential: true
 credential-scopes: https://purview.azure.net/.default
