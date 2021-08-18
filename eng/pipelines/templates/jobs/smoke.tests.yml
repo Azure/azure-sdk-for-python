@@ -159,7 +159,7 @@ jobs:
           timeoutInMinutes: 5
 
         - pwsh: |
-            $packages = Get-ChildItem "$(Pipeline.Workspace)/${{ parameters.ArtifactName }}/*/*.zip"
+            $packages = Get-ChildItem "$(Pipeline.Workspace)/${{ parameters.ArtifactName }}/${{ parameters.Artifact.name }}/*.zip"
             Write-Host "Artifacts found:"
             $artifacts = $packages | ForEach-Object {
               if ($_.Name -match "([a-zA-Z\-]+)\-(.*).zip") {
@@ -184,19 +184,18 @@ jobs:
           displayName: Override requirements with pipeline build artifact versions
 
         - pwsh: |
+            $ErrorActionPreference = "Continue"
             do {
               $failure = $false
-              try {
+              Write-Host "pip install -r $(requirements) --no-deps --upgrade --no-cache-dir"
+              pip install -r "$(requirements)" --no-deps --upgrade --no-cache-dir
+              if ($LASTEXITCODE) {
+                $failure = $true
+                Write-Host "Installation failed, retrying in 3 minutes..."
+                sleep 180
+              } else {
                 $ErrorActionPreference = "Stop"
-                pip install -r "$(requirements)" --no-deps --upgrade --no-cache-dir 2>&1
-              } catch {
-                if ($LASTEXITCODE -ne 0) {
-                  $failure = $true
-                  Write-Host "Installation failed, retrying in 3 minutes..."
-                  sleep 180
-                }
-              } finally {
-                $ErrorActionPreference = "Continue"
+                break
               }
             } while (($retries++ -lt 4) -and ($failure))
           displayName: Install requirements without dependencies
