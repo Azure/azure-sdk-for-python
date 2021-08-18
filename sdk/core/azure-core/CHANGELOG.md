@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- `azure.core.serialization.AzureJSONEncoder` (introduced in 1.17.0) serializes `datetime.datetime` objects in ISO 8601 format, conforming to RFC 3339's specification.    #20190
+
 ### Breaking Changes
 
 ### Bugs Fixed
