@@ -20,7 +20,7 @@ interactions:
       X-Schema-Type:
       - Avro
     method: PUT
-    uri: https://fake_resource.servicebus.windows.net$schemagroups/fakegroup/schemas/example.avro.User?api-version=2017-04
+    uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/example.avro.User?api-version=2017-04
   response:
     body:
       string: '{"id":"576838e0558c43f8b85cdaadbd4561f5"}'
@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Tue, 17 Aug 2021 23:21:42 GMT
+      - Wed, 18 Aug 2021 15:11:19 GMT
       location:
       - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/example.avro.User/versions/1?api-version=2017-04
       server:
