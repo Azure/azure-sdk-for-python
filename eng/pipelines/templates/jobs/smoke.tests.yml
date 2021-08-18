@@ -195,7 +195,6 @@ jobs:
                 Write-Host "Installation failed, retrying in 3 minutes..."
                 sleep 180
               } else {
-                $ErrorActionPreference = "Stop"
                 break
               }
             }
