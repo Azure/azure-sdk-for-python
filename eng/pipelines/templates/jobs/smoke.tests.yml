@@ -186,12 +186,12 @@ jobs:
         - pwsh: |
             $ErrorActionPreference = "Continue"
             while ($retries++ -lt 4) {
-              if ($retries -ge 4) {
-                $ErrorActionPreference = "Stop"
-              }
               Write-Host "pip install -r $(requirements) --no-deps --upgrade --no-cache-dir"
               pip install -r "$(requirements)" --no-deps --upgrade --no-cache-dir
               if ($LASTEXITCODE) {
+                if ($retries -ge 4) {
+                  exit $LASTEXITCODE
+                }
                 Write-Host "Installation failed, retrying in 3 minutes..."
                 sleep 180
               } else {
