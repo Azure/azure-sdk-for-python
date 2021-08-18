@@ -149,7 +149,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         try:
             result = result.result()
         except HttpResponseError as e:
-            self.assertEquals(str(e), "(InternalServerError) An error occurred.")
+            self.assertEqual(str(e), "(InternalServerError) An error occurred.")
         return result
 
     def create_vm(self, group_name, location, vm_name, network_name, subnet_name, interface_name):
