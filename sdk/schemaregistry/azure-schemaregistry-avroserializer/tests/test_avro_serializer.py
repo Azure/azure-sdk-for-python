@@ -32,7 +32,7 @@ from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
 
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 
-SchemaRegistryPowerShellPreparer = functools.partial(PowerShellPreparer, "schemaregistry", schemaregistry_endpoint="fake_resource.servicebus.windows.net", schemaregistry_group="fakegroup")
+SchemaRegistryPowerShellPreparer = functools.partial(PowerShellPreparer, "schemaregistry", schemaregistry_endpoint="fake_resource.servicebus.windows.net/", schemaregistry_group="fakegroup")
 
 class SchemaRegistryAvroSerializerTests(AzureTestCase):
 
