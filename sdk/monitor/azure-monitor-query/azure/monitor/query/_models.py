@@ -464,7 +464,7 @@ class Metric(object):
     :ivar display_description: Detailed description of this metric.
     :vartype display_description: str
     :ivar error: Error message encountered querying this specific metric.
-    :vartype error: str
+    :vartype error: ~azure.core.exceptions.HttpResponseError
     """
     def __init__(
         self,
@@ -483,6 +483,9 @@ class Metric(object):
     def _from_generated(cls, generated):
         if not generated:
             return cls()
+        error = None
+        if generated.error_message:
+            error = HttpResponseError(message=generated.error_message)
         return cls(
             id=generated.id,
             type=generated.type,
@@ -492,7 +495,7 @@ class Metric(object):
                 TimeSeriesElement._from_generated(t) for t in generated.timeseries # pylint: disable=protected-access
                 ],
             display_description=generated.display_description,
-            error=HttpResponseError(messgae=generated.error_message) if  generated.error_message else None,
+            error= error,
         )
 
 
