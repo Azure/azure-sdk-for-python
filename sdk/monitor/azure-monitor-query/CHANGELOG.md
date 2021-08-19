@@ -20,6 +20,7 @@
 - `time_grain` is renamed to `granularity`
 - `interval` is renamed to `granularity`
 - `orderby` is renamed to `order_by`
+- `LogsQueryResult` now returns `datetime` objects for a time values.
 
 ### Bugs Fixed
 
