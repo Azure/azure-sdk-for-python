@@ -28,7 +28,6 @@ async def test_async_gen_data(port):
     async with AsyncioRequestsTransport() as transport:
         req = HttpRequest('GET', 'http://localhost:{}/basic/anything'.format(port), data=AsyncGen())
         response = await transport.send(req)
-        text = response.text()
         assert json.loads(response.text())['data'] == "azerty"
 
 @pytest.mark.asyncio
@@ -36,5 +35,4 @@ async def test_send_data(port):
     async with AsyncioRequestsTransport() as transport:
         req = HttpRequest('PUT', 'http://localhost:{}/basic/anything'.format(port), data=b"azerty")
         response = await transport.send(req)
-        text = response.text()
         assert json.loads(response.text())['data'] == "azerty"

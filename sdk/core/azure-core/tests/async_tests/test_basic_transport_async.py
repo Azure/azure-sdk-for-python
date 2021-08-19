@@ -34,6 +34,17 @@ class MockResponse(AsyncHttpResponse):
 
 
 @pytest.mark.asyncio
+async def test_basic_options_aiohttp(port):
+
+    request = HttpRequest("OPTIONS", "http://localhost:{}/basic/string".format(port))
+    async with AsyncPipeline(AioHttpTransport(), policies=[]) as pipeline:
+        response = await pipeline.run(request)
+
+    assert pipeline._transport.session is None
+    assert isinstance(response.http_response.status_code, int)
+
+
+@pytest.mark.asyncio
 async def test_multipart_send():
     transport = MockAsyncHttpTransport()
 
@@ -925,13 +936,3 @@ async def test_recursive_multipart_receive():
 
     internal_response0 = internal_parts[0]
     assert internal_response0.status_code == 400
-
-@pytest.mark.asyncio
-async def test_basic_options_aiohttp(port):
-
-    request = HttpRequest("OPTIONS", "http://localhost:{}/basic/string".format(port))
-    async with AsyncPipeline(AioHttpTransport(), policies=[]) as pipeline:
-        response = await pipeline.run(request)
-
-    assert pipeline._transport.session is None
-    assert isinstance(response.http_response.status_code, int)

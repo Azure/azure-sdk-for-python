@@ -155,17 +155,16 @@ class TestExceptions(object):
         assert isinstance(error.model, FakeErrorTwo)
         assert isinstance(error.error, ODataV4Format)
 
-    class TestExceptions(object):
-        def test_httpresponse_error_with_response(self, port):
-            response = requests.get("http://localhost:{}/basic/string".format(port))
-            http_response = RequestsTransportResponse(None, response)
+    def test_httpresponse_error_with_response(self, port):
+        response = requests.get("http://localhost:{}/basic/string".format(port))
+        http_response = RequestsTransportResponse(None, response)
 
-            error = HttpResponseError(response=http_response)
-            assert error.message == "Operation returned an invalid status 'OK'"
-            assert error.response is not None
-            assert error.reason == 'OK'
-            assert isinstance(error.status_code, int)
-            assert error.error is None
+        error = HttpResponseError(response=http_response)
+        assert error.message == "Operation returned an invalid status 'OK'"
+        assert error.response is not None
+        assert error.reason == 'OK'
+        assert isinstance(error.status_code, int)
+        assert error.error is None
 
     def test_odata_v4_exception(self):
         message = {
