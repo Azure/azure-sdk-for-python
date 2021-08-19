@@ -159,14 +159,14 @@ async def test_response_no_charset_with_ascii_content(send_request):
 @pytest.mark.asyncio
 async def test_response_no_charset_with_iso_8859_1_content(send_request):
     """
-    A response with ISO 8859-1 encoded content should decode correctly,
-    even with no charset specified.
+    We don't support iso-8859-1 by default following conversations
+    about endoding flow
     """
     response = await send_request(
         request=HttpRequest("GET", "/encoding/iso-8859-1"),
     )
     await response.read()
-    assert response.text() == "Accented: �sterreich" # aiohttp is having diff behavior than requests
+    assert response.text() == "Accented: �sterreich"
     assert response.encoding is None
 
 # NOTE: aiohttp isn't liking this

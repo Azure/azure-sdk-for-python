@@ -61,19 +61,6 @@ class _RestRequestsTransportResponseBase(_HttpResponseBase):
             # requests throws a RuntimeError if the content for a response is already consumed
             raise ResponseNotReadError(self)
 
-    @_HttpResponseBase.encoding.setter  # type: ignore
-    def encoding(self, value):
-        # type: (str) -> None
-        _HttpResponseBase.encoding.fset(self, value)
-        self._internal_response.encoding = value
-
-    def text(self, encoding=None):
-        # this will trigger errors if response is not read in
-        self.content  # pylint: disable=pointless-statement
-        if encoding:
-            self._internal_response.encoding = encoding
-        return self._internal_response.text
-
 def _stream_download_helper(decompress, response):
     if response.is_stream_consumed:
         raise StreamConsumedError(response)

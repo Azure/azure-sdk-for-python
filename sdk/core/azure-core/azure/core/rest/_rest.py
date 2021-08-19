@@ -247,12 +247,8 @@ class _HttpResponseBase(object):  # pylint: disable=too-many-instance-attributes
         :return: The response's content decoded as a string.
         """
         if self._text is None or encoding:
-            content = self.content
-            if not content:
-                self._text = ""
-            else:
-                encoding_to_pass = encoding or self.encoding
-                self._text = decode_to_text(encoding_to_pass, self.content)
+            encoding_to_pass = encoding or self.encoding
+            self._text = decode_to_text(encoding_to_pass, self.content)
         return self._text
 
     def json(self):
