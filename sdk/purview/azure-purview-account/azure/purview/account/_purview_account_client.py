@@ -31,22 +31,22 @@ class PurviewAccountClient(object):
     :vartype collections: azure.purview.account.operations.CollectionsOperations
     :ivar resource_set_rules: ResourceSetRulesOperations operations
     :vartype resource_set_rules: azure.purview.account.operations.ResourceSetRulesOperations
+    :param endpoint: The account endpoint of your Purview account. Example:
+     https://{accountName}.purview.azure.com/account/.
+    :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param endpoint: The account endpoint of your Purview account. Example:
-     https://{accountName}.purview.azure.com.
-    :type endpoint: str
     """
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
         endpoint,  # type: str
+        credential,  # type: "TokenCredential"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         base_url = '{endpoint}'
-        self._config = PurviewAccountClientConfiguration(credential, endpoint, **kwargs)
+        self._config = PurviewAccountClientConfiguration(endpoint, credential, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         self._serialize = Serializer()
