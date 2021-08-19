@@ -183,17 +183,19 @@ jobs:
 
           displayName: Override requirements with pipeline build artifact versions
 
+        # Retry for pip install due to delay in package availability after publish
+        # The package is expected to be available for download/installation within 10 minutes 
         - pwsh: |
             $ErrorActionPreference = "Continue"
-            while ($retries++ -lt 4) {
+            while ($retries++ -lt 15) {
               Write-Host "pip install -r $(requirements) --no-deps --upgrade --no-cache-dir"
               pip install -r "$(requirements)" --no-deps --upgrade --no-cache-dir
               if ($LASTEXITCODE) {
-                if ($retries -ge 4) {
+                if ($retries -ge 15) {
                   exit $LASTEXITCODE
                 }
-                Write-Host "Installation failed, retrying in 3 minutes..."
-                sleep 180
+                Write-Host "Installation failed, retrying in 1 minute..."
+                sleep 60
               } else {
                 break
               }
