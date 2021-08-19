@@ -23,10 +23,6 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Union
-
-from azure.core.rest import HttpResponse, AsyncHttpResponse
-
 from ._schema import SchemaProperties, Schema
 
 
@@ -41,7 +37,6 @@ def _parse_schema_properties(response):
 
 
 def _parse_response_schema_id(response):
-    # type: (Union[HttpResponse, AsyncHttpResponse]) -> SchemaProperties
     properties_dict = _parse_schema_properties(response)
     properties_dict['schema_id'] = response.json()["id"]
     return SchemaProperties(
@@ -50,7 +45,6 @@ def _parse_response_schema_id(response):
 
 
 def _parse_response_schema(response):
-    # type: (Union[HttpResponse, AsyncHttpResponse]) -> Schema
     return Schema(
         schema_content=response.text,
         schema_properties=SchemaProperties(**_parse_schema_properties(response))
