@@ -9,7 +9,7 @@ from enum import Enum
 import uuid
 from typing import Any, Optional, List
 
-from ._helpers import construct_iso8601
+from ._helpers import construct_iso8601, process_row
 from ._generated.models import (
     Column as InternalColumn,
     BatchQueryRequest as InternalLogQueryRequest,
@@ -32,7 +32,7 @@ class LogsQueryResultTable(object):
         # type: (str, List[LogsQueryResultColumn], List[List[str]]) -> None
         self.name = name
         self.columns = columns
-        self.rows = rows
+        self.rows = [process_row(self.columns, row) for row in rows]
 
     @classmethod
     def _from_generated(cls, generated):
