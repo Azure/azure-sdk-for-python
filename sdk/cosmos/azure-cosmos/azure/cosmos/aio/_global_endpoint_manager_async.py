@@ -108,7 +108,7 @@ class _GlobalEndpointManager(object):
             and self.location_cache.current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms
         ):
             if not database_account:
-                await database_account = self._GetDatabaseAccount(**kwargs)
+                database_account = await self._GetDatabaseAccount(**kwargs)
                 self.location_cache.perform_on_database_account_read(database_account)
                 self.last_refresh_time = self.location_cache.current_time_millis()
                 self.refresh_needed = False

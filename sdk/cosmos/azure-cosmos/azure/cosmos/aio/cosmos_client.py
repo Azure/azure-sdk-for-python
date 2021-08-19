@@ -129,12 +129,12 @@ class CosmosClient(object):
         return "<CosmosClient [{}]>".format(self.client_connection.url_connection)[:1024]
 
     async def __aenter__(self):
-        await self.client_connection.pipeline_client.__enter__()
+        await self.client_connection.pipeline_client.__aenter__()
         await self.client_connection._setup()
         return self
 
     async def __aexit__(self, *args):
-        return await self.client_connection.pipeline_client.__exit__(*args)
+        return await self.client_connection.pipeline_client.__aexit__(*args)
 
     async def close(self):
         await self.__aexit__()
