@@ -32,9 +32,8 @@ from ._common._response_handlers import (
     _parse_response_schema_id
 )
 from ._generated._azure_schema_registry import AzureSchemaRegistry
+from ._generated.rest import schema
 
-
-from azure.schemaregistry._generated.rest import schema
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
