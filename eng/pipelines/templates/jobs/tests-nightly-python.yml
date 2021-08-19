@@ -15,7 +15,7 @@ jobs:
       vmImage: 'ubuntu-20.04'
 
     steps:
-      - template: eng/pipelines/templates/steps/use-python-version.yml
+      - template: /eng/pipelines/templates/steps/use-python-version.yml
         parameters:
           versionSpec: $(targetRC)
         
