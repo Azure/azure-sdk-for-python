@@ -32,7 +32,10 @@ class StorageDirectoryTest(StorageTestCase):
         self.share_name = self.get_resource_name('utshare')
 
         if not self.is_playback():
-            self.fsc.create_share(self.share_name)
+            try:
+                self.fsc.create_share(self.share_name)
+            except:
+                pass
 
     def _teardown(self, FILE_PATH):
         if os.path.isfile(FILE_PATH):
@@ -366,16 +369,60 @@ class StorageDirectoryTest(StorageTestCase):
         list_dir = list(directory.list_directories_and_files())
 
         # Assert
-        expected = [
-            {'name': 'subdir1', 'is_directory': True},
-            {'name': 'subdir2', 'is_directory': True},
-            {'name': 'subdir3', 'is_directory': True},
-            {'name': 'file1', 'is_directory': False, 'size': 5},
-            {'name': 'file2', 'is_directory': False, 'size': 5},
-            {'name': 'file3', 'is_directory': False, 'size': 5},
-        ]
         self.assertEqual(len(list_dir), 6)
-        self.assertEqual(list_dir, expected)
+        self.assertEqual(list_dir[0]['name'], 'subdir1')
+        self.assertEqual(list_dir[0]['is_directory'], True)
+        self.assertEqual(list_dir[1]['name'], 'subdir2')
+        self.assertEqual(list_dir[1]['is_directory'], True)
+        self.assertEqual(list_dir[2]['name'], 'subdir3')
+        self.assertEqual(list_dir[2]['is_directory'], True)
+        self.assertEqual(list_dir[3]['name'], 'file1')
+        self.assertEqual(list_dir[3]['is_directory'], False)
+        self.assertEqual(list_dir[4]['name'], 'file2')
+        self.assertEqual(list_dir[4]['is_directory'], False)
+        self.assertEqual(list_dir[5]['name'], 'file3')
+        self.assertEqual(list_dir[5]['is_directory'], False)
+
+    @GlobalStorageAccountPreparer()
+    def test_list_subdirectories_and_files_include_other_data(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory = share_client.create_directory('dir1')
+        directory.create_subdirectory("subdir1")
+        directory.create_subdirectory("subdir2")
+        directory.create_subdirectory("subdir3")
+        directory.upload_file("file1", "data1")
+        directory.upload_file("file2", "data2")
+        directory.upload_file("file3", "data3")
+
+        # Act
+        list_dir = list(directory.list_directories_and_files(include=["timestamps", "Etag", "Attributes", "PermissionKey"]))
+
+        self.assertEqual(len(list_dir), 6)
+        self.assertIsNotNone(list_dir[0].etag)
+        self.assertIsNotNone(list_dir[1].file_attributes)
+        self.assertIsNotNone(list_dir[1].last_access_time)
+        self.assertIsNotNone(list_dir[1].last_write_time)
+        self.assertIsNotNone(list_dir[2].change_time)
+        self.assertIsNotNone(list_dir[2].creation_time)
+        self.assertIsNotNone(list_dir[2].file_id)
+        try:
+            share_client.delete_share()
+        except:
+            pass
+
+    @GlobalStorageAccountPreparer()
+    def test_list_subdirectories_and_files_include_extended_info(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory = share_client.create_directory('dir1')
+        directory.create_subdirectory("subdir1")
+
+        list_dir = list(directory.list_directories_and_files(include_extended_info=True))
+        self.assertEqual(len(list_dir), 1)
+        self.assertIsNotNone(list_dir[0].file_id)
+        self.assertIsNone(list_dir[0].file_attributes)
+        self.assertIsNone(list_dir[0].last_access_time)
 
     @GlobalStorageAccountPreparer()
     def test_list_subdirectories_and_files_with_prefix(self, resource_group, location, storage_account, storage_account_key):
@@ -393,13 +440,13 @@ class StorageDirectoryTest(StorageTestCase):
         list_dir = list(directory.list_directories_and_files(name_starts_with="sub"))
 
         # Assert
-        expected = [
-            {'name': 'subdir1', 'is_directory': True},
-            {'name': 'subdir2', 'is_directory': True},
-            {'name': 'subdir3', 'is_directory': True},
-        ]
         self.assertEqual(len(list_dir), 3)
-        self.assertEqual(list_dir, expected)
+        self.assertEqual(list_dir[0]['name'], 'subdir1')
+        self.assertEqual(list_dir[0]['is_directory'], True)
+        self.assertEqual(list_dir[1]['name'], 'subdir2')
+        self.assertEqual(list_dir[1]['is_directory'], True)
+        self.assertEqual(list_dir[2]['name'], 'subdir3')
+        self.assertEqual(list_dir[2]['is_directory'], True)
 
     @GlobalStorageAccountPreparer()
     def test_list_subdirectories_and_files_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
@@ -422,13 +469,14 @@ class StorageDirectoryTest(StorageTestCase):
         list_dir = list(snapshot_dir.list_directories_and_files())
 
         # Assert
-        expected = [
-            {'name': 'subdir1', 'is_directory': True},
-            {'name': 'subdir2', 'is_directory': True},
-            {'name': 'file1', 'is_directory': False, 'size': 5},
-        ]
         self.assertEqual(len(list_dir), 3)
-        self.assertEqual(list_dir, expected)
+        self.assertEqual(list_dir[0]['name'], 'subdir1')
+        self.assertEqual(list_dir[0]['is_directory'], True)
+        self.assertEqual(list_dir[1]['name'], 'subdir2')
+        self.assertEqual(list_dir[1]['is_directory'], True)
+        self.assertEqual(list_dir[2]['name'], 'file1')
+        self.assertEqual(list_dir[2]['is_directory'], False)
+        self.assertEqual(list_dir[2]['size'], 5)
 
     @GlobalStorageAccountPreparer()
     def test_list_nested_subdirectories_and_files(self, resource_group, location, storage_account, storage_account_key):
@@ -446,12 +494,12 @@ class StorageDirectoryTest(StorageTestCase):
         list_dir = list(directory.list_directories_and_files())
 
         # Assert
-        expected = [
-            {'name': 'subdir1', 'is_directory': True},
-            {'name': 'file1', 'is_directory': False, 'size': 5},
-        ]
         self.assertEqual(len(list_dir), 2)
-        self.assertEqual(list_dir, expected)
+        self.assertEqual(list_dir[0]['name'], 'subdir1')
+        self.assertEqual(list_dir[0]['is_directory'], True)
+        self.assertEqual(list_dir[1]['name'], 'file1')
+        self.assertEqual(list_dir[1]['is_directory'], False)
+        self.assertEqual(list_dir[1]['size'], 5)
 
     @GlobalStorageAccountPreparer()
     def test_delete_directory_with_existing_share(self, resource_group, location, storage_account, storage_account_key):

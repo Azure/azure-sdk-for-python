@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/repoe19b1892
   response:
@@ -18,7 +18,7 @@ interactions:
       connection: keep-alive
       content-length: '215'
       content-type: application/json; charset=utf-8
-      date: Thu, 20 May 2021 19:25:32 GMT
+      date: Tue, 17 Aug 2021 18:20:16 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -27,17 +27,17 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://seankane.azurecr.io/acr/v1/repoe19b1892
+    url: https://yalinlitests.azurecr.io/acr/v1/repoe19b1892
 - request:
     body:
       access_token: REDACTED
       grant_type: access_token
-      service: seankane.azurecr.io
+      service: yalinlitests.azurecr.io
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/exchange
   response:
@@ -46,26 +46,26 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 20 May 2021 19:25:33 GMT
+      date: Tue, 17 Aug 2021 18:20:16 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.55'
+      x-ms-ratelimit-remaining-calls-per-second: '165.666667'
     status:
       code: 200
       message: OK
-    url: https://seankane.azurecr.io/oauth2/exchange
+    url: https://yalinlitests.azurecr.io/oauth2/exchange
 - request:
     body:
       grant_type: refresh_token
       refresh_token: REDACTED
       scope: repository:repoe19b1892:metadata_read
-      service: seankane.azurecr.io
+      service: yalinlitests.azurecr.io
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/token
   response:
@@ -74,37 +74,37 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 20 May 2021 19:25:33 GMT
+      date: Tue, 17 Aug 2021 18:20:16 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.4'
+      x-ms-ratelimit-remaining-calls-per-second: '165.65'
     status:
       code: 200
       message: OK
-    url: https://seankane.azurecr.io/oauth2/token
+    url: https://yalinlitests.azurecr.io/oauth2/token
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/repoe19b1892
   response:
     body:
-      string: '{"registry": "fake_url.azurecr.io", "imageName": "repoe19b1892", "createdTime":
-        "2021-05-20T19:25:06.3749913Z", "lastUpdateTime": "2021-05-20T19:25:05.806487Z",
-        "manifestCount": 10, "tagCount": 1, "changeableAttributes": {"deleteEnabled":
+      string: '{"registry": "yalinlitests.azurecr.io", "imageName": "repoe19b1892",
+        "createdTime": "2021-08-17T18:19:55.9502131Z", "lastUpdateTime": "2021-08-17T18:19:54.2472558Z",
+        "manifestCount": 11, "tagCount": 1, "changeableAttributes": {"deleteEnabled":
         true, "writeEnabled": true, "readEnabled": true, "listEnabled": true, "teleportEnabled":
         false}}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '314'
+      content-length: '319'
       content-type: application/json; charset=utf-8
-      date: Thu, 20 May 2021 19:25:33 GMT
+      date: Tue, 17 Aug 2021 18:20:16 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -112,19 +112,19 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://seankane.azurecr.io/acr/v1/repoe19b1892
+    url: https://yalinlitests.azurecr.io/acr/v1/repoe19b1892
 - request:
     body: '{"deleteEnabled": false, "writeEnabled": false, "listEnabled": false, "readEnabled":
-      false, "teleportEnabled": false}'
+      false}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '117'
+      - '91'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: PATCH
     uri: https://fake_url.azurecr.io/acr/v1/repoe19b1892
   response:
@@ -137,7 +137,7 @@ interactions:
       connection: keep-alive
       content-length: '216'
       content-type: application/json; charset=utf-8
-      date: Thu, 20 May 2021 19:25:33 GMT
+      date: Tue, 17 Aug 2021 18:20:16 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -146,18 +146,45 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://seankane.azurecr.io/acr/v1/repoe19b1892
+    url: https://yalinlitests.azurecr.io/acr/v1/repoe19b1892
+- request:
+    body:
+      access_token: REDACTED
+      grant_type: access_token
+      service: yalinlitests.azurecr.io
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://fake_url.azurecr.io/oauth2/exchange
+  response:
+    body:
+      string: '{"refresh_token": "REDACTED"}'
+    headers:
+      connection: keep-alive
+      content-type: application/json; charset=utf-8
+      date: Tue, 17 Aug 2021 18:20:17 GMT
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+      x-ms-ratelimit-remaining-calls-per-second: '165.633333'
+    status:
+      code: 200
+      message: OK
+    url: https://yalinlitests.azurecr.io/oauth2/exchange
 - request:
     body:
       grant_type: refresh_token
       refresh_token: REDACTED
       scope: repository:repoe19b1892:metadata_write
-      service: seankane.azurecr.io
+      service: yalinlitests.azurecr.io
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/token
   response:
@@ -166,42 +193,42 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 20 May 2021 19:25:33 GMT
+      date: Tue, 17 Aug 2021 18:20:17 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.383333'
+      x-ms-ratelimit-remaining-calls-per-second: '165.616667'
     status:
       code: 200
       message: OK
-    url: https://seankane.azurecr.io/oauth2/token
+    url: https://yalinlitests.azurecr.io/oauth2/token
 - request:
     body: '{"deleteEnabled": false, "writeEnabled": false, "listEnabled": false, "readEnabled":
-      false, "teleportEnabled": false}'
+      false}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '117'
+      - '91'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: PATCH
     uri: https://fake_url.azurecr.io/acr/v1/repoe19b1892
   response:
     body:
-      string: '{"registry": "fake_url.azurecr.io", "imageName": "repoe19b1892", "createdTime":
-        "2021-05-20T19:25:06.3749913Z", "lastUpdateTime": "2021-05-20T19:25:05.806487Z",
-        "manifestCount": 10, "tagCount": 1, "changeableAttributes": {"deleteEnabled":
+      string: '{"registry": "yalinlitests.azurecr.io", "imageName": "repoe19b1892",
+        "createdTime": "2021-08-17T18:19:55.9502131Z", "lastUpdateTime": "2021-08-17T18:19:54.2472558Z",
+        "manifestCount": 11, "tagCount": 1, "changeableAttributes": {"deleteEnabled":
         false, "writeEnabled": false, "readEnabled": false, "listEnabled": false,
         "teleportEnabled": false}}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '318'
+      content-length: '323'
       content-type: application/json; charset=utf-8
-      date: Thu, 20 May 2021 19:25:34 GMT
+      date: Tue, 17 Aug 2021 18:20:17 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -209,19 +236,19 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://seankane.azurecr.io/acr/v1/repoe19b1892
+    url: https://yalinlitests.azurecr.io/acr/v1/repoe19b1892
 - request:
     body: '{"deleteEnabled": true, "writeEnabled": true, "listEnabled": true, "readEnabled":
-      true, "teleportEnabled": false}'
+      true}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '113'
+      - '87'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: PATCH
     uri: https://fake_url.azurecr.io/acr/v1/repoe19b1892
   response:
@@ -234,7 +261,7 @@ interactions:
       connection: keep-alive
       content-length: '216'
       content-type: application/json; charset=utf-8
-      date: Thu, 20 May 2021 19:25:34 GMT
+      date: Tue, 17 Aug 2021 18:20:17 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -243,18 +270,45 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://seankane.azurecr.io/acr/v1/repoe19b1892
+    url: https://yalinlitests.azurecr.io/acr/v1/repoe19b1892
+- request:
+    body:
+      access_token: REDACTED
+      grant_type: access_token
+      service: yalinlitests.azurecr.io
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://fake_url.azurecr.io/oauth2/exchange
+  response:
+    body:
+      string: '{"refresh_token": "REDACTED"}'
+    headers:
+      connection: keep-alive
+      content-type: application/json; charset=utf-8
+      date: Tue, 17 Aug 2021 18:20:17 GMT
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+      x-ms-ratelimit-remaining-calls-per-second: '165.6'
+    status:
+      code: 200
+      message: OK
+    url: https://yalinlitests.azurecr.io/oauth2/exchange
 - request:
     body:
       grant_type: refresh_token
       refresh_token: REDACTED
       scope: repository:repoe19b1892:metadata_write
-      service: seankane.azurecr.io
+      service: yalinlitests.azurecr.io
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/token
   response:
@@ -263,42 +317,42 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 20 May 2021 19:25:35 GMT
+      date: Tue, 17 Aug 2021 18:20:17 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.366667'
+      x-ms-ratelimit-remaining-calls-per-second: '165.583333'
     status:
       code: 200
       message: OK
-    url: https://seankane.azurecr.io/oauth2/token
+    url: https://yalinlitests.azurecr.io/oauth2/token
 - request:
     body: '{"deleteEnabled": true, "writeEnabled": true, "listEnabled": true, "readEnabled":
-      true, "teleportEnabled": false}'
+      true}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '113'
+      - '87'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: PATCH
     uri: https://fake_url.azurecr.io/acr/v1/repoe19b1892
   response:
     body:
-      string: '{"registry": "fake_url.azurecr.io", "imageName": "repoe19b1892", "createdTime":
-        "2021-05-20T19:25:06.3749913Z", "lastUpdateTime": "2021-05-20T19:25:05.806487Z",
-        "manifestCount": 10, "tagCount": 1, "changeableAttributes": {"deleteEnabled":
+      string: '{"registry": "yalinlitests.azurecr.io", "imageName": "repoe19b1892",
+        "createdTime": "2021-08-17T18:19:55.9502131Z", "lastUpdateTime": "2021-08-17T18:19:54.2472558Z",
+        "manifestCount": 11, "tagCount": 1, "changeableAttributes": {"deleteEnabled":
         true, "writeEnabled": true, "readEnabled": true, "listEnabled": true, "teleportEnabled":
         false}}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '314'
+      content-length: '319'
       content-type: application/json; charset=utf-8
-      date: Thu, 20 May 2021 19:25:35 GMT
+      date: Tue, 17 Aug 2021 18:20:17 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -306,5 +360,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://seankane.azurecr.io/acr/v1/repoe19b1892
+    url: https://yalinlitests.azurecr.io/acr/v1/repoe19b1892
 version: 1

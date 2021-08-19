@@ -21,6 +21,7 @@ from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
 
 from .. import models as _models, _rest as rest
+from .._patch import _validate_text_records
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -32,7 +33,7 @@ if TYPE_CHECKING:
 
 class QuestionAnsweringClientOperationsMixin(object):
     @overload
-    def query_knowledgebase(
+    def query_knowledge_base(
         self,
         knowledge_base_query_options,  # type: "_models.KnowledgeBaseQueryOptions"
         **kwargs  # type: Any
@@ -55,7 +56,7 @@ class QuestionAnsweringClientOperationsMixin(object):
         pass
 
     @overload
-    def query_knowledgebase(
+    def query_knowledge_base(
         self,
         **kwargs  # type: Any
     ):
@@ -96,12 +97,49 @@ class QuestionAnsweringClientOperationsMixin(object):
         """
         pass
 
-    def query_knowledgebase(
+    def query_knowledge_base(
         self,
         *args,  # type: "_models.KnowledgeBaseQueryOptions"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.KnowledgeBaseAnswers"
+        """Answers the specified question using your knowledge base.
+
+        :param knowledge_base_query_options: Post body of the request. Provide either `knowledge_base_query_options`, OR
+         individual keyword arguments. If both are provided, only the options object will be used.
+        :type knowledge_base_query_options:
+         ~azure.ai.language.questionanswering.models.KnowledgeBaseQueryOptions
+        :keyword project_name: The name of the project to use.
+        :paramtype project_name: str
+        :keyword deployment_name: The name of the specific deployment of the project to use.
+        :paramtype deployment_name: str
+        :keyword question: User question to query against the knowledge base. Provide either `knowledge_base_query_options`, OR
+         individual keyword arguments. If both are provided, only the options object will be used.
+        :paramtype question: str
+        :keyword qna_id: Exact QnA ID to fetch from the knowledge base, this field takes priority over question.
+        :paramtype qna_id: int
+        :keyword top: Max number of answers to be returned for the question.
+        :paramtype top: int
+        :keyword user_id: Unique identifier for the user.
+        :paramtype user_id: str
+        :keyword confidence_score_threshold: Minimum threshold score for answers, value ranges from 0 to 1.
+        :paramtype confidence_score_threshold: float
+        :keyword context: Context object with previous QnA's information.
+        :paramtype context: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerRequestContext
+        :keyword ranker_type: (Optional) Set to 'QuestionOnly' for using a question only Ranker. Possible
+         values include: "Default", "QuestionOnly".
+        :paramtype ranker_type: str or ~azure.ai.language.questionanswering.models.RankerType
+        :keyword strict_filters: Filter QnAs based on give metadata list and knowledge base source names.
+        :paramtype strict_filters: ~azure.ai.language.questionanswering.models.StrictFilters
+        :keyword answer_span_request: To configure Answer span prediction feature.
+        :paramtype answer_span_request: ~azure.ai.language.questionanswering.models.AnswerSpanRequest
+        :keyword include_unstructured_sources: (Optional) Flag to enable Query over Unstructured Sources.
+        :paramtype include_unstructured_sources: bool
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: KnowledgeBaseAnswers, or the result of cls(response)
+        :rtype: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswers
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
         if args:
             knowledge_base_query_options = args[0]
         else:
@@ -126,12 +164,12 @@ class QuestionAnsweringClientOperationsMixin(object):
 
         json = self._serialize.body(knowledge_base_query_options, "KnowledgeBaseQueryOptions")
 
-        request = rest.build_query_knowledgebase_request(
+        request = rest.build_query_knowledge_base_request(
             content_type=content_type,
             project_name=project_name,
             deployment_name=deployment_name,
             json=json,
-            template_url=self.query_knowledgebase.metadata["url"],
+            template_url=self.query_knowledge_base.metadata["url"],
         )._to_pipeline_transport_request()
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -153,7 +191,7 @@ class QuestionAnsweringClientOperationsMixin(object):
 
         return deserialized
 
-    query_knowledgebase.metadata = {"url": "/:query-knowledgebases"}  # type: ignore
+    query_knowledge_base.metadata = {"url": "/:query-knowledgebases"}  # type: ignore
 
     @overload
     def query_text(
@@ -184,7 +222,7 @@ class QuestionAnsweringClientOperationsMixin(object):
         :keyword question: Required. User question to query against the given text records.
         :paramtype question: str
         :keyword records: Required. Text records to be searched for given question.
-        :paramtype records: list[~azure.ai.language.questionanswering.models.TextInput]
+        :paramtype records: list[str or ~azure.ai.language.questionanswering.models.TextRecord]
         :keyword language: Language of the text records. This is BCP-47 representation of a language. For
         example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as
         default.
@@ -207,6 +245,30 @@ class QuestionAnsweringClientOperationsMixin(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.TextAnswers"
+        """Answers the specified question using the provided text in the body.
+
+        :param text_query_options: Post body of the request. Provide either `text_query_options`, OR
+         individual keyword arguments. If both are provided, only the options object will be used.
+        :type text_query_options: ~azure.ai.language.questionanswering.models.TextQueryOptions
+        :keyword question: User question to query against the given text records. Provide either `text_query_options`, 
+         OR individual keyword arguments. If both are provided, only the options object will be used.
+        :paramtype question: str
+        :keyword records: Text records to be searched for given question. Provide either `text_query_options`, OR
+         individual keyword arguments. If both are provided, only the options object will be used.
+        :paramtype records: list[str or ~azure.ai.language.questionanswering.models.TextRecord]
+        :keyword language: Language of the text records. This is BCP-47 representation of a language. For
+         example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as default.
+        :paramtype language: str
+        :keyword string_index_type: Specifies the method used to interpret string offsets.  Defaults to
+         Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
+         https://aka.ms/text-analytics-offsets. Possible values include: "TextElements_v8",
+         "UnicodeCodePoint", "Utf16CodeUnit". Default value: "TextElements_v8".
+        :paramtype string_index_type: str or ~azure.ai.language.questionanswering.models.StringIndexType
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: TextAnswers, or the result of cls(response)
+        :rtype: ~azure.ai.language.questionanswering.models.TextAnswers
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
         if args:
             text_query_options = args[0]
         else:
@@ -216,6 +278,11 @@ class QuestionAnsweringClientOperationsMixin(object):
                 language=kwargs.pop("language", None),
                 string_index_type=kwargs.pop("string_index_type", "TextElements_v8")
             )
+        try:
+            text_query_options['records'] = _validate_text_records(text_query_options['records'])
+        except TypeError:
+            text_query_options.records = _validate_text_records(text_query_options.records)
+
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.TextAnswers"]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))

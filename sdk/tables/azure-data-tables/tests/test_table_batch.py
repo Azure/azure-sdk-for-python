@@ -768,3 +768,47 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
 
         finally:
             self._tear_down()
+
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
+    @tables_decorator
+    def test_batch_with_mode(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            table2_name = self._get_table_reference('table2')
+            table2 = self.ts.get_table_client(table2_name)
+            table2.create_table()
+
+            # Act
+            entity1 = {
+                "PartitionKey": "pk001",
+                "RowKey": "rk001",
+                "Value": 1,
+                "day": "Monday",
+                "float": 1.001
+            }
+            entity2 = {
+                "PartitionKey": "pk001",
+                "RowKey": "rk002",
+                "Value": 1,
+                "day": "Monday",
+                "float": 1.001
+            }
+
+
+            batch = [
+                ("upsert", entity1, {"mode": "merge"}),
+                ("upsert", entity2, {"mode": "replace"})
+            ]
+
+            resp = self.table.submit_transaction(batch)
+            assert len(resp) == 2
+
+            with pytest.raises(ValueError):
+                batch = [
+                    ("upsert", entity1, {"mode": "foo"}),
+                    ("upsert", entity2, {"mode": "bar"})
+                ]
+                self.table.submit_transaction(batch)
+        finally:
+            self._tear_down()

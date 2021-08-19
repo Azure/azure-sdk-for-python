@@ -35,7 +35,7 @@ These sample programs show common scenarios for the QuestionAnswering client's o
 
 ## Setup
 
-1. Install the Azure QuestionAnswering client library for Python with [pip][pip]):
+1. Install the Azure QuestionAnswering client library for Python with [pip][pip]:
 ```bash
 pip install --pre azure-ai-language-questionanswering
 ```

@@ -22,9 +22,9 @@ async def logs_query():
     where TimeGenerated > ago(12h) | 
     summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
 
-    # returns LogsQueryResults
+    # returns LogsQueryResult
     async with client:
-        response = await client.query(os.environ['LOG_WORKSPACE_ID'], query)
+        response = await client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None)
 
     if not response.tables:
         print("No results for the query")

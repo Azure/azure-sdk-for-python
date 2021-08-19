@@ -6,45 +6,27 @@ import functools
 import os
 from typing import TYPE_CHECKING
 
-from azure.core.credentials import AccessToken
 from azure.core.pipeline.transport import HttpRequest
 
-from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
+from .._internal.managed_identity_base import ManagedIdentityBase
 from .._internal.managed_identity_client import ManagedIdentityClient
-from .._internal.get_token_mixin import GetTokenMixin
 
 if TYPE_CHECKING:
     from typing import Any, Optional
 
 
-class AppServiceCredential(GetTokenMixin):
-    def __init__(self, **kwargs):
-        # type: (**Any) -> None
-        super(AppServiceCredential, self).__init__()
-
+class AppServiceCredential(ManagedIdentityBase):
+    def get_client(self, **kwargs):
+        # type: (**Any) -> Optional[ManagedIdentityClient]
         client_args = _get_client_args(**kwargs)
         if client_args:
-            self._available = True
-            self._client = ManagedIdentityClient(**client_args)
-        else:
-            self._available = False
+            return ManagedIdentityClient(**client_args)
+        return None
 
-    def get_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
-        if not self._available:
-            raise CredentialUnavailableError(
-                message="App Service managed identity configuration not found in environment"
-            )
-        return super(AppServiceCredential, self).get_token(*scopes, **kwargs)
-
-    def _acquire_token_silently(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> Optional[AccessToken]
-        return self._client.get_cached_token(*scopes)
-
-    def _request_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
-        return self._client.request_token(*scopes, **kwargs)
+    def get_unavailable_message(self):
+        # type: () -> str
+        return "App Service managed identity configuration not found in environment"
 
 
 def _get_client_args(**kwargs):
