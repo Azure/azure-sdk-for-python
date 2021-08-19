@@ -144,13 +144,13 @@ def test_response_no_charset_with_ascii_content(send_request):
 
 def test_response_no_charset_with_iso_8859_1_content(send_request):
     """
-    A response with ISO 8859-1 encoded content should decode correctly,
-    even with no charset specified.
+    We don't support iso-8859-1 by default following conversations
+    about endoding flow
     """
     response = send_request(
         request=HttpRequest("GET", "/encoding/iso-8859-1"),
     )
-    assert response.text() == u"Accented: Österreich"
+    assert response.text() == u"Accented: �sterreich"
     assert response.encoding is None
 
 def test_response_set_explicit_encoding(send_request):
