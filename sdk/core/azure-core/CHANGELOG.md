@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- We now use `azure.core.serialization.AzureJSONEncoder` to serialize `json` input to `azure.core.rest.HttpRequest`.
+
 ### Breaking Changes
 
 ### Bugs Fixed
