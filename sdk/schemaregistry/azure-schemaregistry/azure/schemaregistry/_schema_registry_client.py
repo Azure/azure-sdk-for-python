@@ -168,7 +168,7 @@ class SchemaRegistryClient(object):
             request = schema_rest.build_get_by_id_request(schema_id=schema_id)
             response = self._generated_client.send_request(request, **kwargs)
             response.raise_for_status()
-            schema =  _parse_response_schema(response)
+            schema = _parse_response_schema(response)
             self._id_to_schema[schema_id] = schema
             return schema
 
