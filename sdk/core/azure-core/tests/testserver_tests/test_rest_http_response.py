@@ -309,5 +309,5 @@ def test_text_and_encoding(send_request):
     assert response.text() == u"鿰ꦑ" == response.content.decode(response.encoding)
 
     # assert latin-1 changes text decoding without changing encoding property
-    assert response.text("latin-1") == 'ð\x9f\x91©' == response.content.decode("latin-1")
+    assert response.text("latin-1") == u'ð\x9f\x91©' == response.content.decode("latin-1")
     assert response.encoding == "utf-16"
