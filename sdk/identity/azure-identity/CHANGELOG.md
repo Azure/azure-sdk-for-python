@@ -1,8 +1,15 @@
 # Release History
 
-## 1.7.0b3 (Unreleased)
+## 1.6.1 (2021-08-19)
 
-### Features Added
+### Other Changes
+- Persistent cache implementations are now loaded on demand, enabling
+  workarounds when importing transitive dependencies such as pywin32
+  fails
+  ([#19989](https://github.com/Azure/azure-sdk-for-python/issues/19989))
+
+
+## 1.7.0b3 (2021-08-10)
 
 ### Breaking Changes
 > These changes do not impact the API of stable versions such as 1.6.0.
@@ -16,6 +23,11 @@
   ([#19943](https://github.com/Azure/azure-sdk-for-python/issues/19943))
 
 ### Other Changes
+- Added `CustomHookPolicy` to credential HTTP pipelines. This allows applications
+  to initialize credentials with `raw_request_hook` and `raw_response_hook`
+  keyword arguments. The value of these arguments should be a callback taking a
+  `PipelineRequest` and `PipelineResponse`, respectively. For example:
+  `ManagedIdentityCredential(raw_request_hook=lambda request: print(request.http_request.url))`
 - Reduced redundant `ChainedTokenCredential` and `DefaultAzureCredential`
   logging. On Python 3.7+, credentials invoked by these classes now log debug
   rather than info messages.
@@ -24,6 +36,7 @@
   workarounds when importing transitive dependencies such as pywin32
   fails
   ([#19989](https://github.com/Azure/azure-sdk-for-python/issues/19989))
+
 
 ## 1.7.0b2 (2021-07-08)
 ### Features Added
@@ -453,7 +466,7 @@ arguments ([8514](https://github.com/Azure/azure-sdk-for-python/pull/8514))
 for transport but the library does not require it as a dependency because the
 async API is optional. To use async credentials, please install
 [`aiohttp`](https://pypi.org/project/aiohttp/) or see
-[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#transport)
+[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#transport)
 for information about customizing the transport.
 - Renamed `ClientSecretCredential` parameter "`secret`" to "`client_secret`"
 - All credentials with `tenant_id` and `client_id` positional parameters now accept them in that order
@@ -522,7 +535,7 @@ authenticate silently after you've signed in to Visual Studio 2019, for
 example. `DefaultAzureCredential` includes `SharedTokenCacheCredential` when
 the shared cache is available, and environment variable `AZURE_USERNAME`
 is set. See the
-[README](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md#single-sign-on)
+[README](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md#single-sign-on)
 for more information.
 
 ### Dependency changes:
@@ -559,7 +572,7 @@ https://aka.ms/azure-sdk-preview1-python.
 
 This release supports service principal and managed identity authentication.
 See the
-[documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md)
+[documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md)
 for more details. User authentication will be added in an upcoming preview
 release.
 
