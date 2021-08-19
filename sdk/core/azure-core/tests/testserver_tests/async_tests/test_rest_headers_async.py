@@ -57,9 +57,9 @@ async def test_headers_response_keys(get_response_headers):
     assert list(h.keys()) == list(ref_dict.keys())
     assert repr(h.keys()) == repr(ref_dict.keys())
     assert "a" in h.keys()
-    assert "A" not in h.keys()
+    assert "A" in h.keys()
     assert "b" in h.keys()
-    assert "B" not in h.keys()
+    assert "B" in h.keys()
     assert set(h.keys()) == set(ref_dict.keys())
 
     # test mutability
