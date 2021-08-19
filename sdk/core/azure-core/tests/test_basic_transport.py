@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+from six.moves.http_client import HTTPConnection
 from collections import OrderedDict
 import sys
 
@@ -12,10 +13,11 @@ except ImportError:
     import mock
 
 from azure.core.pipeline.transport import HttpRequest, HttpResponse, RequestsTransport
-from azure.core.pipeline.transport._base import HttpTransport, _deserialize_response, _urljoin
+from azure.core.pipeline.transport._base import HttpClientTransportResponse, HttpTransport, _deserialize_response, _urljoin
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.pipeline import Pipeline
 from azure.core.exceptions import HttpResponseError
+import logging
 import pytest
 
 
@@ -90,6 +92,27 @@ def test_url_join():
     assert _urljoin('devstoreaccount1', 'testdir/') == 'devstoreaccount1/testdir/'
     assert _urljoin('devstoreaccount1/', '') == 'devstoreaccount1/'
     assert _urljoin('devstoreaccount1/', 'testdir/') == 'devstoreaccount1/testdir/'
+
+
+def test_http_client_response(port):
+    # Create a core request
+    request = HttpRequest("GET", "http://localhost:{}".format(port))
+
+    # Fake a transport based on http.client
+    conn = HTTPConnection("localhost", port)
+    conn.request("GET", "/get")
+    r1 = conn.getresponse()
+
+    response = HttpClientTransportResponse(request, r1)
+
+    # Don't assume too much in those assert, since we reach a real server
+    assert response.internal_response is r1
+    assert response.reason is not None
+    assert isinstance(response.status_code, int)
+    assert len(response.headers.keys()) != 0
+    assert len(response.text()) != 0
+    assert "content-type" in response.headers
+    assert "Content-Type" in response.headers
 
 
 def test_response_deserialization():
@@ -1082,6 +1105,40 @@ def test_recursive_multipart_receive():
 def test_close_unopened_transport():
     transport = RequestsTransport()
     transport.close()
+
+
+def test_timeout(caplog, port):
+    transport = RequestsTransport()
+
+    request = HttpRequest("GET", "http://localhost:{}/basic/string".format(port))
+
+    with caplog.at_level(logging.WARNING, logger="azure.core.pipeline.transport"):
+        with Pipeline(transport) as pipeline:
+            pipeline.run(request, connection_timeout=100)
+
+    assert "Tuple timeout setting is deprecated" not in caplog.text
+
+
+def test_tuple_timeout(caplog, port):
+    transport = RequestsTransport()
+
+    request = HttpRequest("GET", "http://localhost:{}/basic/string".format(port))
+
+    with caplog.at_level(logging.WARNING, logger="azure.core.pipeline.transport"):
+        with Pipeline(transport) as pipeline:
+            pipeline.run(request, connection_timeout=(100, 100))
+
+    assert "Tuple timeout setting is deprecated" in caplog.text
+
+
+def test_conflict_timeout(caplog, port):
+    transport = RequestsTransport()
+
+    request = HttpRequest("GET", "http://localhost:{}/basic/string".format(port))
+
+    with pytest.raises(ValueError):
+        with Pipeline(transport) as pipeline:
+            pipeline.run(request, connection_timeout=(100, 100), read_timeout = 100)
 
 
 @pytest.mark.skipif(sys.version_info < (3, 10), reason="Loop parameter is deprecated since Python 3.10")

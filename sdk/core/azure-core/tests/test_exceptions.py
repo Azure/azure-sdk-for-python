@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import json
+import requests
 try:
     from unittest.mock import Mock
 except ImportError:
@@ -32,6 +33,7 @@ except ImportError:
 
 # module under test
 from azure.core.exceptions import HttpResponseError, ODataV4Error, ODataV4Format
+from azure.core.pipeline.transport import RequestsTransportResponse
 from azure.core.pipeline.transport._base import _HttpResponseBase
 
 
@@ -152,6 +154,18 @@ class TestExceptions(object):
         assert error.status_code == 400
         assert isinstance(error.model, FakeErrorTwo)
         assert isinstance(error.error, ODataV4Format)
+
+    class TestExceptions(object):
+        def test_httpresponse_error_with_response(self, port):
+            response = requests.get("http://localhost:{}/basic/string".format(port))
+            http_response = RequestsTransportResponse(None, response)
+
+            error = HttpResponseError(response=http_response)
+            assert error.message == "Operation returned an invalid status 'OK'"
+            assert error.response is not None
+            assert error.reason == 'OK'
+            assert isinstance(error.status_code, int)
+            assert error.error is None
 
     def test_odata_v4_exception(self):
         message = {

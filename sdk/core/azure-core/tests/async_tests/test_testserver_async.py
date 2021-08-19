@@ -23,18 +23,15 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import requests
-from azure.core.exceptions import HttpResponseError
-from azure.core.pipeline.transport import RequestsTransportResponse
+import pytest
+from azure.core.pipeline.transport import HttpRequest, AioHttpTransport
+"""This file does a simple call to the testserver to make sure we can use the testserver"""
 
-class TestExceptions(object):
-    def test_httpresponse_error_with_response(self, port):
-        response = requests.get("http://localhost:{}/basic/string".format(port))
-        http_response = RequestsTransportResponse(None, response)
-
-        error = HttpResponseError(response=http_response)
-        assert error.message == "Operation returned an invalid status 'OK'"
-        assert error.response is not None
-        assert error.reason == 'OK'
-        assert isinstance(error.status_code, int)
-        assert error.error is None
+@pytest.mark.asyncio
+async def test_smoke(port):
+    request = HttpRequest(method="GET", url="http://localhost:{}/basic/string".format(port))
+    async with AioHttpTransport() as sender:
+        response = await sender.send(request)
+        response.raise_for_status()
+        await response.load_body()
+        assert response.text() == "Hello, world!"

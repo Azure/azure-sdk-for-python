@@ -4,9 +4,6 @@
 # license information.
 # -------------------------------------------------------------------------
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
-import functools
-import os
-import json
 import pytest
 from azure.core.rest import HttpRequest
 from azure.core.exceptions import StreamClosedError, StreamConsumedError, ResponseNotReadError

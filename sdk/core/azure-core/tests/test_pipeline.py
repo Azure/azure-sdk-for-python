@@ -354,3 +354,67 @@ def test_add_custom_policy():
         client = PipelineClient(base_url="test", policies=policies, per_retry_policies=foo_policy)
     with pytest.raises(ValueError):
         client = PipelineClient(base_url="test", policies=policies, per_retry_policies=[foo_policy])
+
+def test_basic_requests(port):
+
+    conf = Configuration()
+    request = HttpRequest("GET", "http://localhost:{}/basic/string".format(port))
+    policies = [
+        UserAgentPolicy("myusergant"),
+        RedirectPolicy()
+    ]
+    with Pipeline(RequestsTransport(), policies=policies) as pipeline:
+        response = pipeline.run(request)
+
+    assert pipeline._transport.session is None
+    assert isinstance(response.http_response.status_code, int)
+
+def test_basic_options_requests(port):
+
+    request = HttpRequest("OPTIONS", "http://localhost:{}/basic/string".format(port))
+    policies = [
+        UserAgentPolicy("myusergant"),
+        RedirectPolicy()
+    ]
+    with Pipeline(RequestsTransport(), policies=policies) as pipeline:
+        response = pipeline.run(request)
+
+    assert pipeline._transport.session is None
+    assert isinstance(response.http_response.status_code, int)
+
+def test_basic_requests_separate_session(port):
+
+    session = requests.Session()
+    request = HttpRequest("GET", "http://localhost:{}/basic/string".format(port))
+    policies = [
+        UserAgentPolicy("myusergant"),
+        RedirectPolicy()
+    ]
+    transport = RequestsTransport(session=session, session_owner=False)
+    with Pipeline(transport, policies=policies) as pipeline:
+        response = pipeline.run(request)
+
+    assert transport.session
+    assert isinstance(response.http_response.status_code, int)
+    transport.close()
+    assert transport.session
+    transport.session.close()
+
+def test_request_text(port):
+    client = PipelineClientBase("http://localhost:{}".format(port))
+    request = client.get(
+        "/",
+        content="foo"
+    )
+
+    # In absence of information, everything is JSON (double quote added)
+    assert request.data == json.dumps("foo")
+
+    request = client.post(
+        "/",
+        headers={'content-type': 'text/whatever'},
+        content="foo"
+    )
+
+    # We want a direct string
+    assert request.data == "foo"

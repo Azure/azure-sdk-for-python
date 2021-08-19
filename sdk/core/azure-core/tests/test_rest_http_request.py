@@ -11,7 +11,6 @@ import io
 import pytest
 import sys
 import collections
-from typing import Generator
 from azure.core.rest import HttpRequest
 
 @pytest.fixture
