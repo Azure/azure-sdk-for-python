@@ -84,15 +84,15 @@ def construct_iso8601(timespan=None):
 
 def native_col_type(col_type, value):
     if col_type == 'datetime':
-        return Deserializer.deserialize_iso(value)
+        value = Deserializer.deserialize_iso(value)
     elif col_type in ('timespan', 'guid', 'string'):
-        return str(value)
+        value = str(value)
     elif col_type == 'bool':
-        return bool(value)
+        value = bool(value)
     return value
 
 def process_row(col_types, row):
     new_row = []
-    for ind in range(len(row)):
-        new_row.append(native_col_type(col_types[ind].type, row[ind]))
+    for ind, val in enumerate(row):
+        new_row.append(native_col_type(col_types[ind].type, val))
     return new_row
