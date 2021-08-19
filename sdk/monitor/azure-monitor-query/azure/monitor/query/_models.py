@@ -463,8 +463,6 @@ class Metric(object):
     :vartype timeseries: list[~monitor_query_client.models.TimeSeriesElement]
     :ivar display_description: Detailed description of this metric.
     :vartype display_description: str
-    :ivar error: Error message encountered querying this specific metric.
-    :vartype error: ~azure.core.exceptions.HttpResponseError
     """
     def __init__(
         self,
@@ -477,15 +475,11 @@ class Metric(object):
         self.unit = kwargs['unit']
         self.timeseries = kwargs['timeseries']
         self.display_description = kwargs['display_description']
-        self.error = kwargs['error']
 
     @classmethod
     def _from_generated(cls, generated):
         if not generated:
             return cls()
-        error = None
-        if generated.error_message:
-            error = HttpResponseError(message=generated.error_message)
         return cls(
             id=generated.id,
             type=generated.type,

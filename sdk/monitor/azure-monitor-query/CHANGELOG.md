@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added addition `display_description` and `error` attributes to the `Metric` type.
+- Added addition `display_description` attribute to the `Metric` type.
 
 ### Breaking Changes
 
