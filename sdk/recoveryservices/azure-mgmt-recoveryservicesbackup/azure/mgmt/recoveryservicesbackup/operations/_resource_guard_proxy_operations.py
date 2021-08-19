@@ -22,8 +22,8 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class ProtectedItemsOperations(object):
-    """ProtectedItemsOperations operations.
+class ResourceGuardProxyOperations(object):
+    """ResourceGuardProxyOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -48,36 +48,25 @@ class ProtectedItemsOperations(object):
         self,
         vault_name,  # type: str
         resource_group_name,  # type: str
-        fabric_name,  # type: str
-        container_name,  # type: str
-        protected_item_name,  # type: str
-        filter=None,  # type: Optional[str]
+        resource_guard_proxy_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.ProtectedItemResource"
-        """Provides the details of the backed up item. This is an asynchronous operation. To know the
-        status of the operation,
-        call the GetItemOperationResult API.
+        # type: (...) -> "_models.ResourceGuardProxyBaseResource"
+        """Returns ResourceGuardProxy under vault and with the name referenced in request.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str
         :param resource_group_name: The name of the resource group where the recovery services vault is
          present.
         :type resource_group_name: str
-        :param fabric_name: Fabric name associated with the backed up item.
-        :type fabric_name: str
-        :param container_name: Container name associated with the backed up item.
-        :type container_name: str
-        :param protected_item_name: Backed up item name whose details are to be fetched.
-        :type protected_item_name: str
-        :param filter: OData filter options.
-        :type filter: str
+        :param resource_guard_proxy_name:
+        :type resource_guard_proxy_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ProtectedItemResource, or the result of cls(response)
-        :rtype: ~azure.mgmt.recoveryservicesbackup.models.ProtectedItemResource
+        :return: ResourceGuardProxyBaseResource, or the result of cls(response)
+        :rtype: ~azure.mgmt.recoveryservicesbackup.models.ResourceGuardProxyBaseResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProtectedItemResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceGuardProxyBaseResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -91,17 +80,13 @@ class ProtectedItemsOperations(object):
             'vaultName': self._serialize.url("vault_name", vault_name, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'fabricName': self._serialize.url("fabric_name", fabric_name, 'str'),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'protectedItemName': self._serialize.url("protected_item_name", protected_item_name, 'str'),
+            'resourceGuardProxyName': self._serialize.url("resource_guard_proxy_name", resource_guard_proxy_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -115,66 +100,52 @@ class ProtectedItemsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('ProtectedItemResource', pipeline_response)
+        deserialized = self._deserialize('ResourceGuardProxyBaseResource', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupResourceGuardProxies/{resourceGuardProxyName}'}  # type: ignore
 
-    def create_or_update(
+    def put(
         self,
         vault_name,  # type: str
         resource_group_name,  # type: str
-        fabric_name,  # type: str
-        container_name,  # type: str
-        protected_item_name,  # type: str
-        parameters,  # type: "_models.ProtectedItemResource"
+        resource_guard_proxy_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["_models.ProtectedItemResource"]
-        """Enables backup of an item or to modifies the backup policy information of an already backed up
-        item. This is an
-        asynchronous operation. To know the status of the operation, call the GetItemOperationResult
-        API.
+        # type: (...) -> "_models.ResourceGuardProxyBaseResource"
+        """Add or Update ResourceGuardProxy under vault
+        Secures vault critical operations.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str
         :param resource_group_name: The name of the resource group where the recovery services vault is
          present.
         :type resource_group_name: str
-        :param fabric_name: Fabric name associated with the backup item.
-        :type fabric_name: str
-        :param container_name: Container name associated with the backup item.
-        :type container_name: str
-        :param protected_item_name: Item name to be backed up.
-        :type protected_item_name: str
-        :param parameters: resource backed up item.
-        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.ProtectedItemResource
+        :param resource_guard_proxy_name:
+        :type resource_guard_proxy_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ProtectedItemResource, or the result of cls(response)
-        :rtype: ~azure.mgmt.recoveryservicesbackup.models.ProtectedItemResource or None
+        :return: ResourceGuardProxyBaseResource, or the result of cls(response)
+        :rtype: ~azure.mgmt.recoveryservicesbackup.models.ResourceGuardProxyBaseResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ProtectedItemResource"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceGuardProxyBaseResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2021-07-01"
-        content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
-        url = self.create_or_update.metadata['url']  # type: ignore
+        url = self.put.metadata['url']  # type: ignore
         path_format_arguments = {
             'vaultName': self._serialize.url("vault_name", vault_name, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'fabricName': self._serialize.url("fabric_name", fabric_name, 'str'),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'protectedItemName': self._serialize.url("protected_item_name", protected_item_name, 'str'),
+            'resourceGuardProxyName': self._serialize.url("resource_guard_proxy_name", resource_guard_proxy_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -184,55 +155,41 @@ class ProtectedItemsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'ProtectedItemResource')
-        body_content_kwargs['content'] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
+        request = self._client.put(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('ProtectedItemResource', pipeline_response)
+        deserialized = self._deserialize('ResourceGuardProxyBaseResource', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}'}  # type: ignore
+    put.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupResourceGuardProxies/{resourceGuardProxyName}'}  # type: ignore
 
     def delete(
         self,
         vault_name,  # type: str
         resource_group_name,  # type: str
-        fabric_name,  # type: str
-        container_name,  # type: str
-        protected_item_name,  # type: str
+        resource_guard_proxy_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Used to disable backup of an item within a container. This is an asynchronous operation. To
-        know the status of the
-        request, call the GetItemOperationResult API.
+        """Delete ResourceGuardProxy under vault.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str
         :param resource_group_name: The name of the resource group where the recovery services vault is
          present.
         :type resource_group_name: str
-        :param fabric_name: Fabric name associated with the backed up item.
-        :type fabric_name: str
-        :param container_name: Container name associated with the backed up item.
-        :type container_name: str
-        :param protected_item_name: Backed up item to be deleted.
-        :type protected_item_name: str
+        :param resource_guard_proxy_name:
+        :type resource_guard_proxy_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -252,9 +209,7 @@ class ProtectedItemsOperations(object):
             'vaultName': self._serialize.url("vault_name", vault_name, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'fabricName': self._serialize.url("fabric_name", fabric_name, 'str'),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'protectedItemName': self._serialize.url("protected_item_name", protected_item_name, 'str'),
+            'resourceGuardProxyName': self._serialize.url("resource_guard_proxy_name", resource_guard_proxy_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -270,11 +225,83 @@ class ProtectedItemsOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202, 204]:
+        if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}'}  # type: ignore
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupResourceGuardProxies/{resourceGuardProxyName}'}  # type: ignore
+
+    def unlock_delete(
+        self,
+        vault_name,  # type: str
+        resource_group_name,  # type: str
+        resource_guard_proxy_name,  # type: str
+        parameters,  # type: "_models.UnlockDeleteRequest"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.UnlockDeleteResponse"
+        """Secures delete ResourceGuardProxy operations.
+
+        :param vault_name: The name of the recovery services vault.
+        :type vault_name: str
+        :param resource_group_name: The name of the resource group where the recovery services vault is
+         present.
+        :type resource_group_name: str
+        :param resource_guard_proxy_name:
+        :type resource_guard_proxy_name: str
+        :param parameters: Request body for operation.
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.UnlockDeleteRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: UnlockDeleteResponse, or the result of cls(response)
+        :rtype: ~azure.mgmt.recoveryservicesbackup.models.UnlockDeleteResponse
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.UnlockDeleteResponse"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-07-01"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.unlock_delete.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'vaultName': self._serialize.url("vault_name", vault_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGuardProxyName': self._serialize.url("resource_guard_proxy_name", resource_guard_proxy_name, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(parameters, 'UnlockDeleteRequest')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('UnlockDeleteResponse', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    unlock_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupResourceGuardProxies/{resourceGuardProxyName}/unlockDelete'}  # type: ignore
