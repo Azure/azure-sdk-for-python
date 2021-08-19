@@ -390,11 +390,11 @@ queues = service_bus_administration_client.list_queues()
 
 # get total, active, scheduled, dead-letter message count info
 for queue in queues:
-    queue_info = service_bus_administration_client.get_queue_runtime_properties(queue.name)
-    print(queue_info.total_message_count)
-    print(queue_info.active_message_count)
-    print(queue_info.scheduled_message_count)
-    print(queue_info.dead_letter_message_count)
+    queue_runtime_properties = service_bus_administration_client.get_queue_runtime_properties(queue.name)
+    print(queue_runtime_properties.total_message_count)
+    print(queue_runtime_properties.active_message_count)
+    print(queue_runtime_properties.scheduled_message_count)
+    print(queue_runtime_properties.dead_letter_message_count)
 ```
 
 ### Migration samples
