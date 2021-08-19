@@ -16,6 +16,7 @@
 - `metric_namespace_name` is renamed to `fully_qualified_namespace`
 - `is_dimension_required` is renamed to `dimension_required`
 - `time_grain` is renamed to `granularity`
+- `LogsQueryResult` now returns `datetime` objects for a time values.
 
 ### Bugs Fixed
 

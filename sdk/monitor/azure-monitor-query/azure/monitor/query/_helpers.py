@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
-from msrest import Serializer
+from msrest import Serializer, Deserializer
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 
@@ -81,3 +81,18 @@ def construct_iso8601(timespan=None):
     else:
         iso_str = duration
     return iso_str
+
+def native_col_type(col_type, value):
+    if col_type == 'datetime':
+        return Deserializer.deserialize_iso(value)
+    elif col_type in ('timespan', 'guid', 'string'):
+        return str(value)
+    elif col_type == 'bool':
+        return bool(value)
+    return value
+
+def process_row(col_types, row):
+    new_row = []
+    for ind in range(len(row)):
+        new_row.append(native_col_type(col_types[ind].type, row[ind]))
+    return new_row
