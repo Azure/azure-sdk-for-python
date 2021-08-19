@@ -19,25 +19,17 @@ def _credential():
     return credential
 
 @pytest.mark.live_test_only
-def test_query_response_datetime():
+def test_query_response_types():
     credential = _credential()
     client = LogsQueryClient(credential)
-    query = """AppRequests | 
-    where TimeGenerated > ago(12h) | 
-    summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
+    query = """AppRequests |
+    summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId, Success, ItemCount, DurationMs"""
 
     # returns LogsQueryResult 
     result = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None)
-    assert result.tables[0].rows[0][0].__class__ == datetime
+    assert result.tables[0].rows[0][0].__class__ == datetime # TimeGenerated generated is a datetime
+    assert result.tables[0].rows[0][1].__class__ == str # _ResourceId generated is a string
+    assert result.tables[0].rows[0][2].__class__ == bool # Success generated is a bool
+    assert result.tables[0].rows[0][3].__class__ == int # ItemCount generated is a int
+    assert result.tables[0].rows[0][4].__class__ == float # DurationMs generated is a real
 
-@pytest.mark.live_test_only
-def test_query_response_float():
-    credential = _credential()
-    client = LogsQueryClient(credential)
-    query = """AppRequests | 
-    where TimeGenerated > ago(12h) | 
-    summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
-
-    # returns LogsQueryResult 
-    result = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None)
-    assert result.tables[0].rows[0][2].__class__ == float
