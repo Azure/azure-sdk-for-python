@@ -13,7 +13,7 @@ from rest_client_async import AsyncTestRestClient
 async def test_normal_call(client):
     async def _raise_and_get_text(response):
         response.raise_for_status()
-        assert response.text == "Hello, world!"
+        assert response.text() == "Hello, world!"
         assert response.is_closed
     request = HttpRequest("GET", url="/basic/string")
     response = await client.send_request(request)
@@ -33,9 +33,9 @@ async def test_stream_call(client):
         response.raise_for_status()
         assert not response.is_closed
         with pytest.raises(ResponseNotReadError):
-            response.text
+            response.text()
         await response.read()
-        assert response.text == "Hello, world!"
+        assert response.text() == "Hello, world!"
         assert response.is_closed
     request = HttpRequest("GET", url="/streams/basic")
     response = await client.send_request(request, stream=True)

@@ -29,7 +29,7 @@ def test_response(send_request, port):
     )
     assert response.status_code == 200
     assert response.reason == "OK"
-    assert response.text == "Hello, world!"
+    assert response.text() == "Hello, world!"
     assert response.request.method == "GET"
     assert response.request.url == "http://localhost:{}/basic/string".format(port)
 
@@ -40,7 +40,7 @@ def test_response_content(send_request):
     )
     assert response.status_code == 200
     assert response.reason == "OK"
-    assert response.text == "Hello, world!"
+    assert response.text() == "Hello, world!"
 
 
 def test_response_text(send_request):
@@ -49,7 +49,7 @@ def test_response_text(send_request):
     )
     assert response.status_code == 200
     assert response.reason == "OK"
-    assert response.text == "Hello, world!"
+    assert response.text() == "Hello, world!"
     assert response.headers["Content-Length"] == '13'
     assert response.headers['Content-Type'] == "text/plain; charset=utf-8"
     assert response.content_type == "text/plain; charset=utf-8"
@@ -60,7 +60,7 @@ def test_response_html(send_request):
     )
     assert response.status_code == 200
     assert response.reason == "OK"
-    assert response.text == "<html><body>Hello, world!</html></body>"
+    assert response.text() == "<html><body>Hello, world!</html></body>"
 
 def test_raise_for_status(client):
     response = client.send_request(
@@ -97,7 +97,7 @@ def test_response_content_type_encoding(send_request):
         request=HttpRequest("GET", "/encoding/latin-1")
     )
     assert response.content_type == "text/plain; charset=latin-1"
-    assert response.text == u"Latin 1: ÿ"
+    assert response.text() == u"Latin 1: ÿ"
     assert response.encoding == "latin-1"
 
 
@@ -109,7 +109,7 @@ def test_response_autodetect_encoding(send_request):
         request=HttpRequest("GET", "/encoding/latin-1")
     )
 
-    assert response.text == u'Latin 1: ÿ'
+    assert response.text() == u'Latin 1: ÿ'
     assert response.encoding == "latin-1"
 
 @pytest.mark.skipif(sys.version_info < (3, 0),
@@ -123,7 +123,7 @@ def test_response_fallback_to_autodetect(send_request):
     )
 
     assert response.headers["Content-Type"] == "text/plain; charset=invalid-codec-name"
-    assert response.text == u"おはようございます。"
+    assert response.text() == u"おはようございます。"
     assert response.encoding is None
 
 
@@ -139,18 +139,18 @@ def test_response_no_charset_with_ascii_content(send_request):
     assert response.headers["Content-Type"] == "text/plain"
     assert response.status_code == 200
     assert response.encoding is None
-    assert response.text == "Hello, world!"
+    assert response.text() == "Hello, world!"
 
 
 def test_response_no_charset_with_iso_8859_1_content(send_request):
     """
-    A response with ISO 8859-1 encoded content should decode correctly,
-    even with no charset specified.
+    We don't support iso-8859-1 by default following conversations
+    about endoding flow
     """
     response = send_request(
         request=HttpRequest("GET", "/encoding/iso-8859-1"),
     )
-    assert response.text == u"Accented: Österreich"
+    assert response.text() == u"Accented: �sterreich"
     assert response.encoding is None
 
 def test_response_set_explicit_encoding(send_request):
@@ -160,7 +160,7 @@ def test_response_set_explicit_encoding(send_request):
     )
     assert response.headers["Content-Type"] == "text/plain; charset=utf-8"
     response.encoding = "latin-1"
-    assert response.text == u"Latin 1: ÿ"
+    assert response.text() == u"Latin 1: ÿ"
     assert response.encoding == "latin-1"
 
 def test_json(send_request):
@@ -181,19 +181,19 @@ def test_emoji(send_request):
     response = send_request(
         request=HttpRequest("GET", "/encoding/emoji"),
     )
-    assert response.text == u"👩"
+    assert response.text() == u"👩"
 
 def test_emoji_family_with_skin_tone_modifier(send_request):
     response = send_request(
         request=HttpRequest("GET", "/encoding/emoji-family-skin-tone-modifier"),
     )
-    assert response.text == u"👩🏻‍👩🏽‍👧🏾‍👦🏿 SSN: 859-98-0987"
+    assert response.text() == u"👩🏻‍👩🏽‍👧🏾‍👦🏿 SSN: 859-98-0987"
 
 def test_korean_nfc(send_request):
     response = send_request(
         request=HttpRequest("GET", "/encoding/korean"),
     )
-    assert response.text == u"아가"
+    assert response.text() == u"아가"
 
 def test_urlencoded_content(send_request):
     send_request(
@@ -255,7 +255,7 @@ def test_get_xml_basic(send_request):
         "/xml/basic",
     )
     response = send_request(request)
-    parsed_xml = ET.fromstring(response.text)
+    parsed_xml = ET.fromstring(response.text())
     assert parsed_xml.tag == 'slideshow'
     attributes = parsed_xml.attrib
     assert attributes['title'] == "Sample Slide Show"
@@ -294,5 +294,20 @@ def test_send_request_return_pipeline_response(client):
     assert hasattr(response, "http_request")
     assert hasattr(response, "http_response")
     assert hasattr(response, "context")
-    assert response.http_response.text == "Hello, world!"
+    assert response.http_response.text() == "Hello, world!"
     assert hasattr(response.http_request, "content")
+
+def test_text_and_encoding(send_request):
+    response = send_request(
+        request=HttpRequest("GET", "/encoding/emoji"),
+    )
+    assert response.content == u"👩".encode("utf-8")
+    assert response.text() == u"👩"
+
+    # try setting encoding as a property
+    response.encoding = "utf-16"
+    assert response.text() == u"鿰ꦑ" == response.content.decode(response.encoding)
+
+    # assert latin-1 changes text decoding without changing encoding property
+    assert response.text("latin-1") == u'ð\x9f\x91©' == response.content.decode("latin-1")
+    assert response.encoding == "utf-16"

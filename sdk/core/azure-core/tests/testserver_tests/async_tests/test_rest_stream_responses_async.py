@@ -170,11 +170,11 @@ async def test_iter_read_back_and_forth(client):
         async for line in response.iter_lines():
             assert line
         with pytest.raises(ResponseNotReadError):
-            response.text
+            response.text()
         with pytest.raises(StreamConsumedError):
             await response.read()
         with pytest.raises(ResponseNotReadError):
-            response.text
+            response.text()
 
 @pytest.mark.asyncio
 async def test_stream_with_return_pipeline_response(client):
