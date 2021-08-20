@@ -25,7 +25,7 @@ class RoleAssignmentsOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.keyvault.v7_2.models
+    :type models: ~azure.keyvault.v7_3_preview.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -57,7 +57,7 @@ class RoleAssignmentsOperations:
         :type role_assignment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RoleAssignment, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.RoleAssignment
+        :rtype: ~azure.keyvault.v7_3_preview.models.RoleAssignment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleAssignment"]
@@ -65,7 +65,7 @@ class RoleAssignmentsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         # Construct URL
@@ -120,10 +120,10 @@ class RoleAssignmentsOperations:
          GUID.
         :type role_assignment_name: str
         :param parameters: Parameters for the role assignment.
-        :type parameters: ~azure.keyvault.v7_2.models.RoleAssignmentCreateParameters
+        :type parameters: ~azure.keyvault.v7_3_preview.models.RoleAssignmentCreateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RoleAssignment, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.RoleAssignment
+        :rtype: ~azure.keyvault.v7_3_preview.models.RoleAssignment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleAssignment"]
@@ -131,7 +131,7 @@ class RoleAssignmentsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -190,7 +190,7 @@ class RoleAssignmentsOperations:
         :type role_assignment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RoleAssignment, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.RoleAssignment
+        :rtype: ~azure.keyvault.v7_3_preview.models.RoleAssignment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleAssignment"]
@@ -198,7 +198,7 @@ class RoleAssignmentsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         # Construct URL
@@ -254,7 +254,7 @@ class RoleAssignmentsOperations:
         :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RoleAssignmentListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_2.models.RoleAssignmentListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_3_preview.models.RoleAssignmentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleAssignmentListResult"]
@@ -262,7 +262,7 @@ class RoleAssignmentsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
