@@ -23,7 +23,7 @@
 database service.
 """
 
-import threading
+import asyncio
 
 from six.moves.urllib.parse import urlparse
 
@@ -54,7 +54,7 @@ class _GlobalEndpointManager(object):
             self.refresh_time_interval_in_ms,
         )
         self.refresh_needed = False
-        self.refresh_lock = threading.RLock()
+        self.refresh_lock = asyncio.RLock()
         self.last_refresh_time = 0
 
     def get_refresh_time_interval_in_ms_stub(self):  # pylint: disable=no-self-use
@@ -84,21 +84,21 @@ class _GlobalEndpointManager(object):
     def can_use_multiple_write_locations(self, request):
         return self.location_cache.can_use_multiple_write_locations_for_request(request)
 
-    def force_refresh(self, database_account):
+    async def force_refresh(self, database_account):
         self.refresh_needed = True
-        self.refresh_endpoint_list(database_account)
+        await self.refresh_endpoint_list(database_account)
 
-    def refresh_endpoint_list(self, database_account, **kwargs):
-        with self.refresh_lock:
+    async def refresh_endpoint_list(self, database_account, **kwargs):
+        async with self.refresh_lock:
             # if refresh is not needed or refresh is already taking place, return
             if not self.refresh_needed:
                 return
             try:
-                self._refresh_endpoint_list_private(database_account, **kwargs)
+                await self._refresh_endpoint_list_private(database_account, **kwargs)
             except Exception as e:
                 raise e
 
-    def _refresh_endpoint_list_private(self, database_account=None, **kwargs):
+    async def _refresh_endpoint_list_private(self, database_account=None, **kwargs):
         if database_account:
             self.location_cache.perform_on_database_account_read(database_account)
             self.refresh_needed = False
@@ -108,12 +108,12 @@ class _GlobalEndpointManager(object):
             and self.location_cache.current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms
         ):
             if not database_account:
-                database_account = self._GetDatabaseAccount(**kwargs)
+                database_account = await self._GetDatabaseAccount(**kwargs)
                 self.location_cache.perform_on_database_account_read(database_account)
                 self.last_refresh_time = self.location_cache.current_time_millis()
                 self.refresh_needed = False
 
-    def _GetDatabaseAccount(self, **kwargs):
+    async def _GetDatabaseAccount(self, **kwargs):
         """Gets the database account.
 
         First tries by using the default endpoint, and if that doesn't work,
@@ -121,7 +121,7 @@ class _GlobalEndpointManager(object):
         specified, to get the database account.
         """
         try:
-            database_account = self._GetDatabaseAccountStub(self.DefaultEndpoint, **kwargs)
+            database_account = await self._GetDatabaseAccountStub(self.DefaultEndpoint, **kwargs)
             return database_account
         # If for any reason(non-globaldb related), we are not able to get the database
         # account from the above call to GetDatabaseAccount, we would try to get this
@@ -133,7 +133,7 @@ class _GlobalEndpointManager(object):
             for location_name in self.PreferredLocations:
                 locational_endpoint = _GlobalEndpointManager.GetLocationalEndpoint(self.DefaultEndpoint, location_name)
                 try:
-                    database_account = self._GetDatabaseAccountStub(locational_endpoint, **kwargs)
+                    database_account = await self._GetDatabaseAccountStub(locational_endpoint, **kwargs)
                     return database_account
                 except exceptions.CosmosHttpResponseError:
                     pass

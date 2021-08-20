@@ -6,24 +6,21 @@ from azure.cosmos import container
 from azure.core.tracing.decorator import distributed_trace
 import asyncio
 from azure.cosmos import partition_key, cosmos_client
-from azure.cosmos.aio.cosmos_client_async import AsyncCosmosClient
+from azure.cosmos.aio.cosmos_client import CosmosClient
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.partition_key import PartitionKey
 from azure.cosmos.database import DatabaseProxy
-from azure.cosmos.aio.database_async import DatabaseProxy
 
 import config
 import heroes
 
-def get_azure_data():
-	endpoint = "https://simonmoreno-sql.documents.azure.com:443/"
-	key = 'd3KEBamwtPiQpuuyFSlXEOF98cuhL8oqW3jQygmAfTOPImEZPN2yYWFd4IE5pQNdBF70v8I7LldjXB6fimMbrg=='
-	return [endpoint, key]
+endpoint = ''
+key = ''
 
 def creation():
 
 	# <create_cosmos_client>
-	client = AsyncCosmosClient(get_azure_data()[0], get_azure_data()[1])
+	client = CosmosClient(endpoint, key)
 	# </create_cosmos_client
 
 	# Create a database
@@ -65,7 +62,7 @@ def creation():
 	print('Query returned {0} items. Operation consumed {1} request units'.format(len(items), request_charge))
 
 def clean_heroes():
-	client = AsyncCosmosClient(get_azure_data()[0], get_azure_data()[1])
+	client = CosmosClient(endpoint, key)
 	database_name = 'MockHeroesDatabase'
 	database = client.get_database_client(database_name)
 	container_name = 'mockHeroesContainer'
@@ -76,14 +73,14 @@ def clean_heroes():
 		print(response)
 
 def destroy():
-	client = AsyncCosmosClient(get_azure_data()[0], get_azure_data()[1])
+	client = CosmosClient(endpoint, key)
 	database_name = 'MockHeroesDatabase'
 	response = client.delete_database(database_name)
 	print(f"Database with name {database_name} has been deleted.")
 	print(response)
 
 async def createaio():
-	client = AsyncCosmosClient(get_azure_data()[0], get_azure_data()[1])
+	client = CosmosClient(endpoint, key)
 	database_name = 'MockHeroesDatabase'
 	database = client.create_database_if_not_exists(id=database_name)
 
@@ -104,7 +101,7 @@ async def createaio():
 	# 	container.create_item_aio(body=generic)
 
 def get_db():
-	client = AsyncCosmosClient(get_azure_data()[0], get_azure_data()[1])
+	client = CosmosClient(endpoint, key)
 	database_name = 'MockHeroesDatabase'
 	res = client.get_database_client(database_name).list_containers()
 	r= client.get_database_client('lols').list_containers()
@@ -126,10 +123,6 @@ def get_db():
 # creation()
 
 import uuid
-
-
-endpoint = "https://simonmoreno-sql.documents.azure.com:443/"
-key = 'd3KEBamwtPiQpuuyFSlXEOF98cuhL8oqW3jQygmAfTOPImEZPN2yYWFd4IE5pQNdBF70v8I7LldjXB6fimMbrg=='
 
 def get_test_item():
     async_item = {
@@ -159,10 +152,10 @@ def create_test():
 
 async def async_read_test():
 	# ids = create_test()
-	client = AsyncCosmosClient(endpoint, key)
-	db = client.get_database_client(id="AsyncDB")
-	container = db.get_container_client(id="AsyncContainer")
-	print(container.read())
+	client = CosmosClient(endpoint, key)
+	# db = client.get_database_client(id="AsyncDB")
+	# container = db.get_container_client(id="AsyncContainer")
+	# print(container.read())
 
 
 
