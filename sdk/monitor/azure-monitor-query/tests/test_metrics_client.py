@@ -26,6 +26,20 @@ def test_metrics_auth():
     assert response.metrics
 
 @pytest.mark.live_test_only
+def test_metrics_granularity():
+    credential = _credential()
+    client = MetricsQueryClient(credential)
+    response = client.query(
+        os.environ['METRICS_RESOURCE_URI'],
+        metric_names=["MatchedEventCount"],
+        timespan=timedelta(days=1),
+        granularity=timedelta(minutes=5),
+        aggregations=[AggregationType.COUNT]
+        )
+    assert response
+    assert response.granularity == timedelta(minutes=5)
+
+@pytest.mark.live_test_only
 def test_metrics_namespaces():
     client = MetricsQueryClient(_credential())
 

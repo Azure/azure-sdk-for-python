@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added additional `display_description` attribute to the `Metric` type.
+
 ### Breaking Changes
 
 - Rename `batch_query` to `query_batch`.
@@ -15,7 +17,8 @@
 - `top` is renamed to `max_results` in the metric's `query` API.
 - `metric_namespace_name` is renamed to `fully_qualified_namespace`
 - `is_dimension_required` is renamed to `dimension_required`
-- `time_grain` is renamed to `granularity`
+- `interval`  and `time_grain` are renamed to `granularity`
+- `orderby` is renamed to `order_by`
 - `LogsQueryResult` now returns `datetime` objects for a time values.
 
 ### Bugs Fixed
