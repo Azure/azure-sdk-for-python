@@ -20,6 +20,8 @@
 - `interval`  and `time_grain` are renamed to `granularity`
 - `orderby` is renamed to `order_by`
 - `LogsQueryResult` now returns `datetime` objects for a time values.
+- `LogsBatchQuery` doesn't accept a `request_id` anymore.
+- `MetricsMetadataValues` is removed. A dictionary is used instead.
 
 ### Bugs Fixed
 
