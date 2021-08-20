@@ -8,6 +8,7 @@
 # pylint: disable=anomalous-backslash-in-string
 
 from typing import TYPE_CHECKING, Any, Optional
+from azure.core.tracing.decorator import distributed_trace
 
 from ._generated._monitor_query_client import (
     MonitorQueryClient,
@@ -53,6 +54,7 @@ class MetricsQueryClient(object):
         self._namespace_op = self._client.metric_namespaces
         self._definitions_op = self._client.metric_definitions
 
+    @distributed_trace
     def query(self, resource_uri, metric_names, **kwargs):
         # type: (str, list, Optional[timedelta], Any) -> MetricsResult
         """Lists the metric values for a resource.
@@ -120,6 +122,7 @@ class MetricsQueryClient(object):
         generated = self._metrics_op.list(resource_uri, connection_verify=False, **kwargs)
         return MetricsResult._from_generated(generated) # pylint: disable=protected-access
 
+    @distributed_trace
     def list_metric_namespaces(self, resource_uri, **kwargs):
         # type: (str, Any) -> ItemPaged[MetricNamespace]
         """Lists the metric namespaces for the resource.
@@ -143,6 +146,7 @@ class MetricsQueryClient(object):
             ),
             **kwargs)
 
+    @distributed_trace
     def list_metric_definitions(self, resource_uri, metric_namespace=None, **kwargs):
         # type: (str, str, Any) -> ItemPaged[MetricDefinition]
         """Lists the metric definitions for the resource.

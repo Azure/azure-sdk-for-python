@@ -17,6 +17,7 @@
 - `is_dimension_required` is renamed to `dimension_required`
 - `time_grain` is renamed to `granularity`
 - `LogsQueryResult` now returns `datetime` objects for a time values.
+- `LogsBatchQuery` doesn't accept a `request_id` anymore.
 
 ### Bugs Fixed
 

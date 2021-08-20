@@ -11,6 +11,7 @@ from datetime import timedelta
 from typing import TYPE_CHECKING, Any, List, Optional
 
 from azure.core.async_paging import AsyncItemPaged
+from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._generated.aio._monitor_query_client import (
     MonitorQueryClient,
@@ -43,6 +44,7 @@ class MetricsQueryClient(object):
         self._namespace_op = self._client.metric_namespaces
         self._definitions_op = self._client.metric_definitions
 
+    @distributed_trace_async
     async def query(
         self,
         resource_uri: str,
@@ -104,6 +106,7 @@ class MetricsQueryClient(object):
         generated = await self._metrics_op.list(resource_uri, connection_verify=False, **kwargs)
         return MetricsResult._from_generated(generated) # pylint: disable=protected-access
 
+    @distributed_trace_async
     def list_metric_namespaces(self, resource_uri: str, **kwargs: Any) -> AsyncItemPaged[MetricNamespace]:
         """Lists the metric namespaces for the resource.
 
@@ -126,6 +129,7 @@ class MetricsQueryClient(object):
             ),
             **kwargs)
 
+    @distributed_trace_async
     def list_metric_definitions(
         self,
         resource_uri: str,
