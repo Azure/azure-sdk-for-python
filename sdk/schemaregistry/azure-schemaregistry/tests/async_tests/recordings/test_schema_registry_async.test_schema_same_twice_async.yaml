@@ -19,7 +19,7 @@ interactions:
       string: '{"id":"6bdebddbfb8d4feca13c51289508d0a6"}'
     headers:
       content-type: application/json
-      date: Thu, 19 Aug 2021 21:11:18 GMT
+      date: Fri, 20 Aug 2021 15:35:36 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-twice-async7bfd16a1/versions/1?api-version=2020-09-01-preview
       schema-id: 6bdebddbfb8d4feca13c51289508d0a6
       schema-id-location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/6bdebddbfb8d4feca13c51289508d0a6?api-version=2020-09-01-preview
@@ -53,7 +53,7 @@ interactions:
       string: '{"id":"6bdebddbfb8d4feca13c51289508d0a6"}'
     headers:
       content-type: application/json
-      date: Thu, 19 Aug 2021 21:11:18 GMT
+      date: Fri, 20 Aug 2021 15:35:36 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-twice-async7bfd16a1/versions/1?api-version=2020-09-01-preview
       schema-id: 6bdebddbfb8d4feca13c51289508d0a6
       schema-id-location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/6bdebddbfb8d4feca13c51289508d0a6?api-version=2020-09-01-preview

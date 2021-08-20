@@ -25,7 +25,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Thu, 19 Aug 2021 21:10:56 GMT
+      - Fri, 20 Aug 2021 15:35:13 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-basic31c70f88/versions/1?api-version=2020-09-01-preview
       schema-id:
@@ -73,7 +73,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Thu, 19 Aug 2021 21:10:56 GMT
+      - Fri, 20 Aug 2021 15:35:13 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-basic31c70f88/versions/1?api-version=2020-09-01-preview
       schema-id:
