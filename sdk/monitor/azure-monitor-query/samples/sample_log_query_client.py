@@ -20,18 +20,26 @@ client = LogsQueryClient(credential)
 query = """AppRequests |
 summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
 
+query = """
+AppRequests
+| where TimeGenerated > ago(1h)
+| fork
+    ( summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId )
+"""
+
 # returns LogsQueryResult 
 response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=timedelta(days=1))
 
 if not response.tables:
     print("No results for the query")
 
-try:
-    table = response.tables[0]
-    df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
-    print(df)
-except TypeError:
-    print(response.error)
+for table in response.tables:
+    try:
+        print ([col.name for col in table.columns])
+        df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
+        print(df)
+    except TypeError:
+        print(response.error)
 # [END send_logs_query]
 """
     TimeGenerated                                        _ResourceId          avgRequestDuration
