@@ -231,17 +231,6 @@ class EndpointResourceState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     STOPPED = "Stopped"
     STOPPING = "Stopping"
 
-class Enum46(with_metaclass(_CaseInsensitiveEnumMeta, int, Enum)):
-    """If the action type is block, this field defines the default customer overridable http response
-    status code.
-    """
-
-    TWO_HUNDRED = 200
-    FOUR_HUNDRED_THREE = 403
-    FOUR_HUNDRED_FIVE = 405
-    FOUR_HUNDRED_SIX = 406
-    FOUR_HUNDRED_TWENTY_NINE = 429
-
 class ForwardingProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Protocol this rule will use when forwarding traffic to backends.
     """
@@ -487,6 +476,17 @@ class PolicyResourceState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DISABLING = "Disabling"
     DISABLED = "Disabled"
     DELETING = "Deleting"
+
+class PolicySettingsDefaultCustomBlockResponseStatusCode(with_metaclass(_CaseInsensitiveEnumMeta, int, Enum)):
+    """If the action type is block, this field defines the default customer overridable http response
+    status code.
+    """
+
+    TWO_HUNDRED = 200
+    FOUR_HUNDRED_THREE = 403
+    FOUR_HUNDRED_FIVE = 405
+    FOUR_HUNDRED_SIX = 406
+    FOUR_HUNDRED_TWENTY_NINE = 429
 
 class PostArgsOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Describes operator to be matched

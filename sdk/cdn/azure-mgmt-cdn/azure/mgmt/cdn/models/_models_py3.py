@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -55,7 +55,43 @@ class Resource(msrest.serialization.Model):
         self.system_data = None
 
 
-class AFDDomain(Resource):
+class ProxyResource(Resource):
+    """The resource model definition for a ARM proxy resource. It will have everything other than required location and tags.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar system_data: Read only system data.
+    :vartype system_data: ~azure.mgmt.cdn.models.SystemData
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ProxyResource, self).__init__(**kwargs)
+
+
+class AFDDomain(ProxyResource):
     """Friendly domain name mapping to the endpoint hostname that the customer provides for branding purposes, e.g. www.contoso.com.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -664,7 +700,7 @@ class AfdErrorResponse(msrest.serialization.Model):
         self.error = error
 
 
-class AFDOrigin(Resource):
+class AFDOrigin(ProxyResource):
     """CDN origin is the source of the content being delivered via CDN. When the edge nodes represented by an endpoint do not have the requested content cached, they attempt to fetch it from one or more of the configured origins.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -700,7 +736,7 @@ class AFDOrigin(Resource):
     :type weight: int
     :param shared_private_link_resource: The properties of the private link resource for private
      origin.
-    :type shared_private_link_resource: object
+    :type shared_private_link_resource: any
     :param enabled_state: Whether to enable health probes to be made against backends defined under
      backendPools. Health probes can only be disabled if there is a single enabled backend in single
      enabled backend pool. Possible values include: "Enabled", "Disabled".
@@ -754,7 +790,7 @@ class AFDOrigin(Resource):
         origin_host_header: Optional[str] = None,
         priority: Optional[int] = None,
         weight: Optional[int] = None,
-        shared_private_link_resource: Optional[object] = None,
+        shared_private_link_resource: Optional[Any] = None,
         enabled_state: Optional[Union[str, "EnabledState"]] = None,
         **kwargs
     ):
@@ -772,7 +808,7 @@ class AFDOrigin(Resource):
         self.deployment_status = None
 
 
-class AFDOriginGroup(Resource):
+class AFDOriginGroup(ProxyResource):
     """AFDOrigin group comprising of origins is used for load balancing to origins when the content cannot be served from CDN.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1112,7 +1148,7 @@ class AFDOriginUpdatePropertiesParameters(msrest.serialization.Model):
     :type weight: int
     :param shared_private_link_resource: The properties of the private link resource for private
      origin.
-    :type shared_private_link_resource: object
+    :type shared_private_link_resource: any
     :param enabled_state: Whether to enable health probes to be made against backends defined under
      backendPools. Health probes can only be disabled if there is a single enabled backend in single
      enabled backend pool. Possible values include: "Enabled", "Disabled".
@@ -1148,7 +1184,7 @@ class AFDOriginUpdatePropertiesParameters(msrest.serialization.Model):
         origin_host_header: Optional[str] = None,
         priority: Optional[int] = None,
         weight: Optional[int] = None,
-        shared_private_link_resource: Optional[object] = None,
+        shared_private_link_resource: Optional[Any] = None,
         enabled_state: Optional[Union[str, "EnabledState"]] = None,
         **kwargs
     ):
@@ -1192,7 +1228,7 @@ class AFDOriginProperties(AFDStateProperties, AFDOriginUpdatePropertiesParameter
     :type weight: int
     :param shared_private_link_resource: The properties of the private link resource for private
      origin.
-    :type shared_private_link_resource: object
+    :type shared_private_link_resource: any
     :param enabled_state: Whether to enable health probes to be made against backends defined under
      backendPools. Health probes can only be disabled if there is a single enabled backend in single
      enabled backend pool. Possible values include: "Enabled", "Disabled".
@@ -1238,7 +1274,7 @@ class AFDOriginProperties(AFDStateProperties, AFDOriginUpdatePropertiesParameter
         origin_host_header: Optional[str] = None,
         priority: Optional[int] = None,
         weight: Optional[int] = None,
-        shared_private_link_resource: Optional[object] = None,
+        shared_private_link_resource: Optional[Any] = None,
         enabled_state: Optional[Union[str, "EnabledState"]] = None,
         **kwargs
     ):
@@ -1282,7 +1318,7 @@ class AFDOriginUpdateParameters(msrest.serialization.Model):
     :type weight: int
     :param shared_private_link_resource: The properties of the private link resource for private
      origin.
-    :type shared_private_link_resource: object
+    :type shared_private_link_resource: any
     :param enabled_state: Whether to enable health probes to be made against backends defined under
      backendPools. Health probes can only be disabled if there is a single enabled backend in single
      enabled backend pool. Possible values include: "Enabled", "Disabled".
@@ -1318,7 +1354,7 @@ class AFDOriginUpdateParameters(msrest.serialization.Model):
         origin_host_header: Optional[str] = None,
         priority: Optional[int] = None,
         weight: Optional[int] = None,
-        shared_private_link_resource: Optional[object] = None,
+        shared_private_link_resource: Optional[Any] = None,
         enabled_state: Optional[Union[str, "EnabledState"]] = None,
         **kwargs
     ):
@@ -1374,7 +1410,7 @@ class CacheExpirationActionParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required.  Default value:
+    :ivar odata_type:  Has constant value:
      "#Microsoft.Azure.Cdn.Models.DeliveryRuleCacheExpirationActionParameters".
     :vartype odata_type: str
     :param cache_behavior: Required. Caching behavior for the requests. Possible values include:
@@ -1424,7 +1460,7 @@ class CacheKeyQueryStringActionParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required.  Default value:
+    :ivar odata_type:  Has constant value:
      "#Microsoft.Azure.Cdn.Models.DeliveryRuleCacheKeyQueryStringBehaviorActionParameters".
     :vartype odata_type: str
     :param query_string_behavior: Required. Caching behavior for the requests. Possible values
@@ -1466,7 +1502,7 @@ class CdnCertificateSourceParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required.  Default value:
+    :ivar odata_type:  Has constant value:
      "#Microsoft.Azure.Cdn.Models.CdnCertificateSourceParameters".
     :vartype odata_type: str
     :param certificate_type: Required. Type of certificate used. Possible values include: "Shared",
@@ -1800,7 +1836,7 @@ class CheckNameAvailabilityInput(msrest.serialization.Model):
 
     :param name: Required. The resource name to validate.
     :type name: str
-    :ivar type: Required. The type of the resource whose name is to be validated. Default value:
+    :ivar type: The type of the resource whose name is to be validated. Has constant value:
      "Microsoft.Cdn/Profiles/Endpoints".
     :vartype type: str
     """
@@ -2081,7 +2117,7 @@ class CookiesMatchConditionParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required.  Default value:
+    :ivar odata_type:  Has constant value:
      "#Microsoft.Azure.Cdn.Models.DeliveryRuleCookiesConditionParameters".
     :vartype odata_type: str
     :param selector: Name of Cookies to be matched.
@@ -2132,7 +2168,7 @@ class CookiesMatchConditionParameters(msrest.serialization.Model):
         self.transforms = transforms
 
 
-class CustomDomain(Resource):
+class CustomDomain(ProxyResource):
     """Friendly domain name mapping to the endpoint hostname that the customer provides for branding purposes, e.g. www.contoso.com.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3405,7 +3441,7 @@ class DomainValidationProperties(msrest.serialization.Model):
         self.expiration_date = None
 
 
-class EdgeNode(Resource):
+class EdgeNode(ProxyResource):
     """Edgenode is a global Point of Presence (POP) location used to deliver CDN content to end users.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4164,7 +4200,7 @@ class HeaderActionParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required.  Default value:
+    :ivar odata_type:  Has constant value:
      "#Microsoft.Azure.Cdn.Models.DeliveryRuleHeaderActionParameters".
     :vartype odata_type: str
     :param header_action: Required. Action to perform. Possible values include: "Append",
@@ -4287,7 +4323,7 @@ class HttpVersionMatchConditionParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required.  Default value:
+    :ivar odata_type:  Has constant value:
      "#Microsoft.Azure.Cdn.Models.DeliveryRuleHttpVersionConditionParameters".
     :vartype odata_type: str
     :param operator: Required. Describes operator to be matched. Possible values include: "Equal".
@@ -4364,7 +4400,7 @@ class IsDeviceMatchConditionParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required.  Default value:
+    :ivar odata_type:  Has constant value:
      "#Microsoft.Azure.Cdn.Models.DeliveryRuleIsDeviceConditionParameters".
     :vartype odata_type: str
     :param operator: Required. Describes operator to be matched. Possible values include: "Equal".
@@ -4416,7 +4452,7 @@ class KeyVaultCertificateSourceParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required.  Default value:
+    :ivar odata_type:  Has constant value:
      "#Microsoft.Azure.Cdn.Models.KeyVaultCertificateSourceParameters".
     :vartype odata_type: str
     :param subscription_id: Required. Subscription Id of the user's Key Vault containing the SSL
@@ -4492,7 +4528,7 @@ class KeyVaultSigningKeyParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required.  Default value:
+    :ivar odata_type:  Has constant value:
      "#Microsoft.Azure.Cdn.Models.KeyVaultSigningKeyParameters".
     :vartype odata_type: str
     :param subscription_id: Required. Subscription Id of the user's Key Vault containing the
@@ -5216,7 +5252,7 @@ class OperationsListResult(msrest.serialization.Model):
         self.next_link = next_link
 
 
-class Origin(Resource):
+class Origin(ProxyResource):
     """CDN origin is the source of the content being delivered via CDN. When the edge nodes represented by an endpoint do not have the requested content cached, they attempt to fetch it from one or more of the configured origins.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5340,7 +5376,7 @@ class Origin(Resource):
         self.private_endpoint_status = None
 
 
-class OriginGroup(Resource):
+class OriginGroup(ProxyResource):
     """Origin group comprising of origins is used for load balancing to origins when the content cannot be served from CDN.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5487,7 +5523,7 @@ class OriginGroupOverrideActionParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required.  Default value:
+    :ivar odata_type:  Has constant value:
      "#Microsoft.Azure.Cdn.Models.DeliveryRuleOriginGroupOverrideActionParameters".
     :vartype odata_type: str
     :param origin_group: Required. defines the OriginGroup that would override the
@@ -5985,7 +6021,8 @@ class PolicySettings(msrest.serialization.Model):
     :param default_custom_block_response_status_code: If the action type is block, this field
      defines the default customer overridable http response status code. Possible values include:
      200, 403, 405, 406, 429.
-    :type default_custom_block_response_status_code: str or ~azure.mgmt.cdn.models.Enum46
+    :type default_custom_block_response_status_code: str or
+     ~azure.mgmt.cdn.models.PolicySettingsDefaultCustomBlockResponseStatusCode
     :param default_custom_block_response_body: If the action type is block, customer can override
      the response body. The body must be specified in base64 encoding.
     :type default_custom_block_response_body: str
@@ -6009,7 +6046,7 @@ class PolicySettings(msrest.serialization.Model):
         enabled_state: Optional[Union[str, "PolicyEnabledState"]] = None,
         mode: Optional[Union[str, "PolicyMode"]] = None,
         default_redirect_url: Optional[str] = None,
-        default_custom_block_response_status_code: Optional[Union[int, "Enum46"]] = None,
+        default_custom_block_response_status_code: Optional[Union[int, "PolicySettingsDefaultCustomBlockResponseStatusCode"]] = None,
         default_custom_block_response_body: Optional[str] = None,
         **kwargs
     ):
@@ -6028,7 +6065,7 @@ class PostArgsMatchConditionParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required.  Default value:
+    :ivar odata_type:  Has constant value:
      "#Microsoft.Azure.Cdn.Models.DeliveryRulePostArgsConditionParameters".
     :vartype odata_type: str
     :param selector: Name of PostArg to be matched.
@@ -6202,42 +6239,6 @@ class ProfileUpdateParameters(msrest.serialization.Model):
         self.tags = tags
 
 
-class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have everything other than required location and tags.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar system_data: Read only system data.
-    :vartype system_data: ~azure.mgmt.cdn.models.SystemData
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)
-
-
 class PurgeParameters(msrest.serialization.Model):
     """Parameters required for content purge.
 
@@ -6273,7 +6274,7 @@ class QueryStringMatchConditionParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required.  Default value:
+    :ivar odata_type:  Has constant value:
      "#Microsoft.Azure.Cdn.Models.DeliveryRuleQueryStringConditionParameters".
     :vartype odata_type: str
     :param operator: Required. Describes operator to be matched. Possible values include: "Any",
@@ -6522,7 +6523,7 @@ class RemoteAddressMatchConditionParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required.  Default value:
+    :ivar odata_type:  Has constant value:
      "#Microsoft.Azure.Cdn.Models.DeliveryRuleRemoteAddressConditionParameters".
     :vartype odata_type: str
     :param operator: Required. Describes operator to be matched. Possible values include: "Any",
@@ -6576,7 +6577,7 @@ class RequestBodyMatchConditionParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required.  Default value:
+    :ivar odata_type:  Has constant value:
      "#Microsoft.Azure.Cdn.Models.DeliveryRuleRequestBodyConditionParameters".
     :vartype odata_type: str
     :param operator: Required. Describes operator to be matched. Possible values include: "Any",
@@ -6629,7 +6630,7 @@ class RequestHeaderMatchConditionParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required.  Default value:
+    :ivar odata_type:  Has constant value:
      "#Microsoft.Azure.Cdn.Models.DeliveryRuleRequestHeaderConditionParameters".
     :vartype odata_type: str
     :param selector: Name of Header to be matched.
@@ -6687,7 +6688,7 @@ class RequestMethodMatchConditionParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required.  Default value:
+    :ivar odata_type:  Has constant value:
      "#Microsoft.Azure.Cdn.Models.DeliveryRuleRequestMethodConditionParameters".
     :vartype odata_type: str
     :param operator: Required. Describes operator to be matched. Possible values include: "Equal".
@@ -6734,10 +6735,10 @@ class RequestSchemeMatchConditionParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required.  Default value:
+    :ivar odata_type:  Has constant value:
      "#Microsoft.Azure.Cdn.Models.DeliveryRuleRequestSchemeConditionParameters".
     :vartype odata_type: str
-    :ivar operator: Required. Describes operator to be matched. Default value: "Equal".
+    :ivar operator: Describes operator to be matched. Has constant value: "Equal".
     :vartype operator: str
     :param negate_condition: Describes if this is negate condition or not.
     :type negate_condition: bool
@@ -6780,7 +6781,7 @@ class RequestUriMatchConditionParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required.  Default value:
+    :ivar odata_type:  Has constant value:
      "#Microsoft.Azure.Cdn.Models.DeliveryRuleRequestUriConditionParameters".
     :vartype odata_type: str
     :param operator: Required. Describes operator to be matched. Possible values include: "Any",
@@ -7093,7 +7094,7 @@ class ResponseBasedOriginErrorDetectionParameters(msrest.serialization.Model):
         self.http_error_ranges = http_error_ranges
 
 
-class Route(Resource):
+class Route(ProxyResource):
     """Friendly Routes name mapping to the any Routes or secret related information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7120,7 +7121,7 @@ class Route(Resource):
     :param patterns_to_match: The route patterns of the rule.
     :type patterns_to_match: list[str]
     :param compression_settings: compression settings.
-    :type compression_settings: object
+    :type compression_settings: any
     :param query_string_caching_behavior: Defines how CDN caches requests that include query
      strings. You can ignore any query strings when caching, bypass caching to prevent requests that
      contain query strings from being cached, or cache every request with a unique URL. Possible
@@ -7187,7 +7188,7 @@ class Route(Resource):
         rule_sets: Optional[List["ResourceReference"]] = None,
         supported_protocols: Optional[List[Union[str, "AFDEndpointProtocols"]]] = None,
         patterns_to_match: Optional[List[str]] = None,
-        compression_settings: Optional[object] = None,
+        compression_settings: Optional[Any] = None,
         query_string_caching_behavior: Optional[Union[str, "AfdQueryStringCachingBehavior"]] = None,
         forwarding_protocol: Optional[Union[str, "ForwardingProtocol"]] = None,
         link_to_default_domain: Optional[Union[str, "LinkToDefaultDomain"]] = None,
@@ -7260,7 +7261,7 @@ class RouteUpdatePropertiesParameters(msrest.serialization.Model):
     :param patterns_to_match: The route patterns of the rule.
     :type patterns_to_match: list[str]
     :param compression_settings: compression settings.
-    :type compression_settings: object
+    :type compression_settings: any
     :param query_string_caching_behavior: Defines how CDN caches requests that include query
      strings. You can ignore any query strings when caching, bypass caching to prevent requests that
      contain query strings from being cached, or cache every request with a unique URL. Possible
@@ -7306,7 +7307,7 @@ class RouteUpdatePropertiesParameters(msrest.serialization.Model):
         rule_sets: Optional[List["ResourceReference"]] = None,
         supported_protocols: Optional[List[Union[str, "AFDEndpointProtocols"]]] = None,
         patterns_to_match: Optional[List[str]] = None,
-        compression_settings: Optional[object] = None,
+        compression_settings: Optional[Any] = None,
         query_string_caching_behavior: Optional[Union[str, "AfdQueryStringCachingBehavior"]] = None,
         forwarding_protocol: Optional[Union[str, "ForwardingProtocol"]] = None,
         link_to_default_domain: Optional[Union[str, "LinkToDefaultDomain"]] = None,
@@ -7348,7 +7349,7 @@ class RouteProperties(AFDStateProperties, RouteUpdatePropertiesParameters):
     :param patterns_to_match: The route patterns of the rule.
     :type patterns_to_match: list[str]
     :param compression_settings: compression settings.
-    :type compression_settings: object
+    :type compression_settings: any
     :param query_string_caching_behavior: Defines how CDN caches requests that include query
      strings. You can ignore any query strings when caching, bypass caching to prevent requests that
      contain query strings from being cached, or cache every request with a unique URL. Possible
@@ -7407,7 +7408,7 @@ class RouteProperties(AFDStateProperties, RouteUpdatePropertiesParameters):
         rule_sets: Optional[List["ResourceReference"]] = None,
         supported_protocols: Optional[List[Union[str, "AFDEndpointProtocols"]]] = None,
         patterns_to_match: Optional[List[str]] = None,
-        compression_settings: Optional[object] = None,
+        compression_settings: Optional[Any] = None,
         query_string_caching_behavior: Optional[Union[str, "AfdQueryStringCachingBehavior"]] = None,
         forwarding_protocol: Optional[Union[str, "ForwardingProtocol"]] = None,
         link_to_default_domain: Optional[Union[str, "LinkToDefaultDomain"]] = None,
@@ -7449,7 +7450,7 @@ class RouteUpdateParameters(msrest.serialization.Model):
     :param patterns_to_match: The route patterns of the rule.
     :type patterns_to_match: list[str]
     :param compression_settings: compression settings.
-    :type compression_settings: object
+    :type compression_settings: any
     :param query_string_caching_behavior: Defines how CDN caches requests that include query
      strings. You can ignore any query strings when caching, bypass caching to prevent requests that
      contain query strings from being cached, or cache every request with a unique URL. Possible
@@ -7495,7 +7496,7 @@ class RouteUpdateParameters(msrest.serialization.Model):
         rule_sets: Optional[List["ResourceReference"]] = None,
         supported_protocols: Optional[List[Union[str, "AFDEndpointProtocols"]]] = None,
         patterns_to_match: Optional[List[str]] = None,
-        compression_settings: Optional[object] = None,
+        compression_settings: Optional[Any] = None,
         query_string_caching_behavior: Optional[Union[str, "AfdQueryStringCachingBehavior"]] = None,
         forwarding_protocol: Optional[Union[str, "ForwardingProtocol"]] = None,
         link_to_default_domain: Optional[Union[str, "LinkToDefaultDomain"]] = None,
@@ -7518,7 +7519,7 @@ class RouteUpdateParameters(msrest.serialization.Model):
         self.enabled_state = enabled_state
 
 
-class Rule(Resource):
+class Rule(ProxyResource):
     """Friendly Rules name mapping to the any Rules or secret related information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7725,7 +7726,7 @@ class RuleProperties(AFDStateProperties, RuleUpdatePropertiesParameters):
         self.deployment_status = None
 
 
-class RuleSet(Resource):
+class RuleSet(ProxyResource):
     """Friendly RuleSet name mapping to the any RuleSet or secret related information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7876,7 +7877,7 @@ class RuleUpdateParameters(msrest.serialization.Model):
         self.match_processing_behavior = match_processing_behavior
 
 
-class Secret(Resource):
+class Secret(ProxyResource):
     """Friendly Secret name mapping to the any Secret or secret related information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7997,7 +7998,7 @@ class SecretProperties(AFDStateProperties):
         self.parameters = parameters
 
 
-class SecurityPolicy(Resource):
+class SecurityPolicy(ProxyResource):
     """SecurityPolicy association for AzureFrontDoor profile.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8390,7 +8391,7 @@ class UrlFileExtensionMatchConditionParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required.  Default value:
+    :ivar odata_type:  Has constant value:
      "#Microsoft.Azure.Cdn.Models.DeliveryRuleUrlFileExtensionMatchConditionParameters".
     :vartype odata_type: str
     :param operator: Required. Describes operator to be matched. Possible values include: "Any",
@@ -8443,7 +8444,7 @@ class UrlFileNameMatchConditionParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required.  Default value:
+    :ivar odata_type:  Has constant value:
      "#Microsoft.Azure.Cdn.Models.DeliveryRuleUrlFilenameConditionParameters".
     :vartype odata_type: str
     :param operator: Required. Describes operator to be matched. Possible values include: "Any",
@@ -8496,7 +8497,7 @@ class UrlPathMatchConditionParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required.  Default value:
+    :ivar odata_type:  Has constant value:
      "#Microsoft.Azure.Cdn.Models.DeliveryRuleUrlPathMatchConditionParameters".
     :vartype odata_type: str
     :param operator: Required. Describes operator to be matched. Possible values include: "Any",
@@ -8583,7 +8584,7 @@ class UrlRedirectActionParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required.  Default value:
+    :ivar odata_type:  Has constant value:
      "#Microsoft.Azure.Cdn.Models.DeliveryRuleUrlRedirectActionParameters".
     :vartype odata_type: str
     :param redirect_type: Required. The redirect type the rule will use when redirecting traffic.
@@ -8686,7 +8687,7 @@ class UrlRewriteActionParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required.  Default value:
+    :ivar odata_type:  Has constant value:
      "#Microsoft.Azure.Cdn.Models.DeliveryRuleUrlRewriteActionParameters".
     :vartype odata_type: str
     :param source_pattern: Required. define a request URI pattern that identifies the type of
@@ -8769,7 +8770,7 @@ class UrlSigningActionParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required.  Default value:
+    :ivar odata_type:  Has constant value:
      "#Microsoft.Azure.Cdn.Models.DeliveryRuleUrlSigningActionParameters".
     :vartype odata_type: str
     :param algorithm: Algorithm to use for URL signing. Possible values include: "SHA256".
@@ -9316,22 +9317,17 @@ class WafMetricsResponse(msrest.serialization.Model):
 class WafMetricsResponseSeriesItem(msrest.serialization.Model):
     """WafMetricsResponseSeriesItem.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     :param metric:
     :type metric: str
-    :ivar unit:  Default value: "count".
-    :vartype unit: str
+    :param unit:  The only acceptable values to pass in are None and "count". The default value is
+     None.
+    :type unit: str
     :param groups:
     :type groups: list[~azure.mgmt.cdn.models.WafMetricsResponseSeriesPropertiesItemsItem]
     :param data:
     :type data:
      list[~azure.mgmt.cdn.models.Components18OrqelSchemasWafmetricsresponsePropertiesSeriesItemsPropertiesDataItems]
     """
-
-    _validation = {
-        'unit': {'constant': True},
-    }
 
     _attribute_map = {
         'metric': {'key': 'metric', 'type': 'str'},
@@ -9340,18 +9336,18 @@ class WafMetricsResponseSeriesItem(msrest.serialization.Model):
         'data': {'key': 'data', 'type': '[Components18OrqelSchemasWafmetricsresponsePropertiesSeriesItemsPropertiesDataItems]'},
     }
 
-    unit = "count"
-
     def __init__(
         self,
         *,
         metric: Optional[str] = None,
+        unit: Optional[str] = None,
         groups: Optional[List["WafMetricsResponseSeriesPropertiesItemsItem"]] = None,
         data: Optional[List["Components18OrqelSchemasWafmetricsresponsePropertiesSeriesItemsPropertiesDataItems"]] = None,
         **kwargs
     ):
         super(WafMetricsResponseSeriesItem, self).__init__(**kwargs)
         self.metric = metric
+        self.unit = unit
         self.groups = groups
         self.data = data
 

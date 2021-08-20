@@ -48,7 +48,7 @@ class RulesOperations:
         resource_group_name: str,
         profile_name: str,
         rule_set_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RuleListResult"]:
         """Lists all of the existing delivery rules within a rule set.
 
@@ -111,7 +111,7 @@ class RulesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.AfdErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -128,7 +128,7 @@ class RulesOperations:
         profile_name: str,
         rule_set_name: str,
         rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Rule":
         """Gets an existing delivery rule within a rule set.
 
@@ -178,7 +178,7 @@ class RulesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AfdErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Rule', pipeline_response)
@@ -196,7 +196,7 @@ class RulesOperations:
         rule_set_name: str,
         rule_name: str,
         rule: "_models.Rule",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Rule":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Rule"]
         error_map = {
@@ -236,7 +236,7 @@ class RulesOperations:
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AfdErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -261,7 +261,7 @@ class RulesOperations:
         rule_set_name: str,
         rule_name: str,
         rule: "_models.Rule",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Rule"]:
         """Creates a new delivery rule within the specified rule set.
 
@@ -277,8 +277,8 @@ class RulesOperations:
         :type rule: ~azure.mgmt.cdn.models.Rule
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Rule or the result of cls(response)
@@ -342,7 +342,7 @@ class RulesOperations:
         rule_set_name: str,
         rule_name: str,
         rule_update_properties: "_models.RuleUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Rule":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Rule"]
         error_map = {
@@ -382,7 +382,7 @@ class RulesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AfdErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -404,7 +404,7 @@ class RulesOperations:
         rule_set_name: str,
         rule_name: str,
         rule_update_properties: "_models.RuleUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Rule"]:
         """Updates an existing delivery rule within a rule set.
 
@@ -420,8 +420,8 @@ class RulesOperations:
         :type rule_update_properties: ~azure.mgmt.cdn.models.RuleUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Rule or the result of cls(response)
@@ -484,7 +484,7 @@ class RulesOperations:
         profile_name: str,
         rule_set_name: str,
         rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -519,7 +519,7 @@ class RulesOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AfdErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -533,7 +533,7 @@ class RulesOperations:
         profile_name: str,
         rule_set_name: str,
         rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes an existing delivery rule within a rule set.
 
@@ -547,8 +547,8 @@ class RulesOperations:
         :type rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)

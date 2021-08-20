@@ -47,7 +47,7 @@ class SecurityPoliciesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SecurityPolicyListResult"]:
         """Lists security policies associated with the profile.
 
@@ -107,7 +107,7 @@ class SecurityPoliciesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.AfdErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -123,7 +123,7 @@ class SecurityPoliciesOperations:
         resource_group_name: str,
         profile_name: str,
         security_policy_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SecurityPolicy":
         """Gets an existing security policy within a profile.
 
@@ -170,7 +170,7 @@ class SecurityPoliciesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AfdErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SecurityPolicy', pipeline_response)
@@ -187,7 +187,7 @@ class SecurityPoliciesOperations:
         profile_name: str,
         security_policy_name: str,
         security_policy: "_models.SecurityPolicy",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SecurityPolicy":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityPolicy"]
         error_map = {
@@ -226,7 +226,7 @@ class SecurityPoliciesOperations:
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AfdErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -250,7 +250,7 @@ class SecurityPoliciesOperations:
         profile_name: str,
         security_policy_name: str,
         security_policy: "_models.SecurityPolicy",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.SecurityPolicy"]:
         """Creates a new security policy within the specified profile.
 
@@ -264,8 +264,8 @@ class SecurityPoliciesOperations:
         :type security_policy: ~azure.mgmt.cdn.models.SecurityPolicy
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either SecurityPolicy or the result of cls(response)
@@ -326,7 +326,7 @@ class SecurityPoliciesOperations:
         profile_name: str,
         security_policy_name: str,
         security_policy_properties: "_models.SecurityPolicyProperties",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SecurityPolicy":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityPolicy"]
         error_map = {
@@ -365,7 +365,7 @@ class SecurityPoliciesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AfdErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -386,7 +386,7 @@ class SecurityPoliciesOperations:
         profile_name: str,
         security_policy_name: str,
         security_policy_properties: "_models.SecurityPolicyProperties",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.SecurityPolicy"]:
         """Updates an existing Secret within a profile.
 
@@ -400,8 +400,8 @@ class SecurityPoliciesOperations:
         :type security_policy_properties: ~azure.mgmt.cdn.models.SecurityPolicyProperties
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either SecurityPolicy or the result of cls(response)
@@ -461,7 +461,7 @@ class SecurityPoliciesOperations:
         resource_group_name: str,
         profile_name: str,
         security_policy_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -495,7 +495,7 @@ class SecurityPoliciesOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AfdErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -508,7 +508,7 @@ class SecurityPoliciesOperations:
         resource_group_name: str,
         profile_name: str,
         security_policy_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes an existing security policy within profile.
 
@@ -520,8 +520,8 @@ class SecurityPoliciesOperations:
         :type security_policy_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)

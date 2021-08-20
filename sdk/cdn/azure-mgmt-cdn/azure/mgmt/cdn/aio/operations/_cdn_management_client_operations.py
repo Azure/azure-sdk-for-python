@@ -23,7 +23,7 @@ class CdnManagementClientOperationsMixin:
     async def check_name_availability(
         self,
         check_name_availability_input: "_models.CheckNameAvailabilityInput",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CheckNameAvailabilityOutput":
         """Check the availability of a resource name. This is needed for resources where name is globally
         unique, such as a CDN endpoint.
@@ -65,7 +65,7 @@ class CdnManagementClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CheckNameAvailabilityOutput', pipeline_response)
@@ -79,7 +79,7 @@ class CdnManagementClientOperationsMixin:
     async def check_name_availability_with_subscription(
         self,
         check_name_availability_input: "_models.CheckNameAvailabilityInput",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CheckNameAvailabilityOutput":
         """Check the availability of a resource name. This is needed for resources where name is globally
         unique, such as a CDN endpoint.
@@ -125,7 +125,7 @@ class CdnManagementClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CheckNameAvailabilityOutput', pipeline_response)
@@ -139,7 +139,7 @@ class CdnManagementClientOperationsMixin:
     async def validate_probe(
         self,
         validate_probe_input: "_models.ValidateProbeInput",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ValidateProbeOutput":
         """Check if the probe path is a valid path and the file can be accessed. Probe path is the path to
         a file hosted on the origin server to help accelerate the delivery of dynamic content via the
@@ -186,7 +186,7 @@ class CdnManagementClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ValidateProbeOutput', pipeline_response)

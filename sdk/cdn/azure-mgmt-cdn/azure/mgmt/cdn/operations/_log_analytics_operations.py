@@ -133,7 +133,7 @@ class LogAnalyticsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AfdErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('MetricsResponse', pipeline_response)
@@ -218,7 +218,7 @@ class LogAnalyticsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AfdErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RankingsResponse', pipeline_response)
@@ -278,7 +278,7 @@ class LogAnalyticsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AfdErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ContinentsResponse', pipeline_response)
@@ -338,7 +338,7 @@ class LogAnalyticsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AfdErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ResourcesResponse', pipeline_response)
@@ -429,7 +429,7 @@ class LogAnalyticsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AfdErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WafMetricsResponse', pipeline_response)
@@ -519,7 +519,7 @@ class LogAnalyticsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AfdErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WafRankingsResponse', pipeline_response)

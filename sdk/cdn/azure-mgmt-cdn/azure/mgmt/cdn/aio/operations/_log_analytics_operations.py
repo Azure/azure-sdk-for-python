@@ -54,7 +54,7 @@ class LogAnalyticsOperations:
         group_by: Optional[List[Union[str, "_models.LogMetricsGroupBy"]]] = None,
         continents: Optional[List[str]] = None,
         country_or_regions: Optional[List[str]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MetricsResponse":
         """Get log report for AFD profile.
 
@@ -128,7 +128,7 @@ class LogAnalyticsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AfdErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('MetricsResponse', pipeline_response)
@@ -149,7 +149,7 @@ class LogAnalyticsOperations:
         date_time_begin: datetime.datetime,
         date_time_end: datetime.datetime,
         custom_domains: Optional[List[str]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RankingsResponse":
         """Get log analytics ranking report for AFD profile.
 
@@ -212,7 +212,7 @@ class LogAnalyticsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AfdErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RankingsResponse', pipeline_response)
@@ -227,7 +227,7 @@ class LogAnalyticsOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ContinentsResponse":
         """Get all available location names for AFD log analytics report.
 
@@ -271,7 +271,7 @@ class LogAnalyticsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AfdErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ContinentsResponse', pipeline_response)
@@ -286,7 +286,7 @@ class LogAnalyticsOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ResourcesResponse":
         """Get all endpoints and custom domains available for AFD log report.
 
@@ -330,7 +330,7 @@ class LogAnalyticsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AfdErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ResourcesResponse', pipeline_response)
@@ -352,7 +352,7 @@ class LogAnalyticsOperations:
         actions: Optional[List[Union[str, "_models.WafAction"]]] = None,
         group_by: Optional[List[Union[str, "_models.WafRankingGroupBy"]]] = None,
         rule_types: Optional[List[Union[str, "_models.WafRuleType"]]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WafMetricsResponse":
         """Get Waf related log analytics report for AFD profile.
 
@@ -420,7 +420,7 @@ class LogAnalyticsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AfdErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WafMetricsResponse', pipeline_response)
@@ -442,7 +442,7 @@ class LogAnalyticsOperations:
         rankings: List[Union[str, "_models.WafRankingType"]],
         actions: Optional[List[Union[str, "_models.WafAction"]]] = None,
         rule_types: Optional[List[Union[str, "_models.WafRuleType"]]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WafRankingsResponse":
         """Get WAF log analytics charts for AFD profile.
 
@@ -509,7 +509,7 @@ class LogAnalyticsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AfdErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WafRankingsResponse', pipeline_response)

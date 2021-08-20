@@ -47,7 +47,7 @@ class AFDCustomDomainsOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AFDDomainListResult"]:
         """Lists existing AzureFrontDoor domains.
 
@@ -107,7 +107,7 @@ class AFDCustomDomainsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.AfdErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -123,7 +123,7 @@ class AFDCustomDomainsOperations:
         resource_group_name: str,
         profile_name: str,
         custom_domain_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AFDDomain":
         """Gets an existing AzureFrontDoor domain with the specified domain name under the specified
         subscription, resource group and profile.
@@ -171,7 +171,7 @@ class AFDCustomDomainsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AfdErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AFDDomain', pipeline_response)
@@ -188,7 +188,7 @@ class AFDCustomDomainsOperations:
         profile_name: str,
         custom_domain_name: str,
         custom_domain: "_models.AFDDomain",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AFDDomain":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AFDDomain"]
         error_map = {
@@ -227,7 +227,7 @@ class AFDCustomDomainsOperations:
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AfdErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -251,7 +251,7 @@ class AFDCustomDomainsOperations:
         profile_name: str,
         custom_domain_name: str,
         custom_domain: "_models.AFDDomain",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.AFDDomain"]:
         """Creates a new domain within the specified profile.
 
@@ -265,8 +265,8 @@ class AFDCustomDomainsOperations:
         :type custom_domain: ~azure.mgmt.cdn.models.AFDDomain
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either AFDDomain or the result of cls(response)
@@ -327,7 +327,7 @@ class AFDCustomDomainsOperations:
         profile_name: str,
         custom_domain_name: str,
         custom_domain_update_properties: "_models.AFDDomainUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AFDDomain":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AFDDomain"]
         error_map = {
@@ -366,7 +366,7 @@ class AFDCustomDomainsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AfdErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -387,7 +387,7 @@ class AFDCustomDomainsOperations:
         profile_name: str,
         custom_domain_name: str,
         custom_domain_update_properties: "_models.AFDDomainUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.AFDDomain"]:
         """Updates an existing domain within a profile.
 
@@ -401,8 +401,8 @@ class AFDCustomDomainsOperations:
         :type custom_domain_update_properties: ~azure.mgmt.cdn.models.AFDDomainUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either AFDDomain or the result of cls(response)
@@ -462,7 +462,7 @@ class AFDCustomDomainsOperations:
         resource_group_name: str,
         profile_name: str,
         custom_domain_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -496,7 +496,7 @@ class AFDCustomDomainsOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AfdErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -509,7 +509,7 @@ class AFDCustomDomainsOperations:
         resource_group_name: str,
         profile_name: str,
         custom_domain_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes an existing AzureFrontDoor domain with the specified domain name under the specified
         subscription, resource group and profile.
@@ -522,8 +522,8 @@ class AFDCustomDomainsOperations:
         :type custom_domain_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -579,7 +579,7 @@ class AFDCustomDomainsOperations:
         resource_group_name: str,
         profile_name: str,
         custom_domain_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ValidationToken":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ValidationToken"]
         error_map = {
@@ -613,7 +613,7 @@ class AFDCustomDomainsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AfdErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ValidationToken', pipeline_response)
@@ -629,7 +629,7 @@ class AFDCustomDomainsOperations:
         resource_group_name: str,
         profile_name: str,
         custom_domain_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ValidationToken"]:
         """Updates the domain validation token.
 
@@ -641,8 +641,8 @@ class AFDCustomDomainsOperations:
         :type custom_domain_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ValidationToken or the result of cls(response)

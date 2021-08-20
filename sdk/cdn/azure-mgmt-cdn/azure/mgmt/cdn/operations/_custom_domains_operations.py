@@ -116,7 +116,7 @@ class CustomDomainsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -184,7 +184,7 @@ class CustomDomainsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CustomDomain', pipeline_response)
@@ -243,7 +243,7 @@ class CustomDomainsOperations(object):
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -285,8 +285,8 @@ class CustomDomainsOperations(object):
         :type custom_domain_properties: ~azure.mgmt.cdn.models.CustomDomainParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either CustomDomain or the result of cls(response)
@@ -385,7 +385,7 @@ class CustomDomainsOperations(object):
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -419,8 +419,8 @@ class CustomDomainsOperations(object):
         :type custom_domain_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -476,7 +476,7 @@ class CustomDomainsOperations(object):
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/customDomains/{customDomainName}'}  # type: ignore
 
-    def disable_custom_https(
+    def _disable_custom_https_initial(
         self,
         resource_group_name,  # type: str
         profile_name,  # type: str
@@ -485,21 +485,6 @@ class CustomDomainsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Optional["_models.CustomDomain"]
-        """Disable https delivery of the custom domain.
-
-        :param resource_group_name: Name of the Resource group within the Azure subscription.
-        :type resource_group_name: str
-        :param profile_name: Name of the CDN profile which is unique within the resource group.
-        :type profile_name: str
-        :param endpoint_name: Name of the endpoint under the profile which is unique globally.
-        :type endpoint_name: str
-        :param custom_domain_name: Name of the custom domain within an endpoint.
-        :type custom_domain_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CustomDomain, or the result of cls(response)
-        :rtype: ~azure.mgmt.cdn.models.CustomDomain or None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.CustomDomain"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -509,7 +494,7 @@ class CustomDomainsOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self.disable_custom_https.metadata['url']  # type: ignore
+        url = self._disable_custom_https_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
@@ -533,7 +518,7 @@ class CustomDomainsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -544,19 +529,18 @@ class CustomDomainsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    disable_custom_https.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/customDomains/{customDomainName}/disableCustomHttps'}  # type: ignore
+    _disable_custom_https_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/customDomains/{customDomainName}/disableCustomHttps'}  # type: ignore
 
-    def enable_custom_https(
+    def begin_disable_custom_https(
         self,
         resource_group_name,  # type: str
         profile_name,  # type: str
         endpoint_name,  # type: str
         custom_domain_name,  # type: str
-        custom_domain_https_parameters=None,  # type: Optional["_models.CustomDomainHttpsParameters"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["_models.CustomDomain"]
-        """Enable https delivery of the custom domain.
+        # type: (...) -> LROPoller["_models.CustomDomain"]
+        """Disable https delivery of the custom domain.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
@@ -566,15 +550,75 @@ class CustomDomainsOperations(object):
         :type endpoint_name: str
         :param custom_domain_name: Name of the custom domain within an endpoint.
         :type custom_domain_name: str
-        :param custom_domain_https_parameters: The configuration specifying how to enable HTTPS for the
-         custom domain - using CDN managed certificate or user's own certificate. If not specified,
-         enabling ssl uses CDN managed certificate by default.
-        :type custom_domain_https_parameters: ~azure.mgmt.cdn.models.CustomDomainHttpsParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CustomDomain, or the result of cls(response)
-        :rtype: ~azure.mgmt.cdn.models.CustomDomain or None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
+        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CustomDomain"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._disable_custom_https_initial(
+                resource_group_name=resource_group_name,
+                profile_name=profile_name,
+                endpoint_name=endpoint_name,
+                custom_domain_name=custom_domain_name,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('CustomDomain', pipeline_response)
+
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'profileName': self._serialize.url("profile_name", profile_name, 'str'),
+            'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
+            'customDomainName': self._serialize.url("custom_domain_name", custom_domain_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_disable_custom_https.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/customDomains/{customDomainName}/disableCustomHttps'}  # type: ignore
+
+    def _enable_custom_https_initial(
+        self,
+        resource_group_name,  # type: str
+        profile_name,  # type: str
+        endpoint_name,  # type: str
+        custom_domain_name,  # type: str
+        custom_domain_https_parameters=None,  # type: Optional["_models.CustomDomainHttpsParameters"]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Optional["_models.CustomDomain"]
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.CustomDomain"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -585,7 +629,7 @@ class CustomDomainsOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self.enable_custom_https.metadata['url']  # type: ignore
+        url = self._enable_custom_https_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
@@ -616,7 +660,7 @@ class CustomDomainsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -627,4 +671,88 @@ class CustomDomainsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    enable_custom_https.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/customDomains/{customDomainName}/enableCustomHttps'}  # type: ignore
+    _enable_custom_https_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/customDomains/{customDomainName}/enableCustomHttps'}  # type: ignore
+
+    def begin_enable_custom_https(
+        self,
+        resource_group_name,  # type: str
+        profile_name,  # type: str
+        endpoint_name,  # type: str
+        custom_domain_name,  # type: str
+        custom_domain_https_parameters=None,  # type: Optional["_models.CustomDomainHttpsParameters"]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> LROPoller["_models.CustomDomain"]
+        """Enable https delivery of the custom domain.
+
+        :param resource_group_name: Name of the Resource group within the Azure subscription.
+        :type resource_group_name: str
+        :param profile_name: Name of the CDN profile which is unique within the resource group.
+        :type profile_name: str
+        :param endpoint_name: Name of the endpoint under the profile which is unique globally.
+        :type endpoint_name: str
+        :param custom_domain_name: Name of the custom domain within an endpoint.
+        :type custom_domain_name: str
+        :param custom_domain_https_parameters: The configuration specifying how to enable HTTPS for the
+         custom domain - using CDN managed certificate or user's own certificate. If not specified,
+         enabling ssl uses CDN managed certificate by default.
+        :type custom_domain_https_parameters: ~azure.mgmt.cdn.models.CustomDomainHttpsParameters
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CustomDomain"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._enable_custom_https_initial(
+                resource_group_name=resource_group_name,
+                profile_name=profile_name,
+                endpoint_name=endpoint_name,
+                custom_domain_name=custom_domain_name,
+                custom_domain_https_parameters=custom_domain_https_parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('CustomDomain', pipeline_response)
+
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'profileName': self._serialize.url("profile_name", profile_name, 'str'),
+            'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
+            'customDomainName': self._serialize.url("custom_domain_name", custom_domain_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_enable_custom_https.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/customDomains/{customDomainName}/enableCustomHttps'}  # type: ignore

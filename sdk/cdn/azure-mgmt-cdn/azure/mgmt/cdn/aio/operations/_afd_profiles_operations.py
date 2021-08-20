@@ -45,7 +45,7 @@ class AFDProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.UsagesListResult"]:
         """Checks the quota and actual usage of endpoints under the given CDN profile.
 
@@ -105,7 +105,7 @@ class AFDProfilesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.AfdErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -121,7 +121,7 @@ class AFDProfilesOperations:
         resource_group_name: str,
         profile_name: str,
         check_host_name_availability_input: "_models.ValidateCustomDomainInput",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ValidateCustomDomainOutput":
         """Validates the custom domain mapping to ensure it maps to the correct CDN endpoint in DNS.
 
@@ -172,7 +172,7 @@ class AFDProfilesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AfdErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ValidateCustomDomainOutput', pipeline_response)

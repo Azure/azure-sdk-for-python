@@ -46,7 +46,7 @@ class PoliciesOperations:
     def list(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CdnWebApplicationFirewallPolicyList"]:
         """Lists all of the protection policies within a resource group.
 
@@ -103,7 +103,7 @@ class PoliciesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -118,7 +118,7 @@ class PoliciesOperations:
         self,
         resource_group_name: str,
         policy_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CdnWebApplicationFirewallPolicy":
         """Retrieve protection policy with specified name within a resource group.
 
@@ -162,7 +162,7 @@ class PoliciesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CdnWebApplicationFirewallPolicy', pipeline_response)
@@ -178,7 +178,7 @@ class PoliciesOperations:
         resource_group_name: str,
         policy_name: str,
         cdn_web_application_firewall_policy: "_models.CdnWebApplicationFirewallPolicy",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CdnWebApplicationFirewallPolicy":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CdnWebApplicationFirewallPolicy"]
         error_map = {
@@ -216,7 +216,7 @@ class PoliciesOperations:
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -239,7 +239,7 @@ class PoliciesOperations:
         resource_group_name: str,
         policy_name: str,
         cdn_web_application_firewall_policy: "_models.CdnWebApplicationFirewallPolicy",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.CdnWebApplicationFirewallPolicy"]:
         """Create or update policy with specified rule set name within a resource group.
 
@@ -251,8 +251,8 @@ class PoliciesOperations:
         :type cdn_web_application_firewall_policy: ~azure.mgmt.cdn.models.CdnWebApplicationFirewallPolicy
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either CdnWebApplicationFirewallPolicy or the result of cls(response)
@@ -310,7 +310,7 @@ class PoliciesOperations:
         resource_group_name: str,
         policy_name: str,
         cdn_web_application_firewall_policy_patch_parameters: "_models.CdnWebApplicationFirewallPolicyPatchParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CdnWebApplicationFirewallPolicy":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CdnWebApplicationFirewallPolicy"]
         error_map = {
@@ -348,7 +348,7 @@ class PoliciesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -368,7 +368,7 @@ class PoliciesOperations:
         resource_group_name: str,
         policy_name: str,
         cdn_web_application_firewall_policy_patch_parameters: "_models.CdnWebApplicationFirewallPolicyPatchParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.CdnWebApplicationFirewallPolicy"]:
         """Update an existing CdnWebApplicationFirewallPolicy with the specified policy name under the
         specified subscription and resource group.
@@ -382,8 +382,8 @@ class PoliciesOperations:
         :type cdn_web_application_firewall_policy_patch_parameters: ~azure.mgmt.cdn.models.CdnWebApplicationFirewallPolicyPatchParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either CdnWebApplicationFirewallPolicy or the result of cls(response)
@@ -440,7 +440,7 @@ class PoliciesOperations:
         self,
         resource_group_name: str,
         policy_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes Policy.
 

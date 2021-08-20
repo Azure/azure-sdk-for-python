@@ -45,7 +45,7 @@ class ProfilesOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProfileListResult"]:
         """Lists all of the CDN profiles within an Azure subscription.
 
@@ -99,7 +99,7 @@ class ProfilesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -113,7 +113,7 @@ class ProfilesOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProfileListResult"]:
         """Lists all of the CDN profiles within a resource group.
 
@@ -170,7 +170,7 @@ class ProfilesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -185,7 +185,7 @@ class ProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Profile":
         """Gets a CDN profile with the specified profile name under the specified subscription and
         resource group.
@@ -230,7 +230,7 @@ class ProfilesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Profile', pipeline_response)
@@ -246,7 +246,7 @@ class ProfilesOperations:
         resource_group_name: str,
         profile_name: str,
         profile: "_models.Profile",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Profile":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Profile"]
         error_map = {
@@ -284,7 +284,7 @@ class ProfilesOperations:
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -307,7 +307,7 @@ class ProfilesOperations:
         resource_group_name: str,
         profile_name: str,
         profile: "_models.Profile",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Profile"]:
         """Creates a new CDN profile with a profile name under the specified subscription and resource
         group.
@@ -320,8 +320,8 @@ class ProfilesOperations:
         :type profile: ~azure.mgmt.cdn.models.Profile
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Profile or the result of cls(response)
@@ -379,7 +379,7 @@ class ProfilesOperations:
         resource_group_name: str,
         profile_name: str,
         profile_update_parameters: "_models.ProfileUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Profile":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Profile"]
         error_map = {
@@ -417,7 +417,7 @@ class ProfilesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -437,7 +437,7 @@ class ProfilesOperations:
         resource_group_name: str,
         profile_name: str,
         profile_update_parameters: "_models.ProfileUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Profile"]:
         """Updates an existing CDN profile with the specified profile name under the specified
         subscription and resource group.
@@ -450,8 +450,8 @@ class ProfilesOperations:
         :type profile_update_parameters: ~azure.mgmt.cdn.models.ProfileUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Profile or the result of cls(response)
@@ -508,7 +508,7 @@ class ProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -541,7 +541,7 @@ class ProfilesOperations:
 
         if response.status_code not in [202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -553,7 +553,7 @@ class ProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes an existing CDN profile with the specified parameters. Deleting a profile will result
         in the deletion of all of the sub-resources including endpoints, origins and custom domains.
@@ -564,8 +564,8 @@ class ProfilesOperations:
         :type profile_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -618,7 +618,7 @@ class ProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SsoUri":
         """Generates a dynamic SSO URI used to sign in to the CDN supplemental portal. Supplemental portal
         is used to configure advanced feature capabilities that are not yet available in the Azure
@@ -666,7 +666,7 @@ class ProfilesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SsoUri', pipeline_response)
@@ -681,7 +681,7 @@ class ProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SupportedOptimizationTypesListResult":
         """Gets the supported optimization types for the current profile. A user can create an endpoint
         with an optimization type from the listed values.
@@ -726,7 +726,7 @@ class ProfilesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SupportedOptimizationTypesListResult', pipeline_response)
@@ -741,7 +741,7 @@ class ProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ResourceUsageListResult"]:
         """Checks the quota and actual usage of endpoints under the given CDN profile.
 
@@ -801,7 +801,7 @@ class ProfilesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
