@@ -14,7 +14,7 @@ from azure.eventhub.extensions.checkpointstoretable import TableCheckpointStore
 from azure.eventhub.exceptions import OwnershipLostError
 
 STORAGE_CONN_STR = [
-    #os.environ.get("AZURE_STORAGE_CONN_STR", "Azure Storage Connection String"),
+    os.environ.get("AZURE_TABLES_CONN_STR", "Azure Storage Connection String"),
     os.environ.get("AZURE_COSMOS_CONN_STR", "Azure Storage Connection String"),
 ]
 
@@ -177,7 +177,7 @@ def _update_and_list_checkpoint(storage_connection_str, table_name):
 
 
 @pytest.mark.parametrize("storage_connection_str", STORAGE_CONN_STR)
-@pytest.mark.skip("update after adding conn str env var")
+@pytest.mark.liveTest
 def test_claim_ownership_exception(storage_connection_str):
     storage_connection_str, table_name = get_live_storage_table_client(
         storage_connection_str
@@ -189,7 +189,7 @@ def test_claim_ownership_exception(storage_connection_str):
 
 
 @pytest.mark.parametrize("storage_connection_str", STORAGE_CONN_STR)
-@pytest.mark.skip("update after adding conn str env var")
+@pytest.mark.liveTest
 def test_claim_and_list_ownership(storage_connection_str):
     storage_connection_str, table_name = get_live_storage_table_client(
         storage_connection_str
@@ -201,7 +201,7 @@ def test_claim_and_list_ownership(storage_connection_str):
 
 
 @pytest.mark.parametrize("storage_connection_str", STORAGE_CONN_STR)
-@pytest.mark.skip("update after adding conn str env var")
+@pytest.mark.liveTest
 def test_update_checkpoint(storage_connection_str):
     storage_connection_str, table_name = get_live_storage_table_client(
         storage_connection_str
