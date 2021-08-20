@@ -187,7 +187,7 @@ def test_iter_read(client):
     iterator = response.iter_lines()
     for line in iterator:
         assert line
-    assert response.text
+    assert response.text()
 
 def test_iter_read_back_and_forth(client):
     # thanks to McCoy Patiño for this test!
@@ -202,11 +202,11 @@ def test_iter_read_back_and_forth(client):
     for line in iterator:
         assert line
     with pytest.raises(ResponseNotReadError):
-        response.text
+        response.text()
     with pytest.raises(StreamConsumedError):
         response.read()
     with pytest.raises(ResponseNotReadError):
-        response.text
+        response.text()
 
 def test_stream_with_return_pipeline_response(client):
     request = HttpRequest("GET", "/basic/lines")
