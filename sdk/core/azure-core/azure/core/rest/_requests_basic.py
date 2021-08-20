@@ -61,36 +61,6 @@ class _RestRequestsTransportResponseBase(_HttpResponseBase):
             # requests throws a RuntimeError if the content for a response is already consumed
             raise ResponseNotReadError(self)
 
-    @property
-    def encoding(self):
-        # type: () -> Optional[str]
-        retval = super(_RestRequestsTransportResponseBase, self).encoding
-        if not retval:
-            # There is a few situation where "requests" magic doesn't fit us:
-            # - https://github.com/psf/requests/issues/654
-            # - https://github.com/psf/requests/issues/1737
-            # - https://github.com/psf/requests/issues/2086
-            from codecs import BOM_UTF8
-            if self._internal_response.content[:3] == BOM_UTF8:
-                retval = "utf-8-sig"
-        if retval:
-            if retval == "utf-8":
-                retval = "utf-8-sig"
-        return retval
-
-    @encoding.setter  # type: ignore
-    def encoding(self, value):
-        # type: (str) -> None
-        # ignoring setter bc of known mypy issue https://github.com/python/mypy/issues/1465
-        self._encoding = value
-        self._internal_response.encoding = value
-
-    @property
-    def text(self):
-        # this will trigger errors if response is not read in
-        self.content  # pylint: disable=pointless-statement
-        return self._internal_response.text
-
 def _stream_download_helper(decompress, response):
     if response.is_stream_consumed:
         raise StreamConsumedError(response)

@@ -139,6 +139,7 @@ chardet<5,>=3.0.2
 #override azure-data-tables msrest>=0.6.21
 #override azure-eventhub azure-core<2.0.0,>=1.14.0
 #override azure-identity azure-core<2.0.0,>=1.11.0
+#override azure-identity cryptography>=2.5
 #override azure-keyvault-administration msrest>=0.6.21
 #override azure-keyvault-administration azure-core<2.0.0,>=1.11.0
 #override azure-keyvault-certificates msrest>=0.6.21

@@ -9,6 +9,7 @@ from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
 from azure.identity import CertificateCredential, RegionalAuthority, TokenCachePersistenceOptions
 from azure.identity._constants import EnvironmentVariables
+from azure.identity._credentials.certificate import load_pkcs12_certificate
 from azure.identity._internal.user_agent import USER_AGENT
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
@@ -33,13 +34,18 @@ try:
 except ImportError:  # python < 3.3
     from mock import Mock, patch  # type: ignore
 
-CERT_PATH = os.path.join(os.path.dirname(__file__), "certificate.pem")
-CERT_WITH_PASSWORD_PATH = os.path.join(os.path.dirname(__file__), "certificate-with-password.pem")
+PEM_CERT_PATH = os.path.join(os.path.dirname(__file__), "certificate.pem")
+PEM_CERT_WITH_PASSWORD_PATH = os.path.join(os.path.dirname(__file__), "certificate-with-password.pem")
+PFX_CERT_PATH = os.path.join(os.path.dirname(__file__), "certificate.pfx")
+PFX_CERT_WITH_PASSWORD_PATH = os.path.join(os.path.dirname(__file__), "certificate-with-password.pfx")
 CERT_PASSWORD = "password"
-BOTH_CERTS = (
-    (CERT_PATH, None),
-    (CERT_WITH_PASSWORD_PATH, CERT_PASSWORD),  # credential should accept passwords as str or bytes
-    (CERT_WITH_PASSWORD_PATH, CERT_PASSWORD.encode("utf-8")),
+ALL_CERTS = (
+    (PEM_CERT_PATH, None),
+    (PEM_CERT_WITH_PASSWORD_PATH, CERT_PASSWORD),  # credential should accept passwords as str or bytes
+    (PEM_CERT_WITH_PASSWORD_PATH, CERT_PASSWORD.encode("utf-8")),
+    (PFX_CERT_PATH, None),
+    (PFX_CERT_WITH_PASSWORD_PATH, CERT_PASSWORD),
+    (PFX_CERT_WITH_PASSWORD_PATH, CERT_PASSWORD.encode("utf-8")),
 )
 
 EC_CERT_PATH = os.path.join(os.path.dirname(__file__), "ec-certificate.pem")
@@ -58,18 +64,18 @@ def test_tenant_id_validation():
 
     valid_ids = {"c878a2ab-8ef4-413b-83a0-199afb84d7fb", "contoso.onmicrosoft.com", "organizations", "common"}
     for tenant in valid_ids:
-        CertificateCredential(tenant, "client-id", CERT_PATH)
+        CertificateCredential(tenant, "client-id", PEM_CERT_PATH)
 
     invalid_ids = {"", "my tenant", "my_tenant", "/", "\\", '"my-tenant"', "'my-tenant'"}
     for tenant in invalid_ids:
         with pytest.raises(ValueError):
-            CertificateCredential(tenant, "client-id", CERT_PATH)
+            CertificateCredential(tenant, "client-id", PEM_CERT_PATH)
 
 
 def test_no_scopes():
     """The credential should raise ValueError when get_token is called with no scopes"""
 
-    credential = CertificateCredential("tenant-id", "client-id", CERT_PATH)
+    credential = CertificateCredential("tenant-id", "client-id", PEM_CERT_PATH)
     with pytest.raises(ValueError):
         credential.get_token()
 
@@ -82,7 +88,7 @@ def test_policies_configurable():
     )
 
     credential = CertificateCredential(
-        "tenant-id", "client-id", CERT_PATH, policies=[ContentDecodePolicy(), policy], transport=transport
+        "tenant-id", "client-id", PEM_CERT_PATH, policies=[ContentDecodePolicy(), policy], transport=transport
     )
 
     credential.get_token("scope")
@@ -96,7 +102,7 @@ def test_user_agent():
         responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
     )
 
-    credential = CertificateCredential("tenant-id", "client-id", CERT_PATH, transport=transport)
+    credential = CertificateCredential("tenant-id", "client-id", PEM_CERT_PATH, transport=transport)
 
     credential.get_token("scope")
 
@@ -114,7 +120,7 @@ def test_authority(authority):
         return_value=Mock(acquire_token_silent_with_error=lambda *_, **__: {"access_token": "**", "expires_in": 42})
     )
 
-    credential = CertificateCredential(tenant_id, "client-id", CERT_PATH, authority=authority)
+    credential = CertificateCredential(tenant_id, "client-id", PEM_CERT_PATH, authority=authority)
     with patch("msal.ConfidentialClientApplication", mock_ctor):
         # must call get_token because the credential constructs the MSAL application lazily
         credential.get_token("scope")
@@ -126,7 +132,7 @@ def test_authority(authority):
 
     # authority can be configured via environment variable
     with patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}, clear=True):
-        credential = CertificateCredential(tenant_id, "client-id", CERT_PATH, authority=authority)
+        credential = CertificateCredential(tenant_id, "client-id", PEM_CERT_PATH, authority=authority)
     with patch("msal.ConfidentialClientApplication", mock_ctor):
         credential.get_token("scope")
 
@@ -146,7 +152,7 @@ def test_regional_authority():
         mock_confidential_client.reset_mock()
 
         with patch.dict("os.environ", {}, clear=True):
-            credential = CertificateCredential("tenant", "client-id", CERT_PATH, regional_authority=region)
+            credential = CertificateCredential("tenant", "client-id", PEM_CERT_PATH, regional_authority=region)
         with patch("msal.ConfidentialClientApplication", mock_confidential_client):
             # must call get_token because the credential constructs the MSAL application lazily
             credential.get_token("scope")
@@ -158,7 +164,7 @@ def test_regional_authority():
 
         # region can be configured via environment variable
         with patch.dict("os.environ", {EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: region}, clear=True):
-            credential = CertificateCredential("tenant", "client-id", CERT_PATH)
+            credential = CertificateCredential("tenant", "client-id", PEM_CERT_PATH)
         with patch("msal.ConfidentialClientApplication", mock_confidential_client):
             credential.get_token("scope")
 
@@ -182,7 +188,7 @@ def test_requires_certificate():
         CertificateCredential("tenant", "client-id", certificate_path="", certificate_data=None)
 
 
-@pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
+@pytest.mark.parametrize("cert_path,cert_password", ALL_CERTS)
 @pytest.mark.parametrize("send_certificate_chain", (True, False))
 def test_request_body(cert_path, cert_password, send_certificate_chain):
     access_token = "***"
@@ -199,7 +205,7 @@ def test_request_body(cert_path, cert_password, send_certificate_chain):
         assert request.body["scope"] == expected_scope
 
         with open(cert_path, "rb") as cert_file:
-            validate_jwt(request, client_id, cert_file.read(), expect_x5c=send_certificate_chain)
+            validate_jwt(request, client_id, cert_file.read(), cert_password, expect_x5c=send_certificate_chain)
 
         return mock_response(json_payload=build_aad_response(access_token=access_token))
 
@@ -232,12 +238,18 @@ def test_request_body(cert_path, cert_password, send_certificate_chain):
     assert token.token == access_token
 
 
-def validate_jwt(request, client_id, pem_bytes, expect_x5c=False):
+def validate_jwt(request, client_id, cert_bytes, cert_password, expect_x5c=False):
     """Validate the request meets AAD's expectations for a client credential grant using a certificate, as documented
     at https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-certificate-credentials
     """
 
-    cert = x509.load_pem_x509_certificate(pem_bytes, default_backend())
+    try:
+        cert = x509.load_pem_x509_certificate(cert_bytes, default_backend())
+    except ValueError:
+        if cert_password:
+            cert_password = six.ensure_binary(cert_password)
+        cert_bytes = load_pkcs12_certificate(cert_bytes, cert_password).pem_bytes
+        cert = x509.load_pem_x509_certificate(cert_bytes, default_backend())
 
     # jwt is of the form 'header.payload.signature'; 'signature' is 'header.payload' signed with cert's private key
     jwt = six.ensure_str(request.body["client_assertion"])
@@ -252,8 +264,8 @@ def validate_jwt(request, client_id, pem_bytes, expect_x5c=False):
     assert deserialized_header["alg"] == "RS256"
     assert deserialized_header["typ"] == "JWT"
     if expect_x5c:
-        # x5c should have all the certs in the PEM file, in order, minus headers and footers
-        pem_lines = pem_bytes.decode("utf-8").splitlines()
+        # x5c should have all the certs in the file, in order, in PEM format minus headers and footers
+        pem_lines = cert_bytes.decode("utf-8").splitlines()
         header = "-----BEGIN CERTIFICATE-----"
         assert len(deserialized_header["x5c"]) == pem_lines.count(header)
 
@@ -268,7 +280,7 @@ def validate_jwt(request, client_id, pem_bytes, expect_x5c=False):
     cert.public_key().verify(signature, signed_part.encode("utf-8"), padding.PKCS1v15(), hashes.SHA256())
 
 
-@pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
+@pytest.mark.parametrize("cert_path,cert_password", ALL_CERTS)
 def test_token_cache(cert_path, cert_password):
     """the credential should optionally use a persistent cache, and default to an in memory cache"""
 
@@ -287,8 +299,8 @@ def test_token_cache(cert_path, cert_password):
         assert load_persistent_cache.call_count == 1
 
 
-@pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
-def test_cache_multiple_clients(cert_path, cert_password):
+@pytest.mark.parametrize("cert_path,cert_password", ALL_CERTS)
+def test_persistent_cache_multiple_clients(cert_path, cert_password):
     """the credential shouldn't use tokens issued to other service principals"""
 
     access_token_a = "token a"
@@ -346,7 +358,7 @@ def test_certificate_arguments():
     assert "certificate_data" in message and "certificate_path" in message
 
 
-@pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
+@pytest.mark.parametrize("cert_path,cert_password", ALL_CERTS)
 def test_allow_multitenant_authentication(cert_path, cert_password):
     """When allow_multitenant_authentication is True, the credential should respect get_token(tenant_id=...)"""
 
@@ -387,7 +399,7 @@ def test_allow_multitenant_authentication(cert_path, cert_password):
     assert token.token == first_token
 
 
-@pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
+@pytest.mark.parametrize("cert_path,cert_password", ALL_CERTS)
 def test_multitenant_authentication_backcompat(cert_path, cert_password):
     """When allow_multitenant_authentication is True, the credential should respect get_token(tenant_id=...)"""
 
