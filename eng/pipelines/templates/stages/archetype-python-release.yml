@@ -46,6 +46,7 @@ stages:
                           ForRelease: true
                     - pwsh: |
                         Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}
+                        Write-Host "$($artifact)"
                       workingDirectory: $(Pipeline.Workspace)
                       displayName: Output Visible Artifacts
 
