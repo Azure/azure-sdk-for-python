@@ -165,8 +165,6 @@ class LogsBatchQuery(object):
     :keyword additional_workspaces: A list of workspaces that are included in the query.
      These can be qualified workspace names, workspace Ids, or Azure resource Ids.
     :paramtype additional_workspaces: list[str]
-    :keyword request_id: The error details.
-    :paramtype request_id: str
     :keyword int server_timeout: the server timeout. The default timeout is 3 minutes,
      and the maximum timeout is 10 minutes.
     :keyword bool include_statistics: To get information about query statistics.
@@ -201,7 +199,7 @@ class LogsBatchQuery(object):
             headers = {'Prefer': prefer}
         timespan = construct_iso8601(timespan)
         additional_workspaces = kwargs.pop("additional_workspaces", None)
-        self.id = kwargs.get("request_id", str(uuid.uuid4()))
+        self.id = str(uuid.uuid4())
         self.body = {
             "query": query, "timespan": timespan, "workspaces": additional_workspaces
         }
@@ -494,7 +492,7 @@ class TimeSeriesElement(object):
     """A time series result type. The discriminator value is always TimeSeries in this case.
 
     :ivar metadata_values: The metadata values returned if $filter was specified in the call.
-    :vartype metadata_values: list[~monitor_query_client.models.MetadataValue]
+    :vartype metadata_values: dict(str, str)
     :ivar data: An array of data points representing the metric values. This is only returned if
      a result type of data is specified.
     :vartype data: list[~monitor_query_client.models.MetricValue]
@@ -518,37 +516,10 @@ class TimeSeriesElement(object):
         if not generated:
             return cls()
         return cls(
-            metadata_values=[
-                MetricsMetadataValue._from_generated( # pylint: disable=protected-access
-                    mval
-                    ) for mval in generated.metadatavalues
-                ],
+            metadata_values={
+                obj.name.value: obj.value for obj in generated.metadatavalues
+            },
             data=[MetricValue._from_generated(val) for val in generated.data] # pylint: disable=protected-access
-        )
-
-class MetricsMetadataValue(object):
-    """Represents a metric metadata value.
-
-    :ivar name: The name of the metadata.
-    :vartype name: str
-    :ivar value: The value of the metadata.
-    :vartype value: str
-    """
-    def __init__(
-        self,
-        **kwargs
-    ):
-        # type: (Any) -> None
-        self.name = kwargs.get('name', None)
-        self.value = kwargs.get('value', None)
-
-    @classmethod
-    def _from_generated(cls, generated):
-        if not generated:
-            return cls()
-        return cls(
-            name=generated.name.value,
-            value=generated.value
         )
 
 

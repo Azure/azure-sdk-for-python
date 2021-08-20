@@ -7,6 +7,7 @@
 
 from typing import TYPE_CHECKING, Any, Union, Sequence, Dict, Optional
 from azure.core.exceptions import HttpResponseError
+from azure.core.tracing.decorator import distributed_trace
 
 from ._generated._monitor_query_client import MonitorQueryClient
 
@@ -49,6 +50,7 @@ class LogsQueryClient(object):
         )
         self._query_op = self._client.query
 
+    @distributed_trace
     def query(self, workspace_id, query, timespan=None, **kwargs):
         # type: (str, str, Optional[timedelta], Any) -> LogsQueryResult
         """Execute an Analytics query.
@@ -122,6 +124,7 @@ class LogsQueryClient(object):
         except HttpResponseError as e:
             process_error(e)
 
+    @distributed_trace
     def query_batch(self, queries, **kwargs):
         # type: (Union[Sequence[Dict], Sequence[LogsBatchQuery]], Any) -> Sequence[LogsBatchQueryResult]
         """Execute a list of analytics queries. Each request can be either a LogQueryRequest
