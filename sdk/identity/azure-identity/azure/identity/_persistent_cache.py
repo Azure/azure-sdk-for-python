@@ -6,6 +6,8 @@ import os
 import sys
 from typing import TYPE_CHECKING
 
+import six
+
 if TYPE_CHECKING:
     from typing import Any
     import msal_extensions
@@ -86,12 +88,13 @@ def _get_persistence(allow_unencrypted, account_name, cache_name):
             return msal_extensions.LibsecretPersistence(
                 file_path, cache_name, {"MsalClientID": "Microsoft.Developer.IdentityService"}, label=account_name
             )
-        except ImportError:
+        except Exception as ex:  # pylint:disable=broad-except
             if not allow_unencrypted:
-                raise ValueError(
-                    "PyGObject is required to encrypt the persistent cache. Please install that library or "
-                    + 'specify "allow_unencrypted_storage=True" to store the cache without encryption.'
+                error = ValueError(
+                    "Persistent cache encryption isn't available in this environment. Please install encryption "
+                    + 'dependencies or specify "allow_unencrypted_storage=True" to store the cache without encryption.'
                 )
+                six.raise_from(error, ex)
             return msal_extensions.FilePersistence(file_path)
 
     raise NotImplementedError("A persistent cache is not available in this environment.")
