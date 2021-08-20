@@ -32,7 +32,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -91,7 +91,7 @@ class KeyVaultClientOperationsMixin:
         :param azure_storage_blob_container_uri: Azure blob shared access signature token pointing to a
          valid Azure blob container where full backup needs to be stored. This token needs to be valid
          for at least next 24 hours from the time of making this call.
-        :type azure_storage_blob_container_uri: ~azure.keyvault.v7_2.models.SASTokenParameter
+        :type azure_storage_blob_container_uri: ~azure.keyvault.v7_3_preview.models.SASTokenParameter
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling.
@@ -99,7 +99,7 @@ class KeyVaultClientOperationsMixin:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either FullBackupOperation or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.keyvault.v7_2.models.FullBackupOperation]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.keyvault.v7_3_preview.models.FullBackupOperation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -163,7 +163,7 @@ class KeyVaultClientOperationsMixin:
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FullBackupOperation, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.FullBackupOperation
+        :rtype: ~azure.keyvault.v7_3_preview.models.FullBackupOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.FullBackupOperation"]
@@ -171,7 +171,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         # Construct URL
@@ -218,7 +218,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -277,7 +277,7 @@ class KeyVaultClientOperationsMixin:
         :type vault_base_url: str
         :param restore_blob_details: The Azure blob SAS token pointing to a folder where the previous
          successful full backup was stored.
-        :type restore_blob_details: ~azure.keyvault.v7_2.models.RestoreOperationParameters
+        :type restore_blob_details: ~azure.keyvault.v7_3_preview.models.RestoreOperationParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling.
@@ -285,7 +285,7 @@ class KeyVaultClientOperationsMixin:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either RestoreOperation or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.keyvault.v7_2.models.RestoreOperation]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.keyvault.v7_3_preview.models.RestoreOperation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -349,7 +349,7 @@ class KeyVaultClientOperationsMixin:
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RestoreOperation, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.RestoreOperation
+        :rtype: ~azure.keyvault.v7_3_preview.models.RestoreOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RestoreOperation"]
@@ -357,7 +357,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         # Construct URL
@@ -405,7 +405,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -468,7 +468,7 @@ class KeyVaultClientOperationsMixin:
         :type key_name: str
         :param restore_blob_details: The Azure blob SAS token pointing to a folder where the previous
          successful full backup was stored.
-        :type restore_blob_details: ~azure.keyvault.v7_2.models.SelectiveKeyRestoreOperationParameters
+        :type restore_blob_details: ~azure.keyvault.v7_3_preview.models.SelectiveKeyRestoreOperationParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling.
@@ -476,7 +476,7 @@ class KeyVaultClientOperationsMixin:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either SelectiveKeyRestoreOperation or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.keyvault.v7_2.models.SelectiveKeyRestoreOperation]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.keyvault.v7_3_preview.models.SelectiveKeyRestoreOperation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
