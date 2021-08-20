@@ -29,6 +29,7 @@ from itertools import groupby
 from typing import AsyncIterator
 from multidict import CIMultiDict
 from . import HttpRequest, AsyncHttpResponse
+from ._helpers import KeysView, ValuesView
 from ._helpers_py3 import iter_raw_helper, iter_bytes_helper
 from ..pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
 
@@ -54,41 +55,6 @@ class _ItemsView(collections.abc.ItemsView):
     def __repr__(self):
         return f"dict_items({list(self.__iter__())})"
 
-class _KeysView(collections.abc.KeysView):
-    def __init__(self, items):
-        super().__init__(items)
-        self._items = items
-
-    def __iter__(self):
-        for key, _ in self._items:
-            yield key
-
-    def __contains__(self, key):
-        for k in self.__iter__():
-            if key.lower() == k.lower():
-                return True
-        return False
-    def __repr__(self):
-        return f"dict_keys({list(self.__iter__())})"
-
-class _ValuesView(collections.abc.ValuesView):
-    def __init__(self, items):
-        super().__init__(items)
-        self._items = items
-
-    def __iter__(self):
-        for _, value in self._items:
-            yield value
-
-    def __contains__(self, value):
-        for v in self.__iter__():
-            if value == v:
-                return True
-        return False
-
-    def __repr__(self):
-        return f"dict_values({list(self.__iter__())})"
-
 
 class _CIMultiDict(CIMultiDict):
     """Dictionary with the support for duplicate case-insensitive keys."""
@@ -98,7 +64,7 @@ class _CIMultiDict(CIMultiDict):
 
     def keys(self):
         """Return a new view of the dictionary's keys."""
-        return _KeysView(self.items())
+        return KeysView(self.items())
 
     def items(self):
         """Return a new view of the dictionary's items."""
@@ -106,7 +72,7 @@ class _CIMultiDict(CIMultiDict):
 
     def values(self):
         """Return a new view of the dictionary's values."""
-        return _ValuesView(self.items())
+        return ValuesView(self.items())
 
     def __getitem__(self, key: str) -> str:
         return ", ".join(self.getall(key, []))

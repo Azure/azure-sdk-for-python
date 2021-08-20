@@ -28,7 +28,10 @@ import codecs
 import cgi
 from enum import Enum
 from json import dumps
-import collections
+try:
+    import collections.abc as collections
+except ImportError:
+    import collections
 from typing import (
     Optional,
     Union,
@@ -300,3 +303,39 @@ def decode_to_text(encoding, content):
     if encoding:
         return content.decode(encoding)
     return codecs.getincrementaldecoder("utf-8-sig")(errors="replace").decode(content)
+
+class KeysView(collections.KeysView):
+    def __init__(self, items):
+        super().__init__(items)
+        self._items = items
+
+    def __iter__(self):
+        for key, _ in self._items:
+            yield key
+
+    def __contains__(self, key):
+        for k in self.__iter__():
+            if key.lower() == k.lower():
+                return True
+        return False
+
+    def __repr__(self):
+        return "dict_keys()".format({list(self.__iter__())})
+
+class ValuesView(collections.ValuesView):
+    def __init__(self, items):
+        super().__init__(items)
+        self._items = items
+
+    def __iter__(self):
+        for _, value in self._items:
+            yield value
+
+    def __contains__(self, value):
+        for v in self.__iter__():
+            if value == v:
+                return True
+        return False
+
+    def __repr__(self):
+        return "dict_values({})".format(list(self.__iter__()))
