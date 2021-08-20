@@ -283,7 +283,7 @@ def test_use_custom_json_encoder():
     # since json can't serialize bytes by default but AzureJSONEncoder can,
     # we pass in bytes and check that they are serialized
     request = HttpRequest("GET", "/headers", json=bytearray("mybytes", "utf-8"))
-    assert request.content == "bXlieXRlcw=="
+    assert request.content == '"bXlieXRlcw=="'
 
 # NOTE: For files, we don't allow list of tuples yet, just dict. Will uncomment when we add this capability
 # def test_multipart_multiple_files_single_input_content():
