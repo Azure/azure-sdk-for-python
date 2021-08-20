@@ -44,6 +44,18 @@ class AuthorizationCodeCredential(GetTokenMixin):
         self._redirect_uri = redirect_uri
         super(AuthorizationCodeCredential, self).__init__()
 
+    def __enter__(self):
+        self._client.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        self._client.__exit__(*args)
+
+    def close(self):
+        # type: () -> None
+        """Close the credential's transport session."""
+        self.__exit__()
+
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.

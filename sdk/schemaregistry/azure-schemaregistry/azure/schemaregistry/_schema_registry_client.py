@@ -27,7 +27,10 @@ from typing import Any, TYPE_CHECKING, Union
 
 from ._common._constants import SerializationType
 from ._common._schema import Schema, SchemaProperties
-from ._common._response_handlers import _parse_response_schema, _parse_response_schema_id
+from ._common._response_handlers import (
+    _parse_response_schema,
+    _parse_response_schema_id,
+)
 from ._generated._azure_schema_registry import AzureSchemaRegistry
 
 if TYPE_CHECKING:
@@ -53,14 +56,14 @@ class SchemaRegistryClient(object):
             :caption: Create a new instance of the SchemaRegistryClient.
 
     """
-    def __init__(
-        self,
-        endpoint,
-        credential,
-        **kwargs
-    ):
+
+    def __init__(self, endpoint, credential, **kwargs):
         # type: (str, TokenCredential, Any) -> None
-        self._generated_client = AzureSchemaRegistry(credential=credential, endpoint=endpoint, **kwargs)
+        self._generated_client = AzureSchemaRegistry(
+            credential=credential, endpoint=endpoint, **kwargs
+        )
+        self._description_to_properties = {}
+        self._id_to_schema = {}
 
     def __enter__(self):
         # type: () -> SchemaRegistryClient
@@ -73,12 +76,14 @@ class SchemaRegistryClient(object):
 
     def close(self):
         # type: () -> None
-        """ This method is to close the sockets opened by the client.
+        """This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
         """
         self._generated_client.close()
 
-    def register_schema(self, schema_group, schema_name, serialization_type, schema_content, **kwargs):
+    def register_schema(
+        self, schema_group, schema_name, serialization_type, schema_content, **kwargs
+    ):
         # type: (str, str, Union[str, SerializationType], str, Any) -> SchemaProperties
         """
         Register new schema. If schema of specified name does not exist in specified group,
@@ -108,7 +113,7 @@ class SchemaRegistryClient(object):
         except AttributeError:
             pass
 
-        return self._generated_client.schema.register(
+        schema_properties = self._generated_client.schema.register(
             group_name=schema_group,
             schema_name=schema_name,
             schema_content=schema_content,
@@ -116,6 +121,18 @@ class SchemaRegistryClient(object):
             cls=_parse_response_schema_id,
             **kwargs
         )
+        schema_description = (
+            schema_group,
+            schema_name,
+            serialization_type,
+            schema_content,
+        )
+        self._id_to_schema[schema_properties.schema_id] = Schema(
+            schema_content, schema_properties
+        )
+        self._description_to_properties[schema_description] = schema_properties
+
+        return schema_properties
 
     def get_schema(self, schema_id, **kwargs):
         # type: (str, Any) -> Schema
@@ -136,13 +153,18 @@ class SchemaRegistryClient(object):
                 :caption: Get schema by id.
 
         """
-        return self._generated_client.schema.get_by_id(
-            schema_id,
-            cls=_parse_response_schema,
-            **kwargs
-        )
+        try:
+            return self._id_to_schema[schema_id]
+        except KeyError:
+            schema = self._generated_client.schema.get_by_id(
+                schema_id, cls=_parse_response_schema, **kwargs
+            )
+            self._id_to_schema[schema_id] = schema
+            return schema
 
-    def get_schema_id(self, schema_group, schema_name, serialization_type, schema_content, **kwargs):
+    def get_schema_id(
+        self, schema_group, schema_name, serialization_type, schema_content, **kwargs
+    ):
         # type: (str, str, Union[str, SerializationType], str, Any) -> SchemaProperties
         """
         Gets the ID referencing an existing schema within the specified schema group,
@@ -171,11 +193,25 @@ class SchemaRegistryClient(object):
         except AttributeError:
             pass
 
-        return self._generated_client.schema.query_id_by_content(
-            group_name=schema_group,
-            schema_name=schema_name,
-            schema_content=schema_content,
-            x_schema_type=serialization_type,
-            cls=_parse_response_schema_id,
-            **kwargs
-        )
+        try:
+            properties = self._description_to_properties[
+                (schema_group, schema_name, serialization_type, schema_content)
+            ]
+            return properties
+        except KeyError:
+            schema_properties = self._generated_client.schema.query_id_by_content(
+                group_name=schema_group,
+                schema_name=schema_name,
+                schema_content=schema_content,
+                x_schema_type=serialization_type,
+                cls=_parse_response_schema_id,
+                **kwargs
+            )
+            if not self._id_to_schema.get(schema_properties.schema_id):
+                self._id_to_schema[schema_properties.schema_id] = Schema(schema_content, schema_properties)
+            else:
+                schema_properties = self._id_to_schema[schema_properties.schema_id].schema_properties
+            self._description_to_properties[
+                (schema_group, schema_name, serialization_type, schema_content)
+            ] = schema_properties
+            return schema_properties

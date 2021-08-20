@@ -1,3 +1,5 @@
+from datetime import timedelta
+from time import time
 import pytest
 import os
 from azure.identity.aio import ClientSecretCredential
@@ -22,7 +24,7 @@ async def test_logs_auth():
     summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
 
     # returns LogsQueryResult 
-    response = await client.query(os.environ['LOG_WORKSPACE_ID'], query)
+    response = await client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None)
 
     assert response is not None
     assert response.tables is not None
@@ -35,6 +37,7 @@ async def test_logs_server_timeout():
         response = await client.query(
             os.environ['LOG_WORKSPACE_ID'],
             "range x from 1 to 10000000000 step 1 | count",
+            timespan=None,
             server_timeout=1,
         )
         assert e.message.contains('Gateway timeout')
@@ -46,18 +49,19 @@ async def test_logs_query_batch():
     requests = [
         LogsBatchQuery(
             query="AzureActivity | summarize count()",
-            timespan="PT1H",
+            timespan=timedelta(hours=1),
             workspace_id= os.environ['LOG_WORKSPACE_ID']
         ),
         LogsBatchQuery(
             query= """AppRequests | take 10  |
                 summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId""",
-            timespan="PT1H",
+            timespan=timedelta(hours=1),
             workspace_id= os.environ['LOG_WORKSPACE_ID']
         ),
         LogsBatchQuery(
             query= "AppRequests | take 2",
-            workspace_id= os.environ['LOG_WORKSPACE_ID']
+            workspace_id= os.environ['LOG_WORKSPACE_ID'],
+            timespan=None
         ),
     ]
     response = await client.query_batch(requests)
@@ -76,6 +80,7 @@ async def test_logs_single_query_additional_workspaces_async():
     response = await client.query(
         os.environ['LOG_WORKSPACE_ID'],
         query,
+        timespan=None,
         additional_workspaces=[os.environ["SECONDARY_WORKSPACE_ID"]],
         )
 
@@ -92,13 +97,13 @@ async def test_logs_query_batch_additional_workspaces():
     requests = [
         LogsBatchQuery(
             query,
-            timespan="PT1H",
+            timespan=timedelta(hours=1),
             workspace_id= os.environ['LOG_WORKSPACE_ID'],
             additional_workspaces=[os.environ['SECONDARY_WORKSPACE_ID']]
         ),
         LogsBatchQuery(
             query,
-            timespan="PT1H",
+            timespan=timedelta(hours=1),
             workspace_id= os.environ['LOG_WORKSPACE_ID'],
             additional_workspaces=[os.environ['SECONDARY_WORKSPACE_ID']]
         ),
@@ -123,7 +128,7 @@ async def test_logs_single_query_with_render():
     query = """AppRequests"""
 
     # returns LogsQueryResult 
-    response = await client.query(os.environ['LOG_WORKSPACE_ID'], query, include_visualization=True)
+    response = await client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None, include_visualization=True)
 
     assert response.visualization is not None
 
@@ -135,7 +140,7 @@ async def test_logs_single_query_with_render_and_stats():
     query = """AppRequests"""
 
     # returns LogsQueryResult 
-    response = await client.query(os.environ['LOG_WORKSPACE_ID'], query, include_visualization=True, include_statistics=True)
+    response = await client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None, include_visualization=True, include_statistics=True)
 
     assert response.visualization is not None
     assert response.statistics is not None

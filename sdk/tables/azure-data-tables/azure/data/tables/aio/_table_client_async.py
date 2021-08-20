@@ -448,7 +448,7 @@ class TableClient(AsyncTablesBaseClient):
         try:
             metadata = None
             content = None
-            if mode is UpdateMode.REPLACE:
+            if mode == UpdateMode.REPLACE:
                 metadata, content = await self._client.table.update_entity(  # type: ignore
                     table=self.table_name,
                     partition_key=partition_key,
@@ -458,7 +458,7 @@ class TableClient(AsyncTablesBaseClient):
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs
                 )
-            elif mode is UpdateMode.MERGE:
+            elif mode == UpdateMode.MERGE:
                 metadata, content = await self._client.table.merge_entity(  # type: ignore
                     table=self.table_name,
                     partition_key=partition_key,
@@ -469,7 +469,7 @@ class TableClient(AsyncTablesBaseClient):
                     **kwargs
                 )
             else:
-                raise ValueError("Mode type is not supported")
+                raise ValueError("Mode type '{}' is not supported.".format(mode))
         except HttpResponseError as error:
             _process_table_error(error)
         return _trim_service_metadata(metadata, content=content)  # type: ignore
@@ -632,7 +632,7 @@ class TableClient(AsyncTablesBaseClient):
         try:
             metadata = None
             content = None
-            if mode is UpdateMode.MERGE:
+            if mode == UpdateMode.MERGE:
                 metadata, content = await self._client.table.merge_entity(  # type: ignore
                     table=self.table_name,
                     partition_key=partition_key,
@@ -641,7 +641,7 @@ class TableClient(AsyncTablesBaseClient):
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs
                 )
-            elif mode is UpdateMode.REPLACE:
+            elif mode == UpdateMode.REPLACE:
                 metadata, content = await self._client.table.update_entity(  # type: ignore
                     table=self.table_name,
                     partition_key=partition_key,

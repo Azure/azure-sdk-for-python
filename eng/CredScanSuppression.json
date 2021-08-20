@@ -36,6 +36,7 @@
         },
         {
             "file":[
+                "eng/common/testproxy/dotnet-devcert.pfx",
                 "sdk/keyvault/azure-keyvault-certificates/tests/ca.key",
                 "sdk/identity/azure-identity/tests/ec-certificate.pem",
                 "sdk/core/azure-servicemanagement-legacy/tests/legacy_mgmt_settings_fake.py",
