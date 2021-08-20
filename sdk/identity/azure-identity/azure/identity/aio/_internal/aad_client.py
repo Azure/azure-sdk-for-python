@@ -48,8 +48,9 @@ class AadClient(AadClientBase):
         response = await self._pipeline.run(request, retry_on_methods=self._POST, **kwargs)
         return self._process_response(response, now)
 
-    async def obtain_token_by_client_certificate(self, scopes, certificate, **kwargs):
-        # type: (Iterable[str], AadClientCertificate, **Any) -> AccessToken
+    async def obtain_token_by_client_certificate(
+        self, scopes: "Iterable[str]", certificate: "AadClientCertificate", **kwargs: "Any"
+    ) -> "AccessToken":
         request = self._get_client_certificate_request(scopes, certificate, **kwargs)
         now = int(time.time())
         response = await self._pipeline.run(request, stream=False, retry_on_methods=self._POST, **kwargs)
@@ -61,6 +62,14 @@ class AadClient(AadClientBase):
         request = self._get_client_secret_request(scopes, secret, **kwargs)
         now = int(time.time())
         response = await self._pipeline.run(request, retry_on_methods=self._POST, **kwargs)
+        return self._process_response(response, now)
+
+    async def obtain_token_by_jwt_assertion(
+        self, scopes: "Iterable[str]", assertion: str, **kwargs: "Any"
+    ) -> "AccessToken":
+        request = self._get_jwt_assertion_request(scopes, assertion)
+        now = int(time.time())
+        response = await self._pipeline.run(request, stream=False, retry_on_methods=self._POST, **kwargs)
         return self._process_response(response, now)
 
     async def obtain_token_by_refresh_token(

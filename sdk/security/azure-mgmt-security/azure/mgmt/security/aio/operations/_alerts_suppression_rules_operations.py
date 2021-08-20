@@ -44,7 +44,7 @@ class AlertsSuppressionRulesOperations:
     def list(
         self,
         alert_type: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AlertsSuppressionRulesList"]:
         """List of all the dismiss rules for the given subscription.
 
@@ -115,7 +115,7 @@ class AlertsSuppressionRulesOperations:
     async def get(
         self,
         alerts_suppression_rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AlertsSuppressionRule":
         """Get dismiss rule, with name: {alertsSuppressionRuleName}, for the given subscription.
 
@@ -170,7 +170,7 @@ class AlertsSuppressionRulesOperations:
         self,
         alerts_suppression_rule_name: str,
         alerts_suppression_rule: "_models.AlertsSuppressionRule",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AlertsSuppressionRule":
         """Update existing rule or create new rule if it doesn't exist.
 
@@ -231,7 +231,7 @@ class AlertsSuppressionRulesOperations:
     async def delete(
         self,
         alerts_suppression_rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete dismiss alert rule for this subscription.
 

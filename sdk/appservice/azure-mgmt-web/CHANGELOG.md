@@ -1,5 +1,21 @@
 # Release History
 
+## 4.0.0 (2021-08-03)
+
+**Features**
+
+  - Model AppServicePlan has a new parameter elastic_scale_enabled
+  - Added operation WebAppsOperations.update_swift_virtual_network_connection_with_check_slot
+  - Added operation WebAppsOperations.create_or_update_swift_virtual_network_connection_with_check_slot
+  - Added operation WebAppsOperations.update_swift_virtual_network_connection_with_check
+  - Added operation WebAppsOperations.list_basic_publishing_credentials_policies
+  - Added operation WebAppsOperations.list_basic_publishing_credentials_policies_slot
+
+**Breaking changes**
+
+  - Removed operation WebAppsOperations.get_basic_publishing_credentials_policies_slot
+  - Removed operation WebAppsOperations.get_basic_publishing_credentials_policies
+
 ## 3.0.0 (2021-05-25)
 
 **Features**

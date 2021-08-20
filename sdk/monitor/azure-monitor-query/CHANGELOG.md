@@ -1,7 +1,33 @@
 # Release History
 
+## 1.0.0b4 (Unreleased)
 
-## 1.0.0b3 (Unreleased)
+### Features Added
+
+- Added additional `display_description` attribute to the `Metric` type.
+
+### Breaking Changes
+
+- Rename `batch_query` to `query_batch`.
+- Rename `LogsBatchQueryRequest` to `LogsBatchQuery`.
+- `include_render` is now renamed to `include_visualization` in the query API.
+- `LogsQueryResult` and `LogsBatchQueryResult` now return `visualization` instead of `render`.
+- `start_time`, `duration` and `end_time` are now replaced with a single param called `timespan`
+- `resourceregion` is renamed to `resource_region` in the MetricResult type.
+- `top` is renamed to `max_results` in the metric's `query` API.
+- `metric_namespace_name` is renamed to `fully_qualified_namespace`
+- `is_dimension_required` is renamed to `dimension_required`
+- `interval`  and `time_grain` are renamed to `granularity`
+- `orderby` is renamed to `order_by`
+- `LogsQueryResult` now returns `datetime` objects for a time values.
+
+### Bugs Fixed
+
+- `include_statistics` and `include_visualization` args can now work together.
+
+### Other Changes
+
+## 1.0.0b3 (2021-08-09)
 
 ### Features Added
 
@@ -17,10 +43,6 @@
 - `LogsQueryRequest` is renamed to `LogsBatchQueryRequest`
 - `LogsQueryResults` is now renamed to `LogsQueryResult`
 - `LogsBatchQueryResult` now has 4 additional attributes - `tables`, `error`, `statistics` and `render` instead of `body` attribute.
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.0.0b2 (2021-07-06)
 

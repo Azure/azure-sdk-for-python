@@ -293,6 +293,8 @@ def get_charset_encoding(response):
 
 def decode_to_text(encoding, content):
     # type: (Optional[str], bytes) -> str
+    if not content:
+        return ""
     if encoding == "utf-8":
         encoding = "utf-8-sig"
     if encoding:

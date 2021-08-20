@@ -45,7 +45,7 @@ class RoleAssignmentsOperations:
         vault_base_url: str,
         scope: str,
         role_assignment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RoleAssignment":
         """Deletes a role assignment.
 
@@ -108,7 +108,7 @@ class RoleAssignmentsOperations:
         scope: str,
         role_assignment_name: str,
         parameters: "_models.RoleAssignmentCreateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RoleAssignment":
         """Creates a role assignment.
 
@@ -178,7 +178,7 @@ class RoleAssignmentsOperations:
         vault_base_url: str,
         scope: str,
         role_assignment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RoleAssignment":
         """Get the specified role assignment.
 
@@ -240,7 +240,7 @@ class RoleAssignmentsOperations:
         vault_base_url: str,
         scope: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RoleAssignmentListResult"]:
         """Gets role assignments for a scope.
 

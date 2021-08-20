@@ -41,6 +41,13 @@ class SilentAuthenticationCredential(object):
         self._client = MsalClient(**kwargs)
         self._initialized = False
 
+    def __enter__(self):
+        self._client.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        self._client.__exit__(*args)
+
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type (*str, **Any) -> AccessToken
         if not scopes:

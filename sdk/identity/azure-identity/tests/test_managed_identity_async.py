@@ -7,10 +7,8 @@ import time
 from unittest import mock
 
 from azure.core.credentials import AccessToken
-from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.exceptions import ClientAuthenticationError
 from azure.identity.aio import ManagedIdentityCredential
-from azure.identity.aio._internal.managed_identity_client import AsyncManagedIdentityClient
 from azure.identity._credentials.imds import IMDS_AUTHORITY, IMDS_TOKEN_PATH
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
@@ -18,7 +16,7 @@ from azure.identity._internal.user_agent import USER_AGENT
 import pytest
 
 from helpers import build_aad_response, mock_response, Request
-from helpers_async import async_validating_transport, AsyncMockTransport, get_completed_future
+from helpers_async import async_validating_transport, AsyncMockTransport
 from test_managed_identity import ALL_ENVIRONMENTS
 
 
@@ -94,6 +92,17 @@ async def test_context_manager(environ):
 
     assert transport.__aenter__.call_count == 1
     assert transport.__aexit__.call_count == 1
+
+
+@pytest.mark.asyncio
+async def test_close_incomplete_configuration():
+    await ManagedIdentityCredential().close()
+
+
+@pytest.mark.asyncio
+async def test_context_manager_incomplete_configuration():
+    async with ManagedIdentityCredential():
+        pass
 
 
 @pytest.mark.asyncio
@@ -716,18 +725,56 @@ async def test_azure_arc_client_id():
 
 
 @pytest.mark.asyncio
-async def test_managed_identity_client_retry():
-    """AsyncManagedIdentityClient should retry token requests"""
+async def test_token_exchange(tmpdir):
+    exchange_token = "exchange-token"
+    token_file = tmpdir.join("token")
+    token_file.write(exchange_token)
+    access_token = "***"
+    authority = "https://localhost"
+    client_id = "client_id"
+    tenant = "tenant_id"
+    scope = "scope"
 
-    message = "can't connect"
-    transport = mock.Mock(send=mock.Mock(side_effect=ServiceRequestError(message)), sleep=get_completed_future)
-    request_factory = mock.Mock()
+    transport = async_validating_transport(
+        requests=[
+            Request(
+                base_url=authority,
+                method="POST",
+                required_data={
+                    "client_assertion": exchange_token,
+                    "client_assertion_type": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+                    "client_id": client_id,
+                    "grant_type": "client_credentials",
+                    "scope": scope,
+                },
+            )
+        ],
+        responses=[
+            mock_response(
+                json_payload={
+                    "access_token": access_token,
+                    "expires_in": 3600,
+                    "ext_expires_in": 3600,
+                    "expires_on": int(time.time()) + 3600,
+                    "not_before": int(time.time()),
+                    "resource": scope,
+                    "token_type": "Bearer",
+                }
+            )
+        ],
+    )
 
-    client = AsyncManagedIdentityClient(request_factory, transport=transport)
+    with mock.patch.dict(
+        "os.environ",
+        {
+            EnvironmentVariables.AZURE_AUTHORITY_HOST: authority,
+            EnvironmentVariables.AZURE_CLIENT_ID: client_id,
+            EnvironmentVariables.AZURE_TENANT_ID: tenant,
+            EnvironmentVariables.TOKEN_FILE_PATH: token_file.strpath,
+        },
+        clear=True,
+    ):
+        credential = ManagedIdentityCredential(transport=transport)
+        token = await credential.get_token(scope)
 
-    for method in ("GET", "POST"):
-        request_factory.return_value = HttpRequest(method, "https://localhost")
-        with pytest.raises(ServiceRequestError, match=message):
-            await client.request_token("scope")
-        assert transport.send.call_count > 1
-        transport.send.reset_mock()
+    assert token.token == access_token

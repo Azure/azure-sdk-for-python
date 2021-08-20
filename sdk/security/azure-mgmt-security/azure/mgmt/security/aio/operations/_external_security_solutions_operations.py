@@ -43,7 +43,7 @@ class ExternalSecuritySolutionsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ExternalSecuritySolutionList"]:
         """Gets a list of external security solutions for the subscription.
 
@@ -109,7 +109,7 @@ class ExternalSecuritySolutionsOperations:
 
     def list_by_home_region(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ExternalSecuritySolutionList"]:
         """Gets a list of external Security Solutions for the subscription and location.
 
@@ -178,7 +178,7 @@ class ExternalSecuritySolutionsOperations:
         self,
         resource_group_name: str,
         external_security_solutions_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ExternalSecuritySolution":
         """Gets a specific external Security Solution.
 

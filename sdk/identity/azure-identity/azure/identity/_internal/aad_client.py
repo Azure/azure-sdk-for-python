@@ -17,6 +17,17 @@ if TYPE_CHECKING:
 
 
 class AadClient(AadClientBase):
+    def __enter__(self):
+        self._pipeline.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        self._pipeline.__exit__(*args)
+
+    def close(self):
+        # type: () -> None
+        self.__exit__()
+
     def obtain_token_by_authorization_code(self, scopes, code, redirect_uri, client_secret=None, **kwargs):
         # type: (Iterable[str], str, str, Optional[str], **Any) -> AccessToken
         request = self._get_auth_code_request(
@@ -36,6 +47,13 @@ class AadClient(AadClientBase):
     def obtain_token_by_client_secret(self, scopes, secret, **kwargs):
         # type: (Iterable[str], str, **Any) -> AccessToken
         request = self._get_client_secret_request(scopes, secret, **kwargs)
+        now = int(time.time())
+        response = self._pipeline.run(request, stream=False, retry_on_methods=self._POST, **kwargs)
+        return self._process_response(response, now)
+
+    def obtain_token_by_jwt_assertion(self, scopes, assertion, **kwargs):
+        # type: (Iterable[str], str, **Any) -> AccessToken
+        request = self._get_jwt_assertion_request(scopes, assertion)
         now = int(time.time())
         response = self._pipeline.run(request, stream=False, retry_on_methods=self._POST, **kwargs)
         return self._process_response(response, now)

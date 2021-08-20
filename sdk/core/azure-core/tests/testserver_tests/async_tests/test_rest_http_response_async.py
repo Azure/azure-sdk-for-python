@@ -14,9 +14,10 @@ from azure.core.exceptions import HttpResponseError
 @pytest.fixture
 def send_request(client):
     async def _send_request(request):
-        response = await client.send_request(request, stream=False)
-        response.raise_for_status()
-        return response
+        async with client:
+            response = await client.send_request(request, stream=False)
+            response.raise_for_status()
+            return response
     return _send_request
 
 @pytest.mark.asyncio
@@ -27,7 +28,7 @@ async def test_response(send_request, port):
     assert response.status_code == 200
     assert response.reason == "OK"
     assert response.content == b"Hello, world!"
-    assert response.text == "Hello, world!"
+    assert response.text() == "Hello, world!"
     assert response.request.method == "GET"
     assert response.request.url == "http://localhost:{}/basic/string".format(port)
 
@@ -40,7 +41,7 @@ async def test_response_content(send_request):
     assert response.reason == "OK"
     content = await response.read()
     assert content == b"Hello, world!"
-    assert response.text == "Hello, world!"
+    assert response.text() == "Hello, world!"
 
 @pytest.mark.asyncio
 async def test_response_text(send_request):
@@ -51,7 +52,7 @@ async def test_response_text(send_request):
     assert response.reason == "OK"
     content = await response.read()
     assert content == b"Hello, world!"
-    assert response.text == "Hello, world!"
+    assert response.text() == "Hello, world!"
     assert response.headers["Content-Length"] == '13'
     assert response.headers['Content-Type'] == "text/plain; charset=utf-8"
 
@@ -64,7 +65,7 @@ async def test_response_html(send_request):
     assert response.reason == "OK"
     content = await response.read()
     assert content == b"<html><body>Hello, world!</html></body>"
-    assert response.text == "<html><body>Hello, world!</html></body>"
+    assert response.text() == "<html><body>Hello, world!</html></body>"
 
 @pytest.mark.asyncio
 async def test_raise_for_status(client):
@@ -106,7 +107,7 @@ async def test_response_content_type_encoding(send_request):
     await response.read()
     assert response.content_type == "text/plain; charset=latin-1"
     assert response.content == b'Latin 1: \xff'
-    assert response.text == "Latin 1: ÿ"
+    assert response.text() == "Latin 1: ÿ"
     assert response.encoding == "latin-1"
 
 
@@ -119,7 +120,7 @@ async def test_response_autodetect_encoding(send_request):
         request=HttpRequest("GET", "/encoding/latin-1")
     )
     await response.read()
-    assert response.text == u'Latin 1: ÿ'
+    assert response.text() == u'Latin 1: ÿ'
     assert response.encoding == "latin-1"
 
 
@@ -133,7 +134,7 @@ async def test_response_fallback_to_autodetect(send_request):
     )
     await response.read()
     assert response.headers["Content-Type"] == "text/plain; charset=invalid-codec-name"
-    assert response.text == "おはようございます。"
+    assert response.text() == "おはようございます。"
     assert response.encoding is None
 
 
@@ -152,20 +153,20 @@ async def test_response_no_charset_with_ascii_content(send_request):
     assert response.encoding is None
     content = await response.read()
     assert content == b"Hello, world!"
-    assert response.text == "Hello, world!"
+    assert response.text() == "Hello, world!"
 
 
 @pytest.mark.asyncio
 async def test_response_no_charset_with_iso_8859_1_content(send_request):
     """
-    A response with ISO 8859-1 encoded content should decode correctly,
-    even with no charset specified.
+    We don't support iso-8859-1 by default following conversations
+    about endoding flow
     """
     response = await send_request(
         request=HttpRequest("GET", "/encoding/iso-8859-1"),
     )
     await response.read()
-    assert response.text == "Accented: �sterreich" # aiohttp is having diff behavior than requests
+    assert response.text() == "Accented: �sterreich"
     assert response.encoding is None
 
 # NOTE: aiohttp isn't liking this
@@ -177,7 +178,7 @@ async def test_response_no_charset_with_iso_8859_1_content(send_request):
 #     assert response.headers["Content-Type"] == "text/plain; charset=utf-8"
 #     response.encoding = "latin-1"
 #     await response.read()
-#     assert response.text == "Latin 1: ÿ"
+#     assert response.text() == "Latin 1: ÿ"
 #     assert response.encoding == "latin-1"
 
 @pytest.mark.asyncio
@@ -204,7 +205,7 @@ async def test_emoji(send_request):
         request=HttpRequest("GET", "/encoding/emoji"),
     )
     await response.read()
-    assert response.text == "👩"
+    assert response.text() == "👩"
 
 @pytest.mark.asyncio
 async def test_emoji_family_with_skin_tone_modifier(send_request):
@@ -212,7 +213,7 @@ async def test_emoji_family_with_skin_tone_modifier(send_request):
         request=HttpRequest("GET", "/encoding/emoji-family-skin-tone-modifier"),
     )
     await response.read()
-    assert response.text == "👩🏻‍👩🏽‍👧🏾‍👦🏿 SSN: 859-98-0987"
+    assert response.text() == "👩🏻‍👩🏽‍👧🏾‍👦🏿 SSN: 859-98-0987"
 
 @pytest.mark.asyncio
 async def test_korean_nfc(send_request):
@@ -220,7 +221,7 @@ async def test_korean_nfc(send_request):
         request=HttpRequest("GET", "/encoding/korean"),
     )
     await response.read()
-    assert response.text == "아가"
+    assert response.text() == "아가"
 
 @pytest.mark.asyncio
 async def test_urlencoded_content(send_request):
@@ -249,8 +250,24 @@ async def test_send_request_return_pipeline_response(client):
     assert hasattr(response, "http_request")
     assert hasattr(response, "http_response")
     assert hasattr(response, "context")
-    assert response.http_response.text == "Hello, world!"
+    assert response.http_response.text() == "Hello, world!"
     assert hasattr(response.http_request, "content")
+
+@pytest.mark.asyncio
+async def test_text_and_encoding(send_request):
+    response = await send_request(
+        request=HttpRequest("GET", "/encoding/emoji"),
+    )
+    assert response.content == u"👩".encode("utf-8")
+    assert response.text() == u"👩"
+
+    # try setting encoding as a property
+    response.encoding = "utf-16"
+    assert response.text() == u"鿰ꦑ" == response.content.decode(response.encoding)
+
+    # assert latin-1 changes text decoding without changing encoding property
+    assert response.text("latin-1") == 'ð\x9f\x91©' == response.content.decode("latin-1")
+    assert response.encoding == "utf-16"
 
 # @pytest.mark.asyncio
 # async def test_multipart_encode_non_seekable_filelike(send_request):
