@@ -18,6 +18,7 @@
 - `time_grain` is renamed to `granularity`
 - `LogsQueryResult` now returns `datetime` objects for a time values.
 - `LogsBatchQuery` doesn't accept a `request_id` anymore.
+- `MetricsMetadataValues` is removed. A dictionary is used instead.
 
 ### Bugs Fixed
 
