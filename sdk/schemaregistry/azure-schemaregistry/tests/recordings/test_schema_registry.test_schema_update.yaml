@@ -20,20 +20,20 @@ interactions:
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-update423f1009?api-version=2020-09-01-preview
   response:
     body:
-      string: '{"id":"5c569b0803e34a13af3f8f09acbf654a"}'
+      string: '{"id":"8caff65e6a8844b280e70312dd7059e4"}'
     headers:
       content-type:
       - application/json
       date:
-      - Fri, 20 Aug 2021 15:35:24 GMT
+      - Fri, 20 Aug 2021 16:37:16 GMT
       location:
-      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update423f1009/versions/3?api-version=2020-09-01-preview
+      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update423f1009/versions/1?api-version=2020-09-01-preview
       schema-id:
-      - 5c569b0803e34a13af3f8f09acbf654a
+      - 8caff65e6a8844b280e70312dd7059e4
       schema-id-location:
-      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/5c569b0803e34a13af3f8f09acbf654a?api-version=2020-09-01-preview
+      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/8caff65e6a8844b280e70312dd7059e4?api-version=2020-09-01-preview
       schema-version:
-      - '3'
+      - '1'
       schema-versions-location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update423f1009/versions?api-version=2020-09-01-preview
       serialization-type:
@@ -68,20 +68,20 @@ interactions:
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-update423f1009?api-version=2020-09-01-preview
   response:
     body:
-      string: '{"id":"e6b79563705a4f059c38b5f1f9ea6e21"}'
+      string: '{"id":"b8991214c4bb47da89a785efeaaf52b6"}'
     headers:
       content-type:
       - application/json
       date:
-      - Fri, 20 Aug 2021 15:35:24 GMT
+      - Fri, 20 Aug 2021 16:37:16 GMT
       location:
-      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update423f1009/versions/4?api-version=2020-09-01-preview
+      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update423f1009/versions/2?api-version=2020-09-01-preview
       schema-id:
-      - e6b79563705a4f059c38b5f1f9ea6e21
+      - b8991214c4bb47da89a785efeaaf52b6
       schema-id-location:
-      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/e6b79563705a4f059c38b5f1f9ea6e21?api-version=2020-09-01-preview
+      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/b8991214c4bb47da89a785efeaaf52b6?api-version=2020-09-01-preview
       schema-version:
-      - '4'
+      - '2'
       schema-versions-location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update423f1009/versions?api-version=2020-09-01-preview
       serialization-type:
@@ -107,7 +107,7 @@ interactions:
       User-Agent:
       - azsdk-python-azureschemaregistry/1.0.0b2 Python/3.7.10 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_resource.servicebus.windows.net/$schemagroups/getSchemaById/e6b79563705a4f059c38b5f1f9ea6e21?api-version=2020-09-01-preview
+    uri: https://fake_resource.servicebus.windows.net/$schemagroups/getSchemaById/b8991214c4bb47da89a785efeaaf52b6?api-version=2020-09-01-preview
   response:
     body:
       string: '{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_food","type":["string","null"]}]}'
@@ -115,15 +115,15 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 20 Aug 2021 15:35:25 GMT
+      - Fri, 20 Aug 2021 16:37:17 GMT
       location:
-      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update423f1009/versions/4?api-version=2020-09-01-preview
+      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update423f1009/versions/2?api-version=2020-09-01-preview
       schema-id:
-      - e6b79563705a4f059c38b5f1f9ea6e21
+      - b8991214c4bb47da89a785efeaaf52b6
       schema-id-location:
-      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/e6b79563705a4f059c38b5f1f9ea6e21?api-version=2020-09-01-preview
+      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/b8991214c4bb47da89a785efeaaf52b6?api-version=2020-09-01-preview
       schema-version:
-      - '4'
+      - '2'
       schema-versions-location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update423f1009/versions?api-version=2020-09-01-preview
       serialization-type:
@@ -149,7 +149,7 @@ interactions:
       User-Agent:
       - azsdk-python-azureschemaregistry/1.0.0b2 Python/3.7.10 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_resource.servicebus.windows.net/$schemagroups/getSchemaById/e6b79563705a4f059c38b5f1f9ea6e21?api-version=2020-09-01-preview
+    uri: https://fake_resource.servicebus.windows.net/$schemagroups/getSchemaById/b8991214c4bb47da89a785efeaaf52b6?api-version=2020-09-01-preview
   response:
     body:
       string: '{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_food","type":["string","null"]}]}'
@@ -157,15 +157,15 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 20 Aug 2021 15:35:25 GMT
+      - Fri, 20 Aug 2021 16:37:17 GMT
       location:
-      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update423f1009/versions/4?api-version=2020-09-01-preview
+      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update423f1009/versions/2?api-version=2020-09-01-preview
       schema-id:
-      - e6b79563705a4f059c38b5f1f9ea6e21
+      - b8991214c4bb47da89a785efeaaf52b6
       schema-id-location:
-      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/e6b79563705a4f059c38b5f1f9ea6e21?api-version=2020-09-01-preview
+      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/b8991214c4bb47da89a785efeaaf52b6?api-version=2020-09-01-preview
       schema-version:
-      - '4'
+      - '2'
       schema-versions-location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update423f1009/versions?api-version=2020-09-01-preview
       serialization-type:
@@ -200,20 +200,20 @@ interactions:
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-update423f1009?api-version=2020-09-01-preview
   response:
     body:
-      string: '{"id":"e6b79563705a4f059c38b5f1f9ea6e21"}'
+      string: '{"id":"b8991214c4bb47da89a785efeaaf52b6"}'
     headers:
       content-type:
       - application/json
       date:
-      - Fri, 20 Aug 2021 15:35:25 GMT
+      - Fri, 20 Aug 2021 16:37:17 GMT
       location:
-      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update423f1009/versions/4?api-version=2020-09-01-preview
+      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update423f1009/versions/2?api-version=2020-09-01-preview
       schema-id:
-      - e6b79563705a4f059c38b5f1f9ea6e21
+      - b8991214c4bb47da89a785efeaaf52b6
       schema-id-location:
-      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/e6b79563705a4f059c38b5f1f9ea6e21?api-version=2020-09-01-preview
+      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/b8991214c4bb47da89a785efeaaf52b6?api-version=2020-09-01-preview
       schema-version:
-      - '4'
+      - '2'
       schema-versions-location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update423f1009/versions?api-version=2020-09-01-preview
       serialization-type:

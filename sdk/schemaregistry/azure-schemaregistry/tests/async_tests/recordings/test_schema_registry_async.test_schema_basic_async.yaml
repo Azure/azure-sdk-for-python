@@ -16,13 +16,13 @@ interactions:
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-basic-asynce5e1482?api-version=2020-09-01-preview
   response:
     body:
-      string: '{"id":"f81a51eafcc045d4aa8b67a2a66e60a5"}'
+      string: '{"id":"b62561063b8c4defb840df456807031c"}'
     headers:
       content-type: application/json
-      date: Fri, 20 Aug 2021 15:35:27 GMT
+      date: Fri, 20 Aug 2021 16:37:19 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-basic-asynce5e1482/versions/1?api-version=2020-09-01-preview
-      schema-id: f81a51eafcc045d4aa8b67a2a66e60a5
-      schema-id-location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/f81a51eafcc045d4aa8b67a2a66e60a5?api-version=2020-09-01-preview
+      schema-id: b62561063b8c4defb840df456807031c
+      schema-id-location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/b62561063b8c4defb840df456807031c?api-version=2020-09-01-preview
       schema-version: '1'
       schema-versions-location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-basic-asynce5e1482/versions?api-version=2020-09-01-preview
       serialization-type: Avro
@@ -50,13 +50,13 @@ interactions:
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-basic-asynce5e1482?api-version=2020-09-01-preview
   response:
     body:
-      string: '{"id":"f81a51eafcc045d4aa8b67a2a66e60a5"}'
+      string: '{"id":"b62561063b8c4defb840df456807031c"}'
     headers:
       content-type: application/json
-      date: Fri, 20 Aug 2021 15:35:28 GMT
+      date: Fri, 20 Aug 2021 16:37:19 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-basic-asynce5e1482/versions/1?api-version=2020-09-01-preview
-      schema-id: f81a51eafcc045d4aa8b67a2a66e60a5
-      schema-id-location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/f81a51eafcc045d4aa8b67a2a66e60a5?api-version=2020-09-01-preview
+      schema-id: b62561063b8c4defb840df456807031c
+      schema-id-location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/b62561063b8c4defb840df456807031c?api-version=2020-09-01-preview
       schema-version: '1'
       schema-versions-location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-basic-asynce5e1482/versions?api-version=2020-09-01-preview
       serialization-type: Avro
