@@ -3,6 +3,8 @@
 ## 1.7.0b4 (Unreleased)
 
 ### Features Added
+- `CertificateCredential` accepts certificates in PKCS12 format
+  ([#13540](https://github.com/Azure/azure-sdk-for-python/issues/13540))
 
 ### Breaking Changes
 
@@ -13,6 +15,16 @@
   `azure.identity` namespace. At the end of a `with` block, or when `close()`
   is called, these credentials close their underlying transport sessions.
   ([#18798](https://github.com/Azure/azure-sdk-for-python/issues/18798))
+
+
+
+## 1.6.1 (2021-08-19)
+
+### Other Changes
+- Persistent cache implementations are now loaded on demand, enabling
+  workarounds when importing transitive dependencies such as pywin32
+  fails
+  ([#19989](https://github.com/Azure/azure-sdk-for-python/issues/19989))
 
 
 ## 1.7.0b3 (2021-08-10)
