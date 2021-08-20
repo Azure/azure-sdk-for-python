@@ -487,7 +487,6 @@ class Metric(object):
                 TimeSeriesElement._from_generated(t) for t in generated.timeseries # pylint: disable=protected-access
                 ],
             display_description=generated.display_description,
-            error= error,
         )
 
 
