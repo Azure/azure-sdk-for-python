@@ -25,7 +25,7 @@ from azure.identity._constants import EnvironmentVariables
 
 import pytest
 
-from test_certificate_credential import CERT_PATH
+from test_certificate_credential import PEM_CERT_PATH
 from test_vscode_credential import GET_USER_SETTINGS
 
 
@@ -46,7 +46,9 @@ FIXTURES = (
         AuthorizationCodeCredential,
         {kwarg: "..." for kwarg in ("tenant_id", "client_id", "authorization_code", "redirect_uri")},
     ),
-    CredentialFixture(CertificateCredential, {"tenant_id": "...", "client_id": "...", "certificate_path": CERT_PATH}),
+    CredentialFixture(
+        CertificateCredential, {"tenant_id": "...", "client_id": "...", "certificate_path": PEM_CERT_PATH}
+    ),
     CredentialFixture(ClientSecretCredential, {kwarg: "..." for kwarg in ("tenant_id", "client_id", "client_secret")}),
     CredentialFixture(DeviceCodeCredential),
     CredentialFixture(
