@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- We now use `azure.core.serialization.AzureJSONEncoder` to serialize `json` input to `azure.core.rest.HttpRequest`.
+
 ### Breaking Changes in the Provisional `azure.core.rest` package
 
 - The `text` property on `azure.core.rest.HttpResponse` and `azure.core.rest.AsyncHttpResponse` has changed to a method, which also takes
