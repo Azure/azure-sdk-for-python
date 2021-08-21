@@ -46,6 +46,6 @@ def _parse_response_schema_id(response):
 
 def _parse_response_schema(response):
     return Schema(
-        schema_content=response.text,
+        schema_content=response.text(),
         schema_properties=SchemaProperties(**_parse_schema_properties(response))
     )
