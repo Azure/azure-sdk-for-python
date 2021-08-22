@@ -401,8 +401,8 @@ class MetricValue(object):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar time_stamp: Required. The timestamp for the metric value in ISO 8601 format.
-    :vartype time_stamp: ~datetime.datetime
+    :ivar timestamp: Required. The timestamp for the metric value in ISO 8601 format.
+    :vartype timestamp: ~datetime.datetime
     :ivar average: The average value in the time range.
     :vartype average: float
     :ivar minimum: The least value in the time range.
@@ -420,7 +420,7 @@ class MetricValue(object):
         **kwargs
     ):
         # type: (Any) -> None
-        self.time_stamp = kwargs['time_stamp']
+        self.timestamp = kwargs['timestamp']
         self.average = kwargs.get('average', None)
         self.minimum = kwargs.get('minimum', None)
         self.maximum = kwargs.get('maximum', None)
@@ -432,7 +432,7 @@ class MetricValue(object):
         if not generated:
             return cls()
         return cls(
-            time_stamp=generated.time_stamp,
+            timestamp=generated.time_stamp,
             average=generated.average,
             minimum=generated.minimum,
             maximum=generated.maximum,

@@ -22,6 +22,7 @@
 - `LogsQueryResult` now returns `datetime` objects for a time values.
 - `LogsBatchQuery` doesn't accept a `request_id` anymore.
 - `MetricsMetadataValues` is removed. A dictionary is used instead.
+- `time_stamp` is renamed to `timestamp` in `MetricValue` type.
 
 ### Bugs Fixed
 
