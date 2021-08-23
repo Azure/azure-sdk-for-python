@@ -11,8 +11,7 @@ import traceback
 
 _NULL = ' '
 _FILE_OUT = 'release_issue_status.csv'
-_PYTHON_SDK_ADMINISTRATORS = ['msyyc', 'RAY-316', 'BigCat20196']
-
+_PYTHON_SDK_ADMINISTRATORS = {'msyyc', 'RAY-316', 'BigCat20196'}
 
 def my_print(cmd):
     print('==' + cmd + ' ==\n')
@@ -87,11 +86,9 @@ def _extract_author_latest_comment(comments):
 
 
 def _whether_author_comment(comments):
-    q = set(comment.user.login for comment in comments)
-    for administrators in _PYTHON_SDK_ADMINISTRATORS:
-        q.discard(administrators)
+    diff = q.difference(_PYTHON_SDK_ADMINISTRATORS)
 
-    return True if len(q) > 0 else False
+    return  len(diff) > 0
 
 
 def _latest_comment_time(comments, delay_from_create_date):
