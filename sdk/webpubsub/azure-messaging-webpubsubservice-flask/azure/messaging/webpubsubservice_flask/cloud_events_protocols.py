@@ -25,7 +25,6 @@
 # --------------------------------------------------------------------------
 
 # pylint: disable=line-too-long
-# pylint: disable=redefined-builtin
 # pylint: disable=unused-argument
 # pylint: disable=unsubscriptable-object
 from dataclasses import dataclass
@@ -35,17 +34,17 @@ class ConnectionContext:
     hub: str
     connection_id: str
     event_name: str
-    type: str
+    event_type: str
     origin: str = None
     user_id: str = None
     subprotocol: str = None
     states: dict[str, object] = None
 
-    def __init__(self, hub: str, connection_id: str, event_name: str, type: str, origin: str = None, user_id: str = None, subprotocol: str = None, states: dict[str, object] = None, **kwargs):
+    def __init__(self, hub: str, connection_id: str, event_name: str, event_type: str, origin: str = None, user_id: str = None, subprotocol: str = None, states: dict[str, object] = None, **kwargs):
         self.hub = hub
         self.connection_id = connection_id
         self.event_name = event_name
-        self.type = type
+        self.event_type = event_type
         self.origin = origin
         self.user_id = user_id
         self.subprotocol = subprotocol

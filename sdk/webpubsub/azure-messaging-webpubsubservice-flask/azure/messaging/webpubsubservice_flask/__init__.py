@@ -102,7 +102,7 @@ class EventHandler:
         context['origin'] = request.headers.get(self.ORIGIN_HEADER)
         context['user_id'] = request.headers.get(self.USER_ID_HEADER)
         context['subprotocol'] = request.headers.get(self.SUBPROTOCOL_HEADER)
-        context['type'] = request.headers.get(self.TYPE_HEADER)
+        context['event_type'] = request.headers.get(self.TYPE_HEADER)
         return context
 
 def make_connect_response(connect_response: ConnectResponse = None):
