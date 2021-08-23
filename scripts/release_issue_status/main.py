@@ -86,6 +86,7 @@ def _extract_author_latest_comment(comments):
 
 
 def _whether_author_comment(comments):
+    q = set(comment.user.login for comment in comments)
     diff = q.difference(_PYTHON_SDK_ADMINISTRATORS)
 
     return  len(diff) > 0
