@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import logging
 import os
 import sys
 from typing import TYPE_CHECKING
@@ -11,6 +12,8 @@ import six
 if TYPE_CHECKING:
     from typing import Any
     import msal_extensions
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class TokenCachePersistenceOptions(object):
@@ -90,6 +93,7 @@ def _get_persistence(allow_unencrypted, account_name, cache_name):
             )
         except Exception as ex:  # pylint:disable=broad-except
             if not allow_unencrypted:
+                _LOGGER.debug('msal-extensions is unable to encrypt a persistent cache: "%s"', ex, exc_info=True)
                 error = ValueError(
                     "Persistent cache encryption isn't available in this environment. Please install encryption "
                     + 'dependencies or specify "allow_unencrypted_storage=True" to store the cache without encryption.'
