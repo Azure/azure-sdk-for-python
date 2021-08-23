@@ -243,9 +243,12 @@ try:
     from ._models_py3 import ExcelDataset
     from ._models_py3 import ExcelSource
     from ._models_py3 import ExecuteDataFlowActivity
+    from ._models_py3 import ExecuteDataFlowActivityTypeProperties
     from ._models_py3 import ExecuteDataFlowActivityTypePropertiesCompute
     from ._models_py3 import ExecutePipelineActivity
+    from ._models_py3 import ExecutePowerQueryActivityTypeProperties
     from ._models_py3 import ExecuteSSISPackageActivity
+    from ._models_py3 import ExecuteWranglingDataflowActivity
     from ._models_py3 import ExecutionActivity
     from ._models_py3 import ExportSettings
     from ._models_py3 import ExposureControlBatchRequest
@@ -340,6 +343,10 @@ try:
     from ._models_py3 import IntegrationRuntimeMonitoringData
     from ._models_py3 import IntegrationRuntimeNodeIpAddress
     from ._models_py3 import IntegrationRuntimeNodeMonitoringData
+    from ._models_py3 import IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint
+    from ._models_py3 import IntegrationRuntimeOutboundNetworkDependenciesEndpoint
+    from ._models_py3 import IntegrationRuntimeOutboundNetworkDependenciesEndpointDetails
+    from ._models_py3 import IntegrationRuntimeOutboundNetworkDependenciesEndpointsResponse
     from ._models_py3 import IntegrationRuntimeReference
     from ._models_py3 import IntegrationRuntimeRegenerateKeyParameters
     from ._models_py3 import IntegrationRuntimeResource
@@ -480,6 +487,8 @@ try:
     from ._models_py3 import PostgreSqlLinkedService
     from ._models_py3 import PostgreSqlSource
     from ._models_py3 import PostgreSqlTableDataset
+    from ._models_py3 import PowerQuerySink
+    from ._models_py3 import PowerQuerySource
     from ._models_py3 import PrestoLinkedService
     from ._models_py3 import PrestoObjectDataset
     from ._models_py3 import PrestoSource
@@ -591,6 +600,7 @@ try:
     from ._models_py3 import SqlAlwaysEncryptedProperties
     from ._models_py3 import SqlDWSink
     from ._models_py3 import SqlDWSource
+    from ._models_py3 import SqlDWUpsertSettings
     from ._models_py3 import SqlMISink
     from ._models_py3 import SqlMISource
     from ._models_py3 import SqlPartitionSettings
@@ -601,6 +611,7 @@ try:
     from ._models_py3 import SqlServerTableDataset
     from ._models_py3 import SqlSink
     from ._models_py3 import SqlSource
+    from ._models_py3 import SqlUpsertSettings
     from ._models_py3 import SquareLinkedService
     from ._models_py3 import SquareObjectDataset
     from ._models_py3 import SquareSource
@@ -670,6 +681,7 @@ try:
     from ._models_py3 import WebLinkedServiceTypeProperties
     from ._models_py3 import WebSource
     from ._models_py3 import WebTableDataset
+    from ._models_py3 import WranglingDataFlow
     from ._models_py3 import XeroLinkedService
     from ._models_py3 import XeroObjectDataset
     from ._models_py3 import XeroSource
@@ -917,9 +929,12 @@ except (SyntaxError, ImportError):
     from ._models import ExcelDataset  # type: ignore
     from ._models import ExcelSource  # type: ignore
     from ._models import ExecuteDataFlowActivity  # type: ignore
+    from ._models import ExecuteDataFlowActivityTypeProperties  # type: ignore
     from ._models import ExecuteDataFlowActivityTypePropertiesCompute  # type: ignore
     from ._models import ExecutePipelineActivity  # type: ignore
+    from ._models import ExecutePowerQueryActivityTypeProperties  # type: ignore
     from ._models import ExecuteSSISPackageActivity  # type: ignore
+    from ._models import ExecuteWranglingDataflowActivity  # type: ignore
     from ._models import ExecutionActivity  # type: ignore
     from ._models import ExportSettings  # type: ignore
     from ._models import ExposureControlBatchRequest  # type: ignore
@@ -1014,6 +1029,10 @@ except (SyntaxError, ImportError):
     from ._models import IntegrationRuntimeMonitoringData  # type: ignore
     from ._models import IntegrationRuntimeNodeIpAddress  # type: ignore
     from ._models import IntegrationRuntimeNodeMonitoringData  # type: ignore
+    from ._models import IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint  # type: ignore
+    from ._models import IntegrationRuntimeOutboundNetworkDependenciesEndpoint  # type: ignore
+    from ._models import IntegrationRuntimeOutboundNetworkDependenciesEndpointDetails  # type: ignore
+    from ._models import IntegrationRuntimeOutboundNetworkDependenciesEndpointsResponse  # type: ignore
     from ._models import IntegrationRuntimeReference  # type: ignore
     from ._models import IntegrationRuntimeRegenerateKeyParameters  # type: ignore
     from ._models import IntegrationRuntimeResource  # type: ignore
@@ -1154,6 +1173,8 @@ except (SyntaxError, ImportError):
     from ._models import PostgreSqlLinkedService  # type: ignore
     from ._models import PostgreSqlSource  # type: ignore
     from ._models import PostgreSqlTableDataset  # type: ignore
+    from ._models import PowerQuerySink  # type: ignore
+    from ._models import PowerQuerySource  # type: ignore
     from ._models import PrestoLinkedService  # type: ignore
     from ._models import PrestoObjectDataset  # type: ignore
     from ._models import PrestoSource  # type: ignore
@@ -1265,6 +1286,7 @@ except (SyntaxError, ImportError):
     from ._models import SqlAlwaysEncryptedProperties  # type: ignore
     from ._models import SqlDWSink  # type: ignore
     from ._models import SqlDWSource  # type: ignore
+    from ._models import SqlDWUpsertSettings  # type: ignore
     from ._models import SqlMISink  # type: ignore
     from ._models import SqlMISource  # type: ignore
     from ._models import SqlPartitionSettings  # type: ignore
@@ -1275,6 +1297,7 @@ except (SyntaxError, ImportError):
     from ._models import SqlServerTableDataset  # type: ignore
     from ._models import SqlSink  # type: ignore
     from ._models import SqlSource  # type: ignore
+    from ._models import SqlUpsertSettings  # type: ignore
     from ._models import SquareLinkedService  # type: ignore
     from ._models import SquareObjectDataset  # type: ignore
     from ._models import SquareSource  # type: ignore
@@ -1344,6 +1367,7 @@ except (SyntaxError, ImportError):
     from ._models import WebLinkedServiceTypeProperties  # type: ignore
     from ._models import WebSource  # type: ignore
     from ._models import WebTableDataset  # type: ignore
+    from ._models import WranglingDataFlow  # type: ignore
     from ._models import XeroLinkedService  # type: ignore
     from ._models import XeroObjectDataset  # type: ignore
     from ._models import XeroSource  # type: ignore
@@ -1433,7 +1457,9 @@ from ._data_factory_management_client_enums import (
     SparkServerType,
     SparkThriftTransportProtocol,
     SqlAlwaysEncryptedAkvAuthType,
+    SqlDWWriteBehaviorEnum,
     SqlPartitionOption,
+    SqlWriteBehaviorEnum,
     SsisLogLocationType,
     SsisObjectMetadataType,
     SsisPackageLocationType,
@@ -1687,9 +1713,12 @@ __all__ = [
     'ExcelDataset',
     'ExcelSource',
     'ExecuteDataFlowActivity',
+    'ExecuteDataFlowActivityTypeProperties',
     'ExecuteDataFlowActivityTypePropertiesCompute',
     'ExecutePipelineActivity',
+    'ExecutePowerQueryActivityTypeProperties',
     'ExecuteSSISPackageActivity',
+    'ExecuteWranglingDataflowActivity',
     'ExecutionActivity',
     'ExportSettings',
     'ExposureControlBatchRequest',
@@ -1784,6 +1813,10 @@ __all__ = [
     'IntegrationRuntimeMonitoringData',
     'IntegrationRuntimeNodeIpAddress',
     'IntegrationRuntimeNodeMonitoringData',
+    'IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint',
+    'IntegrationRuntimeOutboundNetworkDependenciesEndpoint',
+    'IntegrationRuntimeOutboundNetworkDependenciesEndpointDetails',
+    'IntegrationRuntimeOutboundNetworkDependenciesEndpointsResponse',
     'IntegrationRuntimeReference',
     'IntegrationRuntimeRegenerateKeyParameters',
     'IntegrationRuntimeResource',
@@ -1924,6 +1957,8 @@ __all__ = [
     'PostgreSqlLinkedService',
     'PostgreSqlSource',
     'PostgreSqlTableDataset',
+    'PowerQuerySink',
+    'PowerQuerySource',
     'PrestoLinkedService',
     'PrestoObjectDataset',
     'PrestoSource',
@@ -2035,6 +2070,7 @@ __all__ = [
     'SqlAlwaysEncryptedProperties',
     'SqlDWSink',
     'SqlDWSource',
+    'SqlDWUpsertSettings',
     'SqlMISink',
     'SqlMISource',
     'SqlPartitionSettings',
@@ -2045,6 +2081,7 @@ __all__ = [
     'SqlServerTableDataset',
     'SqlSink',
     'SqlSource',
+    'SqlUpsertSettings',
     'SquareLinkedService',
     'SquareObjectDataset',
     'SquareSource',
@@ -2114,6 +2151,7 @@ __all__ = [
     'WebLinkedServiceTypeProperties',
     'WebSource',
     'WebTableDataset',
+    'WranglingDataFlow',
     'XeroLinkedService',
     'XeroObjectDataset',
     'XeroSource',
@@ -2201,7 +2239,9 @@ __all__ = [
     'SparkServerType',
     'SparkThriftTransportProtocol',
     'SqlAlwaysEncryptedAkvAuthType',
+    'SqlDWWriteBehaviorEnum',
     'SqlPartitionOption',
+    'SqlWriteBehaviorEnum',
     'SsisLogLocationType',
     'SsisObjectMetadataType',
     'SsisPackageLocationType',
