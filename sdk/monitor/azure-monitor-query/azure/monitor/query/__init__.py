@@ -21,6 +21,7 @@ from ._models import (
     TimeSeriesElement,
     Metric,
     MetricValue,
+    MetricClass,
     MetricAvailability
 )
 
@@ -42,6 +43,7 @@ __all__ = [
     "TimeSeriesElement",
     "Metric",
     "MetricValue",
+    "MetricClass",
     "MetricAvailability"
 ]
 

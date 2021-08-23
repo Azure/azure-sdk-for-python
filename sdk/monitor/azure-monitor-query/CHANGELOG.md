@@ -5,6 +5,8 @@
 ### Features Added
 
 - Added additional `display_description` attribute to the `Metric` type.
+- Added a `MetricClass` enum to provide the class of a metric.
+- Added a `metric_class` attribute to the `MetricDefinition` type.
 
 ### Breaking Changes
 

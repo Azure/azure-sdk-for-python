@@ -326,6 +326,18 @@ class MetricNamespace(object):
             fully_qualified_namespace=fully_qualified_namespace
         )
 
+
+class MetricClass(str, Enum):
+    """The class of the metric.
+    """
+
+    AVAILABILITY = "Availability"
+    TRANSACTIONS = "Transactions"
+    ERRORS = "Errors"
+    LATENCY = "Latency"
+    SATURATION = "Saturation"
+
+
 class MetricDefinition(object):
     """Metric definition class specifies the metadata for a metric.
 
@@ -344,12 +356,15 @@ class MetricDefinition(object):
     :keyword primary_aggregation_type: the primary aggregation type value defining how to use the
      values for display. Possible values include: "None", "Average", "Count", "Minimum", "Maximum",
      "Total".
-    :paramtype primary_aggregation_type: str or ~monitor_query_client.models.MetricAggregationType
+    :paramtype primary_aggregation_type: str or ~azure.monitor.query.MetricAggregationType
+    :keyword metric_class: The class of the metric. Possible values include: "Availability",
+     "Transactions", "Errors", "Latency", "Saturation".
+    :paramtype metric_class: str or ~azure.monitor.query.MetricClass
     :keyword supported_aggregation_types: the collection of what aggregation types are supported.
-    :paramtype supported_aggregation_types: list[str or ~monitor_query_client.models.MetricAggregationType]
+    :paramtype supported_aggregation_types: list[str or ~azure.monitor.query.MetricAggregationType]
     :keyword metric_availabilities: the collection of what aggregation intervals are available to be
      queried.
-    :paramtype metric_availabilities: list[~monitor_query_client.models.MetricAvailability]
+    :paramtype metric_availabilities: list[~azure.monitor.query.MetricAvailability]
     :keyword id: the resource identifier of the metric definition.
     :paramtype id: str
     :keyword dimensions: the name and the display name of the dimension, i.e. it is a localizable
