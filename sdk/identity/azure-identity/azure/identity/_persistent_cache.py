@@ -92,11 +92,13 @@ def _get_persistence(allow_unencrypted, account_name, cache_name):
                 file_path, cache_name, {"MsalClientID": "Microsoft.Developer.IdentityService"}, label=account_name
             )
         except Exception as ex:  # pylint:disable=broad-except
+            _LOGGER.debug('msal-extensions is unable to encrypt a persistent cache: "%s"', ex, exc_info=True)
             if not allow_unencrypted:
-                _LOGGER.debug('msal-extensions is unable to encrypt a persistent cache: "%s"', ex, exc_info=True)
                 error = ValueError(
-                    "Persistent cache encryption isn't available in this environment. Please install encryption "
-                    + 'dependencies or specify "allow_unencrypted_storage=True" to store the cache without encryption.'
+                    "Cache encryption is impossible because libsecret dependencies are not installed or are unusable,"
+                    + " for example because no display is available (as in an SSH session). The chained exception has"
+                    + ' more information. Specify "allow_unencrypted_storage=True" to store the cache unencrypted'
+                    + " instead of raising this exception."
                 )
                 six.raise_from(error, ex)
             return msal_extensions.FilePersistence(file_path)
