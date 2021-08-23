@@ -188,7 +188,6 @@ class UserAgentPolicy(SansIOHTTPPolicy):
     _USERAGENT = "User-Agent"
     _ENV_ADDITIONAL_USER_AGENT = 'AZURE_HTTP_USER_AGENT'
     _MAX_APPLICATION_ID_LENGTH = 24
-    _INVALID_APPLICATION_ID_LENGTH = "'applicationId' length cannot be greater than " + _MAX_APPLICATION_ID_LENGTH
 
     def __init__(self, base_user_agent=None, **kwargs):  # pylint: disable=super-init-not-called
         # type: (Optional[str], **Any) -> None
@@ -213,7 +212,6 @@ class UserAgentPolicy(SansIOHTTPPolicy):
                 raise ValueError("'applicationId' cannot contain spaces.")
 
             self._user_agent = "{} {}".format(application_id, self._user_agent)
-
 
     @property
     def user_agent(self):
