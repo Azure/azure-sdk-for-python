@@ -125,6 +125,20 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
         user's home tenant or the tenant configured by **tenant_id** or VS Code's user settings.
     """
 
+    def __enter__(self):
+        if self._client:
+            self._client.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        if self._client:
+            self._client.__exit__(*args)
+
+    def close(self):
+        # type: () -> None
+        """Close the credential's transport session."""
+        self.__exit__()
+
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes` as the user currently signed in to Visual Studio Code.

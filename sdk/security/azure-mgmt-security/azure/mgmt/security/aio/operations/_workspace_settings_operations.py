@@ -43,7 +43,7 @@ class WorkspaceSettingsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.WorkspaceSettingList"]:
         """Settings about where we should store your security data and logs. If the result is empty, it
         means that no custom-workspace configuration was set.
@@ -111,7 +111,7 @@ class WorkspaceSettingsOperations:
     async def get(
         self,
         workspace_setting_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WorkspaceSetting":
         """Settings about where we should store your security data and logs. If the result is empty, it
         means that no custom-workspace configuration was set.
@@ -167,7 +167,7 @@ class WorkspaceSettingsOperations:
         self,
         workspace_setting_name: str,
         workspace_setting: "_models.WorkspaceSetting",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WorkspaceSetting":
         """creating settings about where we should store your security data and logs.
 
@@ -229,7 +229,7 @@ class WorkspaceSettingsOperations:
         self,
         workspace_setting_name: str,
         workspace_setting: "_models.WorkspaceSetting",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WorkspaceSetting":
         """Settings about where we should store your security data and logs.
 
@@ -290,7 +290,7 @@ class WorkspaceSettingsOperations:
     async def delete(
         self,
         workspace_setting_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the custom workspace settings for this subscription. new VMs will report to the default
         workspace.

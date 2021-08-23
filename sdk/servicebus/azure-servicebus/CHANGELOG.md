@@ -1,6 +1,6 @@
 # Release History
 
-## 7.3.2 (Unreleased)
+## 7.3.3 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,13 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 7.3.2 (2021-08-10)
+
+### Bugs Fixed
+
+- Fixed a bug that `azure.servicebus.aio.AutoLockRenewer` crashes on disposal if no messages have been registered (#19642).
+- Fixed a bug that `azure.servicebus.AutoLockRenewer` only supports auto lock renewal for `max_workers` amount of messages/sessions at a time (#19362).
 
 ## 7.3.1 (2021-07-07)
 

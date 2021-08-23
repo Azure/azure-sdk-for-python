@@ -17,6 +17,9 @@ response = client.query(
     server_timeout=1,
     )
 
-for table in response.tables:
+try:
+    table = response.tables[0]
     df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
     print(df)
+except TypeError:
+    print(response.error)

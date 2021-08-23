@@ -48,11 +48,13 @@ class SearchClient(HeadersMixin):
 
     _ODATA_ACCEPT = "application/json;odata.metadata=none"  # type: str
 
-    def __init__(self, endpoint: str,
-                 index_name: str,
-                 credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
-                 **kwargs
-                 ) -> None:
+    def __init__(
+        self,
+        endpoint: str,
+        index_name: str,
+        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
+        **kwargs
+    ) -> None:
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._index_documents_batch = IndexDocumentsBatch()
         self._endpoint = endpoint  # type: str
@@ -64,7 +66,8 @@ class SearchClient(HeadersMixin):
                 endpoint=endpoint,
                 index_name=index_name,
                 sdk_moniker=SDK_MONIKER,
-                api_version=self._api_version, **kwargs
+                api_version=self._api_version,
+                **kwargs
             )  # type: SearchIndexClient
         else:
             self._aad = True
@@ -74,9 +77,9 @@ class SearchClient(HeadersMixin):
                 index_name=index_name,
                 authentication_policy=authentication_policy,
                 sdk_moniker=SDK_MONIKER,
-                api_version=self._api_version, **kwargs
+                api_version=self._api_version,
+                **kwargs
             )  # type: SearchIndexClient
-
 
     def __repr__(self):
         # type: () -> str
@@ -86,9 +89,7 @@ class SearchClient(HeadersMixin):
 
     async def close(self):
         # type: () -> None
-        """Close the :class:`~azure.search.documents.aio.SearchClient` session.
-
-        """
+        """Close the :class:`~azure.search.documents.aio.SearchClient` session."""
         return await self._client.close()
 
     @distributed_trace_async
@@ -141,8 +142,8 @@ class SearchClient(HeadersMixin):
          expression contains a field name, optionally followed by a comma-separated list of name:value
          pairs.
         :keyword str filter: The OData $filter expression to apply to the search query.
-        :keyword list[str] highlight_fields: The list of field names to use for hit highlights. Only searchable
-         fields can be used for hit highlighting.
+        :keyword str highlight_fields: The comma-separated list of field names to use for hit highlights.
+         Only searchable fields can be used for hit highlighting.
         :keyword str highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
          highlightPreTag. Default is </em>.
         :keyword str highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
@@ -260,7 +261,7 @@ class SearchClient(HeadersMixin):
             answers=answers,
             select=select if isinstance(select, six.string_types) else None,
             skip=skip,
-            top=top
+            top=top,
         )
         if isinstance(select, list):
             query.select(select)
@@ -337,7 +338,7 @@ class SearchClient(HeadersMixin):
             order_by=order_by,
             search_fields=search_fields_str,
             select=select if isinstance(select, six.string_types) else None,
-            top=top
+            top=top,
         )
         if isinstance(select, list):
             query.select(select)
@@ -409,7 +410,7 @@ class SearchClient(HeadersMixin):
             highlight_pre_tag=highlight_pre_tag,
             minimum_coverage=minimum_coverage,
             search_fields=search_fields_str,
-            top=top
+            top=top,
         )
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
@@ -548,28 +549,30 @@ class SearchClient(HeadersMixin):
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         try:
-            batch_response = await self._client.documents.index(actions=actions, error_map=error_map, **kwargs)
+            batch_response = await self._client.documents.index(
+                actions=actions, error_map=error_map, **kwargs
+            )
             return cast(List[IndexingResult], batch_response.results)
         except RequestEntityTooLargeError:
             if len(actions) == 1:
                 raise
             pos = round(len(actions) / 2)
             batch_response_first_half = await self._index_documents_actions(
-                actions=actions[:pos],
-                error_map=error_map,
-                **kwargs
+                actions=actions[:pos], error_map=error_map, **kwargs
             )
             if batch_response_first_half:
-                result_first_half = cast(List[IndexingResult], batch_response_first_half.results)
+                result_first_half = cast(
+                    List[IndexingResult], batch_response_first_half.results
+                )
             else:
                 result_first_half = []
             batch_response_second_half = await self._index_documents_actions(
-                actions=actions[pos:],
-                error_map=error_map,
-                **kwargs
+                actions=actions[pos:], error_map=error_map, **kwargs
             )
             if batch_response_second_half:
-                result_second_half = cast(List[IndexingResult], batch_response_second_half.results)
+                result_second_half = cast(
+                    List[IndexingResult], batch_response_second_half.results
+                )
             else:
                 result_second_half = []
             return result_first_half.extend(result_second_half)

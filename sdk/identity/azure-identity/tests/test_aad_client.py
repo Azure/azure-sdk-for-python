@@ -3,19 +3,17 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import functools
-import time
 
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
-from azure.identity._constants import EnvironmentVariables, DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
+from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal import AadClient, AadClientCertificate
-from azure.core.credentials import AccessToken
 
 import pytest
 from msal import TokenCache
 from six.moves.urllib_parse import urlparse
 
 from helpers import build_aad_response, mock_response
-from test_certificate_credential import CERT_PATH
+from test_certificate_credential import PEM_CERT_PATH
 
 try:
     from unittest.mock import Mock, patch
@@ -224,7 +222,7 @@ def test_retries_token_requests():
     transport.send.reset_mock()
 
     with pytest.raises(ServiceRequestError, match=message):
-        client.obtain_token_by_client_certificate("", AadClientCertificate(open(CERT_PATH, "rb").read()))
+        client.obtain_token_by_client_certificate("", AadClientCertificate(open(PEM_CERT_PATH, "rb").read()))
     assert transport.send.call_count > 1
     transport.send.reset_mock()
 
@@ -234,9 +232,13 @@ def test_retries_token_requests():
     transport.send.reset_mock()
 
     with pytest.raises(ServiceRequestError, match=message):
-        client.obtain_token_by_refresh_token("", "")
+        client.obtain_token_by_jwt_assertion("", "")
     assert transport.send.call_count > 1
     transport.send.reset_mock()
+
+    with pytest.raises(ServiceRequestError, match=message):
+        client.obtain_token_by_refresh_token("", "")
+    assert transport.send.call_count > 1
 
 
 def test_shared_cache():
