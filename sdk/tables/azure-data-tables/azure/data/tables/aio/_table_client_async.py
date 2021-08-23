@@ -22,7 +22,7 @@ from .._base_client import parse_connection_str
 from .._entity import TableEntity
 from .._generated.models import SignedIdentifier, TableProperties, QueryOptions
 from .._models import TableAccessPolicy, TableItem
-from .._serialize import serialize_iso, _parameter_filter_substitution
+from .._serialize import serialize_iso, _parameter_filter_substitution, _prepare_key
 from .._deserialize import deserialize_iso, _return_headers_and_deserialized
 from .._error import (
     _process_table_error,
@@ -346,8 +346,8 @@ class TableClient(AsyncTablesBaseClient):
         try:
             await self._client.table.delete_entity(
                 table=self.table_name,
-                partition_key=partition_key,
-                row_key=row_key,
+                partition_key=_prepare_key(partition_key),
+                row_key=_prepare_key(row_key),
                 if_match=if_match,
                 **kwargs
             )

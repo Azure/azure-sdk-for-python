@@ -30,7 +30,7 @@ from ._generated.models import (
     TableProperties,
     QueryOptions
 )
-from ._serialize import _get_match_headers, _add_entity_properties
+from ._serialize import _get_match_headers, _add_entity_properties, _prepare_key
 from ._base_client import parse_connection_str, TablesBaseClient
 from ._serialize import serialize_iso, _parameter_filter_substitution
 from ._deserialize import deserialize_iso, _return_headers_and_deserialized
@@ -364,8 +364,8 @@ class TableClient(TablesBaseClient):
         try:
             self._client.table.delete_entity(
                 table=self.table_name,
-                partition_key=partition_key,
-                row_key=row_key,
+                partition_key=_prepare_key(partition_key),
+                row_key=_prepare_key(row_key),
                 if_match=if_match,
                 **kwargs
             )
@@ -459,10 +459,9 @@ class TableClient(TablesBaseClient):
             etag=etag,
             match_condition=match_condition or MatchConditions.Unconditionally,
         )
-
+        entity = _add_entity_properties(entity)
         partition_key = entity["PartitionKey"]
         row_key = entity["RowKey"]
-        entity = _add_entity_properties(entity)
         try:
             metadata = None
             content = None
@@ -611,8 +610,8 @@ class TableClient(TablesBaseClient):
         try:
             entity = self._client.table.query_entity_with_partition_and_row_key(
                 table=self.table_name,
-                partition_key=partition_key,
-                row_key=row_key,
+                partition_key=_prepare_key(partition_key),
+                row_key=_prepare_key(row_key),
                 query_options=QueryOptions(select=user_select),
                 **kwargs
             )
@@ -647,10 +646,9 @@ class TableClient(TablesBaseClient):
                 :dedent: 16
                 :caption: Update/merge or insert an entity into a table
         """
-
+        entity = _add_entity_properties(entity)
         partition_key = entity["PartitionKey"]
         row_key = entity["RowKey"]
-        entity = _add_entity_properties(entity)
         try:
             metadata = None
             content = None

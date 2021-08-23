@@ -692,3 +692,38 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
 
         finally:
             await self._tear_down()
+
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
+    @tables_decorator_async
+    async def test_batch_with_specialchar_partitionkey(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            table2_name = self._get_table_reference('table2')
+            table2 = self.ts.get_table_client(table2_name)
+            await table2.create_table()
+
+            # Act
+            entity1 = {
+                'PartitionKey': "A'aaa\"_bbbb2",
+                'RowKey': '"A\'aaa"_bbbb2',
+                'test': '"A\'aaa"_bbbb2'
+            }
+
+            await self.table.upsert_entity(entity1)
+            resp = await self.table.submit_transaction([("upsert", entity1)])
+            assert len(resp) == 1
+
+            entity_results = self.table.list_entities()
+            assert entity_results[0] == entity1
+            async for entity in entity_results:
+                get_entity = await self.table.get_entity(
+                    partition_key=entity['PartitionKey'],
+                    row_key=entity['RowKey'])
+                assert get_entity == entity1
+                print(get_entity)
+            print(entity1)
+            print(entity_results[0])
+
+        finally:
+            self._tear_down()
