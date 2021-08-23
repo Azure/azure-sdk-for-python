@@ -25,6 +25,8 @@
 # --------------------------------------------------------------------------
 
 # pylint: disable=line-too-long
+# pylint: disable=redefined-builtin
+# pylint: disable=unused-argument
 from dataclasses import dataclass
 
 @dataclass(init=False)

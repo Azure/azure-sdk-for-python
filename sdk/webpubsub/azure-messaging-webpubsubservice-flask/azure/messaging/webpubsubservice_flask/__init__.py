@@ -30,19 +30,20 @@ from flask import request, make_response
 from .cloud_events_protocols import ConnectResponse, ConnectResquest, ConnectionContext, DisconnectedRequest
 
 class EventHandler:
-    TYPE_HEADER='ce-type'
-    SIGNATURE_HEADER='ce-signature'
-    HUB_HEADER='ce-hub'
-    CONNECTION_ID_HEADER='ce-connectionId'
-    EVENT_NAME_HEADER='ce-eventName'
-    SUBPROTOCOL_HEADER='ce-subprotocol'
-    ORIGIN_HEADER='WebHook-Request-Origin'
-    USER_ID_HEADER='ce-userId'
+    TYPE_HEADER = 'ce-type'
+    SIGNATURE_HEADER = 'ce-signature'
+    HUB_HEADER = 'ce-hub'
+    CONNECTION_ID_HEADER = 'ce-connectionId'
+    EVENT_NAME_HEADER = 'ce-eventName'
+    SUBPROTOCOL_HEADER = 'ce-subprotocol'
+    ORIGIN_HEADER = 'WebHook-Request-Origin'
+    ALLOW_ORIGIN_HEADER = 'WebHook-Allowed-Origin'
+    USER_ID_HEADER = 'ce-userId'
 
-    SUPPORTED_TYPE=['azure.webpubsub.sys.connect', 'azure.webpubsub.sys.connected', 'azure.webpubsub.sys.disconnected', 'azure.webpubsub.user.message']
+    SUPPORTED_TYPE = ['azure.webpubsub.sys.connect', 'azure.webpubsub.sys.connected', 'azure.webpubsub.sys.disconnected', 'azure.webpubsub.user.message']
 
-    def __init__(self, app):
-        self._app = app
+    def __init__(self):
+        pass
 
     def handle_abuse_protection_validation(self, endpoints='*'):
         """Decorator to add function a functionality to handle abuse protection validation
@@ -58,14 +59,14 @@ class EventHandler:
         def handle_abuse_protection_validation_internal(func):
             @wraps(func)
             def decorator(*args, **kwargs):
-                origin = request.headers.get('WebHook-Request-Origin')
+                origin = request.headers.get(self.ORIGIN_HEADER)
                 if request.method != 'OPTIONS' or origin is None:
                     return func(*args, **kwargs)
 
                 res = make_response()
                 if origin in endpoints or '*' in endpoints:
                     res.status_code = 200
-                    res.headers.add_header('WebHook-Allowed-Origin', ', '.join(endpoints))
+                    res.headers.add_header(self.ALLOW_ORIGIN_HEADER, ', '.join(endpoints))
                 else:
                     res.status_code = 401
 
