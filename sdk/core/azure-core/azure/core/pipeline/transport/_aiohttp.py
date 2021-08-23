@@ -25,12 +25,12 @@
 # --------------------------------------------------------------------------
 import sys
 from typing import Any, Optional, AsyncIterator as AsyncIteratorType
-from collections.abc import AsyncIterator
+import collections.abc
 try:
     import cchardet as chardet
 except ImportError:  # pragma: no cover
     import chardet  # type: ignore
-
+from itertools import groupby
 import logging
 import asyncio
 import codecs
@@ -53,6 +53,92 @@ from .._tools_async import read_in_response as _read_in_response
 # Matching requests, because why not?
 CONTENT_CHUNK_SIZE = 10 * 1024
 _LOGGER = logging.getLogger(__name__)
+
+class _ItemsView(collections.abc.ItemsView):
+    def __init__(self, ref):
+        super().__init__(ref)
+        self._ref = ref
+
+    def __iter__(self):
+        for key, groups in groupby(self._ref.__iter__(), lambda x: x[0]):
+            yield tuple([key, ", ".join(group[1] for group in groups)])
+
+    def __contains__(self, item):
+        if not (isinstance(item, (list, tuple)) and len(item) == 2):
+            return False
+        for k, v in self.__iter__():
+            if item[0].lower() == k.lower() and item[1] == v:
+                return True
+        return False
+
+    def __repr__(self):
+        return f"dict_items({list(self.__iter__())})"
+
+class _KeysView(collections.abc.KeysView):
+    def __init__(self, items):
+        super().__init__(items)
+        self._items = items
+
+    def __iter__(self):
+        for key, _ in self._items:
+            yield key
+
+    def __contains__(self, key):
+        for k in self.__iter__():
+            if key.lower() == k.lower():
+                return True
+        return False
+    def __repr__(self):
+        return f"dict_keys({list(self.__iter__())})"
+
+class _ValuesView(collections.abc.ValuesView):
+    def __init__(self, items):
+        super().__init__(items)
+        self._items = items
+
+    def __iter__(self):
+        for _, value in self._items:
+            yield value
+
+    def __contains__(self, value):
+        for v in self.__iter__():
+            if value == v:
+                return True
+        return False
+
+    def __repr__(self):
+        return f"dict_values({list(self.__iter__())})"
+
+
+class _CIMultiDict(CIMultiDict):
+    """Dictionary with the support for duplicate case-insensitive keys."""
+
+    def __iter__(self):
+        return iter(self.keys())
+
+    def keys(self):
+        """Return a new view of the dictionary's keys."""
+        return _KeysView(self.items())
+
+    def items(self):
+        """Return a new view of the dictionary's items."""
+        return _ItemsView(super().items())
+
+    def values(self):
+        """Return a new view of the dictionary's values."""
+        return _ValuesView(self.items())
+
+    def __getitem__(self, key: str) -> str:
+        return ", ".join(self.getall(key, []))
+
+    def __setitem__(self, key, value) -> None:
+        self.update({key: value})
+
+    def get(self, key, default=None):
+        values = self.getall(key, None)
+        if values:
+            values = ", ".join(values)
+        return values or default
 
 class AioHttpTransport(AsyncHttpTransport):
     """AioHttp HTTP sender implementation.
@@ -194,7 +280,6 @@ class AioHttpTransport(AsyncHttpTransport):
                 allow_redirects=False,
                 **config
             )
-            from ...rest._aiohttp import RestAioHttpTransportResponse
             response = RestAioHttpTransportResponse(request=request, internal_response=result)
             response._connection_data_block_size = self.connection_config.data_block_size
             response._decompress = not auto_decompress
@@ -209,7 +294,7 @@ class AioHttpTransport(AsyncHttpTransport):
             raise ServiceResponseError(err, error=err) from err
         return response
 
-class AioHttpStreamDownloadGenerator(AsyncIterator):
+class AioHttpStreamDownloadGenerator(collections.abc.AsyncIterator):
     """Streams the response body data.
 
     :param pipeline: The pipeline object
@@ -364,3 +449,88 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         state['internal_response'] = None  # aiohttp response are not pickable (see headers comments)
         state['headers'] = CIMultiDict(self.headers)  # MultiDictProxy is not pickable
         return state
+
+
+##################### REST #####################
+from ...rest import (
+    HttpRequest as RestHttpRequest,
+    AsyncHttpResponse as RestAsyncHttpResponse,
+)
+from ...rest._helpers_py3 import (
+    iter_raw_helper as _iter_raw_helper,
+    iter_bytes_helper as _iter_bytes_helper,
+)
+
+class _AioHttpTransportResponseBackcompatMixin():
+    async def load_body(self) -> None:
+        """Load in memory the body, so it could be accessible from sync methods."""
+        self._content = await self.read()
+
+class RestAioHttpTransportResponse(RestAsyncHttpResponse, _AioHttpTransportResponseBackcompatMixin):
+    def __init__(
+        self,
+        *,
+        request: RestHttpRequest,
+        internal_response,
+    ):
+        super().__init__(request=request, internal_response=internal_response)
+        self.status_code = internal_response.status
+        self.headers = _CIMultiDict(internal_response.headers)  # type: ignore
+        self.reason = internal_response.reason
+        self.content_type = internal_response.headers.get('content-type')
+        self._decompress = True
+
+    async def iter_raw(self) -> AsyncIteratorType[bytes]:
+        """Asynchronously iterates over the response's bytes. Will not decompress in the process
+
+        :return: An async iterator of bytes from the response
+        :rtype: AsyncIterator[bytes]
+        """
+        async for part in _iter_raw_helper(AioHttpStreamDownloadGenerator, self):
+            yield part
+        await self.close()
+
+    async def iter_bytes(self) -> AsyncIteratorType[bytes]:
+        """Asynchronously iterates over the response's bytes. Will decompress in the process
+
+        :return: An async iterator of bytes from the response
+        :rtype: AsyncIterator[bytes]
+        """
+        async for part in _iter_bytes_helper(
+            AioHttpStreamDownloadGenerator,
+            self,
+            content=self._content
+        ):
+            yield part
+        await self.close()
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        # Remove the unpicklable entries.
+        state['internal_response'] = None  # aiohttp response are not pickable (see headers comments)
+        state['headers'] = CIMultiDict(self.headers)  # MultiDictProxy is not pickable
+        return state
+
+    async def close(self) -> None:
+        """Close the response.
+
+        :return: None
+        :rtype: None
+        """
+        self.is_closed = True
+        self._internal_response.close()
+        await asyncio.sleep(0)
+
+    async def read(self) -> bytes:
+        """Read the response's bytes into memory.
+
+        :return: The response's bytes
+        :rtype: bytes
+        """
+        iterator = self.iter_bytes() if self._decompress else self.iter_raw()
+        if self._content is None:
+            parts = []
+            async for part in iterator:
+                parts.append(part)
+            self._content = b"".join(parts)
+        return self._content

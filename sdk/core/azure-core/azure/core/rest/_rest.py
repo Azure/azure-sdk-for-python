@@ -39,8 +39,6 @@ from ._helpers import (
     set_multipart_body,
     set_urlencoded_body,
     format_parameters,
-    to_pipeline_transport_request_helper,
-    from_pipeline_transport_request_helper,
     get_charset_encoding,
     decode_to_text,
 )
@@ -184,13 +182,6 @@ class HttpRequest(HttpRequestBackcompatMixin):
             return request
         except (ValueError, TypeError):
             return copy.copy(self)
-
-    def _to_pipeline_transport_request(self):
-        return to_pipeline_transport_request_helper(self)
-
-    @classmethod
-    def _from_pipeline_transport_request(cls, pipeline_transport_request):
-        return from_pipeline_transport_request_helper(cls, pipeline_transport_request)
 
 class _HttpResponseBase(object):  # pylint: disable=too-many-instance-attributes
 

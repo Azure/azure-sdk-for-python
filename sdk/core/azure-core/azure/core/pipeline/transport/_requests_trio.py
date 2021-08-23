@@ -196,7 +196,6 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
 
         if error:
             raise error
-        from ...rest._requests_trio import RestTrioRequestsTransportResponse
         retval = RestTrioRequestsTransportResponse(
             request=request,
             internal_response=response,
@@ -205,3 +204,58 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
         if not kwargs.get("stream"):
             await _read_in_response(retval)
         return retval
+
+##################### REST #####################
+
+from ...rest import AsyncHttpResponse as RestAsyncHttpResponse
+from ...rest._helpers_py3 import (
+    iter_bytes_helper as _iter_bytes_helper,
+    iter_raw_helper as _iter_raw_helper,
+)
+from ._requests_basic import _RestRequestsTransportResponseBase, _has_content
+
+class RestTrioRequestsTransportResponse(_RestRequestsTransportResponseBase, RestAsyncHttpResponse): # type: ignore
+    """Asynchronous streaming of data from the response.
+    """
+    async def iter_raw(self) -> AsyncIterator[bytes]:
+        """Asynchronously iterates over the response's bytes. Will not decompress in the process
+
+        :return: An async iterator of bytes from the response
+        :rtype: AsyncIterator[bytes]
+        """
+        async for part in _iter_raw_helper(TrioStreamDownloadGenerator, self):
+            yield part
+        await self.close()
+
+    async def iter_bytes(self) -> AsyncIterator[bytes]:
+        """Asynchronously iterates over the response's bytes. Will decompress in the process
+
+        :return: An async iterator of bytes from the response
+        :rtype: AsyncIterator[bytes]
+        """
+
+        async for part in _iter_bytes_helper(
+            TrioStreamDownloadGenerator,
+            self,
+            content=self.content if _has_content(self) else None
+        ):
+            yield part
+        await self.close()
+
+    async def read(self) -> bytes:
+        """Read the response's bytes into memory.
+
+        :return: The response's bytes
+        :rtype: bytes
+        """
+        if not _has_content(self):
+            parts = []
+            async for part in self.iter_bytes():  # type: ignore
+                parts.append(part)
+            self._internal_response._content = b"".join(parts)  # pylint: disable=protected-access
+        return self.content
+
+    async def close(self) -> None:
+        self.is_closed = True
+        self._internal_response.close()
+        await trio.sleep(0)

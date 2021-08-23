@@ -261,25 +261,6 @@ def parse_lines_from_text(text):
         lines.append(last_chunk_of_text)
     return lines
 
-def to_pipeline_transport_request_helper(rest_request):
-    from ..pipeline.transport import HttpRequest as PipelineTransportHttpRequest
-    return PipelineTransportHttpRequest(
-        method=rest_request.method,
-        url=rest_request.url,
-        headers=rest_request.headers,
-        files=rest_request._files,  # pylint: disable=protected-access
-        data=rest_request._data  # pylint: disable=protected-access
-    )
-
-def from_pipeline_transport_request_helper(request_class, pipeline_transport_request):
-    return request_class(
-        method=pipeline_transport_request.method,
-        url=pipeline_transport_request.url,
-        headers=pipeline_transport_request.headers,
-        files=pipeline_transport_request.files,
-        data=pipeline_transport_request.data
-    )
-
 def get_charset_encoding(response):
     # type: (...) -> Optional[str]
     content_type = response.headers.get("Content-Type")

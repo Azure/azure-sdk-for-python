@@ -24,19 +24,24 @@
 #
 # --------------------------------------------------------------------------
 from __future__ import absolute_import
+import collections
 import logging
-from typing import Iterator, Optional, Any, Union, TypeVar
+from typing import Iterator, Optional, Any, Union, TypeVar, cast
 import urllib3 # type: ignore
 from urllib3.util.retry import Retry # type: ignore
 from urllib3.exceptions import (
     DecodeError, ReadTimeoutError, ProtocolError
 )
 import requests
+from requests.structures import CaseInsensitiveDict
 
 from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import (
     ServiceRequestError,
-    ServiceResponseError
+    ServiceResponseError,
+    ResponseNotReadError,
+    StreamConsumedError,
+    StreamClosedError,
 )
 from . import HttpRequest # pylint: disable=unused-import
 
@@ -55,6 +60,28 @@ from .._tools import (
 PipelineType = TypeVar("PipelineType")
 
 _LOGGER = logging.getLogger(__name__)
+
+class _ItemsView(collections.ItemsView):
+    def __contains__(self, item):
+        if not (isinstance(item, (list, tuple)) and len(item) == 2):
+            return False  # requests raises here, we just return False
+        for k, v in self.__iter__():
+            if item[0].lower() == k.lower() and item[1] == v:
+                return True
+        return False
+
+    def __repr__(self):
+        return 'ItemsView({})'.format(dict(self.__iter__()))
+
+class _CaseInsensitiveDict(CaseInsensitiveDict):
+    """Overriding default requests dict so we can unify
+    to not raise if users pass in incorrect items to contains.
+    Instead, we return False
+    """
+
+    def items(self):
+        """Return a new view of the dictionary's items."""
+        return _ItemsView(self)
 
 def _read_raw_stream(response, chunk_size=1):
     # Special case for urllib3.
@@ -300,7 +327,6 @@ class RequestsTransport(HttpTransport):
 
         if error:
             raise error
-        from ...rest._requests_basic import RestRequestsTransportResponse
         retval = RestRequestsTransportResponse(
             request=request,
             internal_response=response,
@@ -309,3 +335,98 @@ class RequestsTransport(HttpTransport):
         if not kwargs.get("stream"):
             _read_in_response(retval)
         return retval
+
+##################### REST #####################
+from ...rest._rest import (
+    _HttpResponseBase as _RestHttpResponseBase,
+    HttpResponse as RestHttpResponse,
+)
+
+
+def _has_content(response):
+    try:
+        response.content  # pylint: disable=pointless-statement
+        return True
+    except ResponseNotReadError:
+        return False
+
+class _RestRequestsTransportResponseBase(_RestHttpResponseBase):
+    def __init__(self, **kwargs):
+        super(_RestRequestsTransportResponseBase, self).__init__(**kwargs)
+        self.status_code = self._internal_response.status_code
+        self.headers = _CaseInsensitiveDict(self._internal_response.headers)
+        self.reason = self._internal_response.reason
+        self.content_type = self._internal_response.headers.get('content-type')
+
+    @property
+    def content(self):
+        # type: () -> bytes
+        if not self._internal_response._content_consumed:  # pylint: disable=protected-access
+            # if we just call .content, requests will read in the content.
+            # we want to read it in our own way
+            raise ResponseNotReadError(self)
+
+        try:
+            return self._internal_response.content
+        except RuntimeError:
+            # requests throws a RuntimeError if the content for a response is already consumed
+            raise ResponseNotReadError(self)
+
+def _stream_download_helper(decompress, response):
+    if response.is_stream_consumed:
+        raise StreamConsumedError(response)
+    if response.is_closed:
+        raise StreamClosedError(response)
+
+    response.is_stream_consumed = True
+    stream_download = StreamDownloadGenerator(
+        pipeline=None,
+        response=response,
+        decompress=decompress,
+    )
+    for part in stream_download:
+        yield part
+
+class RestRequestsTransportResponse(RestHttpResponse, _RestRequestsTransportResponseBase):
+
+    def iter_bytes(self):
+        # type: () -> Iterator[bytes]
+        """Iterates over the response's bytes. Will decompress in the process
+        :return: An iterator of bytes from the response
+        :rtype: Iterator[str]
+        """
+        if _has_content(self):
+            chunk_size = cast(int, self._connection_data_block_size)
+            for i in range(0, len(self.content), chunk_size):
+                yield self.content[i : i + chunk_size]
+        else:
+            for part in _stream_download_helper(
+                decompress=True,
+                response=self,
+            ):
+                yield part
+        self.close()
+
+    def iter_raw(self):
+        # type: () -> Iterator[bytes]
+        """Iterates over the response's bytes. Will not decompress in the process
+        :return: An iterator of bytes from the response
+        :rtype: Iterator[str]
+        """
+        for raw_bytes in _stream_download_helper(
+            decompress=False,
+            response=self,
+        ):
+            yield raw_bytes
+        self.close()
+
+    def read(self):
+        # type: () -> bytes
+        """Read the response's bytes.
+
+        :return: The read in bytes
+        :rtype: bytes
+        """
+        if not _has_content(self):
+            self._internal_response._content = b"".join(self.iter_bytes())  # pylint: disable=protected-access
+        return self.content
