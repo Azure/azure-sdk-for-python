@@ -226,10 +226,10 @@ LogsQueryResult / LogsBatchQueryResult
 |---statistics
 |---visualization
 |---error
-|---tables (list of `LogsQueryResultTable` objects)
+|---tables (list of `LogsTable` objects)
     |---name
     |---rows
-    |---columns (list of `LogsQueryResultColumn` objects)
+    |---columns (list of `LogsTableColumn` objects)
         |---name
         |---type
 ```

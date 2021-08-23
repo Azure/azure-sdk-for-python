@@ -28,6 +28,8 @@
 - `time_stamp` is renamed to `timestamp` in `MetricValue` type.
 - `AggregationType` is renamed to `MetricAggregationType`.
 - Removed `LogsBatchResultError` type.
+- `LogsQueryResultTable` is named to `LogsTable`
+- `LogsQueryResultColumn` is renamed to `LogsTableColumn`
 
 ### Bugs Fixed
 

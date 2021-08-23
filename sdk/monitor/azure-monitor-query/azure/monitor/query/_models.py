@@ -16,7 +16,7 @@ from ._generated.models import (
 )
 
 
-class LogsQueryResultTable(object):
+class LogsTable(object):
     """Contains the columns and rows for one table in a query response.
 
     All required parameters must be populated in order to send to Azure.
@@ -24,12 +24,12 @@ class LogsQueryResultTable(object):
     :param name: Required. The name of the table.
     :type name: str
     :param columns: Required. The list of columns in this table.
-    :type columns: list[~azure.monitor.query.LogsQueryResultColumn]
+    :type columns: list[~azure.monitor.query.LogsTableColumn]
     :param rows: Required. The resulting rows from this query.
     :type rows: list[list[str]]
     """
     def __init__(self, name, columns, rows):
-        # type: (str, List[LogsQueryResultColumn], List[List[str]]) -> None
+        # type: (str, List[LogsTableColumn], List[List[str]]) -> None
         self.name = name
         self.columns = columns
         self.rows = [process_row(self.columns, row) for row in rows]
@@ -38,12 +38,12 @@ class LogsQueryResultTable(object):
     def _from_generated(cls, generated):
         return cls(
             name=generated.name,
-            columns=[LogsQueryResultColumn(name=col.name, type=col.type) for col in generated.columns],
+            columns=[LogsTableColumn(name=col.name, type=col.type) for col in generated.columns],
             rows=generated.rows
         )
 
 
-class LogsQueryResultColumn(InternalColumn):
+class LogsTableColumn(InternalColumn):
     """A column in a table.
 
     :ivar name: The name of this column.
@@ -59,7 +59,7 @@ class LogsQueryResultColumn(InternalColumn):
 
     def __init__(self, **kwargs):
         # type: (Any) -> None
-        super(LogsQueryResultColumn, self).__init__(**kwargs)
+        super(LogsTableColumn, self).__init__(**kwargs)
         self.name = kwargs.get("name", None)
         self.type = kwargs.get("type", None)
 
@@ -68,7 +68,7 @@ class LogsQueryResult(object):
     """Contains the tables, columns & rows resulting from a query.
 
     :ivar tables: The list of tables, columns and rows.
-    :vartype tables: list[~azure.monitor.query.LogsQueryResultTable]
+    :vartype tables: list[~azure.monitor.query.LogsTable]
     :ivar statistics: This will include a statistics property in the response that describes various
      performance statistics such as query execution time and resource usage.
     :vartype statistics: object
@@ -92,7 +92,7 @@ class LogsQueryResult(object):
         tables = None
         if generated.tables is not None:
             tables = [
-                LogsQueryResultTable._from_generated( # pylint: disable=protected-access
+                LogsTable._from_generated( # pylint: disable=protected-access
                     table
                     ) for table in generated.tables
                 ]
@@ -222,7 +222,7 @@ class LogsBatchQueryResult(object):
     :ivar status: status code of the response.
     :vartype status: int
     :ivar tables: The list of tables, columns and rows.
-    :vartype tables: list[~azure.monitor.query.LogsQueryResultTable]
+    :vartype tables: list[~azure.monitor.query.LogsTable]
     :ivar statistics: This will include a statistics property in the response that describes various
      performance statistics such as query execution time and resource usage.
     :vartype statistics: object
@@ -250,7 +250,7 @@ class LogsBatchQueryResult(object):
         tables = None
         if generated.body.tables is not None:
             tables = [
-                LogsQueryResultTable._from_generated( # pylint: disable=protected-access
+                LogsTable._from_generated( # pylint: disable=protected-access
                     table
                     ) for table in generated.body.tables
                 ]
