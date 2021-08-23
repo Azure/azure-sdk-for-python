@@ -220,6 +220,22 @@ default_credential = DefaultAzureCredential()
 client = SecretClient("https://my-vault.vault.azure.net", default_credential)
 ```
 
+## Cloud Configuration
+Credentials default to authenticating to the Azure Active Directory endpoint for
+Azure Public Cloud. To access resources in other clouds, such as Azure Government
+or a private cloud, configure credentials with the `authority` argument.
+[AzureAuthorityHosts](https://aka.ms/azsdk/python/identity/docs#azure.identity.AzureAuthorityHosts)
+defines authorities for well-known clouds:
+```py
+from azure.identity import AzureAuthorityHosts
+
+DefaultAzureCredential(authority=AzureAuthorityHosts.AZURE_GOVERNMENT)
+```
+Not all credentials require this configuration. Credentials which authenticate
+through a development tool, such as `AzureCliCredential`, use that tool's
+configuration. Similarly, `VisualStudioCodeCredential` accepts an `authority`
+argument but defaults to the authority matching VS Code's "Azure: Cloud" setting.
+
 ## Credential Classes
 
 ### Authenticating Azure Hosted Applications
