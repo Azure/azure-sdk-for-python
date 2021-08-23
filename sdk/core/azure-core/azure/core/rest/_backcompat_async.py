@@ -35,7 +35,7 @@ class _PartGenerator(AsyncIterator):
     :param parts: An iterable of parts
     """
 
-    def __init__(self, response: "AsyncHttpResponse") -> None:
+    def __init__(self, response) -> None:
         self._response = response
         self._parts = None
 
@@ -79,7 +79,9 @@ class _PartGenerator(AsyncIterator):
 
 class AsyncHttpResponseBackcompatMixin(_HttpResponseBackcompatMixinBase):
     def stream_download(self, pipeline, **kwargs):
-        return self.iter_bytes()
+        if kwargs.get("decompress"):
+            return self.iter_bytes()
+        return self.iter_raw()
 
     def parts(self):
         """Assuming the content-type is multipart/mixed, will return the parts as an async iterator.

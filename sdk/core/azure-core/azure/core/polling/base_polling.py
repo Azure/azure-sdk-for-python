@@ -31,6 +31,7 @@ from typing import TYPE_CHECKING, Optional, Any, Union
 from ..exceptions import HttpResponseError, DecodeError
 from . import PollingMethod
 from ..pipeline.policies._utils import get_retry_after
+from ..rest import HttpRequest
 
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
@@ -574,7 +575,7 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
         """
         if self._path_format_arguments:
             status_link = self._client.format_url(status_link, **self._path_format_arguments)
-        request = self._client.get(status_link)
+        request = HttpRequest(method="GET", url=status_link)
         # Re-inject 'x-ms-client-request-id' while polling
         if "request_id" not in self._operation_config:
             self._operation_config["request_id"] = self._get_request_id()

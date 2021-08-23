@@ -30,7 +30,7 @@ from . import AsyncHttpResponse
 from ._requests_basic import _RestRequestsTransportResponseBase, _has_content
 from ..pipeline.transport._requests_asyncio import AsyncioStreamDownloadGenerator
 
-class RestAsyncioRequestsTransportResponse(AsyncHttpResponse, _RestRequestsTransportResponseBase): # type: ignore
+class RestAsyncioRequestsTransportResponse(_RestRequestsTransportResponseBase, AsyncHttpResponse): # type: ignore
     """Asynchronous streaming of data from the response.
     """
 

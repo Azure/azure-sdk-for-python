@@ -473,6 +473,16 @@ class HttpRequest(object):
         """
         return _serialize_request(self)
 
+    def _to_rest_request(self):
+        from ...rest import HttpRequest as RestHttpRequest
+        return RestHttpRequest(
+            method=self.method,
+            url=self.url,
+            headers=self.headers,
+            data=self.data,
+            files=self.files,
+        )
+
 class _HttpResponseBase(object):
     """Represent a HTTP response.
 

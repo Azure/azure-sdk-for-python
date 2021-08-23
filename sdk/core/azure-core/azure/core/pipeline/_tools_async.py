@@ -23,7 +23,6 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from ._tools import to_rest_request
 
 async def await_result(func, *args, **kwargs):
     """If func returns an awaitable, await it."""
@@ -58,11 +57,10 @@ def _get_response_type(pipeline_transport_response):
     from ..rest import AsyncHttpResponse
     return AsyncHttpResponse
 
-def to_rest_response(pipeline_transport_response):
-    response_type = _get_response_type(pipeline_transport_response)
-    response = response_type(
-        request=to_rest_request(pipeline_transport_response.request),
-        internal_response=pipeline_transport_response.internal_response,
-    )
-    response._connection_data_block_size = pipeline_transport_response.block_size  # pylint: disable=protected-access
-    return response
+async def read_in_response(response) -> None:
+    try:
+        await response.read()
+        await response.close()
+    except Exception as exc:
+        await response.close()
+        raise exc

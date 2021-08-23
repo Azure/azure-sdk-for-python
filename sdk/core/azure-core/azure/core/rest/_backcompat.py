@@ -304,7 +304,9 @@ class _HttpResponseBackcompatMixinBase(object):
         return self._decode_parts(message, http_response_type, requests)
 
     def stream_download(self, pipeline, **kwargs):
-        return self.iter_bytes()
+        if kwargs.get("decompress"):
+            return self.iter_bytes()
+        return self.iter_raw()
 
 class HttpResponseBackcompatMixin(_HttpResponseBackcompatMixinBase):
 

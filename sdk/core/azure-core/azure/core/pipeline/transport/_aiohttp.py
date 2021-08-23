@@ -48,6 +48,8 @@ from ._base_async import (
     _ResponseStopIteration)
 from .._tools import get_block_size as _get_block_size, get_internal_response as _get_internal_response
 
+from .._tools_async import read_in_response as _read_in_response
+
 # Matching requests, because why not?
 CONTENT_CHUNK_SIZE = 10 * 1024
 _LOGGER = logging.getLogger(__name__)
@@ -192,11 +194,13 @@ class AioHttpTransport(AsyncHttpTransport):
                 allow_redirects=False,
                 **config
             )
-            response = AioHttpTransportResponse(request, result,
-                                                self.connection_config.data_block_size,
-                                                decompress=not auto_decompress)
+            from ...rest._aiohttp import RestAioHttpTransportResponse
+            response = RestAioHttpTransportResponse(request=request, internal_response=result)
+            response._connection_data_block_size = self.connection_config.data_block_size
+            response._decompress = not auto_decompress
             if not stream_response:
-                await response.load_body()
+                await _read_in_response(response)
+
         except aiohttp.client_exceptions.ClientResponseError as err:
             raise ServiceResponseError(err, error=err) from err
         except aiohttp.client_exceptions.ClientError as err:

@@ -45,7 +45,7 @@ from ._base_async import (
 from ._requests_basic import RequestsTransportResponse, _read_raw_stream
 from ._base_requests_async import RequestsAsyncTransportBase
 from .._tools import get_block_size as _get_block_size, get_internal_response as _get_internal_response
-
+from .._tools_async import read_in_response as _read_in_response
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -196,5 +196,12 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
 
         if error:
             raise error
-
-        return TrioRequestsTransportResponse(request, response, self.connection_config.data_block_size)
+        from ...rest._requests_trio import RestTrioRequestsTransportResponse
+        retval = RestTrioRequestsTransportResponse(
+            request=request,
+            internal_response=response,
+        )
+        retval._connection_data_block_size = self.connection_config.data_block_size
+        if not kwargs.get("stream"):
+            await _read_in_response(retval)
+        return retval

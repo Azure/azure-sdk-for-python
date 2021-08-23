@@ -120,7 +120,12 @@ class _CIMultiDict(CIMultiDict):
             values = ", ".join(values)
         return values or default
 
-class RestAioHttpTransportResponse(AsyncHttpResponse):
+class _AioHttpTransportResponseBackcompatMixin():
+    async def load_body(self) -> None:
+        """Load in memory the body, so it could be accessible from sync methods."""
+        self._content = await self.read()
+
+class RestAioHttpTransportResponse(AsyncHttpResponse, _AioHttpTransportResponseBackcompatMixin):
     def __init__(
         self,
         *,
@@ -132,6 +137,7 @@ class RestAioHttpTransportResponse(AsyncHttpResponse):
         self.headers = _CIMultiDict(internal_response.headers)  # type: ignore
         self.reason = internal_response.reason
         self.content_type = internal_response.headers.get('content-type')
+        self._decompress = True
 
     async def iter_raw(self) -> AsyncIterator[bytes]:
         """Asynchronously iterates over the response's bytes. Will not decompress in the process
@@ -173,3 +179,17 @@ class RestAioHttpTransportResponse(AsyncHttpResponse):
         self.is_closed = True
         self._internal_response.close()
         await asyncio.sleep(0)
+
+    async def read(self) -> bytes:
+        """Read the response's bytes into memory.
+
+        :return: The response's bytes
+        :rtype: bytes
+        """
+        iterator = self.iter_bytes() if self._decompress else self.iter_raw()
+        if self._content is None:
+            parts = []
+            async for part in iterator:
+                parts.append(part)
+            self._content = b"".join(parts)
+        return self._content

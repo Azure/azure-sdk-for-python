@@ -32,6 +32,7 @@ from .base_polling import (
     LROBasePolling,
     _raise_if_bad_http_status_and_method,
 )
+from ..rest import HttpRequest as RestHttpRequest
 
 __all__ = ["AsyncLROBasePolling"]
 
@@ -116,7 +117,7 @@ class AsyncLROBasePolling(LROBasePolling):
         """
         if self._path_format_arguments:
             status_link = self._client.format_url(status_link, **self._path_format_arguments)
-        request = self._client.get(status_link)
+        request = RestHttpRequest("GET", url=status_link)
         # Re-inject 'x-ms-client-request-id' while polling
         if "request_id" not in self._operation_config:
             self._operation_config["request_id"] = self._get_request_id()

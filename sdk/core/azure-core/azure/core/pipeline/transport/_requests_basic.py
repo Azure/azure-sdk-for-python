@@ -46,7 +46,11 @@ from ._base import (
     _HttpResponseBase
 )
 from ._bigger_block_size_http_adapters import BiggerBlockSizeHTTPAdapter
-from .._tools import get_block_size as _get_block_size, get_internal_response as _get_internal_response
+from .._tools import (
+    get_block_size as _get_block_size,
+    get_internal_response as _get_internal_response,
+    read_in_response as _read_in_response,
+)
 
 PipelineType = TypeVar("PipelineType")
 
@@ -296,4 +300,12 @@ class RequestsTransport(HttpTransport):
 
         if error:
             raise error
-        return RequestsTransportResponse(request, response, self.connection_config.data_block_size)
+        from ...rest._requests_basic import RestRequestsTransportResponse
+        retval = RestRequestsTransportResponse(
+            request=request,
+            internal_response=response,
+        )
+        retval._connection_data_block_size = self.connection_config.data_block_size
+        if not kwargs.get("stream"):
+            _read_in_response(retval)
+        return retval

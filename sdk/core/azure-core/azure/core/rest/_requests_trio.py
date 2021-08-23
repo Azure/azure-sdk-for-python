@@ -30,7 +30,7 @@ from ._requests_basic import _RestRequestsTransportResponseBase, _has_content
 from ._helpers_py3 import iter_bytes_helper, iter_raw_helper
 from ..pipeline.transport._requests_trio import TrioStreamDownloadGenerator
 
-class RestTrioRequestsTransportResponse(AsyncHttpResponse, _RestRequestsTransportResponseBase): # type: ignore
+class RestTrioRequestsTransportResponse(_RestRequestsTransportResponseBase, AsyncHttpResponse): # type: ignore
     """Asynchronous streaming of data from the response.
     """
     async def iter_raw(self) -> AsyncIterator[bytes]:
