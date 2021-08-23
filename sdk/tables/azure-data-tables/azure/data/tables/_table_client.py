@@ -468,8 +468,8 @@ class TableClient(TablesBaseClient):
             if mode == UpdateMode.REPLACE:
                 metadata, content = self._client.table.update_entity(  # type: ignore
                     table=self.table_name,
-                    partition_key=partition_key,
-                    row_key=row_key,
+                    partition_key=_prepare_key(partition_key),
+                    row_key=_prepare_key(row_key),
                     table_entity_properties=entity,  # type: ignore
                     if_match=if_match,
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
@@ -478,8 +478,8 @@ class TableClient(TablesBaseClient):
             elif mode == UpdateMode.MERGE:
                 metadata, content = self._client.table.merge_entity(  # type: ignore
                     table=self.table_name,
-                    partition_key=partition_key,
-                    row_key=row_key,
+                    partition_key=_prepare_key(partition_key),
+                    row_key=_prepare_key(row_key),
                     if_match=if_match,
                     table_entity_properties=entity,  # type: ignore
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
@@ -655,8 +655,8 @@ class TableClient(TablesBaseClient):
             if mode == UpdateMode.MERGE:
                 metadata, content = self._client.table.merge_entity(  # type: ignore
                     table=self.table_name,
-                    partition_key=partition_key,
-                    row_key=row_key,
+                    partition_key=_prepare_key(partition_key),
+                    row_key=_prepare_key(row_key),
                     table_entity_properties=entity,  # type: ignore
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs
@@ -664,8 +664,8 @@ class TableClient(TablesBaseClient):
             elif mode == UpdateMode.REPLACE:
                 metadata, content = self._client.table.update_entity(  # type: ignore
                     table=self.table_name,
-                    partition_key=partition_key,
-                    row_key=row_key,
+                    partition_key=_prepare_key(partition_key),
+                    row_key=_prepare_key(row_key),
                     table_entity_properties=entity,  # type: ignore
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs

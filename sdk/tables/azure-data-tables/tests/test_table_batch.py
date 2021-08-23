@@ -829,10 +829,35 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
                 'RowKey': '"A\'aaa"_bbbb2',
                 'test': '"A\'aaa"_bbbb2'
             }
+            self.table.submit_transaction([("create", entity1)])
+            get_entity = self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
 
-            self.table.upsert_entity(entity1)
-            resp = self.table.submit_transaction([("upsert", entity1)])
-            assert len(resp) == 1
+            self.table.submit_transaction([("upsert", entity1, {'mode': 'merge'})])
+            get_entity = self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
+
+            self.table.submit_transaction([("upsert", entity1, {'mode': 'replace'})])
+            get_entity = self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
+
+            self.table.submit_transaction([("update", entity1, {'mode': 'merge'})])
+            get_entity = self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
+
+            self.table.submit_transaction([("update", entity1, {'mode': 'replace'})])
+            get_entity = self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
 
             entity_results = list(self.table.list_entities())
             assert entity_results[0] == entity1
@@ -841,9 +866,8 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
                     partition_key=entity['PartitionKey'],
                     row_key=entity['RowKey'])
                 assert get_entity == entity1
-                print(get_entity)
-            print(entity1)
-            print(entity_results[0])
+
+            self.table.submit_transaction([("delete", entity1)])
 
         finally:
             self._tear_down()

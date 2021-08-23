@@ -228,8 +228,6 @@ def _add_entity_properties(source):
                 properties[name + "@odata.type"] = mtype.value
 
     # generate the entity_body
-    properties['PartitionKey'] = _prepare_key(properties['PartitionKey'])
-    properties['RowKey'] = _prepare_key(properties['RowKey'])
     return properties
 
 

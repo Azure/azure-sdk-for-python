@@ -257,9 +257,10 @@ class TableBatchOperations(object):
             etag=etag,
             match_condition=match_condition or MatchConditions.Unconditionally,
         )
+
+        partition_key = _prepare_key(temp["PartitionKey"])
+        row_key = _prepare_key(temp["RowKey"])
         temp = _add_entity_properties(temp)
-        partition_key = temp["PartitionKey"]
-        row_key = temp["RowKey"]
 
         if mode == UpdateMode.REPLACE:
             self._batch_update_entity(
@@ -666,9 +667,9 @@ class TableBatchOperations(object):
         self._verify_partition_key(entity)
         temp = entity.copy()  # type: ignore
 
+        partition_key = _prepare_key(temp["PartitionKey"])
+        row_key = _prepare_key(temp["RowKey"])
         temp = _add_entity_properties(temp)
-        partition_key = temp["PartitionKey"]
-        row_key = temp["RowKey"]
 
         if mode == UpdateMode.MERGE:
             self._batch_merge_entity(
