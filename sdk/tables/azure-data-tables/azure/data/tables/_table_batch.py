@@ -261,7 +261,7 @@ class TableBatchOperations(object):
         partition_key = temp["PartitionKey"]
         row_key = temp["RowKey"]
         temp = _add_entity_properties(temp)
-        if mode is UpdateMode.REPLACE:
+        if mode == UpdateMode.REPLACE:
             self._batch_update_entity(
                 table=self.table_name,
                 partition_key=partition_key,
@@ -270,7 +270,7 @@ class TableBatchOperations(object):
                 table_entity_properties=temp,
                 **kwargs
             )
-        elif mode is UpdateMode.MERGE:
+        elif mode == UpdateMode.MERGE:
             self._batch_merge_entity(
                 table=self.table_name,
                 partition_key=partition_key,
@@ -279,6 +279,8 @@ class TableBatchOperations(object):
                 table_entity_properties=temp,
                 **kwargs
             )
+        else:
+            raise ValueError("Mode type '{}' is not supported.".format(mode))
 
     def _batch_update_entity(
         self,
@@ -668,7 +670,7 @@ class TableBatchOperations(object):
         row_key = temp["RowKey"]
         temp = _add_entity_properties(temp)
 
-        if mode is UpdateMode.MERGE:
+        if mode == UpdateMode.MERGE:
             self._batch_merge_entity(
                 table=self.table_name,
                 partition_key=partition_key,
@@ -676,7 +678,7 @@ class TableBatchOperations(object):
                 table_entity_properties=temp,
                 **kwargs
             )
-        elif mode is UpdateMode.REPLACE:
+        elif mode == UpdateMode.REPLACE:
             self._batch_update_entity(
                 table=self.table_name,
                 partition_key=partition_key,
@@ -684,3 +686,5 @@ class TableBatchOperations(object):
                 table_entity_properties=temp,
                 **kwargs
             )
+        else:
+            raise ValueError("Mode type '{}' is not supported.".format(mode))

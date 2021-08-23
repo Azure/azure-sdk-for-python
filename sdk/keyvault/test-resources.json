@@ -73,6 +73,13 @@
             "metadata": {
                 "description": "Key Vault SKU to deploy. The default is 'premium'"
             }
+        },
+        "attestationUri": {
+            "type": "string",
+            "defaultValue": "https://skrattestation.azurewebsites.net/",
+            "metadata": {
+                "description": "Test attestation service for Secure Key Release."
+            }
         }
     },
     "variables": {
@@ -187,7 +194,8 @@
                 "enablePurgeProtection": false,
                 "enableSoftDelete": true,
                 "publicNetworkAccess": "Enabled",
-                "networkAcls": "[variables('networkAcls')]"
+                "networkAcls": "[variables('networkAcls')]",
+                "softDeleteRetentionInDays": 7
             }
         },
         {
@@ -269,6 +277,11 @@
         "BLOB_CONTAINER_NAME" : {
             "type": "string",
             "value": "[variables('blobContainerName')]"
+        },
+        "AZURE_KEYVAULT_ATTESTATION_URI": {
+            "type": "string",
+            "condition": "[parameters('enableHsm')]",
+            "value": "[parameters('attestationUri')]"
         }
     }
 }

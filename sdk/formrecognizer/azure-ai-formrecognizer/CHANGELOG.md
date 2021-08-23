@@ -1,15 +1,23 @@
 # Release History
 
-## 3.1.2 (Unreleased)
+## 3.1.3 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
-### Key Bugs Fixed
+### Bugs Fixed
 
-### Fixed
+### Other Changes
 
+## 3.1.2 (2021-08-10)
+
+### Bugs Fixed
+- A `HttpResponseError` will be immediately raised when the call quota volume is exceeded in a `F0` tier Form Recognizer
+resource.
+
+### Other Changes
+- Bumped `azure-core` minimum dependency version from `1.8.2` to `1.13.0`
 
 ## 3.1.1 (2021-06-08)
 

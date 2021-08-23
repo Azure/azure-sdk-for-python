@@ -31,7 +31,7 @@ async def sample_chit_chat():
 
     endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
     key = os.environ["AZURE_QUESTIONANSWERING_KEY"]
-    knowledgebase_project = os.environ["AZURE_QUESTIONANSWERING_PROJECT"]
+    knowledge_base_project = os.environ["AZURE_QUESTIONANSWERING_PROJECT"]
 
     client = QuestionAnsweringClient(endpoint, AzureKeyCredential(key))
     async with client:
@@ -47,9 +47,9 @@ async def sample_chit_chat():
             ),
         )
 
-        output = await client.query_knowledgebase(
+        output = await client.query_knowledge_base(
             first_question,
-            project_name=knowledgebase_project,
+            project_name=knowledge_base_project,
             deployment_name="test"
         )
         best_candidate = [a for a in output.answers if a.confidence_score > 0.9][0]
@@ -72,9 +72,9 @@ async def sample_chit_chat():
             include_unstructured_sources=True
         )
 
-        output = await client.query_knowledgebase(
+        output = await client.query_knowledge_base(
             followup_question,
-            project_name=knowledgebase_project,
+            project_name=knowledge_base_project,
             deployment_name="test"
         )
         print("Q: {}".format(followup_question.question))

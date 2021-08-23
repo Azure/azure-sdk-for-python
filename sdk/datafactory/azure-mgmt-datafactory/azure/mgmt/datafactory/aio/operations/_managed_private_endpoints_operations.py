@@ -46,7 +46,7 @@ class ManagedPrivateEndpointsOperations:
         resource_group_name: str,
         factory_name: str,
         managed_virtual_network_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ManagedPrivateEndpointListResponse"]:
         """Lists managed private endpoints.
 
@@ -127,7 +127,7 @@ class ManagedPrivateEndpointsOperations:
         managed_private_endpoint_name: str,
         managed_private_endpoint: "_models.ManagedPrivateEndpointResource",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagedPrivateEndpointResource":
         """Creates or updates a managed private endpoint.
 
@@ -206,7 +206,7 @@ class ManagedPrivateEndpointsOperations:
         managed_virtual_network_name: str,
         managed_private_endpoint_name: str,
         if_none_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagedPrivateEndpointResource":
         """Gets a managed private endpoint.
 
@@ -278,7 +278,7 @@ class ManagedPrivateEndpointsOperations:
         factory_name: str,
         managed_virtual_network_name: str,
         managed_private_endpoint_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a managed private endpoint.
 

@@ -16,19 +16,16 @@ client = LogsQueryClient(credential)
 query = """AppRequests |
 summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
 
-end_time = datetime.now(UTC())
-
 # returns LogsQueryResult 
-response = client.query(os.environ['LOG_WORKSPACE_ID'], query, duration=timedelta(days=1), end_time=end_time)
+response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=timedelta(days=1))
 
-if not response.tables:
-    print("No results for the query")
-
-for table in response.tables:
-    pd.json_normalize
+try:
+    table = response.tables[0]
     df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
     key_value = df.to_dict(orient='records')
     print(key_value)
+except TypeError:
+    print(response.error)
 
 """
 [

@@ -7,12 +7,13 @@
 
 from typing import TYPE_CHECKING, Any, Union, Sequence, Dict, Optional
 from azure.core.exceptions import HttpResponseError
+from azure.core.tracing.decorator import distributed_trace
 
 from ._generated._monitor_query_client import MonitorQueryClient
 
 from ._generated.models import BatchRequest, QueryBody as LogsQueryBody
 from ._helpers import get_authentication_policy, process_error, construct_iso8601, order_results
-from ._models import LogsQueryResult, LogsBatchQueryRequest, LogsBatchQueryResult
+from ._models import LogsQueryResult, LogsBatchQuery, LogsBatchQueryResult
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -22,11 +23,6 @@ if TYPE_CHECKING:
 class LogsQueryClient(object):
     """LogsQueryClient
 
-    :param credential: The credential to authenticate the client
-    :type credential: ~azure.core.credentials.TokenCredential
-    :keyword endpoint: The endpoint to connect to. Defaults to 'https://api.loganalytics.io'.
-    :paramtype endpoint: str
-
     .. admonition:: Example:
 
     .. literalinclude:: ../samples/sample_log_query_client.py
@@ -35,6 +31,11 @@ class LogsQueryClient(object):
         :language: python
         :dedent: 0
         :caption: Creating the LogsQueryClient with a TokenCredential.
+
+    :param credential: The credential to authenticate the client.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :keyword endpoint: The endpoint to connect to. Defaults to 'https://api.loganalytics.io'.
+    :paramtype endpoint: str
     """
 
     def __init__(self, credential, **kwargs):
@@ -49,14 +50,12 @@ class LogsQueryClient(object):
         )
         self._query_op = self._client.query
 
-    def query(self, workspace_id, query, duration=None, **kwargs):
+    @distributed_trace
+    def query(self, workspace_id, query, timespan=None, **kwargs):
         # type: (str, str, Optional[timedelta], Any) -> LogsQueryResult
         """Execute an Analytics query.
 
         Executes an Analytics query for data.
-
-        **Note**: Although the start_time, end_time, duration are optional parameters, it is highly
-        recommended to specify the timespan. If not, the entire dataset is queried.
 
         :param workspace_id: ID of the workspace. This is Workspace ID from the Properties blade in the
          Azure portal.
@@ -64,19 +63,16 @@ class LogsQueryClient(object):
         :param query: The Analytics query. Learn more about the `Analytics query syntax
          <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
         :type query: str
-        :param ~datetime.timedelta duration: The duration for which to query the data. This can also be accompanied
-         with either start_time or end_time. If start_time or end_time is not provided, the current time is
-         taken as the end time.
-        :keyword datetime start_time: The start time from which to query the data. This should be accompanied
-         with either end_time or duration.
-        :keyword datetime end_time: The end time till which to query the data. This should be accompanied
-         with either start_time or duration.
+        :param timespan: The timespan for which to query the data. This can be a timedelta,
+         a timedelta and a start datetime, or a start datetime/end datetime.
+        :type timespan: ~datetime.timedelta or tuple[~datetime.datetime, ~datetime.timedelta]
+         or tuple[~datetime.datetime, ~datetime.datetime]
         :keyword int server_timeout: the server timeout in seconds. The default timeout is 3 minutes,
          and the maximum timeout is 10 minutes.
         :keyword bool include_statistics: To get information about query statistics.
-        :keyword bool include_render: In the query language, it is possible to specify different render options.
-         By default, the API does not return information regarding the type of visualization to show.
-         If your client requires this information, specify the preference
+        :keyword bool include_visualization: In the query language, it is possible to specify different
+         visualization options. By default, the API does not return information regarding the type of
+         visualization to show. If your client requires this information, specify the preference
         :keyword additional_workspaces: A list of workspaces that are included in the query.
          These can be qualified workspace names, workspace Ids, or Azure resource Ids.
         :paramtype additional_workspaces: list[str]
@@ -93,11 +89,9 @@ class LogsQueryClient(object):
             :dedent: 0
             :caption: Get a response for a single Log Query
         """
-        start = kwargs.pop('start_time', None)
-        end = kwargs.pop('end_time', None)
-        timespan = construct_iso8601(start, end, duration)
+        timespan = construct_iso8601(timespan)
         include_statistics = kwargs.pop("include_statistics", False)
-        include_render = kwargs.pop("include_render", False)
+        include_visualization = kwargs.pop("include_visualization", False)
         server_timeout = kwargs.pop("server_timeout", None)
         workspaces = kwargs.pop("additional_workspaces", None)
 
@@ -106,11 +100,11 @@ class LogsQueryClient(object):
             prefer += "wait=" + str(server_timeout)
         if include_statistics:
             if len(prefer) > 0:
-                prefer += " "
+                prefer += ","
             prefer += "include-statistics=true"
-        if include_render:
+        if include_visualization:
             if len(prefer) > 0:
-                prefer += " "
+                prefer += ","
             prefer += "include-render=true"
 
         body = LogsQueryBody(
@@ -130,32 +124,34 @@ class LogsQueryClient(object):
         except HttpResponseError as e:
             process_error(e)
 
-    def batch_query(self, queries, **kwargs):
-        # type: (Union[Sequence[Dict], Sequence[LogsBatchQueryRequest]], Any) -> Sequence[LogsBatchQueryResult]
+    @distributed_trace
+    def query_batch(self, queries, **kwargs):
+        # type: (Union[Sequence[Dict], Sequence[LogsBatchQuery]], Any) -> Sequence[LogsBatchQueryResult]
         """Execute a list of analytics queries. Each request can be either a LogQueryRequest
         object or an equivalent serialized model.
 
         The response is returned in the same order as that of the requests sent.
 
         :param queries: The list of queries that should be processed
-        :type queries: list[dict] or list[~azure.monitor.query.LogsBatchQueryRequest]
-        :return: BatchResponse, or the result of cls(response)
+        :type queries: list[dict] or list[~azure.monitor.query.LogsBatchQuery]
+        :return: List of LogsBatchQueryResult, or the result of cls(response)
         :rtype: ~list[~azure.monitor.query.LogsBatchQueryResult]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
 
         .. literalinclude:: ../samples/sample_batch_query.py
-            :start-after: [START send_batch_query]
-            :end-before: [END send_batch_query]
+            :start-after: [START send_query_batch]
+            :end-before: [END send_query_batch]
             :language: python
             :dedent: 0
             :caption: Get a response for multiple Log Queries.
         """
         try:
-            queries = [LogsBatchQueryRequest(**q) for q in queries]
+            queries = [LogsBatchQuery(**q) for q in queries]
         except (KeyError, TypeError):
             pass
+        queries = [q._to_generated() for q in queries] # pylint: disable=protected-access
         try:
             request_order = [req.id for req in queries]
         except AttributeError:
