@@ -29,7 +29,6 @@ from requests.structures import CaseInsensitiveDict
 
 from ..exceptions import ResponseNotReadError, StreamConsumedError, StreamClosedError
 from ._rest import _HttpResponseBase, HttpResponse
-from ._helpers import KeysView, ValuesView
 from ..pipeline.transport._requests_basic import StreamDownloadGenerator
 
 class _ItemsView(collections.ItemsView):
@@ -54,19 +53,6 @@ class _CaseInsensitiveDict(CaseInsensitiveDict):
         """Return a new view of the dictionary's items."""
         return _ItemsView(self)
 
-    def values(self):
-        """Return a new view of the dictionary's values.
-
-        Need to overwrite because default behavior is not mutable for 2.7
-        """
-        return ValuesView(self.items())
-
-    def keys(self):
-        """Return a new view of the dictionary's keys.
-
-        Need to overwrite because default behavior is not mutable for 2.7
-        """
-        return KeysView(self.items())
 
 if TYPE_CHECKING:
     from typing import Iterator, Optional

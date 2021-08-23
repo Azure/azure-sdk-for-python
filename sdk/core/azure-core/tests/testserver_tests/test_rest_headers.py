@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import sys
+from typing import ValuesView
 import pytest
 
 # NOTE: These tests are heavily inspired from the httpx test suite: https://github.com/encode/httpx/tree/master/tests
@@ -68,13 +69,18 @@ def test_headers_response_keys(get_response_headers):
     # basically want to make sure this behaves like dict {"a": "123, 456", "b": "789"}
     ref_dict = {"a": "123, 456", "b": "789"}
     assert list(h.keys()) == list(ref_dict.keys())
-    assert repr(h.keys()) == "KeysView({'a': '123, 456', 'b': '789'})"
+    if sys.version_info < (3, 0):
+        assert repr(h.keys()) == "['a', 'b']"
+    else:
+        assert repr(h.keys()) == "KeysView({'a': '123, 456', 'b': '789'})"
     assert "a" in h.keys()
-    assert "A" in h.keys()
     assert "b" in h.keys()
-    assert "B" in h.keys()
     assert set(h.keys()) == set(ref_dict.keys())
 
+@pytest.mark.skipif(sys.version_info < (3, 0),
+                    reason="In 2.7, .keys() are not mutable")
+def test_headers_response_keys_mutability(get_response_headers):
+    h = get_response_headers(HttpRequest("GET", "/headers/duplicate/numbers"))
     # test mutability
     before_mutation_keys = h.keys()
     h['c'] = '000'
@@ -85,11 +91,18 @@ def test_headers_response_values(get_response_headers):
     # basically want to make sure this behaves like dict {"a": "123, 456", "b": "789"}
     ref_dict = {"a": "123, 456", "b": "789"}
     assert list(h.values()) == list(ref_dict.values())
-    assert repr(h.values()) == "ValuesView({'a': '123, 456', 'b': '789'})"
+    if sys.version_info < (3, 0):
+        assert repr(h.values()) == "['123, 456', '789']"
+    else:
+        assert repr(h.values()) == "ValuesView({'a': '123, 456', 'b': '789'})"
     assert '123, 456' in h.values()
     assert '789' in h.values()
     assert set(h.values()) == set(ref_dict.values())
 
+@pytest.mark.skipif(sys.version_info < (3, 0),
+                    reason="In 2.7, .values() are not mutable")
+def test_headers_response_values_mutability(get_response_headers):
+    h = get_response_headers(HttpRequest("GET", "/headers/duplicate/numbers"))
     # test mutability
     before_mutation_values = h.values()
     h['c'] = '000'
@@ -109,6 +122,11 @@ def test_headers_response_items(get_response_headers):
     assert ("B", '789') in h.items()
     assert set(h.items()) == set(ref_dict.items())
 
+
+@pytest.mark.skipif(sys.version_info < (3, 0),
+                    reason="In 2.7, .items() are not mutable")
+def test_headers_response_items_mutability(get_response_headers):
+    h = get_response_headers(HttpRequest("GET", "/headers/duplicate/numbers"))
     # test mutability
     before_mutation_items = h.items()
     h['c'] = '000'
