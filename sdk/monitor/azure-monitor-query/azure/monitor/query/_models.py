@@ -264,33 +264,6 @@ class LogsBatchQueryResult(object):
         )
 
 
-class LogsBatchResultError(object):
-    """Error response for a batch request.
-
-    :ivar message: The error message describing the cause of the error.
-    :vartype message: str
-    :param code: The error code.
-    :vartype code: str
-    :param details: The details of the error.
-    :vartype inner_error: list[~azure.monitor.query.ErrorDetails]
-    """
-    def __init__(self, **kwargs):
-        # type: (Any) -> None
-        self.message = kwargs.get("message", None)
-        self.code = kwargs.get("code", None)
-        self.details = kwargs.get("details", None)
-
-    @classmethod
-    def _from_generated(cls, generated):
-        if not generated:
-            return cls()
-        return cls(
-            message=generated.inner_error.message,
-            code=generated.code,
-            details=generated.inner_error.details
-        )
-
-
 class MetricNamespace(object):
     """Metric namespace class specifies the metadata for a metric namespace.
 

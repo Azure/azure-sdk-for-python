@@ -26,6 +26,7 @@
 - `MetricsMetadataValues` is removed. A dictionary is used instead.
 - `time_stamp` is renamed to `timestamp` in `MetricValue` type.
 - `AggregationType` is renamed to `MetricAggregationType`.
+- Removed `LogsBatchResultError` type.
 
 ### Bugs Fixed
 
