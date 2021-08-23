@@ -4,8 +4,7 @@
 # ------------------------------------
 """Tests for the request id policy."""
 from azure.core.pipeline.policies import RequestIdPolicy
-from azure.core.pipeline.transport import HttpRequest as PipelineTransportHttpRequest
-from azure.core.rest import HttpRequest as RestHttpRequest
+from azure.core.pipeline.transport import HttpRequest
 from azure.core.pipeline import PipelineRequest, PipelineContext
 try:
     from unittest import mock
@@ -18,11 +17,10 @@ auto_request_id_values = (True, False, None)
 request_id_init_values = ("foo", None, "_unset")
 request_id_set_values = ("bar", None, "_unset")
 request_id_req_values = ("baz", None, "_unset")
-http_request = (PipelineTransportHttpRequest, RestHttpRequest)
-full_combination = list(product(auto_request_id_values, request_id_init_values, request_id_set_values, request_id_req_values, http_request))
+full_combination = list(product(auto_request_id_values, request_id_init_values, request_id_set_values, request_id_req_values))
 
-@pytest.mark.parametrize("auto_request_id, request_id_init, request_id_set, request_id_req, http_request", full_combination)
-def test_request_id_policy(auto_request_id, request_id_init, request_id_set, request_id_req, http_request):
+@pytest.mark.parametrize("auto_request_id, request_id_init, request_id_set, request_id_req", full_combination)
+def test_request_id_policy(auto_request_id, request_id_init, request_id_set, request_id_req):
     """Test policy with no other policy and happy path"""
     kwargs = {}
     if auto_request_id is not None:
@@ -32,7 +30,7 @@ def test_request_id_policy(auto_request_id, request_id_init, request_id_set, req
     request_id_policy = RequestIdPolicy(**kwargs)
     if request_id_set != "_unset":
         request_id_policy.set_request_id(request_id_set)
-    request = http_request('GET', 'http://127.0.0.1/')
+    request = HttpRequest('GET', 'http://127.0.0.1/')
     pipeline_request = PipelineRequest(request, PipelineContext(None))
     if request_id_req != "_unset":
         pipeline_request.context.options['request_id'] = request_id_req
@@ -57,11 +55,10 @@ def test_request_id_policy(auto_request_id, request_id_init, request_id_set, req
     else:
         assert not "x-ms-client-request-id" in request.headers
 
-@pytest.mark.parametrize("http_request", http_request)
-def test_request_id_already_exists(http_request):
+def test_request_id_already_exists():
     """Test policy with no other policy and happy path"""
     request_id_policy = RequestIdPolicy()
-    request = http_request('GET', 'http://127.0.0.1/')
+    request = HttpRequest('GET', 'http://127.0.0.1/')
     request.headers["x-ms-client-request-id"] = "VALUE"
     pipeline_request = PipelineRequest(request, PipelineContext(None))
     request_id_policy.on_request(pipeline_request)

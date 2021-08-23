@@ -24,8 +24,11 @@
 #
 # --------------------------------------------------------------------------
 import json
-import pytest
+import logging
+import os
+
 import requests
+import pytest
 try:
     from unittest.mock import Mock
 except ImportError:
@@ -34,18 +37,16 @@ except ImportError:
 
 # module under test
 from azure.core.exceptions import HttpResponseError, ODataV4Error, ODataV4Format
-from azure.core.pipeline.transport import RequestsTransportResponse as PipelineTransportRequestsTransportResponse
-from azure.core.rest._requests_basic import RestRequestsTransportResponse
-from azure.core.pipeline.transport._base import _HttpResponseBase as PipelineTransportHttpResponseBase
-from azure.core.rest._rest import _HttpResponseBase as RestHttpResponseBase
-from utils import is_rest_http_response
+from azure.core.pipeline.transport import RequestsTransportResponse
+from azure.core.pipeline.transport._base import _HttpResponseBase
 
-def _build_response(json_body, http_response_base):
-    class MockResponse(http_response_base):
+
+def _build_response(json_body):
+    class MockResponse(_HttpResponseBase):
         def __init__(self):
             super(MockResponse, self).__init__(
                 request=None,
-                internal_response=None,
+                internal_response = None,
             )
             self.status_code = 400
             self.reason = "Bad Request"
@@ -55,14 +56,7 @@ def _build_response(json_body, http_response_base):
         def body(self):
             return self._body
 
-        def read(self):
-            self._content = self._body
-
-    response = MockResponse()
-    if is_rest_http_response(http_response_base):
-        # need to explicitly read in for new rest
-        response.read()
-    return response
+    return MockResponse()
 
 
 class FakeErrorOne(object):
@@ -115,8 +109,7 @@ class TestExceptions(object):
         assert error.status_code is None
         assert error.continuation_token == 'foo'
 
-    @pytest.mark.parametrize("http_response_base", [PipelineTransportHttpResponseBase, RestHttpResponseBase])
-    def test_deserialized_httpresponse_error_code(self, http_response_base):
+    def test_deserialized_httpresponse_error_code(self):
         """This is backward compat support of autorest azure-core (KV 4.0.0, Storage 12.0.0).
 
         Do NOT adapt this test unless you know what you're doing.
@@ -127,7 +120,7 @@ class TestExceptions(object):
                 "message": "A fake error",
             }
         }
-        response = _build_response(json.dumps(message).encode("utf-8"), http_response_base)
+        response = _build_response(json.dumps(message).encode("utf-8"))
         error = FakeHttpResponse(response, FakeErrorOne())
         assert "(FakeErrorOne) A fake error" in error.message
         assert "(FakeErrorOne) A fake error" in str(error.error)
@@ -144,8 +137,7 @@ class TestExceptions(object):
         assert error.error.error.message == "A fake error"
 
 
-    @pytest.mark.parametrize("http_response_base", [PipelineTransportHttpResponseBase, RestHttpResponseBase])
-    def test_deserialized_httpresponse_error_message(self, http_response_base):
+    def test_deserialized_httpresponse_error_message(self):
         """This is backward compat support for weird responses, adn even if it's likely
         just the autorest testserver, should be fine parsing.
 
@@ -155,7 +147,7 @@ class TestExceptions(object):
             "code": "FakeErrorTwo",
             "message": "A different fake error",
         }
-        response = _build_response(json.dumps(message).encode("utf-8"), http_response_base)
+        response = _build_response(json.dumps(message).encode("utf-8"))
         error = FakeHttpResponse(response, FakeErrorTwo())
         assert "(FakeErrorTwo) A different fake error" in error.message
         assert "(FakeErrorTwo) A different fake error" in str(error.error)
@@ -167,10 +159,9 @@ class TestExceptions(object):
         assert isinstance(error.model, FakeErrorTwo)
         assert isinstance(error.error, ODataV4Format)
 
-    @pytest.mark.parametrize("requests_transport_response", [PipelineTransportRequestsTransportResponse, RestRequestsTransportResponse])
-    def test_httpresponse_error_with_response(self, requests_transport_response):
+    def test_httpresponse_error_with_response(self):
         response = requests.get("https://bing.com")
-        http_response = requests_transport_response(request=None, internal_response=response)
+        http_response = RequestsTransportResponse(None, response)
 
         error = HttpResponseError(response=http_response)
         assert error.message == "Operation returned an invalid status 'OK'"
@@ -179,8 +170,7 @@ class TestExceptions(object):
         assert isinstance(error.status_code, int)
         assert error.error is None
 
-    @pytest.mark.parametrize("http_response_base", [PipelineTransportHttpResponseBase, RestHttpResponseBase])
-    def test_odata_v4_exception(self, http_response_base):
+    def test_odata_v4_exception(self):
         message = {
             "error": {
                 "code": "501",
@@ -197,7 +187,7 @@ class TestExceptions(object):
                 }
             }
         }
-        exp = ODataV4Error(_build_response(json.dumps(message).encode("utf-8"), http_response_base))
+        exp = ODataV4Error(_build_response(json.dumps(message).encode("utf-8")))
 
         assert exp.code == "501"
         assert exp.message == "Unsupported functionality"
@@ -208,15 +198,14 @@ class TestExceptions(object):
         assert "context" in exp.innererror
 
         message = {}
-        exp = ODataV4Error(_build_response(json.dumps(message).encode("utf-8"), http_response_base))
+        exp = ODataV4Error(_build_response(json.dumps(message).encode("utf-8")))
         assert exp.message == "Operation returned an invalid status 'Bad Request'"
 
-        exp = ODataV4Error(_build_response(b"", http_response_base))
+        exp = ODataV4Error(_build_response(b""))
         assert exp.message == "Operation returned an invalid status 'Bad Request'"
         assert str(exp) == "Operation returned an invalid status 'Bad Request'"
 
-    @pytest.mark.parametrize("http_response_base", [PipelineTransportHttpResponseBase, RestHttpResponseBase])
-    def test_odata_v4_minimal(self, http_response_base):
+    def test_odata_v4_minimal(self):
         """Minimal valid OData v4 is code/message and nothing else.
         """
         message = {
@@ -225,15 +214,14 @@ class TestExceptions(object):
                 "message": "Unsupported functionality",
             }
         }
-        exp = ODataV4Error(_build_response(json.dumps(message).encode("utf-8"), http_response_base))
+        exp = ODataV4Error(_build_response(json.dumps(message).encode("utf-8")))
         assert exp.code == "501"
         assert exp.message == "Unsupported functionality"
         assert exp.target is None
         assert exp.details == []
         assert exp.innererror == {}
 
-    @pytest.mark.parametrize("http_response_base", [PipelineTransportHttpResponseBase, RestHttpResponseBase])
-    def test_broken_odata_details(self, http_response_base):
+    def test_broken_odata_details(self):
         """Do not block creating a nice exception if "details" only is broken
         """
         message = {
@@ -260,11 +248,10 @@ class TestExceptions(object):
                 "innererror": None,
             }
         }
-        exp = HttpResponseError(response=_build_response(json.dumps(message).encode("utf-8"), http_response_base))
+        exp = HttpResponseError(response=_build_response(json.dumps(message).encode("utf-8")))
         assert exp.error.code == "Conflict"
 
-    @pytest.mark.parametrize("http_response_base", [PipelineTransportHttpResponseBase, RestHttpResponseBase])
-    def test_null_odata_details(self, http_response_base):
+    def test_null_odata_details(self):
         message = {
             "error": {
                 "code": "501",
@@ -274,5 +261,5 @@ class TestExceptions(object):
                 "innererror": None,
             }
         }
-        exp = HttpResponseError(response=_build_response(json.dumps(message).encode("utf-8"), http_response_base))
+        exp = HttpResponseError(response=_build_response(json.dumps(message).encode("utf-8")))
         assert exp.error.code == "501"

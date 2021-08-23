@@ -5,15 +5,13 @@
 # -------------------------------------------------------------------------
 import json
 
-from azure.core.pipeline.transport import TrioRequestsTransport, HttpRequest as PipelineTransportHttpRequest
-from azure.core.rest import HttpRequest as RestHttpRequest
+from azure.core.pipeline.transport import TrioRequestsTransport, HttpRequest
 
 import pytest
 
 
 @pytest.mark.trio
-@pytest.mark.parametrize("http_request", [PipelineTransportHttpRequest, RestHttpRequest])
-async def test_async_gen_data(http_request):
+async def test_async_gen_data():
     class AsyncGen:
         def __init__(self):
             self._range = iter([b"azerty"])
@@ -28,15 +26,14 @@ async def test_async_gen_data(http_request):
                 raise StopAsyncIteration
 
     async with TrioRequestsTransport() as transport:
-        req = http_request('GET', 'http://httpbin.org/anything', data=AsyncGen())
+        req = HttpRequest('GET', 'http://httpbin.org/anything', data=AsyncGen())
         response = await transport.send(req)
         assert json.loads(response.text())['data'] == "azerty"
 
 @pytest.mark.trio
-@pytest.mark.parametrize("http_request", [PipelineTransportHttpRequest, RestHttpRequest])
-async def test_send_data(http_request):
+async def test_send_data():
     async with TrioRequestsTransport() as transport:
-        req = http_request('PUT', 'http://httpbin.org/anything', data=b"azerty")
+        req = HttpRequest('PUT', 'http://httpbin.org/anything', data=b"azerty")
         response = await transport.send(req)
 
         assert json.loads(response.text())['data'] == "azerty"

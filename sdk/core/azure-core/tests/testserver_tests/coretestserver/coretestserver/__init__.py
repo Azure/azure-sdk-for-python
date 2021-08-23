@@ -13,8 +13,7 @@ from .test_routes import (
     streams_api,
     urlencoded_api,
     multipart_api,
-    xml_api,
-    headers_api,
+    xml_api
 )
 
 app = Flask(__name__)
@@ -25,7 +24,6 @@ app.register_blueprint(streams_api, url_prefix="/streams")
 app.register_blueprint(urlencoded_api, url_prefix="/urlencoded")
 app.register_blueprint(multipart_api, url_prefix="/multipart")
 app.register_blueprint(xml_api, url_prefix="/xml")
-app.register_blueprint(headers_api, url_prefix="/headers")
 
 @app.route('/health', methods=['GET'])
 def latin_1_charset_utf8():

@@ -14,10 +14,7 @@ try:
 except ImportError:
     import mock
 
-from azure.core.pipeline.transport import (
-    HttpRequest as PipelineTransportHttpRequest, HttpResponse, RequestsTransport
-)
-from azure.core.rest import HttpRequest as RestHttpRequest
+from azure.core.pipeline.transport import HttpRequest, HttpResponse, RequestsTransport
 from azure.core.pipeline.transport._base import HttpClientTransportResponse, HttpTransport, _deserialize_response, _urljoin
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.pipeline import Pipeline
@@ -36,10 +33,9 @@ class MockResponse(HttpResponse):
         return self._body
 
 @pytest.mark.skipif(sys.version_info < (3, 6), reason="Multipart serialization not supported on 2.7 + dict order not deterministic on 3.5")
-@pytest.mark.parametrize("http_request", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_http_request_serialization(http_request):
+def test_http_request_serialization():
     # Method + Url
-    request = http_request("DELETE", "/container0/blob0")
+    request = HttpRequest("DELETE", "/container0/blob0")
     serialized = request.serialize()
 
     expected = (
@@ -50,7 +46,7 @@ def test_http_request_serialization(http_request):
     assert serialized == expected
 
     # Method + Url + Headers
-    request = http_request(
+    request = HttpRequest(
         "DELETE",
         "/container0/blob0",
         # Use OrderedDict to get consistent test result on 3.5 where order is not guaranteed
@@ -73,7 +69,7 @@ def test_http_request_serialization(http_request):
 
 
     # Method + Url + Headers + Body
-    request = http_request(
+    request = HttpRequest(
         "DELETE",
         "/container0/blob0",
         headers={
@@ -93,18 +89,16 @@ def test_http_request_serialization(http_request):
     assert serialized == expected
 
 
-@pytest.mark.parametrize("http_request", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_url_join(http_request):
+def test_url_join():
     assert _urljoin('devstoreaccount1', '') == 'devstoreaccount1/'
     assert _urljoin('devstoreaccount1', 'testdir/') == 'devstoreaccount1/testdir/'
     assert _urljoin('devstoreaccount1/', '') == 'devstoreaccount1/'
     assert _urljoin('devstoreaccount1/', 'testdir/') == 'devstoreaccount1/testdir/'
 
 
-@pytest.mark.parametrize("http_request", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_http_client_response(http_request):
+def test_http_client_response():
     # Create a core request
-    request = http_request("GET", "www.httpbin.org")
+    request = HttpRequest("GET", "www.httpbin.org")
 
     # Fake a transport based on http.client
     conn = HTTPConnection("www.httpbin.org")
@@ -123,11 +117,10 @@ def test_http_client_response(http_request):
     assert "Content-Type" in response.headers
 
 
-@pytest.mark.parametrize("http_request", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_response_deserialization(http_request):
+def test_response_deserialization():
 
     # Method + Url
-    request = http_request("DELETE", "/container0/blob0")
+    request = HttpRequest("DELETE", "/container0/blob0")
     body = (
         b'HTTP/1.1 202 Accepted\r\n'
         b'x-ms-request-id: 778fdc83-801e-0000-62ff-0334671e284f\r\n'
@@ -144,7 +137,7 @@ def test_response_deserialization(http_request):
     }
 
     # Method + Url + Headers + Body
-    request = http_request(
+    request = HttpRequest(
         "DELETE",
         "/container0/blob0",
         headers={
@@ -170,10 +163,9 @@ def test_response_deserialization(http_request):
     }
     assert response.text() == "I am groot"
 
-@pytest.mark.parametrize("http_request", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_response_deserialization_utf8_bom(http_request):
+def test_response_deserialization_utf8_bom():
 
-    request = http_request("DELETE", "/container0/blob0")
+    request = HttpRequest("DELETE", "/container0/blob0")
     body = (
         b'HTTP/1.1 400 One of the request inputs is not valid.\r\n'
         b'x-ms-error-code: InvalidInput\r\n'
@@ -191,8 +183,7 @@ def test_response_deserialization_utf8_bom(http_request):
 
 
 @pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
-@pytest.mark.parametrize("http_request", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_multipart_send(http_request):
+def test_multipart_send():
 
     transport = mock.MagicMock(spec=HttpTransport)
 
@@ -200,10 +191,10 @@ def test_multipart_send(http_request):
         'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
     })
 
-    req0 = http_request("DELETE", "/container0/blob0")
-    req1 = http_request("DELETE", "/container1/blob1")
+    req0 = HttpRequest("DELETE", "/container0/blob0")
+    req1 = HttpRequest("DELETE", "/container1/blob1")
 
-    request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
     request.set_multipart_mixed(
         req0,
         req1,
@@ -238,18 +229,17 @@ def test_multipart_send(http_request):
 
 
 @pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
-@pytest.mark.parametrize("http_request", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_multipart_send_with_context(http_request):
+def test_multipart_send_with_context():
     transport = mock.MagicMock(spec=HttpTransport)
 
     header_policy = HeadersPolicy({
         'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
     })
 
-    req0 = http_request("DELETE", "/container0/blob0")
-    req1 = http_request("DELETE", "/container1/blob1")
+    req0 = HttpRequest("DELETE", "/container0/blob0")
+    req1 = HttpRequest("DELETE", "/container1/blob1")
 
-    request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
     request.set_multipart_mixed(
         req0,
         req1,
@@ -287,8 +277,7 @@ def test_multipart_send_with_context(http_request):
 
 
 @pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
-@pytest.mark.parametrize("http_request", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_multipart_send_with_one_changeset(http_request):
+def test_multipart_send_with_one_changeset():
 
     transport = mock.MagicMock(spec=HttpTransport)
 
@@ -297,18 +286,18 @@ def test_multipart_send_with_one_changeset(http_request):
     })
 
     requests = [
-        http_request("DELETE", "/container0/blob0"),
-        http_request("DELETE", "/container1/blob1")
+        HttpRequest("DELETE", "/container0/blob0"),
+        HttpRequest("DELETE", "/container1/blob1")
     ]
 
-    changeset = http_request("", "")
+    changeset = HttpRequest("", "")
     changeset.set_multipart_mixed(
         *requests,
         policies=[header_policy],
         boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"
     )
 
-    request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
     request.set_multipart_mixed(
         changeset,
         boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525",
@@ -346,8 +335,7 @@ def test_multipart_send_with_one_changeset(http_request):
 
 
 @pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
-@pytest.mark.parametrize("http_request", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_multipart_send_with_multiple_changesets(http_request):
+def test_multipart_send_with_multiple_changesets():
 
     transport = mock.MagicMock(spec=HttpTransport)
 
@@ -355,22 +343,22 @@ def test_multipart_send_with_multiple_changesets(http_request):
         'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
     })
 
-    changeset1 = http_request("", "")
+    changeset1 = HttpRequest("", "")
     changeset1.set_multipart_mixed(
-        http_request("DELETE", "/container0/blob0"),
-        http_request("DELETE", "/container1/blob1"),
+        HttpRequest("DELETE", "/container0/blob0"),
+        HttpRequest("DELETE", "/container1/blob1"),
         policies=[header_policy],
         boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"
     )
-    changeset2 = http_request("", "")
+    changeset2 = HttpRequest("", "")
     changeset2.set_multipart_mixed(
-        http_request("DELETE", "/container2/blob2"),
-        http_request("DELETE", "/container3/blob3"),
+        HttpRequest("DELETE", "/container2/blob2"),
+        HttpRequest("DELETE", "/container3/blob3"),
         policies=[header_policy],
         boundary="changeset_8b9e487e-a353-4dcb-a6f4-0688191e0314"
     )
 
-    request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
     request.set_multipart_mixed(
         changeset1,
         changeset2,
@@ -433,8 +421,7 @@ def test_multipart_send_with_multiple_changesets(http_request):
 
 
 @pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
-@pytest.mark.parametrize("http_request", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_multipart_send_with_combination_changeset_first(http_request):
+def test_multipart_send_with_combination_changeset_first():
 
     transport = mock.MagicMock(spec=HttpTransport)
 
@@ -442,17 +429,17 @@ def test_multipart_send_with_combination_changeset_first(http_request):
         'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
     })
 
-    changeset = http_request("", "")
+    changeset = HttpRequest("", "")
     changeset.set_multipart_mixed(
-        http_request("DELETE", "/container0/blob0"),
-        http_request("DELETE", "/container1/blob1"),
+        HttpRequest("DELETE", "/container0/blob0"),
+        HttpRequest("DELETE", "/container1/blob1"),
         policies=[header_policy],
         boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"
     )
-    request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
     request.set_multipart_mixed(
         changeset,
-        http_request("DELETE", "/container2/blob2"),
+        HttpRequest("DELETE", "/container2/blob2"),
         policies=[header_policy],
         boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525"
     )
@@ -497,8 +484,7 @@ def test_multipart_send_with_combination_changeset_first(http_request):
     )
 
 @pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
-@pytest.mark.parametrize("http_request", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_multipart_send_with_combination_changeset_last(http_request):
+def test_multipart_send_with_combination_changeset_last():
 
     transport = mock.MagicMock(spec=HttpTransport)
 
@@ -506,16 +492,16 @@ def test_multipart_send_with_combination_changeset_last(http_request):
         'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
     })
 
-    changeset = http_request("", "")
+    changeset = HttpRequest("", "")
     changeset.set_multipart_mixed(
-        http_request("DELETE", "/container1/blob1"),
-        http_request("DELETE", "/container2/blob2"),
+        HttpRequest("DELETE", "/container1/blob1"),
+        HttpRequest("DELETE", "/container2/blob2"),
         policies=[header_policy],
         boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"
     )
-    request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
     request.set_multipart_mixed(
-        http_request("DELETE", "/container0/blob0"),
+        HttpRequest("DELETE", "/container0/blob0"),
         changeset,
         policies=[header_policy],
         boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525"
@@ -561,8 +547,7 @@ def test_multipart_send_with_combination_changeset_last(http_request):
     )
 
 @pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
-@pytest.mark.parametrize("http_request", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_multipart_send_with_combination_changeset_middle(http_request):
+def test_multipart_send_with_combination_changeset_middle():
 
     transport = mock.MagicMock(spec=HttpTransport)
 
@@ -570,17 +555,17 @@ def test_multipart_send_with_combination_changeset_middle(http_request):
         'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
     })
 
-    changeset = http_request("", "")
+    changeset = HttpRequest("", "")
     changeset.set_multipart_mixed(
-        http_request("DELETE", "/container1/blob1"),
+        HttpRequest("DELETE", "/container1/blob1"),
         policies=[header_policy],
         boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"
     )
-    request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
     request.set_multipart_mixed(
-        http_request("DELETE", "/container0/blob0"),
+        HttpRequest("DELETE", "/container0/blob0"),
         changeset,
-        http_request("DELETE", "/container2/blob2"),
+        HttpRequest("DELETE", "/container2/blob2"),
         policies=[header_policy],
         boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525"
     )
@@ -625,18 +610,17 @@ def test_multipart_send_with_combination_changeset_middle(http_request):
     )
 
 
-@pytest.mark.parametrize("http_request", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_multipart_receive(http_request):
+def test_multipart_receive():
 
     class ResponsePolicy(object):
         def on_response(self, request, response):
             # type: (PipelineRequest, PipelineResponse) -> None
             response.http_response.headers['x-ms-fun'] = 'true'
 
-    req0 = http_request("DELETE", "/container0/blob0")
-    req1 = http_request("DELETE", "/container1/blob1")
+    req0 = HttpRequest("DELETE", "/container0/blob0")
+    req1 = HttpRequest("DELETE", "/container1/blob1")
 
-    request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
     request.set_multipart_mixed(
         req0,
         req1,
@@ -688,30 +672,27 @@ def test_multipart_receive(http_request):
     assert res1.status_code == 404
     assert res1.headers['x-ms-fun'] == 'true'
 
-@pytest.mark.parametrize("http_request", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_raise_for_status_bad_response(http_request):
+def test_raise_for_status_bad_response():
     response = MockResponse(request=None, body=None, content_type=None)
     response.status_code = 400
     with pytest.raises(HttpResponseError):
         response.raise_for_status()
 
-@pytest.mark.parametrize("http_request", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_raise_for_status_good_response(http_request):
+def test_raise_for_status_good_response():
     response = MockResponse(request=None, body=None, content_type=None)
     response.status_code = 200
     response.raise_for_status()
 
 
-@pytest.mark.parametrize("http_request", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_multipart_receive_with_one_changeset(http_request):
+def test_multipart_receive_with_one_changeset():
 
-    changeset = http_request(None, None)
+    changeset = HttpRequest(None, None)
     changeset.set_multipart_mixed(
-        http_request("DELETE", "/container0/blob0"),
-        http_request("DELETE", "/container1/blob1")
+        HttpRequest("DELETE", "/container0/blob0"),
+        HttpRequest("DELETE", "/container1/blob1")
     )
 
-    request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
     request.set_multipart_mixed(changeset)
 
     body_as_bytes = (
@@ -758,21 +739,20 @@ def test_multipart_receive_with_one_changeset(http_request):
     assert res0.status_code == 202
 
 
-@pytest.mark.parametrize("http_request", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_multipart_receive_with_multiple_changesets(http_request):
+def test_multipart_receive_with_multiple_changesets():
 
-    changeset1 = http_request(None, None)
+    changeset1 = HttpRequest(None, None)
     changeset1.set_multipart_mixed(
-        http_request("DELETE", "/container0/blob0"),
-        http_request("DELETE", "/container1/blob1")
+        HttpRequest("DELETE", "/container0/blob0"),
+        HttpRequest("DELETE", "/container1/blob1")
     )
-    changeset2 = http_request(None, None)
+    changeset2 = HttpRequest(None, None)
     changeset2.set_multipart_mixed(
-        http_request("DELETE", "/container2/blob2"),
-        http_request("DELETE", "/container3/blob3")
+        HttpRequest("DELETE", "/container2/blob2"),
+        HttpRequest("DELETE", "/container3/blob3")
     )
 
-    request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
     request.set_multipart_mixed(changeset1, changeset2)
     body_as_bytes = (
         b'--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\r\n'
@@ -844,17 +824,16 @@ def test_multipart_receive_with_multiple_changesets(http_request):
     assert parts[3].status_code == 409
 
 
-@pytest.mark.parametrize("http_request", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_multipart_receive_with_combination_changeset_first(http_request):
+def test_multipart_receive_with_combination_changeset_first():
 
-    changeset = http_request(None, None)
+    changeset = HttpRequest(None, None)
     changeset.set_multipart_mixed(
-        http_request("DELETE", "/container0/blob0"),
-        http_request("DELETE", "/container1/blob1")
+        HttpRequest("DELETE", "/container0/blob0"),
+        HttpRequest("DELETE", "/container1/blob1")
     )
 
-    request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
-    request.set_multipart_mixed(changeset, http_request("DELETE", "/container2/blob2"))
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request.set_multipart_mixed(changeset, HttpRequest("DELETE", "/container2/blob2"))
     body_as_bytes = (
         b'--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\r\n'
         b'Content-Type: multipart/mixed; boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"\r\n'
@@ -909,17 +888,16 @@ def test_multipart_receive_with_combination_changeset_first(http_request):
     assert parts[2].status_code == 404
 
 
-@pytest.mark.parametrize("http_request", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_multipart_receive_with_combination_changeset_middle(http_request):
+def test_multipart_receive_with_combination_changeset_middle():
 
-    changeset = http_request(None, None)
-    changeset.set_multipart_mixed(http_request("DELETE", "/container1/blob1"))
+    changeset = HttpRequest(None, None)
+    changeset.set_multipart_mixed(HttpRequest("DELETE", "/container1/blob1"))
 
-    request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
     request.set_multipart_mixed(
-        http_request("DELETE", "/container0/blob0"),
+        HttpRequest("DELETE", "/container0/blob0"),
         changeset,
-        http_request("DELETE", "/container2/blob2")
+        HttpRequest("DELETE", "/container2/blob2")
     )
     body_as_bytes = (
         b'--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\r\n'
@@ -975,17 +953,16 @@ def test_multipart_receive_with_combination_changeset_middle(http_request):
     assert parts[2].status_code == 404
 
 
-@pytest.mark.parametrize("http_request", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_multipart_receive_with_combination_changeset_last(http_request):
+def test_multipart_receive_with_combination_changeset_last():
 
-    changeset = http_request(None, None)
+    changeset = HttpRequest(None, None)
     changeset.set_multipart_mixed(
-        http_request("DELETE", "/container1/blob1"),
-        http_request("DELETE", "/container2/blob2")
+        HttpRequest("DELETE", "/container1/blob1"),
+        HttpRequest("DELETE", "/container2/blob2")
     )
 
-    request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
-    request.set_multipart_mixed(http_request("DELETE", "/container0/blob0"), changeset)
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request.set_multipart_mixed(HttpRequest("DELETE", "/container0/blob0"), changeset)
 
     body_as_bytes = (
         b'--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\r\n'
@@ -1041,12 +1018,11 @@ def test_multipart_receive_with_combination_changeset_last(http_request):
     assert parts[2].status_code == 404
 
 
-@pytest.mark.parametrize("http_request", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_multipart_receive_with_bom(http_request):
+def test_multipart_receive_with_bom():
 
-    req0 = http_request("DELETE", "/container0/blob0")
+    req0 = HttpRequest("DELETE", "/container0/blob0")
 
-    request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
     request.set_multipart_mixed(req0)
     body_as_bytes = (
         b"--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\n"
@@ -1078,13 +1054,12 @@ def test_multipart_receive_with_bom(http_request):
     assert res0.body().startswith(b'\xef\xbb\xbf')
 
 
-@pytest.mark.parametrize("http_request", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_recursive_multipart_receive(http_request):
-    req0 = http_request("DELETE", "/container0/blob0")
-    internal_req0 = http_request("DELETE", "/container0/blob0")
+def test_recursive_multipart_receive():
+    req0 = HttpRequest("DELETE", "/container0/blob0")
+    internal_req0 = HttpRequest("DELETE", "/container0/blob0")
     req0.set_multipart_mixed(internal_req0)
 
-    request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
     request.set_multipart_mixed(req0)
     internal_body_as_str = (
         "--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\r\n"
@@ -1129,16 +1104,14 @@ def test_recursive_multipart_receive(http_request):
     assert internal_response0.status_code == 400
 
 
-@pytest.mark.parametrize("http_request", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_close_unopened_transport(http_request):
+def test_close_unopened_transport():
     transport = RequestsTransport()
     transport.close()
 
-@pytest.mark.parametrize("http_request", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_timeout(caplog, http_request):
+def test_timeout(caplog):
     transport = RequestsTransport()
 
-    request = http_request("GET", "https://www.bing.com")
+    request = HttpRequest("GET", "https://www.bing.com")
 
     with caplog.at_level(logging.WARNING, logger="azure.core.pipeline.transport"):
         with Pipeline(transport) as pipeline:
@@ -1146,11 +1119,10 @@ def test_timeout(caplog, http_request):
 
     assert "Tuple timeout setting is deprecated" not in caplog.text
 
-@pytest.mark.parametrize("http_request", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_tuple_timeout(caplog, http_request):
+def test_tuple_timeout(caplog):
     transport = RequestsTransport()
 
-    request = http_request("GET", "https://www.bing.com")
+    request = HttpRequest("GET", "https://www.bing.com")
 
     with caplog.at_level(logging.WARNING, logger="azure.core.pipeline.transport"):
         with Pipeline(transport) as pipeline:
@@ -1158,19 +1130,17 @@ def test_tuple_timeout(caplog, http_request):
 
     assert "Tuple timeout setting is deprecated" in caplog.text
 
-@pytest.mark.parametrize("http_request", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_conflict_timeout(caplog, http_request):
+def test_conflict_timeout(caplog):
     transport = RequestsTransport()
 
-    request = http_request("GET", "https://www.bing.com")
+    request = HttpRequest("GET", "https://www.bing.com")
 
     with pytest.raises(ValueError):
         with Pipeline(transport) as pipeline:
             pipeline.run(request, connection_timeout=(100, 100), read_timeout = 100)
 
 @pytest.mark.skipif(sys.version_info < (3, 10), reason="Loop parameter is deprecated since Python 3.10")
-@pytest.mark.parametrize("http_request", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_aiohttp_loop(http_request):
+def test_aiohttp_loop():
     import asyncio
     from azure.core.pipeline.transport import AioHttpTransport
     loop = asyncio._get_running_loop()

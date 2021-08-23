@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for the HttpLoggingPolicy."""
-import pytest
+
 import logging
 import types
 try:
@@ -16,21 +16,15 @@ from azure.core.pipeline import (
     PipelineContext
 )
 from azure.core.pipeline.transport import (
-    HttpRequest as PipelineTransportHttpRequest,
-    HttpResponse as PipelineTransportHttpResponse,
-)
-from azure.core.rest import (
-    HttpRequest as RestHttpRequest,
-    HttpResponse as RestHttpResponse,
+    HttpRequest,
+    HttpResponse,
 )
 from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
 )
-from utils import create_http_response
 
 
-@pytest.mark.parametrize("http_request,http_response", [(PipelineTransportHttpRequest, PipelineTransportHttpResponse), (RestHttpRequest, RestHttpResponse)])
-def test_http_logger(http_request, http_response):
+def test_http_logger():
 
     class MockHandler(logging.Handler):
         def __init__(self):
@@ -48,8 +42,8 @@ def test_http_logger(http_request, http_response):
 
     policy = HttpLoggingPolicy(logger=logger)
 
-    universal_request = http_request('GET', 'http://127.0.0.1/')
-    http_response = create_http_response(http_response, universal_request, None)
+    universal_request = HttpRequest('GET', 'http://127.0.0.1/')
+    http_response = HttpResponse(universal_request, None)
     http_response.status_code = 202
     request = PipelineRequest(universal_request, PipelineContext(None))
 
@@ -144,8 +138,7 @@ def test_http_logger(http_request, http_response):
 
 
 
-@pytest.mark.parametrize("http_request,http_response", [(PipelineTransportHttpRequest, PipelineTransportHttpResponse), (RestHttpRequest, RestHttpResponse)])
-def test_http_logger_operation_level(http_request, http_response):
+def test_http_logger_operation_level():
 
     class MockHandler(logging.Handler):
         def __init__(self):
@@ -164,8 +157,8 @@ def test_http_logger_operation_level(http_request, http_response):
     policy = HttpLoggingPolicy()
     kwargs={'logger': logger}
 
-    universal_request = http_request('GET', 'http://127.0.0.1/')
-    http_response = create_http_response(http_response, universal_request, None)
+    universal_request = HttpRequest('GET', 'http://127.0.0.1/')
+    http_response = HttpResponse(universal_request, None)
     http_response.status_code = 202
     request = PipelineRequest(universal_request, PipelineContext(None, **kwargs))
 
@@ -216,8 +209,7 @@ def test_http_logger_operation_level(http_request, http_response):
     mock_handler.reset()
 
 
-@pytest.mark.parametrize("http_request,http_response", [(PipelineTransportHttpRequest, PipelineTransportHttpResponse), (RestHttpRequest, RestHttpResponse)])
-def test_http_logger_with_body(http_request, http_response):
+def test_http_logger_with_body():
 
     class MockHandler(logging.Handler):
         def __init__(self):
@@ -235,9 +227,9 @@ def test_http_logger_with_body(http_request, http_response):
 
     policy = HttpLoggingPolicy(logger=logger)
 
-    universal_request = http_request('GET', 'http://127.0.0.1/')
+    universal_request = HttpRequest('GET', 'http://127.0.0.1/')
     universal_request.body = "testbody"
-    http_response = create_http_response(http_response, universal_request, None)
+    http_response = HttpResponse(universal_request, None)
     http_response.status_code = 202
     request = PipelineRequest(universal_request, PipelineContext(None))
 
@@ -257,8 +249,7 @@ def test_http_logger_with_body(http_request, http_response):
     mock_handler.reset()
 
 
-@pytest.mark.parametrize("http_request,http_response", [(PipelineTransportHttpRequest, PipelineTransportHttpResponse), (RestHttpRequest, RestHttpResponse)])
-def test_http_logger_with_generator_body(http_request, http_response):
+def test_http_logger_with_generator_body():
 
     class MockHandler(logging.Handler):
         def __init__(self):
@@ -276,11 +267,11 @@ def test_http_logger_with_generator_body(http_request, http_response):
 
     policy = HttpLoggingPolicy(logger=logger)
 
-    universal_request = http_request('GET', 'http://127.0.0.1/')
+    universal_request = HttpRequest('GET', 'http://127.0.0.1/')
     mock = Mock()
     mock.__class__ = types.GeneratorType
     universal_request.body = mock
-    http_response = create_http_response(http_response, universal_request, None)
+    http_response = HttpResponse(universal_request, None)
     http_response.status_code = 202
     request = PipelineRequest(universal_request, PipelineContext(None))
 
