@@ -18,8 +18,6 @@ from devtools_testutils import (
 from devtools_testutils.cognitiveservices_testcase import CognitiveServicesAccountPreparer
 from azure_devtools.scenario_tests import ReplayableTest
 
-from azure.ai.language.questionanswering import QuestionAnsweringClient
-
 
 REGION = 'westus2'
 
@@ -44,9 +42,9 @@ class QuestionAnsweringTest(AzureTestCase):
 
     def __init__(self, method_name):
         super(QuestionAnsweringTest, self).__init__(method_name)
-        self.scrubber.register_name_pair(os.environ.get("AZURE_QUESTIONANSWERING_ENDPOINT"), TEST_ENDPOINT)
-        self.scrubber.register_name_pair(os.environ.get("AZURE_QUESTIONANSWERING_KEY"), TEST_KEY)
-        self.scrubber.register_name_pair(os.environ.get("AZURE_QUESTIONANSWERING_PROJECT"), TEST_PROJECT)
+        self.scrubber.register_name_pair(os.environ.get("AZURE_CONVERSATIONS_ENDPOINT"), TEST_ENDPOINT)
+        self.scrubber.register_name_pair(os.environ.get("AZURE_CONVERSATIONS_KEY"), TEST_KEY)
+        self.scrubber.register_name_pair(os.environ.get("AZURE_CONVERSATIONS_PROJECT"), TEST_PROJECT)
 
     def get_oauth_endpoint(self):
         raise NotImplementedError()
@@ -96,9 +94,9 @@ class GlobalQuestionAnsweringAccountPreparer(AzureMgmtPreparer):
             return {
                 'location': REGION,
                 'resource_group': "rgname",
-                'qna_account': os.environ.get("AZURE_QUESTIONANSWERING_ENDPOINT"),
-                'qna_key': os.environ.get("AZURE_QUESTIONANSWERING_KEY"),
-                'qna_project': os.environ.get("AZURE_QUESTIONANSWERING_PROJECT")
+                'qna_account': os.environ.get("AZURE_CONVERSATIONS_ENDPOINT"),
+                'qna_key': os.environ.get("AZURE_CONVERSATIONS_KEY"),
+                'qna_project': os.environ.get("AZURE_CONVERSATIONS_PROJECT")
             }
         return {
             'location': REGION,

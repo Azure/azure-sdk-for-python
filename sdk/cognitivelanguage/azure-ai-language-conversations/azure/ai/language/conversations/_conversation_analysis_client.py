@@ -40,8 +40,8 @@ class ConversationAnalysisClient(object):
 
     def __init__(
         self,
-        credential,  # type: AzureKeyCredential
         endpoint,  # type: str
+        credential,  # type: AzureKeyCredential
         **kwargs  # type: Any
     ):
         # type: (...) -> None
