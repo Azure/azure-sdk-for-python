@@ -22,7 +22,7 @@ response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=timedelt
 if not response.tables:
     print("No results for the query")
 
-#response.tables is a LogsQueryResultTable
+#response.tables is a LogsTable
 for table in response.tables:
     for col in table.columns: #LogsQueryResultColumn
         print(col.name + "/"+  col.type + " | ", end="")
