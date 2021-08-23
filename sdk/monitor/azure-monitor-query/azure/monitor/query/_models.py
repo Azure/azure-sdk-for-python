@@ -324,7 +324,7 @@ class MetricClass(str, Enum):
     SATURATION = "Saturation"
 
 
-class MetricDefinition(object):
+class MetricDefinition(object): #pylint: disable=too-many-instance-attributes
     """Metric definition class specifies the metadata for a metric.
 
     :keyword dimension_required: Flag to indicate whether the dimension is required.

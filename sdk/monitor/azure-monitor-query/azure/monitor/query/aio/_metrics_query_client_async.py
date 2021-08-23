@@ -118,7 +118,7 @@ class MetricsQueryClient(object):
         :keyword start_time: The ISO 8601 conform Date start time from which to query for metric
          namespaces.
         :paramtype start_time: str
-        :return: An iterator like instance of either MetricNamespaceCollection or the result of cls(response)
+        :return: An iterator like instance of either MetricNamespace or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricNamespace]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
