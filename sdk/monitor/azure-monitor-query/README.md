@@ -226,10 +226,10 @@ LogsQueryResult / LogsBatchQueryResult
 |---statistics
 |---visualization
 |---error
-|---tables (list of `LogsQueryResultTable` objects)
+|---tables (list of `LogsTable` objects)
     |---name
     |---rows
-    |---columns (list of `LogsQueryResultColumn` objects)
+    |---columns (list of `LogsTableColumn` objects)
         |---name
         |---type
 ```
@@ -313,7 +313,7 @@ MetricsResult
 ```python
 import os
 from datetime import datetime, timedelta
-from azure.monitor.query import MetricsQueryClient, AggregationType
+from azure.monitor.query import MetricsQueryClient, MetricAggregationType
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
@@ -323,7 +323,7 @@ metrics_uri = os.environ['METRICS_RESOURCE_URI']
 response = client.query(
     metrics_uri,
     metric_names=["MatchedEventCount"],
-    aggregations=[AggregationType.COUNT]
+    aggregations=[MetricAggregationType.COUNT]
     )
 
 for metric in response.metrics:

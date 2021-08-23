@@ -5,6 +5,9 @@
 ### Features Added
 
 - Added additional `display_description` attribute to the `Metric` type.
+- Added a `MetricClass` enum to provide the class of a metric.
+- Added a `metric_class` attribute to the `MetricDefinition` type.
+- Added a `MetricNamespaceClassification` enum to support the `namespace_classification` attribute on `MetricNamespace` type.
 
 ### Breaking Changes
 
@@ -22,6 +25,11 @@
 - `LogsQueryResult` now returns `datetime` objects for a time values.
 - `LogsBatchQuery` doesn't accept a `request_id` anymore.
 - `MetricsMetadataValues` is removed. A dictionary is used instead.
+- `time_stamp` is renamed to `timestamp` in `MetricValue` type.
+- `AggregationType` is renamed to `MetricAggregationType`.
+- Removed `LogsBatchResultError` type.
+- `LogsQueryResultTable` is named to `LogsTable`
+- `LogsQueryResultColumn` is renamed to `LogsTableColumn`
 
 ### Bugs Fixed
 
