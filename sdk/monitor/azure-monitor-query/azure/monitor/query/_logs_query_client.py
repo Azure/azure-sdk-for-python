@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Any, Union, Sequence, Dict
+from typing import TYPE_CHECKING, Any, Union, Sequence, Dict, List
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 
@@ -126,7 +126,7 @@ class LogsQueryClient(object):
 
     @distributed_trace
     def query_batch(self, queries, **kwargs):
-        # type: (Union[Sequence[Dict], Sequence[LogsBatchQuery]], Any) -> Sequence[LogsBatchQueryResult]
+        # type: (Union[Sequence[Dict], Sequence[LogsBatchQuery]], Any) -> List[LogsBatchQueryResult]
         """Execute a list of analytics queries. Each request can be either a LogQueryRequest
         object or an equivalent serialized model.
 

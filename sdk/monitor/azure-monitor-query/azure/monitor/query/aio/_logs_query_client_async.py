@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 
 from datetime import datetime, timedelta
-from typing import Any, Tuple, Union, Sequence, Dict, Optional, TYPE_CHECKING
+from typing import Any, Tuple, Union, Sequence, Dict, List, TYPE_CHECKING
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
 
@@ -114,7 +114,7 @@ class LogsQueryClient(object):
         self,
         queries: Union[Sequence[Dict], Sequence[LogsBatchQuery]],
         **kwargs: Any
-        ) -> Sequence[LogsBatchQueryResult]:
+        ) -> List[LogsBatchQueryResult]:
         """Execute a list of analytics queries. Each request can be either a LogQueryRequest
         object or an equivalent serialized model.
 
