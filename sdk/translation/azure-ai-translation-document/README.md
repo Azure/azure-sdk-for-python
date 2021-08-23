@@ -374,7 +374,7 @@ See full SDK logging documentation with examples [here][sdk_logging_docs].
 ### Optional Configuration
 
 Optional keyword arguments can be passed in at the client and per-operation level.
-The Azure-Core [reference documentation][azure_core_ref_docs]
+The azure-core [reference documentation][azure_core_ref_docs]
 describes available configurations for retries, logging, transport protocols, and more.
 
 ## Next steps
