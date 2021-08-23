@@ -11,6 +11,7 @@ import os
 import logging
 from collections import defaultdict
 from functools import partial
+from dotenv import load_dotenv
 
 from azure.identity import ClientSecretCredential
 from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
@@ -19,6 +20,9 @@ from azure.eventhub import EventHubConsumerClient, TransportType, EventHubShared
 from logger import get_logger
 from process_monitor import ProcessMonitor
 from app_insights_metric import AzureMonitorMetric
+
+ENV_FILE = os.environ.get('ENV_FILE')
+load_dotenv(dotenv_path=ENV_FILE, override=True)
 
 
 def parse_starting_position(args):
@@ -37,17 +41,17 @@ def parse_starting_position(args):
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--link_credit", default=3000, type=int)
-parser.add_argument("--output_interval", type=float, default=1000)
-parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=30)
-parser.add_argument("--consumer_group", help="Consumer group name", default="$default")
+parser.add_argument("--link_credit", default=int(os.environ.get("LINK_CREDIT", 3000)), type=int)
+parser.add_argument("--output_interval", type=float, default=int(os.environ.get("OUTPUT_INTERVAL", 5000)))
+parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=int(os.environ.get("DURATION", 864000)))
+parser.add_argument("--consumer_group", help="Consumer group name", default=os.environ.get("CONSUMER_GROUP", "$default"))
 parser.add_argument("--auth_timeout", help="Authorization Timeout", type=float, default=60)
-parser.add_argument("--starting_offset", help="Starting offset", type=str)
+parser.add_argument("--starting_offset", help="Starting offset", type=str, default=os.environ.get("STARTING_OFFSET", "-1"))
 parser.add_argument("--starting_sequence_number", help="Starting sequence number", type=int)
 parser.add_argument("--starting_datetime", help="Starting datetime string, should be format of YYYY-mm-dd HH:mm:ss")
 parser.add_argument("--partitions", help="Number of partitions. 0 means to get partitions from eventhubs", type=int, default=0)
 parser.add_argument("--recv_partition_id", help="Receive from a specific partition if this is set", type=int)
-parser.add_argument("--max_batch_size", type=int, default=0,
+parser.add_argument("--max_batch_size", type=int, default=int(os.environ.get("MAX_BATCH_SIZE", 0)),
                     help="Call EventHubConsumerClient.receive_batch() if not 0, otherwise call receive()")
 parser.add_argument("--max_wait_time", type=float, default=0,
                     help="max_wait_time of EventHubConsumerClient.receive_batch() or EventHubConsumerClient.receive()")
@@ -55,8 +59,8 @@ parser.add_argument("--max_wait_time", type=float, default=0,
 parser.add_argument("--track_last_enqueued_event_properties", action="store_true")
 parser.add_argument("--load_balancing_interval", help="time duration in seconds between two load balance", type=float, default=10)
 parser.add_argument("--conn_str", help="EventHub connection string",
-                    default=os.environ.get('EVENT_HUB_PERF_32_CONN_STR'))
-parser.add_argument("--eventhub", help="Name of EventHub")
+                    default=os.environ.get('EVENT_HUB_CONN_STR'))
+parser.add_argument("--eventhub", help="Name of EventHub", default=os.environ.get('EVENT_HUB_NAME'))
 parser.add_argument("--address", help="Address URI to the EventHub entity")
 parser.add_argument("--sas-policy", help="Name of the shared access policy to authenticate with")
 parser.add_argument("--sas-key", help="Shared access key")
@@ -82,7 +86,14 @@ parser.add_argument("--log_filename", help="log file name", type=str)
 
 args = parser.parse_args()
 starting_position = parse_starting_position(args)
-LOGGER = get_logger(args.log_filename, "stress_receive_sync", level=logging.INFO, print_console=args.print_console)
+print_console = args.print_console or (os.environ.get("PRINT_CONSOLE") == "1")
+
+LOGGER = get_logger(
+    args.log_filename,
+    "stress_receive_sync",
+    level=logging.INFO,
+    print_console=print_console
+)
 LOG_PER_COUNT = args.output_interval
 
 start_time = time.perf_counter()
@@ -105,7 +116,6 @@ def on_event_received(process_monitor, partition_context, event):
     recv_cnt_map[partition_context.partition_id] += 1 if event else 0
     if recv_cnt_map[partition_context.partition_id] % LOG_PER_COUNT == 0:
         total_time_elapsed = time.perf_counter() - start_time
-
         partition_previous_time = recv_time_map.get(partition_context.partition_id)
         partition_current_time = time.perf_counter()
         recv_time_map[partition_context.partition_id] = partition_current_time
@@ -213,7 +223,11 @@ def create_client(args):
 
 def run(args):
 
-    with ProcessMonitor("monitor_{}".format(args.log_filename), "consumer_stress_sync", print_console=args.print_console) as process_monitor:
+    with ProcessMonitor(
+        "monitor_{}".format(args.log_filename),
+        "consumer_stress_sync",
+        print_console=print_console
+    ) as process_monitor:
         kwargs_dict = {
             "prefetch": args.link_credit,
             "partition_id": str(args.recv_partition_id) if args.recv_partition_id else None,

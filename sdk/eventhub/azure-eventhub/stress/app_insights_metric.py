@@ -2,9 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-
-import os
-
 from opencensus.ext.azure import metrics_exporter
 from opencensus.stats import aggregation as aggregation_module
 from opencensus.stats import measure as measure_module
@@ -26,7 +23,7 @@ class AzureMonitorMetric:
         self.desc = test_description
 
         events_measure_name = "The number of events handled by " + self.name
-        events_measure_desc = "The number of events handled by " + self.desc if self.desc else None
+        events_measure_desc = "The number of events handled by" + self.desc if self.desc else None
         memory_measure_name = "memory usage percentage for " + self.name
         memory_measure_desc = "memory usage percentage for " + self.desc if self.desc else None
         cpu_measure_name = "cpu usage percentage for " + self.name
