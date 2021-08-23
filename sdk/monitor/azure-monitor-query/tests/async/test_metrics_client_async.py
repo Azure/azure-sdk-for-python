@@ -2,7 +2,7 @@ from datetime import datetime, time, timedelta
 import pytest
 import os
 from azure.identity.aio import ClientSecretCredential
-from azure.monitor.query import AggregationType
+from azure.monitor.query import MetricAggregationType
 from azure.monitor.query.aio import MetricsQueryClient
 
 def _credential():
@@ -22,7 +22,7 @@ async def test_metrics_auth():
         os.environ['METRICS_RESOURCE_URI'],
         metric_names=["MatchedEventCount"],
         timespan=timedelta(days=1),
-        aggregations=[AggregationType.COUNT]
+        aggregations=[MetricAggregationType.COUNT]
         )
     assert response
     assert response.metrics
@@ -37,7 +37,7 @@ async def test_metrics_granularity():
         metric_names=["MatchedEventCount"],
         timespan=timedelta(days=1),
         granularity=timedelta(minutes=5),
-        aggregations=[AggregationType.COUNT]
+        aggregations=[MetricAggregationType.COUNT]
         )
     assert response
     assert response.granularity == timedelta(minutes=5)
