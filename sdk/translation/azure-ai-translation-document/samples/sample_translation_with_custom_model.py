@@ -8,7 +8,7 @@
 FILE: sample_translation_with_custom_model.py
 
 DESCRIPTION:
-    This sample demonstrates how to create a translation job and apply custom azure translation model when doing the translation.
+    This sample demonstrates how to create a translation operation and apply custom azure translation model when doing the translation.
 
     To set up your containers for translation and generate SAS tokens to your containers (or files)
     with the appropriate permissions, see the README.
@@ -50,9 +50,9 @@ def sample_translation_with_custom_model():
     )
     result = poller.result()
 
-    print("Job status: {}".format(result.status))
-    print("Job created on: {}".format(result.created_on))
-    print("Job last updated on: {}".format(result.last_updated_on))
+    print("Operation status: {}".format(result.status))
+    print("Operation created on: {}".format(result.created_on))
+    print("Operation last updated on: {}".format(result.last_updated_on))
     print("Total number of translations on documents: {}".format(result.documents_total_count))
 
     print("\nOf total documents...")
