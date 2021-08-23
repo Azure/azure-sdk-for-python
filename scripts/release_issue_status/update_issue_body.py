@@ -7,7 +7,7 @@ from github import Github
 def update_issue_body(issue_link):
     # Get Issue Number
     issue_number = int(issue_link.replace("https://github.com/Azure/sdk-release-request/issues/", ""))
-    g = Github(os.getenv('TOKEN', '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'))
+    g = Github(os.getenv('TOKEN'))
     sdk_repo = g.get_repo('Azure/sdk-release-request')
     rest_repo = g.get_repo('Azure/azure-rest-api-specs')
     issue_info = sdk_repo.get_issue(number=issue_number)
@@ -16,7 +16,7 @@ def update_issue_body(issue_link):
     issue_body_list = [i for i in issue_body.split("\n") if i]
     # Get the link in issue body
     for row in issue_body_list:
-        if 'link' in row or 'Link' in row:
+        if 'link' in row.lower():
             link = row.split(":", 1)[-1].strip()
             break
 
