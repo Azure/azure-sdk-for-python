@@ -147,12 +147,12 @@ def main():
         elif item.delay_from_latest_update >= 7:
             item.bot_advice = 'delay for a long time and better to handle now.'
   
-        if item.delay_from_create_date >= 30 and item.language == 'Python' and '30days attention' not in item.labels:
+        if item.days_from_latest_commit >= 30 and item.language == 'Python' and '30days attention' not in item.labels:
             item.labels.append('30days attention')
             item.issue_object.set_labels(*item.labels)
             item.issue_object.create_comment(f'hi @{item.author}, the issue is closed since there is no reply for a long time. Please reopen it if necessary or create new one.')
             item.issue_object.edit(state='close')
-        elif item.delay_from_create_date >= 15 and item.language == 'Python' and '15days attention' not in item.labels:
+        elif item.days_from_latest_commit >= 15 and item.language == 'Python' and '15days attention' not in item.labels:
             item.issue_object.create_comment(f'hi @{item.author}, this release-request has been delayed more than 15 days,'
                                              ' please deal with it ASAP. We will close the issue if there is still no response after 15 days!')
             item.labels.append('15days attention')

@@ -52,6 +52,8 @@ class KeyVaultClientOperationsMixin(object):
         api_version = self._get_api_version('begin_full_backup')
         if api_version == '7.2':
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_full_backup'".format(api_version))
         mixin_instance = OperationClass()
@@ -89,6 +91,8 @@ class KeyVaultClientOperationsMixin(object):
         api_version = self._get_api_version('begin_full_restore_operation')
         if api_version == '7.2':
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_full_restore_operation'".format(api_version))
         mixin_instance = OperationClass()
@@ -129,6 +133,8 @@ class KeyVaultClientOperationsMixin(object):
         api_version = self._get_api_version('begin_selective_key_restore_operation')
         if api_version == '7.2':
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_selective_key_restore_operation'".format(api_version))
         mixin_instance = OperationClass()
@@ -159,6 +165,8 @@ class KeyVaultClientOperationsMixin(object):
         api_version = self._get_api_version('full_backup_status')
         if api_version == '7.2':
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'full_backup_status'".format(api_version))
         mixin_instance = OperationClass()
@@ -189,6 +197,8 @@ class KeyVaultClientOperationsMixin(object):
         api_version = self._get_api_version('restore_status')
         if api_version == '7.2':
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'restore_status'".format(api_version))
         mixin_instance = OperationClass()

@@ -50,6 +50,10 @@ class DataAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     WRITE_ROLE_ASSIGNMENT = "Microsoft.KeyVault/managedHsm/roleAssignments/write/action"
     #: Get role definition.
     READ_ROLE_DEFINITION = "Microsoft.KeyVault/managedHsm/roleDefinitions/read/action"
+    #: Create or update role definition.
+    WRITE_ROLE_DEFINITION = "Microsoft.KeyVault/managedHsm/roleDefinitions/write/action"
+    #: Delete role definition.
+    DELETE_ROLE_DEFINITION = "Microsoft.KeyVault/managedHsm/roleDefinitions/delete/action"
     #: Encrypt using an HSM key.
     ENCRYPT_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/encrypt/action"
     #: Decrypt using an HSM key.

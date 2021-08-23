@@ -26,15 +26,15 @@ class ManagedIdentityCredential(object):
     """Authenticates with an Azure managed identity in any hosting environment which supports managed identities.
 
     This credential defaults to using a system-assigned identity. To configure a user-assigned identity, use one of
-    the keyword arguments.
+    the keyword arguments. See `Azure Active Directory documentation
+    <https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview>`_ for more
+    information about configuring managed identity for applications.
 
-    See Azure Active Directory documentation for more information about configuring managed identity for applications:
-    https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview
-
-    :keyword str client_id: a user-assigned identity's client ID. This is supported in all hosting environments.
+    :keyword str client_id: a user-assigned identity's client ID or, when using Pod Identity, the client ID of an Azure
+        AD app registration. This argument is supported in all hosting environments.
     :keyword identity_config: a mapping ``{parameter_name: value}`` specifying a user-assigned identity by its object
-      or resource ID, for example ``{"object_id": "..."}``. Check the documentation for your hosting environment to
-      learn what values it expects.
+        or resource ID, for example ``{"object_id": "..."}``. Check the documentation for your hosting environment to
+        learn what values it expects.
     :paramtype identity_config: Mapping[str, str]
     """
 

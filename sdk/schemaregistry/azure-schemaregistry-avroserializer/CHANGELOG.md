@@ -1,16 +1,12 @@
 # Release History
 
-## 1.0.0b2 (Unreleased)
+## 1.0.0b2 (2021-08-18)
+
+This version and all future versions will require Python 2.7 or Python 3.6+, Python 3.5 is no longer supported.
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
-
-This version and all future versions will require Python 2.7 or Python 3.6+, Python 3.5 is no longer supported.
+- Depends on `azure-schemaregistry==1.0.0b2` which supports client-level caching.
 
 ## 1.0.0b1 (2020-09-09)
 

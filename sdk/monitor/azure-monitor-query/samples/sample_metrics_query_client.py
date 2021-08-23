@@ -19,9 +19,8 @@ client = MetricsQueryClient(credential)
 metrics_uri = os.environ['METRICS_RESOURCE_URI']
 response = client.query(
     metrics_uri,
-    metric_names=["MatchedEventCount"],
-    start_time=datetime(2021, 6, 21),
-    duration=timedelta(days=1),
+    metric_names=["MatchedEventCount", "DeliverySuccesssCount"],
+    timespan=timedelta(days=1),
     aggregations=[AggregationType.COUNT]
     )
 
