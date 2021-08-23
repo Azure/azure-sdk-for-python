@@ -21,18 +21,19 @@ class LogsTable(object):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the table.
-    :type name: str
-    :param columns: Required. The list of columns in this table.
-    :type columns: list[~azure.monitor.query.LogsTableColumn]
-    :param rows: Required. The resulting rows from this query.
-    :type rows: list[list[str]]
+    :ivar name: Required. The name of the table.
+    :vartype name: str
+    :ivar columns: Required. The list of columns in this table.
+    :vartype columns: list[~azure.monitor.query.LogsTableColumn]
+    :ivar rows: Required. The resulting rows from this query.
+    :vartype rows: list[list[str]]
     """
-    def __init__(self, name, columns, rows):
-        # type: (str, List[LogsTableColumn], List[List[str]]) -> None
-        self.name = name
-        self.columns = columns
-        self.rows = [process_row(self.columns, row) for row in rows]
+    def __init__(self, **kwargs):
+        # type: (Any) -> None
+        self.name = kwargs.pop('name', None) # type: str
+        self.columns = kwargs.pop('columns', None) # type: Optional[LogsTableColumn]
+        _rows = kwargs.pop('rows', None)
+        self.rows = [process_row(self.columns, row) for row in _rows]
 
     @classmethod
     def _from_generated(cls, generated):
@@ -76,7 +77,7 @@ class LogsQueryResult(object):
      visualization selected by the query and any properties for that visualization.
     :vartype visualization: object
     :ivar error: Any error info.
-    :vartype error: object
+    :vartype error: ~azure.core.exceptions.HttpResponseError
     """
     def __init__(self, **kwargs):
         # type: (Any) -> None
@@ -530,12 +531,12 @@ class MetricAvailability(object):
     """Metric availability specifies the time grain (aggregation interval or frequency)
     and the retention period for that time grain.
 
-    :keyword granularity: the time grain specifies the aggregation interval for the metric. Expressed
+    :ivar granularity: the time grain specifies the aggregation interval for the metric. Expressed
      as a duration 'PT1M', 'P1D', etc.
-    :paramtype granularity: ~datetime.timedelta
-    :keyword retention: the retention period for the metric at the specified timegrain. Expressed as
+    :vartype granularity: ~datetime.timedelta
+    :ivar retention: the retention period for the metric at the specified timegrain. Expressed as
      a duration 'PT1M', 'P1D', etc.
-    :paramtype retention: ~datetime.timedelta
+    :vartype retention: ~datetime.timedelta
     """
     def __init__(
         self,
