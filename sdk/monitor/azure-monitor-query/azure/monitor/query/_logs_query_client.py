@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Any, Union, Sequence, Dict, Optional
+from typing import TYPE_CHECKING, Any, Union, Sequence, Dict
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 
@@ -17,7 +17,7 @@ from ._models import LogsQueryResult, LogsBatchQuery, LogsBatchQueryResult
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from datetime import timedelta
+    from datetime import timedelta, datetime
 
 
 class LogsQueryClient(object):
@@ -51,8 +51,8 @@ class LogsQueryClient(object):
         self._query_op = self._client.query
 
     @distributed_trace
-    def query(self, workspace_id, query, timespan=None, **kwargs):
-        # type: (str, str, Optional[timedelta], Any) -> LogsQueryResult
+    def query(self, workspace_id, query, timespan, **kwargs):
+        # type: (str, str, Union[timedelta, (datetime, timedelta), (datetime, datetime)], Any) -> LogsQueryResult
         """Execute an Analytics query.
 
         Executes an Analytics query for data.
@@ -76,7 +76,7 @@ class LogsQueryClient(object):
         :keyword additional_workspaces: A list of workspaces that are included in the query.
          These can be qualified workspace names, workspace Ids, or Azure resource Ids.
         :paramtype additional_workspaces: list[str]
-        :return: QueryResults, or the result of cls(response)
+        :return: LogsQueryResult, or the result of cls(response)
         :rtype: ~azure.monitor.query.LogsQueryResult
         :raises: ~azure.core.exceptions.HttpResponseError
 
@@ -135,7 +135,7 @@ class LogsQueryClient(object):
         :param queries: The list of queries that should be processed
         :type queries: list[dict] or list[~azure.monitor.query.LogsBatchQuery]
         :return: List of LogsBatchQueryResult, or the result of cls(response)
-        :rtype: ~list[~azure.monitor.query.LogsBatchQueryResult]
+        :rtype: list[~azure.monitor.query.LogsBatchQueryResult]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:

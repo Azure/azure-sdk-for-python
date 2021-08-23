@@ -45,7 +45,7 @@ class LogsQueryClient(object):
         self,
         workspace_id: str,
         query: str,
-        timespan: Optional[Union[timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]] = None,
+        timespan: Union[timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]],
         **kwargs: Any) -> LogsQueryResult:
         """Execute an Analytics query.
 
@@ -123,7 +123,7 @@ class LogsQueryClient(object):
         :param queries: The list of queries that should be processed
         :type queries: list[dict] or list[~azure.monitor.query.LogsBatchQuery]
         :return: list of LogsBatchQueryResult objects, or the result of cls(response)
-        :rtype: ~list[~azure.monitor.query.LogsBatchQueryResult]
+        :rtype: list[~azure.monitor.query.LogsBatchQueryResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         try:
