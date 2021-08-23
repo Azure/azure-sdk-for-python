@@ -33,10 +33,6 @@ async def sample_translation_with_custom_model_async():
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.translation.document.aio import DocumentTranslationClient
-    from azure.ai.translation.document import (
-        DocumentTranslationInput,
-        TranslationTarget,
-    )
 
     endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
     key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
@@ -46,19 +42,15 @@ async def sample_translation_with_custom_model_async():
 
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
 
-    inputs = DocumentTranslationInput(
-                source_url=source_container_url,
-                targets=[
-                    TranslationTarget(
-                        target_url=target_container_url,
-                        language_code="es",
-                        category_id=custom_model_id
-                    )
-                ]
-            )
+    
 
     async with client:
-        poller = await client.begin_translation(inputs=[inputs])
+        poller = await client.begin_translation(
+            source_container_url,
+            target_container_url,
+            "es",
+            category_id=custom_model_id
+        )
         result = await poller.result()
 
         print("Job status: {}".format(result.status))
