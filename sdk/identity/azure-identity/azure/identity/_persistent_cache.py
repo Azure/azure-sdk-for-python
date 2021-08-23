@@ -101,6 +101,6 @@ def _get_persistence(allow_unencrypted, account_name, cache_name):
                     + " instead of raising this exception."
                 )
                 six.raise_from(error, ex)
-            return msal_extensions.FilePersistence(file_path)
+        return msal_extensions.FilePersistence(file_path)
 
     raise NotImplementedError("A persistent cache is not available in this environment.")
