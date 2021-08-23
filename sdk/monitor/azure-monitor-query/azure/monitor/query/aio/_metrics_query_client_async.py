@@ -67,7 +67,7 @@ class MetricsQueryClient(object):
          or tuple[~datetime.datetime, ~datetime.datetime]
         :keyword granularity: The interval (i.e. timegrain) of the query.
         :paramtype granularity: ~datetime.timedelta
-        :keyword aggregations: The list of aggregation types to retrieve. Use `azure.monitor.query.AggregationType`
+        :keyword aggregations: The list of aggregation types to retrieve. Use `azure.monitor.query.MetricAggregationType`
          enum to get each aggregation type.
         :paramtype aggregations: list[str]
         :keyword max_results: The maximum number of records to retrieve.

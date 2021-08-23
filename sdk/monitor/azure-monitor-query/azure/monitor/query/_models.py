@@ -344,9 +344,9 @@ class MetricDefinition(object):
     :keyword primary_aggregation_type: the primary aggregation type value defining how to use the
      values for display. Possible values include: "None", "Average", "Count", "Minimum", "Maximum",
      "Total".
-    :paramtype primary_aggregation_type: str or ~monitor_query_client.models.AggregationType
+    :paramtype primary_aggregation_type: str or ~monitor_query_client.models.MetricAggregationType
     :keyword supported_aggregation_types: the collection of what aggregation types are supported.
-    :paramtype supported_aggregation_types: list[str or ~monitor_query_client.models.AggregationType]
+    :paramtype supported_aggregation_types: list[str or ~monitor_query_client.models.MetricAggregationType]
     :keyword metric_availabilities: the collection of what aggregation intervals are available to be
      queried.
     :paramtype metric_availabilities: list[~monitor_query_client.models.MetricAvailability]
@@ -552,7 +552,7 @@ class MetricAvailability(object):
         )
 
 
-class AggregationType(str, Enum):
+class MetricAggregationType(str, Enum):
     """The aggregation type of the metric.
     """
 
