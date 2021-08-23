@@ -341,7 +341,7 @@ Document Translation supports glossaries in the following formats:
 |Localization Interchange File Format|.xlf, .xliff|Read more on [wikipedia][xlf_files_wikipedia]|[glossary_sample.xlf][sample_xlf_file]|
 
 #### **How Use Glossaries in Document Translation**
-In order to use glossaries with Document Translation, you first need to upload your glossaries file to some blob container, and then provide the SaS url to of this blob container - which contains the glossary files - to Document Translation as in the code samples [sample_translation_with_glossaries.py][sample_translation_with_glossaries]. (Note: Don't conflate with blob container with the one you use for the documents you want to translate i.e. source container).
+In order to use glossaries with Document Translation, you first need to upload your glossaries file to some blob container, and then provide the SaS url to of this glossary file to Document Translation as in the code samples [sample_translation_with_glossaries.py][sample_translation_with_glossaries].
 
 
 ### **Custom Translation Models**
