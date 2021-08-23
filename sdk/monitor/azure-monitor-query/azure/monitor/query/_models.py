@@ -264,6 +264,15 @@ class LogsBatchQueryResult(object):
         )
 
 
+class MetricNamespaceClassification(str, Enum):
+    """Kind of namespace
+    """
+
+    PLATFORM = "Platform"
+    CUSTOM = "Custom"
+    QOS = "Qos"
+
+
 class MetricNamespace(object):
     """Metric namespace class specifies the metadata for a metric namespace.
 
@@ -275,6 +284,8 @@ class MetricNamespace(object):
     :paramtype name: str
     :keyword fully_qualified_namespace: The fully qualified namespace name.
     :paramtype fully_qualified_namespace: str
+    :keyword namespace_classification: Kind of namespace. Possible values include: "Platform", "Custom", "Qos".
+    :paramtype namespace_classification: str or ~azure.monitor.query.MetricNamespaceClassification
     """
     def __init__(
         self,
@@ -284,6 +295,7 @@ class MetricNamespace(object):
         self.type = kwargs.get('type', None)
         self.name = kwargs.get('name', None)
         self.fully_qualified_namespace = kwargs.get('fully_qualified_namespace', None)
+        self.namespace_classification = kwargs.get('namespace_classification', None)
 
     @classmethod
     def _from_generated(cls, generated):
@@ -296,7 +308,8 @@ class MetricNamespace(object):
             id=generated.id,
             type=generated.type,
             name=generated.name,
-            fully_qualified_namespace=fully_qualified_namespace
+            fully_qualified_namespace=fully_qualified_namespace,
+            namespace_classification=generated.classification
         )
 
 
@@ -359,6 +372,7 @@ class MetricDefinition(object):
         self.metric_availabilities = kwargs.get('metric_availabilities', None) # type: List[MetricAvailability]
         self.id = kwargs.get('id', None) # type: Optional[str]
         self.dimensions = kwargs.get('dimensions', None) # type: Optional[List[str]]
+        self.metric_class = kwargs.get('metric_class', None) # type: Optional[str]
 
     @classmethod
     def _from_generated(cls, generated):
@@ -375,6 +389,7 @@ class MetricDefinition(object):
             unit=generated.unit,
             primary_aggregation_type=generated.primary_aggregation_type,
             supported_aggregation_types=generated.supported_aggregation_types,
+            metric_class=generated.metric_class,
             metric_availabilities=[
                 MetricAvailability._from_generated( # pylint: disable=protected-access
                     val
