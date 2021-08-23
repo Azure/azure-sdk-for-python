@@ -1221,7 +1221,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
-            resp = self.table.upsert_entity(mode=UpdateMode.MERGE, entity=sent_entity)
+            resp = self.table.upsert_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # Assert
             self._assert_valid_metadata(resp)
@@ -1231,7 +1231,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             # Act
             sent_entity['newField'] = u'newFieldValue'
-            resp = self.table.update_entity(mode=UpdateMode.MERGE, entity=sent_entity)
+            resp = self.table.update_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # Assert
             self._assert_valid_metadata(resp)

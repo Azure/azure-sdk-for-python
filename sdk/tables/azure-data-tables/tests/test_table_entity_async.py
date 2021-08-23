@@ -970,14 +970,14 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
                                                          rk=row_key_with_single_quote)
 
             sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
-            resp = await self.table.upsert_entity(mode=UpdateMode.MERGE, entity=sent_entity)
+            resp = await self.table.upsert_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             self._assert_valid_metadata(resp)
             received_entity = await self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
             self._assert_updated_entity(received_entity)
 
             sent_entity['newField'] = u'newFieldValue'
-            resp = await self.table.update_entity(mode=UpdateMode.MERGE, entity=sent_entity)
+            resp = await self.table.update_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             self._assert_valid_metadata(resp)
             received_entity = await self.table.get_entity(entity['PartitionKey'], entity['RowKey'])

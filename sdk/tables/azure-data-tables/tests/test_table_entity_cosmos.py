@@ -1142,7 +1142,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("Bad Request: Cosmos cannot handle single quotes in a PK/RK (confirm)")
     @cosmos_decorator
     def test_operations_on_entity_with_partition_key_having_single_quote(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
 
@@ -1155,7 +1154,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
-            resp = self.table.upsert_entity(mode=UpdateMode.MERGE, entity=sent_entity)
+            resp = self.table.upsert_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # Assert
             assert resp is not None
@@ -1165,7 +1164,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             # Act
             sent_entity['newField'] = 'newFieldValue'
-            resp = self.table.update_entity(mode=UpdateMode.MERGE, entity=sent_entity)
+            resp = self.table.update_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # Assert
             assert resp is not None
@@ -1174,10 +1173,8 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             assert received_entity['newField'] ==  'newFieldValue'
 
             # Act
-            resp = self.table.delete_entity(entity['PartitionKey'], entity['RowKey'])
+            self.table.delete_entity(entity['PartitionKey'], entity['RowKey'])
 
-            # Assert
-            assert resp is not None
         finally:
             self._tear_down()
 
