@@ -236,6 +236,7 @@ class DocumentTranslationTest(AzureTestCase):
         # submit job
         poller = client.begin_translation(translation_inputs)
         self.assertIsNotNone(poller.id)
+        self.assertIsNotNone(poller.details.id)
         # wait for result
         result = poller.result()
         # validate
