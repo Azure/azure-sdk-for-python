@@ -1,0 +1,12 @@
+{{- include "stress-test-addons.deploy-job-template.from-pod" (list . "stress.python-eh-stress") -}}
+{{- define "stress.python-eh-stress" -}}
+metadata:
+  labels:
+    testName: "deploy-python-eh-stress"
+spec:
+  containers:
+    - name: python-eh-stress
+      image: stresstestregistry.azurecr.io/yuling/py-eh-stress:v1
+      {{- include "stress-test-addons.container-env" . | nindent 10 }}
+      command: ['bash', '-c', 'python3 azure_eventhub_producer_stress.py && python3 azure_eventhub_consumer_stress_sync.py']
+{{- end -}}

@@ -4,16 +4,7 @@ FROM python:3.8-slim-buster
 
 WORKDIR /app
 
-COPY ./sdk/eventhub ./sdk/eventhub
+COPY ./scripts /app/stress/scripts
 
-WORKDIR /app/sdk/eventhub/azure-eventhub
-RUN python3 setup.py install
-
-WORKDIR /app/sdk/eventhub/azure-eventhub-checkpointstoreblob
-RUN python3 setup.py install
-
-WORKDIR /app/sdk/eventhub/azure-eventhub-checkpointstoreblob-aio
-RUN python3 setup.py install
-
-WORKDIR /app/sdk/eventhub/azure-eventhub/stress
+WORKDIR /app/stress/scripts
 RUN pip3 install -r dev_requirement.txt
