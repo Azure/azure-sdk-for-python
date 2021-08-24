@@ -277,16 +277,16 @@ class MetricNamespaceClassification(str, Enum):
 class MetricNamespace(object):
     """Metric namespace class specifies the metadata for a metric namespace.
 
-    :keyword id: The ID of the metricNamespace.
-    :paramtype id: str
-    :keyword type: The type of the namespace.
-    :paramtype type: str
-    :keyword name: The name of the namespace.
-    :paramtype name: str
-    :keyword fully_qualified_namespace: The fully qualified namespace name.
-    :paramtype fully_qualified_namespace: str
-    :keyword namespace_classification: Kind of namespace. Possible values include: "Platform", "Custom", "Qos".
-    :paramtype namespace_classification: str or ~azure.monitor.query.MetricNamespaceClassification
+    :ivar id: The ID of the metricNamespace.
+    :vartype id: str
+    :ivar type: The type of the namespace.
+    :vartype type: str
+    :ivar name: The name of the namespace.
+    :vartype name: str
+    :ivar fully_qualified_namespace: The fully qualified namespace name.
+    :vartype fully_qualified_namespace: str
+    :ivar namespace_classification: Kind of namespace. Possible values include: "Platform", "Custom", "Qos".
+    :vartype namespace_classification: str or ~azure.monitor.query.MetricNamespaceClassification
     """
     def __init__(
         self,

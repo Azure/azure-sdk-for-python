@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING, Any, List, Optional
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from msrest.serialization import Serializer
 
 from .._generated.aio._monitor_query_client import (
     MonitorQueryClient,
@@ -88,9 +89,6 @@ class MetricsQueryClient(object):
          ‘c1’**\ :code:`<br>`- Return all time series where A = a1:code:`<br>`\ **$filter=A eq ‘a1’ and
          B eq ‘\ *’ and C eq ‘*\ ’**.
         :paramtype filter: str
-        :keyword result_type: Reduces the set of data collected. The syntax allowed depends on the
-         operation. See the operation's description for details.
-        :paramtype result_type: str or ~monitor_query_client.models.ResultType
         :keyword metric_namespace: Metric namespace to query metric definitions for.
         :paramtype metric_namespace: str
         :return: Response, or the result of cls(response)
@@ -115,13 +113,15 @@ class MetricsQueryClient(object):
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
-        :keyword start_time: The ISO 8601 conform Date start time from which to query for metric
-         namespaces.
-        :paramtype start_time: str
+        :keyword start_time: The start time from which to query for metric
+         namespaces. This should be provided as a datetime object.
+        :paramtype start_time: ~datetime.datetime
         :return: An iterator like instance of either MetricNamespace or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricNamespace]
+        :rtype: ~azure.core.paging.AsyncItemPaged[:class: `~azure.monitor.query.MetricNamespace`]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        start = Serializer.serialize_iso(kwargs.pop('start_time'))
+        kwargs.setdefault('start_time', start)
         return self._namespace_op.list(
             resource_uri,
             cls=kwargs.pop(
@@ -146,7 +146,7 @@ class MetricsQueryClient(object):
         :param metric_namespace: Metric namespace to query metric definitions for.
         :type metric_namespace: str
         :return: An iterator like instance of either MetricDefinitionCollection or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricDefinition]
+        :rtype: ~azure.core.paging.AsyncItemPaged[:class: `~azure.monitor.query.MetricDefinition`]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._definitions_op.list(

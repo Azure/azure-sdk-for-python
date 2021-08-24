@@ -3,8 +3,7 @@
 
 import os
 import pandas as pd
-from datetime import datetime, timedelta
-from msrest.serialization import UTC
+from datetime import timedelta
 from azure.monitor.query import LogsQueryClient
 from azure.identity import DefaultAzureCredential
 
@@ -19,13 +18,6 @@ client = LogsQueryClient(credential)
 # [START send_logs_query]
 query = """AppRequests |
 summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
-
-query = """
-AppRequests
-| where TimeGenerated > ago(1h)
-| fork
-    ( summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId )
-"""
 
 # returns LogsQueryResult 
 response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=timedelta(days=1))
