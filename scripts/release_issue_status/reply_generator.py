@@ -1,34 +1,29 @@
-from github import Github
 import re
-import os
 
 
 class ReplyGenerator(object):
 
-    def __init__(self, issue_object):
+    def __init__(self, issue_object, rest_repo):
+        self.repo = rest_repo
         self.issue_object = issue_object
-        self.labels = [label.name for label in self.issue_object.labels]
+        self.labels = []
         self.comments = self.issue_object.get_comments()
         self.body = self.issue_object.body
         self.body_parse = {}
-        self._body_parse()
         self.rest_specs_object = None
         self.whether_change_readme = False
-        self._whether_change_readme()
         self.whl_link = None
         self.changelog_content = None
         self.latest_pr_number = None
 
     def _whether_change_readme(self):
-        g = Github(os.getenv('TOKEN'))
-        repo = g.get_repo('Azure/azure-rest-api-specs')
-        self.rest_specs_object = repo
-        contents = repo.get_contents(self.body_parse['readme_path'])
+        self.rest_specs_object = self.repo
+        contents = self.repo.get_contents(self.body_parse['readme_path'])
         contents = str(contents.decoded_content)
         pattern_tag = re.compile(r'tag: package-[\w+-.]+')
         package_tag = pattern_tag.search(contents).group()
         package_tag = package_tag.split(':')[1].strip()
-        readme_python_contents = str(repo.get_contents(self.body_parse['readme_python_path']).decoded_content)
+        readme_python_contents = str(self.repo.get_contents(self.body_parse['readme_python_path']).decoded_content)
         whether_multi_api = 'multi-api' in readme_python_contents
         whether_same_tag = package_tag == self.body_parse['readme_tag']
         self.whether_change_readme = not (whether_same_tag and (not whether_multi_api or 'MultiAPI' in self.labels))
@@ -80,9 +75,12 @@ class ReplyGenerator(object):
             print('track1 generate error')
         pattern_python = re.compile('<b> azure-sdk-for-python-track2</b>.+?</details>', re.DOTALL)
         python = re.search(pattern_python, context).group()
-        prttern_python_track2 = re.compile('<ul>\s*?<li>\s*?<a.*</ul>', re.DOTALL)
-        python_track2_info = re.search(prttern_python_track2, python).group()
-        track2_info_model = '<details open><summary><b> python-track2</b></summary>{} </details>'.format(python_track2_info)
+        # the way that reply not contains [Release SDK Changes]
+        # pattern_python_track2 = re.compile('<ul>\s*?<li>\s*?<a.*</ul>', re.DOTALL)
+        pattern_python_track2 = re.compile('<b>track2_.*</ul>', re.DOTALL)
+        python_track2_info = re.search(pattern_python_track2, python).group()
+        track2_info_model = '<details open><summary><b> python-track2</b></summary>{} </details>'.format(
+            python_track2_info)
         info_model = 'hi @{} Please check the package whether works well and the changelog info is as below:\n' \
                      '{}\n{}\n' \
                      '\n* (The version of the package is only a temporary version for testing)\n' \
@@ -100,6 +98,9 @@ class ReplyGenerator(object):
         self.issue_object.set_labels(*self.labels)
 
     def run(self):
+        self.labels = [label.name for label in self.issue_object.labels]
+        self._body_parse()
+        self._whether_change_readme()
         if not self.whether_change_readme:
             self.latest_pr_number = self._get_latest_pr_from_readme()
             reply_content = self._latest_pr_parse()
