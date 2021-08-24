@@ -271,7 +271,7 @@ class DocumentTranslationClient(object):
             format: ["param1 asc/desc", "param2 asc/desc", ...]
             (ex: 'created_on asc', 'created_on desc').
         :return: A pageable of TranslationStatus.
-        :rtype: ~azure.core.paging.ItemPaged[TranslationStatus]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[TranslationStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -336,7 +336,7 @@ class DocumentTranslationClient(object):
             format: ["param1 asc/desc", "param2 asc/desc", ...]
             (ex: 'created_on asc', 'created_on desc').
         :return: A pageable of DocumentStatus.
-        :rtype: ~azure.core.paging.ItemPaged[DocumentStatus]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[DocumentStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
