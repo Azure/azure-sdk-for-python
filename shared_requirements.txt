@@ -330,6 +330,7 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-mgmt-guestconfig msrest>=0.6.21
 #override azure-mgmt-recoveryservices msrest>=0.6.21
 #override azure-mgmt-avs msrest>=0.6.21
+#override azure-mgmt-policyinsights msrest>=0.6.21
 #override azure-mgmt-purview msrest>=0.6.21
 #override azure-mgmt-datafactory msrest>=0.6.21
 #override azure-mgmt-containerinstance msrest>=0.6.21
