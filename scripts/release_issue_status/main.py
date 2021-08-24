@@ -158,7 +158,7 @@ def main():
                 item.issue_object.set_labels(*item.labels)
             try:
                 time.sleep(3)
-                reply = rg.ReplyGenerator(issue_object=item.issue_object, rest_repo)
+                reply = rg.ReplyGenerator(issue_object=item.issue_object, rest_repo=rest_repo)
                 reply.run()
             except Exception as e:
                 print('Error from auto reply ========================')
