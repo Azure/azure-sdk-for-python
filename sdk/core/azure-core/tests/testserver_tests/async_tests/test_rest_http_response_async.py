@@ -8,6 +8,7 @@
 # Thank you httpx for your wonderful tests!
 import io
 import pytest
+import zlib
 from azure.core.rest import HttpRequest
 from azure.core.exceptions import HttpResponseError
 
@@ -256,6 +257,28 @@ async def test_text_and_encoding(send_request):
     # assert latin-1 changes text decoding without changing encoding property
     assert response.text("latin-1") == 'ð\x9f\x91©' == response.content.decode("latin-1")
     assert response.encoding == "utf-16"
+
+@pytest.mark.asyncio
+async def test_aiohttp_response_decompression(send_request):
+    response = await send_request(HttpRequest("GET", "/decompression/gzip/pass"))
+
+    expected = b'{"id":"e7877039-1376-4dcd-9b0a-192897cff780","createdDateTimeUtc":' \
+             b'"2021-05-07T17:35:36.3121065Z","lastActionDateTimeUtc":' \
+             b'"2021-05-07T17:35:36.3121069Z","status":"NotStarted",' \
+             b'"summary":{"total":0,"failed":0,"success":0,"inProgress":0,' \
+             b'"notYetStarted":0,"cancelled":0,"totalCharacterCharged":0}}'
+    assert response.content == expected
+    assert response.body() == expected
+
+@pytest.mark.asyncio
+async def test_aiohttp_response_decompression_negative(send_request):
+    # here our behavior differs from the old aiohttp transport behavior, but is the same as httpx behavior
+    # current aiohttp transport will not fail until users access the response's body
+    # new aiohttp transport behavior (same as httpx), will fail as part of reading the response
+    # when we make the call
+    with pytest.raises(zlib.error):
+        await send_request(HttpRequest("GET", "/decompression/gzip/fail"))
+
 
 # @pytest.mark.asyncio
 # async def test_multipart_encode_non_seekable_filelike(send_request):

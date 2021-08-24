@@ -27,8 +27,8 @@ import concurrent.futures
 import pytest
 import requests.utils
 
-from azure.core.pipeline.transport import HttpRequest, RequestsTransport, RequestsTransportResponse
-from azure.core.configuration import Configuration
+from azure.core.pipeline.transport import RequestsTransport
+from utils import create_http_response, is_rest_http_response, HTTP_REQUESTS, REQUESTS_TRANSPORT_RESPONSES
 
 
 def test_threading_basic_requests():
@@ -46,14 +46,15 @@ def test_threading_basic_requests():
         future = executor.submit(thread_body, sender)
         assert future.result()
 
-def test_requests_auto_headers():
-    request = HttpRequest("POST", "https://www.bing.com/")
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_requests_auto_headers(http_request):
+    request = http_request("POST", "https://www.bing.com/")
     with RequestsTransport() as sender:
         response = sender.send(request)
         auto_headers = response.internal_response.request.headers
         assert 'Content-Type' not in auto_headers
 
-def _create_requests_response(body_bytes, headers=None):
+def _create_requests_response(http_response, body_bytes, headers=None):
     # https://github.com/psf/requests/blob/67a7b2e8336951d527e223429672354989384197/requests/adapters.py#L255
     req_response = requests.Response()
     req_response._content = body_bytes
@@ -65,27 +66,34 @@ def _create_requests_response(body_bytes, headers=None):
         req_response.headers.update(headers)
     req_response.encoding = requests.utils.get_encoding_from_headers(req_response.headers)
 
-    response = RequestsTransportResponse(
+    response = create_http_response(
+        http_response,
         None, # Don't need a request here
         req_response
     )
 
     return response
 
-
-def test_requests_response_text():
+@pytest.mark.parametrize("http_response", REQUESTS_TRANSPORT_RESPONSES)
+def test_requests_response_text(http_response):
 
     for encoding in ["utf-8", "utf-8-sig", None]:
 
         res = _create_requests_response(
+            http_response,
             b'\xef\xbb\xbf56',
             {'Content-Type': 'text/plain'}
         )
         assert res.text(encoding) == '56', "Encoding {} didn't work".format(encoding)
 
-def test_repr():
+@pytest.mark.parametrize("http_response", REQUESTS_TRANSPORT_RESPONSES)
+def test_repr(http_response):
     res = _create_requests_response(
+        http_response,
         b'\xef\xbb\xbf56',
         {'Content-Type': 'text/plain'}
     )
-    assert repr(res) == "<RequestsTransportResponse: 200 OK, Content-Type: text/plain>"
+    if is_rest_http_response(http_response):
+        assert repr(res) == "<HttpResponse: 200 OK, Content-Type: text/plain>"
+    else:
+        assert repr(res) == "<RequestsTransportResponse: 200 OK, Content-Type: text/plain>"

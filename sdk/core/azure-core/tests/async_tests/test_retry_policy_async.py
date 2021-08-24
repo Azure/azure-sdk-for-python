@@ -9,6 +9,7 @@ except ImportError:
     from cStringIO import StringIO as BytesIO
 import sys
 from unittest.mock import Mock
+from itertools import product
 import pytest
 from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import (
@@ -23,15 +24,14 @@ from azure.core.pipeline.policies import (
     RetryMode,
 )
 from azure.core.pipeline import AsyncPipeline, PipelineResponse
-from azure.core.pipeline.transport import (
-    HttpRequest,
-    HttpResponse,
-    AsyncHttpTransport,
-)
+from azure.core.pipeline.transport import AsyncHttpTransport
 import tempfile
 import os
 import time
 import asyncio
+from utils import create_http_response, HTTP_REQUESTS, HTTP_RESPONSES
+
+RETRY_AFTER_INPUTS = ['0', '800', '1000', '1200']
 
 def test_retry_code_class_variables():
     retry_policy = AsyncRetryPolicy()
@@ -59,11 +59,11 @@ def test_retry_types():
     backoff_time = retry_policy.get_backoff_time(settings)
     assert backoff_time == 4
 
-@pytest.mark.parametrize("retry_after_input", [('0'), ('800'), ('1000'), ('1200')])
-def test_retry_after(retry_after_input):
+@pytest.mark.parametrize("retry_after_input,http_request,http_response", product(RETRY_AFTER_INPUTS, HTTP_REQUESTS, HTTP_RESPONSES))
+def test_retry_after(retry_after_input, http_request, http_response):
     retry_policy = AsyncRetryPolicy()
-    request = HttpRequest("GET", "https://bing.com")
-    response = HttpResponse(request, None)
+    request = http_request("GET", "https://bing.com")
+    response = create_http_response(http_response, request, None)
     response.headers["retry-after-ms"] = retry_after_input
     pipeline_response = PipelineResponse(request, response, None)
     retry_after = retry_policy.get_retry_after(pipeline_response)
@@ -77,11 +77,11 @@ def test_retry_after(retry_after_input):
     retry_after = retry_policy.get_retry_after(pipeline_response)
     assert retry_after == float(retry_after_input)
 
-@pytest.mark.parametrize("retry_after_input", [('0'), ('800'), ('1000'), ('1200')])
-def test_x_ms_retry_after(retry_after_input):
+@pytest.mark.parametrize("retry_after_input,http_request,http_response", product(RETRY_AFTER_INPUTS, HTTP_REQUESTS, HTTP_RESPONSES))
+def test_x_ms_retry_after(retry_after_input, http_request, http_response):
     retry_policy = AsyncRetryPolicy()
-    request = HttpRequest("GET", "https://bing.com")
-    response = HttpResponse(request, None)
+    request = http_request("GET", "https://bing.com")
+    response = create_http_response(http_response, request, None)
     response.headers["x-ms-retry-after-ms"] = retry_after_input
     pipeline_response = PipelineResponse(request, response, None)
     retry_after = retry_policy.get_retry_after(pipeline_response)
@@ -96,7 +96,8 @@ def test_x_ms_retry_after(retry_after_input):
     assert retry_after == float(retry_after_input)
 
 @pytest.mark.asyncio
-async def test_retry_on_429():
+@pytest.mark.parametrize("http_request,http_response", product(HTTP_REQUESTS, HTTP_RESPONSES))
+async def test_retry_on_429(http_request, http_response):
     class MockTransport(AsyncHttpTransport):
         def __init__(self):
             self._count = 0
@@ -109,11 +110,11 @@ async def test_retry_on_429():
 
         async def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
             self._count += 1
-            response = HttpResponse(request, None)
+            response = create_http_response(http_response, request, None)
             response.status_code = 429
             return response
 
-    http_request = HttpRequest('GET', 'http://127.0.0.1/')
+    http_request = http_request('GET', 'http://127.0.0.1/')
     http_retry = AsyncRetryPolicy(retry_total = 1)
     transport = MockTransport()
     pipeline = AsyncPipeline(transport, [http_retry])
@@ -121,7 +122,8 @@ async def test_retry_on_429():
     assert transport._count == 2
 
 @pytest.mark.asyncio
-async def test_no_retry_on_201():
+@pytest.mark.parametrize("http_request,http_response", product(HTTP_REQUESTS, HTTP_RESPONSES))
+async def test_no_retry_on_201(http_request, http_response):
     class MockTransport(AsyncHttpTransport):
         def __init__(self):
             self._count = 0
@@ -134,13 +136,13 @@ async def test_no_retry_on_201():
 
         async def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
             self._count += 1
-            response = HttpResponse(request, None)
+            response = create_http_response(http_response, request, None)
             response.status_code = 201
             headers = {"Retry-After": "1"}
             response.headers = headers
             return response
 
-    http_request = HttpRequest('GET', 'http://127.0.0.1/')
+    http_request = http_request('GET', 'http://127.0.0.1/')
     http_retry = AsyncRetryPolicy(retry_total = 1)
     transport = MockTransport()
     pipeline = AsyncPipeline(transport, [http_retry])
@@ -148,7 +150,8 @@ async def test_no_retry_on_201():
     assert transport._count == 1
 
 @pytest.mark.asyncio
-async def test_retry_seekable_stream():
+@pytest.mark.parametrize("http_request,http_response", product(HTTP_REQUESTS, HTTP_RESPONSES))
+async def test_retry_seekable_stream(http_request, http_response):
     class MockTransport(AsyncHttpTransport):
         def __init__(self):
             self._first = True
@@ -166,19 +169,20 @@ async def test_retry_seekable_stream():
                 raise AzureError('fail on first')
             position = request.body.tell()
             assert position == 0
-            response = HttpResponse(request, None)
+            response = create_http_response(http_response, request, None)
             response.status_code = 400
             return response
 
     data = BytesIO(b"Lots of dataaaa")
-    http_request = HttpRequest('GET', 'http://127.0.0.1/')
+    http_request = http_request('GET', 'http://127.0.0.1/')
     http_request.set_streamed_data_body(data)
     http_retry = AsyncRetryPolicy(retry_total = 1)
     pipeline = AsyncPipeline(MockTransport(), [http_retry])
     await pipeline.run(http_request)
 
 @pytest.mark.asyncio
-async def test_retry_seekable_file():
+@pytest.mark.parametrize("http_request,http_response", product(HTTP_REQUESTS, HTTP_RESPONSES))
+async def test_retry_seekable_file(http_request, http_response):
     class MockTransport(AsyncHttpTransport):
         def __init__(self):
             self._first = True
@@ -202,14 +206,14 @@ async def test_retry_seekable_file():
                 if name and body and hasattr(body, 'read'):
                     position = body.tell()
                     assert not position
-                    response = HttpResponse(request, None)
+                    response = create_http_response(http_response, request, None)
                     response.status_code = 400
                     return response
 
     file = tempfile.NamedTemporaryFile(delete=False)
     file.write(b'Lots of dataaaa')
     file.close()
-    http_request = HttpRequest('GET', 'http://127.0.0.1/')
+    http_request = http_request('GET', 'http://127.0.0.1/')
     headers = {'Content-Type': "multipart/form-data"}
     http_request.headers = headers
     with open(file.name, 'rb') as f:
@@ -225,7 +229,8 @@ async def test_retry_seekable_file():
 
 
 @pytest.mark.asyncio
-async def test_retry_timeout():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_retry_timeout(http_request):
     timeout = 1
 
     def send(request, **kwargs):
@@ -241,17 +246,18 @@ async def test_retry_timeout():
     pipeline = AsyncPipeline(transport, [AsyncRetryPolicy(timeout=timeout)])
 
     with pytest.raises(ServiceResponseTimeoutError):
-        await pipeline.run(HttpRequest("GET", "http://127.0.0.1/"))
+        await pipeline.run(http_request("GET", "http://127.0.0.1/"))
 
 
 @pytest.mark.asyncio
-async def test_timeout_defaults():
+@pytest.mark.parametrize("http_request,http_response", product(HTTP_REQUESTS, HTTP_RESPONSES))
+async def test_timeout_defaults(http_request, http_response):
     """When "timeout" is not set, the policy should not override the transport's timeout configuration"""
 
     async def send(request, **kwargs):
         for arg in ("connection_timeout", "read_timeout"):
             assert arg not in kwargs, "policy should defer to transport configuration when not given a timeout"
-        response = HttpResponse(request, None)
+        response = create_http_response(http_response, request, None)
         response.status_code = 200
         return response
 
@@ -262,18 +268,17 @@ async def test_timeout_defaults():
     )
     pipeline = AsyncPipeline(transport, [AsyncRetryPolicy()])
 
-    await pipeline.run(HttpRequest("GET", "http://127.0.0.1/"))
+    await pipeline.run(http_request("GET", "http://127.0.0.1/"))
     assert transport.send.call_count == 1, "policy should not retry: its first send succeeded"
 
 
+TRANSPORT_AND_EXPECTED_TIMEOUT_ERRORS = [(ServiceRequestError, ServiceRequestTimeoutError), (ServiceResponseError, ServiceResponseTimeoutError)]
 @pytest.mark.asyncio
-@pytest.mark.parametrize(
-    "transport_error,expected_timeout_error",
-    ((ServiceRequestError, ServiceRequestTimeoutError), (ServiceResponseError, ServiceResponseTimeoutError)),
-)
-async def test_does_not_sleep_after_timeout(transport_error, expected_timeout_error):
+@pytest.mark.parametrize("transport_and_expected_timeout_errors,http_request", product(TRANSPORT_AND_EXPECTED_TIMEOUT_ERRORS, HTTP_REQUESTS))
+async def test_does_not_sleep_after_timeout(transport_and_expected_timeout_errors, http_request):
     # With default settings policy will sleep twice before exhausting its retries: 1.6s, 3.2s.
     # It should not sleep the second time when given timeout=1
+    transport_error, expected_timeout_error = transport_and_expected_timeout_errors
     timeout = 1
 
     transport = Mock(
@@ -284,6 +289,6 @@ async def test_does_not_sleep_after_timeout(transport_error, expected_timeout_er
     pipeline = AsyncPipeline(transport, [AsyncRetryPolicy(timeout=timeout)])
 
     with pytest.raises(expected_timeout_error):
-        await pipeline.run(HttpRequest("GET", "http://127.0.0.1/"))
+        await pipeline.run(http_request("GET", "http://127.0.0.1/"))
 
     assert transport.sleep.call_count == 1

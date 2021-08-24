@@ -4,19 +4,19 @@
 # ------------------------------------
 import requests
 from azure.core.pipeline.transport import (
-    HttpRequest,
-    AsyncHttpResponse,
     AsyncHttpTransport,
-    AsyncioRequestsTransportResponse,
     AioHttpTransport,
 )
 from azure.core.pipeline import AsyncPipeline, PipelineResponse
 from azure.core.pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
 from unittest import mock
+from itertools import product
+from utils import HTTP_REQUESTS, HTTP_RESPONSES, ASYNCIO_REQUESTS_TRANSPORT_RESPONSES, create_http_response
 import pytest
 
 @pytest.mark.asyncio
-async def test_connection_error_response():
+@pytest.mark.parametrize("http_request,http_response", product(HTTP_REQUESTS, HTTP_RESPONSES))
+async def test_connection_error_response(http_request, http_response):
     class MockSession(object):
         def __init__(self):
             self.auto_decompress = True
@@ -38,8 +38,8 @@ async def test_connection_error_response():
             pass
 
         async def send(self, request, **kwargs):
-            request = HttpRequest('GET', 'http://127.0.0.1/')
-            response = AsyncHttpResponse(request, None)
+            request = http_request('GET', 'http://127.0.0.1/')
+            response = create_http_response(http_response, request, None)
             response.status_code = 200
             return response
 
@@ -65,9 +65,9 @@ async def test_connection_error_response():
         async def __call__(self, *args, **kwargs):
             return super(AsyncMock, self).__call__(*args, **kwargs)
 
-    http_request = HttpRequest('GET', 'http://127.0.0.1/')
+    http_request = http_request('GET', 'http://127.0.0.1/')
     pipeline = AsyncPipeline(MockTransport())
-    http_response = AsyncHttpResponse(http_request, None)
+    http_response = create_http_response(http_response, http_request, None)
     http_response.internal_response = MockInternalResponse()
     stream = AioHttpStreamDownloadGenerator(pipeline, http_response, decompress=False)
     with mock.patch('asyncio.sleep', new_callable=AsyncMock):
@@ -75,7 +75,8 @@ async def test_connection_error_response():
             await stream.__anext__()
 
 @pytest.mark.asyncio
-async def test_response_streaming_error_behavior():
+@pytest.mark.parametrize("http_response", ASYNCIO_REQUESTS_TRANSPORT_RESPONSES)
+async def test_response_streaming_error_behavior(http_response):
     # Test to reproduce https://github.com/Azure/azure-sdk-for-python/issues/16723
     block_size = 103
     total_response_size = 500
@@ -111,7 +112,8 @@ async def test_response_streaming_error_behavior():
 
     req_response.raw = FakeStreamWithConnectionError()
 
-    response = AsyncioRequestsTransportResponse(
+    response = create_http_response(
+        http_response,
         req_request,
         req_response,
         block_size,

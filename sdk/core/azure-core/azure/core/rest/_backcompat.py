@@ -54,7 +54,7 @@ def _deserialize_response(
     local_socket = BytesIOSocket(http_response_as_bytes)
     response = _HTTPResponse(local_socket, method=http_request.method)
     response.begin()
-    return http_response_type(http_request, response)
+    return http_response_type(request=http_request, internal_response=response)
 
 
 class HttpRequestBackcompatMixin(object):
@@ -257,6 +257,10 @@ class _HttpResponseBackcompatMixinBase(object):
     @property
     def internal_response(self):
         return self._internal_response
+
+    @internal_response.setter
+    def internal_response(self, val):
+        self._internal_response = val
 
     @property
     def block_size(self):

@@ -24,7 +24,10 @@
 #
 # --------------------------------------------------------------------------
 from __future__ import absolute_import
-import collections
+try:
+    import collections.abc as collections
+except ImportError:
+    import collections
 import logging
 from typing import Iterator, Optional, Any, Union, TypeVar, cast
 import urllib3 # type: ignore

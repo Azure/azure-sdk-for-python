@@ -28,7 +28,10 @@ import codecs
 import cgi
 from enum import Enum
 from json import dumps
-import collections
+try:
+    import collections.abc as collections
+except ImportError:
+    import collections
 from typing import (
     Optional,
     Union,

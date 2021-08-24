@@ -48,7 +48,7 @@ def get_internal_response(response):
 def is_pipeline_transport_request(request):
     return not hasattr(request, "content")
 
-def read_in_response(response) -> None:
+def read_in_response(response):
     try:
         response.read()
         response.close()

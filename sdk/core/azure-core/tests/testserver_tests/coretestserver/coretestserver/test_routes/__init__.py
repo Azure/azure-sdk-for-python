@@ -12,9 +12,11 @@ from .multipart import multipart_api
 from .streams import streams_api
 from .urlencoded import urlencoded_api
 from .xml_route import xml_api
+from .decompression import decompression_api
 
 __all__ = [
     "basic_api",
+    "decompression_api",
     "encoding_api",
     "errors_api",
     "multipart_api",

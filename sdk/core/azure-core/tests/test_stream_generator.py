@@ -4,11 +4,8 @@
 # ------------------------------------
 import requests
 from azure.core.pipeline.transport import (
-    HttpRequest,
-    HttpResponse,
     HttpTransport,
     RequestsTransport,
-    RequestsTransportResponse,
 )
 from azure.core.pipeline import Pipeline, PipelineResponse
 from azure.core.pipeline.transport._requests_basic import StreamDownloadGenerator
@@ -17,8 +14,9 @@ try:
 except ImportError:
     import mock
 import pytest
-
-def test_connection_error_response():
+from utils import create_http_response, HTTP_RESPONSES, REQUESTS_TRANSPORT_RESPONSES, HTTP_REQUESTS, pipeline_transport_and_rest_product
+@pytest.mark.parametrize("http_request,http_response", pipeline_transport_and_rest_product(HTTP_REQUESTS, HTTP_RESPONSES))
+def test_connection_error_response(http_request, http_response):
     class MockTransport(HttpTransport):
         def __init__(self):
             self._count = 0
@@ -31,8 +29,8 @@ def test_connection_error_response():
             pass
 
         def send(self, request, **kwargs):
-            request = HttpRequest('GET', 'http://127.0.0.1/')
-            response = HttpResponse(request, None)
+            request = http_request('GET', 'http://127.0.0.1/')
+            response = create_http_response(http_response, request, None)
             response.status_code = 200
             return response
 
@@ -43,7 +41,7 @@ def test_connection_error_response():
             if self._count == 0:
                 self._count += 1
                 raise requests.exceptions.ConnectionError
-        
+
         def stream(self, chunk_size, decode_content=False):
             if self._count == 0:
                 self._count += 1
@@ -58,16 +56,17 @@ def test_connection_error_response():
         def close(self):
             pass
 
-    http_request = HttpRequest('GET', 'http://127.0.0.1/')
+    http_request = http_request('GET', 'http://127.0.0.1/')
     pipeline = Pipeline(MockTransport())
-    http_response = HttpResponse(http_request, None)
+    http_response = create_http_response(http_response, http_request, None)
     http_response.internal_response = MockInternalResponse()
     stream = StreamDownloadGenerator(pipeline, http_response, decompress=False)
     with mock.patch('time.sleep', return_value=None):
         with pytest.raises(requests.exceptions.ConnectionError):
             stream.__next__()
 
-def test_response_streaming_error_behavior():
+@pytest.mark.parametrize("http_response", REQUESTS_TRANSPORT_RESPONSES)
+def test_response_streaming_error_behavior(http_response):
     # Test to reproduce https://github.com/Azure/azure-sdk-for-python/issues/16723
     block_size = 103
     total_response_size = 500
@@ -104,7 +103,8 @@ def test_response_streaming_error_behavior():
     s = FakeStreamWithConnectionError()
     req_response.raw = FakeStreamWithConnectionError()
 
-    response = RequestsTransportResponse(
+    response = create_http_response(
+        http_response,
         req_request,
         req_response,
         block_size,
