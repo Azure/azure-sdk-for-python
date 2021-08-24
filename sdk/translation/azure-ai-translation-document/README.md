@@ -473,7 +473,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [sample_translation_with_custom_model]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/sample_translation_with_custom_model.py
 [sample_translation_with_custom_model_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_translation_with_custom_model_async.py
 
-[supported_glossary_formats]: https://docs.microsoft.com/en-us/azure/cognitive-services/translator/document-translation/overview#supported-glossary-formats
+[supported_glossary_formats]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview#supported-glossary-formats
 [custom_translation_article]: https://docs.microsoft.com/azure/cognitive-services/translator/custom-translator/quickstart-build-deploy-custom-model
 [tsv_files_wikipedia]: https://wikipedia.org/wiki/Tab-separated_values
 [xlf_files_wikipedia]: https://wikipedia.org/wiki/XLIFF
