@@ -24,4 +24,5 @@ class PurviewAccountSmokeTestAsync(PurviewAccountTestAsync):
         client = self.create_async_client(endpoint=purviewaccount_endpoint)
         response = client.collections.list_collections()
         result = [item async for item in response]
-        assert len(result) > 0
+        for item in result:
+            assert set(item.keys()) == set(['name', 'friendlyName', 'description', 'systemData', 'collectionProvisioningState'])

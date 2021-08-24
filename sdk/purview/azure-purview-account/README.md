@@ -69,21 +69,11 @@ The following section shows you how to initialize and authenticate your client, 
 ```python
 from azure.purview.account import PurviewAccountClient
 from azure.identity import DefaultAzureCredential
-from azure.purview.account.rest import accounts
-from azure.core.exceptions import HttpResponseError
 
 credential = DefaultAzureCredential()
 client = PurviewAccountClient(endpoint="https://<my-account-name>.purview.azure.com", credential=credential)
-
-request = accounts.build_list_keys_request()
-
-response = client.send_request(request)
-try:
-    response.raise_for_status()
-    assert response.status_code == 200
-
-except HttpResponseError as e:
-    print(e)
+response = client.accounts.get_access_keys()
+print(response)
 ```
 
 ## Troubleshooting
@@ -127,7 +117,7 @@ Similarly, `logging_enable` can enable detailed logging for a single `send_reque
 even when it isn't enabled for the client:
 
 ```python
-result = client.send_request(request, logging_enable=True)
+result = client.accounts.get_access_keys(logging_enable=True)
 ```
 
 ## Next steps

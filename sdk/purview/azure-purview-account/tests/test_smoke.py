@@ -23,4 +23,5 @@ class PurviewAccountSmokeTest(PurviewAccountTest):
         client = self.create_client(endpoint=purviewaccount_endpoint)
         response = client.collections.list_collections()
         result = [item for item in response]
-        assert len(result) > 0
+        for item in result:
+            assert set(item.keys()) == set(['name', 'friendlyName', 'description', 'systemData', 'collectionProvisioningState'])
