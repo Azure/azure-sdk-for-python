@@ -10,6 +10,7 @@ omitted_paths:
   - sdk/identity/azure-identity/tests/*
   - sdk/**/tests/perfstress_tests/*
   - sdk/nspkg/*
+  - sdk/**/swagger/*
 
 language: python
 root_check_enabled: True
