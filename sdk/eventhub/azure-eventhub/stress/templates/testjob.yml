@@ -6,7 +6,9 @@ metadata:
 spec:
   containers:
     - name: python-eh-stress
-      image: stresstestregistry.azurecr.io/yuling/py-eh-stress:v1
-      {{- include "stress-test-addons.container-env" . | nindent 10 }}
-      command: ['bash', '-c', 'python3 azure_eventhub_producer_stress.py && python3 azure_eventhub_consumer_stress_sync.py']
+      image: stresstestregistry.azurecr.io/yuling/py-eh-stress:v2
+      {{- include "stress-test-addons.container-env" . | nindent 6 }}
+      command: ['bash', '-c', 'python3 azure_eventhub_producer_stress.py & python3 azure_eventhub_consumer_stress_sync.py']
+      # async test command
+      # command: ['bash', '-c', 'python3 azure_eventhub_producer_stress.py -m stress_send_list_async & python3 azure_eventhub_consumer_stress_async.py']
 {{- end -}}
