@@ -4,12 +4,9 @@ import re
 from github import Github
 
 
-def update_issue_body(issue_link):
+def update_issue_body(sdk_repo, rest_repo, issue_link):
     # Get Issue Number
     issue_number = int(issue_link.replace("https://github.com/Azure/sdk-release-request/issues/", ""))
-    g = Github(os.getenv('TOKEN'))
-    sdk_repo = g.get_repo('Azure/sdk-release-request')
-    rest_repo = g.get_repo('Azure/azure-rest-api-specs')
     issue_info = sdk_repo.get_issue(number=issue_number)
     issue_body = issue_info.body
 
