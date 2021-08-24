@@ -336,5 +336,6 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-mgmt-recoveryservicessiterecovery msrest>=0.6.21
 #override azure-mgmt-batch msrest>=0.6.21
 #override azure-batch msrest>=0.6.21
+#override azure-mgmt-servicebus msrest>=0.6.21
 #override azure-mgmt-security msrest>=0.6.21
 #override azure-mgmt-apimanagement msrest>=0.6.21
