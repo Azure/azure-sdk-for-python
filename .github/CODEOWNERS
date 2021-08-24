@@ -28,8 +28,9 @@
 # PRLabel: %App Configuration
 /sdk/appconfiguration/                                               @xiangyan99 @seankane-msft
 
-/sdk/applicationinsights/azure-applicationinsights/                  @divyajay @geneh @alongafni
-/sdk/loganalytics/azure-loganalytics/                                @divyajay @geneh @alongafni
+# PRLabel: %Monitor - ApplicationInsights
+# ServiceLabel: %Monitor - ApplicationInsights %Service Attention
+/sdk/applicationinsights/Microsoft.Azure.App*/  @omziv @anatse @raronen @ischrei @danhadari @azmonapplicationinsights
 
 /sdk/attestation/azure-security-attestation                          @larryosterman @anilba06 @Azure/azure-sdk-write-attestation
 
