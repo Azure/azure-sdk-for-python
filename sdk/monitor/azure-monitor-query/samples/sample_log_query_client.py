@@ -27,8 +27,7 @@ if not response.tables:
 
 for table in response.tables:
     try:
-        print ([col.name for col in table.columns])
-        df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
+        df = pd.DataFrame(table.rows, columns=table.columns)
         print(df)
     except TypeError:
         print(response.error)

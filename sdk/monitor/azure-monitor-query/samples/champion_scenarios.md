@@ -39,7 +39,7 @@ def query():
         return None
 
     primary_table = response.tables[0]
-    df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
+    df = pd.DataFrame(table.rows, columns=table.columns)
     return df
 
 if __name__ == '__main__':
@@ -74,7 +74,7 @@ def query():
         return None
 
     primary_table = response.tables[0]
-    df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
+    df = pd.DataFrame(table.rows, columns=table.columns)
     return df.to_dict(orient='records')
 
 if __name__ == '__main__':
@@ -150,7 +150,7 @@ for response in results:
         print(error)
     
     table = response.tables[0]
-    df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
+    df = pd.DataFrame(table.rows, columns=table.columns)
     print(df)
     print("\n\n-------------------------\n\n")
 
@@ -199,7 +199,7 @@ for response in results:
         print(error)
     
     table = response.tables[0]
-    df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
+    df = pd.DataFrame(table.rows, columns=table.columns)
     print(df.to_dict(orient='records'))
     print("\n\n-------------------------\n\n")
 ```

@@ -23,46 +23,29 @@ class LogsTable(object):
 
     :ivar name: Required. The name of the table.
     :vartype name: str
-    :ivar columns: Required. The list of columns in this table.
-    :vartype columns: list[~azure.monitor.query.LogsTableColumn]
+    :ivar columns: The labels of columns in this table.
+    :vartype columns: list[str]
+    :ivar column_types: The types of columns in this table.
+    :vartype columns: list[object]
     :ivar rows: Required. The resulting rows from this query.
-    :vartype rows: list[list[str]]
+    :vartype rows: list[list[object]]
     """
     def __init__(self, **kwargs):
         # type: (Any) -> None
         self.name = kwargs.pop('name', None) # type: str
-        self.columns = kwargs.pop('columns', None) # type: Optional[LogsTableColumn]
+        self.columns = kwargs.pop('columns', None) # type: Optional[str]
+        self.columns_types = kwargs.pop('column_types', None) # type: Optional[Any]
         _rows = kwargs.pop('rows', None)
-        self.rows = [process_row(self.columns, row) for row in _rows]
+        self.rows = [process_row(self.columns_types, row) for row in _rows]
 
     @classmethod
     def _from_generated(cls, generated):
         return cls(
             name=generated.name,
-            columns=[LogsTableColumn(name=col.name, type=col.type) for col in generated.columns],
+            columns=[col.name for col in generated.columns],
+            column_types=[col.type for col in generated.columns],
             rows=generated.rows
         )
-
-
-class LogsTableColumn(InternalColumn):
-    """A column in a table.
-
-    :ivar name: The name of this column.
-    :vartype name: str
-    :ivar type: The data type of this column.
-    :vartype type: str
-    """
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-    }
-
-    def __init__(self, **kwargs):
-        # type: (Any) -> None
-        super(LogsTableColumn, self).__init__(**kwargs)
-        self.name = kwargs.get("name", None)
-        self.type = kwargs.get("type", None)
 
 
 class LogsQueryResult(object):
@@ -172,11 +155,9 @@ class LogsBatchQuery(object):
     :keyword bool include_visualization: In the query language, it is possible to specify different
      visualization options. By default, the API does not return information regarding the type of
      visualization to show.
-    :keyword headers: Dictionary of :code:`<string>`.
-    :paramtype headers: dict[str, str]
     """
 
-    def __init__(self, query, workspace_id, timespan, **kwargs): #pylint: disable=super-init-not-called
+    def __init__(self, workspace_id, query, timespan, **kwargs): #pylint: disable=super-init-not-called
         # type: (str, str, Optional[str], Any) -> None
         include_statistics = kwargs.pop("include_statistics", False)
         include_visualization = kwargs.pop("include_visualization", False)
@@ -193,11 +174,7 @@ class LogsBatchQuery(object):
                 prefer += ","
             prefer += "include-render=true"
 
-        headers = kwargs.get("headers", None)
-        try:
-            headers['Prefer'] = prefer
-        except TypeError:
-            headers = {'Prefer': prefer}
+        headers = {'Prefer': prefer}
         timespan = construct_iso8601(timespan)
         additional_workspaces = kwargs.pop("additional_workspaces", None)
         self.id = str(uuid.uuid4())
