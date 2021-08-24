@@ -1,8 +1,4 @@
-import os
 import re
-
-from github import Github
-
 
 def update_issue_body(sdk_repo, rest_repo, issue_link):
     # Get Issue Number
@@ -92,3 +88,5 @@ def get_pkname_and_readme_from_pull(rest_repo, pr_link):
             break
     readme_link = 'https://github.com/Azure/azure-rest-api-specs/blob/main/specification/{}/' \
                   'resource-manager/readme.python.md'.format(pk_url_name)
+    
+    return package_name, readme_link
