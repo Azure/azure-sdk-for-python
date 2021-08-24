@@ -55,16 +55,13 @@ client = PurviewAccountClient(endpoint="https://<my-account-name>.purview.azure.
 
 ### Client
 
-This package offers request builders so you can build http requests and send these requests to the service using the `send_request` method.
-For more information on how to use request builders and our clients, see [here][request_builders_and_client].
-
 ## Examples
 
 The following section shows you how to initialize and authenticate your client, then list all of your keys.
 
-- [List All Keys](#list-all-keys "List All Keys")
+- [Get Keys](#get-keys "Get All Keys")
 
-### List All Keys
+### Get Keys
 
 ```python
 from azure.purview.account import PurviewAccountClient
@@ -80,7 +77,7 @@ print(response)
 
 ### General
 
-The Purview Account client will raise exceptions defined in [Azure Core][azure_core] if you call `.raise_for_status()` on your responses.
+The Purview Account client will raise exceptions if status code of your responses is not defined.
 
 ### Logging
 
@@ -113,7 +110,7 @@ credential = DefaultAzureCredential()
 client = PurviewAccountClient(endpoint=endpoint, credential=credential, logging_enable=True)
 ```
 
-Similarly, `logging_enable` can enable detailed logging for a single `send_request` call,
+Similarly, `logging_enable` can enable detailed logging for a single call,
 even when it isn't enabled for the client:
 
 ```python
