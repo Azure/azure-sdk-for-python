@@ -125,7 +125,7 @@ class MetricsResult(object):
     :ivar resource_region: The region of the resource that has been queried for metrics.
     :vartype resource_region: str
     :ivar metrics: Required. The value of the collection.
-    :vartype metrics: list[~monitor_query_client.models.Metric]
+    :vartype metrics: list[~azure.monitor.query.Metric]
     """
     def __init__(self, **kwargs):
         # type: (Any) -> None
@@ -231,7 +231,7 @@ class LogsBatchQueryResult(object):
      visualization selected by the query and any properties for that visualization.
     :vartype visualization: object
     :ivar error: Any error info.
-    :vartype error: object
+    :vartype error: ~azure.core.exceptions.HttpResponseError
     """
     def __init__(
         self,
@@ -328,35 +328,35 @@ class MetricClass(str, Enum):
 class MetricDefinition(object): #pylint: disable=too-many-instance-attributes
     """Metric definition class specifies the metadata for a metric.
 
-    :keyword dimension_required: Flag to indicate whether the dimension is required.
-    :paramtype dimension_required: bool
-    :keyword resource_id: the resource identifier of the resource that emitted the metric.
-    :paramtype resource_id: str
-    :keyword namespace: the namespace the metric belongs to.
-    :paramtype namespace: str
-    :keyword name: the name and the display name of the metric, i.e. it is a localizable string.
-    :paramtype name: str
-    :keyword unit: the unit of the metric. Possible values include: "Count", "Bytes", "Seconds",
+    :ivar dimension_required: Flag to indicate whether the dimension is required.
+    :vartype dimension_required: bool
+    :ivar resource_id: the resource identifier of the resource that emitted the metric.
+    :vartype resource_id: str
+    :ivar namespace: the namespace the metric belongs to.
+    :vartype namespace: str
+    :ivar name: the name and the display name of the metric, i.e. it is a localizable string.
+    :vartype name: str
+    :ivar unit: the unit of the metric. Possible values include: "Count", "Bytes", "Seconds",
      "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
      "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
-    :paramtype unit: str or ~monitor_query_client.models.Unit
-    :keyword primary_aggregation_type: the primary aggregation type value defining how to use the
+    :vartype unit: str or ~azure.monitor.query.MetricUnit
+    :ivar primary_aggregation_type: the primary aggregation type value defining how to use the
      values for display. Possible values include: "None", "Average", "Count", "Minimum", "Maximum",
      "Total".
-    :paramtype primary_aggregation_type: str or ~azure.monitor.query.MetricAggregationType
-    :keyword metric_class: The class of the metric. Possible values include: "Availability",
+    :vartype primary_aggregation_type: str or ~azure.monitor.query.MetricAggregationType
+    :ivar metric_class: The class of the metric. Possible values include: "Availability",
      "Transactions", "Errors", "Latency", "Saturation".
-    :paramtype metric_class: str or ~azure.monitor.query.MetricClass
-    :keyword supported_aggregation_types: the collection of what aggregation types are supported.
-    :paramtype supported_aggregation_types: list[str or ~azure.monitor.query.MetricAggregationType]
-    :keyword metric_availabilities: the collection of what aggregation intervals are available to be
+    :vartype metric_class: str or ~azure.monitor.query.MetricClass
+    :ivar supported_aggregation_types: the collection of what aggregation types are supported.
+    :vartype supported_aggregation_types: list[str or ~azure.monitor.query.MetricAggregationType]
+    :ivar metric_availabilities: the collection of what aggregation intervals are available to be
      queried.
-    :paramtype metric_availabilities: list[~azure.monitor.query.MetricAvailability]
-    :keyword id: the resource identifier of the metric definition.
-    :paramtype id: str
-    :keyword dimensions: the name and the display name of the dimension, i.e. it is a localizable
+    :vartype metric_availabilities: list[~azure.monitor.query.MetricAvailability]
+    :ivar id: the resource identifier of the metric definition.
+    :vartype id: str
+    :ivar dimensions: the name and the display name of the dimension, i.e. it is a localizable
      string.
-    :paramtype dimensions: list[str]
+    :vartype dimensions: list[str]
     """
     def __init__(
         self,
@@ -460,7 +460,7 @@ class Metric(object):
      "Unspecified", "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
     :vartype unit: str
     :ivar timeseries: Required. The time series returned when a data query is performed.
-    :vartype timeseries: list[~monitor_query_client.models.TimeSeriesElement]
+    :vartype timeseries: list[~azure.monitor.query.TimeSeriesElement]
     :ivar display_description: Detailed description of this metric.
     :vartype display_description: str
     """
@@ -499,7 +499,7 @@ class TimeSeriesElement(object):
     :vartype metadata_values: dict(str, str)
     :ivar data: An array of data points representing the metric values. This is only returned if
      a result type of data is specified.
-    :vartype data: list[~monitor_query_client.models.MetricValue]
+    :vartype data: list[~azure.monitor.query.MetricValue]
     """
 
     _attribute_map = {
@@ -566,3 +566,22 @@ class MetricAggregationType(str, Enum):
     MINIMUM = "Minimum"
     MAXIMUM = "Maximum"
     TOTAL = "Total"
+
+
+class MetricUnit(str, Enum):
+    """The unit of the metric.
+    """
+
+    COUNT = "Count"
+    BYTES = "Bytes"
+    SECONDS = "Seconds"
+    COUNT_PER_SECOND = "CountPerSecond"
+    BYTES_PER_SECOND = "BytesPerSecond"
+    PERCENT = "Percent"
+    MILLI_SECONDS = "MilliSeconds"
+    BYTE_SECONDS = "ByteSeconds"
+    UNSPECIFIED = "Unspecified"
+    CORES = "Cores"
+    MILLI_CORES = "MilliCores"
+    NANO_CORES = "NanoCores"
+    BITS_PER_SECOND = "BitsPerSecond"
