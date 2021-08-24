@@ -24,17 +24,11 @@ def update_issue_body(issue_link):
         link = link.split(']')[0]
         link = link.replace('[', "").replace(']', "").replace('(', "").replace(')', "")
 
-    package_name, readme_link = get_pkname_and_readme_link(rest_repo, link)
-    if not package_name and not readme_link:
+    try:
+        package_name, readme_link = get_pkname_and_readme_link(rest_repo, link)
+    except Exception as e:
+        print(e)
         return False
-
-    if not package_name:
-        if 'commit' in readme_link:
-            commit = rest_repo.get_commit()
-            pass
-        readme_link_part = '/specification' + readme_link.split('/specification')[-1]
-        readme_contents = str(rest_repo.get_contents(readme_link_part).decoded_content)
-        package_name = re.findall(r'package-name: (.*?)\\n', readme_contents)[0]
 
     readme_link = readme_link.replace('python.', '')
     issue_body_list.insert(0, f'\n{readme_link}')
@@ -48,24 +42,32 @@ def update_issue_body(issue_link):
         issue_info.edit(body=issue_body_up)
         return True
     except Exception as e:
+        print(e)
         return False
 
 
 def get_pkname_and_readme_link(rest_repo, link):
+    # change commit link to pull json link
+    pk_name = ''
     if 'commit' in link:
         commit_sha = link.split('commit/')[-1]
         commit = rest_repo.get_commit(commit_sha)
         link = commit.files[0].blob_url
 
+    # if link is a pr, it can get both pakeage name and readme link.
     if 'pull' in link:
         pk_name, readme_link = get_pkname_and_readme_from_pull(rest_repo, link)
-        return pk_name, readme_link
     elif '/resource-manager' not in link:
         readme_link = link + '/resource-manager/readme.python.md'
     else:
         readme_link = link.split('/resource-manager')[0] + '/resource-manager/readme.python.md'
+    # get the package name by readme link
+    if not pk_name:
+        readme_link_part = '/specification' + readme_link.split('/specification')[-1]
+        readme_contents = str(rest_repo.get_contents(readme_link_part).decoded_content)
+        pk_name = re.findall(r'package-name: (.*?)\\n', readme_contents)[0]
 
-    return '', readme_link
+    return pk_name, readme_link
 
 
 def get_pkname_and_readme_from_pull(rest_repo, pr_link):
@@ -93,5 +95,3 @@ def get_pkname_and_readme_from_pull(rest_repo, pr_link):
             break
     readme_link = 'https://github.com/Azure/azure-rest-api-specs/blob/main/specification/{}/' \
                   'resource-manager/readme.python.md'.format(pk_url_name)
-
-    return package_name, readme_link
