@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from typing import Any, Dict, Optional, List
     from datetime import datetime
     from ._generated.v7_0 import models as _models
-    from ._enums import KeyOperation, KeyType
+    from ._enums import KeyOperation, KeyRotationPolicyAction, KeyType
 
 KeyOperationResult = namedtuple("KeyOperationResult", ["id", "value"])
 
@@ -277,6 +277,71 @@ class ReleaseKeyResult(object):
     def __init__(self, value):
         # type: (str) -> None
         self.value = value
+
+
+class KeyRotationLifetimeAction(object):
+    """An action and its corresponding trigger that will be performed by Key Vault over the lifetime of a key.
+
+    :param action: The action that will be executed.
+    :type action: ~azure.keyvault.keys.KeyRotationPolicyAction or str
+
+    :keyword str time_after_create: Time after creation to attempt the specified action, as an ISO 8601 duration.
+        For example, 90 days is "P90D".
+    :keyword str time_before_expiry: Time before expiry to attempt the specified action, as an ISO 8601 duration.
+        For example, 90 days is "P90D".
+    """
+
+    def __init__(self, action, **kwargs):
+        # type: (KeyRotationPolicyAction, **Any) -> None
+        self.action = action
+        self.time_after_create = kwargs.get("time_after_create", None)
+        self.time_before_expiry = kwargs.get("time_before_expiry", None)
+
+    @classmethod
+    def _from_generated(cls, lifetime_action):
+        if lifetime_action.trigger:
+            return cls(
+                action=lifetime_action.action,
+                time_after_create=lifetime_action.trigger.time_after_create,
+                time_before_expiry=lifetime_action.trigger.time_before_expiry,
+            )
+        return cls(action=lifetime_action.action)
+
+
+class KeyRotationPolicy(object):
+    """The key rotation policy that belongs to a key.
+
+    :ivar str policy_id: The identifier of the key rotation policy.
+    :ivar lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a key.
+    :type lifetime_actions: list[~azure.keyvault.keys.KeyRotationLifetimeAction]
+    :ivar str expires_in: The expiry time of the policy that will be applied on new key versions, defined as an ISO
+        8601 duration. For example, 90 days is "P90D".
+    :ivar created_on: When the policy was created, in UTC
+    :type created_on: ~datetime.datetime
+    :ivar updated_on: When the policy was last updated, in UTC
+    :type updated_on: ~datetime.datetime
+    """
+
+    def __init__(self, policy_id, **kwargs):
+        # type: (str, **Any) -> None
+        self.id = policy_id
+        self.lifetime_actions = kwargs.get("lifetime_actions", None)
+        self.expires_in = kwargs.get("expires_in", None)
+        self.created_on = kwargs.get("created_on", None)
+        self.updated_on = kwargs.get("updated_on", None)
+
+    @classmethod
+    def _from_generated(cls, policy):
+        lifetime_actions = [KeyRotationLifetimeAction._from_generated(action) for action in policy.lifetime_actions]
+        if policy.attributes:
+            return cls(
+                policy_id=policy.id,
+                lifetime_actions=lifetime_actions,
+                expires_on=policy.attributes.expiry_time,
+                created_on=policy.attributes.created,
+                updated_on=policy.attributes.updated,
+            )
+        return cls(policy_id=policy.id, lifetime_actions=lifetime_actions)
 
 
 class KeyVaultKey(object):
