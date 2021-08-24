@@ -46,7 +46,7 @@ class FilesOperations:
         group_name: str,
         service_name: str,
         project_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.FileList"]:
         """Get files in a project.
 
@@ -69,7 +69,7 @@ class FilesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -129,7 +129,7 @@ class FilesOperations:
         service_name: str,
         project_name: str,
         file_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProjectFile":
         """Get file information.
 
@@ -154,7 +154,7 @@ class FilesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         accept = "application/json"
 
         # Construct URL
@@ -200,7 +200,7 @@ class FilesOperations:
         project_name: str,
         file_name: str,
         parameters: "_models.ProjectFile",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProjectFile":
         """Create a file resource.
 
@@ -226,7 +226,7 @@ class FilesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -280,7 +280,7 @@ class FilesOperations:
         service_name: str,
         project_name: str,
         file_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete file.
 
@@ -304,7 +304,7 @@ class FilesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         accept = "application/json"
 
         # Construct URL
@@ -347,7 +347,7 @@ class FilesOperations:
         project_name: str,
         file_name: str,
         parameters: "_models.ProjectFile",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProjectFile":
         """Update a file.
 
@@ -373,7 +373,7 @@ class FilesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -423,7 +423,7 @@ class FilesOperations:
         service_name: str,
         project_name: str,
         file_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FileStorageInfo":
         """Request storage information for downloading the file content.
 
@@ -448,7 +448,7 @@ class FilesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         accept = "application/json"
 
         # Construct URL
@@ -493,7 +493,7 @@ class FilesOperations:
         service_name: str,
         project_name: str,
         file_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FileStorageInfo":
         """Request information for reading and writing file content.
 
@@ -517,7 +517,7 @@ class FilesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         accept = "application/json"
 
         # Construct URL
