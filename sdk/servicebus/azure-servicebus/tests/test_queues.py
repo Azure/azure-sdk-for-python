@@ -14,6 +14,7 @@ import time
 import uuid
 from datetime import datetime, timedelta
 import calendar
+import unittest
 
 import uamqp
 import uamqp.errors
