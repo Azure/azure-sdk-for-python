@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- The operation `id` under `details` of the poller object now populates correctly.
 
 ### Other Changes
 
