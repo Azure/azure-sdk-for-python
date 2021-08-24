@@ -340,6 +340,8 @@ Document Translation supports glossaries in the following formats:
 |Comma-Seperated Values|.csv|Read more on [wikipedia][csv_files_wikipedia]|[glossary_sample.csv][sample_csv_file]|
 |Localization Interchange File Format|.xlf, .xliff|Read more on [wikipedia][xlf_files_wikipedia]|[glossary_sample.xlf][sample_xlf_file]|
 
+View all supported formats [here][supported_glossary_formats].
+
 #### **How Use Glossaries in Document Translation**
 In order to use glossaries with Document Translation, you first need to upload your glossaries file to some blob container, and then provide the SaS url to of this glossary file to Document Translation as in the code samples [sample_translation_with_glossaries.py][sample_translation_with_glossaries].
 
@@ -471,6 +473,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [sample_translation_with_custom_model]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/sample_translation_with_custom_model.py
 [sample_translation_with_custom_model_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_translation_with_custom_model_async.py
 
+[supported_glossary_formats]: https://docs.microsoft.com/en-us/azure/cognitive-services/translator/document-translation/overview#supported-glossary-formats
 [custom_translation_article]: https://docs.microsoft.com/azure/cognitive-services/translator/custom-translator/quickstart-build-deploy-custom-model
 [tsv_files_wikipedia]: https://wikipedia.org/wiki/Tab-separated_values
 [xlf_files_wikipedia]: https://wikipedia.org/wiki/XLIFF
