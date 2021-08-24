@@ -36,7 +36,7 @@ def build_analyze_conversations_request(
     project_name = kwargs.pop('project_name')  # type: str
     deployment_name = kwargs.pop('deployment_name')  # type: str
 
-    api_version = "2021-05-01-preview"
+    api_version = "2021-07-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/:analyze-conversations')

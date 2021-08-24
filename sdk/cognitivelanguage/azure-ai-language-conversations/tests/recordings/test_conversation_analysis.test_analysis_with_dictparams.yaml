@@ -17,24 +17,37 @@ interactions:
       User-Agent:
       - azsdk-python-ai-language-questionanswering/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://test-resource.api.cognitive.microsoft.com/language/:analyze-conversations?projectName=test-project&deploymentName=production&api-version=2021-05-01-preview
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:analyze-conversations?projectName=test-project&deploymentName=production&api-version=2021-07-15-preview
   response:
     body:
-      string: '{"error":{"code":"404","message": "Resource not found"}}'
+      string: "{\n  \"query\": \"One california maki please.\",\n  \"prediction\":
+        {\n    \"intents\": [\n      {\n        \"category\": \"Order\",\n        \"confidenceScore\":
+        1\n      }\n    ],\n    \"entities\": [\n      {\n        \"category\": \"OrderItem\",\n
+        \       \"text\": \"california maki\",\n        \"offset\": 4,\n        \"length\":
+        15,\n        \"confidenceScore\": 0.49083808\n      }\n    ],\n    \"topIntent\":
+        \"Order\",\n    \"projectType\": \"conversation\"\n  }\n}"
     headers:
       apim-request-id:
-      - 73191187-3f73-45e8-8a07-f7b0743ec13b
-      content-length:
-      - '56'
+      - adcbb000-ac74-48e4-83e5-d700949b3f9c
+      cache-control:
+      - no-store, proxy-revalidate, no-cache, max-age=0, private
       content-type:
-      - application/json
+      - application/json; charset=utf-8
       date:
-      - Mon, 23 Aug 2021 15:37:39 GMT
+      - Mon, 23 Aug 2021 23:12:12 GMT
+      pragma:
+      - no-cache
+      request-id:
+      - adcbb000-ac74-48e4-83e5-d700949b3f9c
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
       x-content-type-options:
       - nosniff
+      x-envoy-upstream-service-time:
+      - '800'
     status:
-      code: 404
-      message: Resource Not Found
+      code: 200
+      message: OK
 version: 1

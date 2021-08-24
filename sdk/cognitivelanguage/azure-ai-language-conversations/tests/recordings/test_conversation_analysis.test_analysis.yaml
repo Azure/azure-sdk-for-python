@@ -1,8 +1,6 @@
 interactions:
 - request:
-    body: '{"query": "One california maki please.", "directTarget": "test-project",
-      "parameters": {"test-project": {"projectType": "luis_deepstack", "language":
-      "en"}}}'
+    body: '{"query": "One california maki please."}'
     headers:
       Accept:
       - application/json
@@ -11,30 +9,43 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '153'
+      - '40'
       Content-Type:
       - application/json
       User-Agent:
       - azsdk-python-ai-language-questionanswering/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://test-resource.api.cognitive.microsoft.com/language/:analyze-conversations?projectName=test-project&deploymentName=production&api-version=2021-05-01-preview
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:analyze-conversations?projectName=test-project&deploymentName=production&api-version=2021-07-15-preview
   response:
     body:
-      string: '{"error":{"code":"404","message": "Resource not found"}}'
+      string: "{\n  \"query\": \"One california maki please.\",\n  \"prediction\":
+        {\n    \"intents\": [\n      {\n        \"category\": \"Order\",\n        \"confidenceScore\":
+        1\n      }\n    ],\n    \"entities\": [\n      {\n        \"category\": \"OrderItem\",\n
+        \       \"text\": \"california maki\",\n        \"offset\": 4,\n        \"length\":
+        15,\n        \"confidenceScore\": 0.49083808\n      }\n    ],\n    \"topIntent\":
+        \"Order\",\n    \"projectType\": \"conversation\"\n  }\n}"
     headers:
       apim-request-id:
-      - 9e30aa98-6738-432b-bd5d-a679b68ca1fe
-      content-length:
-      - '56'
+      - 238ce567-79d4-44ee-9208-71694ff0a973
+      cache-control:
+      - no-store, proxy-revalidate, no-cache, max-age=0, private
       content-type:
-      - application/json
+      - application/json; charset=utf-8
       date:
-      - Mon, 23 Aug 2021 15:37:38 GMT
+      - Mon, 23 Aug 2021 23:12:11 GMT
+      pragma:
+      - no-cache
+      request-id:
+      - 238ce567-79d4-44ee-9208-71694ff0a973
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
       x-content-type-options:
       - nosniff
+      x-envoy-upstream-service-time:
+      - '1033'
     status:
-      code: 404
-      message: Resource Not Found
+      code: 200
+      message: OK
 version: 1

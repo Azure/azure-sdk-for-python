@@ -37,11 +37,11 @@ TEST_KEY = '0000000000000000'
 TEST_PROJECT = 'test-project'
 
 
-class QuestionAnsweringTest(AzureTestCase):
+class ConversationTest(AzureTestCase):
     FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['Ocp-Apim-Subscription-Key']
 
     def __init__(self, method_name):
-        super(QuestionAnsweringTest, self).__init__(method_name)
+        super(ConversationTest, self).__init__(method_name)
         self.scrubber.register_name_pair(os.environ.get("AZURE_CONVERSATIONS_ENDPOINT"), TEST_ENDPOINT)
         self.scrubber.register_name_pair(os.environ.get("AZURE_CONVERSATIONS_KEY"), TEST_KEY)
         self.scrubber.register_name_pair(os.environ.get("AZURE_CONVERSATIONS_PROJECT"), TEST_PROJECT)
@@ -82,9 +82,9 @@ class GlobalResourceGroupPreparer(AzureMgmtPreparer):
         }
 
 
-class GlobalQuestionAnsweringAccountPreparer(AzureMgmtPreparer):
+class GlobalConversationAccountPreparer(AzureMgmtPreparer):
     def __init__(self):
-        super(GlobalQuestionAnsweringAccountPreparer, self).__init__(
+        super(GlobalConversationAccountPreparer, self).__init__(
             name_prefix='',
             random_name_length=42
         )
@@ -94,14 +94,14 @@ class GlobalQuestionAnsweringAccountPreparer(AzureMgmtPreparer):
             return {
                 'location': REGION,
                 'resource_group': "rgname",
-                'qna_account': os.environ.get("AZURE_CONVERSATIONS_ENDPOINT"),
-                'qna_key': os.environ.get("AZURE_CONVERSATIONS_KEY"),
-                'qna_project': os.environ.get("AZURE_CONVERSATIONS_PROJECT")
+                'conv_account': os.environ.get("AZURE_CONVERSATIONS_ENDPOINT"),
+                'conv_key': os.environ.get("AZURE_CONVERSATIONS_KEY"),
+                'conv_project': os.environ.get("AZURE_CONVERSATIONS_PROJECT")
             }
         return {
             'location': REGION,
             'resource_group': "rgname",
-            'qna_account': TEST_ENDPOINT,
-            'qna_key': TEST_KEY,
-            'qna_project': TEST_PROJECT
+            'conv_account': TEST_ENDPOINT,
+            'conv_key': TEST_KEY,
+            'conv_project': TEST_PROJECT
         }
