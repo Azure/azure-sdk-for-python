@@ -67,6 +67,9 @@ from ._workspace_aad_admins_operations import WorkspaceAadAdminsOperations
 from ._workspace_sql_aad_admins_operations import WorkspaceSqlAadAdminsOperations
 from ._workspace_managed_identity_sql_control_settings_operations import WorkspaceManagedIdentitySqlControlSettingsOperations
 from ._restorable_dropped_sql_pools_operations import RestorableDroppedSqlPoolsOperations
+from ._spark_configuration_operations import SparkConfigurationOperations
+from ._spark_configurations_operations import SparkConfigurationsOperations
+from ._azure_ad_only_authentications_operations import AzureADOnlyAuthenticationsOperations
 
 __all__ = [
     'BigDataPoolsOperations',
@@ -130,4 +133,7 @@ __all__ = [
     'WorkspaceSqlAadAdminsOperations',
     'WorkspaceManagedIdentitySqlControlSettingsOperations',
     'RestorableDroppedSqlPoolsOperations',
+    'SparkConfigurationOperations',
+    'SparkConfigurationsOperations',
+    'AzureADOnlyAuthenticationsOperations',
 ]
