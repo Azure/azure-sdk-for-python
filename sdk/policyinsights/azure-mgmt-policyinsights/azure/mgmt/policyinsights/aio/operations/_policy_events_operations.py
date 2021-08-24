@@ -46,7 +46,7 @@ class PolicyEventsOperations:
         self,
         management_group_name: str,
         query_options: Optional["_models.QueryOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyEventsQueryResults"]:
         """Queries policy events for the resources under the management group.
 
@@ -123,9 +123,18 @@ class PolicyEventsOperations:
 
                 request = self._client.post(url, query_parameters, header_parameters)
             else:
-                url = next_link
+                url = '{nextLink}'
+                path_format_arguments = {
+                    'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if _skip_token is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skip_token", _skip_token, 'str')
+
+                request = self._client.post(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -142,7 +151,7 @@ class PolicyEventsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.QueryFailure, response)
+                error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -157,7 +166,7 @@ class PolicyEventsOperations:
         self,
         subscription_id: str,
         query_options: Optional["_models.QueryOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyEventsQueryResults"]:
         """Queries policy events for the resources under the subscription.
 
@@ -232,9 +241,18 @@ class PolicyEventsOperations:
 
                 request = self._client.post(url, query_parameters, header_parameters)
             else:
-                url = next_link
+                url = '{nextLink}'
+                path_format_arguments = {
+                    'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if _skip_token is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skip_token", _skip_token, 'str')
+
+                request = self._client.post(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -251,7 +269,7 @@ class PolicyEventsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.QueryFailure, response)
+                error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -267,7 +285,7 @@ class PolicyEventsOperations:
         subscription_id: str,
         resource_group_name: str,
         query_options: Optional["_models.QueryOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyEventsQueryResults"]:
         """Queries policy events for the resources under the resource group.
 
@@ -345,9 +363,18 @@ class PolicyEventsOperations:
 
                 request = self._client.post(url, query_parameters, header_parameters)
             else:
-                url = next_link
+                url = '{nextLink}'
+                path_format_arguments = {
+                    'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if _skip_token is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skip_token", _skip_token, 'str')
+
+                request = self._client.post(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -364,7 +391,7 @@ class PolicyEventsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.QueryFailure, response)
+                error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -379,7 +406,7 @@ class PolicyEventsOperations:
         self,
         resource_id: str,
         query_options: Optional["_models.QueryOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyEventsQueryResults"]:
         """Queries policy events for the resource.
 
@@ -458,9 +485,18 @@ class PolicyEventsOperations:
 
                 request = self._client.post(url, query_parameters, header_parameters)
             else:
-                url = next_link
+                url = '{nextLink}'
+                path_format_arguments = {
+                    'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if _skip_token is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skip_token", _skip_token, 'str')
+
+                request = self._client.post(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -477,7 +513,7 @@ class PolicyEventsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.QueryFailure, response)
+                error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -493,7 +529,7 @@ class PolicyEventsOperations:
         subscription_id: str,
         policy_set_definition_name: str,
         query_options: Optional["_models.QueryOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyEventsQueryResults"]:
         """Queries policy events for the subscription level policy set definition.
 
@@ -573,9 +609,18 @@ class PolicyEventsOperations:
 
                 request = self._client.post(url, query_parameters, header_parameters)
             else:
-                url = next_link
+                url = '{nextLink}'
+                path_format_arguments = {
+                    'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if _skip_token is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skip_token", _skip_token, 'str')
+
+                request = self._client.post(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -592,7 +637,7 @@ class PolicyEventsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.QueryFailure, response)
+                error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -608,7 +653,7 @@ class PolicyEventsOperations:
         subscription_id: str,
         policy_definition_name: str,
         query_options: Optional["_models.QueryOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyEventsQueryResults"]:
         """Queries policy events for the subscription level policy definition.
 
@@ -688,9 +733,18 @@ class PolicyEventsOperations:
 
                 request = self._client.post(url, query_parameters, header_parameters)
             else:
-                url = next_link
+                url = '{nextLink}'
+                path_format_arguments = {
+                    'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if _skip_token is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skip_token", _skip_token, 'str')
+
+                request = self._client.post(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -707,7 +761,7 @@ class PolicyEventsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.QueryFailure, response)
+                error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -723,7 +777,7 @@ class PolicyEventsOperations:
         subscription_id: str,
         policy_assignment_name: str,
         query_options: Optional["_models.QueryOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyEventsQueryResults"]:
         """Queries policy events for the subscription level policy assignment.
 
@@ -803,9 +857,18 @@ class PolicyEventsOperations:
 
                 request = self._client.post(url, query_parameters, header_parameters)
             else:
-                url = next_link
+                url = '{nextLink}'
+                path_format_arguments = {
+                    'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if _skip_token is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skip_token", _skip_token, 'str')
+
+                request = self._client.post(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -822,7 +885,7 @@ class PolicyEventsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.QueryFailure, response)
+                error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -839,7 +902,7 @@ class PolicyEventsOperations:
         resource_group_name: str,
         policy_assignment_name: str,
         query_options: Optional["_models.QueryOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyEventsQueryResults"]:
         """Queries policy events for the resource group level policy assignment.
 
@@ -922,9 +985,18 @@ class PolicyEventsOperations:
 
                 request = self._client.post(url, query_parameters, header_parameters)
             else:
-                url = next_link
+                url = '{nextLink}'
+                path_format_arguments = {
+                    'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if _skip_token is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skip_token", _skip_token, 'str')
+
+                request = self._client.post(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -941,7 +1013,7 @@ class PolicyEventsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.QueryFailure, response)
+                error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
