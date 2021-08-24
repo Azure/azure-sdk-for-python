@@ -1,5 +1,27 @@
 # Release History
 
+## 10.0.0 (2021-08-19)
+
+**Features**
+
+  - Model ConnectToTargetAzureDbForMySqlTaskInput has a new parameter is_offline_migration
+  - Model MySqlConnectionInfo has a new parameter encrypt_connection
+  - Model TrackedResource has a new parameter system_data
+  - Model Project has a new parameter system_data
+  - Model ApiError has a new parameter system_data
+  - Model ProjectFile has a new parameter system_data
+  - Model DataMigrationService has a new parameter system_data
+  - Model ConnectToSourceMySqlTaskInput has a new parameter is_offline_migration
+  - Model ProjectTask has a new parameter system_data
+
+**Breaking changes**
+
+  - Parameter result_type of model MigrateSchemaSqlServerSqlDbTaskOutputError is now required
+  - Parameter result_type of model MigrateSchemaSqlServerSqlDbTaskOutput is now required
+  - Parameter result_type of model MigrateSchemaSqlServerSqlDbTaskOutputMigrationLevel is now required
+  - Parameter result_type of model MigrateSchemaSqlServerSqlDbTaskOutputDatabaseLevel is now required
+  - Parameter result_type of model MigrateSchemaSqlTaskOutputError is now required
+
 ## 9.0.0 (2021-04-07)
 
 **Features**
