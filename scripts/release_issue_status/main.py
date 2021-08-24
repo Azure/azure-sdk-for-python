@@ -103,9 +103,10 @@ def _latest_comment_time(comments, delay_from_create_date):
 def main():
     # get latest issue status
     g = Github(os.getenv('TOKEN'))  # please fill user_token
-    repo = g.get_repo('Azure/sdk-release-request')
-    label1 = repo.get_label('ManagementPlane')
-    open_issues = repo.get_issues(state='open', labels=[label1])
+    sdk_repo = g.get_repo('Azure/sdk-release-request')
+    rest_repo = g.get_repo('Azure/azure-rest-api-specs')
+    label1 = sdk_repo.get_label('ManagementPlane')
+    open_issues = sdk_repo.get_issues(state='open', labels=[label1])
     issue_status = []
     duplicated_issue = dict()
     start_time = time.time()
@@ -150,7 +151,7 @@ def main():
         elif item.comment_num == 0 and 'Python' in item.labels:
             item.bot_advice = 'new issue and better to confirm quickly.'
             if 'auto-link' not in item.labels:
-                if not update_issue_body(item.link):
+                if not update_issue_body(sdk_repo, rest_repo, item.link):
                     item.bot_advice = 'failed to modify the body of the new issue. Please modify manually'
                     item.labels.append('attention')
                 item.labels.append('auto-link')
