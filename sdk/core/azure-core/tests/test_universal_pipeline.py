@@ -50,8 +50,6 @@ from azure.core.pipeline.transport import (
 from azure.core.pipeline.policies import (
     NetworkTraceLoggingPolicy,
     ContentDecodePolicy,
-    UserAgentPolicy,
-    HttpLoggingPolicy,
     RequestHistory,
     RetryPolicy,
     HTTPPolicy,
@@ -94,7 +92,7 @@ def test_request_history():
             raise ValueError()
 
     body = Non_deep_copiable()
-    request = HttpRequest('GET', 'http://127.0.0.1/', {'user-agent': 'test_request_history'})
+    request = HttpRequest('GET', 'http://localhost/', {'user-agent': 'test_request_history'})
     request.body = body
     request_history = RequestHistory(request)
     assert request_history.http_request.headers == request.headers
@@ -107,7 +105,7 @@ def test_request_history_type_error():
             raise TypeError()
 
     body = Non_deep_copiable()
-    request = HttpRequest('GET', 'http://127.0.0.1/', {'user-agent': 'test_request_history'})
+    request = HttpRequest('GET', 'http://localhost/', {'user-agent': 'test_request_history'})
     request.body = body
     request_history = RequestHistory(request)
     assert request_history.http_request.headers == request.headers
@@ -116,7 +114,7 @@ def test_request_history_type_error():
 
 @mock.patch('azure.core.pipeline.policies._universal._LOGGER')
 def test_no_log(mock_http_logger):
-    universal_request = HttpRequest('GET', 'http://127.0.0.1/')
+    universal_request = HttpRequest('GET', 'http://localhost/')
     request = PipelineRequest(universal_request, PipelineContext(None))
     http_logger = NetworkTraceLoggingPolicy()
     response = PipelineResponse(request, HttpResponse(universal_request, None), request.context)
@@ -193,7 +191,7 @@ def test_retry_without_http_response():
 def test_raw_deserializer():
     raw_deserializer = ContentDecodePolicy()
     context = PipelineContext(None, stream=False)
-    universal_request = HttpRequest('GET', 'http://127.0.0.1/')
+    universal_request = HttpRequest('GET', 'http://localhost/')
     request = PipelineRequest(universal_request, context)
 
     def build_response(body, content_type=None):

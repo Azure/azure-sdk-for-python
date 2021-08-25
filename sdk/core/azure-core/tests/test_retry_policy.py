@@ -65,7 +65,7 @@ def test_retry_types():
 @pytest.mark.parametrize("retry_after_input", [('0'), ('800'), ('1000'), ('1200')])
 def test_retry_after(retry_after_input):
     retry_policy = RetryPolicy()
-    request = HttpRequest("GET", "https://bing.com")
+    request = HttpRequest("GET", "http://localhost")
     response = HttpResponse(request, None)
     response.headers["retry-after-ms"] = retry_after_input
     pipeline_response = PipelineResponse(request, response, None)
@@ -83,7 +83,7 @@ def test_retry_after(retry_after_input):
 @pytest.mark.parametrize("retry_after_input", [('0'), ('800'), ('1000'), ('1200')])
 def test_x_ms_retry_after(retry_after_input):
     retry_policy = RetryPolicy()
-    request = HttpRequest("GET", "https://bing.com")
+    request = HttpRequest("GET", "http://localhost")
     response = HttpResponse(request, None)
     response.headers["x-ms-retry-after-ms"] = retry_after_input
     pipeline_response = PipelineResponse(request, response, None)
@@ -115,7 +115,7 @@ def test_retry_on_429():
             response.status_code = 429
             return response
 
-    http_request = HttpRequest('GET', 'http://127.0.0.1/')
+    http_request = HttpRequest('GET', 'http://localhost/')
     http_retry = RetryPolicy(retry_total = 1)
     transport = MockTransport()
     pipeline = Pipeline(transport, [http_retry])
@@ -141,7 +141,7 @@ def test_no_retry_on_201():
             response.headers = headers
             return response
 
-    http_request = HttpRequest('GET', 'http://127.0.0.1/')
+    http_request = HttpRequest('GET', 'http://localhost/')
     http_retry = RetryPolicy(retry_total = 1)
     transport = MockTransport()
     pipeline = Pipeline(transport, [http_retry])
@@ -171,7 +171,7 @@ def test_retry_seekable_stream():
             return response
 
     data = BytesIO(b"Lots of dataaaa")
-    http_request = HttpRequest('GET', 'http://127.0.0.1/')
+    http_request = HttpRequest('GET', 'http://localhost/')
     http_request.set_streamed_data_body(data)
     http_retry = RetryPolicy(retry_total = 1)
     pipeline = Pipeline(MockTransport(), [http_retry])
@@ -208,7 +208,7 @@ def test_retry_seekable_file():
     file = tempfile.NamedTemporaryFile(delete=False)
     file.write(b'Lots of dataaaa')
     file.close()
-    http_request = HttpRequest('GET', 'http://127.0.0.1/')
+    http_request = HttpRequest('GET', 'http://localhost/')
     headers = {'Content-Type': "multipart/form-data"}
     http_request.headers = headers
     with open(file.name, 'rb') as f:
@@ -239,7 +239,7 @@ def test_retry_timeout():
     pipeline = Pipeline(transport, [RetryPolicy(timeout=timeout)])
 
     with pytest.raises(ServiceResponseTimeoutError):
-        response = pipeline.run(HttpRequest("GET", "http://127.0.0.1/"))
+        response = pipeline.run(HttpRequest("GET", "http://localhost/"))
 
 
 def test_timeout_defaults():
@@ -259,7 +259,7 @@ def test_timeout_defaults():
     )
     pipeline = Pipeline(transport, [RetryPolicy()])
 
-    pipeline.run(HttpRequest("GET", "http://127.0.0.1/"))
+    pipeline.run(HttpRequest("GET", "http://localhost/"))
     assert transport.send.call_count == 1, "policy should not retry: its first send succeeded"
 
 
@@ -280,6 +280,6 @@ def test_does_not_sleep_after_timeout(transport_error, expected_timeout_error):
     pipeline = Pipeline(transport, [RetryPolicy(timeout=timeout)])
 
     with pytest.raises(expected_timeout_error):
-        pipeline.run(HttpRequest("GET", "http://127.0.0.1/"))
+        pipeline.run(HttpRequest("GET", "http://localhost/"))
 
     assert transport.sleep.call_count == 1
