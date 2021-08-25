@@ -83,4 +83,7 @@ This module is ***provisional***, meaning any of the objects and methods in this
    :members:
    :undoc-members:
    :inherited-members:
+   :exclude-members: files,data,multipart_mixed_info,query,body,format_parameters,set_streamed_data_body,
+    set_text_body,set_xml_body,set_json_body,set_formdata_body,set_bytes_body,set_multipart_mixed,prepare_multipart_body,
+    serialize,internal_response,block_size,stream_download,parts
 
