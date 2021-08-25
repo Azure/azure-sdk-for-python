@@ -37,6 +37,7 @@ __all__ = [
     "MatchConditions",
     "CaseInsensitiveEnumMeta",
 ]
+
 try:
     from ._pipeline_client_async import AsyncPipelineClient #pylint: disable=unused-import
     __all__.extend(["AsyncPipelineClient"])

@@ -17,10 +17,9 @@ from azure.core.pipeline import (
 from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
 )
-from itertools import product
-from utils import create_http_response, HTTP_REQUESTS, HTTP_RESPONSES
+from utils import create_http_response, HTTP_REQUESTS, HTTP_RESPONSES, pipeline_transport_and_rest_product
 
-@pytest.mark.parametrize("http_request,http_response", product(HTTP_REQUESTS, HTTP_RESPONSES))
+@pytest.mark.parametrize("http_request,http_response", pipeline_transport_and_rest_product(HTTP_REQUESTS, HTTP_RESPONSES))
 def test_http_logger(http_request, http_response):
 
     class MockHandler(logging.Handler):
@@ -134,7 +133,7 @@ def test_http_logger(http_request, http_response):
     mock_handler.reset()
 
 
-@pytest.mark.parametrize("http_request,http_response", product(HTTP_REQUESTS, HTTP_RESPONSES))
+@pytest.mark.parametrize("http_request,http_response", pipeline_transport_and_rest_product(HTTP_REQUESTS, HTTP_RESPONSES))
 def test_http_logger_operation_level(http_request, http_response):
 
     class MockHandler(logging.Handler):
@@ -205,7 +204,7 @@ def test_http_logger_operation_level(http_request, http_response):
 
     mock_handler.reset()
 
-@pytest.mark.parametrize("http_request,http_response", product(HTTP_REQUESTS, HTTP_RESPONSES))
+@pytest.mark.parametrize("http_request,http_response", pipeline_transport_and_rest_product(HTTP_REQUESTS, HTTP_RESPONSES))
 def test_http_logger_with_body(http_request, http_response):
 
     class MockHandler(logging.Handler):
@@ -247,7 +246,7 @@ def test_http_logger_with_body(http_request, http_response):
 
 
 @pytest.mark.skipif(sys.version_info < (3, 6), reason="types.AsyncGeneratorType does not exist in 3.5")
-@pytest.mark.parametrize("http_request,http_response", product(HTTP_REQUESTS, HTTP_RESPONSES))
+@pytest.mark.parametrize("http_request,http_response", pipeline_transport_and_rest_product(HTTP_REQUESTS, HTTP_RESPONSES))
 def test_http_logger_with_generator_body(http_request, http_response):
 
     class MockHandler(logging.Handler):

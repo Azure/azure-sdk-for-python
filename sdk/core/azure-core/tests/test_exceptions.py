@@ -34,8 +34,6 @@ except ImportError:
 
 # module under test
 from azure.core.exceptions import HttpResponseError, ODataV4Error, ODataV4Format
-from azure.core.pipeline.transport import RequestsTransportResponse as PipelineTransportRequestsTransportResponse
-from azure.core.pipeline.transport._requests_basic import RestRequestsTransportResponse
 from azure.core.pipeline.transport._base import _HttpResponseBase as PipelineTransportHttpResponseBase
 from azure.core.rest._rest import _HttpResponseBase as RestHttpResponseBase
 from utils import is_rest_http_response, create_http_response, REQUESTS_TRANSPORT_RESPONSES

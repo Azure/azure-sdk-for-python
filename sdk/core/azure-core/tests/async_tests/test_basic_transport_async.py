@@ -4,7 +4,6 @@
 # license information.
 # -------------------------------------------------------------------------
 from six.moves.http_client import HTTPConnection
-from itertools import product
 import time
 
 try:
@@ -21,7 +20,7 @@ from azure.core.rest import (
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.pipeline import AsyncPipeline
 from azure.core.exceptions import HttpResponseError
-from utils import HTTP_REQUESTS
+from utils import HTTP_REQUESTS, pipeline_transport_and_rest_product
 
 import pytest
 
@@ -457,7 +456,7 @@ async def test_multipart_send_with_combination_changeset_middle(http_request):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("http_request,mock_response", product(HTTP_REQUESTS, MOCK_RESPONSES))
+@pytest.mark.parametrize("http_request,mock_response", pipeline_transport_and_rest_product(HTTP_REQUESTS, MOCK_RESPONSES))
 async def test_multipart_receive(http_request, mock_response):
 
     class ResponsePolicy(object):
@@ -531,7 +530,7 @@ async def test_multipart_receive(http_request, mock_response):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("http_request,mock_response", product(HTTP_REQUESTS, MOCK_RESPONSES))
+@pytest.mark.parametrize("http_request,mock_response", pipeline_transport_and_rest_product(HTTP_REQUESTS, MOCK_RESPONSES))
 async def test_multipart_receive_with_one_changeset(http_request, mock_response):
     changeset = http_request("", "")
     changeset.set_multipart_mixed(
@@ -586,7 +585,7 @@ async def test_multipart_receive_with_one_changeset(http_request, mock_response)
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("http_request,mock_response", product(HTTP_REQUESTS, MOCK_RESPONSES))
+@pytest.mark.parametrize("http_request,mock_response", pipeline_transport_and_rest_product(HTTP_REQUESTS, MOCK_RESPONSES))
 async def test_multipart_receive_with_multiple_changesets(http_request, mock_response):
 
     changeset1 = http_request("", "")
@@ -673,7 +672,7 @@ async def test_multipart_receive_with_multiple_changesets(http_request, mock_res
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("http_request,mock_response", product(HTTP_REQUESTS, MOCK_RESPONSES))
+@pytest.mark.parametrize("http_request,mock_response", pipeline_transport_and_rest_product(HTTP_REQUESTS, MOCK_RESPONSES))
 async def test_multipart_receive_with_combination_changeset_first(http_request, mock_response):
 
     changeset = http_request("", "")
@@ -752,7 +751,7 @@ def test_raise_for_status_good_response(mock_response):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("http_request,mock_response", product(HTTP_REQUESTS, MOCK_RESPONSES))
+@pytest.mark.parametrize("http_request,mock_response", pipeline_transport_and_rest_product(HTTP_REQUESTS, MOCK_RESPONSES))
 async def test_multipart_receive_with_combination_changeset_middle(http_request, mock_response):
 
     changeset = http_request("", "")
@@ -819,7 +818,7 @@ async def test_multipart_receive_with_combination_changeset_middle(http_request,
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("http_request,mock_response", product(HTTP_REQUESTS, MOCK_RESPONSES))
+@pytest.mark.parametrize("http_request,mock_response", pipeline_transport_and_rest_product(HTTP_REQUESTS, MOCK_RESPONSES))
 async def test_multipart_receive_with_combination_changeset_last(http_request, mock_response):
 
     changeset = http_request("", "")
@@ -886,7 +885,7 @@ async def test_multipart_receive_with_combination_changeset_last(http_request, m
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("http_request,mock_response", product(HTTP_REQUESTS, MOCK_RESPONSES))
+@pytest.mark.parametrize("http_request,mock_response", pipeline_transport_and_rest_product(HTTP_REQUESTS, MOCK_RESPONSES))
 async def test_multipart_receive_with_bom(http_request, mock_response):
 
     req0 = http_request("DELETE", "/container0/blob0")
@@ -926,7 +925,7 @@ async def test_multipart_receive_with_bom(http_request, mock_response):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("http_request,mock_response", product(HTTP_REQUESTS, MOCK_RESPONSES))
+@pytest.mark.parametrize("http_request,mock_response", pipeline_transport_and_rest_product(HTTP_REQUESTS, MOCK_RESPONSES))
 async def test_recursive_multipart_receive(http_request, mock_response):
     req0 = http_request("DELETE", "/container0/blob0")
     internal_req0 = http_request("DELETE", "/container0/blob0")

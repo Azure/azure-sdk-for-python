@@ -10,12 +10,11 @@ from azure.core.pipeline.transport import (
 from azure.core.pipeline import AsyncPipeline, PipelineResponse
 from azure.core.pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
 from unittest import mock
-from itertools import product
-from utils import HTTP_REQUESTS, HTTP_RESPONSES, ASYNCIO_REQUESTS_TRANSPORT_RESPONSES, create_http_response
+from utils import HTTP_REQUESTS, HTTP_RESPONSES, ASYNCIO_REQUESTS_TRANSPORT_RESPONSES, create_http_response, pipeline_transport_and_rest_product
 import pytest
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("http_request,http_response", product(HTTP_REQUESTS, HTTP_RESPONSES))
+@pytest.mark.parametrize("http_request,http_response", pipeline_transport_and_rest_product(HTTP_REQUESTS, HTTP_RESPONSES))
 async def test_connection_error_response(http_request, http_response):
     class MockSession(object):
         def __init__(self):

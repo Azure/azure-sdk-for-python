@@ -9,7 +9,6 @@ except ImportError:
     from cStringIO import StringIO as BytesIO
 import sys
 from unittest.mock import Mock
-from itertools import product
 import pytest
 from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import (
@@ -29,7 +28,7 @@ import tempfile
 import os
 import time
 import asyncio
-from utils import create_http_response, HTTP_REQUESTS, HTTP_RESPONSES
+from utils import create_http_response, HTTP_REQUESTS, HTTP_RESPONSES, pipeline_transport_and_rest_product
 
 RETRY_AFTER_INPUTS = ['0', '800', '1000', '1200']
 
@@ -59,7 +58,7 @@ def test_retry_types():
     backoff_time = retry_policy.get_backoff_time(settings)
     assert backoff_time == 4
 
-@pytest.mark.parametrize("retry_after_input,http_request,http_response", product(RETRY_AFTER_INPUTS, HTTP_REQUESTS, HTTP_RESPONSES))
+@pytest.mark.parametrize("retry_after_input,http_request,http_response", pipeline_transport_and_rest_product(RETRY_AFTER_INPUTS, HTTP_REQUESTS, HTTP_RESPONSES))
 def test_retry_after(retry_after_input, http_request, http_response):
     retry_policy = AsyncRetryPolicy()
     request = http_request("GET", "https://bing.com")
@@ -77,7 +76,7 @@ def test_retry_after(retry_after_input, http_request, http_response):
     retry_after = retry_policy.get_retry_after(pipeline_response)
     assert retry_after == float(retry_after_input)
 
-@pytest.mark.parametrize("retry_after_input,http_request,http_response", product(RETRY_AFTER_INPUTS, HTTP_REQUESTS, HTTP_RESPONSES))
+@pytest.mark.parametrize("retry_after_input,http_request,http_response", pipeline_transport_and_rest_product(RETRY_AFTER_INPUTS, HTTP_REQUESTS, HTTP_RESPONSES))
 def test_x_ms_retry_after(retry_after_input, http_request, http_response):
     retry_policy = AsyncRetryPolicy()
     request = http_request("GET", "https://bing.com")
@@ -96,7 +95,7 @@ def test_x_ms_retry_after(retry_after_input, http_request, http_response):
     assert retry_after == float(retry_after_input)
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("http_request,http_response", product(HTTP_REQUESTS, HTTP_RESPONSES))
+@pytest.mark.parametrize("http_request,http_response", pipeline_transport_and_rest_product(HTTP_REQUESTS, HTTP_RESPONSES))
 async def test_retry_on_429(http_request, http_response):
     class MockTransport(AsyncHttpTransport):
         def __init__(self):
@@ -122,7 +121,7 @@ async def test_retry_on_429(http_request, http_response):
     assert transport._count == 2
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("http_request,http_response", product(HTTP_REQUESTS, HTTP_RESPONSES))
+@pytest.mark.parametrize("http_request,http_response", pipeline_transport_and_rest_product(HTTP_REQUESTS, HTTP_RESPONSES))
 async def test_no_retry_on_201(http_request, http_response):
     class MockTransport(AsyncHttpTransport):
         def __init__(self):
@@ -150,7 +149,7 @@ async def test_no_retry_on_201(http_request, http_response):
     assert transport._count == 1
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("http_request,http_response", product(HTTP_REQUESTS, HTTP_RESPONSES))
+@pytest.mark.parametrize("http_request,http_response", pipeline_transport_and_rest_product(HTTP_REQUESTS, HTTP_RESPONSES))
 async def test_retry_seekable_stream(http_request, http_response):
     class MockTransport(AsyncHttpTransport):
         def __init__(self):
@@ -181,7 +180,7 @@ async def test_retry_seekable_stream(http_request, http_response):
     await pipeline.run(http_request)
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("http_request,http_response", product(HTTP_REQUESTS, HTTP_RESPONSES))
+@pytest.mark.parametrize("http_request,http_response", pipeline_transport_and_rest_product(HTTP_REQUESTS, HTTP_RESPONSES))
 async def test_retry_seekable_file(http_request, http_response):
     class MockTransport(AsyncHttpTransport):
         def __init__(self):
@@ -250,7 +249,7 @@ async def test_retry_timeout(http_request):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("http_request,http_response", product(HTTP_REQUESTS, HTTP_RESPONSES))
+@pytest.mark.parametrize("http_request,http_response", pipeline_transport_and_rest_product(HTTP_REQUESTS, HTTP_RESPONSES))
 async def test_timeout_defaults(http_request, http_response):
     """When "timeout" is not set, the policy should not override the transport's timeout configuration"""
 
@@ -274,7 +273,7 @@ async def test_timeout_defaults(http_request, http_response):
 
 TRANSPORT_AND_EXPECTED_TIMEOUT_ERRORS = [(ServiceRequestError, ServiceRequestTimeoutError), (ServiceResponseError, ServiceResponseTimeoutError)]
 @pytest.mark.asyncio
-@pytest.mark.parametrize("transport_and_expected_timeout_errors,http_request", product(TRANSPORT_AND_EXPECTED_TIMEOUT_ERRORS, HTTP_REQUESTS))
+@pytest.mark.parametrize("transport_and_expected_timeout_errors,http_request", pipeline_transport_and_rest_product(TRANSPORT_AND_EXPECTED_TIMEOUT_ERRORS, HTTP_REQUESTS))
 async def test_does_not_sleep_after_timeout(transport_and_expected_timeout_errors, http_request):
     # With default settings policy will sleep twice before exhausting its retries: 1.6s, 3.2s.
     # It should not sleep the second time when given timeout=1
