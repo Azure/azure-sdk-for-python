@@ -1,5 +1,12 @@
 # Release History
 
+## 3.0.0 (2021-07-27)
+
+**Breaking changes**
+
+  - Parameter dataset of model QueryDefinition is now required
+  - Parameter dataset of model ForecastDefinition is now required
+
 ## 2.0.0 (2021-06-08)
 
 **Features**

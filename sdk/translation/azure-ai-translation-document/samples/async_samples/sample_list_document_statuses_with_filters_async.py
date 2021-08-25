@@ -50,13 +50,13 @@ async def sample_list_document_statuses_with_filters_async():
     '''
     start = datetime(2021, 4, 12)
     end = datetime(2021, 4, 14)
-    statuses = ["Cancelled", "Failed"]
+    statuses = ["Canceled", "Failed"]
     order_by = ["created_on desc"]
     results_per_page = 2
     skip = 3
 
     async with client:
-        filtered_docs = client.list_all_document_statuses(
+        filtered_docs = client.list_document_statuses(
             translation_id,
             # filters
             statuses=statuses,

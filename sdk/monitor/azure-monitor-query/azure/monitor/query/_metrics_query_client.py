@@ -8,6 +8,8 @@
 # pylint: disable=anomalous-backslash-in-string
 
 from typing import TYPE_CHECKING, Any, Optional
+from msrest.serialization import Serializer
+from azure.core.tracing.decorator import distributed_trace
 
 from ._generated._monitor_query_client import (
     MonitorQueryClient,
@@ -53,12 +55,10 @@ class MetricsQueryClient(object):
         self._namespace_op = self._client.metric_namespaces
         self._definitions_op = self._client.metric_definitions
 
+    @distributed_trace
     def query(self, resource_uri, metric_names, **kwargs):
         # type: (str, list, Optional[timedelta], Any) -> MetricsResult
         """Lists the metric values for a resource.
-
-        **Note**: Although the start_time, end_time, duration are optional parameters, it is highly
-        recommended to specify the timespan. If not, the entire dataset is queried.
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
@@ -70,8 +70,8 @@ class MetricsQueryClient(object):
          or tuple[~datetime.datetime, ~datetime.datetime]
         :keyword granularity: The granularity (i.e. timegrain) of the query.
         :paramtype granularity: ~datetime.timedelta
-        :keyword aggregations: The list of aggregation types to retrieve. Use `azure.monitor.query.AggregationType`
-         enum to get each aggregation type.
+        :keyword aggregations: The list of aggregation types to retrieve. Use
+         `azure.monitor.query.MetricAggregationType` enum to get each aggregation type.
         :paramtype aggregations: list[str]
         :keyword max_results: The maximum number of records to retrieve.
          Valid only if $filter is specified.
@@ -91,9 +91,6 @@ class MetricsQueryClient(object):
          ‘c1’**\ :code:`<br>`- Return all time series where A = a1:code:`<br>`\ **$filter=A eq ‘a1’ and
          B eq ‘\ *’ and C eq ‘*\ ’**.
         :paramtype filter: str
-        :keyword result_type: Reduces the set of data collected. The syntax allowed depends on the
-         operation. See the operation's description for details.
-        :paramtype result_type: str or ~monitor_query_client.models.ResultType
         :keyword metric_namespace: Metric namespace to query metric definitions for.
         :paramtype metric_namespace: str
         :return: Response, or the result of cls(response)
@@ -122,21 +119,26 @@ class MetricsQueryClient(object):
         generated = self._metrics_op.list(resource_uri, connection_verify=False, **kwargs)
         return MetricsResult._from_generated(generated) # pylint: disable=protected-access
 
+    @distributed_trace
     def list_metric_namespaces(self, resource_uri, **kwargs):
         # type: (str, Any) -> ItemPaged[MetricNamespace]
         """Lists the metric namespaces for the resource.
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
-        :keyword start_time: The ISO 8601 conform Date start time from which to query for metric
-         namespaces.
-        :paramtype start_time: str
-        :return: An iterator like instance of either MetricNamespaceCollection or the result of cls(response)
+        :keyword start_time: The start time from which to query for metric
+         namespaces. This should be provided as a datetime object.
+        :paramtype start_time: ~datetime.datetime
+        :return: An iterator like instance of either MetricNamespace or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricNamespace]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        start_time = kwargs.pop('start_time', None)
+        if start_time:
+            start_time = Serializer.serialize_iso(start_time)
         return self._namespace_op.list(
             resource_uri,
+            start_time,
             cls=kwargs.pop(
                 "cls",
                 lambda objs: [
@@ -145,18 +147,20 @@ class MetricsQueryClient(object):
             ),
             **kwargs)
 
+    @distributed_trace
     def list_metric_definitions(self, resource_uri, metric_namespace=None, **kwargs):
         # type: (str, str, Any) -> ItemPaged[MetricDefinition]
         """Lists the metric definitions for the resource.
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
-        :param metric_namespace: Metric namespace to query metric definitions for.
-        :type metric_namespace: str
+        :keyword namespace: Metric namespace to query metric definitions for.
+        :paramtype namespace: str
         :return: An iterator like instance of either MetricDefinitionCollection or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricDefinition]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        metric_namespace = kwargs.pop('namespace', None)
         return self._definitions_op.list(
             resource_uri,
             metric_namespace,
