@@ -16,13 +16,13 @@ interactions:
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-update-async24591503?api-version=2020-09-01-preview
   response:
     body:
-      string: '{"id":"6f0c81127bb24cfa96046f3cd8b73a4c"}'
+      string: '{"id":"6a7ca13272984bd6aa95029cc4c08196"}'
     headers:
       content-type: application/json
-      date: Wed, 25 Aug 2021 07:34:54 GMT
+      date: Wed, 25 Aug 2021 17:20:47 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update-async24591503/versions/1?api-version=2020-09-01-preview
-      schema-id: 6f0c81127bb24cfa96046f3cd8b73a4c
-      schema-id-location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/6f0c81127bb24cfa96046f3cd8b73a4c?api-version=2020-09-01-preview
+      schema-id: 6a7ca13272984bd6aa95029cc4c08196
+      schema-id-location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/6a7ca13272984bd6aa95029cc4c08196?api-version=2020-09-01-preview
       schema-version: '1'
       schema-versions-location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update-async24591503/versions?api-version=2020-09-01-preview
       serialization-type: Avro
@@ -50,13 +50,13 @@ interactions:
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-update-async24591503?api-version=2020-09-01-preview
   response:
     body:
-      string: '{"id":"eb209711c7ed4320af79e6ddad681dc3"}'
+      string: '{"id":"6045874b118f46b9932ed4a2b3a288b3"}'
     headers:
       content-type: application/json
-      date: Wed, 25 Aug 2021 07:34:54 GMT
+      date: Wed, 25 Aug 2021 17:20:47 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update-async24591503/versions/2?api-version=2020-09-01-preview
-      schema-id: eb209711c7ed4320af79e6ddad681dc3
-      schema-id-location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/eb209711c7ed4320af79e6ddad681dc3?api-version=2020-09-01-preview
+      schema-id: 6045874b118f46b9932ed4a2b3a288b3
+      schema-id-location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/6045874b118f46b9932ed4a2b3a288b3?api-version=2020-09-01-preview
       schema-version: '2'
       schema-versions-location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update-async24591503/versions?api-version=2020-09-01-preview
       serialization-type: Avro
@@ -75,16 +75,16 @@ interactions:
       User-Agent:
       - azsdk-python-azureschemaregistry/1.0.0b2 Python/3.7.10 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_resource.servicebus.windows.net/$schemagroups/getSchemaById/eb209711c7ed4320af79e6ddad681dc3?api-version=2020-09-01-preview
+    uri: https://fake_resource.servicebus.windows.net/$schemagroups/getSchemaById/6045874b118f46b9932ed4a2b3a288b3?api-version=2020-09-01-preview
   response:
     body:
       string: '{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_food","type":["string","null"]}]}'
     headers:
       content-type: application/json
-      date: Wed, 25 Aug 2021 07:34:55 GMT
+      date: Wed, 25 Aug 2021 17:20:47 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update-async24591503/versions/2?api-version=2020-09-01-preview
-      schema-id: eb209711c7ed4320af79e6ddad681dc3
-      schema-id-location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/eb209711c7ed4320af79e6ddad681dc3?api-version=2020-09-01-preview
+      schema-id: 6045874b118f46b9932ed4a2b3a288b3
+      schema-id-location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/6045874b118f46b9932ed4a2b3a288b3?api-version=2020-09-01-preview
       schema-version: '2'
       schema-versions-location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update-async24591503/versions?api-version=2020-09-01-preview
       serialization-type: Avro
@@ -94,7 +94,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://sr-playground.servicebus.windows.net/$schemagroups/getSchemaById/eb209711c7ed4320af79e6ddad681dc3?api-version=2020-09-01-preview
+    url: https://sr-playground.servicebus.windows.net/$schemagroups/getSchemaById/6045874b118f46b9932ed4a2b3a288b3?api-version=2020-09-01-preview
 - request:
     body: null
     headers:
@@ -103,16 +103,16 @@ interactions:
       User-Agent:
       - azsdk-python-azureschemaregistry/1.0.0b2 Python/3.7.10 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_resource.servicebus.windows.net/$schemagroups/getSchemaById/eb209711c7ed4320af79e6ddad681dc3?api-version=2020-09-01-preview
+    uri: https://fake_resource.servicebus.windows.net/$schemagroups/getSchemaById/6045874b118f46b9932ed4a2b3a288b3?api-version=2020-09-01-preview
   response:
     body:
       string: '{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_food","type":["string","null"]}]}'
     headers:
       content-type: application/json
-      date: Wed, 25 Aug 2021 07:34:55 GMT
+      date: Wed, 25 Aug 2021 17:20:48 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update-async24591503/versions/2?api-version=2020-09-01-preview
-      schema-id: eb209711c7ed4320af79e6ddad681dc3
-      schema-id-location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/eb209711c7ed4320af79e6ddad681dc3?api-version=2020-09-01-preview
+      schema-id: 6045874b118f46b9932ed4a2b3a288b3
+      schema-id-location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/6045874b118f46b9932ed4a2b3a288b3?api-version=2020-09-01-preview
       schema-version: '2'
       schema-versions-location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update-async24591503/versions?api-version=2020-09-01-preview
       serialization-type: Avro
@@ -122,7 +122,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://sr-playground.servicebus.windows.net/$schemagroups/getSchemaById/eb209711c7ed4320af79e6ddad681dc3?api-version=2020-09-01-preview
+    url: https://sr-playground.servicebus.windows.net/$schemagroups/getSchemaById/6045874b118f46b9932ed4a2b3a288b3?api-version=2020-09-01-preview
 - request:
     body: '{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_food","type":["string","null"]}]}'
     headers:
@@ -140,13 +140,13 @@ interactions:
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-update-async24591503?api-version=2020-09-01-preview
   response:
     body:
-      string: '{"id":"eb209711c7ed4320af79e6ddad681dc3"}'
+      string: '{"id":"6045874b118f46b9932ed4a2b3a288b3"}'
     headers:
       content-type: application/json
-      date: Wed, 25 Aug 2021 07:34:55 GMT
+      date: Wed, 25 Aug 2021 17:20:48 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update-async24591503/versions/2?api-version=2020-09-01-preview
-      schema-id: eb209711c7ed4320af79e6ddad681dc3
-      schema-id-location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/eb209711c7ed4320af79e6ddad681dc3?api-version=2020-09-01-preview
+      schema-id: 6045874b118f46b9932ed4a2b3a288b3
+      schema-id-location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/6045874b118f46b9932ed4a2b3a288b3?api-version=2020-09-01-preview
       schema-version: '2'
       schema-versions-location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update-async24591503/versions?api-version=2020-09-01-preview
       serialization-type: Avro

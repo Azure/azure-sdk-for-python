@@ -40,27 +40,7 @@ class SchemaRegistryTests(AzureTestCase):
     def test_schema_basic(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
         client = self.create_client(schemaregistry_endpoint)
         schema_name = self.get_resource_name('test-schema-basic')
-
-        schema_json = {
-            "namespace": "example.avro",
-            "type": "record",
-            "name": "User",
-            "fields": [
-                {
-                    "name": "name",
-                    "type": "string"
-                },
-                {
-                    "name": "favorite_number",
-                    "type": ["int", "null"]},
-                {
-                    "name": "favorite_color",
-                    "type": ["string", "null"]
-                }
-            ]
-        }
-
-        schema_str = json.dumps(schema_json, separators=(',', ':'))
+        schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         serialization_type = "Avro"
         assert len(client._id_to_schema) == 0
         assert len(client._description_to_properties) == 0
@@ -110,28 +90,7 @@ class SchemaRegistryTests(AzureTestCase):
     def test_schema_update(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
         client = self.create_client(schemaregistry_endpoint)
         schema_name = self.get_resource_name('test-schema-update')
-
-        schema_json = {
-            "namespace": "example.avro",
-            "type": "record",
-            "name": "User",
-            "fields": [
-                {
-                    "name": "name",
-                    "type": "string"
-                },
-                {
-                    "name": "favorite_number",
-                    "type": ["int", "null"]},
-                {
-                    "name": "favorite_color",
-                    "type": ["string", "null"]
-                }
-            ]
-        }
-
-        schema_str = json.dumps(schema_json, separators=(',', ':'))
-
+        schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         serialization_type = "Avro"
         schema_properties = client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
 
@@ -141,27 +100,7 @@ class SchemaRegistryTests(AzureTestCase):
         assert schema_properties.version != 0
         assert schema_properties.serialization_type == "Avro"
 
-        schema_json_new = {
-            "namespace": "example.avro",
-            "type": "record",
-            "name": "User",
-            "fields": [
-                {
-                    "name": "name",
-                    "type": "string"
-                },
-                {
-                    "name": "favorite_number",
-                    "type": ["int", "null"]},
-                {
-                    "name": "favorite_food",
-                    "type": ["string", "null"]
-                }
-            ]
-        }
-
-        schema_str_new = json.dumps(schema_json_new, separators=(',', ':'))
-
+        schema_str_new = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_food","type":["string","null"]}]}"""
         new_schema_properties = client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str_new)
 
         assert new_schema_properties.schema_id is not None
@@ -203,28 +142,7 @@ class SchemaRegistryTests(AzureTestCase):
     def test_schema_same_twice(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
         client = self.create_client(schemaregistry_endpoint)
         schema_name = self.get_resource_name('test-schema-twice')
-
-        schema_json = {
-            "namespace": "example.avro",
-            "type": "record",
-            "name": "User",
-            "fields": [
-                {
-                    "name": "name",
-                    "type": "string"
-                },
-                {
-                    "name": "age",
-                    "type": ["int", "null"]},
-                {
-                    "name": "city",
-                    "type": ["string", "null"]
-                }
-            ]
-        }
-
-        schema_str = json.dumps(schema_json, separators=(',', ':'))
-
+        schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         serialization_type = "Avro"
         schema_properties = client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
         schema_cache_length = len(client._id_to_schema)
@@ -241,28 +159,7 @@ class SchemaRegistryTests(AzureTestCase):
         credential = ClientSecretCredential(tenant_id="fake", client_id="fake", client_secret="fake")
         client = SchemaRegistryClient(endpoint=schemaregistry_endpoint, credential=credential)
         schema_name = self.get_resource_name('test-schema-negative')
-
-        schema_json = {
-            "namespace": "example.avro",
-            "type": "record",
-            "name": "User",
-            "fields": [
-                {
-                    "name": "name",
-                    "type": "string"
-                },
-                {
-                    "name": "age",
-                    "type": ["int", "null"]},
-                {
-                    "name": "city",
-                    "type": ["string", "null"]
-                }
-            ]
-        }
-
-        schema_str = json.dumps(schema_json, separators=(',', ':'))
-
+        schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         serialization_type = "Avro"
         with pytest.raises(ClientAuthenticationError):
             client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
@@ -271,28 +168,7 @@ class SchemaRegistryTests(AzureTestCase):
     def test_schema_negative_wrong_endpoint(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
         client = self.create_client("nonexist.servicebus.windows.net")
         schema_name = self.get_resource_name('test-schema-nonexist')
-
-        schema_json = {
-            "namespace": "example.avro",
-            "type": "record",
-            "name": "User",
-            "fields": [
-                {
-                    "name": "name",
-                    "type": "string"
-                },
-                {
-                    "name": "age",
-                    "type": ["int", "null"]},
-                {
-                    "name": "city",
-                    "type": ["string", "null"]
-                }
-            ]
-        }
-
-        schema_str = json.dumps(schema_json, separators=(',', ':'))
-
+        schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         serialization_type = "Avro"
         with pytest.raises(ServiceRequestError):
             client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)

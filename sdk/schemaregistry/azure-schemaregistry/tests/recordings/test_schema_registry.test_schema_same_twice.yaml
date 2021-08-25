@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"age","type":["int","null"]},{"name":"city","type":["string","null"]}]}'
+    body: '{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}'
     headers:
       Accept:
       - application/json
@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '179'
+      - '201'
       Content-Type:
       - application/json
       Serialization-Type:
@@ -20,18 +20,18 @@ interactions:
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7?api-version=2020-09-01-preview
   response:
     body:
-      string: '{"id":"040228b8d73d4de68af2f7f7f973a55b"}'
+      string: '{"id":"bcdf7c2c36584a2f8ce5f8b6cd8ba9e8"}'
     headers:
       content-type:
       - application/json
       date:
-      - Wed, 25 Aug 2021 07:34:38 GMT
+      - Wed, 25 Aug 2021 17:20:33 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7/versions/1?api-version=2020-09-01-preview
       schema-id:
-      - 040228b8d73d4de68af2f7f7f973a55b
+      - bcdf7c2c36584a2f8ce5f8b6cd8ba9e8
       schema-id-location:
-      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/040228b8d73d4de68af2f7f7f973a55b?api-version=2020-09-01-preview
+      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/bcdf7c2c36584a2f8ce5f8b6cd8ba9e8?api-version=2020-09-01-preview
       schema-version:
       - '1'
       schema-versions-location:
@@ -48,7 +48,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"age","type":["int","null"]},{"name":"city","type":["string","null"]}]}'
+    body: '{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}'
     headers:
       Accept:
       - application/json
@@ -57,7 +57,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '179'
+      - '201'
       Content-Type:
       - application/json
       Serialization-Type:
@@ -68,18 +68,18 @@ interactions:
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7?api-version=2020-09-01-preview
   response:
     body:
-      string: '{"id":"040228b8d73d4de68af2f7f7f973a55b"}'
+      string: '{"id":"bcdf7c2c36584a2f8ce5f8b6cd8ba9e8"}'
     headers:
       content-type:
       - application/json
       date:
-      - Wed, 25 Aug 2021 07:34:38 GMT
+      - Wed, 25 Aug 2021 17:20:33 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7/versions/1?api-version=2020-09-01-preview
       schema-id:
-      - 040228b8d73d4de68af2f7f7f973a55b
+      - bcdf7c2c36584a2f8ce5f8b6cd8ba9e8
       schema-id-location:
-      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/040228b8d73d4de68af2f7f7f973a55b?api-version=2020-09-01-preview
+      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/bcdf7c2c36584a2f8ce5f8b6cd8ba9e8?api-version=2020-09-01-preview
       schema-version:
       - '1'
       schema-versions-location:
