@@ -45,10 +45,11 @@ def get_internal_response(response):
     except AttributeError:
         return response.internal_response
 
-def read_in_response(response):
+def read_in_response(response, is_stream_response):
     try:
-        response.read()
-        response.close()
+        if not is_stream_response:
+            response.read()
+            response.close()
     except Exception as exc:
         response.close()
         raise exc

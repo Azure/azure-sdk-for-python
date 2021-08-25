@@ -311,7 +311,7 @@ class _HttpResponseBackcompatMixinBase(object):
             self, http_response_type, RestHttpClientTransportResponse
         )
 
-    def stream_download(self, pipeline, **kwargs):  # pylint: disable=unused-argument
+    def _stream_download(self, pipeline, **kwargs):  # pylint: disable=unused-argument
         """DEPRECATED: Generator for streaming request body data.
 
         This is deprecated and will be removed in a later release.

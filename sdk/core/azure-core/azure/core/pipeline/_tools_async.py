@@ -23,6 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from typing import Optional
 
 async def await_result(func, *args, **kwargs):
     """If func returns an awaitable, await it."""
@@ -57,10 +58,11 @@ def _get_response_type(pipeline_transport_response):
     from ..rest import AsyncHttpResponse
     return AsyncHttpResponse
 
-async def read_in_response(response) -> None:
+async def read_in_response(response, is_stream_response: Optional[bool]) -> None:
     try:
-        await response.read()
-        await response.close()
+        if not is_stream_response:
+            await response.read()
+            await response.close()
     except Exception as exc:
         await response.close()
         raise exc

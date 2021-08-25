@@ -336,8 +336,7 @@ class RequestsTransport(HttpTransport):
             internal_response=response,
         )
         retval._connection_data_block_size = self.connection_config.data_block_size  # pylint: disable=protected-access
-        if not kwargs.get("stream"):
-            _read_in_response(retval)
+        _read_in_response(retval, kwargs.get("stream"))
         return retval
 
 ##################### REST #####################

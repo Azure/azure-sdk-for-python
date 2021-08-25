@@ -291,8 +291,7 @@ class AioHttpTransport(AsyncHttpTransport):
             response = RestAioHttpTransportResponse(request=request, internal_response=result)
             response._connection_data_block_size = self.connection_config.data_block_size  # pylint: disable=protected-access
             response._decompress = not auto_decompress  # pylint: disable=protected-access
-            if not stream_response:
-                await _read_in_response(response)
+            await _read_in_response(response, stream_response)
 
         except aiohttp.client_exceptions.ClientResponseError as err:
             raise ServiceResponseError(err, error=err) from err
