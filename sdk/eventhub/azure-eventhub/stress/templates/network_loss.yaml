@@ -1,14 +1,12 @@
-{{- range (.Values.scenarios) }}
----
 apiVersion: chaos-mesh.org/v1alpha1
 kind: NetworkChaos
 metadata:
-  name: '{{ lower . }}-{{ $.Release.Name }}-{{ $.Release.Revision }}'
+  name: '{{ $.Release.Name }}-{{ $.Release.Revision }}'
   namespace: {{ $.Release.Namespace }}
   annotations:
     experiment.chaos-mesh.org/pause: 'true'
   labels:
-    scenario: '{{ . }}'
+    scenario: 'stress'
     release: '{{ $.Release.Name }}'
     revision: '{{ $.Release.Revision }}'
 spec:
@@ -18,7 +16,7 @@ spec:
   action: loss
   direction: to
   externalTargets:
-    - 'eh-{{ .Scenario }}-{{ .Release.Name }}-{{ .Release.Revision}}.servicebus.windows.net'
+    - 'eh-stress-{{ .Release.Name }}-{{ .Release.Revision}}.servicebus.windows.net'
   mode: one
   selector:
     labelSelectors:
@@ -31,4 +29,3 @@ spec:
   loss:
     loss: '100'
     correlation: '100'
-{{- end }}
