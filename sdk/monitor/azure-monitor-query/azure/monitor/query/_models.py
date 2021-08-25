@@ -12,6 +12,7 @@ from typing import Any, Optional, List
 from ._helpers import construct_iso8601, process_row
 from ._generated.models import (
     BatchQueryRequest as InternalLogQueryRequest,
+    BatchQueryResponse
 )
 
 
@@ -182,7 +183,7 @@ class LogsQueryResult(object):
         if not generated:
             return cls()
         tables = None
-        if hasattr(generated, 'body'):
+        if isinstance(generated, BatchQueryResponse):
             generated = generated.body
         if generated.tables is not None:
             tables = [

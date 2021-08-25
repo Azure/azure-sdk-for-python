@@ -45,9 +45,9 @@ def process_error(exception):
     raise_error = HttpResponseError
     raise raise_error(message=exception.message, response=exception.response)
 
-def order_results(request_order, mapping, type):
+def order_results(request_order, mapping, obj):
     ordered = [mapping[id] for id in request_order]
-    return [type._from_generated(rsp) for rsp in ordered] # pylint: disable=protected-access
+    return [obj._from_generated(rsp) for rsp in ordered] # pylint: disable=protected-access
 
 def construct_iso8601(timespan=None):
     if not timespan:
