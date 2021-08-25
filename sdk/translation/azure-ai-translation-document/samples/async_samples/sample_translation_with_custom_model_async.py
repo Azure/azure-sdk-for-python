@@ -62,7 +62,7 @@ async def sample_translation_with_custom_model_async():
         print("{} failed".format(result.documents_failed_count))
         print("{} succeeded".format(result.documents_succeeded_count))
 
-        doc_results = client.list_all_document_statuses(result.id)
+        doc_results = client.list_document_statuses(result.id)
         async for document in doc_results:
             print("Document ID: {}".format(document.id))
             print("Document status: {}".format(document.status))
