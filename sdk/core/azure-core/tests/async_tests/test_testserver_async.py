@@ -24,12 +24,14 @@
 #
 # --------------------------------------------------------------------------
 import pytest
-from azure.core.pipeline.transport import HttpRequest, RequestsTransport
+from azure.core.pipeline.transport import HttpRequest, AioHttpTransport
 """This file does a simple call to the testserver to make sure we can use the testserver"""
 
-def test_smoke(port):
+@pytest.mark.asyncio
+async def test_smoke(port):
     request = HttpRequest(method="GET", url="http://localhost:{}/basic/string".format(port))
-    with RequestsTransport() as sender:
-        response = sender.send(request)
+    async with AioHttpTransport() as sender:
+        response = await sender.send(request)
         response.raise_for_status()
+        await response.load_body()
         assert response.text() == "Hello, world!"

@@ -119,12 +119,12 @@ def test_url_join(http_request):
 
 CLIENT_TRANSPORT_RESPONSES = [PipelineTransportHttpClientTransportResponse, RestHttpClientTransportResponse]
 @pytest.mark.parametrize("http_request,http_response", pipeline_transport_and_rest_product(HTTP_REQUESTS, CLIENT_TRANSPORT_RESPONSES))
-def test_http_client_response(http_request, http_response):
+def test_http_client_response(port, http_request, http_response):
     # Create a core request
-    request = http_request("GET", "www.httpbin.org")
+    request = http_request("GET", "http://localhost:{}".format(port))
 
     # Fake a transport based on http.client
-    conn = HTTPConnection("www.httpbin.org")
+    conn = HTTPConnection("localhost", port)
     conn.request("GET", "/get")
     r1 = conn.getresponse()
 
@@ -1152,10 +1152,10 @@ def test_close_unopened_transport(http_request):
     transport.close()
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_timeout(caplog, http_request):
+def test_timeout(caplog, port, http_request):
     transport = RequestsTransport()
 
-    request = http_request("GET", "https://www.bing.com")
+    request = http_request("GET", "http://localhost:{}/basic/string".format(port))
 
     with caplog.at_level(logging.WARNING, logger="azure.core.pipeline.transport"):
         with Pipeline(transport) as pipeline:
@@ -1164,10 +1164,10 @@ def test_timeout(caplog, http_request):
     assert "Tuple timeout setting is deprecated" not in caplog.text
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_tuple_timeout(caplog, http_request):
+def test_tuple_timeout(caplog, port, http_request):
     transport = RequestsTransport()
 
-    request = http_request("GET", "https://www.bing.com")
+    request = http_request("GET", "http://localhost:{}/basic/string".format(port))
 
     with caplog.at_level(logging.WARNING, logger="azure.core.pipeline.transport"):
         with Pipeline(transport) as pipeline:
@@ -1176,14 +1176,15 @@ def test_tuple_timeout(caplog, http_request):
     assert "Tuple timeout setting is deprecated" in caplog.text
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_conflict_timeout(caplog, http_request):
+def test_conflict_timeout(caplog, port, http_request):
     transport = RequestsTransport()
 
-    request = http_request("GET", "https://www.bing.com")
+    request = http_request("GET", "http://localhost:{}/basic/string".format(port))
 
     with pytest.raises(ValueError):
         with Pipeline(transport) as pipeline:
             pipeline.run(request, connection_timeout=(100, 100), read_timeout = 100)
+
 
 @pytest.mark.skipif(sys.version_info < (3, 10), reason="Loop parameter is deprecated since Python 3.10")
 def test_aiohttp_loop():

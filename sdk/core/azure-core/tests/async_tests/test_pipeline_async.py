@@ -88,12 +88,11 @@ async def test_sans_io_exception(http_request):
     with pytest.raises(NotImplementedError):
         await pipeline.run(req)
 
-
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-async def test_basic_aiohttp(http_request):
+async def test_basic_aiohttp(port, http_request):
 
-    request = http_request("GET", "https://bing.com")
+    request = http_request("GET", "http://localhost:{}/basic/string".format(port))
     policies = [
         UserAgentPolicy("myusergant"),
         AsyncRedirectPolicy()
@@ -107,10 +106,10 @@ async def test_basic_aiohttp(http_request):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-async def test_basic_aiohttp_separate_session(http_request):
+async def test_basic_aiohttp_separate_session(port, http_request):
 
     session = aiohttp.ClientSession()
-    request = http_request("GET", "https://bing.com")
+    request = http_request("GET", "http://localhost:{}/basic/string".format(port))
     policies = [
         UserAgentPolicy("myusergant"),
         AsyncRedirectPolicy()
@@ -127,9 +126,9 @@ async def test_basic_aiohttp_separate_session(http_request):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-async def test_basic_async_requests(http_request):
+async def test_basic_async_requests(port, http_request):
 
-    request = http_request("GET", "https://bing.com")
+    request = http_request("GET", "http://localhost:{}/basic/string".format(port))
     policies = [
         UserAgentPolicy("myusergant"),
         AsyncRedirectPolicy()
@@ -190,9 +189,9 @@ def test_pass_in_http_logging_policy():
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-async def test_conf_async_requests(http_request):
+async def test_conf_async_requests(port, http_request):
 
-    request = http_request("GET", "https://bing.com/")
+    request = http_request("GET", "http://localhost:{}/basic/string".format(port))
     policies = [
         UserAgentPolicy("myusergant"),
         AsyncRedirectPolicy()
@@ -203,10 +202,10 @@ async def test_conf_async_requests(http_request):
     assert isinstance(response.http_response.status_code, int)
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_conf_async_trio_requests(http_request):
+def test_conf_async_trio_requests(port, http_request):
 
     async def do():
-        request = http_request("GET", "https://bing.com/")
+        request = http_request("GET", "http://localhost:{}/basic/string".format(port))
         policies = [
             UserAgentPolicy("myusergant"),
             AsyncRedirectPolicy()

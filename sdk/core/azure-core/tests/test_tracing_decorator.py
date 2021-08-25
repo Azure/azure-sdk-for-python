@@ -9,7 +9,6 @@ try:
 except ImportError:
     import mock
 
-import sys
 import time
 
 import pytest
@@ -30,7 +29,7 @@ class MockClient:
     @distributed_trace
     def __init__(self, http_request, policies=None, assert_current_span=False):
         time.sleep(0.001)
-        self.request = http_request("GET", "https://bing.com")
+        self.request = http_request("GET", "http://localhost")
         if policies is None:
             policies = []
         policies.append(mock.Mock(spec=HTTPPolicy, send=self.verify_request))

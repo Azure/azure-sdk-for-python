@@ -168,8 +168,8 @@ class TestExceptions(object):
         assert isinstance(error.error, ODataV4Format)
 
     @pytest.mark.parametrize("requests_transport_response", REQUESTS_TRANSPORT_RESPONSES)
-    def test_httpresponse_error_with_response(self, requests_transport_response):
-        response = requests.get("https://bing.com")
+    def test_httpresponse_error_with_response(self, port, requests_transport_response):
+        response = requests.get("http://localhost:{}/basic/string".format(port))
         http_response = create_http_response(requests_transport_response, None, response)
 
         error = HttpResponseError(response=http_response)

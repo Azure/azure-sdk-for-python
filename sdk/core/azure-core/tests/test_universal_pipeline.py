@@ -45,8 +45,6 @@ from azure.core.pipeline import (
 from azure.core.pipeline.policies import (
     NetworkTraceLoggingPolicy,
     ContentDecodePolicy,
-    UserAgentPolicy,
-    HttpLoggingPolicy,
     RequestHistory,
     RetryPolicy,
     HTTPPolicy,
@@ -101,7 +99,7 @@ def test_request_history(http_request):
             raise ValueError()
 
     body = Non_deep_copiable()
-    request = create_http_request(http_request, 'GET', 'http://127.0.0.1/', {'user-agent': 'test_request_history'})
+    request = create_http_request(http_request, 'GET', 'http://localhost/', {'user-agent': 'test_request_history'})
     request.body = body
     request_history = RequestHistory(request)
     assert request_history.http_request.headers == request.headers
@@ -115,7 +113,7 @@ def test_request_history_type_error(http_request):
             raise TypeError()
 
     body = Non_deep_copiable()
-    request = create_http_request(http_request, 'GET', 'http://127.0.0.1/', {'user-agent': 'test_request_history'})
+    request = create_http_request(http_request, 'GET', 'http://localhost/', {'user-agent': 'test_request_history'})
     request.body = body
     request_history = RequestHistory(request)
     assert request_history.http_request.headers == request.headers
@@ -125,7 +123,7 @@ def test_request_history_type_error(http_request):
 @pytest.mark.parametrize("http_request,http_response", pipeline_transport_and_rest_product(HTTP_REQUESTS, HTTP_RESPONSES))
 @mock.patch('azure.core.pipeline.policies._universal._LOGGER')
 def test_no_log(mock_http_logger, http_request, http_response):
-    universal_request = http_request('GET', 'http://127.0.0.1/')
+    universal_request = http_request('GET', 'http://localhost/')
     request = PipelineRequest(universal_request, PipelineContext(None))
     http_logger = NetworkTraceLoggingPolicy()
     response = PipelineResponse(request, create_http_response(http_response, universal_request, None), request.context)
@@ -208,7 +206,7 @@ def test_retry_without_http_response(http_request):
 def test_raw_deserializer(http_request, http_response, requests_transport_response):
     raw_deserializer = ContentDecodePolicy()
     context = PipelineContext(None, stream=False)
-    universal_request = http_request('GET', 'http://127.0.0.1/')
+    universal_request = http_request('GET', 'http://localhost/')
     request = PipelineRequest(universal_request, context)
 
     def build_response(body, content_type=None):

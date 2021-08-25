@@ -26,22 +26,13 @@
 
 import json
 import requests
-import datetime
-from enum import Enum
-import unittest
 try:
     from io import BytesIO
 except ImportError:
     from cStringIO import StringIO as BytesIO
-
-try:
-    from unittest import mock
-except ImportError:
-    import mock
 import xml.etree.ElementTree as ET
 import sys
 
-import requests
 import pytest
 
 from azure.core.configuration import Configuration
@@ -117,35 +108,6 @@ def test_sans_io_exception(http_request):
         pipeline.run(req)
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_basic_requests(http_request):
-
-    conf = Configuration()
-    request = http_request("GET", "https://bing.com")
-    policies = [
-        UserAgentPolicy("myusergant"),
-        RedirectPolicy()
-    ]
-    with Pipeline(RequestsTransport(), policies=policies) as pipeline:
-        response = pipeline.run(request)
-
-    assert pipeline._transport.session is None
-    assert isinstance(response.http_response.status_code, int)
-
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_basic_options_requests(http_request):
-
-    request = http_request("OPTIONS", "https://httpbin.org")
-    policies = [
-        UserAgentPolicy("myusergant"),
-        RedirectPolicy()
-    ]
-    with Pipeline(RequestsTransport(), policies=policies) as pipeline:
-        response = pipeline.run(request)
-
-    assert pipeline._transport.session is None
-    assert isinstance(response.http_response.status_code, int)
-
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_requests_socket_timeout(http_request):
     conf = Configuration()
     request = http_request("GET", "https://bing.com")
@@ -159,83 +121,63 @@ def test_requests_socket_timeout(http_request):
     with pytest.raises(AzureError):
         with Pipeline(RequestsTransport(), policies=policies) as pipeline:
             response = pipeline.run(request, connection_timeout=0.000001, read_timeout=0.000001)
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_basic_requests_separate_session(http_request):
 
-    session = requests.Session()
-    request = http_request("GET", "https://bing.com")
-    policies = [
-        UserAgentPolicy("myusergant"),
-        RedirectPolicy()
-    ]
-    transport = RequestsTransport(session=session, session_owner=False)
-    with Pipeline(transport, policies=policies) as pipeline:
-        response = pipeline.run(request)
+def test_format_url_basic():
+    client = PipelineClientBase("https://bing.com")
+    formatted = client.format_url("/{foo}", foo="bar")
+    assert formatted == "https://bing.com/bar"
 
-    assert transport.session
-    assert isinstance(response.http_response.status_code, int)
-    transport.close()
-    assert transport.session
-    transport.session.close()
+def test_format_url_with_query():
+    client = PipelineClientBase("https://bing.com/path?query=testvalue&x=2ndvalue")
+    formatted = client.format_url("/{foo}", foo="bar")
+    assert formatted == "https://bing.com/path/bar?query=testvalue&x=2ndvalue"
 
-class TestClientPipelineURLFormatting(unittest.TestCase):
+def test_format_url_missing_param_values():
+    client = PipelineClientBase("https://bing.com/path")
+    formatted = client.format_url("/{foo}")
+    assert formatted == "https://bing.com/path"
 
-    def test_format_url_basic(self):
-        client = PipelineClientBase("https://bing.com")
-        formatted = client.format_url("/{foo}", foo="bar")
-        assert formatted == "https://bing.com/bar"
+def test_format_url_missing_param_values_with_query():
+    client = PipelineClientBase("https://bing.com/path?query=testvalue&x=2ndvalue")
+    formatted = client.format_url("/{foo}")
+    assert formatted == "https://bing.com/path?query=testvalue&x=2ndvalue"
 
-    def test_format_url_with_query(self):
-        client = PipelineClientBase("https://bing.com/path?query=testvalue&x=2ndvalue")
-        formatted = client.format_url("/{foo}", foo="bar")
-        assert formatted == "https://bing.com/path/bar?query=testvalue&x=2ndvalue"
+def test_format_url_extra_path():
+    client = PipelineClientBase("https://bing.com/path")
+    formatted = client.format_url("/subpath/{foo}", foo="bar")
+    assert formatted == "https://bing.com/path/subpath/bar"
 
-    def test_format_url_missing_param_values(self):
-        client = PipelineClientBase("https://bing.com/path")
-        formatted = client.format_url("/{foo}")
-        assert formatted == "https://bing.com/path"
+def test_format_url_complex_params():
+    client = PipelineClientBase("https://bing.com/path")
+    formatted = client.format_url("/subpath/{a}/{b}/foo/{c}/bar", a="X", c="Y")
+    assert formatted == "https://bing.com/path/subpath/X/foo/Y/bar"
 
-    def test_format_url_missing_param_values_with_query(self):
-        client = PipelineClientBase("https://bing.com/path?query=testvalue&x=2ndvalue")
-        formatted = client.format_url("/{foo}")
-        assert formatted == "https://bing.com/path?query=testvalue&x=2ndvalue"
+def test_format_url_extra_path_missing_values():
+    client = PipelineClientBase("https://bing.com/path")
+    formatted = client.format_url("/subpath/{foo}")
+    assert formatted == "https://bing.com/path/subpath"
 
-    def test_format_url_extra_path(self):
-        client = PipelineClientBase("https://bing.com/path")
-        formatted = client.format_url("/subpath/{foo}", foo="bar")
-        assert formatted == "https://bing.com/path/subpath/bar"
+def test_format_url_extra_path_missing_values_with_query():
+    client = PipelineClientBase("https://bing.com/path?query=testvalue&x=2ndvalue")
+    formatted = client.format_url("/subpath/{foo}")
+    assert formatted == "https://bing.com/path/subpath?query=testvalue&x=2ndvalue"
 
-    def test_format_url_complex_params(self):
-        client = PipelineClientBase("https://bing.com/path")
-        formatted = client.format_url("/subpath/{a}/{b}/foo/{c}/bar", a="X", c="Y")
-        assert formatted == "https://bing.com/path/subpath/X/foo/Y/bar"
+def test_format_url_full_url():
+    client = PipelineClientBase("https://bing.com/path")
+    formatted = client.format_url("https://google.com/subpath/{foo}", foo="bar")
+    assert formatted == "https://google.com/subpath/bar"
 
-    def test_format_url_extra_path_missing_values(self):
-        client = PipelineClientBase("https://bing.com/path")
-        formatted = client.format_url("/subpath/{foo}")
-        assert formatted == "https://bing.com/path/subpath"
+def test_format_url_no_base_url():
+    client = PipelineClientBase(None)
+    formatted = client.format_url("https://google.com/subpath/{foo}", foo="bar")
+    assert formatted == "https://google.com/subpath/bar"
 
-    def test_format_url_extra_path_missing_values_with_query(self):
-        client = PipelineClientBase("https://bing.com/path?query=testvalue&x=2ndvalue")
-        formatted = client.format_url("/subpath/{foo}")
-        assert formatted == "https://bing.com/path/subpath?query=testvalue&x=2ndvalue"
-
-    def test_format_url_full_url(self):
-        client = PipelineClientBase("https://bing.com/path")
-        formatted = client.format_url("https://google.com/subpath/{foo}", foo="bar")
-        assert formatted == "https://google.com/subpath/bar"
-
-    def test_format_url_no_base_url(self):
-        client = PipelineClientBase(None)
-        formatted = client.format_url("https://google.com/subpath/{foo}", foo="bar")
-        assert formatted == "https://google.com/subpath/bar"
-
-    def test_format_incorrect_endpoint(self):
-        # https://github.com/Azure/azure-sdk-for-python/pull/12106
-        client = PipelineClientBase('{Endpoint}/text/analytics/v3.0')
-        with pytest.raises(ValueError) as exp:
-            client.format_url("foo/bar")
-        assert str(exp.value) == "The value provided for the url part Endpoint was incorrect, and resulted in an invalid url"
+def test_format_incorrect_endpoint():
+    # https://github.com/Azure/azure-sdk-for-python/pull/12106
+    client = PipelineClientBase('{Endpoint}/text/analytics/v3.0')
+    with pytest.raises(ValueError) as exp:
+        client.format_url("foo/bar")
+    assert str(exp.value) == "The value provided for the url part Endpoint was incorrect, and resulted in an invalid url"
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_request_json(http_request):
@@ -318,32 +260,6 @@ def test_request_url_with_params_with_none(http_request):
     with pytest.raises(ValueError):
         request.format_parameters({"g": None})
 
-
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_request_text(http_request):
-    client = PipelineClientBase('http://example.org')
-    if is_rest_http_request(http_request):
-        request = http_request("GET", "/", json="foo")
-    else:
-        request = client.get(
-            "/",
-            content="foo"
-        )
-
-    # In absence of information, everything is JSON (double quote added)
-    assert request.data == json.dumps("foo")
-
-    if is_rest_http_request(http_request):
-        request = http_request("POST", "/", headers={'content-type': 'text/whatever'}, content="foo")
-    else:
-        request = client.post(
-            "/",
-            headers={'content-type': 'text/whatever'},
-            content="foo"
-        )
-
-    # We want a direct string
-    assert request.data == "foo"
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_repr(http_request):
@@ -447,3 +363,77 @@ def test_add_custom_policy():
         client = PipelineClient(base_url="test", policies=policies, per_retry_policies=foo_policy)
     with pytest.raises(ValueError):
         client = PipelineClient(base_url="test", policies=policies, per_retry_policies=[foo_policy])
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_basic_requests(http_request):
+
+    conf = Configuration()
+    request = http_request("GET", "https://bing.com")
+    policies = [
+        UserAgentPolicy("myusergant"),
+        RedirectPolicy()
+    ]
+    with Pipeline(RequestsTransport(), policies=policies) as pipeline:
+        response = pipeline.run(request)
+
+    assert pipeline._transport.session is None
+    assert isinstance(response.http_response.status_code, int)
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_basic_options_requests(port, http_request):
+
+    request = http_request("OPTIONS", "http://localhost:{}/basic/string".format(port))
+    policies = [
+        UserAgentPolicy("myusergant"),
+        RedirectPolicy()
+    ]
+    with Pipeline(RequestsTransport(), policies=policies) as pipeline:
+        response = pipeline.run(request)
+
+    assert pipeline._transport.session is None
+    assert isinstance(response.http_response.status_code, int)
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_basic_requests_separate_session(http_request):
+
+    session = requests.Session()
+    request = http_request("GET", "https://bing.com")
+    policies = [
+        UserAgentPolicy("myusergant"),
+        RedirectPolicy()
+    ]
+    transport = RequestsTransport(session=session, session_owner=False)
+    with Pipeline(transport, policies=policies) as pipeline:
+        response = pipeline.run(request)
+
+    assert transport.session
+    assert isinstance(response.http_response.status_code, int)
+    transport.close()
+    assert transport.session
+    transport.session.close()
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_request_text(http_request):
+    client = PipelineClientBase('http://example.org')
+    if is_rest_http_request(http_request):
+        request = http_request("GET", "/", json="foo")
+    else:
+        request = client.get(
+            "/",
+            content="foo"
+        )
+
+    # In absence of information, everything is JSON (double quote added)
+    assert request.data == json.dumps("foo")
+
+    if is_rest_http_request(http_request):
+        request = http_request("POST", "/", headers={'content-type': 'text/whatever'}, content="foo")
+    else:
+        request = client.post(
+            "/",
+            headers={'content-type': 'text/whatever'},
+            content="foo"
+        )
+
+    # We want a direct string
+    assert request.data == "foo"

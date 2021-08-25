@@ -23,7 +23,7 @@ def test_user_agent_policy(http_request):
     user_agent = UserAgentPolicy(base_user_agent='foo', user_agent='bar', user_agent_use_env=False)
     assert user_agent._user_agent == 'bar foo'
 
-    request = http_request('GET', 'http://127.0.0.1/')
+    request = http_request('GET', 'http://localhost/')
     pipeline_request = PipelineRequest(request, PipelineContext(None))
 
     pipeline_request.context.options['user_agent'] = 'xyz'
@@ -38,6 +38,6 @@ def test_user_agent_environ(http_request):
         policy = UserAgentPolicy(None)
         assert policy.user_agent.endswith("mytools")
 
-        request = http_request('GET', 'http://127.0.0.1/')
+        request = http_request('GET', 'http://localhost/')
         policy.on_request(PipelineRequest(request, PipelineContext(None)))
         assert request.headers["user-agent"].endswith("mytools")

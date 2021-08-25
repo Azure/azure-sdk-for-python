@@ -60,9 +60,9 @@ MOCK_RESPONSES = [PipelineTransportMockResponse, RestMockResponse]
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-async def test_basic_options_aiohttp(http_request):
+async def test_basic_options_aiohttp(port, http_request):
 
-    request = http_request("OPTIONS", "https://httpbin.org")
+    request = http_request("OPTIONS", "http://localhost:{}/basic/string".format(port))
     async with AsyncPipeline(AioHttpTransport(), policies=[]) as pipeline:
         response = await pipeline.run(request)
 

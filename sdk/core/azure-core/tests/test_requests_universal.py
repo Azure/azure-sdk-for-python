@@ -24,8 +24,8 @@
 #
 # --------------------------------------------------------------------------
 import concurrent.futures
-import pytest
 import requests.utils
+import pytest
 
 from azure.core.pipeline.transport import RequestsTransport
 from utils import create_http_response, is_rest_http_response, HTTP_REQUESTS, REQUESTS_TRANSPORT_RESPONSES
@@ -47,8 +47,8 @@ def test_threading_basic_requests():
         assert future.result()
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_requests_auto_headers(http_request):
-    request = http_request("POST", "https://www.bing.com/")
+def test_requests_auto_headers(port, http_request):
+    request = http_request("POST", "http://localhost:{}/basic/string".format(port))
     with RequestsTransport() as sender:
         response = sender.send(request)
         auto_headers = response.internal_response.request.headers

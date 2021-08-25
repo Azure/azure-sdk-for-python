@@ -26,7 +26,6 @@
 from itertools import product
 from azure.core.pipeline.transport import (
     AioHttpTransport,
-    AsyncHttpTransport,
     AioHttpTransportResponse,
     AsyncioRequestsTransport,
     TrioRequestsTransport)
@@ -41,9 +40,9 @@ from utils import HTTP_REQUESTS, AIOHTTP_TRANSPORT_RESPONSES, create_http_respon
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-async def test_basic_aiohttp(http_request):
+async def test_basic_aiohttp(port, http_request):
 
-    request = http_request("GET", "https://www.bing.com/")
+    request = http_request("GET", "http://localhost:{}/basic/string".format(port))
     async with AioHttpTransport() as sender:
         response = await sender.send(request)
         assert response.body() is not None
@@ -53,9 +52,9 @@ async def test_basic_aiohttp(http_request):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-async def test_aiohttp_auto_headers(http_request):
+async def test_aiohttp_auto_headers(port, http_request):
 
-    request = http_request("POST", "https://www.bing.com/")
+    request = http_request("POST", "http://localhost:{}/basic/string".format(port))
     async with AioHttpTransport() as sender:
         response = await sender.send(request)
         auto_headers = response.internal_response.request_info.headers
@@ -63,9 +62,9 @@ async def test_aiohttp_auto_headers(http_request):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-async def test_basic_async_requests(http_request):
+async def test_basic_async_requests(port, http_request):
 
-    request = http_request("GET", "https://www.bing.com/")
+    request = http_request("GET", "http://localhost:{}/basic/string".format(port))
     async with AsyncioRequestsTransport() as sender:
         response = await sender.send(request)
         assert response.body() is not None
@@ -74,9 +73,9 @@ async def test_basic_async_requests(http_request):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-async def test_conf_async_requests(http_request):
+async def test_conf_async_requests(port, http_request):
 
-    request = http_request("GET", "https://www.bing.com/")
+    request = http_request("GET", "http://localhost:{}/basic/string".format(port))
     async with AsyncioRequestsTransport() as sender:
         response = await sender.send(request)
         assert response.body() is not None
@@ -84,10 +83,10 @@ async def test_conf_async_requests(http_request):
     assert isinstance(response.status_code, int)
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_conf_async_trio_requests(http_request):
+def test_conf_async_trio_requests(port, http_request):
 
     async def do():
-        request = http_request("GET", "https://www.bing.com/")
+        request = http_request("GET", "http://localhost:{}/basic/string".format(port))
         async with TrioRequestsTransport() as sender:
             return await sender.send(request)
             assert response.body() is not None

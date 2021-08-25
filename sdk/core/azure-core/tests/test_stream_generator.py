@@ -29,7 +29,7 @@ def test_connection_error_response(http_request, http_response):
             pass
 
         def send(self, request, **kwargs):
-            request = http_request('GET', 'http://127.0.0.1/')
+            request = http_request('GET', 'http://localhost/')
             response = create_http_response(http_response, request, None)
             response.status_code = 200
             return response
@@ -56,7 +56,7 @@ def test_connection_error_response(http_request, http_response):
         def close(self):
             pass
 
-    http_request = http_request('GET', 'http://127.0.0.1/')
+    http_request = http_request('GET', 'http://localhost/')
     pipeline = Pipeline(MockTransport())
     http_response = create_http_response(http_response, http_request, None)
     http_response.internal_response = MockInternalResponse()
