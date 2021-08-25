@@ -15,6 +15,20 @@ from ._generated.models import (
 )
 
 
+def convert_status(status, ll=False):
+    if ll is False:
+        if status == "Cancelled":
+            return "Canceled"
+        if status == "Cancelling":
+            return "Canceling"
+    elif ll is True:
+        if status == "Canceled":
+            return "Cancelled"
+        if status == "Canceling":
+            return "Cancelling"
+    return status
+
+
 class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
     """Glossary / translation memory to apply to the translation.
 
@@ -256,8 +270,8 @@ class TranslationStatus(
         * `NotStarted` - the operation has not begun yet.
         * `Running` - translation is in progress.
         * `Succeeded` - at least one document translated successfully within the operation.
-        * `Cancelled` - the operation was cancelled.
-        * `Cancelling` - the operation is being cancelled.
+        * `Canceled` - the operation was canceled.
+        * `Canceling` - the operation is being canceled.
         * `ValidationFailed` - the input failed validation. E.g. there was insufficient permissions on blob containers.
         * `Failed` - all the documents within the operation failed.
 
@@ -269,7 +283,7 @@ class TranslationStatus(
     :ivar int documents_succeeded_count: Number of successful translations on documents.
     :ivar int documents_in_progress_count: Number of translations on documents in progress.
     :ivar int documents_not_yet_started_count: Number of documents that have not yet started being translated.
-    :ivar int documents_cancelled_count: Number of documents that were cancelled for translation.
+    :ivar int documents_canceled_count: Number of documents that were canceled for translation.
     :ivar int total_characters_charged: Total characters charged across all documents within the translation operation.
     """
 
@@ -289,18 +303,19 @@ class TranslationStatus(
         self.documents_not_yet_started_count = kwargs.get(
             "documents_not_yet_started_count", None
         )
-        self.documents_cancelled_count = kwargs.get("documents_cancelled_count", None)
+        self.documents_canceled_count = kwargs.get("documents_canceled_count", None)
         self.total_characters_charged = kwargs.get("total_characters_charged", None)
 
     @classmethod
     def _from_generated(cls, batch_status_details):
         if not batch_status_details:
             return cls()
+
         return cls(
             id=batch_status_details.id,
             created_on=batch_status_details.created_date_time_utc,
             last_updated_on=batch_status_details.last_action_date_time_utc,
-            status=batch_status_details.status,
+            status=convert_status(batch_status_details.status),
             error=DocumentTranslationError._from_generated(  # pylint: disable=protected-access
                 batch_status_details.error
             )
@@ -311,7 +326,7 @@ class TranslationStatus(
             documents_succeeded_count=batch_status_details.summary.success,
             documents_in_progress_count=batch_status_details.summary.in_progress,
             documents_not_yet_started_count=batch_status_details.summary.not_yet_started,
-            documents_cancelled_count=batch_status_details.summary.cancelled,
+            documents_canceled_count=batch_status_details.summary.cancelled,
             total_characters_charged=batch_status_details.summary.total_character_charged,
         )
 
@@ -321,7 +336,7 @@ class TranslationStatus(
             "last_updated_on={}, status={}, error={}, documents_total_count={}, "
             "documents_failed_count={}, documents_succeeded_count={}, "
             "documents_in_progress_count={}, documents_not_yet_started_count={}, "
-            "documents_cancelled_count={}, total_characters_charged={})".format(
+            "documents_canceled_count={}, total_characters_charged={})".format(
                 self.id,
                 self.created_on,
                 self.last_updated_on,
@@ -332,7 +347,7 @@ class TranslationStatus(
                 self.documents_succeeded_count,
                 self.documents_in_progress_count,
                 self.documents_not_yet_started_count,
-                self.documents_cancelled_count,
+                self.documents_canceled_count,
                 self.total_characters_charged,
             )[:1024]
         )
@@ -357,8 +372,8 @@ class DocumentStatus(
         * `Running` - translation is in progress for document
         * `Succeeded` - translation succeeded for the document
         * `Failed` - the document failed to translate. Check the error property.
-        * `Cancelled` - the operation was cancelled, the document was not translated.
-        * `Cancelling` - the operation is cancelling, the document will not be translated.
+        * `Canceled` - the operation was canceled, the document was not translated.
+        * `Canceling` - the operation is canceling, the document will not be translated.
     :ivar str translated_to: The language code of the language the document was translated to,
         if successful.
     :ivar error: Returned if there is an error with the particular document.
@@ -390,7 +405,7 @@ class DocumentStatus(
             translated_document_url=doc_status.path,
             created_on=doc_status.created_date_time_utc,
             last_updated_on=doc_status.last_action_date_time_utc,
-            status=doc_status.status,
+            status=convert_status(doc_status.status),
             translated_to=doc_status.to,
             error=DocumentTranslationError._from_generated(  # pylint: disable=protected-access
                 doc_status.error

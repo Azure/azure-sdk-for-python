@@ -316,7 +316,7 @@ for operation in operations:
     print("Of total documents...")
     print("{} failed".format(operation.documents_failed_count))
     print("{} succeeded".format(operation.documents_succeeded_count))
-    print("{} cancelled".format(operation.documents_cancelled_count))
+    print("{} canceled".format(operation.documents_canceled_count))
 ```
 
 To see how to use the Document Translation client library with Azure Storage Blob to upload documents, create SAS tokens

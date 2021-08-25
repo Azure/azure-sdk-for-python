@@ -83,14 +83,14 @@ class TestListTranslations(DocumentTranslationTest):
         # create some translations with the status 'Succeeded'
         completed_translation_ids = self._begin_multiple_translations(client, operations_count, wait=True, docs_per_operation=docs_per_operation)
 
-        # create some translations with the status 'Cancelled'
+        # create some translations with the status 'Canceled'
         translation_ids = self._begin_multiple_translations(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
         for id in translation_ids:
             client.cancel_translation(id)
-        self.wait(10) # wait for cancelled to propagate
+        self.wait(10) # wait for canceled to propagate
 
         # list translations with status filter
-        statuses = ["Cancelled"]
+        statuses = ["Canceled"]
         submitted_translations = list(client.list_translation_statuses(statuses=statuses))
 
         # check statuses

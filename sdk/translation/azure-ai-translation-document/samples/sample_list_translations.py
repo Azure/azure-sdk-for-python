@@ -46,7 +46,7 @@ def sample_list_translations():
         print("\nOf total documents...")
         print("{} failed".format(operation.documents_failed_count))
         print("{} succeeded".format(operation.documents_succeeded_count))
-        print("{} cancelled\n".format(operation.documents_cancelled_count))
+        print("{} canceled\n".format(operation.documents_canceled_count))
 
     # [END list_translations]
 

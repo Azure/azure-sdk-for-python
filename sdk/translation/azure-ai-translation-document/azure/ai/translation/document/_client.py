@@ -15,6 +15,7 @@ from ._models import (
     DocumentStatus,
     DocumentTranslationInput,
     FileFormat,
+    convert_status
 )
 from ._user_agent import USER_AGENT
 from ._polling import TranslationPolling, DocumentTranslationLROPollingMethod
@@ -228,9 +229,9 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         # type: (str, **Any) -> None
         """Cancel a currently processing or queued translation operation.
 
-        A translation will not be cancelled if it is already completed, failed, or cancelling.
-        All documents that have completed translation will not be cancelled and will be charged.
-        If possible, all pending documents will be cancelled.
+        A translation will not be canceled if it is already completed, failed, or canceling.
+        All documents that have completed translation will not be canceled and will be charged.
+        If possible, all pending documents will be canceled.
 
         :param str translation_id: The translation operation ID.
         :return: None
@@ -251,7 +252,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         :keyword int results_per_page: is the number of operations returned per page.
         :keyword list[str] translation_ids: translation operations ids to filter by.
         :keyword list[str] statuses: translation operation statuses to filter by. Options include
-            'NotStarted', 'Running', 'Succeeded', 'Failed', 'Cancelled', 'Cancelling',
+            'NotStarted', 'Running', 'Succeeded', 'Failed', 'Canceled', 'Canceling',
             and 'ValidationFailed'.
         :keyword created_after: get operations created after certain datetime.
         :paramtype created_after: Union[str, datetime.datetime]
@@ -275,6 +276,9 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
                 :caption: List all submitted translations under the resource.
         """
 
+        statuses = kwargs.pop("statuses", None)
+        if statuses:
+            statuses = [convert_status(status, ll=True) for status in statuses]
         order_by = convert_order_by(kwargs.pop("order_by", None))
         created_after = kwargs.pop("created_after", None)
         created_before = kwargs.pop("created_before", None)
@@ -304,6 +308,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
             created_date_time_utc_end=created_before,
             ids=translation_ids,
             order_by=order_by,
+            statuses=statuses,
             **kwargs
         )
 
@@ -319,7 +324,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         :keyword int results_per_page: is the number of documents returned per page.
         :keyword list[str] document_ids: document IDs to filter by.
         :keyword list[str] statuses: document statuses to filter by. Options include
-            'NotStarted', 'Running', 'Succeeded', 'Failed', 'Cancelled', 'Cancelling',
+            'NotStarted', 'Running', 'Succeeded', 'Failed', 'Canceled', 'Canceling',
             and 'ValidationFailed'.
         :keyword created_after: get document created after certain datetime.
         :paramtype created_after: Union[str, datetime.datetime]
@@ -343,6 +348,9 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
                 :caption: List all the document statuses as they are being translated.
         """
 
+        statuses = kwargs.pop("statuses", None)
+        if statuses:
+            statuses = [convert_status(status, ll=True) for status in statuses]
         order_by = convert_order_by(kwargs.pop("order_by", None))
         created_after = kwargs.pop("created_after", None)
         created_before = kwargs.pop("created_before", None)
@@ -375,6 +383,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
             created_date_time_utc_end=created_before,
             ids=document_ids,
             order_by=order_by,
+            statuses=statuses,
             **kwargs
         )
 
