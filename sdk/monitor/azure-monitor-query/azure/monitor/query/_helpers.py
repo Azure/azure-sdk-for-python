@@ -90,4 +90,4 @@ def native_col_type(col_type, value):
     return value
 
 def process_row(col_types, row):
-    return [native_col_type(col_types[ind].type, val) for ind, val in enumerate(row)]
+    return [native_col_type(col_types[ind], val) for ind, val in enumerate(row)]

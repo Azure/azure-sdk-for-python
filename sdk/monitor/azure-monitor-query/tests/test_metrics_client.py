@@ -51,6 +51,6 @@ def test_metrics_namespaces():
 def test_metrics_definitions():
     client = MetricsQueryClient(_credential())
 
-    response = client.list_metric_definitions(os.environ['METRICS_RESOURCE_URI'], metric_namespace='microsoft.eventgrid/topics')
+    response = client.list_metric_definitions(os.environ['METRICS_RESOURCE_URI'], namespace='microsoft.eventgrid/topics')
 
     assert response is not None
