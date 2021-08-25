@@ -22,10 +22,22 @@ def test_logs_single_query():
     summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
 
     # returns LogsQueryResult 
-    response = client.query(os.environ['LOG_WORKSPACE_ID'], query)
+    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None)
 
     assert response is not None
     assert response.tables is not None
+
+@pytest.mark.live_test_only
+def test_logs_single_query_raises_no_timespan():
+    credential = _credential()
+    client = LogsQueryClient(credential)
+    query = """AppRequests | 
+    where TimeGenerated > ago(12h) | 
+    summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
+
+    # returns LogsQueryResult 
+    with pytest.raises(TypeError):
+        client.query(os.environ['LOG_WORKSPACE_ID'], query)
 
 @pytest.mark.live_test_only
 def test_logs_single_query_with_non_200():
@@ -107,7 +119,7 @@ def test_logs_single_query_with_render():
     query = """AppRequests"""
 
     # returns LogsQueryResult 
-    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, include_visualization=True)
+    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None, include_visualization=True)
 
     assert response.visualization is not None
 
