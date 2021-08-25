@@ -387,4 +387,4 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         await self._close_handler()
         self._shutdown.set()
         if self._deregister_from_client_func:
-            self._deregister_from_client_func()
+            self._deregister_from_client_func(self)
