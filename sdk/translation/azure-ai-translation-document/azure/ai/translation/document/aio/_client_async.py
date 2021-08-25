@@ -16,7 +16,7 @@ from .._user_agent import USER_AGENT
 from .._models import (
     TranslationStatus,
     DocumentTranslationInput,
-    FileFormat,
+    DocumentTranslationFileFormat,
     DocumentStatus,
     convert_status
 )
@@ -414,11 +414,11 @@ class DocumentTranslationClient(object):
 
     @distributed_trace_async
     async def get_supported_glossary_formats(self, **kwargs):
-        # type: (**Any) -> List[FileFormat]
+        # type: (**Any) -> List[DocumentTranslationFileFormat]
         """Get the list of the glossary formats supported by the Document Translation service.
 
         :return: A list of supported glossary formats.
-        :rtype: List[FileFormat]
+        :rtype: List[DocumentTranslationFileFormat]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         glossary_formats = (
@@ -427,15 +427,15 @@ class DocumentTranslationClient(object):
             )
         )
         # pylint: disable=protected-access
-        return FileFormat._from_generated_list(glossary_formats.value)
+        return DocumentTranslationFileFormat._from_generated_list(glossary_formats.value)
 
     @distributed_trace_async
     async def get_supported_document_formats(self, **kwargs):
-        # type: (**Any) -> List[FileFormat]
+        # type: (**Any) -> List[DocumentTranslationFileFormat]
         """Get the list of the document formats supported by the Document Translation service.
 
         :return: A list of supported document formats for translation.
-        :rtype: List[FileFormat]
+        :rtype: List[DocumentTranslationFileFormat]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         document_formats = (
@@ -444,4 +444,4 @@ class DocumentTranslationClient(object):
             )
         )
         # pylint: disable=protected-access
-        return FileFormat._from_generated_list(document_formats.value)
+        return DocumentTranslationFileFormat._from_generated_list(document_formats.value)

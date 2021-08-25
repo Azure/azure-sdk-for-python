@@ -477,7 +477,7 @@ class DocumentTranslationError(
         )[:1024]
 
 
-class FileFormat(object):  # pylint: disable=useless-object-inheritance, R0903
+class DocumentTranslationFileFormat(object):  # pylint: disable=useless-object-inheritance, R0903
     """Possible file formats supported by the Document Translation service.
 
     :ivar file_format: Name of the format.
@@ -513,13 +513,13 @@ class FileFormat(object):  # pylint: disable=useless-object-inheritance, R0903
     @staticmethod
     def _from_generated_list(file_formats):
         return [
-            FileFormat._from_generated(file_formats) for file_formats in file_formats
+            DocumentTranslationFileFormat._from_generated(file_formats) for file_formats in file_formats
         ]
 
     def __repr__(self):
         # pylint: disable=line-too-long
         return (
-            "FileFormat(file_format={}, file_extensions={}, "
+            "DocumentTranslationFileFormat(file_format={}, file_extensions={}, "
             "content_types={}, format_versions={}, default_format_version={}".format(
                 self.file_format,
                 self.file_extensions,

@@ -14,7 +14,7 @@ from ._models import (
     TranslationStatus,
     DocumentStatus,
     DocumentTranslationInput,
-    FileFormat,
+    DocumentTranslationFileFormat,
     convert_status
 )
 from ._user_agent import USER_AGENT
@@ -408,34 +408,34 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
 
     @distributed_trace
     def get_supported_glossary_formats(self, **kwargs):
-        # type: (**Any) -> List[FileFormat]
+        # type: (**Any) -> List[DocumentTranslationFileFormat]
         """Get the list of the glossary formats supported by the Document Translation service.
 
         :return: A list of supported glossary formats.
-        :rtype: List[FileFormat]
+        :rtype: List[DocumentTranslationFileFormat]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         glossary_formats = (
             self._client.document_translation.get_supported_glossary_formats(**kwargs)
         )
-        return FileFormat._from_generated_list(  # pylint: disable=protected-access
+        return DocumentTranslationFileFormat._from_generated_list(  # pylint: disable=protected-access
             glossary_formats.value
         )
 
     @distributed_trace
     def get_supported_document_formats(self, **kwargs):
-        # type: (**Any) -> List[FileFormat]
+        # type: (**Any) -> List[DocumentTranslationFileFormat]
         """Get the list of the document formats supported by the Document Translation service.
 
         :return: A list of supported document formats for translation.
-        :rtype: List[FileFormat]
+        :rtype: List[DocumentTranslationFileFormat]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         document_formats = (
             self._client.document_translation.get_supported_document_formats(**kwargs)
         )
-        return FileFormat._from_generated_list(  # pylint: disable=protected-access
+        return DocumentTranslationFileFormat._from_generated_list(  # pylint: disable=protected-access
             document_formats.value
         )
