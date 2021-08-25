@@ -43,7 +43,7 @@ class RemoteRenderingAccountsOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RemoteRenderingAccountPage"]:
         """List Remote Rendering Accounts by Subscription.
 
@@ -110,7 +110,7 @@ class RemoteRenderingAccountsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RemoteRenderingAccountPage"]:
         """List Resources by Resource Group.
 
@@ -181,7 +181,7 @@ class RemoteRenderingAccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a Remote Rendering Account.
 
@@ -236,7 +236,7 @@ class RemoteRenderingAccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RemoteRenderingAccount":
         """Retrieve a Remote Rendering Account.
 
@@ -295,7 +295,7 @@ class RemoteRenderingAccountsOperations:
         resource_group_name: str,
         account_name: str,
         remote_rendering_account: "_models.RemoteRenderingAccount",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RemoteRenderingAccount":
         """Updating a Remote Rendering Account.
 
@@ -361,7 +361,7 @@ class RemoteRenderingAccountsOperations:
         resource_group_name: str,
         account_name: str,
         remote_rendering_account: "_models.RemoteRenderingAccount",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RemoteRenderingAccount":
         """Creating or Updating a Remote Rendering Account.
 
@@ -430,7 +430,7 @@ class RemoteRenderingAccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AccountKeys":
         """List Both of the 2 Keys of a Remote Rendering Account.
 
@@ -489,7 +489,7 @@ class RemoteRenderingAccountsOperations:
         resource_group_name: str,
         account_name: str,
         regenerate: "_models.AccountKeyRegenerateRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AccountKeys":
         """Regenerate specified Key of a Remote Rendering Account.
 

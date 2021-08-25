@@ -43,7 +43,7 @@ class SpatialAnchorsAccountsOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SpatialAnchorsAccountPage"]:
         """List Spatial Anchors Accounts by Subscription.
 
@@ -110,7 +110,7 @@ class SpatialAnchorsAccountsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SpatialAnchorsAccountPage"]:
         """List Resources by Resource Group.
 
@@ -181,7 +181,7 @@ class SpatialAnchorsAccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a Spatial Anchors Account.
 
@@ -236,7 +236,7 @@ class SpatialAnchorsAccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SpatialAnchorsAccount":
         """Retrieve a Spatial Anchors Account.
 
@@ -295,7 +295,7 @@ class SpatialAnchorsAccountsOperations:
         resource_group_name: str,
         account_name: str,
         spatial_anchors_account: "_models.SpatialAnchorsAccount",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SpatialAnchorsAccount":
         """Updating a Spatial Anchors Account.
 
@@ -361,7 +361,7 @@ class SpatialAnchorsAccountsOperations:
         resource_group_name: str,
         account_name: str,
         spatial_anchors_account: "_models.SpatialAnchorsAccount",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SpatialAnchorsAccount":
         """Creating or Updating a Spatial Anchors Account.
 
@@ -430,7 +430,7 @@ class SpatialAnchorsAccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AccountKeys":
         """List Both of the 2 Keys of a Spatial Anchors Account.
 
@@ -489,7 +489,7 @@ class SpatialAnchorsAccountsOperations:
         resource_group_name: str,
         account_name: str,
         regenerate: "_models.AccountKeyRegenerateRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AccountKeys":
         """Regenerate specified Key of a Spatial Anchors Account.
 

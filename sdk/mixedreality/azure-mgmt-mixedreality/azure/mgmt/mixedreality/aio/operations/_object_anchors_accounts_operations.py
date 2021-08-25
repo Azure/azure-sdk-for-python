@@ -43,7 +43,7 @@ class ObjectAnchorsAccountsOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ObjectAnchorsAccountPage"]:
         """List Object Anchors Accounts by Subscription.
 
@@ -110,7 +110,7 @@ class ObjectAnchorsAccountsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ObjectAnchorsAccountPage"]:
         """List Resources by Resource Group.
 
@@ -181,7 +181,7 @@ class ObjectAnchorsAccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete an Object Anchors Account.
 
@@ -236,7 +236,7 @@ class ObjectAnchorsAccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ObjectAnchorsAccount":
         """Retrieve an Object Anchors Account.
 
@@ -295,7 +295,7 @@ class ObjectAnchorsAccountsOperations:
         resource_group_name: str,
         account_name: str,
         object_anchors_account: "_models.ObjectAnchorsAccount",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ObjectAnchorsAccount":
         """Updating an Object Anchors Account.
 
@@ -361,7 +361,7 @@ class ObjectAnchorsAccountsOperations:
         resource_group_name: str,
         account_name: str,
         object_anchors_account: "_models.ObjectAnchorsAccount",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ObjectAnchorsAccount":
         """Creating or Updating an object anchors Account.
 
@@ -430,7 +430,7 @@ class ObjectAnchorsAccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AccountKeys":
         """List Both of the 2 Keys of an object anchors Account.
 
@@ -489,7 +489,7 @@ class ObjectAnchorsAccountsOperations:
         resource_group_name: str,
         account_name: str,
         regenerate: "_models.AccountKeyRegenerateRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AccountKeys":
         """Regenerate specified Key of an object anchors Account.
 

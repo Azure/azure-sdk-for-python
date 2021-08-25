@@ -165,14 +165,14 @@ class Identity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :ivar type: The identity type. Default value: "SystemAssigned".
-    :vartype type: str
+    :param type: The identity type. The only acceptable values to pass in are None and
+     "SystemAssigned". The default value is None.
+    :type type: str
     """
 
     _validation = {
         'principal_id': {'readonly': True},
         'tenant_id': {'readonly': True},
-        'type': {'constant': True},
     }
 
     _attribute_map = {
@@ -181,8 +181,6 @@ class Identity(msrest.serialization.Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    type = "SystemAssigned"
-
     def __init__(
         self,
         **kwargs
@@ -190,6 +188,7 @@ class Identity(msrest.serialization.Model):
         super(Identity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
+        self.type = kwargs.get('type', None)
 
 
 class LogSpecification(msrest.serialization.Model):
@@ -228,12 +227,15 @@ class MetricDimension(msrest.serialization.Model):
     :type display_name: str
     :param internal_name: Internal name of the dimension.
     :type internal_name: str
+    :param to_be_exported_for_shoebox: Flag to indicate export for Shoebox.
+    :type to_be_exported_for_shoebox: bool
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'internal_name': {'key': 'internalName', 'type': 'str'},
+        'to_be_exported_for_shoebox': {'key': 'toBeExportedForShoebox', 'type': 'bool'},
     }
 
     def __init__(
@@ -244,6 +246,7 @@ class MetricDimension(msrest.serialization.Model):
         self.name = kwargs.get('name', None)
         self.display_name = kwargs.get('display_name', None)
         self.internal_name = kwargs.get('internal_name', None)
+        self.to_be_exported_for_shoebox = kwargs.get('to_be_exported_for_shoebox', None)
 
 
 class MetricSpecification(msrest.serialization.Model):
@@ -260,10 +263,31 @@ class MetricSpecification(msrest.serialization.Model):
     :param aggregation_type: Only provide one value for this field. Valid values: Average, Minimum,
      Maximum, Total, Count.
     :type aggregation_type: str
+    :param supported_aggregation_types: Supported aggregation types. Valid values: Average,
+     Minimum, Maximum, Total, Count.
+    :type supported_aggregation_types: list[str]
+    :param supported_time_grain_types: Supported time grains. Valid values: PT1M, PT5M, PT15M,
+     PT30M, PT1H, PT6H, PT12H, P1D.
+    :type supported_time_grain_types: list[str]
+    :param enable_regional_mdm_account: Flag to indicate use of regional Mdm accounts.
+    :type enable_regional_mdm_account: bool
+    :param source_mdm_account: Source mdm account.
+    :type source_mdm_account: str
+    :param source_mdm_namespace: Source mdm namespace.
+    :type source_mdm_namespace: str
+    :param metric_filter_pattern: Metric filter regex pattern.
+    :type metric_filter_pattern: str
+    :param fill_gap_with_zero: Flag to determine is Zero is returned for time duration where no
+     metric is emitted.
+    :type fill_gap_with_zero: bool
+    :param category: Metric category.
+    :type category: str
     :param internal_metric_name: Internal metric name.
     :type internal_metric_name: str
     :param dimensions: Dimensions of the metric.
     :type dimensions: list[~azure.mgmt.mixedreality.models.MetricDimension]
+    :param locked_aggregation_type: Locked aggregation type of the metric.
+    :type locked_aggregation_type: str
     """
 
     _attribute_map = {
@@ -272,8 +296,17 @@ class MetricSpecification(msrest.serialization.Model):
         'display_description': {'key': 'displayDescription', 'type': 'str'},
         'unit': {'key': 'unit', 'type': 'str'},
         'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
+        'supported_aggregation_types': {'key': 'supportedAggregationTypes', 'type': '[str]'},
+        'supported_time_grain_types': {'key': 'supportedTimeGrainTypes', 'type': '[str]'},
+        'enable_regional_mdm_account': {'key': 'enableRegionalMdmAccount', 'type': 'bool'},
+        'source_mdm_account': {'key': 'sourceMdmAccount', 'type': 'str'},
+        'source_mdm_namespace': {'key': 'sourceMdmNamespace', 'type': 'str'},
+        'metric_filter_pattern': {'key': 'metricFilterPattern', 'type': 'str'},
+        'fill_gap_with_zero': {'key': 'fillGapWithZero', 'type': 'bool'},
+        'category': {'key': 'category', 'type': 'str'},
         'internal_metric_name': {'key': 'internalMetricName', 'type': 'str'},
         'dimensions': {'key': 'dimensions', 'type': '[MetricDimension]'},
+        'locked_aggregation_type': {'key': 'lockedAggregationType', 'type': 'str'},
     }
 
     def __init__(
@@ -286,8 +319,17 @@ class MetricSpecification(msrest.serialization.Model):
         self.display_description = kwargs.get('display_description', None)
         self.unit = kwargs.get('unit', None)
         self.aggregation_type = kwargs.get('aggregation_type', None)
+        self.supported_aggregation_types = kwargs.get('supported_aggregation_types', None)
+        self.supported_time_grain_types = kwargs.get('supported_time_grain_types', None)
+        self.enable_regional_mdm_account = kwargs.get('enable_regional_mdm_account', None)
+        self.source_mdm_account = kwargs.get('source_mdm_account', None)
+        self.source_mdm_namespace = kwargs.get('source_mdm_namespace', None)
+        self.metric_filter_pattern = kwargs.get('metric_filter_pattern', None)
+        self.fill_gap_with_zero = kwargs.get('fill_gap_with_zero', None)
+        self.category = kwargs.get('category', None)
         self.internal_metric_name = kwargs.get('internal_metric_name', None)
         self.dimensions = kwargs.get('dimensions', None)
+        self.locked_aggregation_type = kwargs.get('locked_aggregation_type', None)
 
 
 class Resource(msrest.serialization.Model):
@@ -393,6 +435,12 @@ class ObjectAnchorsAccount(TrackedResource):
     :type location: str
     :param identity:
     :type identity: ~azure.mgmt.mixedreality.models.ObjectAnchorsAccountIdentity
+    :param plan: The plan associated with this account.
+    :type plan: ~azure.mgmt.mixedreality.models.Identity
+    :param sku: The sku associated with this account.
+    :type sku: ~azure.mgmt.mixedreality.models.Sku
+    :param kind: The kind of account, if supported.
+    :type kind: ~azure.mgmt.mixedreality.models.Sku
     :ivar system_data: The system metadata related to an object anchors account.
     :vartype system_data: ~azure.mgmt.mixedreality.models.SystemData
     :param storage_account_name: The name of the storage account associated with this accountId.
@@ -420,6 +468,9 @@ class ObjectAnchorsAccount(TrackedResource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
         'identity': {'key': 'identity', 'type': 'ObjectAnchorsAccountIdentity'},
+        'plan': {'key': 'plan', 'type': 'Identity'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'kind': {'key': 'kind', 'type': 'Sku'},
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'storage_account_name': {'key': 'properties.storageAccountName', 'type': 'str'},
         'account_id': {'key': 'properties.accountId', 'type': 'str'},
@@ -432,6 +483,9 @@ class ObjectAnchorsAccount(TrackedResource):
     ):
         super(ObjectAnchorsAccount, self).__init__(**kwargs)
         self.identity = kwargs.get('identity', None)
+        self.plan = kwargs.get('plan', None)
+        self.sku = kwargs.get('sku', None)
+        self.kind = kwargs.get('kind', None)
         self.system_data = None
         self.storage_account_name = kwargs.get('storage_account_name', None)
         self.account_id = None
@@ -447,14 +501,14 @@ class ObjectAnchorsAccountIdentity(Identity):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :ivar type: The identity type. Default value: "SystemAssigned".
-    :vartype type: str
+    :param type: The identity type. The only acceptable values to pass in are None and
+     "SystemAssigned". The default value is None.
+    :type type: str
     """
 
     _validation = {
         'principal_id': {'readonly': True},
         'tenant_id': {'readonly': True},
-        'type': {'constant': True},
     }
 
     _attribute_map = {
@@ -462,8 +516,6 @@ class ObjectAnchorsAccountIdentity(Identity):
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
-
-    type = "SystemAssigned"
 
     def __init__(
         self,

@@ -114,7 +114,7 @@
                 },
                 "async": {
                     "coroutine": true,
-                    "signature": "async def check_name_availability_local(\n    self,\n    location: str,\n    check_name_availability: \"_models.CheckNameAvailabilityRequest\",\n    **kwargs\n) -\u003e \"_models.CheckNameAvailabilityResponse\":\n",
+                    "signature": "async def check_name_availability_local(\n    self,\n    location: str,\n    check_name_availability: \"_models.CheckNameAvailabilityRequest\",\n    **kwargs: Any\n) -\u003e \"_models.CheckNameAvailabilityResponse\":\n",
                     "doc": "\"\"\"Check Name Availability for local uniqueness.\n\n:param location: The location in which uniqueness will be verified.\n:type location: str\n:param check_name_availability: Check Name Availability Request.\n:type check_name_availability: ~azure.mgmt.mixedreality.models.CheckNameAvailabilityRequest\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CheckNameAvailabilityResponse, or the result of cls(response)\n:rtype: ~azure.mgmt.mixedreality.models.CheckNameAvailabilityResponse\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
                 },
                 "call": "location, check_name_availability"

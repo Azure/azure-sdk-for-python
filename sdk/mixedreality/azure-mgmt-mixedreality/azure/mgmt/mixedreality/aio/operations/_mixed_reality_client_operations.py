@@ -24,7 +24,7 @@ class MixedRealityClientOperationsMixin:
         self,
         location: str,
         check_name_availability: "_models.CheckNameAvailabilityRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CheckNameAvailabilityResponse":
         """Check Name Availability for local uniqueness.
 
