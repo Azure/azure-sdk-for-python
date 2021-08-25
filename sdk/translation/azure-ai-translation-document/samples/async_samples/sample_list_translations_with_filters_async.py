@@ -53,7 +53,7 @@ async def sample_list_translations_with_filters_async():
         skip = 3
 
         # list translation operations
-        submitted_translations = client.list_all_translation_statuses(
+        submitted_translations = client.list_translation_statuses(
             # filters
             statuses=statuses,
             created_after=start,

@@ -241,7 +241,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         self._client.document_translation.cancel_translation(translation_id, **kwargs)
 
     @distributed_trace
-    def list_all_translation_statuses(self, **kwargs):
+    def list_translation_statuses(self, **kwargs):
         # type: (**Any) -> ItemPaged[TranslationStatus]
         """List all the submitted translation operations under the Document Translation resource.
 
@@ -267,9 +267,9 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_list_all_translations.py
-                :start-after: [START list_all_translations]
-                :end-before: [END list_all_translations]
+            .. literalinclude:: ../samples/sample_list_translations.py
+                :start-after: [START list_translations]
+                :end-before: [END list_translations]
                 :language: python
                 :dedent: 4
                 :caption: List all submitted translations under the resource.

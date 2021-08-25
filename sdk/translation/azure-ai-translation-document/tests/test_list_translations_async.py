@@ -28,7 +28,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         await self._begin_multiple_translations_async(client, operations_count, docs_per_operation=docs_per_operation, wait=False)
 
         # list translations
-        submitted_translations = client.list_all_translation_statuses()
+        submitted_translations = client.list_translation_statuses()
         self.assertIsNotNone(submitted_translations)
 
         # check statuses
@@ -48,7 +48,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         await self._begin_multiple_translations_async(client, operations_count, docs_per_operation=docs_per_operation, wait=False)
 
         # list translations
-        submitted_translations_pages = client.list_all_translation_statuses(results_per_page=results_per_page).by_page()
+        submitted_translations_pages = client.list_translation_statuses(results_per_page=results_per_page).by_page()
         self.assertIsNotNone(submitted_translations_pages)
 
         # iterate by page
@@ -73,12 +73,12 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         await self._begin_multiple_translations_async(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
 
         # list translations - unable to assert skip!!
-        all_translations = client.list_all_translation_statuses()
+        all_translations = client.list_translation_statuses()
         all_operations_count = 0
         async for translation in all_translations:
             all_operations_count += 1
 
-        translations_with_skip = client.list_all_translation_statuses(skip=skip)
+        translations_with_skip = client.list_translation_statuses(skip=skip)
         translations_with_skip_count = 0
         async for translation in translations_with_skip:
             translations_with_skip_count += 1
@@ -103,7 +103,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
 
         # list translations with status filter
         statuses = ["Cancelled"]
-        submitted_translations = client.list_all_translation_statuses(statuses=statuses)
+        submitted_translations = client.list_translation_statuses(statuses=statuses)
 
         # check statuses
         async for translation in submitted_translations:
@@ -121,7 +121,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         translation_ids = await self._begin_multiple_translations_async(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
 
         # list translations
-        submitted_translations = client.list_all_translation_statuses(translation_ids=translation_ids)
+        submitted_translations = client.list_translation_statuses(translation_ids=translation_ids)
         self.assertIsNotNone(submitted_translations)
 
         # check statuses
@@ -142,7 +142,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         translation_ids = await self._begin_multiple_translations_async(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
 
         # list translations
-        submitted_translations = client.list_all_translation_statuses(created_after=start)
+        submitted_translations = client.list_translation_statuses(created_after=start)
         self.assertIsNotNone(submitted_translations)
 
         # check statuses
@@ -168,7 +168,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         translation_ids = await self._begin_multiple_translations_async(client, operations_count, wait=True, docs_per_operation=docs_per_operation)
 
         # list translations
-        submitted_translations = client.list_all_translation_statuses(created_before=end)
+        submitted_translations = client.list_translation_statuses(created_before=end)
         self.assertIsNotNone(submitted_translations)
 
         # check statuses
@@ -187,7 +187,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         await self._begin_multiple_translations_async(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
 
         # list translations
-        submitted_translations = client.list_all_translation_statuses(order_by=["created_on asc"])
+        submitted_translations = client.list_translation_statuses(order_by=["created_on asc"])
         self.assertIsNotNone(submitted_translations)
 
         # check statuses
@@ -207,7 +207,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         await self._begin_multiple_translations_async(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
 
         # list translations
-        submitted_translations = client.list_all_translation_statuses(order_by=["created_on desc"])
+        submitted_translations = client.list_translation_statuses(order_by=["created_on desc"])
         self.assertIsNotNone(submitted_translations)
 
         # check statuses
@@ -233,7 +233,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         end = datetime.utcnow().replace(tzinfo=pytz.utc)
 
         # list translations
-        submitted_translations = client.list_all_translation_statuses(
+        submitted_translations = client.list_translation_statuses(
             # filters
             statuses=statuses,
             created_after=start,

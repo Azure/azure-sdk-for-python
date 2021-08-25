@@ -253,7 +253,7 @@ class DocumentTranslationClient(object):
         )
 
     @distributed_trace
-    def list_all_translation_statuses(self, **kwargs):
+    def list_translation_statuses(self, **kwargs):
         # type: (**Any) -> AsyncItemPaged[TranslationStatus]
         """List all the submitted translation operations under the Document Translation resource.
 
@@ -279,9 +279,9 @@ class DocumentTranslationClient(object):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_list_all_translations_async.py
-                :start-after: [START list_all_translations_async]
-                :end-before: [END list_all_translations_async]
+            .. literalinclude:: ../samples/async_samples/sample_list_translations_async.py
+                :start-after: [START list_translations_async]
+                :end-before: [END list_translations_async]
                 :language: python
                 :dedent: 4
                 :caption: List all submitted translations under the resource.
