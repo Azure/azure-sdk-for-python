@@ -41,40 +41,66 @@ except ImportError:
     binary_type = bytes  # type: ignore
     from urllib.parse import urlparse
 
+def _pad_attr_name(attr, backcompat_attrs):
+    return "_{}".format(attr) if attr in backcompat_attrs else attr
+
 class HttpRequestBackcompatMixin(object):
 
-    @property
-    def files(self):
-        return self._files
+    def __getattr__(self, attr):
+        backcompat_attrs = [
+            "files",
+            "data",
+            "multipart_mixed_info",
+            "query",
+            "body",
+            "format_parameters",
+            "set_streamed_data_body",
+            "set_text_body",
+            "set_xml_body",
+            "set_json_body",
+            "set_formdata_body",
+            "set_bytes_body",
+            "set_multipart_mixed",
+            "prepare_multipart_body",
+            "serialize",
+        ]
+        attr = _pad_attr_name(attr, backcompat_attrs)
+        return self.__getattribute__(attr)
+
+    def __setattr__(self, attr, value):
+        backcompat_attrs = [
+            "multipart_mixed_info",
+            "files",
+            "data",
+            "body",
+        ]
+        attr = _pad_attr_name(attr, backcompat_attrs)
+        super(HttpRequestBackcompatMixin, self).__setattr__(attr, value)
 
     @property
-    def data(self):
-        return self._data
-
-    @property
-    def multipart_mixed_info(self):
+    def _multipart_mixed_info(self):
         try:
-            return self._multipart_mixed_info
+            return self.__multipart_mixed_info
         except AttributeError:
             return None
 
-    @multipart_mixed_info.setter
-    def multipart_mixed_info(self, val):
-        self._multipart_mixed_info = val
+    @_multipart_mixed_info.setter
+    def _multipart_mixed_info(self, val):
+        self.__multipart_mixed_info = val
 
     @property
-    def query(self):
+    def _query(self):
         query = urlparse(self.url).query
         if query:
             return {p[0]: p[-1] for p in [p.partition("=") for p in query.split("&")]}
         return {}
 
     @property
-    def body(self):
+    def _body(self):
         return self._data
 
-    @body.setter
-    def body(self, val):
+    @_body.setter
+    def _body(self, val):
         self._data = val
 
     @staticmethod
@@ -82,10 +108,10 @@ class HttpRequestBackcompatMixin(object):
         from ..pipeline.transport._base import HttpRequest as PipelineTransportHttpRequest
         return PipelineTransportHttpRequest._format_data(data)  # pylint: disable=protected-access
 
-    def format_parameters(self, params):
+    def _format_parameters(self, params):
         return _format_parameters_helper(self, params)
 
-    def set_streamed_data_body(self, data):
+    def _set_streamed_data_body(self, data):
         if not isinstance(data, binary_type) and not any(
             hasattr(data, attr) for attr in ["read", "__iter__", "__aiter__"]
         ):
@@ -95,7 +121,7 @@ class HttpRequestBackcompatMixin(object):
         self._data = data
         self._files = None
 
-    def set_text_body(self, data):
+    def _set_text_body(self, data):
         if data is None:
             self._data = None
         else:
@@ -103,7 +129,7 @@ class HttpRequestBackcompatMixin(object):
             self.headers["Content-Length"] = str(len(self._data))
         self._files = None
 
-    def set_xml_body(self, data):
+    def _set_xml_body(self, data):
         if data is None:
             self._data = None
         else:
@@ -112,7 +138,7 @@ class HttpRequestBackcompatMixin(object):
             self.headers["Content-Length"] = str(len(self._data))
         self._files = None
 
-    def set_json_body(self, data):
+    def _set_json_body(self, data):
         if data is None:
             self._data = None
         else:
@@ -120,7 +146,7 @@ class HttpRequestBackcompatMixin(object):
             self.headers["Content-Length"] = str(len(self._data))
         self._files = None
 
-    def set_formdata_body(self, data=None):
+    def _set_formdata_body(self, data=None):
         if data is None:
             data = {}
         content_type = self.headers.pop("Content-Type", None) if self.headers else None
@@ -134,13 +160,13 @@ class HttpRequestBackcompatMixin(object):
             }
             self._data = None
 
-    def set_bytes_body(self, data):
+    def _set_bytes_body(self, data):
         if data:
             self.headers["Content-Length"] = str(len(data))
         self._data = data
         self._files = None
 
-    def set_multipart_mixed(self, *requests, **kwargs):
+    def _set_multipart_mixed(self, *requests, **kwargs):
         self.multipart_mixed_info = (
             requests,
             kwargs.pop("policies", []),
@@ -148,10 +174,10 @@ class HttpRequestBackcompatMixin(object):
             kwargs
         )
 
-    def prepare_multipart_body(self, content_index=0):
+    def _prepare_multipart_body(self, content_index=0):
         return _prepare_multipart_body_helper(self, content_index)
 
-    def serialize(self):
+    def _serialize(self):
         """Serialize this request using application/http spec.
 
         :rtype: bytes
@@ -161,23 +187,30 @@ class HttpRequestBackcompatMixin(object):
 
 class _HttpResponseBackcompatMixinBase(object):
 
-    def body(self):
+    def __getattr__(self, attr):
+        backcompat_attrs = [
+            "body",
+            "internal_response",
+            "block_size",
+            "stream_download",
+        ]
+        attr = _pad_attr_name(attr, backcompat_attrs)
+        return self.__getattribute__(attr)
+
+    def __setattr__(self, attr, value):
+        backcompat_attrs = ["block_size", "internal_response"]
+        attr = _pad_attr_name(attr, backcompat_attrs)
+        super(_HttpResponseBackcompatMixinBase, self).__setattr__(attr, value)
+
+    def _body(self):
         return self.content  # pylint: disable=no-member
 
     @property
-    def internal_response(self):
-        return self._internal_response
-
-    @internal_response.setter
-    def internal_response(self, val):
-        self._internal_response = val  # type: Any
-
-    @property
-    def block_size(self):
+    def _block_size(self):
         return self._connection_data_block_size
 
-    @block_size.setter
-    def block_size(self, val):
+    @_block_size.setter
+    def _block_size(self, val):
         self._connection_data_block_size = val  # type: Optional[int]
 
     def _decode_parts(self, message, http_response_type, requests):
@@ -206,6 +239,11 @@ class _HttpResponseBackcompatMixinBase(object):
         return self.iter_raw()  # pylint: disable=no-member
 
 class HttpResponseBackcompatMixin(_HttpResponseBackcompatMixinBase):
+
+    def __getattr__(self, attr):
+        backcompat_attrs = ["parts"]
+        attr = _pad_attr_name(attr, backcompat_attrs)
+        return super(HttpResponseBackcompatMixin, self).__getattr__(attr)
 
     def parts(self):
         return _parts_helper(self)

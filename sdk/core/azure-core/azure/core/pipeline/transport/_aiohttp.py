@@ -462,7 +462,8 @@ class AioHttpTransportResponse(AsyncHttpResponse):
 ##################### REST #####################
 
 class _AioHttpTransportResponseBackcompatMixin():
-    async def load_body(self) -> None:
+
+    async def _load_body(self) -> None:
         """Load in memory the body, so it could be accessible from sync methods."""
         self._content = await self.read()  # type: ignore
 
@@ -479,6 +480,12 @@ class RestAioHttpTransportResponse(RestAsyncHttpResponse, _AioHttpTransportRespo
         self.reason = internal_response.reason
         self.content_type = internal_response.headers.get('content-type')
         self._decompress = True
+
+    def __getattr__(self, attr):
+        backcompat_attrs = ["load_body"]
+        if attr in backcompat_attrs:
+            attr = "_" + attr
+        return super().__getattr__(attr)
 
     async def iter_raw(self) -> AsyncIteratorType[bytes]:
         """Asynchronously iterates over the response's bytes. Will not decompress in the process

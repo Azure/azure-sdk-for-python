@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 import asyncio
 from collections.abc import AsyncIterator
-from ._backcompat import _HttpResponseBackcompatMixinBase
+from ._backcompat import _HttpResponseBackcompatMixinBase, _pad_attr_name
 from ..pipeline import PipelineContext, PipelineResponse, PipelineRequest
 from ..pipeline._tools_async import await_result as _await_result
 
@@ -78,10 +78,10 @@ class _PartGenerator(AsyncIterator):
             raise StopAsyncIteration()
 
 class AsyncHttpResponseBackcompatMixin(_HttpResponseBackcompatMixinBase):
-    def stream_download(self, pipeline, **kwargs):
-        if kwargs.get("decompress"):
-            return self.iter_bytes()
-        return self.iter_raw()
+    def __getattr__(self, attr):
+        backcompat_attrs = ["parts"]
+        attr = _pad_attr_name(attr, backcompat_attrs)
+        return super().__getattr__(attr)
 
     def parts(self):
         """Assuming the content-type is multipart/mixed, will return the parts as an async iterator.
