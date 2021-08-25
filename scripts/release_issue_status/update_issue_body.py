@@ -37,7 +37,7 @@ def update_issue_body(sdk_repo, rest_repo, issue_link):
 
 
 def get_pkname_and_readme_link(rest_repo, link):
-    # change commit link to pull json link
+    # change commit link to pull json link(i.e. https://github.com/Azure/azure-rest-api-specs/commit/77f5d3b5d2fbae17621ea124485788f496786758#diff-708c2fb843b022cac4af8c6f996a527440c1e0d328abb81f54670747bf14ab1a)
     pk_name = ''
     if 'commit' in link:
         commit_sha = link.split('commit/')[-1]
