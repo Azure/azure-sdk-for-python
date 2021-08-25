@@ -122,10 +122,13 @@ class DocumentTranslationClient(object):
         self, *args, **kwargs
     ):  # pylint: disable=client-method-missing-type-annotations
         """Begin translating the document(s) in your source container to your target container
-        in the given language. To perform a single translation from source to target, pass the `source_url`,
-        `target_url`, and `target_language_code` parameters including any optional keyword arguments.
-        To pass multiple inputs for translation, pass the `inputs` parameter as a list of
-        :class:`~azure.ai.translation.document.DocumentTranslationInput`.
+        in the given language. There are two ways to call this method:
+
+        1) To perform translation on documents from a single source container to a single target container, pass the
+        `source_url`, `target_url`, and `target_language_code` parameters including any optional keyword arguments.
+
+        2) To pass multiple inputs for translation (multiple sources or targets), pass the `inputs` parameter
+        as a list of :class:`~azure.ai.translation.document.DocumentTranslationInput`.
 
         For supported languages and document formats, see the service documentation:
         https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
@@ -271,7 +274,7 @@ class DocumentTranslationClient(object):
             format: ["param1 asc/desc", "param2 asc/desc", ...]
             (ex: 'created_on asc', 'created_on desc').
         :return: A pageable of TranslationStatus.
-        :rtype: ~azure.core.paging.ItemPaged[TranslationStatus]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[TranslationStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -336,7 +339,7 @@ class DocumentTranslationClient(object):
             format: ["param1 asc/desc", "param2 asc/desc", ...]
             (ex: 'created_on asc', 'created_on desc').
         :return: A pageable of DocumentStatus.
-        :rtype: ~azure.core.paging.ItemPaged[DocumentStatus]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[DocumentStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:

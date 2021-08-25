@@ -4,17 +4,13 @@
 import os
 import asyncio
 from datetime import datetime, timedelta
-import urllib3
 from azure.monitor.query.aio import MetricsQueryClient
+from azure.monitor.query import MetricAggregationType
 from azure.identity.aio import DefaultAzureCredential
-
-urllib3.disable_warnings()
 
 async def query_metrics():
     credential  = DefaultAzureCredential(
-            client_id = os.environ['AZURE_CLIENT_ID'],
-            client_secret = os.environ['AZURE_CLIENT_SECRET'],
-            tenant_id = os.environ['AZURE_TENANT_ID']
+
         )
 
     client = MetricsQueryClient(credential)
@@ -23,16 +19,17 @@ async def query_metrics():
     async with client:
         response = await client.query(
             metrics_uri,
-            metric_names=["PublishSuccessCount"],
-            start_time=datetime(2021, 5, 25),
-            duration=timedelta(days=1)
+            metric_names=["Ingress"],
+            timespan=timedelta(hours=2),
+            granularity=timedelta(minutes=15),
+            aggregations=[MetricAggregationType.AVERAGE],
             )
 
     for metric in response.metrics:
         print(metric.name)
         for time_series_element in metric.timeseries:
             for metric_value in time_series_element.data:
-                print(metric_value.time_stamp)
+                print(metric_value.timestamp)
     
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()

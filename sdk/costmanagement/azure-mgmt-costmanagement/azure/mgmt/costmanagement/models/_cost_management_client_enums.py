@@ -185,6 +185,9 @@ class FunctionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The name of the aggregation function to use.
     """
 
+    AVG = "Avg"
+    MAX = "Max"
+    MIN = "Min"
     SUM = "Sum"
 
 class GranularityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
