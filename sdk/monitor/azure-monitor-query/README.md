@@ -221,7 +221,6 @@ Here is a heirarchy of the response:
 
 ```
 LogsQueryResult
-|---status
 |---statistics
 |---visualization
 |---error
