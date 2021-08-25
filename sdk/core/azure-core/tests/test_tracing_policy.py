@@ -11,7 +11,6 @@ from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.core.settings import settings
 from tracing_common import FakeSpan
 import time
-import pytest
 
 try:
     from unittest import mock
@@ -25,7 +24,7 @@ def test_distributed_tracing_policy_solo():
     with FakeSpan(name="parent") as root_span:
         policy = DistributedTracingPolicy()
 
-        request = HttpRequest("GET", "http://127.0.0.1/temp?query=query")
+        request = HttpRequest("GET", "http://localhost/temp?query=query")
         request.headers["x-ms-client-request-id"] = "some client request id"
 
         pipeline_request = PipelineRequest(request, PipelineContext(None))
@@ -51,7 +50,7 @@ def test_distributed_tracing_policy_solo():
     assert network_span.name == "/temp"
     assert network_span.attributes.get("http.method") == "GET"
     assert network_span.attributes.get("component") == "http"
-    assert network_span.attributes.get("http.url") == "http://127.0.0.1/temp?query=query"
+    assert network_span.attributes.get("http.url") == "http://localhost/temp?query=query"
     assert network_span.attributes.get("http.user_agent") is None
     assert network_span.attributes.get("x-ms-request-id") == "some request id"
     assert network_span.attributes.get("x-ms-client-request-id") == "some client request id"
@@ -62,7 +61,7 @@ def test_distributed_tracing_policy_solo():
     assert network_span.name == "/temp"
     assert network_span.attributes.get("http.method") == "GET"
     assert network_span.attributes.get("component") == "http"
-    assert network_span.attributes.get("http.url") == "http://127.0.0.1/temp?query=query"
+    assert network_span.attributes.get("http.url") == "http://localhost/temp?query=query"
     assert network_span.attributes.get("x-ms-client-request-id") == "some client request id"
     assert network_span.attributes.get("http.user_agent") is None
     assert network_span.attributes.get("x-ms-request-id") == None
@@ -77,7 +76,7 @@ def test_distributed_tracing_policy_attributes():
             'myattr': 'myvalue'
         })
 
-        request = HttpRequest("GET", "http://127.0.0.1/temp?query=query")
+        request = HttpRequest("GET", "http://localhost/temp?query=query")
 
         pipeline_request = PipelineRequest(request, PipelineContext(None))
         policy.on_request(pipeline_request)
@@ -133,7 +132,7 @@ def test_distributed_tracing_policy_with_user_agent():
         with FakeSpan(name="parent") as root_span:
             policy = DistributedTracingPolicy()
 
-            request = HttpRequest("GET", "http://127.0.0.1")
+            request = HttpRequest("GET", "http://localhost")
             request.headers["x-ms-client-request-id"] = "some client request id"
 
             pipeline_request = PipelineRequest(request, PipelineContext(None))
@@ -165,7 +164,7 @@ def test_distributed_tracing_policy_with_user_agent():
         assert network_span.name == "/"
         assert network_span.attributes.get("http.method") == "GET"
         assert network_span.attributes.get("component") == "http"
-        assert network_span.attributes.get("http.url") == "http://127.0.0.1"
+        assert network_span.attributes.get("http.url") == "http://localhost"
         assert network_span.attributes.get("http.user_agent").endswith("mytools")
         assert network_span.attributes.get("x-ms-request-id") == "some request id"
         assert network_span.attributes.get("x-ms-client-request-id") == "some client request id"
@@ -175,7 +174,7 @@ def test_distributed_tracing_policy_with_user_agent():
         assert network_span.name == "/"
         assert network_span.attributes.get("http.method") == "GET"
         assert network_span.attributes.get("component") == "http"
-        assert network_span.attributes.get("http.url") == "http://127.0.0.1"
+        assert network_span.attributes.get("http.url") == "http://localhost"
         assert network_span.attributes.get("http.user_agent").endswith("mytools")
         assert network_span.attributes.get("x-ms-client-request-id") == "some client request id"
         assert network_span.attributes.get("x-ms-request-id") is None
@@ -188,7 +187,7 @@ def test_span_namer():
     settings.tracing_implementation.set_value(FakeSpan)
     with FakeSpan(name="parent") as root_span:
 
-        request = HttpRequest("GET", "http://127.0.0.1/temp?query=query")
+        request = HttpRequest("GET", "http://localhost/temp?query=query")
         pipeline_request = PipelineRequest(request, PipelineContext(None))
 
         def fixed_namer(http_request):
