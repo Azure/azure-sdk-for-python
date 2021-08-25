@@ -178,20 +178,23 @@ class LogsQueryResult(object):
 
     @classmethod
     def _from_generated(cls, generated):
+
         if not generated:
             return cls()
         tables = None
-        if generated.body.tables is not None:
+        if hasattr(generated, 'body'):
+            generated = generated.body
+        if generated.tables is not None:
             tables = [
                 LogsTable._from_generated( # pylint: disable=protected-access
                     table
-                    ) for table in generated.body.tables
+                    ) for table in generated.tables
                 ]
         return cls(
             tables=tables,
-            statistics=generated.body.statistics,
-            visualization=generated.body.render,
-            error=generated.body.error
+            statistics=generated.statistics,
+            visualization=generated.render,
+            error=generated.error
         )
 
 
