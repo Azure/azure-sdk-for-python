@@ -4,7 +4,7 @@
 import os
 from datetime import datetime, timedelta
 import urllib3
-from azure.monitor.query import MetricsQueryClient, AggregationType
+from azure.monitor.query import MetricsQueryClient, MetricAggregationType
 from azure.identity import DefaultAzureCredential
 
 urllib3.disable_warnings()
@@ -19,10 +19,9 @@ client = MetricsQueryClient(credential)
 metrics_uri = os.environ['METRICS_RESOURCE_URI']
 response = client.query(
     metrics_uri,
-    metric_names=["MatchedEventCount"],
-    start_time=datetime(2021, 6, 21),
-    duration=timedelta(days=1),
-    aggregations=[AggregationType.COUNT]
+    metric_names=["MatchedEventCount", "DeliverySuccesssCount"],
+    timespan=timedelta(days=1),
+    aggregations=[MetricAggregationType.COUNT]
     )
 
 for metric in response.metrics:

@@ -11,6 +11,8 @@ from datetime import timedelta
 from typing import TYPE_CHECKING, Any, List, Optional
 
 from azure.core.async_paging import AsyncItemPaged
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._generated.aio._monitor_query_client import (
     MonitorQueryClient,
@@ -43,6 +45,7 @@ class MetricsQueryClient(object):
         self._namespace_op = self._client.metric_namespaces
         self._definitions_op = self._client.metric_definitions
 
+    @distributed_trace_async
     async def query(
         self,
         resource_uri: str,
@@ -62,19 +65,19 @@ class MetricsQueryClient(object):
          a timedelta and a start datetime, or a start datetime/end datetime.
         :paramtype timespan: ~datetime.timedelta or tuple[~datetime.datetime, ~datetime.timedelta]
          or tuple[~datetime.datetime, ~datetime.datetime]
-        :keyword interval: The interval (i.e. timegrain) of the query.
-        :paramtype interval: ~datetime.timedelta
-        :keyword aggregations: The list of aggregation types to retrieve. Use `azure.monitor.query.AggregationType`
-         enum to get each aggregation type.
+        :keyword granularity: The interval (i.e. timegrain) of the query.
+        :paramtype granularity: ~datetime.timedelta
+        :keyword aggregations: The list of aggregation types to retrieve.
+         Use `azure.monitor.query.MetricAggregationType` enum to get each aggregation type.
         :paramtype aggregations: list[str]
         :keyword max_results: The maximum number of records to retrieve.
          Valid only if $filter is specified.
          Defaults to 10.
         :paramtype max_results: int
-        :keyword orderby: The aggregation to use for sorting results and the direction of the sort.
+        :keyword order_by: The aggregation to use for sorting results and the direction of the sort.
          Only one order can be specified.
          Examples: sum asc.
-        :paramtype orderby: str
+        :paramtype order_by: str
         :keyword filter: The **$filter** is used to reduce the set of metric data
          returned.:code:`<br>`Example::code:`<br>`Metric contains metadata A, B and C.:code:`<br>`-
          Return all time series of C where A = a1 and B = b1 or b2:code:`<br>`\ **$filter=A eq ‘a1’ and
@@ -98,12 +101,15 @@ class MetricsQueryClient(object):
         kwargs.setdefault("metricnames", ",".join(metric_names))
         kwargs.setdefault("timespan", timespan)
         kwargs.setdefault("top", kwargs.pop("max_results", None))
+        kwargs.setdefault("interval", kwargs.pop("granularity", None))
+        kwargs.setdefault("orderby", kwargs.pop("order_by", None))
         aggregations = kwargs.pop("aggregations", None)
         if aggregations:
             kwargs.setdefault("aggregation", ",".join(aggregations))
         generated = await self._metrics_op.list(resource_uri, connection_verify=False, **kwargs)
         return MetricsResult._from_generated(generated) # pylint: disable=protected-access
 
+    @distributed_trace
     def list_metric_namespaces(self, resource_uri: str, **kwargs: Any) -> AsyncItemPaged[MetricNamespace]:
         """Lists the metric namespaces for the resource.
 
@@ -112,7 +118,7 @@ class MetricsQueryClient(object):
         :keyword start_time: The ISO 8601 conform Date start time from which to query for metric
          namespaces.
         :paramtype start_time: str
-        :return: An iterator like instance of either MetricNamespaceCollection or the result of cls(response)
+        :return: An iterator like instance of either MetricNamespace or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricNamespace]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -126,6 +132,7 @@ class MetricsQueryClient(object):
             ),
             **kwargs)
 
+    @distributed_trace
     def list_metric_definitions(
         self,
         resource_uri: str,

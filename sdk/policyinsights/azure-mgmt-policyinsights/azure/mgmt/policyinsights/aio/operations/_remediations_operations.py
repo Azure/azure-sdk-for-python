@@ -46,7 +46,7 @@ class RemediationsOperations:
         management_group_id: str,
         remediation_name: str,
         query_options: Optional["_models.QueryOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RemediationDeploymentsListResult"]:
         """Gets all deployments for a remediation at management group scope.
 
@@ -115,7 +115,7 @@ class RemediationsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -130,7 +130,7 @@ class RemediationsOperations:
         self,
         management_group_id: str,
         remediation_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Remediation":
         """Cancels a remediation at management group scope.
 
@@ -175,7 +175,7 @@ class RemediationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Remediation', pipeline_response)
@@ -190,7 +190,7 @@ class RemediationsOperations:
         self,
         management_group_id: str,
         query_options: Optional["_models.QueryOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RemediationListResult"]:
         """Gets all remediations for the management group.
 
@@ -260,7 +260,7 @@ class RemediationsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -276,7 +276,7 @@ class RemediationsOperations:
         management_group_id: str,
         remediation_name: str,
         parameters: "_models.Remediation",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Remediation":
         """Creates or updates a remediation at management group scope.
 
@@ -328,7 +328,7 @@ class RemediationsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -347,7 +347,7 @@ class RemediationsOperations:
         self,
         management_group_id: str,
         remediation_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Remediation":
         """Gets an existing remediation at management group scope.
 
@@ -392,7 +392,7 @@ class RemediationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Remediation', pipeline_response)
@@ -407,7 +407,7 @@ class RemediationsOperations:
         self,
         management_group_id: str,
         remediation_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.Remediation"]:
         """Deletes an existing remediation at management group scope.
 
@@ -452,7 +452,7 @@ class RemediationsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -469,7 +469,7 @@ class RemediationsOperations:
         self,
         remediation_name: str,
         query_options: Optional["_models.QueryOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RemediationDeploymentsListResult"]:
         """Gets all deployments for a remediation at subscription scope.
 
@@ -534,7 +534,7 @@ class RemediationsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -548,7 +548,7 @@ class RemediationsOperations:
     async def cancel_at_subscription(
         self,
         remediation_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Remediation":
         """Cancels a remediation at subscription scope.
 
@@ -589,7 +589,7 @@ class RemediationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Remediation', pipeline_response)
@@ -603,7 +603,7 @@ class RemediationsOperations:
     def list_for_subscription(
         self,
         query_options: Optional["_models.QueryOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RemediationListResult"]:
         """Gets all remediations for the subscription.
 
@@ -669,7 +669,7 @@ class RemediationsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -684,7 +684,7 @@ class RemediationsOperations:
         self,
         remediation_name: str,
         parameters: "_models.Remediation",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Remediation":
         """Creates or updates a remediation at subscription scope.
 
@@ -732,7 +732,7 @@ class RemediationsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -750,7 +750,7 @@ class RemediationsOperations:
     async def get_at_subscription(
         self,
         remediation_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Remediation":
         """Gets an existing remediation at subscription scope.
 
@@ -791,7 +791,7 @@ class RemediationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Remediation', pipeline_response)
@@ -805,7 +805,7 @@ class RemediationsOperations:
     async def delete_at_subscription(
         self,
         remediation_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.Remediation"]:
         """Deletes an existing remediation at subscription scope.
 
@@ -846,7 +846,7 @@ class RemediationsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -864,7 +864,7 @@ class RemediationsOperations:
         resource_group_name: str,
         remediation_name: str,
         query_options: Optional["_models.QueryOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RemediationDeploymentsListResult"]:
         """Gets all deployments for a remediation at resource group scope.
 
@@ -932,7 +932,7 @@ class RemediationsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -947,7 +947,7 @@ class RemediationsOperations:
         self,
         resource_group_name: str,
         remediation_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Remediation":
         """Cancels a remediation at resource group scope.
 
@@ -991,7 +991,7 @@ class RemediationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Remediation', pipeline_response)
@@ -1006,7 +1006,7 @@ class RemediationsOperations:
         self,
         resource_group_name: str,
         query_options: Optional["_models.QueryOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RemediationListResult"]:
         """Gets all remediations for the subscription.
 
@@ -1075,7 +1075,7 @@ class RemediationsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1091,7 +1091,7 @@ class RemediationsOperations:
         resource_group_name: str,
         remediation_name: str,
         parameters: "_models.Remediation",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Remediation":
         """Creates or updates a remediation at resource group scope.
 
@@ -1142,7 +1142,7 @@ class RemediationsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -1161,7 +1161,7 @@ class RemediationsOperations:
         self,
         resource_group_name: str,
         remediation_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Remediation":
         """Gets an existing remediation at resource group scope.
 
@@ -1205,7 +1205,7 @@ class RemediationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Remediation', pipeline_response)
@@ -1220,7 +1220,7 @@ class RemediationsOperations:
         self,
         resource_group_name: str,
         remediation_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.Remediation"]:
         """Deletes an existing remediation at resource group scope.
 
@@ -1264,7 +1264,7 @@ class RemediationsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -1282,7 +1282,7 @@ class RemediationsOperations:
         resource_id: str,
         remediation_name: str,
         query_options: Optional["_models.QueryOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RemediationDeploymentsListResult"]:
         """Gets all deployments for a remediation at resource scope.
 
@@ -1349,7 +1349,7 @@ class RemediationsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1364,7 +1364,7 @@ class RemediationsOperations:
         self,
         resource_id: str,
         remediation_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Remediation":
         """Cancel a remediation at resource scope.
 
@@ -1407,7 +1407,7 @@ class RemediationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Remediation', pipeline_response)
@@ -1422,7 +1422,7 @@ class RemediationsOperations:
         self,
         resource_id: str,
         query_options: Optional["_models.QueryOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RemediationListResult"]:
         """Gets all remediations for a resource.
 
@@ -1490,7 +1490,7 @@ class RemediationsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1506,7 +1506,7 @@ class RemediationsOperations:
         resource_id: str,
         remediation_name: str,
         parameters: "_models.Remediation",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Remediation":
         """Creates or updates a remediation at resource scope.
 
@@ -1556,7 +1556,7 @@ class RemediationsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -1575,7 +1575,7 @@ class RemediationsOperations:
         self,
         resource_id: str,
         remediation_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Remediation":
         """Gets an existing remediation at resource scope.
 
@@ -1618,7 +1618,7 @@ class RemediationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Remediation', pipeline_response)
@@ -1633,7 +1633,7 @@ class RemediationsOperations:
         self,
         resource_id: str,
         remediation_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.Remediation"]:
         """Deletes an existing remediation at individual resource scope.
 
@@ -1676,7 +1676,7 @@ class RemediationsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
