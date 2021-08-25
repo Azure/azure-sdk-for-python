@@ -120,10 +120,10 @@ class MetricsQueryClient(object):
         :rtype: ~azure.core.paging.AsyncItemPaged[:class: `~azure.monitor.query.MetricNamespace`]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        start = Serializer.serialize_iso(kwargs.pop('start_time', None))
-        kwargs.setdefault('start_time', start)
+        start_time = Serializer.serialize_iso(kwargs.pop('start_time', None))
         return self._namespace_op.list(
             resource_uri,
+            start_time,
             cls=kwargs.pop(
                 "cls",
                 lambda objs: [
@@ -136,19 +136,19 @@ class MetricsQueryClient(object):
     def list_metric_definitions(
         self,
         resource_uri: str,
-        metric_namespace: str = None,
         **kwargs: Any
         ) -> AsyncItemPaged[MetricDefinition]:
         """Lists the metric definitions for the resource.
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
-        :param metric_namespace: Metric namespace to query metric definitions for.
-        :type metric_namespace: str
+        :keyword namespace: Metric namespace to query metric definitions for.
+        :paramtype namespace: str
         :return: An iterator like instance of either MetricDefinitionCollection or the result of cls(response)
         :rtype: ~azure.core.paging.AsyncItemPaged[:class: `~azure.monitor.query.MetricDefinition`]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        metric_namespace = kwargs.pop('namespace', None)
         return self._definitions_op.list(
             resource_uri,
             metric_namespace,

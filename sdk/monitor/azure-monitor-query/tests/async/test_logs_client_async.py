@@ -31,6 +31,7 @@ async def test_logs_auth():
 
 @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/19917")
 @pytest.mark.live_test_only
+@pytest.mark.asyncio
 async def test_logs_server_timeout():
     client = LogsQueryClient(_credential())
     with pytest.raises(HttpResponseError) as e:
@@ -43,6 +44,7 @@ async def test_logs_server_timeout():
         assert e.message.contains('Gateway timeout')
 
 @pytest.mark.live_test_only
+@pytest.mark.asyncio
 async def test_logs_query_batch():
     client = LogsQueryClient(_credential())
 

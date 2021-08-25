@@ -22,7 +22,7 @@ def test_logs_single_query():
     summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
 
     # returns LogsQueryResult 
-    response = client.query(os.environ['LOG_WORKSPACE_ID'], query)
+    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None)
 
     assert response is not None
     assert response.tables is not None
@@ -107,7 +107,7 @@ def test_logs_single_query_with_render():
     query = """AppRequests"""
 
     # returns LogsQueryResult 
-    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, include_visualization=True)
+    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None, include_visualization=True)
 
     assert response.visualization is not None
 
