@@ -18,6 +18,7 @@ from ._file_operations import FileOperations
 from ._job_schedule_operations import JobScheduleOperations
 from ._task_operations import TaskOperations
 from ._compute_node_operations import ComputeNodeOperations
+from ._compute_node_extension_operations import ComputeNodeExtensionOperations
 
 __all__ = [
     'ApplicationOperations',
@@ -29,4 +30,5 @@ __all__ = [
     'JobScheduleOperations',
     'TaskOperations',
     'ComputeNodeOperations',
+    'ComputeNodeExtensionOperations',
 ]

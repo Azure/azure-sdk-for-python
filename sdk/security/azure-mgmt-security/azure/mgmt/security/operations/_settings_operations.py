@@ -62,7 +62,7 @@ class SettingsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-01-01"
+        api_version = "2021-07-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -114,14 +114,14 @@ class SettingsOperations(object):
 
     def get(
         self,
-        setting_name,  # type: Union[str, "_models.Enum3"]
+        setting_name,  # type: Union[str, "_models.Enum69"]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.Setting"
         """Settings of different configurations in security center.
 
-        :param setting_name: Name of setting: (MCAS/WDATP).
-        :type setting_name: str or ~azure.mgmt.security.models.Enum3
+        :param setting_name: The name of the setting.
+        :type setting_name: str or ~azure.mgmt.security.models.Enum69
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Setting, or the result of cls(response)
         :rtype: ~azure.mgmt.security.models.Setting
@@ -132,7 +132,7 @@ class SettingsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-01-01"
+        api_version = "2021-07-01"
         accept = "application/json"
 
         # Construct URL
@@ -169,15 +169,15 @@ class SettingsOperations(object):
 
     def update(
         self,
-        setting_name,  # type: Union[str, "_models.Enum3"]
+        setting_name,  # type: Union[str, "_models.Enum69"]
         setting,  # type: "_models.Setting"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.Setting"
         """updating settings about different configurations in security center.
 
-        :param setting_name: Name of setting: (MCAS/WDATP).
-        :type setting_name: str or ~azure.mgmt.security.models.Enum3
+        :param setting_name: The name of the setting.
+        :type setting_name: str or ~azure.mgmt.security.models.Enum69
         :param setting: Setting object.
         :type setting: ~azure.mgmt.security.models.Setting
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -190,7 +190,7 @@ class SettingsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-01-01"
+        api_version = "2021-07-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

@@ -187,7 +187,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         await self._begin_multiple_translations_async(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
 
         # list translations
-        submitted_translations = client.list_all_translation_statuses(order_by=["createdDateTimeUtc asc"])
+        submitted_translations = client.list_all_translation_statuses(order_by=["created_on asc"])
         self.assertIsNotNone(submitted_translations)
 
         # check statuses
@@ -207,7 +207,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         await self._begin_multiple_translations_async(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
 
         # list translations
-        submitted_translations = client.list_all_translation_statuses(order_by=["createdDateTimeUtc desc"])
+        submitted_translations = client.list_all_translation_statuses(order_by=["created_on desc"])
         self.assertIsNotNone(submitted_translations)
 
         # check statuses
@@ -216,25 +216,20 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
             assert(translation.created_on.replace(tzinfo=None) <= curr.replace(tzinfo=None))
             curr = translation.created_on
 
-
-    @pytest.mark.skip(reason="not working! - list returned is empty")
+    @pytest.mark.live_test_only()
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_list_translations_mixed_filters(self, client):
         # create some translations
-        operations_count = 15
+        operations_count = 4
         docs_per_operation = 1
         results_per_page = 2
-        statuses = ["Cancelled"]
-        skip = 2
+        statuses = ["Succeeded"]
+        skip = 1
 
         # create some translations
         start = datetime.utcnow().replace(tzinfo=pytz.utc)
         successful_translation_ids = await self._begin_multiple_translations_async(client, operations_count, wait=True, docs_per_operation=docs_per_operation)
-        cancelled_translation_ids = await self._begin_multiple_translations_async(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
-        for translation_id in cancelled_translation_ids:
-            await client.cancel_translation(translation_id)
-        self.wait(15) # wait for status to propagate
         end = datetime.utcnow().replace(tzinfo=pytz.utc)
 
         # list translations
@@ -244,7 +239,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
             created_after=start,
             created_before=end,
             # ordering
-            order_by=["createdDateTimeUtc asc"],
+            order_by=["created_on asc"],
             # paging
             skip=skip,
             results_per_page=results_per_page
@@ -257,8 +252,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
             async for translation in page:
                 counter += 1
                 # assert id
-                self.assertIn(translation.id, cancelled_translation_ids)
-                self.assertNotIn(translation.id, successful_translation_ids)
+                self.assertIn(translation.id, successful_translation_ids)
                 # assert ordering
                 assert(translation.created_on.replace(tzinfo=None) >= curr_time.replace(tzinfo=None))
                 curr_time = translation.created_on

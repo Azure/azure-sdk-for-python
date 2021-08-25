@@ -64,7 +64,7 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
         profile=KnownProfiles.default, # type: KnownProfiles
         **kwargs  # type: Any
     ):
-        if api_version == '7.2':
+        if api_version == '7.2' or api_version == '7.3-preview':
             base_url = '{vaultBaseUrl}'
         else:
             raise ValueError("API version {} is not available".format(api_version))
@@ -84,9 +84,13 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
         """Module depends on the API version:
 
            * 7.2: :mod:`v7_2.models<azure.keyvault.v7_2.models>`
+           * 7.3-preview: :mod:`v7_3_preview.models<azure.keyvault.v7_3_preview.models>`
         """
         if api_version == '7.2':
             from .v7_2 import models
+            return models
+        elif api_version == '7.3-preview':
+            from .v7_3_preview import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
@@ -95,10 +99,13 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
         """Instance depends on the API version:
 
            * 7.2: :class:`RoleAssignmentsOperations<azure.keyvault.v7_2.operations.RoleAssignmentsOperations>`
+           * 7.3-preview: :class:`RoleAssignmentsOperations<azure.keyvault.v7_3_preview.operations.RoleAssignmentsOperations>`
         """
         api_version = self._get_api_version('role_assignments')
         if api_version == '7.2':
             from .v7_2.operations import RoleAssignmentsOperations as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import RoleAssignmentsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'role_assignments'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -108,10 +115,13 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
         """Instance depends on the API version:
 
            * 7.2: :class:`RoleDefinitionsOperations<azure.keyvault.v7_2.operations.RoleDefinitionsOperations>`
+           * 7.3-preview: :class:`RoleDefinitionsOperations<azure.keyvault.v7_3_preview.operations.RoleDefinitionsOperations>`
         """
         api_version = self._get_api_version('role_definitions')
         if api_version == '7.2':
             from .v7_2.operations import RoleDefinitionsOperations as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import RoleDefinitionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'role_definitions'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

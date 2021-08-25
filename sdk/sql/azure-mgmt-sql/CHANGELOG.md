@@ -1,5 +1,11 @@
 # Release History
 
+## 3.0.1 (2021-07-15)
+
+**Bugfixes**
+
+  - Fix default setting for blob_auditing_policy_name
+
 ## 3.0.0 (2021-06-18)
 
 **Features**

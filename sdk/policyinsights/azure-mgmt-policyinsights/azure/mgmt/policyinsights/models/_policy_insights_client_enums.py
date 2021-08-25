@@ -26,13 +26,36 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
+class ComplianceState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The compliance state that should be set on the resource.
+    """
+
+    #: The resource is in compliance with the policy.
+    COMPLIANT = "Compliant"
+    #: The resource is not in compliance with the policy.
+    NON_COMPLIANT = "NonCompliant"
+    #: The compliance state of the resource is not known.
+    UNKNOWN = "Unknown"
+
+class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
 class FieldRestrictionResult(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of restriction that is imposed on the field.
     """
 
-    REQUIRED = "Required"  #: The field and/or values are required by policy.
-    REMOVED = "Removed"  #: The field will be removed by policy.
-    DENY = "Deny"  #: The field and/or values will be denied by policy.
+    #: The field and/or values are required by policy.
+    REQUIRED = "Required"
+    #: The field will be removed by policy.
+    REMOVED = "Removed"
+    #: The field and/or values will be denied by policy.
+    DENY = "Deny"
 
 class PolicyStatesResource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -44,5 +67,8 @@ class ResourceDiscoveryMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     specified.
     """
 
-    EXISTING_NON_COMPLIANT = "ExistingNonCompliant"  #: Remediate resources that are already known to be non-compliant.
-    RE_EVALUATE_COMPLIANCE = "ReEvaluateCompliance"  #: Re-evaluate the compliance state of resources and then remediate the resources found to be non-compliant.
+    #: Remediate resources that are already known to be non-compliant.
+    EXISTING_NON_COMPLIANT = "ExistingNonCompliant"
+    #: Re-evaluate the compliance state of resources and then remediate the resources found to be
+    #: non-compliant.
+    RE_EVALUATE_COMPLIANCE = "ReEvaluateCompliance"

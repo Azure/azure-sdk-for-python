@@ -450,7 +450,7 @@ class CheckNameAvailabilityRequest(msrest.serialization.Model):
 
     :param name: Required.
     :type name: str
-    :ivar type: Required.  Default value: "Microsoft.Sql/servers".
+    :ivar type:  Has constant value: "Microsoft.Sql/servers".
     :vartype type: str
     """
 
@@ -11885,7 +11885,7 @@ class ResourceIdentity(msrest.serialization.Model):
     :vartype principal_id: str
     :param type: The identity type. Set this to 'SystemAssigned' in order to automatically create
      and assign an Azure Active Directory principal for the resource. Possible values include:
-     "None", "SystemAssigned", "UserAssigned".
+     "None", "SystemAssigned", "UserAssigned", "SystemAssigned,UserAssigned".
     :type type: str or ~azure.mgmt.sql.models.IdentityType
     :ivar tenant_id: The Azure Active Directory tenant id.
     :vartype tenant_id: str
@@ -11911,49 +11911,6 @@ class ResourceIdentity(msrest.serialization.Model):
         **kwargs
     ):
         super(ResourceIdentity, self).__init__(**kwargs)
-        self.user_assigned_identities = user_assigned_identities
-        self.principal_id = None
-        self.type = type
-        self.tenant_id = None
-
-
-class ResourceIdentityWithUserAssignedIdentities(msrest.serialization.Model):
-    """Azure Active Directory identity configuration for a resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :param user_assigned_identities: The resource ids of the user assigned identities to use.
-    :type user_assigned_identities: dict[str, ~azure.mgmt.sql.models.UserIdentity]
-    :ivar principal_id: The Azure Active Directory principal id.
-    :vartype principal_id: str
-    :param type: The identity type. Set this to 'SystemAssigned' in order to automatically create
-     and assign an Azure Active Directory principal for the resource. Possible values include:
-     "None", "SystemAssigned", "UserAssigned".
-    :type type: str or ~azure.mgmt.sql.models.IdentityType
-    :ivar tenant_id: The Azure Active Directory tenant id.
-    :vartype tenant_id: str
-    """
-
-    _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserIdentity}'},
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        user_assigned_identities: Optional[Dict[str, "UserIdentity"]] = None,
-        type: Optional[Union[str, "IdentityType"]] = None,
-        **kwargs
-    ):
-        super(ResourceIdentityWithUserAssignedIdentities, self).__init__(**kwargs)
         self.user_assigned_identities = user_assigned_identities
         self.principal_id = None
         self.type = type

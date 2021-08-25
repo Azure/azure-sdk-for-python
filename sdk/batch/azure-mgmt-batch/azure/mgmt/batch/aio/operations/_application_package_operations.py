@@ -48,7 +48,7 @@ class ApplicationPackageOperations:
         application_name: str,
         version_name: str,
         parameters: "_models.ActivateApplicationPackageParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplicationPackage":
         """Activates the specified application package. This should be done after the
         ``ApplicationPackage`` was created and uploaded. This needs to be done before an
@@ -74,7 +74,7 @@ class ApplicationPackageOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -124,11 +124,12 @@ class ApplicationPackageOperations:
         application_name: str,
         version_name: str,
         parameters: Optional["_models.ApplicationPackage"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplicationPackage":
-        """Creates an application package record. The record contains the SAS where the package should be
-        uploaded to.  Once it is uploaded the ``ApplicationPackage`` needs to be activated using
-        ``ApplicationPackageActive`` before it can be used.
+        """Creates an application package record. The record contains a storageUrl where the package
+        should be uploaded to.  Once it is uploaded the ``ApplicationPackage`` needs to be activated
+        using ``ApplicationPackageActive`` before it can be used. If the auto storage account was
+        configured to use storage keys, the URL returned will contain a SAS.
 
         :param resource_group_name: The name of the resource group that contains the Batch account.
         :type resource_group_name: str
@@ -150,7 +151,7 @@ class ApplicationPackageOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -202,7 +203,7 @@ class ApplicationPackageOperations:
         account_name: str,
         application_name: str,
         version_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes an application package record and its associated binary file.
 
@@ -224,7 +225,7 @@ class ApplicationPackageOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -265,7 +266,7 @@ class ApplicationPackageOperations:
         account_name: str,
         application_name: str,
         version_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplicationPackage":
         """Gets information about the specified application package.
 
@@ -287,7 +288,7 @@ class ApplicationPackageOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -331,7 +332,7 @@ class ApplicationPackageOperations:
         account_name: str,
         application_name: str,
         maxresults: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListApplicationPackagesResult"]:
         """Lists all of the application packages in the specified application.
 
@@ -353,7 +354,7 @@ class ApplicationPackageOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):

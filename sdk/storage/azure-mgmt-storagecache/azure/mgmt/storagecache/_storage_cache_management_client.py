@@ -25,6 +25,7 @@ from .operations import UsageModelsOperations
 from .operations import AscOperationsOperations
 from .operations import CachesOperations
 from .operations import StorageTargetsOperations
+from .operations import StorageTargetOperations
 from . import models
 
 
@@ -43,6 +44,8 @@ class StorageCacheManagementClient(object):
     :vartype caches: storage_cache_management_client.operations.CachesOperations
     :ivar storage_targets: StorageTargetsOperations operations
     :vartype storage_targets: storage_cache_management_client.operations.StorageTargetsOperations
+    :ivar storage_target: StorageTargetOperations operations
+    :vartype storage_target: storage_cache_management_client.operations.StorageTargetOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
@@ -80,6 +83,8 @@ class StorageCacheManagementClient(object):
         self.caches = CachesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.storage_targets = StorageTargetsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.storage_target = StorageTargetOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, http_request, **kwargs):

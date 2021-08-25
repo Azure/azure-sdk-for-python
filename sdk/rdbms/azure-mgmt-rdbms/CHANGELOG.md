@@ -1,5 +1,11 @@
 # Release History
 
+## 9.1.0b1 (2021-07-19)
+
+**Features**
+
+  - Added operation group BackupsOperations
+
 ## 9.0.0 (2021-07-01)
 
 **Features**

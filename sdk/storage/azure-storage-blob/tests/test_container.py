@@ -13,6 +13,7 @@ from time import sleep
 
 import pytest
 import requests
+from devtools_testutils import ResourceGroupPreparer, BlobAccountPreparer, CachedResourceGroupPreparer
 
 from _shared.testcase import StorageTestCase, LogCaptured, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer, StorageAccountPreparer
 from azure.core import MatchConditions
@@ -227,6 +228,7 @@ class StorageContainerTest(StorageTestCase):
         self.assertNamedItemInContainer(containers, container.container_name)
         self.assertIsNotNone(containers[0].has_immutability_policy)
         self.assertIsNotNone(containers[0].has_legal_hold)
+        self.assertIsNotNone(containers[0].is_immutable_storage_with_versioning_enabled)
 
     @GlobalStorageAccountPreparer()
     def test_list_containers_with_prefix(self, resource_group, location, storage_account, storage_account_key):
@@ -399,6 +401,7 @@ class StorageContainerTest(StorageTestCase):
         # Assert
         self.assertIsNotNone(props)
         self.assertDictEqual(props.metadata, metadata)
+        self.assertIsNotNone(props.is_immutable_storage_with_versioning_enabled)
         # self.assertEqual(props.lease.duration, 'infinite')
         # self.assertEqual(props.lease.state, 'leased')
         # self.assertEqual(props.lease.status, 'locked')
@@ -1053,6 +1056,42 @@ class StorageContainerTest(StorageTestCase):
         self.assertEqual(blobs[1].metadata['name'], 'car')
         self.assertEqual(blobs[1].content_settings.content_language, 'spanish')
         self.assertEqual(blobs[1].content_settings.content_disposition, 'inline')
+
+    @GlobalResourceGroupPreparer()
+    @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", random_name_enabled=True)
+    def test_list_blobs_include_deletedwithversion(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        # pytest.skip("Waiting on metadata XML fix in msrest")
+        container = self._create_container(bsc)
+        data = b'hello world'
+        content_settings = ContentSettings(
+            content_language='spanish',
+            content_disposition='inline')
+        blob1 = container.get_blob_client('blob1')
+        resp = blob1.upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '1', 'name': 'bob'})
+        version_id_1 = resp['version_id']
+        blob1.upload_blob(b"abc", overwrite=True)
+        root_content = b"cde"
+        root_version_id = blob1.upload_blob(root_content, overwrite=True)['version_id']
+        blob1.delete_blob()
+
+        container.get_blob_client('blob2').upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '2', 'name': 'car'})
+        container.get_blob_client('blob3').upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '2', 'name': 'car'})
+
+        # Act
+        blobs =list(container.list_blobs(include=["deletedwithversions"]))
+        downloaded_root_content = blob1.download_blob(version_id=root_version_id).readall()
+        downloaded_original_content = blob1.download_blob(version_id=version_id_1).readall()
+
+        # Assert
+        self.assertEqual(blobs[0].name, 'blob1')
+        self.assertTrue(blobs[0].has_versions_only)
+        self.assertEqual(root_content, downloaded_root_content)
+        self.assertEqual(data, downloaded_original_content)
+        self.assertEqual(blobs[1].name, 'blob2')
+        self.assertFalse(blobs[1].has_versions_only)
+        self.assertEqual(blobs[2].name, 'blob3')
+        self.assertFalse(blobs[2].has_versions_only)
 
     @GlobalStorageAccountPreparer()
     def test_list_blobs_with_include_uncommittedblobs(self, resource_group, location, storage_account, storage_account_key):

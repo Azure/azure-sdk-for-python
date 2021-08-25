@@ -48,7 +48,7 @@ class AuthorizationServerOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AuthorizationServerCollection"]:
         """Lists a collection of authorization servers defined within a service instance.
 
@@ -124,7 +124,7 @@ class AuthorizationServerOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -140,7 +140,7 @@ class AuthorizationServerOperations:
         resource_group_name: str,
         service_name: str,
         authsid: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Gets the entity state (Etag) version of the authorizationServer specified by its identifier.
 
@@ -187,7 +187,7 @@ class AuthorizationServerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -204,7 +204,7 @@ class AuthorizationServerOperations:
         resource_group_name: str,
         service_name: str,
         authsid: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AuthorizationServerContract":
         """Gets the details of the authorization server specified by its identifier.
 
@@ -251,7 +251,7 @@ class AuthorizationServerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -271,7 +271,7 @@ class AuthorizationServerOperations:
         authsid: str,
         parameters: "_models.AuthorizationServerContract",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AuthorizationServerContract":
         """Creates new authorization server or updates an existing authorization server.
 
@@ -330,7 +330,7 @@ class AuthorizationServerOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -355,7 +355,7 @@ class AuthorizationServerOperations:
         authsid: str,
         if_match: str,
         parameters: "_models.AuthorizationServerUpdateContract",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AuthorizationServerContract":
         """Updates the details of the authorization server specified by its identifier.
 
@@ -413,7 +413,7 @@ class AuthorizationServerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -432,7 +432,7 @@ class AuthorizationServerOperations:
         service_name: str,
         authsid: str,
         if_match: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes specific authorization server instance.
 
@@ -483,7 +483,7 @@ class AuthorizationServerOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -496,7 +496,7 @@ class AuthorizationServerOperations:
         resource_group_name: str,
         service_name: str,
         authsid: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AuthorizationServerSecretsContract":
         """Gets the client secret details of the authorization server.
 
@@ -543,7 +543,7 @@ class AuthorizationServerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
