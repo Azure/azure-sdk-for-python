@@ -123,6 +123,8 @@ IGNORED_SAMPLES = {
         "sample_list_translations_with_filters_async.py",
         "sample_list_document_statuses_with_filters.py",
         "sample_list_translations_with_filters.py",
+        "sample_translation_with_custom_model.py",
+        "sample_translation_with_custom_model_async.py",
     ]
 }
 
