@@ -120,7 +120,9 @@ class MetricsQueryClient(object):
         :rtype: ~azure.core.paging.AsyncItemPaged[:class: `~azure.monitor.query.MetricNamespace`]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        start_time = Serializer.serialize_iso(kwargs.pop('start_time', None))
+        start_time = kwargs.pop('start_time', None)
+        if start_time:
+            start_time = Serializer.serialize_iso(start_time)
         return self._namespace_op.list(
             resource_uri,
             start_time,
