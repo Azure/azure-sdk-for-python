@@ -20,18 +20,18 @@ interactions:
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7?api-version=2020-09-01-preview
   response:
     body:
-      string: '{"id":"388ac43e38dc4128bf07a83944b4859f"}'
+      string: '{"id":"040228b8d73d4de68af2f7f7f973a55b"}'
     headers:
       content-type:
       - application/json
       date:
-      - Sat, 21 Aug 2021 00:06:18 GMT
+      - Wed, 25 Aug 2021 07:34:38 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7/versions/1?api-version=2020-09-01-preview
       schema-id:
-      - 388ac43e38dc4128bf07a83944b4859f
+      - 040228b8d73d4de68af2f7f7f973a55b
       schema-id-location:
-      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/388ac43e38dc4128bf07a83944b4859f?api-version=2020-09-01-preview
+      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/040228b8d73d4de68af2f7f7f973a55b?api-version=2020-09-01-preview
       schema-version:
       - '1'
       schema-versions-location:
@@ -68,18 +68,18 @@ interactions:
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7?api-version=2020-09-01-preview
   response:
     body:
-      string: '{"id":"388ac43e38dc4128bf07a83944b4859f"}'
+      string: '{"id":"040228b8d73d4de68af2f7f7f973a55b"}'
     headers:
       content-type:
       - application/json
       date:
-      - Sat, 21 Aug 2021 00:06:18 GMT
+      - Wed, 25 Aug 2021 07:34:38 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7/versions/1?api-version=2020-09-01-preview
       schema-id:
-      - 388ac43e38dc4128bf07a83944b4859f
+      - 040228b8d73d4de68af2f7f7f973a55b
       schema-id-location:
-      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/388ac43e38dc4128bf07a83944b4859f?api-version=2020-09-01-preview
+      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/040228b8d73d4de68af2f7f7f973a55b?api-version=2020-09-01-preview
       schema-version:
       - '1'
       schema-versions-location:
