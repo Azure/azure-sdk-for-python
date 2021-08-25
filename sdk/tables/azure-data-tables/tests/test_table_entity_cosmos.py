@@ -1146,8 +1146,8 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     def test_operations_on_entity_with_partition_key_having_single_quote(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
 
         # Arrange
-        partition_key_with_single_quote = "a''''b"
-        row_key_with_single_quote = "a''''b"
+        partition_key_with_single_quote = u"a''''b"
+        row_key_with_single_quote = u"a''''b"
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = self._insert_random_entity(pk=partition_key_with_single_quote, rk=row_key_with_single_quote)
@@ -1163,7 +1163,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._assert_updated_entity(received_entity)
 
             # Act
-            sent_entity['newField'] = 'newFieldValue'
+            sent_entity['newField'] = u'newFieldValue'
             resp = self.table.update_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # Assert
@@ -1855,9 +1855,9 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             # Act
             entity1 = {
-                'PartitionKey': "A'aaa\"_bbbb2",
-                'RowKey': '"A\'aaa"_bbbb2',
-                'test': '"A\'aaa"_bbbb2'
+                'PartitionKey': u"A'aaa\"_bbbb2",
+                'RowKey': u'"A\'aaa"_bbbb2',
+                'test': u'"A\'aaa"_bbbb2'
             }
 
             self.table.create_entity(entity1.copy())

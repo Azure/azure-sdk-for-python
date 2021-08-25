@@ -2035,9 +2035,9 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             # Act
             entity1 = {
-                'PartitionKey': "A'aaa\"_bbbb2",
-                'RowKey': '"A\'aaa"_bbbb2',
-                'test': '"A\'aaa"_bbbb2'
+                'PartitionKey': u"A'aaa\"_bbbb2",
+                'RowKey': u'"A\'aaa"_bbbb2',
+                'test': u'"A\'aaa"_bbbb2'
             }
 
             self.table.create_entity(entity1.copy())
