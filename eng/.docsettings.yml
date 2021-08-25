@@ -92,6 +92,7 @@ known_content_issues:
   - ['sdk/purview/azure-purview-catalog/swagger/README.md',  '#4554']
   - ['sdk/purview/azure-purview-scanning/swagger/README.md',  '#4554']
   - ['sdk/agrifood/azure-agrifood-farming/swagger/README.md',  '#4554']
+  - ['sdk/purview/azure-purview-account/swagger/README.md', '#4554']
   - ['sdk/containerregistry/azure-containerregistry/swagger/README.md', '#4554']
   - ['sdk/appconfiguration/azure-appconfiguration/swagger/README.md', '#4554']
   - ['sdk/attestation/azure-security-attestation/swagger/README.md', '#4554']
