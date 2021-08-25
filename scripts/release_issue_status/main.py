@@ -151,13 +151,15 @@ def main():
         elif item.comment_num == 0 and 'Python' in item.labels:
             item.bot_advice = 'new issue and better to confirm quickly.'
             if 'auto-link' not in item.labels:
-                if not update_issue_body(sdk_repo, rest_repo, item.link):
+                try:
+                    update_issue_body(sdk_repo, rest_repo, item.link)
+                except Exception as e:
                     item.bot_advice = 'failed to modify the body of the new issue. Please modify manually'
                     item.labels.append('attention')
                 item.labels.append('auto-link')
                 item.issue_object.set_labels(*item.labels)
             try:
-                time.sleep(3)
+                time.sleep(5)
                 reply = rg.ReplyGenerator(issue_object=item.issue_object, rest_repo=rest_repo)
                 reply.run()
             except Exception as e:
