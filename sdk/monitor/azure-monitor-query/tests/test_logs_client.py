@@ -76,7 +76,7 @@ def test_logs_server_timeout():
     assert 'Gateway timeout' in e.value.message
 
 @pytest.mark.live_test_only
-def test_logs_query_batch():
+def test_logs_query_batch_default():
     client = LogsQueryClient(_credential())
 
     requests = [
@@ -92,7 +92,7 @@ def test_logs_query_batch():
             workspace_id= os.environ['LOG_WORKSPACE_ID']
         ),
         LogsBatchQuery(
-            query= "AppRequests | take 2",
+            query= "Wrong query | take 2",
             workspace_id= os.environ['LOG_WORKSPACE_ID'],
             timespan=None
         ),
@@ -100,6 +100,15 @@ def test_logs_query_batch():
     response = client.query_batch(requests)
 
     assert len(response) == 3
+    
+    r0 = response[0]
+    assert r0.tables[0].columns == ['count_']
+    r1 = response[1]
+    assert r1.tables[0].columns[0] == 'TimeGenerated'
+    assert r1.tables[0].columns[1] == '_ResourceId'
+    assert r1.tables[0].columns[2] == 'avgRequestDuration'
+    r2 = response[2]
+    assert r2.error is not None
 
 @pytest.mark.live_test_only
 def test_logs_single_query_with_statistics():

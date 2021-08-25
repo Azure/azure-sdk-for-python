@@ -9,7 +9,6 @@ from ._metrics_query_client import MetricsQueryClient
 
 from ._models import (
     MetricAggregationType,
-    LogsBatchQueryResult,
     LogsQueryResult,
     LogsTable,
     MetricsResult,
@@ -30,7 +29,6 @@ from ._version import VERSION
 __all__ = [
     "MetricAggregationType",
     "LogsQueryClient",
-    "LogsBatchQueryResult",
     "LogsQueryResult",
     "LogsTable",
     "LogsBatchQuery",

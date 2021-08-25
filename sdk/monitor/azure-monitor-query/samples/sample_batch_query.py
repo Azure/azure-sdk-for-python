@@ -37,7 +37,7 @@ responses = client.query_batch(requests)
 for response in responses:
     try:
         table = response.tables[0]
-        df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
+        df = pd.DataFrame(table.rows, columns=table.columns)
         print(df)
         print("\n\n-------------------------\n\n")
     except TypeError:
