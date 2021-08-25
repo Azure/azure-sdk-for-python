@@ -15,7 +15,7 @@
 - Rename `batch_query` to `query_batch`.
 - Rename `LogsBatchQueryRequest` to `LogsBatchQuery`.
 - `include_render` is now renamed to `include_visualization` in the query API.
-- `LogsQueryResult` and `LogsBatchQueryResult` now return `visualization` instead of `render`.
+- `LogsQueryResult` now returns `visualization` instead of `render`.
 - `start_time`, `duration` and `end_time` are now replaced with a single param called `timespan`
 - `resourceregion` is renamed to `resource_region` in the MetricResult type.
 - `top` is renamed to `max_results` in the metric's `query` API.
@@ -30,11 +30,11 @@
 - `AggregationType` is renamed to `MetricAggregationType`.
 - Removed `LogsBatchResultError` type.
 - `LogsQueryResultTable` is named to `LogsTable`
-- `LogsQueryResultColumn` is renamed to `LogsTableColumn`
 - `LogsTableColumn` is now removed. Column labels are strings instead.
 - `start_time` in `list_metric_namespaces` API is now a datetime.
 - The order of params in `LogsBatchQuery` is changed. Also, `headers` is no longer accepted.
 - `timespan` is now a required keyword-only argument in logs APIs.
+- batch api now returns a list of `LogsQueryResult` objects.
 
 ### Bugs Fixed
 
