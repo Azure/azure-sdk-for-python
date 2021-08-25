@@ -40,9 +40,9 @@ class _PartGenerator(AsyncIterator):
         self._parts = None
 
     async def _parse_response(self):
-        from ._client_transport_response_async import AsyncHttpClientTransportResponse
+        from ..pipeline.transport._base_async import RestAsyncHttpClientTransportResponse
         responses = self._response._get_raw_parts(  # pylint: disable=protected-access
-            http_response_type=AsyncHttpClientTransportResponse
+            http_response_type=RestAsyncHttpClientTransportResponse
         )
         if self._response.request.multipart_mixed_info:
             policies = self._response.request.multipart_mixed_info[

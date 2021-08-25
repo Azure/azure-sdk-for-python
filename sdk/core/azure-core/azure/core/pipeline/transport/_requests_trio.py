@@ -37,15 +37,25 @@ from azure.core.exceptions import (
     ServiceResponseError
 )
 from azure.core.pipeline import Pipeline
-from ._base import HttpRequest
 from ._base_async import (
     AsyncHttpResponse,
     _ResponseStopIteration,
     _iterate_response_content)
-from ._requests_basic import RequestsTransportResponse, _read_raw_stream
+from ._requests_basic import (
+    RequestsTransportResponse,
+    _RestRequestsTransportResponseBase,
+    _read_raw_stream,
+    _has_content,
+)
 from ._base_requests_async import RequestsAsyncTransportBase
 from .._tools import get_block_size as _get_block_size, get_internal_response as _get_internal_response
 from .._tools_async import read_in_response as _read_in_response
+
+from ...rest import HttpRequest, AsyncHttpResponse as RestAsyncHttpResponse
+from ...rest._helpers_py3 import (
+    iter_bytes_helper as _iter_bytes_helper,
+    iter_raw_helper as _iter_raw_helper,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -133,13 +143,13 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
     async def sleep(self, duration):  # pylint:disable=invalid-overridden-method
         await trio.sleep(duration)
 
-    async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # type: ignore # pylint:disable=invalid-overridden-method
+    async def send(self, request: HttpRequest, **kwargs: Any) -> RestAsyncHttpResponse:  # type: ignore # pylint:disable=invalid-overridden-method
         """Send the request using this HTTP sender.
 
         :param request: The HttpRequest
-        :type request: ~azure.core.pipeline.transport.HttpRequest
+        :type request: ~azure.core.rest.HttpRequest
         :return: The AsyncHttpResponse
-        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+        :rtype: ~azure.core.rest.AsyncHttpResponse
 
         :keyword requests.Session session: will override the driver session and use yours.
          Should NOT be done unless really required. Anything else is sent straight to requests.
@@ -200,19 +210,12 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
             request=request,
             internal_response=response,
         )
-        retval._connection_data_block_size = self.connection_config.data_block_size
+        retval._connection_data_block_size = self.connection_config.data_block_size  # pylint: disable=protected-access
         if not kwargs.get("stream"):
             await _read_in_response(retval)
         return retval
 
 ##################### REST #####################
-
-from ...rest import AsyncHttpResponse as RestAsyncHttpResponse
-from ...rest._helpers_py3 import (
-    iter_bytes_helper as _iter_bytes_helper,
-    iter_raw_helper as _iter_raw_helper,
-)
-from ._requests_basic import _RestRequestsTransportResponseBase, _has_content
 
 class RestTrioRequestsTransportResponse(_RestRequestsTransportResponseBase, RestAsyncHttpResponse): # type: ignore
     """Asynchronous streaming of data from the response.

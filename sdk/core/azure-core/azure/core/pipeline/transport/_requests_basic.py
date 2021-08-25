@@ -27,7 +27,7 @@ from __future__ import absolute_import
 try:
     import collections.abc as collections
 except ImportError:
-    import collections
+    import collections  # type: ignore
 import logging
 from typing import Iterator, Optional, Any, Union, TypeVar, cast
 import urllib3 # type: ignore
@@ -46,7 +46,6 @@ from azure.core.exceptions import (
     StreamConsumedError,
     StreamClosedError,
 )
-from . import HttpRequest # pylint: disable=unused-import
 
 from ._base import (
     HttpTransport,
@@ -59,6 +58,8 @@ from .._tools import (
     get_internal_response as _get_internal_response,
     read_in_response as _read_in_response,
 )
+from ...rest import HttpRequest as RestHttpRequest, HttpResponse as RestHttpResponse
+from ...rest._rest import _HttpResponseBase as _RestHttpResponseBase
 
 PipelineType = TypeVar("PipelineType")
 
@@ -277,13 +278,13 @@ class RequestsTransport(HttpTransport):
             self.session = None
 
     def send(self, request, **kwargs): # type: ignore
-        # type: (HttpRequest, Any) -> HttpResponse
+        # type: (RestHttpRequest, Any) -> RestHttpResponse
         """Send request object according to configuration.
 
         :param request: The request object to be sent.
-        :type request: ~azure.core.pipeline.transport.HttpRequest
+        :type request: ~azure.core.rest.HttpRequest
         :return: An HTTPResponse object.
-        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        :rtype: ~azure.core.rest.HttpResponse
 
         :keyword requests.Session session: will override the driver session and use yours.
          Should NOT be done unless really required. Anything else is sent straight to requests.
@@ -334,17 +335,12 @@ class RequestsTransport(HttpTransport):
             request=request,
             internal_response=response,
         )
-        retval._connection_data_block_size = self.connection_config.data_block_size
+        retval._connection_data_block_size = self.connection_config.data_block_size  # pylint: disable=protected-access
         if not kwargs.get("stream"):
             _read_in_response(retval)
         return retval
 
 ##################### REST #####################
-from ...rest._rest import (
-    _HttpResponseBase as _RestHttpResponseBase,
-    HttpResponse as RestHttpResponse,
-)
-
 
 def _has_content(response):
     try:
@@ -390,7 +386,7 @@ def _stream_download_helper(decompress, response):
     for part in stream_download:
         yield part
 
-class RestRequestsTransportResponse(RestHttpResponse, _RestRequestsTransportResponseBase):
+class RestRequestsTransportResponse(_RestRequestsTransportResponseBase, RestHttpResponse):
 
     def iter_bytes(self):
         # type: () -> Iterator[bytes]

@@ -16,13 +16,19 @@ from azure.core.pipeline.transport import (
     HttpResponse as PipelineTransportHttpResponse, RequestsTransport
 )
 from azure.core.rest import HttpResponse as RestHttpResponse
-from azure.core.pipeline.transport._base import HttpClientTransportResponse, HttpTransport, _deserialize_response, _urljoin
+from azure.core.pipeline.transport._base import (
+    HttpClientTransportResponse as PipelineTransportHttpClientTransportResponse,
+    RestHttpClientTransportResponse,
+    HttpTransport,
+    _deserialize_response,
+    _urljoin,
+)
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.pipeline import Pipeline
 from azure.core.exceptions import HttpResponseError
 import logging
 import pytest
-from utils import HTTP_REQUESTS, pipeline_transport_and_rest_product
+from utils import HTTP_REQUESTS, pipeline_transport_and_rest_product, create_http_response
 
 class PipelineTransportMockResponse(PipelineTransportHttpResponse):
     def __init__(self, request, body, content_type):
@@ -111,8 +117,9 @@ def test_url_join(http_request):
     assert _urljoin('devstoreaccount1/', 'testdir/') == 'devstoreaccount1/testdir/'
 
 
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_http_client_response(http_request):
+CLIENT_TRANSPORT_RESPONSES = [PipelineTransportHttpClientTransportResponse, RestHttpClientTransportResponse]
+@pytest.mark.parametrize("http_request,http_response", pipeline_transport_and_rest_product(HTTP_REQUESTS, CLIENT_TRANSPORT_RESPONSES))
+def test_http_client_response(http_request, http_response):
     # Create a core request
     request = http_request("GET", "www.httpbin.org")
 
@@ -121,7 +128,7 @@ def test_http_client_response(http_request):
     conn.request("GET", "/get")
     r1 = conn.getresponse()
 
-    response = HttpClientTransportResponse(request, r1)
+    response = create_http_response(http_response, request, r1)
 
     # Don't assume too much in those assert, since we reach a real server
     assert response.internal_response is r1

@@ -32,11 +32,13 @@ from typing import AsyncIterator as AsyncIteratorType, TypeVar, Generic, Any
 from ._base import (
     _HttpResponseBase,
     _HttpClientTransportResponse,
+    _RestHttpClientTransportResponse,
     PipelineContext,
     PipelineRequest,
     PipelineResponse,
 )
 from .._tools_async import await_result as _await_result
+from ...rest import AsyncHttpResponse as RestAsyncHttpResponse
 
 try:
     from contextlib import AbstractAsyncContextManager  # type: ignore
@@ -158,6 +160,16 @@ class AsyncHttpClientTransportResponse(_HttpClientTransportResponse, AsyncHttpRe
     :param HttpRequest request: The request.
     :param httpclient_response: The object returned from an HTTP(S)Connection from http.client
     """
+
+class RestAsyncHttpClientTransportResponse(_RestHttpClientTransportResponse, RestAsyncHttpResponse):
+    """Create a Rest HTTPResponse from an http.client response.
+    """
+
+    async def iter_bytes(self):
+        raise TypeError("We do not support iter_bytes for this transport response")
+
+    async def iter_raw(self):
+        raise TypeError("We do not support iter_raw for this transport response")
 
 
 class AsyncHttpTransport(

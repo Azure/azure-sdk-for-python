@@ -31,7 +31,7 @@ from json import dumps
 try:
     import collections.abc as collections
 except ImportError:
-    import collections
+    import collections  # type: ignore
 from typing import (
     Optional,
     Union,

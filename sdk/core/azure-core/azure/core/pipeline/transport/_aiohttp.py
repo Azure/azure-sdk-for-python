@@ -41,7 +41,7 @@ from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 from azure.core.pipeline import Pipeline
 
-from ._base import HttpRequest
+from ._base import HttpRequest as PipelineTransportHttpRequest
 from ._base_async import (
     AsyncHttpTransport,
     AsyncHttpResponse,
@@ -49,6 +49,14 @@ from ._base_async import (
 from .._tools import get_block_size as _get_block_size, get_internal_response as _get_internal_response
 
 from .._tools_async import read_in_response as _read_in_response
+from ...rest import (
+    HttpRequest as RestHttpRequest, AsyncHttpResponse as RestAsyncHttpResponse
+)
+from ...rest._helpers_py3 import (
+    iter_raw_helper as _iter_raw_helper,
+    iter_bytes_helper as _iter_bytes_helper,
+)
+
 
 # Matching requests, because why not?
 CONTENT_CHUNK_SIZE = 10 * 1024
@@ -223,17 +231,17 @@ class AioHttpTransport(AsyncHttpTransport):
             return form_data
         return request.data
 
-    async def send(self, request: HttpRequest, **config: Any) -> Optional[AsyncHttpResponse]:
+    async def send(self, request: RestHttpRequest, **config: Any) -> Optional[RestAsyncHttpResponse]:
         """Send the request using this HTTP sender.
 
         Will pre-load the body into memory to be available with a sync method.
         Pass stream=True to avoid this behavior.
 
         :param request: The HttpRequest object
-        :type request: ~azure.core.pipeline.transport.HttpRequest
+        :type request: ~azure.core.rest.HttpRequest
         :param config: Any keyword arguments
         :return: The AsyncHttpResponse
-        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+        :rtype: ~azure.core.rest.AsyncHttpResponse
 
         :keyword bool stream: Defaults to False.
         :keyword dict proxies: dict of proxy to used based on protocol. Proxy is a dict (protocol, url)
@@ -281,8 +289,8 @@ class AioHttpTransport(AsyncHttpTransport):
                 **config
             )
             response = RestAioHttpTransportResponse(request=request, internal_response=result)
-            response._connection_data_block_size = self.connection_config.data_block_size
-            response._decompress = not auto_decompress
+            response._connection_data_block_size = self.connection_config.data_block_size  # pylint: disable=protected-access
+            response._decompress = not auto_decompress  # pylint: disable=protected-access
             if not stream_response:
                 await _read_in_response(response)
 
@@ -354,7 +362,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
     :param bool decompress: If True which is default, will attempt to decode the body based
             on the *content-encoding* header.
     """
-    def __init__(self, request: HttpRequest,
+    def __init__(self, request: PipelineTransportHttpRequest,
                  aiohttp_response: aiohttp.ClientResponse,
                  block_size=None, *, decompress=True) -> None:
         super(AioHttpTransportResponse, self).__init__(request, aiohttp_response, block_size=block_size)
@@ -452,19 +460,11 @@ class AioHttpTransportResponse(AsyncHttpResponse):
 
 
 ##################### REST #####################
-from ...rest import (
-    HttpRequest as RestHttpRequest,
-    AsyncHttpResponse as RestAsyncHttpResponse,
-)
-from ...rest._helpers_py3 import (
-    iter_raw_helper as _iter_raw_helper,
-    iter_bytes_helper as _iter_bytes_helper,
-)
 
 class _AioHttpTransportResponseBackcompatMixin():
     async def load_body(self) -> None:
         """Load in memory the body, so it could be accessible from sync methods."""
-        self._content = await self.read()
+        self._content = await self.read()  # type: ignore
 
 class RestAioHttpTransportResponse(RestAsyncHttpResponse, _AioHttpTransportResponseBackcompatMixin):
     def __init__(

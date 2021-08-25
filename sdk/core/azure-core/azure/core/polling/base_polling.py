@@ -38,7 +38,6 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport import (
         HttpResponse,
         AsyncHttpResponse,
-        HttpRequest,
     )
 
     ResponseType = Union[HttpResponse, AsyncHttpResponse]
