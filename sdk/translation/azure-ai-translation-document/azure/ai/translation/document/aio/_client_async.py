@@ -183,7 +183,7 @@ class DocumentTranslationClient(object):
             raw_response, _, headers
         ):  # pylint: disable=unused-argument
             translation_status = json.loads(raw_response.http_response.text())
-            return self.list_all_document_statuses(translation_status["id"])
+            return self.list_document_statuses(translation_status["id"])
 
         polling_interval = kwargs.pop(
             "polling_interval",
@@ -317,7 +317,7 @@ class DocumentTranslationClient(object):
         )
 
     @distributed_trace
-    def list_all_document_statuses(self, translation_id, **kwargs):
+    def list_document_statuses(self, translation_id, **kwargs):
         # type: (str, **Any) -> AsyncItemPaged[DocumentStatus]
         """List all the document statuses for a given translation operation.
 
@@ -345,8 +345,8 @@ class DocumentTranslationClient(object):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_check_document_statuses_async.py
-                :start-after: [START list_all_document_statuses_async]
-                :end-before: [END list_all_document_statuses_async]
+                :start-after: [START list_document_statuses_async]
+                :end-before: [END list_document_statuses_async]
                 :language: python
                 :dedent: 4
                 :caption: List all the document statuses as they are being translated.

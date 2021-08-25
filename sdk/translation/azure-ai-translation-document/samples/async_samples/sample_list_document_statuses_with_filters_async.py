@@ -56,7 +56,7 @@ async def sample_list_document_statuses_with_filters_async():
     skip = 3
 
     async with client:
-        filtered_docs = client.list_all_document_statuses(
+        filtered_docs = client.list_document_statuses(
             translation_id,
             # filters
             statuses=statuses,

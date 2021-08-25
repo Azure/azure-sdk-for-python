@@ -53,7 +53,7 @@ def sample_list_document_statuses_with_filters():
     results_per_page = 2
     skip = 3
 
-    filtered_docs = client.list_all_document_statuses(
+    filtered_docs = client.list_document_statuses(
         translation_id,
         # filters
         statuses=statuses,
