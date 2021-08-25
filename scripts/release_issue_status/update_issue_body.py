@@ -20,8 +20,7 @@ def update_issue_body(sdk_repo, rest_repo, issue_link):
     try:
         package_name, readme_link = get_pkname_and_readme_link(rest_repo, link)
     except Exception as e:
-        print(e)
-        return False
+        raise e
 
     readme_link = readme_link.replace('python.', '')
     issue_body_list.insert(0, f'\n{readme_link}')
@@ -33,10 +32,8 @@ def update_issue_body(sdk_repo, rest_repo, issue_link):
         issue_body_up += raw + '\n'
     try:
         issue_info.edit(body=issue_body_up)
-        return True
     except Exception as e:
-        print(e)
-        return False
+        raise e
 
 
 def get_pkname_and_readme_link(rest_repo, link):
