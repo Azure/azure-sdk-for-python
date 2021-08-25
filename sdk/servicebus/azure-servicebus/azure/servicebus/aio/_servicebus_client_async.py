@@ -108,6 +108,12 @@ class ServiceBusClient(object):
             debug=self._config.logging_enable,
         )
 
+    def _deregister_handler(self, handler):
+        try:
+            self._handlers.remove(handler)
+        except ValueError:
+            pass  # the handler has already been removed from the client._handlers
+
     @classmethod
     def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "ServiceBusClient":
         """
@@ -212,7 +218,7 @@ class ServiceBusClient(object):
             retry_total=self._config.retry_total,
             retry_backoff_factor=self._config.retry_backoff_factor,
             retry_backoff_max=self._config.retry_backoff_max,
-            service_bus_client=self,
+            deregister_from_client_func=self._deregister_handler,
             **kwargs
         )
         self._handlers.append(handler)
@@ -302,7 +308,7 @@ class ServiceBusClient(object):
             retry_total=self._config.retry_total,
             retry_backoff_factor=self._config.retry_backoff_factor,
             retry_backoff_max=self._config.retry_backoff_max,
-            service_bus_client=self,
+            deregister_from_client_func=self._deregister_handler,
             **kwargs
         )
         self._handlers.append(handler)
@@ -343,7 +349,7 @@ class ServiceBusClient(object):
             retry_total=self._config.retry_total,
             retry_backoff_factor=self._config.retry_backoff_factor,
             retry_backoff_max=self._config.retry_backoff_max,
-            service_bus_client=self,
+            deregister_from_client_func=self._deregister_handler,
             **kwargs
         )
         self._handlers.append(handler)
@@ -434,7 +440,7 @@ class ServiceBusClient(object):
                 retry_total=self._config.retry_total,
                 retry_backoff_factor=self._config.retry_backoff_factor,
                 retry_backoff_max=self._config.retry_backoff_max,
-                service_bus_client=self,
+                deregister_from_client_func=self._deregister_handler,
                 **kwargs
             )
         except ValueError:
@@ -455,7 +461,7 @@ class ServiceBusClient(object):
                 retry_total=self._config.retry_total,
                 retry_backoff_factor=self._config.retry_backoff_factor,
                 retry_backoff_max=self._config.retry_backoff_max,
-                service_bus_client=self,
+                deregister_from_client_func=self._deregister_handler,
                 **kwargs
             )
         self._handlers.append(handler)
