@@ -47,46 +47,6 @@ class LogsTable(object):
         )
 
 
-class LogsQueryResult(object):
-    """Contains the tables, columns & rows resulting from a query.
-
-    :ivar tables: The list of tables, columns and rows.
-    :vartype tables: list[~azure.monitor.query.LogsTable]
-    :ivar statistics: This will include a statistics property in the response that describes various
-     performance statistics such as query execution time and resource usage.
-    :vartype statistics: object
-    :ivar visualization: This will include a visualization property in the response that specifies the type of
-     visualization selected by the query and any properties for that visualization.
-    :vartype visualization: object
-    :ivar error: Any error info.
-    :vartype error: ~azure.core.exceptions.HttpResponseError
-    """
-    def __init__(self, **kwargs):
-        # type: (Any) -> None
-        self.tables = kwargs.get("tables", None)
-        self.statistics = kwargs.get("statistics", None)
-        self.visualization = kwargs.get("visualization", None)
-        self.error = kwargs.get("error", None)
-
-    @classmethod
-    def _from_generated(cls, generated):
-        if not generated:
-            return cls()
-        tables = None
-        if generated.tables is not None:
-            tables = [
-                LogsTable._from_generated( # pylint: disable=protected-access
-                    table
-                    ) for table in generated.tables
-                ]
-        return cls(
-            tables=tables,
-            statistics=generated.statistics,
-            visualization=generated.render,
-            error=generated.error
-        )
-
-
 class MetricsResult(object):
     """The response to a metrics query.
 
@@ -193,13 +153,9 @@ class LogsBatchQuery(object):
             workspace=self.workspace
         )
 
-class LogsBatchQueryResult(object):
-    """The LogsBatchQueryResult.
+class LogsQueryResult(object):
+    """The LogsQueryResult.
 
-    :ivar id: the request id of the request that was sent.
-    :vartype id: str
-    :ivar status: status code of the response.
-    :vartype status: int
     :ivar tables: The list of tables, columns and rows.
     :vartype tables: list[~azure.monitor.query.LogsTable]
     :ivar statistics: This will include a statistics property in the response that describes various
@@ -215,8 +171,6 @@ class LogsBatchQueryResult(object):
         self,
         **kwargs
     ):
-        self.id = kwargs.get('id', None)
-        self.status = kwargs.get('status', None)
         self.tables = kwargs.get('tables', None)
         self.error = kwargs.get('error', None)
         self.statistics = kwargs.get('statistics', None)
@@ -234,8 +188,6 @@ class LogsBatchQueryResult(object):
                     ) for table in generated.body.tables
                 ]
         return cls(
-            id=generated.id,
-            status=generated.status,
             tables=tables,
             statistics=generated.body.statistics,
             visualization=generated.body.render,
