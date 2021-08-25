@@ -34,6 +34,7 @@
 - `LogsTableColumn` is now removed. Column labels are strings instead.
 - `start_time` in `list_metric_namespaces` API is now a datetime.
 - The order of params in `LogsBatchQuery` is changed. Also, `headers` is no longer accepted.
+- `timespan` is now a required keyword-only argument in logs APIs.
 
 ### Bugs Fixed
 

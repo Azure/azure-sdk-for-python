@@ -141,9 +141,9 @@ class LogsBatchQuery(object):
     :param query: The Analytics query. Learn more about the `Analytics query syntax
      <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
     :type query: str
-    :param timespan: The timespan for which to query the data. This can be a timedelta,
+    :keyword timespan: The timespan for which to query the data. This can be a timedelta,
      a timedelta and a start datetime, or a start datetime/end datetime.
-    :type timespan: ~datetime.timedelta or tuple[~datetime.datetime, ~datetime.timedelta]
+    :paramtype timespan: ~datetime.timedelta or tuple[~datetime.datetime, ~datetime.timedelta]
      or tuple[~datetime.datetime, ~datetime.datetime]
     :keyword additional_workspaces: A list of workspaces that are included in the query.
      These can be qualified workspace names, workspace Ids, or Azure resource Ids.
@@ -156,8 +156,10 @@ class LogsBatchQuery(object):
      visualization to show.
     """
 
-    def __init__(self, workspace_id, query, timespan, **kwargs): #pylint: disable=super-init-not-called
-        # type: (str, str, Optional[str], Any) -> None
+    def __init__(self, workspace_id, query, **kwargs): #pylint: disable=super-init-not-called
+        # type: (str, str, Any) -> None
+        if 'timespan' not in kwargs:
+            raise TypeError("LogsBatchQuery() missing 1 required keyword-only argument: 'timespan'")
         include_statistics = kwargs.pop("include_statistics", False)
         include_visualization = kwargs.pop("include_visualization", False)
         server_timeout = kwargs.pop("server_timeout", None)
@@ -174,7 +176,7 @@ class LogsBatchQuery(object):
             prefer += "include-render=true"
 
         headers = {'Prefer': prefer}
-        timespan = construct_iso8601(timespan)
+        timespan = construct_iso8601(kwargs.pop('timespan'))
         additional_workspaces = kwargs.pop("additional_workspaces", None)
         self.id = str(uuid.uuid4())
         self.body = {

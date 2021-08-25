@@ -45,6 +45,7 @@ class LogsQueryClient(object):
         self,
         workspace_id: str,
         query: str,
+        *,
         timespan: Union[timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]],
         **kwargs: Any) -> LogsQueryResult:
         """Execute an Analytics query.

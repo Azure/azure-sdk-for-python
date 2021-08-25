@@ -51,8 +51,8 @@ class LogsQueryClient(object):
         self._query_op = self._client.query
 
     @distributed_trace
-    def query(self, workspace_id, query, timespan, **kwargs):
-        # type: (str, str, Union[timedelta, (datetime, timedelta), (datetime, datetime)], Any) -> LogsQueryResult
+    def query(self, workspace_id, query, **kwargs):
+        # type: (str, str, Any) -> LogsQueryResult
         """Execute an Analytics query.
 
         Executes an Analytics query for data.
@@ -63,9 +63,9 @@ class LogsQueryClient(object):
         :param query: The Analytics query. Learn more about the `Analytics query syntax
          <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
         :type query: str
-        :param timespan: The timespan for which to query the data. This can be a timedelta,
+        :keyword timespan: The timespan for which to query the data. This can be a timedelta,
          a timedelta and a start datetime, or a start datetime/end datetime.
-        :type timespan: ~datetime.timedelta or tuple[~datetime.datetime, ~datetime.timedelta]
+        :paramtype timespan: ~datetime.timedelta or tuple[~datetime.datetime, ~datetime.timedelta]
          or tuple[~datetime.datetime, ~datetime.datetime]
         :keyword int server_timeout: the server timeout in seconds. The default timeout is 3 minutes,
          and the maximum timeout is 10 minutes.
@@ -89,7 +89,9 @@ class LogsQueryClient(object):
             :dedent: 0
             :caption: Get a response for a single Log Query
         """
-        timespan = construct_iso8601(timespan)
+        if 'timespan' not in kwargs:
+            raise TypeError("query() missing 1 required keyword-only argument: 'timespan'")
+        timespan = construct_iso8601(kwargs.pop('timespan'))
         include_statistics = kwargs.pop("include_statistics", False)
         include_visualization = kwargs.pop("include_visualization", False)
         server_timeout = kwargs.pop("server_timeout", None)

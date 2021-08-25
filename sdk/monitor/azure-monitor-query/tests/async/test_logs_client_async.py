@@ -16,6 +16,7 @@ def _credential():
     return credential
 
 @pytest.mark.live_test_only
+@pytest.mark.asyncio
 async def test_logs_auth():
     credential = _credential()
     client = LogsQueryClient(credential)
@@ -28,6 +29,20 @@ async def test_logs_auth():
 
     assert response is not None
     assert response.tables is not None
+
+@pytest.mark.live_test_only
+@pytest.mark.asyncio
+async def test_logs_auth_no_timespan():
+    credential = _credential()
+    client = LogsQueryClient(credential)
+    query = """AppRequests | 
+    where TimeGenerated > ago(12h) | 
+    summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
+
+    # returns LogsQueryResult 
+    with pytest.raises(TypeError):
+        await client.query(os.environ['LOG_WORKSPACE_ID'], query)
+
 
 @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/19917")
 @pytest.mark.live_test_only
@@ -42,6 +57,15 @@ async def test_logs_server_timeout():
             server_timeout=1,
         )
         assert e.message.contains('Gateway timeout')
+
+@pytest.mark.live_test_only
+@pytest.mark.asyncio
+async def test_logs_query_batch_raises_on_no_timespan():
+    with pytest.raises(TypeError):
+        LogsBatchQuery(
+                    query="AzureActivity | summarize count()",
+                    workspace_id= os.environ['LOG_WORKSPACE_ID']
+                )
 
 @pytest.mark.live_test_only
 @pytest.mark.asyncio
