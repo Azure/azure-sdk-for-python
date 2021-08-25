@@ -213,7 +213,7 @@ class RestAsyncioRequestsTransportResponse(_RestRequestsTransportResponseBase, R
     """Asynchronous streaming of data from the response.
     """
 
-    async def iter_raw(self) -> AsyncIterator[bytes]:
+    async def iter_raw(self) -> AsyncIteratorType[bytes]:
         """Asynchronously iterates over the response's bytes. Will not decompress in the process
 
         :return: An async iterator of bytes from the response
@@ -224,7 +224,7 @@ class RestAsyncioRequestsTransportResponse(_RestRequestsTransportResponseBase, R
             yield part
         await self.close()
 
-    async def iter_bytes(self) -> AsyncIterator[bytes]:
+    async def iter_bytes(self) -> AsyncIteratorType[bytes]:
         """Asynchronously iterates over the response's bytes. Will decompress in the process
 
         :return: An async iterator of bytes from the response

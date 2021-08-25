@@ -220,7 +220,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
 class RestTrioRequestsTransportResponse(_RestRequestsTransportResponseBase, RestAsyncHttpResponse): # type: ignore
     """Asynchronous streaming of data from the response.
     """
-    async def iter_raw(self) -> AsyncIterator[bytes]:
+    async def iter_raw(self) -> AsyncIteratorType[bytes]:
         """Asynchronously iterates over the response's bytes. Will not decompress in the process
 
         :return: An async iterator of bytes from the response
@@ -230,7 +230,7 @@ class RestTrioRequestsTransportResponse(_RestRequestsTransportResponseBase, Rest
             yield part
         await self.close()
 
-    async def iter_bytes(self) -> AsyncIterator[bytes]:
+    async def iter_bytes(self) -> AsyncIteratorType[bytes]:
         """Asynchronously iterates over the response's bytes. Will decompress in the process
 
         :return: An async iterator of bytes from the response
