@@ -3,6 +3,7 @@
 metadata:
   labels:
     testName: "deploy-python-eh-stress"
+    testInstance: "deploy-python-eh-stress-instance"
     chaos: "true"
 spec:
   containers:
