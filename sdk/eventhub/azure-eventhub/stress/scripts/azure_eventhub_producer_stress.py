@@ -94,7 +94,7 @@ class StressTestRunner(object):
         self.argument_parser = argument_parser
         self.argument_parser.add_argument("-m", "--method", default="stress_send_list_sync")
         self.argument_parser.add_argument("--output_interval", type=float, default=int(os.environ.get("OUTPUT_INTERVAL", 5000)))
-        self.argument_parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=int(os.environ.get("DURATION", 864000)))
+        self.argument_parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=int(os.environ.get("DURATION", 999999999)))
         self.argument_parser.add_argument(
             "--partitions",
             help="Number of partitions. 0 means to get partitions from eventhubs",
