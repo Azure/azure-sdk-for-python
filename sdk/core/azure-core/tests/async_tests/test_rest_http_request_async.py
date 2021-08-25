@@ -8,7 +8,6 @@
 # Thank you httpx for your wonderful tests!
 import pytest
 from azure.core.rest import HttpRequest
-from typing import AsyncGenerator
 import collections.abc
 
 @pytest.fixture

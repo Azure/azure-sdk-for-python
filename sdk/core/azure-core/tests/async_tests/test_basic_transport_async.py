@@ -3,14 +3,6 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from six.moves.http_client import HTTPConnection
-import time
-
-try:
-    from unittest import mock
-except ImportError:
-    import mock
-
 from azure.core.pipeline.transport import HttpRequest, AsyncHttpResponse, AsyncHttpTransport, AioHttpTransport
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.pipeline import AsyncPipeline
@@ -42,9 +34,9 @@ class MockResponse(AsyncHttpResponse):
 
 
 @pytest.mark.asyncio
-async def test_basic_options_aiohttp():
+async def test_basic_options_aiohttp(port):
 
-    request = HttpRequest("OPTIONS", "https://httpbin.org")
+    request = HttpRequest("OPTIONS", "http://localhost:{}/basic/string".format(port))
     async with AsyncPipeline(AioHttpTransport(), policies=[]) as pipeline:
         response = await pipeline.run(request)
 

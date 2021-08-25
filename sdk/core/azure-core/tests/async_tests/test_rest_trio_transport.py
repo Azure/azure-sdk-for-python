@@ -27,14 +27,14 @@ async def test_async_gen_data(port):
 
     async with TrioRequestsTransport() as transport:
         client = AsyncTestRestClient(port, transport=transport)
-        request = HttpRequest('GET', 'http://httpbin.org/anything', content=AsyncGen())
+        request = HttpRequest('GET', 'http://localhost:{}/basic/anything'.format(port), content=AsyncGen())
         response = await client.send_request(request)
         assert response.json()['data'] == "azerty"
 
 @pytest.mark.trio
 async def test_send_data(port):
     async with TrioRequestsTransport() as transport:
-        request = HttpRequest('PUT', 'http://httpbin.org/anything', content=b"azerty")
+        request = HttpRequest('PUT', 'http://localhost:{}/basic/anything'.format(port), content=b"azerty")
         client = AsyncTestRestClient(port, transport=transport)
         response = await client.send_request(request)
 

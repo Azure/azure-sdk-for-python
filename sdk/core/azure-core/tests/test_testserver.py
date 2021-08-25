@@ -23,15 +23,12 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import pytest
-from azure.core.pipeline.transport import HttpRequest, AioHttpTransport
+from azure.core.pipeline.transport import HttpRequest, RequestsTransport
 """This file does a simple call to the testserver to make sure we can use the testserver"""
 
-@pytest.mark.asyncio
-async def test_smoke(port):
+def test_smoke(port):
     request = HttpRequest(method="GET", url="http://localhost:{}/basic/string".format(port))
-    async with AioHttpTransport() as sender:
-        response = await sender.send(request)
+    with RequestsTransport() as sender:
+        response = sender.send(request)
         response.raise_for_status()
-        await response.load_body()
         assert response.text() == "Hello, world!"

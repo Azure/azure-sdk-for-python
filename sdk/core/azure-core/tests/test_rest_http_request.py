@@ -11,7 +11,6 @@ import io
 import pytest
 import sys
 import collections
-from typing import Generator
 from azure.core.rest import HttpRequest
 
 @pytest.fixture
@@ -204,7 +203,7 @@ def test_multipart_invalid_key(key):
     files = {"file": io.BytesIO(b"<file content>")}
     with pytest.raises(TypeError) as e:
         HttpRequest(
-            url="http://127.0.0.1:8000/",
+            url="http://localhost:8000/",
             method="POST",
             data=data,
             files=files,
@@ -221,7 +220,7 @@ def test_multipart_invalid_key_binary_string():
     files = {"file": io.BytesIO(b"<file content>")}
     with pytest.raises(TypeError) as e:
         HttpRequest(
-            url="http://127.0.0.1:8000/",
+            url="http://localhost:8000/",
             method="POST",
             data=data,
             files=files,
@@ -235,7 +234,7 @@ def test_multipart_invalid_value(value):
     data = {"text": value}
     files = {"file": io.BytesIO(b"<file content>")}
     with pytest.raises(TypeError) as e:
-        HttpRequest("POST", "http://127.0.0.1:8000/", data=data, files=files)
+        HttpRequest("POST", "http://localhost:8000/", data=data, files=files)
     assert "Invalid type for data value" in str(e.value)
 
 def test_empty_request():
