@@ -9,11 +9,11 @@
 
 from datetime import timedelta
 from typing import TYPE_CHECKING, Any, List, Optional
+from msrest.serialization import Serializer
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from msrest.serialization import Serializer
 
 from .._generated.aio._monitor_query_client import (
     MonitorQueryClient,

@@ -11,7 +11,6 @@ from typing import Any, Optional, List
 
 from ._helpers import construct_iso8601, process_row
 from ._generated.models import (
-    Column as InternalColumn,
     BatchQueryRequest as InternalLogQueryRequest,
 )
 

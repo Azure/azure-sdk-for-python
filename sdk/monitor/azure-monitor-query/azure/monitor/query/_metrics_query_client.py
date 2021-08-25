@@ -8,8 +8,8 @@
 # pylint: disable=anomalous-backslash-in-string
 
 from typing import TYPE_CHECKING, Any, Optional
-from azure.core.tracing.decorator import distributed_trace
 from msrest.serialization import Serializer
+from azure.core.tracing.decorator import distributed_trace
 
 from ._generated._monitor_query_client import (
     MonitorQueryClient,
