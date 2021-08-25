@@ -76,6 +76,40 @@ def _read_raw_stream(response, chunk_size=1):
     # https://github.com/psf/requests/blob/master/requests/models.py#L774
     response._content_consumed = True  # pylint: disable=protected-access
 
+
+def _set_enforce_content_length(request, *args, **kwargs):  # pylint: disable=unused-argument
+    # type: (requests.Request, Any, Any) -> None
+    """
+    Hook to set urllib3's enforce_content_length
+    """
+    # Do not modify objects if they don't look like the urllib3 connections 
+    if hasattr(request.raw, "enforce_content_length"):
+        request.raw.enforce_content_length = True
+
+
+def _get_request_hooks(user_hooks):
+    # type: (Optional[dict]) -> dict
+    """
+    Get an argument for the `hooks` parameter for `requests.Session.request` that
+    sets the `enforce_content_length` on the underlying urllib3 connection.
+
+    `user_hooks` are the hooks passed to Transport.send explicitly. They are called last,
+    so users can override the default set here if they insist.
+    """
+    if user_hooks:
+        merged_hooks = dict(user_hooks)
+    else:
+        merged_hooks = requests.hooks.default_hooks()
+    user_response_hooks = merged_hooks.pop("response")
+    if user_response_hooks is None:
+        merged_response_hooks = [_set_enforce_content_length]
+    elif callable(user_response_hooks):
+        merged_response_hooks = [_set_enforce_content_length, user_response_hooks]
+    else:
+        merged_response_hooks = [_set_enforce_content_length] + user_response_hooks
+    merged_hooks["response"] = merged_response_hooks
+    return merged_hooks
+
 class _RequestsTransportResponseBase(_HttpResponseBase):
     """Base class for accessing response data.
 
@@ -280,6 +314,7 @@ class RequestsTransport(HttpTransport):
                 timeout=timeout,
                 cert=kwargs.pop('connection_cert', self.connection_config.cert),
                 allow_redirects=False,
+                hooks=_get_request_hooks(kwargs.pop('hooks', None)),
                 **kwargs)
 
         except (urllib3.exceptions.NewConnectionError, urllib3.exceptions.ConnectTimeoutError) as err:

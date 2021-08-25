@@ -8,6 +8,9 @@
 
 ### Bugs Fixed
 
+- The `Content-Length` header in a http response is strictly checked against the actual number of bytes in the body,
+  rather than silently truncating data in case the underlying tcp connection is closed prematurely.
+
 ### Other Changes
 
 ## 1.18.0 (2021-09-02)
