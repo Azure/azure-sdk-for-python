@@ -93,7 +93,6 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
         service_name = span.resource.attributes.get("service.name")
         service_namespace = span.resource.attributes.get("service.namespace")
         service_instance_id = span.resource.attributes.get("service.instance.id")
-        user_id = span.resource.attributes.get("enduser.id")
         if service_name:
             if service_namespace:
                 envelope.tags["ai.cloud.role"] = service_namespace + \
@@ -105,10 +104,9 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
         else:
             envelope.tags["ai.cloud.roleInstance"] = platform.node()  # hostname default
         envelope.tags["ai.internal.nodeName"] = envelope.tags["ai.cloud.roleInstance"]
-        if user_id:
-            envelope.tags["ai.user.id"] = user_id
-
     envelope.tags["ai.operation.id"] = "{:032x}".format(span.context.trace_id)
+    if "user_id" in span.attributes:
+        envelope.tags["ai.user.id"] = span.attributes["enduser.id"]
     parent = span.parent
     if parent:
         envelope.tags["ai.operation.parentId"] = "{:016x}".format(
@@ -126,13 +124,12 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
         )
         envelope.data = MonitorBase(base_data=data, base_type="RequestData")
         if "http.method" in span.attributes:  # HTTP
-            if span.name and span.name.startswith("/"):
-                envelope.tags["ai.operation.name"] = "{} {}".format(
-                    span.attributes["http.method"],
-                    span.name,
-                )
-            else:
-                envelope.tags["ai.operation.name"] = span.name
+            envelope.tags["ai.operation.name"] = "{} {}".format(
+                span.attributes["http.method"],
+                span.name,
+            )
+            if "http.user_agent" in span.attributes:
+                envelope.tags["ai.user.userAgent"] = span.attributes["http.user_agent"]
             if "http.client_ip" in span.attributes:
                 envelope.tags["ai.location.ip"] = span.attributes["http.client_ip"]
             elif "net.peer.ip" in span.attributes:
@@ -241,6 +238,7 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
                         target = "{}/{}".format(target, db_name)
             elif "rpc.system" in span.attributes:  # Rpc
                 data.type = "rpc.system"
+                # TODO: data.data for rpc
                 if target is None:
                     target = span.attributes["rpc.system"]
             else:
@@ -248,20 +246,19 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
                 data.type = "N/A"
         elif span.kind is SpanKind.PRODUCER:  # Messaging
             data.type = "Queue Message"
-            if "net.peer.ip" in span.attributes and \
-                    "messaging.destination" in span.attributes:
-                data.target = "{}/{}".format(
-                    span.attributes["net.peer.ip"],
-                    span.attributes["messaging.destination"]
-                )
-            else:
-                data.target = span.attributes["messaging.system"]
+            # TODO: data.data for messaging
+            # TODO: Special logic for data.target for messaging?
         else:  # SpanKind.INTERNAL
             data.type = "InProc"
             data.success = True
-        data.result_code = data.result_code[:1024]  # Breeze max length
-        data.target = target
-    for key in span.attributes:
+        # Apply truncation
+        if data.result_code:
+            data.result_code = data.result_code[:1024]
+        if data.data:
+            data.data = data.data[:8192]
+        if data.target:
+            data.target = target[:1024]
+    for key, val in span.attributes.items():
         # Remove Opentelemetry related span attributes from custom dimensions
         if key.startswith("http.") or \
                 key.startswith("db.") or \
@@ -269,15 +266,22 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
                 key.startswith("net.") or \
                 key.startswith("messaging."):
             continue
-        data.properties[key] = span.attributes[key]
+        # Apply truncation rules
+        # Max key length is 150, value is 8192
+        if not key or len(key) > 150 or val is None:
+            continue
+        data.properties[key] = val[:8192]
     if span.links:
+        # Max length for value is 8192
+        # Since links are a fixed length (80) in json, max number of links would be 102
         links = []
         for link in span.links:
+            if len(links) > 102:
+                break
             operation_id = "{:032x}".format(link.context.trace_id)
             span_id = "{:016x}".format(link.context.span_id)
             links.append({"operation_Id": operation_id, "id": span_id})
         data.properties["_MS.links"] = json.dumps(links)
-    # TODO: tracestate, tags
     return envelope
 
 
