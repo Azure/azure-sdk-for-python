@@ -11,9 +11,7 @@ import pytest
 import six
 import time
 
-from azure.containerregistry import (
-    ContainerRegistryClient,
-)
+from azure.containerregistry import ContainerRegistryAudience, ContainerRegistryClient
 from azure.containerregistry._helpers import _is_tag
 
 from azure.core.credentials import AccessToken
@@ -175,15 +173,15 @@ class ContainerRegistryTestClass(AzureTestCase):
         authority = get_authority(endpoint)
         audience = kwargs.pop("audience", None)
         if not audience:
-            audience = get_authorization_scope(authority)
+            audience = get_audience(authority)
         credential = self.get_credential(authority=authority)
         logger.warning("Authority: {} \nAuthorization scope: {}".format(authority, audience))
-        return ContainerRegistryClient(endpoint=endpoint, credential=credential, credential_scopes=audience, **kwargs)
+        return ContainerRegistryClient(endpoint=endpoint, credential=credential, audience=audience, **kwargs)
 
     def create_anon_client(self, endpoint, **kwargs):
         authority = get_authority(endpoint)
-        audience = get_authorization_scope(authority)
-        return ContainerRegistryClient(endpoint=endpoint, credential=None, credential_scopes=audience, **kwargs)
+        audience = get_audience(authority)
+        return ContainerRegistryClient(endpoint=endpoint, credential=None, audience=audience, **kwargs)
 
     def set_all_properties(self, properties, value):
         properties.can_delete = value
@@ -223,16 +221,16 @@ def get_authority(endpoint):
     raise ValueError("Endpoint ({}) could not be understood".format(endpoint))
 
 
-def get_authorization_scope(authority):
+def get_audience(authority):
     if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
         logger.warning("Public auth scope")
-        return ["https://management.core.windows.net/.default"]
+        return ContainerRegistryAudience.ARM_PUBLIC_CLOUD_VALUE
     if authority == AzureAuthorityHosts.AZURE_CHINA:
         logger.warning("China scope")
-        return ["https://management.chinacloudapi.cn/.default"]
+        return ContainerRegistryAudience.ARM_CHINA_VALUE
     if authority == AzureAuthorityHosts.AZURE_GOVERNMENT:
         logger.warning("US Gov scope")
-        return ["https://management.usgovcloudapi.net/.default"]
+        return ContainerRegistryAudience.ARM_GOVERNMENT_VALUE
 
 def get_base_url(authority):
     if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:

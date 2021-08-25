@@ -31,10 +31,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str endpoint: An ACR endpoint
         :param credential: The credential with which to authenticate
         :type credential: :class:`~azure.core.credentials.TokenCredential`
-        :keyword credential_scopes: URL for credential authentication if different from the default
-        :paramtype credential_scopes: List[str]
+        :keyword audience: URL to use for credential authentication with AAD
+        :paramtype audience: ~azure.containerregistry.ContainerRegistryAudience or str
         :returns: None
-        :raises: None
+        :raises ValueError: if audience keyword-only argument isn't provided
 
         .. admonition:: Example:
 
@@ -45,11 +45,15 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 :dedent: 8
                 :caption: Instantiate an instance of `ContainerRegistryClient`
         """
+        audience =  kwargs.pop("audience", None)
+        if not audience:
+            raise ValueError("The argument audience must be set to initialize ContainerRegistryClient.")
+        defaultScope = [audience + "/.default"]
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
-        self._credential = credential
-        super(ContainerRegistryClient, self).__init__(endpoint=endpoint, credential=credential, **kwargs)
+        self._credential = credential   
+        super(ContainerRegistryClient, self).__init__(endpoint=endpoint, credential=credential, credential_scopes=defaultScope, **kwargs)
 
     def _get_digest_from_tag(self, repository, tag):
         # type: (str, str) -> str
