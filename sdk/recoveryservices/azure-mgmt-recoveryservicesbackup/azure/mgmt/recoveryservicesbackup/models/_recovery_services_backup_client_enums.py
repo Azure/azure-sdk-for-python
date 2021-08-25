@@ -135,7 +135,7 @@ class DataMoveLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     CONTAINER = "Container"
 
 class DataSourceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Container Type - VM, SQLPaaS, DPM, AzureFileShare...
+    """Type of workload this item represents.
     """
 
     INVALID = "Invalid"
@@ -330,6 +330,8 @@ class LastUpdateStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     PARTIALLY_FAILED = "PartiallyFailed"
     FAILED = "Failed"
     SUCCEEDED = "Succeeded"
+    INITIALIZED = "Initialized"
+    FIRST_INITIALIZATION = "FirstInitialization"
 
 class MabServerType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Server type of MAB container.

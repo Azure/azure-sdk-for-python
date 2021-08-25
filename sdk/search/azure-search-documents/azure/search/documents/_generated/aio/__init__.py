@@ -7,4 +7,5 @@
 # --------------------------------------------------------------------------
 
 from ._search_client import SearchClient
-__all__ = ['SearchClient']
+
+__all__ = ["SearchClient"]

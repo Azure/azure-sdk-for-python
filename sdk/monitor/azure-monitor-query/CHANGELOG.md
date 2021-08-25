@@ -1,18 +1,58 @@
 # Release History
 
-## 1.0.0b3 (Unreleased)
+## 1.0.0b4 (Unreleased)
 
 ### Features Added
 
-- Added enum `AggragationType` which can be used to specify aggregations in the query API.
+- Added additional `display_description` attribute to the `Metric` type.
+- Added a `MetricClass` enum to provide the class of a metric.
+- Added a `metric_class` attribute to the `MetricDefinition` type.
+- Added a `MetricNamespaceClassification` enum to support the `namespace_classification` attribute on `MetricNamespace` type.
+
+### Breaking Changes
+
+- Rename `batch_query` to `query_batch`.
+- Rename `LogsBatchQueryRequest` to `LogsBatchQuery`.
+- `include_render` is now renamed to `include_visualization` in the query API.
+- `LogsQueryResult` and `LogsBatchQueryResult` now return `visualization` instead of `render`.
+- `start_time`, `duration` and `end_time` are now replaced with a single param called `timespan`
+- `resourceregion` is renamed to `resource_region` in the MetricResult type.
+- `top` is renamed to `max_results` in the metric's `query` API.
+- `metric_namespace_name` is renamed to `fully_qualified_namespace`
+- `is_dimension_required` is renamed to `dimension_required`
+- `interval`  and `time_grain` are renamed to `granularity`
+- `orderby` is renamed to `order_by`
+- `LogsQueryResult` now returns `datetime` objects for a time values.
+- `LogsBatchQuery` doesn't accept a `request_id` anymore.
+- `MetricsMetadataValues` is removed. A dictionary is used instead.
+- `time_stamp` is renamed to `timestamp` in `MetricValue` type.
+- `AggregationType` is renamed to `MetricAggregationType`.
+- Removed `LogsBatchResultError` type.
+- `LogsQueryResultTable` is named to `LogsTable`
+- `LogsQueryResultColumn` is renamed to `LogsTableColumn`
+
+### Bugs Fixed
+
+- `include_statistics` and `include_visualization` args can now work together.
+
+### Other Changes
+
+## 1.0.0b3 (2021-08-09)
+
+### Features Added
+
+- Added enum `AggregationType` which can be used to specify aggregations in the query API.
+- Added `LogsBatchQueryResult` model that is returned for a logs batch query.
+- Added `error` attribute to `LogsQueryResult`.
 
 ### Breaking Changes
 
 - `aggregation` param in the query API is renamed to `aggregations`
-
-### Bugs Fixed
-
-### Other Changes
+- `batch_query` API now returns a list of responses.
+- `LogsBatchResults` model is now removed.
+- `LogsQueryRequest` is renamed to `LogsBatchQueryRequest`
+- `LogsQueryResults` is now renamed to `LogsQueryResult`
+- `LogsBatchQueryResult` now has 4 additional attributes - `tables`, `error`, `statistics` and `render` instead of `body` attribute.
 
 ## 1.0.0b2 (2021-07-06)
 

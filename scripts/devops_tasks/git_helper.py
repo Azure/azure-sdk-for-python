@@ -28,7 +28,8 @@ EXCLUDED_PACKAGE_VERSIONS = {
     'azure-storage-file-datalake': '12.2.0b1',
     'azure-communication-identity': '1.0.0',
     'azure-communication-phonenumbers': '1.0.0',
-    'azure-communication-sms': '1.0.0'
+    'azure-communication-sms': '1.0.0',
+    'azure-search-documents': '11.2.0b3',
 }
 
 # This method identifies release tag for latest or oldest released version of a given package

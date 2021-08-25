@@ -18,7 +18,8 @@ class Backup(msrest.serialization.Model):
     :type backup_retention_days: int
     :param geo_redundant_backup: A value indicating whether Geo-Redundant backup is enabled on the
      server. Possible values include: "Enabled", "Disabled".
-    :type geo_redundant_backup: str or ~postgre_sql_management_client.models.GeoRedundantBackupEnum
+    :type geo_redundant_backup: str or
+     ~azure.mgmt.rdbms.postgresql_flexibleservers.models.GeoRedundantBackupEnum
     :ivar earliest_restore_date: The earliest restore point time (ISO8601 format) for server.
     :vartype earliest_restore_date: ~datetime.datetime
     """
@@ -49,7 +50,7 @@ class CapabilitiesListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: A list of supported capabilities.
-    :vartype value: list[~postgre_sql_management_client.models.CapabilityProperties]
+    :vartype value: list[~azure.mgmt.rdbms.postgresql_flexibleservers.models.CapabilityProperties]
     :ivar next_link: Link to retrieve next page of results.
     :vartype next_link: str
     """
@@ -91,10 +92,10 @@ class CapabilityProperties(msrest.serialization.Model):
     :vartype zone_redundant_ha_and_geo_backup_supported: bool
     :ivar supported_flexible_server_editions:
     :vartype supported_flexible_server_editions:
-     list[~postgre_sql_management_client.models.FlexibleServerEditionCapability]
+     list[~azure.mgmt.rdbms.postgresql_flexibleservers.models.FlexibleServerEditionCapability]
     :ivar supported_hyperscale_node_editions:
     :vartype supported_hyperscale_node_editions:
-     list[~postgre_sql_management_client.models.HyperscaleNodeEditionCapability]
+     list[~azure.mgmt.rdbms.postgresql_flexibleservers.models.HyperscaleNodeEditionCapability]
     :ivar status: The status.
     :vartype status: str
     """
@@ -218,7 +219,7 @@ class Configuration(ProxyResource):
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar system_data: The system metadata relating to this resource.
-    :vartype system_data: ~postgre_sql_management_client.models.SystemData
+    :vartype system_data: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.SystemData
     :param value: Value of the configuration.
     :type value: str
     :ivar description: Description of the configuration.
@@ -227,7 +228,8 @@ class Configuration(ProxyResource):
     :vartype default_value: str
     :ivar data_type: Data type of the configuration. Possible values include: "Boolean", "Numeric",
      "Integer", "Enumeration".
-    :vartype data_type: str or ~postgre_sql_management_client.models.ConfigurationDataType
+    :vartype data_type: str or
+     ~azure.mgmt.rdbms.postgresql_flexibleservers.models.ConfigurationDataType
     :ivar allowed_values: Allowed values of the configuration.
     :vartype allowed_values: str
     :param source: Source of the configuration.
@@ -276,7 +278,7 @@ class ConfigurationListResult(msrest.serialization.Model):
     """A list of server configurations.
 
     :param value: The list of server configurations.
-    :type value: list[~postgre_sql_management_client.models.Configuration]
+    :type value: list[~azure.mgmt.rdbms.postgresql_flexibleservers.models.Configuration]
     :param next_link: The link used to get the next page of operations.
     :type next_link: str
     """
@@ -309,7 +311,7 @@ class Database(ProxyResource):
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar system_data: The system metadata relating to this resource.
-    :vartype system_data: ~postgre_sql_management_client.models.SystemData
+    :vartype system_data: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.SystemData
     :param charset: The charset of the database.
     :type charset: str
     :param collation: The collation of the database.
@@ -346,7 +348,7 @@ class DatabaseListResult(msrest.serialization.Model):
     """A List of databases.
 
     :param value: The list of databases housed in a server.
-    :type value: list[~postgre_sql_management_client.models.Database]
+    :type value: list[~azure.mgmt.rdbms.postgresql_flexibleservers.models.Database]
     :param next_link: The link used to get the next page of databases.
     :type next_link: str
     """
@@ -437,9 +439,10 @@ class ErrorResponse(msrest.serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~postgre_sql_management_client.models.ErrorResponse]
+    :vartype details: list[~azure.mgmt.rdbms.postgresql_flexibleservers.models.ErrorResponse]
     :ivar additional_info: The error additional info.
-    :vartype additional_info: list[~postgre_sql_management_client.models.ErrorAdditionalInfo]
+    :vartype additional_info:
+     list[~azure.mgmt.rdbms.postgresql_flexibleservers.models.ErrorAdditionalInfo]
     """
 
     _validation = {
@@ -486,7 +489,7 @@ class FirewallRule(ProxyResource):
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar system_data: The system metadata relating to this resource.
-    :vartype system_data: ~postgre_sql_management_client.models.SystemData
+    :vartype system_data: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.SystemData
     :param start_ip_address: Required. The start IP address of the server firewall rule. Must be
      IPv4 format.
     :type start_ip_address: str
@@ -527,7 +530,7 @@ class FirewallRuleListResult(msrest.serialization.Model):
     """A list of firewall rules.
 
     :param value: The list of firewall rules in a server.
-    :type value: list[~postgre_sql_management_client.models.FirewallRule]
+    :type value: list[~azure.mgmt.rdbms.postgresql_flexibleservers.models.FirewallRule]
     :param next_link: The link used to get the next page of operations.
     :type next_link: str
     """
@@ -555,10 +558,10 @@ class FlexibleServerEditionCapability(msrest.serialization.Model):
     :vartype name: str
     :ivar supported_storage_editions: The list of editions supported by this server edition.
     :vartype supported_storage_editions:
-     list[~postgre_sql_management_client.models.StorageEditionCapability]
+     list[~azure.mgmt.rdbms.postgresql_flexibleservers.models.StorageEditionCapability]
     :ivar supported_server_versions: The list of server versions supported by this server edition.
     :vartype supported_server_versions:
-     list[~postgre_sql_management_client.models.ServerVersionCapability]
+     list[~azure.mgmt.rdbms.postgresql_flexibleservers.models.ServerVersionCapability]
     :ivar status: The status.
     :vartype status: str
     """
@@ -594,11 +597,11 @@ class HighAvailability(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :param mode: The HA mode for the server. Possible values include: "Disabled", "ZoneRedundant".
-    :type mode: str or ~postgre_sql_management_client.models.HighAvailabilityMode
+    :type mode: str or ~azure.mgmt.rdbms.postgresql_flexibleservers.models.HighAvailabilityMode
     :ivar state: A state of a HA server that is visible to user. Possible values include:
      "NotEnabled", "CreatingStandby", "ReplicatingData", "FailingOver", "Healthy",
      "RemovingStandby".
-    :vartype state: str or ~postgre_sql_management_client.models.ServerHAState
+    :vartype state: str or ~azure.mgmt.rdbms.postgresql_flexibleservers.models.ServerHAState
     :param standby_availability_zone: availability zone information of the standby.
     :type standby_availability_zone: str
     """
@@ -632,12 +635,13 @@ class HyperscaleNodeEditionCapability(msrest.serialization.Model):
     :vartype name: str
     :ivar supported_storage_editions: The list of editions supported by this server edition.
     :vartype supported_storage_editions:
-     list[~postgre_sql_management_client.models.StorageEditionCapability]
+     list[~azure.mgmt.rdbms.postgresql_flexibleservers.models.StorageEditionCapability]
     :ivar supported_server_versions: The list of server versions supported by this server edition.
     :vartype supported_server_versions:
-     list[~postgre_sql_management_client.models.ServerVersionCapability]
+     list[~azure.mgmt.rdbms.postgresql_flexibleservers.models.ServerVersionCapability]
     :ivar supported_node_types: The list of Node Types supported by this server edition.
-    :vartype supported_node_types: list[~postgre_sql_management_client.models.NodeTypeCapability]
+    :vartype supported_node_types:
+     list[~azure.mgmt.rdbms.postgresql_flexibleservers.models.NodeTypeCapability]
     :ivar status: The status.
     :vartype status: str
     """
@@ -804,7 +808,7 @@ class Network(msrest.serialization.Model):
     :ivar public_network_access: public network access is enabled or not. Possible values include:
      "Enabled", "Disabled".
     :vartype public_network_access: str or
-     ~postgre_sql_management_client.models.ServerPublicNetworkAccessState
+     ~azure.mgmt.rdbms.postgresql_flexibleservers.models.ServerPublicNetworkAccessState
     :param delegated_subnet_resource_id: delegated subnet arm resource id.
     :type delegated_subnet_resource_id: str
     :param private_dns_zone_arm_resource_id: private dns zone arm resource id.
@@ -874,12 +878,12 @@ class Operation(msrest.serialization.Model):
     :ivar name: The name of the operation being performed on this particular object.
     :vartype name: str
     :ivar display: The localized display information for this particular operation or action.
-    :vartype display: ~postgre_sql_management_client.models.OperationDisplay
+    :vartype display: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.OperationDisplay
     :param is_data_action: Indicates whether the operation is a data action.
     :type is_data_action: bool
     :ivar origin: The intended executor of the operation. Possible values include: "NotSpecified",
      "user", "system".
-    :vartype origin: str or ~postgre_sql_management_client.models.OperationOrigin
+    :vartype origin: str or ~azure.mgmt.rdbms.postgresql_flexibleservers.models.OperationOrigin
     :ivar properties: Additional descriptions for the operation.
     :vartype properties: dict[str, any]
     """
@@ -955,7 +959,7 @@ class OperationListResult(msrest.serialization.Model):
     """A list of resource provider operations.
 
     :param value: Collection of available operation details.
-    :type value: list[~postgre_sql_management_client.models.Operation]
+    :type value: list[~azure.mgmt.rdbms.postgresql_flexibleservers.models.Operation]
     :param next_link: URL client should use to fetch the next page (per server side paging).
      It's null for now, added for future use.
     :type next_link: str
@@ -1063,11 +1067,11 @@ class Server(TrackedResource):
     :param location: Required. The geo-location where the resource lives.
     :type location: str
     :param identity: The Azure Active Directory identity of the server.
-    :type identity: ~postgre_sql_management_client.models.Identity
+    :type identity: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.Identity
     :param sku: The SKU (pricing tier) of the server.
-    :type sku: ~postgre_sql_management_client.models.Sku
+    :type sku: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.Sku
     :ivar system_data: The system metadata relating to this resource.
-    :vartype system_data: ~postgre_sql_management_client.models.SystemData
+    :vartype system_data: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.SystemData
     :param administrator_login: The administrator's login name of a server. Can only be specified
      when the server is being created (and is required for creation).
     :type administrator_login: str
@@ -1075,24 +1079,24 @@ class Server(TrackedResource):
      creation).
     :type administrator_login_password: str
     :param version: PostgreSQL Server version. Possible values include: "13", "12", "11".
-    :type version: str or ~postgre_sql_management_client.models.ServerVersion
+    :type version: str or ~azure.mgmt.rdbms.postgresql_flexibleservers.models.ServerVersion
     :ivar minor_version: The minor version of the server.
     :vartype minor_version: str
     :ivar state: A state of a server that is visible to user. Possible values include: "Ready",
      "Dropping", "Disabled", "Starting", "Stopping", "Stopped", "Updating".
-    :vartype state: str or ~postgre_sql_management_client.models.ServerState
+    :vartype state: str or ~azure.mgmt.rdbms.postgresql_flexibleservers.models.ServerState
     :ivar fully_qualified_domain_name: The fully qualified domain name of a server.
     :vartype fully_qualified_domain_name: str
     :param storage: Storage properties of a server.
-    :type storage: ~postgre_sql_management_client.models.Storage
+    :type storage: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.Storage
     :param backup: Backup properties of a server.
-    :type backup: ~postgre_sql_management_client.models.Backup
+    :type backup: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.Backup
     :param network: Network properties of a server.
-    :type network: ~postgre_sql_management_client.models.Network
+    :type network: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.Network
     :param high_availability: High availability properties of a server.
-    :type high_availability: ~postgre_sql_management_client.models.HighAvailability
+    :type high_availability: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.HighAvailability
     :param maintenance_window: Maintenance window properties of a server.
-    :type maintenance_window: ~postgre_sql_management_client.models.MaintenanceWindow
+    :type maintenance_window: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.MaintenanceWindow
     :param source_server_resource_id: The source server resource ID to restore from. It's required
      when 'createMode' is 'PointInTimeRestore'.
     :type source_server_resource_id: str
@@ -1103,7 +1107,7 @@ class Server(TrackedResource):
     :type availability_zone: str
     :param create_mode: The mode to create a new PostgreSQL server. Possible values include:
      "Default", "Create", "Update", "PointInTimeRestore".
-    :type create_mode: str or ~postgre_sql_management_client.models.CreateMode
+    :type create_mode: str or ~azure.mgmt.rdbms.postgresql_flexibleservers.models.CreateMode
     :param tags_properties_tags: Application-specific metadata in the form of key-value pairs.
     :type tags_properties_tags: dict[str, str]
     """
@@ -1178,22 +1182,23 @@ class ServerForUpdate(msrest.serialization.Model):
     :param location: The location the resource resides in.
     :type location: str
     :param sku: The SKU (pricing tier) of the server.
-    :type sku: ~postgre_sql_management_client.models.Sku
+    :type sku: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.Sku
     :param tags: A set of tags. Application-specific metadata in the form of key-value pairs.
     :type tags: dict[str, str]
     :param administrator_login_password: The password of the administrator login.
     :type administrator_login_password: str
     :param storage: Storage properties of a server.
-    :type storage: ~postgre_sql_management_client.models.Storage
+    :type storage: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.Storage
     :param backup: Backup properties of a server.
-    :type backup: ~postgre_sql_management_client.models.Backup
+    :type backup: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.Backup
     :param high_availability: High availability properties of a server.
-    :type high_availability: ~postgre_sql_management_client.models.HighAvailability
+    :type high_availability: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.HighAvailability
     :param maintenance_window: Maintenance window properties of a server.
-    :type maintenance_window: ~postgre_sql_management_client.models.MaintenanceWindow
+    :type maintenance_window: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.MaintenanceWindow
     :param create_mode: The mode to update a new PostgreSQL server. Possible values include:
      "Default", "Update".
-    :type create_mode: str or ~postgre_sql_management_client.models.CreateModeForUpdate
+    :type create_mode: str or
+     ~azure.mgmt.rdbms.postgresql_flexibleservers.models.CreateModeForUpdate
     """
 
     _attribute_map = {
@@ -1228,7 +1233,7 @@ class ServerListResult(msrest.serialization.Model):
     """A list of servers.
 
     :param value: The list of flexible servers.
-    :type value: list[~postgre_sql_management_client.models.Server]
+    :type value: list[~azure.mgmt.rdbms.postgresql_flexibleservers.models.Server]
     :param next_link: The link used to get the next page of operations.
     :type next_link: str
     """
@@ -1255,7 +1260,8 @@ class ServerVersionCapability(msrest.serialization.Model):
     :ivar name: server version.
     :vartype name: str
     :ivar supported_vcores:
-    :vartype supported_vcores: list[~postgre_sql_management_client.models.VcoreCapability]
+    :vartype supported_vcores:
+     list[~azure.mgmt.rdbms.postgresql_flexibleservers.models.VcoreCapability]
     :ivar status: The status.
     :vartype status: str
     """
@@ -1292,7 +1298,7 @@ class Sku(msrest.serialization.Model):
     :type name: str
     :param tier: Required. The tier of the particular SKU, e.g. Burstable. Possible values include:
      "Burstable", "GeneralPurpose", "MemoryOptimized".
-    :type tier: str or ~postgre_sql_management_client.models.SkuTier
+    :type tier: str or ~azure.mgmt.rdbms.postgresql_flexibleservers.models.SkuTier
     """
 
     _validation = {
@@ -1341,7 +1347,8 @@ class StorageEditionCapability(msrest.serialization.Model):
     :ivar name: storage edition name.
     :vartype name: str
     :ivar supported_storage_mb:
-    :vartype supported_storage_mb: list[~postgre_sql_management_client.models.StorageMBCapability]
+    :vartype supported_storage_mb:
+     list[~azure.mgmt.rdbms.postgresql_flexibleservers.models.StorageMBCapability]
     :ivar status: The status.
     :vartype status: str
     """
@@ -1415,14 +1422,15 @@ class SystemData(msrest.serialization.Model):
     :type created_by: str
     :param created_by_type: The type of identity that created the resource. Possible values
      include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~postgre_sql_management_client.models.CreatedByType
+    :type created_by_type: str or ~azure.mgmt.rdbms.postgresql_flexibleservers.models.CreatedByType
     :param created_at: The timestamp of resource creation (UTC).
     :type created_at: ~datetime.datetime
     :param last_modified_by: The identity that last modified the resource.
     :type last_modified_by: str
     :param last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~postgre_sql_management_client.models.CreatedByType
+    :type last_modified_by_type: str or
+     ~azure.mgmt.rdbms.postgresql_flexibleservers.models.CreatedByType
     :param last_modified_at: The timestamp of resource last modification (UTC).
     :type last_modified_at: ~datetime.datetime
     """
@@ -1520,7 +1528,7 @@ class VirtualNetworkSubnetUsageResult(msrest.serialization.Model):
 
     :ivar delegated_subnets_usage:
     :vartype delegated_subnets_usage:
-     list[~postgre_sql_management_client.models.DelegatedSubnetUsage]
+     list[~azure.mgmt.rdbms.postgresql_flexibleservers.models.DelegatedSubnetUsage]
     """
 
     _validation = {

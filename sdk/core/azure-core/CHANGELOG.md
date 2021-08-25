@@ -1,16 +1,34 @@
 # Release History
 
-## 1.16.1 (Unreleased)
+## 1.17.1 (Unreleased)
 
 ### Features Added
 
-### Breaking Changes
+- We now use `azure.core.serialization.AzureJSONEncoder` to serialize `json` input to `azure.core.rest.HttpRequest`.
 
-### Key Bugs Fixed
+### Breaking Changes in the Provisional `azure.core.rest` package
+
+- The `text` property on `azure.core.rest.HttpResponse` and `azure.core.rest.AsyncHttpResponse` has changed to a method, which also takes
+an `encoding` parameter.
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.17.0 (2021-08-05)
+
+### Features Added
+
+- Cut hard dependency on requests library
+- Added a `from_json` method which now accepts storage QueueMessage, eventhub's EventData or ServiceBusMessage or simply json bytes to return a `CloudEvent`
 
 ### Fixed
 
 - Not override "x-ms-client-request-id" if it already exists in the header.    #17757
+
+### Breaking Changes in the Provisional `azure.core.rest` package
+
+- `azure.core.rest` will not try to guess the `charset` anymore if it was impossible to extract it from `HttpResponse` analysis. This removes our dependency on `charset`.
 
 ## 1.16.0 (2021-07-01)
 
@@ -36,7 +54,6 @@ are thrown if you mishandle streamed responses from the provisional `azure.core.
 
 - Retry policies don't sleep after operations time out
 - The `from_dict` methhod in the `CloudEvent` can now convert a datetime string to datetime object when microsecond exceeds the python limitation
-
 
 ## 1.14.0 (2021-05-13)
 

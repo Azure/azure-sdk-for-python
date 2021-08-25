@@ -325,6 +325,8 @@ class AcsChatMessageEditedEventData(AcsChatMessageEventBaseProperties):
     :type version: long
     :param message_body: The body of the chat message.
     :type message_body: str
+    :param metadata: The chat message metadata.
+    :type metadata: dict[str, str]
     :param edit_time: The time at which the message was edited.
     :type edit_time: ~datetime.datetime
     """
@@ -340,6 +342,7 @@ class AcsChatMessageEditedEventData(AcsChatMessageEventBaseProperties):
         'type': {'key': 'type', 'type': 'str'},
         'version': {'key': 'version', 'type': 'long'},
         'message_body': {'key': 'messageBody', 'type': 'str'},
+        'metadata': {'key': 'metadata', 'type': '{str}'},
         'edit_time': {'key': 'editTime', 'type': 'iso-8601'},
     }
 
@@ -356,11 +359,13 @@ class AcsChatMessageEditedEventData(AcsChatMessageEventBaseProperties):
         type: Optional[str] = None,
         version: Optional[int] = None,
         message_body: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
         edit_time: Optional[datetime.datetime] = None,
         **kwargs
     ):
         super(AcsChatMessageEditedEventData, self).__init__(recipient_communication_identifier=recipient_communication_identifier, transaction_id=transaction_id, thread_id=thread_id, message_id=message_id, sender_communication_identifier=sender_communication_identifier, sender_display_name=sender_display_name, compose_time=compose_time, type=type, version=version, **kwargs)
         self.message_body = message_body
+        self.metadata = metadata
         self.edit_time = edit_time
 
 
@@ -386,6 +391,8 @@ class AcsChatMessageEditedInThreadEventData(AcsChatMessageEventInThreadBasePrope
     :type version: long
     :param message_body: The body of the chat message.
     :type message_body: str
+    :param metadata: The chat message metadata.
+    :type metadata: dict[str, str]
     :param edit_time: The time at which the message was edited.
     :type edit_time: ~datetime.datetime
     """
@@ -400,6 +407,7 @@ class AcsChatMessageEditedInThreadEventData(AcsChatMessageEventInThreadBasePrope
         'type': {'key': 'type', 'type': 'str'},
         'version': {'key': 'version', 'type': 'long'},
         'message_body': {'key': 'messageBody', 'type': 'str'},
+        'metadata': {'key': 'metadata', 'type': '{str}'},
         'edit_time': {'key': 'editTime', 'type': 'iso-8601'},
     }
 
@@ -415,11 +423,13 @@ class AcsChatMessageEditedInThreadEventData(AcsChatMessageEventInThreadBasePrope
         type: Optional[str] = None,
         version: Optional[int] = None,
         message_body: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
         edit_time: Optional[datetime.datetime] = None,
         **kwargs
     ):
         super(AcsChatMessageEditedInThreadEventData, self).__init__(transaction_id=transaction_id, thread_id=thread_id, message_id=message_id, sender_communication_identifier=sender_communication_identifier, sender_display_name=sender_display_name, compose_time=compose_time, type=type, version=version, **kwargs)
         self.message_body = message_body
+        self.metadata = metadata
         self.edit_time = edit_time
 
 
@@ -448,6 +458,8 @@ class AcsChatMessageReceivedEventData(AcsChatMessageEventBaseProperties):
     :type version: long
     :param message_body: The body of the chat message.
     :type message_body: str
+    :param metadata: The chat message metadata.
+    :type metadata: dict[str, str]
     """
 
     _attribute_map = {
@@ -461,6 +473,7 @@ class AcsChatMessageReceivedEventData(AcsChatMessageEventBaseProperties):
         'type': {'key': 'type', 'type': 'str'},
         'version': {'key': 'version', 'type': 'long'},
         'message_body': {'key': 'messageBody', 'type': 'str'},
+        'metadata': {'key': 'metadata', 'type': '{str}'},
     }
 
     def __init__(
@@ -476,10 +489,12 @@ class AcsChatMessageReceivedEventData(AcsChatMessageEventBaseProperties):
         type: Optional[str] = None,
         version: Optional[int] = None,
         message_body: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
         **kwargs
     ):
         super(AcsChatMessageReceivedEventData, self).__init__(recipient_communication_identifier=recipient_communication_identifier, transaction_id=transaction_id, thread_id=thread_id, message_id=message_id, sender_communication_identifier=sender_communication_identifier, sender_display_name=sender_display_name, compose_time=compose_time, type=type, version=version, **kwargs)
         self.message_body = message_body
+        self.metadata = metadata
 
 
 class AcsChatMessageReceivedInThreadEventData(AcsChatMessageEventInThreadBaseProperties):
@@ -504,6 +519,8 @@ class AcsChatMessageReceivedInThreadEventData(AcsChatMessageEventInThreadBasePro
     :type version: long
     :param message_body: The body of the chat message.
     :type message_body: str
+    :param metadata: The chat message metadata.
+    :type metadata: dict[str, str]
     """
 
     _attribute_map = {
@@ -516,6 +533,7 @@ class AcsChatMessageReceivedInThreadEventData(AcsChatMessageEventInThreadBasePro
         'type': {'key': 'type', 'type': 'str'},
         'version': {'key': 'version', 'type': 'long'},
         'message_body': {'key': 'messageBody', 'type': 'str'},
+        'metadata': {'key': 'metadata', 'type': '{str}'},
     }
 
     def __init__(
@@ -530,10 +548,12 @@ class AcsChatMessageReceivedInThreadEventData(AcsChatMessageEventInThreadBasePro
         type: Optional[str] = None,
         version: Optional[int] = None,
         message_body: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
         **kwargs
     ):
         super(AcsChatMessageReceivedInThreadEventData, self).__init__(transaction_id=transaction_id, thread_id=thread_id, message_id=message_id, sender_communication_identifier=sender_communication_identifier, sender_display_name=sender_display_name, compose_time=compose_time, type=type, version=version, **kwargs)
         self.message_body = message_body
+        self.metadata = metadata
 
 
 class AcsChatParticipantAddedToThreadEventData(AcsChatEventInThreadBaseProperties):
@@ -2106,6 +2126,47 @@ class ContainerRegistryImagePushedEventData(ContainerRegistryEventData):
         **kwargs
     ):
         super(ContainerRegistryImagePushedEventData, self).__init__(id=id, timestamp=timestamp, action=action, target=target, request=request, actor=actor, source=source, **kwargs)
+
+
+class ContainerServiceNewKubernetesVersionAvailableEventData(msrest.serialization.Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.ContainerService.NewKubernetesVersionAvailable event.
+
+    :param latest_supported_kubernetes_version: The highest PATCH Kubernetes version for the
+     highest MINOR version supported by ManagedCluster resource.
+    :type latest_supported_kubernetes_version: str
+    :param latest_stable_kubernetes_version: The highest PATCH Kubernetes version for the MINOR
+     version considered stable for the ManagedCluster resource.
+    :type latest_stable_kubernetes_version: str
+    :param lowest_minor_kubernetes_version: The highest PATCH Kubernetes version for the lowest
+     applicable MINOR version available for the ManagedCluster resource.
+    :type lowest_minor_kubernetes_version: str
+    :param latest_preview_kubernetes_version: The highest PATCH Kubernetes version considered
+     preview for the ManagedCluster resource. There might not be any version in preview at the time
+     of publishing the event.
+    :type latest_preview_kubernetes_version: str
+    """
+
+    _attribute_map = {
+        'latest_supported_kubernetes_version': {'key': 'latestSupportedKubernetesVersion', 'type': 'str'},
+        'latest_stable_kubernetes_version': {'key': 'latestStableKubernetesVersion', 'type': 'str'},
+        'lowest_minor_kubernetes_version': {'key': 'lowestMinorKubernetesVersion', 'type': 'str'},
+        'latest_preview_kubernetes_version': {'key': 'latestPreviewKubernetesVersion', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        latest_supported_kubernetes_version: Optional[str] = None,
+        latest_stable_kubernetes_version: Optional[str] = None,
+        lowest_minor_kubernetes_version: Optional[str] = None,
+        latest_preview_kubernetes_version: Optional[str] = None,
+        **kwargs
+    ):
+        super(ContainerServiceNewKubernetesVersionAvailableEventData, self).__init__(**kwargs)
+        self.latest_supported_kubernetes_version = latest_supported_kubernetes_version
+        self.latest_stable_kubernetes_version = latest_stable_kubernetes_version
+        self.lowest_minor_kubernetes_version = lowest_minor_kubernetes_version
+        self.latest_preview_kubernetes_version = latest_preview_kubernetes_version
 
 
 class DeviceConnectionStateEventInfo(msrest.serialization.Model):

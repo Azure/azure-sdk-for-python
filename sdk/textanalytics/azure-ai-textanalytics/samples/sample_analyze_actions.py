@@ -12,8 +12,8 @@ FILE: sample_analyze_actions.py
 DESCRIPTION:
     This sample demonstrates how to submit a collection of text documents for analysis, which consists of a variety
     of text analysis actions, such as Entity Recognition, PII Entity Recognition, Linked Entity Recognition,
-    Sentiment Analysis, or Key Phrase Extraction.  The response will contain results from each of the individual
-    actions specified in the request.
+    Sentiment Analysis, Key Phrase Extraction, or Extractive Text Summarization (not shown - see sample sample_extract_summary.py).
+    The response will contain results from each of the individual actions specified in the request.
 
 USAGE:
     python sample_analyze_actions.py
@@ -48,15 +48,15 @@ def sample_analyze_actions():
     )
 
     documents = [
-        'We went to Contoso Steakhouse located at midtown NYC last week for a dinner party, and we adore the spot!'\
-        'They provide marvelous food and they have a great menu. The chief cook happens to be the owner (I think his name is John Doe)'\
-        'and he is super nice, coming out of the kitchen and greeted us all.'\
+        'We went to Contoso Steakhouse located at midtown NYC last week for a dinner party, and we adore the spot! '
+        'They provide marvelous food and they have a great menu. The chief cook happens to be the owner (I think his name is John Doe) '
+        'and he is super nice, coming out of the kitchen and greeted us all.'
         ,
 
-        'We enjoyed very much dining in the place!'\
-        'The Sirloin steak I ordered was tender and juicy, and the place was impeccably clean. You can even pre-order from their'\
-        'online menu at www.contososteakhouse.com, call 312-555-0176 or send email to order@contososteakhouse.com!'\
-        'The only complaint I have is the food didn\'t come fast enough. Overall I highly recommend it!'\
+        'We enjoyed very much dining in the place! '
+        'The Sirloin steak I ordered was tender and juicy, and the place was impeccably clean. You can even pre-order from their '
+        'online menu at www.contososteakhouse.com, call 312-555-0176 or send email to order@contososteakhouse.com! '
+        'The only complaint I have is the food didn\'t come fast enough. Overall I highly recommend it!'
     ]
 
     poller = text_analytics_client.begin_analyze_actions(
@@ -67,7 +67,7 @@ def sample_analyze_actions():
             RecognizePiiEntitiesAction(),
             ExtractKeyPhrasesAction(),
             RecognizeLinkedEntitiesAction(),
-            AnalyzeSentimentAction()
+            AnalyzeSentimentAction(),
         ],
     )
 

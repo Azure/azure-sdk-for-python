@@ -5,7 +5,7 @@
 import json
 import time
 
-from azure.core.exceptions import ClientAuthenticationError
+from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
 from azure.core.pipeline.transport import HttpRequest
 from azure.identity._internal.managed_identity_client import ManagedIdentityClient
 import pytest
@@ -81,6 +81,23 @@ def test_deserializes_json_from_text():
     token = client.request_token(scope)
     assert token.expires_on == expected_expires_on
     assert token.token == expected_token
+
+
+def test_retry():
+    """ManagedIdentityClient should retry token requests"""
+
+    message = "can't connect"
+    transport = mock.Mock(send=mock.Mock(side_effect=ServiceRequestError(message)))
+    request_factory = mock.Mock()
+
+    client = ManagedIdentityClient(request_factory, transport=transport)
+
+    for method in ("GET", "POST"):
+        request_factory.return_value = HttpRequest(method, "https://localhost")
+        with pytest.raises(ServiceRequestError, match=message):
+            client.request_token("scope")
+        assert transport.send.call_count > 1
+        transport.send.reset_mock()
 
 
 @pytest.mark.parametrize("content_type", ("text/html","application/json"))
