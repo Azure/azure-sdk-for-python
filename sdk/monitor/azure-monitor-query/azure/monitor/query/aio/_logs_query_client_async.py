@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 
 from datetime import datetime, timedelta
-from typing import Any, Tuple, Union, Sequence, Dict, Optional, TYPE_CHECKING
+from typing import Any, Tuple, Union, Sequence, Dict, List, TYPE_CHECKING
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
 
@@ -45,7 +45,8 @@ class LogsQueryClient(object):
         self,
         workspace_id: str,
         query: str,
-        timespan: Optional[Union[timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]] = None,
+        *,
+        timespan: Union[timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]],
         **kwargs: Any) -> LogsQueryResult:
         """Execute an Analytics query.
 
@@ -114,7 +115,7 @@ class LogsQueryClient(object):
         self,
         queries: Union[Sequence[Dict], Sequence[LogsBatchQuery]],
         **kwargs: Any
-        ) -> Sequence[LogsBatchQueryResult]:
+        ) -> List[LogsBatchQueryResult]:
         """Execute a list of analytics queries. Each request can be either a LogQueryRequest
         object or an equivalent serialized model.
 
@@ -123,7 +124,7 @@ class LogsQueryClient(object):
         :param queries: The list of queries that should be processed
         :type queries: list[dict] or list[~azure.monitor.query.LogsBatchQuery]
         :return: list of LogsBatchQueryResult objects, or the result of cls(response)
-        :rtype: ~list[~azure.monitor.query.LogsBatchQueryResult]
+        :rtype: list[~azure.monitor.query.LogsBatchQueryResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         try:
