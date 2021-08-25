@@ -84,7 +84,9 @@ class AsyncHttpResponseBackcompatMixin(_HttpResponseBackcompatMixinBase):
         return super().__getattr__(attr)
 
     def parts(self):
-        """Assuming the content-type is multipart/mixed, will return the parts as an async iterator.
+        """DEPRECATED: Assuming the content-type is multipart/mixed, will return the parts as an async iterator.
+
+        This is deprecated and will be removed in a later release.
 
         :rtype: AsyncIterator
         :raises ValueError: If the content is not multipart/mixed

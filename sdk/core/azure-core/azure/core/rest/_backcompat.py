@@ -79,6 +79,10 @@ class HttpRequestBackcompatMixin(object):
 
     @property
     def _multipart_mixed_info(self):
+        """DEPRECATED: Information used to make multipart mixed requests.
+
+        This is deprecated and will be removed in a later release.
+        """
         try:
             return self.__multipart_mixed_info
         except AttributeError:
@@ -86,10 +90,18 @@ class HttpRequestBackcompatMixin(object):
 
     @_multipart_mixed_info.setter
     def _multipart_mixed_info(self, val):
+        """DEPRECATED: Set information to make multipart mixed requests.
+
+        This is deprecated and will be removed in a later release.
+        """
         self.__multipart_mixed_info = val
 
     @property
     def _query(self):
+        """DEPRECATED: Query parameters passed in by user
+
+        This is deprecated and will be removed in a later release.
+        """
         query = urlparse(self.url).query
         if query:
             return {p[0]: p[-1] for p in [p.partition("=") for p in query.split("&")]}
@@ -97,10 +109,18 @@ class HttpRequestBackcompatMixin(object):
 
     @property
     def _body(self):
+        """DEPRECATED: Body of the request. You should use the `content` property instead
+
+        This is deprecated and will be removed in a later release.
+        """
         return self._data
 
     @_body.setter
     def _body(self, val):
+        """DEPRECATED: Set the body of the request
+
+        This is deprecated and will be removed in a later release.
+        """
         self._data = val
 
     @staticmethod
@@ -109,9 +129,20 @@ class HttpRequestBackcompatMixin(object):
         return PipelineTransportHttpRequest._format_data(data)  # pylint: disable=protected-access
 
     def _format_parameters(self, params):
+        """DEPRECATED: Format the query parameters
+
+        This is deprecated and will be removed in a later release.
+        You should pass the query parameters through the kwarg `params`
+        instead.
+        """
         return _format_parameters_helper(self, params)
 
     def _set_streamed_data_body(self, data):
+        """DEPRECATED: Set the streamed request body.
+
+        This is deprecated and will be removed in a later release.
+        You should pass your stream content through the `content` kwarg instead
+        """
         if not isinstance(data, binary_type) and not any(
             hasattr(data, attr) for attr in ["read", "__iter__", "__aiter__"]
         ):
@@ -122,6 +153,11 @@ class HttpRequestBackcompatMixin(object):
         self._files = None
 
     def _set_text_body(self, data):
+        """DEPRECATED: Set the text body
+
+        This is deprecated and will be removed in a later release.
+        You should pass your text content through the `content` kwarg instead
+        """
         if data is None:
             self._data = None
         else:
@@ -130,6 +166,11 @@ class HttpRequestBackcompatMixin(object):
         self._files = None
 
     def _set_xml_body(self, data):
+        """DEPRECATED: Set the xml body.
+
+        This is deprecated and will be removed in a later release.
+        You should pass your xml content through the `content` kwarg instead
+        """
         if data is None:
             self._data = None
         else:
@@ -139,6 +180,11 @@ class HttpRequestBackcompatMixin(object):
         self._files = None
 
     def _set_json_body(self, data):
+        """DEPRECATED: Set the json request body.
+
+        This is deprecated and will be removed in a later release.
+        You should pass your json content through the `json` kwarg instead
+        """
         if data is None:
             self._data = None
         else:
@@ -147,6 +193,11 @@ class HttpRequestBackcompatMixin(object):
         self._files = None
 
     def _set_formdata_body(self, data=None):
+        """DEPRECATED: Set the formrequest body.
+
+        This is deprecated and will be removed in a later release.
+        You should pass your stream content through the `files` kwarg instead
+        """
         if data is None:
             data = {}
         content_type = self.headers.pop("Content-Type", None) if self.headers else None
@@ -161,12 +212,21 @@ class HttpRequestBackcompatMixin(object):
             self._data = None
 
     def _set_bytes_body(self, data):
+        """DEPRECATED: Set the bytes request body.
+
+        This is deprecated and will be removed in a later release.
+        You should pass your bytes content through the `content` kwarg instead
+        """
         if data:
             self.headers["Content-Length"] = str(len(data))
         self._data = data
         self._files = None
 
     def _set_multipart_mixed(self, *requests, **kwargs):
+        """DEPRECATED: Set the multipart mixed info.
+
+        This is deprecated and will be removed in a later release.
+        """
         self.multipart_mixed_info = (
             requests,
             kwargs.pop("policies", []),
@@ -175,10 +235,16 @@ class HttpRequestBackcompatMixin(object):
         )
 
     def _prepare_multipart_body(self, content_index=0):
+        """DEPRECATED: Prepare your request body for multipart requests.
+
+        This is deprecated and will be removed in a later release.
+        """
         return _prepare_multipart_body_helper(self, content_index)
 
     def _serialize(self):
-        """Serialize this request using application/http spec.
+        """DEPRECATED: Serialize this request using application/http spec.
+
+        This is deprecated and will be removed in a later release.
 
         :rtype: bytes
         """
@@ -203,18 +269,30 @@ class _HttpResponseBackcompatMixinBase(object):
         super(_HttpResponseBackcompatMixinBase, self).__setattr__(attr, value)
 
     def _body(self):
+        """DEPRECATED: Get the response body.
+
+        This is deprecated and will be removed in a later release.
+        You should get it through the `content` property instead
+        """
         return self.content  # pylint: disable=no-member
 
     @property
     def _block_size(self):
+        """DEPRECATED: Get the block size of the response content.
+
+        This is deprecated and will be removed in a later release.
+        """
         return self._connection_data_block_size
 
     @_block_size.setter
     def _block_size(self, val):
+        """DEPRECATED: Set the block size of the response content.
+
+        This is deprecated and will be removed in a later release.
+        """
         self._connection_data_block_size = val  # type: Optional[int]
 
     def _decode_parts(self, message, http_response_type, requests):
-        """Rebuild an HTTP response from pure string."""
         from ..pipeline.transport._base import BytesIOSocket, _HTTPResponse
         def _deserialize_response(
             http_response_as_bytes, http_request, http_response_type
@@ -234,6 +312,13 @@ class _HttpResponseBackcompatMixinBase(object):
         )
 
     def stream_download(self, pipeline, **kwargs):  # pylint: disable=unused-argument
+        """DEPRECATED: Generator for streaming request body data.
+
+        This is deprecated and will be removed in a later release.
+        You should use `iter_bytes` or `iter_raw` instead.
+
+        :rtype: iterator[bytes]
+        """
         if kwargs.get("decompress"):
             return self.iter_bytes()  # pylint: disable=no-member
         return self.iter_raw()  # pylint: disable=no-member
@@ -246,4 +331,11 @@ class HttpResponseBackcompatMixin(_HttpResponseBackcompatMixinBase):
         return super(HttpResponseBackcompatMixin, self).__getattr__(attr)
 
     def parts(self):
+        """DEPRECATED: Assuming the content-type is multipart/mixed, will return the parts as an async iterator.
+
+        This is deprecated and will be removed in a later release.
+
+        :rtype: Iterator
+        :raises ValueError: If the content is not multipart/mixed
+        """
         return _parts_helper(self)
