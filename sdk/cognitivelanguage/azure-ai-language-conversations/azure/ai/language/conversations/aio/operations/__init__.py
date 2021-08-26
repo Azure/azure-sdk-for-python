@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._conversation_analysis_operations import ConversationAnalysisOperations
+from ._operations import ConversationAnalysisClientOperationsMixin
 
 __all__ = [
-    'ConversationAnalysisOperations',
+    'ConversationAnalysisClientOperationsMixin',
 ]

@@ -11,32 +11,31 @@ import msrest.serialization
 
 
 class AnalyzeParameters(msrest.serialization.Model):
-    """This is the parameter set of either the conversation application itself or one of the target projects.
+    """This is the parameter set of either the conversation application itself or one of the target services.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DeepstackParameters, LUISV2Parameters, LUISV3Parameters, QuestionAnsweringParameters.
+    sub-classes are: LUISParameters, DeepstackParameters, QuestionAnsweringParameters.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param project_type: Required. The type of the project. It could be one of the following
-     values.Constant filled by server.  Possible values include: "luis_v2", "luis_v3",
-     "luis_deepstack", "question_answering".
-    :type project_type: str or ~azure.ai.language.questionanswering.models.ProjectType
-    :param api_version: The API version to use when call a specific target project.
+    :param target_type: Required. The type of a target service.Constant filled by server.  Possible
+     values include: "luis", "luis_deepstack", "question_answering".
+    :type target_type: str or ~azure.ai.language.conversations.models.TargetType
+    :param api_version: The API version to use when call a specific target service.
     :type api_version: str
     """
 
     _validation = {
-        'project_type': {'required': True},
+        'target_type': {'required': True},
     }
 
     _attribute_map = {
-        'project_type': {'key': 'projectType', 'type': 'str'},
+        'target_type': {'key': 'targetType', 'type': 'str'},
         'api_version': {'key': 'apiVersion', 'type': 'str'},
     }
 
     _subtype_map = {
-        'project_type': {'luis_deepstack': 'DeepstackParameters', 'luis_v2': 'LUISV2Parameters', 'luis_v3': 'LUISV3Parameters', 'question_answering': 'QuestionAnsweringParameters'}
+        'target_type': {'luis': 'LUISParameters', 'luis_deepstack': 'DeepstackParameters', 'question_answering': 'QuestionAnsweringParameters'}
     }
 
     def __init__(
@@ -44,219 +43,45 @@ class AnalyzeParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(AnalyzeParameters, self).__init__(**kwargs)
-        self.project_type = None  # type: Optional[str]
+        self.target_type = None  # type: Optional[str]
         self.api_version = kwargs.get('api_version', None)
 
 
-class AnalyzePrediction(msrest.serialization.Model):
-    """Represents the prediction section in the response body.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param top_intent: Required. The name of the top scoring intent.
-    :type top_intent: str
-    :param intents: Required. A dictionary that contains all intents. Each key is an intent name
-     and the value is its confidence score and project type. The top intent's value also contains
-     the actual response from the target project.
-    :type intents: dict[str, ~azure.ai.language.questionanswering.models.BaseIntent]
-    """
-
-    _validation = {
-        'top_intent': {'required': True},
-        'intents': {'required': True},
-    }
-
-    _attribute_map = {
-        'top_intent': {'key': 'topIntent', 'type': 'str'},
-        'intents': {'key': 'intents', 'type': '{BaseIntent}'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(AnalyzePrediction, self).__init__(**kwargs)
-        self.top_intent = kwargs['top_intent']
-        self.intents = kwargs['intents']
-
-
-class AnswerSpan(msrest.serialization.Model):
-    """Answer span object of QnA.
-
-    :param text: Predicted text of answer span.
-    :type text: str
-    :param confidence_score: Predicted score of answer span, value ranges from 0 to 1.
-    :type confidence_score: float
-    :param offset: The answer span offset from the start of answer.
-    :type offset: int
-    :param length: The length of the answer span.
-    :type length: int
-    """
-
-    _validation = {
-        'confidence_score': {'maximum': 1, 'minimum': 0},
-    }
-
-    _attribute_map = {
-        'text': {'key': 'text', 'type': 'str'},
-        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
-        'offset': {'key': 'offset', 'type': 'int'},
-        'length': {'key': 'length', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(AnswerSpan, self).__init__(**kwargs)
-        self.text = kwargs.get('text', None)
-        self.confidence_score = kwargs.get('confidence_score', None)
-        self.offset = kwargs.get('offset', None)
-        self.length = kwargs.get('length', None)
-
-
-class AnswerSpanRequest(msrest.serialization.Model):
-    """To configure Answer span prediction feature.
-
-    :param enable: Enable or disable Answer Span prediction.
-    :type enable: bool
-    :param confidence_score_threshold: Minimum threshold score required to include an answer span,
-     value ranges from 0 to 1.
-    :type confidence_score_threshold: float
-    :param top_answers_with_span: Number of Top answers to be considered for span prediction from 1
-     to 10.
-    :type top_answers_with_span: int
-    """
-
-    _validation = {
-        'confidence_score_threshold': {'maximum': 1, 'minimum': 0},
-        'top_answers_with_span': {'maximum': 10, 'minimum': 1},
-    }
-
-    _attribute_map = {
-        'enable': {'key': 'enable', 'type': 'bool'},
-        'confidence_score_threshold': {'key': 'confidenceScoreThreshold', 'type': 'float'},
-        'top_answers_with_span': {'key': 'topAnswersWithSpan', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(AnswerSpanRequest, self).__init__(**kwargs)
-        self.enable = kwargs.get('enable', None)
-        self.confidence_score_threshold = kwargs.get('confidence_score_threshold', None)
-        self.top_answers_with_span = kwargs.get('top_answers_with_span', None)
-
-
-class BaseIntent(msrest.serialization.Model):
-    """This is the base class of an intent prediction.
+class BasePrediction(msrest.serialization.Model):
+    """This is the base class of prediction.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DeepstackIntent, LUISIntentV2, LUISIntentV3, QuestionAnsweringIntent.
+    sub-classes are: DeepstackPrediction, WorkflowPrediction.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param project_type: Required. This discriminator property specifies the type of the target
-     project that returns the response. 'luis' means the type is LUIS Generally Available.
-     'luis_deepstack' means LUIS vNext. 'question_answering' means Question Answering.Constant
-     filled by server.  Possible values include: "luis_v2", "luis_v3", "luis_deepstack",
-     "question_answering".
-    :type project_type: str or ~azure.ai.language.questionanswering.models.ProjectType
-    :param api_version: The API version used to call a target project.
-    :type api_version: str
-    :param confidence_score: Required. The prediction score and it ranges from 0.0 to 1.0.
-    :type confidence_score: float
+    :param project_type: Required. The type of the project.Constant filled by server.  Possible
+     values include: "conversation", "workflow".
+    :type project_type: str or ~azure.ai.language.conversations.models.ProjectType
+    :param top_intent: The intent with the highest score.
+    :type top_intent: str
     """
 
     _validation = {
         'project_type': {'required': True},
-        'confidence_score': {'required': True, 'maximum': 1, 'minimum': 0},
     }
 
     _attribute_map = {
         'project_type': {'key': 'projectType', 'type': 'str'},
-        'api_version': {'key': 'apiVersion', 'type': 'str'},
-        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
+        'top_intent': {'key': 'topIntent', 'type': 'str'},
     }
 
     _subtype_map = {
-        'project_type': {'luis_deepstack': 'DeepstackIntent', 'luis_v2': 'LUISIntentV2', 'luis_v3': 'LUISIntentV3', 'question_answering': 'QuestionAnsweringIntent'}
+        'project_type': {'conversation': 'DeepstackPrediction', 'workflow': 'WorkflowPrediction'}
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(BaseIntent, self).__init__(**kwargs)
+        super(BasePrediction, self).__init__(**kwargs)
         self.project_type = None  # type: Optional[str]
-        self.api_version = kwargs.get('api_version', None)
-        self.confidence_score = kwargs['confidence_score']
-
-
-class CompositeChildModel(msrest.serialization.Model):
-    """Child entity in a LUIS Composite Entity.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param type: Required. Type of child entity.
-    :type type: str
-    :param value: Required. Value extracted by LUIS.
-    :type value: str
-    """
-
-    _validation = {
-        'type': {'required': True},
-        'value': {'required': True},
-    }
-
-    _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CompositeChildModel, self).__init__(**kwargs)
-        self.type = kwargs['type']
-        self.value = kwargs['value']
-
-
-class CompositeEntityModel(msrest.serialization.Model):
-    """LUIS Composite Entity.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param parent_type: Required. Type/name of parent entity.
-    :type parent_type: str
-    :param value: Required. Value for composite entity extracted by LUIS.
-    :type value: str
-    :param children: Required. Child entities.
-    :type children: list[~azure.ai.language.questionanswering.models.CompositeChildModel]
-    """
-
-    _validation = {
-        'parent_type': {'required': True},
-        'value': {'required': True},
-        'children': {'required': True},
-    }
-
-    _attribute_map = {
-        'parent_type': {'key': 'parentType', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-        'children': {'key': 'children', 'type': '[CompositeChildModel]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CompositeEntityModel, self).__init__(**kwargs)
-        self.parent_type = kwargs['parent_type']
-        self.value = kwargs['value']
-        self.children = kwargs['children']
+        self.top_intent = kwargs.get('top_intent', None)
 
 
 class ConversationAnalysisInput(msrest.serialization.Model):
@@ -269,7 +94,7 @@ class ConversationAnalysisInput(msrest.serialization.Model):
     :param direct_target: The name of the target project this request is sending to directly.
     :type direct_target: str
     :param language: The language to use in this request. This will be the language setting when
-     communicating all target projects.
+     communicating with all other target projects.
     :type language: str
     :param verbose: If true, the service will return more detailed information in the response.
     :type verbose: bool
@@ -277,7 +102,7 @@ class ConversationAnalysisInput(msrest.serialization.Model):
      further review, to improve the model quality.
     :type is_logging_enabled: bool
     :param parameters: A dictionary representing the input for each target project.
-    :type parameters: dict[str, ~azure.ai.language.questionanswering.models.AnalyzeParameters]
+    :type parameters: dict[str, ~azure.ai.language.conversations.models.AnalyzeParameters]
     """
 
     _validation = {
@@ -313,8 +138,10 @@ class ConversationAnalysisResult(msrest.serialization.Model):
 
     :param query: Required. The conversation utterance given by the caller.
     :type query: str
+    :param detected_language: The system detected language for the query.
+    :type detected_language: str
     :param prediction: Required. The prediction result of a conversation project.
-    :type prediction: ~azure.ai.language.questionanswering.models.AnalyzePrediction
+    :type prediction: ~azure.ai.language.conversations.models.BasePrediction
     """
 
     _validation = {
@@ -324,7 +151,8 @@ class ConversationAnalysisResult(msrest.serialization.Model):
 
     _attribute_map = {
         'query': {'key': 'query', 'type': 'str'},
-        'prediction': {'key': 'prediction', 'type': 'AnalyzePrediction'},
+        'detected_language': {'key': 'detectedLanguage', 'type': 'str'},
+        'prediction': {'key': 'prediction', 'type': 'BasePrediction'},
     }
 
     def __init__(
@@ -333,11 +161,40 @@ class ConversationAnalysisResult(msrest.serialization.Model):
     ):
         super(ConversationAnalysisResult, self).__init__(**kwargs)
         self.query = kwargs['query']
+        self.detected_language = kwargs.get('detected_language', None)
         self.prediction = kwargs['prediction']
 
 
+class DeepstackCallingOptions(msrest.serialization.Model):
+    """The option to set to call a LUIS Deepstack project.
+
+    :param language: The language of the query.
+    :type language: str
+    :param verbose: If true, the service will return more detailed information.
+    :type verbose: bool
+    :param is_logging_enabled: If true, the query will be saved for customers to further review in
+     authoring, to improve the model quality.
+    :type is_logging_enabled: bool
+    """
+
+    _attribute_map = {
+        'language': {'key': 'language', 'type': 'str'},
+        'verbose': {'key': 'verbose', 'type': 'bool'},
+        'is_logging_enabled': {'key': 'isLoggingEnabled', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DeepstackCallingOptions, self).__init__(**kwargs)
+        self.language = kwargs.get('language', None)
+        self.verbose = kwargs.get('verbose', None)
+        self.is_logging_enabled = kwargs.get('is_logging_enabled', None)
+
+
 class DeepstackClassification(msrest.serialization.Model):
-    """DeepstackClassification.
+    """The classification result of a LUIS Deepstack project.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -367,7 +224,7 @@ class DeepstackClassification(msrest.serialization.Model):
 
 
 class DeepstackEntity(msrest.serialization.Model):
-    """DeepstackEntity.
+    """The entity extraction result of a LUIS Deepstack project.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -411,76 +268,28 @@ class DeepstackEntity(msrest.serialization.Model):
         self.confidence_score = kwargs['confidence_score']
 
 
-class DeepstackIntent(BaseIntent):
-    """A wrap up of LUIS Deepstack response.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param project_type: Required. This discriminator property specifies the type of the target
-     project that returns the response. 'luis' means the type is LUIS Generally Available.
-     'luis_deepstack' means LUIS vNext. 'question_answering' means Question Answering.Constant
-     filled by server.  Possible values include: "luis_v2", "luis_v3", "luis_deepstack",
-     "question_answering".
-    :type project_type: str or ~azure.ai.language.questionanswering.models.ProjectType
-    :param api_version: The API version used to call a target project.
-    :type api_version: str
-    :param confidence_score: Required. The prediction score and it ranges from 0.0 to 1.0.
-    :type confidence_score: float
-    :param result: The actual response from a LUIS Deepstack application.
-    :type result: ~azure.ai.language.questionanswering.models.DeepstackResult
-    """
-
-    _validation = {
-        'project_type': {'required': True},
-        'confidence_score': {'required': True, 'maximum': 1, 'minimum': 0},
-    }
-
-    _attribute_map = {
-        'project_type': {'key': 'projectType', 'type': 'str'},
-        'api_version': {'key': 'apiVersion', 'type': 'str'},
-        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
-        'result': {'key': 'result', 'type': 'DeepstackResult'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DeepstackIntent, self).__init__(**kwargs)
-        self.project_type = 'luis_deepstack'  # type: str
-        self.result = kwargs.get('result', None)
-
-
 class DeepstackParameters(AnalyzeParameters):
     """This is a set of request parameters for LUIS Deepstack projects.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param project_type: Required. The type of the project. It could be one of the following
-     values.Constant filled by server.  Possible values include: "luis_v2", "luis_v3",
-     "luis_deepstack", "question_answering".
-    :type project_type: str or ~azure.ai.language.questionanswering.models.ProjectType
-    :param api_version: The API version to use when call a specific target project.
+    :param target_type: Required. The type of a target service.Constant filled by server.  Possible
+     values include: "luis", "luis_deepstack", "question_answering".
+    :type target_type: str or ~azure.ai.language.conversations.models.TargetType
+    :param api_version: The API version to use when call a specific target service.
     :type api_version: str
-    :param language: The detected language of the input query.
-    :type language: str
-    :param verbose: If true, the service will return more detailed information.
-    :type verbose: bool
-    :param is_logging_enabled: If true, the query will be saved for customers to further review in
-     authoring, to improve the model quality.
-    :type is_logging_enabled: bool
+    :param calling_options: The option to set to call a LUIS Deepstack project.
+    :type calling_options: ~azure.ai.language.conversations.models.DeepstackCallingOptions
     """
 
     _validation = {
-        'project_type': {'required': True},
+        'target_type': {'required': True},
     }
 
     _attribute_map = {
-        'project_type': {'key': 'projectType', 'type': 'str'},
+        'target_type': {'key': 'targetType', 'type': 'str'},
         'api_version': {'key': 'apiVersion', 'type': 'str'},
-        'language': {'key': 'language', 'type': 'str'},
-        'verbose': {'key': 'verbose', 'type': 'bool'},
-        'is_logging_enabled': {'key': 'isLoggingEnabled', 'type': 'bool'},
+        'calling_options': {'key': 'callingOptions', 'type': 'DeepstackCallingOptions'},
     }
 
     def __init__(
@@ -488,30 +297,35 @@ class DeepstackParameters(AnalyzeParameters):
         **kwargs
     ):
         super(DeepstackParameters, self).__init__(**kwargs)
-        self.project_type = 'luis_deepstack'  # type: str
-        self.language = kwargs.get('language', None)
-        self.verbose = kwargs.get('verbose', None)
-        self.is_logging_enabled = kwargs.get('is_logging_enabled', None)
+        self.target_type = 'luis_deepstack'  # type: str
+        self.calling_options = kwargs.get('calling_options', None)
 
 
-class DeepstackPrediction(msrest.serialization.Model):
-    """DeepstackPrediction.
+class DeepstackPrediction(BasePrediction):
+    """Represents the prediction section of a LUIS Deepstack project.
 
     All required parameters must be populated in order to send to Azure.
 
+    :param project_type: Required. The type of the project.Constant filled by server.  Possible
+     values include: "conversation", "workflow".
+    :type project_type: str or ~azure.ai.language.conversations.models.ProjectType
+    :param top_intent: The intent with the highest score.
+    :type top_intent: str
     :param classifications: Required. The classification results.
-    :type classifications:
-     list[~azure.ai.language.questionanswering.models.DeepstackClassification]
+    :type classifications: list[~azure.ai.language.conversations.models.DeepstackClassification]
     :param entities: Required. The entity extraction results.
-    :type entities: list[~azure.ai.language.questionanswering.models.DeepstackEntity]
+    :type entities: list[~azure.ai.language.conversations.models.DeepstackEntity]
     """
 
     _validation = {
+        'project_type': {'required': True},
         'classifications': {'required': True},
         'entities': {'required': True},
     }
 
     _attribute_map = {
+        'project_type': {'key': 'projectType', 'type': 'str'},
+        'top_intent': {'key': 'topIntent', 'type': 'str'},
         'classifications': {'key': 'classifications', 'type': '[DeepstackClassification]'},
         'entities': {'key': 'entities', 'type': '[DeepstackEntity]'},
     }
@@ -521,12 +335,13 @@ class DeepstackPrediction(msrest.serialization.Model):
         **kwargs
     ):
         super(DeepstackPrediction, self).__init__(**kwargs)
+        self.project_type = 'conversation'  # type: str
         self.classifications = kwargs['classifications']
         self.entities = kwargs['entities']
 
 
 class DeepstackResult(msrest.serialization.Model):
-    """DeepstackResult.
+    """The response returned by a LUIS Deepstack project.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -535,7 +350,7 @@ class DeepstackResult(msrest.serialization.Model):
     :param detected_language: The detected language from the query.
     :type detected_language: str
     :param prediction: Required. The predicted result for the query.
-    :type prediction: ~azure.ai.language.questionanswering.models.DeepstackPrediction
+    :type prediction: ~azure.ai.language.conversations.models.DeepstackPrediction
     """
 
     _validation = {
@@ -559,81 +374,87 @@ class DeepstackResult(msrest.serialization.Model):
         self.prediction = kwargs['prediction']
 
 
-class DynamicList(msrest.serialization.Model):
-    """Defines an extension for a list entity.
+class TargetIntentResult(msrest.serialization.Model):
+    """This is the base class of an intent prediction.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: LUISTargetIntentResult, DSTargetIntentResult, QuestionAnsweringTargetIntentResult.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param list_entity_name: Required. The name of the list entity to extend.
-    :type list_entity_name: str
-    :param request_lists: Required. The lists to append on the extended list entity.
-    :type request_lists: list[~azure.ai.language.questionanswering.models.RequestList]
+    :param target_type: Required. This discriminator property specifies the type of the target
+     project that returns the response. 'luis' means the type is LUIS Generally Available.
+     'luis_deepstack' means LUIS vNext. 'question_answering' means Question Answering.Constant
+     filled by server.  Possible values include: "luis", "luis_deepstack", "question_answering".
+    :type target_type: str or ~azure.ai.language.conversations.models.TargetType
+    :param api_version: The API version used to call a target service.
+    :type api_version: str
+    :param confidence_score: Required. The prediction score and it ranges from 0.0 to 1.0.
+    :type confidence_score: float
     """
 
     _validation = {
-        'list_entity_name': {'required': True},
-        'request_lists': {'required': True},
+        'target_type': {'required': True},
+        'confidence_score': {'required': True, 'maximum': 1, 'minimum': 0},
     }
 
     _attribute_map = {
-        'list_entity_name': {'key': 'listEntityName', 'type': 'str'},
-        'request_lists': {'key': 'requestLists', 'type': '[RequestList]'},
+        'target_type': {'key': 'targetType', 'type': 'str'},
+        'api_version': {'key': 'apiVersion', 'type': 'str'},
+        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
+    }
+
+    _subtype_map = {
+        'target_type': {'luis': 'LUISTargetIntentResult', 'luis_deepstack': 'DSTargetIntentResult', 'question_answering': 'QuestionAnsweringTargetIntentResult'}
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(DynamicList, self).__init__(**kwargs)
-        self.list_entity_name = kwargs['list_entity_name']
-        self.request_lists = kwargs['request_lists']
+        super(TargetIntentResult, self).__init__(**kwargs)
+        self.target_type = None  # type: Optional[str]
+        self.api_version = kwargs.get('api_version', None)
+        self.confidence_score = kwargs['confidence_score']
 
 
-class EntityModel(msrest.serialization.Model):
-    """An entity extracted from the utterance.
+class DSTargetIntentResult(TargetIntentResult):
+    """A wrap up of LUIS Deepstack response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
-     collection.
-    :type additional_properties: dict[str, any]
-    :param entity: Required. Name of the entity, as defined in LUIS.
-    :type entity: str
-    :param type: Required. Type of the entity, as defined in LUIS.
-    :type type: str
-    :param start_index: Required. The position of the first character of the matched entity within
-     the utterance.
-    :type start_index: int
-    :param end_index: Required. The position of the last character of the matched entity within the
-     utterance.
-    :type end_index: int
+    :param target_type: Required. This discriminator property specifies the type of the target
+     project that returns the response. 'luis' means the type is LUIS Generally Available.
+     'luis_deepstack' means LUIS vNext. 'question_answering' means Question Answering.Constant
+     filled by server.  Possible values include: "luis", "luis_deepstack", "question_answering".
+    :type target_type: str or ~azure.ai.language.conversations.models.TargetType
+    :param api_version: The API version used to call a target service.
+    :type api_version: str
+    :param confidence_score: Required. The prediction score and it ranges from 0.0 to 1.0.
+    :type confidence_score: float
+    :param result: The actual response from a LUIS Deepstack application.
+    :type result: ~azure.ai.language.conversations.models.DeepstackResult
     """
 
     _validation = {
-        'entity': {'required': True},
-        'type': {'required': True},
-        'start_index': {'required': True},
-        'end_index': {'required': True},
+        'target_type': {'required': True},
+        'confidence_score': {'required': True, 'maximum': 1, 'minimum': 0},
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'entity': {'key': 'entity', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'start_index': {'key': 'startIndex', 'type': 'int'},
-        'end_index': {'key': 'endIndex', 'type': 'int'},
+        'target_type': {'key': 'targetType', 'type': 'str'},
+        'api_version': {'key': 'apiVersion', 'type': 'str'},
+        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
+        'result': {'key': 'result', 'type': 'DeepstackResult'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(EntityModel, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get('additional_properties', None)
-        self.entity = kwargs['entity']
-        self.type = kwargs['type']
-        self.start_index = kwargs['start_index']
-        self.end_index = kwargs['end_index']
+        super(DSTargetIntentResult, self).__init__(**kwargs)
+        self.target_type = 'luis_deepstack'  # type: str
+        self.result = kwargs.get('result', None)
 
 
 class Error(msrest.serialization.Model):
@@ -644,16 +465,16 @@ class Error(msrest.serialization.Model):
     :param code: Required. One of a server-defined set of error codes. Possible values include:
      "InvalidRequest", "InvalidArgument", "Unauthorized", "Forbidden", "NotFound",
      "TooManyRequests", "InternalServerError", "ServiceUnavailable".
-    :type code: str or ~azure.ai.language.questionanswering.models.ErrorCode
+    :type code: str or ~azure.ai.language.conversations.models.ErrorCode
     :param message: Required. A human-readable representation of the error.
     :type message: str
     :param target: The target of the error.
     :type target: str
     :param details: An array of details about specific errors that led to this reported error.
-    :type details: list[~azure.ai.language.questionanswering.models.Error]
+    :type details: list[~azure.ai.language.conversations.models.Error]
     :param innererror: An object containing more specific information than the current object about
      the error.
-    :type innererror: ~azure.ai.language.questionanswering.models.InnerErrorModel
+    :type innererror: ~azure.ai.language.conversations.models.InnerErrorModel
     """
 
     _validation = {
@@ -685,7 +506,7 @@ class ErrorResponse(msrest.serialization.Model):
     """Error response.
 
     :param error: The error object.
-    :type error: ~azure.ai.language.questionanswering.models.Error
+    :type error: ~azure.ai.language.conversations.models.Error
     """
 
     _attribute_map = {
@@ -700,49 +521,6 @@ class ErrorResponse(msrest.serialization.Model):
         self.error = kwargs.get('error', None)
 
 
-class ExternalEntity(msrest.serialization.Model):
-    """Defines a user predicted entity that extends an already existing one.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param entity_name: Required. The name of the entity to extend.
-    :type entity_name: str
-    :param start_index: Required. The start character index of the predicted entity.
-    :type start_index: int
-    :param entity_length: Required. The length of the predicted entity.
-    :type entity_length: int
-    :param resolution: A user supplied custom resolution to return as the entity's prediction.
-    :type resolution: any
-    :param score: A user supplied score to return as the entity's prediction score.
-    :type score: float
-    """
-
-    _validation = {
-        'entity_name': {'required': True},
-        'start_index': {'required': True},
-        'entity_length': {'required': True},
-    }
-
-    _attribute_map = {
-        'entity_name': {'key': 'entityName', 'type': 'str'},
-        'start_index': {'key': 'startIndex', 'type': 'int'},
-        'entity_length': {'key': 'entityLength', 'type': 'int'},
-        'resolution': {'key': 'resolution', 'type': 'object'},
-        'score': {'key': 'score', 'type': 'float'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ExternalEntity, self).__init__(**kwargs)
-        self.entity_name = kwargs['entity_name']
-        self.start_index = kwargs['start_index']
-        self.entity_length = kwargs['entity_length']
-        self.resolution = kwargs.get('resolution', None)
-        self.score = kwargs.get('score', None)
-
-
 class InnerErrorModel(msrest.serialization.Model):
     """An object containing more specific information about the error. As per Microsoft One API guidelines - https://github.com/Microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses.
 
@@ -751,7 +529,7 @@ class InnerErrorModel(msrest.serialization.Model):
     :param code: Required. One of a server-defined set of error codes. Possible values include:
      "InvalidRequest", "InvalidParameterValue", "KnowledgeBaseNotFound",
      "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling", "ExtractionFailure".
-    :type code: str or ~azure.ai.language.questionanswering.models.InnerErrorCode
+    :type code: str or ~azure.ai.language.conversations.models.InnerErrorCode
     :param message: Required. Error message.
     :type message: str
     :param details: Error details.
@@ -760,7 +538,7 @@ class InnerErrorModel(msrest.serialization.Model):
     :type target: str
     :param innererror: An object containing more specific information than the current object about
      the error.
-    :type innererror: ~azure.ai.language.questionanswering.models.InnerErrorModel
+    :type innererror: ~azure.ai.language.conversations.models.InnerErrorModel
     """
 
     _validation = {
@@ -788,411 +566,8 @@ class InnerErrorModel(msrest.serialization.Model):
         self.innererror = kwargs.get('innererror', None)
 
 
-class Intent(msrest.serialization.Model):
-    """Represents an intent prediction.
-
-    :param score: The score of the fired intent.
-    :type score: float
-    :param child_app: The prediction of the dispatched application.
-    :type child_app: ~azure.ai.language.questionanswering.models.Prediction
-    """
-
-    _attribute_map = {
-        'score': {'key': 'score', 'type': 'float'},
-        'child_app': {'key': 'childApp', 'type': 'Prediction'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Intent, self).__init__(**kwargs)
-        self.score = kwargs.get('score', None)
-        self.child_app = kwargs.get('child_app', None)
-
-
-class IntentModel(msrest.serialization.Model):
-    """An intent detected from the utterance.
-
-    :param intent: Name of the intent, as defined in LUIS.
-    :type intent: str
-    :param score: Associated prediction score for the intent (float).
-    :type score: float
-    """
-
-    _validation = {
-        'score': {'maximum': 1, 'minimum': 0},
-    }
-
-    _attribute_map = {
-        'intent': {'key': 'intent', 'type': 'str'},
-        'score': {'key': 'score', 'type': 'float'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(IntentModel, self).__init__(**kwargs)
-        self.intent = kwargs.get('intent', None)
-        self.score = kwargs.get('score', None)
-
-
-class KnowledgeBaseAnswer(msrest.serialization.Model):
-    """Represents knowledge base answer.
-
-    :param questions: List of questions.
-    :type questions: list[str]
-    :param answer: The Answer.
-    :type answer: str
-    :param confidence_score: Answer confidence score, value ranges from 0 to 1.
-    :type confidence_score: float
-    :param id: ID of the QnA result.
-    :type id: int
-    :param source: Source of QnA result.
-    :type source: str
-    :param metadata: Metadata associated with the answer, useful to categorize or filter question
-     answers.
-    :type metadata: dict[str, str]
-    :param dialog: Dialog associated with Answer.
-    :type dialog: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerDialog
-    :param answer_span: Answer span object of QnA with respect to user's question.
-    :type answer_span: ~azure.ai.language.questionanswering.models.AnswerSpan
-    """
-
-    _validation = {
-        'confidence_score': {'maximum': 1, 'minimum': 0},
-    }
-
-    _attribute_map = {
-        'questions': {'key': 'questions', 'type': '[str]'},
-        'answer': {'key': 'answer', 'type': 'str'},
-        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
-        'id': {'key': 'id', 'type': 'int'},
-        'source': {'key': 'source', 'type': 'str'},
-        'metadata': {'key': 'metadata', 'type': '{str}'},
-        'dialog': {'key': 'dialog', 'type': 'KnowledgeBaseAnswerDialog'},
-        'answer_span': {'key': 'answerSpan', 'type': 'AnswerSpan'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(KnowledgeBaseAnswer, self).__init__(**kwargs)
-        self.questions = kwargs.get('questions', None)
-        self.answer = kwargs.get('answer', None)
-        self.confidence_score = kwargs.get('confidence_score', None)
-        self.id = kwargs.get('id', None)
-        self.source = kwargs.get('source', None)
-        self.metadata = kwargs.get('metadata', None)
-        self.dialog = kwargs.get('dialog', None)
-        self.answer_span = kwargs.get('answer_span', None)
-
-
-class KnowledgeBaseAnswerDialog(msrest.serialization.Model):
-    """Dialog associated with Answer.
-
-    :param is_context_only: To mark if a prompt is relevant only with a previous question or not.
-     If true, do not include this QnA as search result for queries without context; otherwise, if
-     false, ignores context and includes this QnA in search result.
-    :type is_context_only: bool
-    :param prompts: List of 0 to 20 prompts associated with the answer.
-    :type prompts: list[~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerPrompt]
-    """
-
-    _validation = {
-        'prompts': {'max_items': 20, 'min_items': 0},
-    }
-
-    _attribute_map = {
-        'is_context_only': {'key': 'isContextOnly', 'type': 'bool'},
-        'prompts': {'key': 'prompts', 'type': '[KnowledgeBaseAnswerPrompt]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(KnowledgeBaseAnswerDialog, self).__init__(**kwargs)
-        self.is_context_only = kwargs.get('is_context_only', None)
-        self.prompts = kwargs.get('prompts', None)
-
-
-class KnowledgeBaseAnswerPrompt(msrest.serialization.Model):
-    """Prompt for an answer.
-
-    :param display_order: Index of the prompt - used in ordering of the prompts.
-    :type display_order: int
-    :param qna_id: QnA ID corresponding to the prompt.
-    :type qna_id: int
-    :param display_text: Text displayed to represent a follow up question prompt.
-    :type display_text: str
-    """
-
-    _validation = {
-        'display_text': {'max_length': 200, 'min_length': 0},
-    }
-
-    _attribute_map = {
-        'display_order': {'key': 'displayOrder', 'type': 'int'},
-        'qna_id': {'key': 'qnaId', 'type': 'int'},
-        'display_text': {'key': 'displayText', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(KnowledgeBaseAnswerPrompt, self).__init__(**kwargs)
-        self.display_order = kwargs.get('display_order', None)
-        self.qna_id = kwargs.get('qna_id', None)
-        self.display_text = kwargs.get('display_text', None)
-
-
-class KnowledgeBaseAnswerRequestContext(msrest.serialization.Model):
-    """Context object with previous QnA's information.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param previous_qna_id: Required. Previous turn top answer result QnA ID.
-    :type previous_qna_id: int
-    :param previous_user_query: Previous user query.
-    :type previous_user_query: str
-    """
-
-    _validation = {
-        'previous_qna_id': {'required': True},
-    }
-
-    _attribute_map = {
-        'previous_qna_id': {'key': 'previousQnaId', 'type': 'int'},
-        'previous_user_query': {'key': 'previousUserQuery', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(KnowledgeBaseAnswerRequestContext, self).__init__(**kwargs)
-        self.previous_qna_id = kwargs['previous_qna_id']
-        self.previous_user_query = kwargs.get('previous_user_query', None)
-
-
-class KnowledgeBaseAnswers(msrest.serialization.Model):
-    """Represents List of Question Answers.
-
-    :param answers: Represents Answer Result list.
-    :type answers: list[~azure.ai.language.questionanswering.models.KnowledgeBaseAnswer]
-    """
-
-    _attribute_map = {
-        'answers': {'key': 'answers', 'type': '[KnowledgeBaseAnswer]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(KnowledgeBaseAnswers, self).__init__(**kwargs)
-        self.answers = kwargs.get('answers', None)
-
-
-class KnowledgeBaseQueryOptions(msrest.serialization.Model):
-    """The question parameters to answer using a knowledge base.
-
-    :param qna_id: Exact QnA ID to fetch from the knowledge base, this field takes priority over
-     question.
-    :type qna_id: int
-    :param question: User question to query against the knowledge base.
-    :type question: str
-    :param top: Max number of answers to be returned for the question.
-    :type top: int
-    :param user_id: Unique identifier for the user.
-    :type user_id: str
-    :param confidence_score_threshold: Minimum threshold score for answers, value ranges from 0 to
-     1.
-    :type confidence_score_threshold: float
-    :param context: Context object with previous QnA's information.
-    :type context: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerRequestContext
-    :param ranker_type: (Optional) Set to 'QuestionOnly' for using a question only Ranker. Possible
-     values include: "Default", "QuestionOnly".
-    :type ranker_type: str or ~azure.ai.language.questionanswering.models.RankerType
-    :param strict_filters: Filter QnAs based on give metadata list and knowledge base source names.
-    :type strict_filters: ~azure.ai.language.questionanswering.models.StrictFilters
-    :param answer_span_request: To configure Answer span prediction feature.
-    :type answer_span_request: ~azure.ai.language.questionanswering.models.AnswerSpanRequest
-    :param include_unstructured_sources: (Optional) Flag to enable Query over Unstructured Sources.
-    :type include_unstructured_sources: bool
-    """
-
-    _validation = {
-        'confidence_score_threshold': {'maximum': 1, 'minimum': 0},
-    }
-
-    _attribute_map = {
-        'qna_id': {'key': 'qnaId', 'type': 'int'},
-        'question': {'key': 'question', 'type': 'str'},
-        'top': {'key': 'top', 'type': 'int'},
-        'user_id': {'key': 'userId', 'type': 'str'},
-        'confidence_score_threshold': {'key': 'confidenceScoreThreshold', 'type': 'float'},
-        'context': {'key': 'context', 'type': 'KnowledgeBaseAnswerRequestContext'},
-        'ranker_type': {'key': 'rankerType', 'type': 'str'},
-        'strict_filters': {'key': 'strictFilters', 'type': 'StrictFilters'},
-        'answer_span_request': {'key': 'answerSpanRequest', 'type': 'AnswerSpanRequest'},
-        'include_unstructured_sources': {'key': 'includeUnstructuredSources', 'type': 'bool'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(KnowledgeBaseQueryOptions, self).__init__(**kwargs)
-        self.qna_id = kwargs.get('qna_id', None)
-        self.question = kwargs.get('question', None)
-        self.top = kwargs.get('top', None)
-        self.user_id = kwargs.get('user_id', None)
-        self.confidence_score_threshold = kwargs.get('confidence_score_threshold', None)
-        self.context = kwargs.get('context', None)
-        self.ranker_type = kwargs.get('ranker_type', None)
-        self.strict_filters = kwargs.get('strict_filters', None)
-        self.answer_span_request = kwargs.get('answer_span_request', None)
-        self.include_unstructured_sources = kwargs.get('include_unstructured_sources', None)
-
-
-class LUISIntentV2(BaseIntent):
-    """It is a wrap up of LUIS Generally Available v2.0 response.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param project_type: Required. This discriminator property specifies the type of the target
-     project that returns the response. 'luis' means the type is LUIS Generally Available.
-     'luis_deepstack' means LUIS vNext. 'question_answering' means Question Answering.Constant
-     filled by server.  Possible values include: "luis_v2", "luis_v3", "luis_deepstack",
-     "question_answering".
-    :type project_type: str or ~azure.ai.language.questionanswering.models.ProjectType
-    :param api_version: The API version used to call a target project.
-    :type api_version: str
-    :param confidence_score: Required. The prediction score and it ranges from 0.0 to 1.0.
-    :type confidence_score: float
-    :param result: The actual response from a LUIS Generally Available application and API version
-     v2.0.
-    :type result: ~azure.ai.language.questionanswering.models.LuisResult
-    """
-
-    _validation = {
-        'project_type': {'required': True},
-        'confidence_score': {'required': True, 'maximum': 1, 'minimum': 0},
-    }
-
-    _attribute_map = {
-        'project_type': {'key': 'projectType', 'type': 'str'},
-        'api_version': {'key': 'apiVersion', 'type': 'str'},
-        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
-        'result': {'key': 'result', 'type': 'LuisResult'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(LUISIntentV2, self).__init__(**kwargs)
-        self.project_type = 'luis_v2'  # type: str
-        self.result = kwargs.get('result', None)
-
-
-class LUISIntentV3(BaseIntent):
-    """It is a wrap up a LUIS Generally Available v3.0 response.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param project_type: Required. This discriminator property specifies the type of the target
-     project that returns the response. 'luis' means the type is LUIS Generally Available.
-     'luis_deepstack' means LUIS vNext. 'question_answering' means Question Answering.Constant
-     filled by server.  Possible values include: "luis_v2", "luis_v3", "luis_deepstack",
-     "question_answering".
-    :type project_type: str or ~azure.ai.language.questionanswering.models.ProjectType
-    :param api_version: The API version used to call a target project.
-    :type api_version: str
-    :param confidence_score: Required. The prediction score and it ranges from 0.0 to 1.0.
-    :type confidence_score: float
-    :param result: The actual response from a LUIS Generally Available application and API version
-     v3.0.
-    :type result: ~azure.ai.language.questionanswering.models.PredictionResponse
-    """
-
-    _validation = {
-        'project_type': {'required': True},
-        'confidence_score': {'required': True, 'maximum': 1, 'minimum': 0},
-    }
-
-    _attribute_map = {
-        'project_type': {'key': 'projectType', 'type': 'str'},
-        'api_version': {'key': 'apiVersion', 'type': 'str'},
-        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
-        'result': {'key': 'result', 'type': 'PredictionResponse'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(LUISIntentV3, self).__init__(**kwargs)
-        self.project_type = 'luis_v3'  # type: str
-        self.result = kwargs.get('result', None)
-
-
-class LuisResult(msrest.serialization.Model):
-    """Prediction, based on the input query, containing intent(s) and entities.
-
-    :param query: The input utterance that was analyzed.
-    :type query: str
-    :param altered_query: The corrected utterance (when spell checking was enabled).
-    :type altered_query: str
-    :param top_scoring_intent: An intent detected from the utterance.
-    :type top_scoring_intent: ~azure.ai.language.questionanswering.models.IntentModel
-    :param intents: All the intents (and their score) that were detected from utterance.
-    :type intents: list[~azure.ai.language.questionanswering.models.IntentModel]
-    :param entities: The entities extracted from the utterance.
-    :type entities: list[~azure.ai.language.questionanswering.models.EntityModel]
-    :param composite_entities: The composite entities extracted from the utterance.
-    :type composite_entities:
-     list[~azure.ai.language.questionanswering.models.CompositeEntityModel]
-    :param sentiment_analysis: Sentiment of the input utterance.
-    :type sentiment_analysis: ~azure.ai.language.questionanswering.models.Sentiment
-    :param connected_service_result: Prediction, based on the input query, containing intent(s) and
-     entities.
-    :type connected_service_result: ~azure.ai.language.questionanswering.models.LuisResult
-    """
-
-    _attribute_map = {
-        'query': {'key': 'query', 'type': 'str'},
-        'altered_query': {'key': 'alteredQuery', 'type': 'str'},
-        'top_scoring_intent': {'key': 'topScoringIntent', 'type': 'IntentModel'},
-        'intents': {'key': 'intents', 'type': '[IntentModel]'},
-        'entities': {'key': 'entities', 'type': '[EntityModel]'},
-        'composite_entities': {'key': 'compositeEntities', 'type': '[CompositeEntityModel]'},
-        'sentiment_analysis': {'key': 'sentimentAnalysis', 'type': 'Sentiment'},
-        'connected_service_result': {'key': 'connectedServiceResult', 'type': 'LuisResult'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(LuisResult, self).__init__(**kwargs)
-        self.query = kwargs.get('query', None)
-        self.altered_query = kwargs.get('altered_query', None)
-        self.top_scoring_intent = kwargs.get('top_scoring_intent', None)
-        self.intents = kwargs.get('intents', None)
-        self.entities = kwargs.get('entities', None)
-        self.composite_entities = kwargs.get('composite_entities', None)
-        self.sentiment_analysis = kwargs.get('sentiment_analysis', None)
-        self.connected_service_result = kwargs.get('connected_service_result', None)
-
-
-class LUISV2CallingOptions(msrest.serialization.Model):
-    """This customizes how the service calls LUIS Generally Available V2 projects.
+class LUISCallingOptions(msrest.serialization.Model):
+    """This customizes how the service calls LUIS Generally Available projects.
 
     :param verbose: Enable verbose response.
     :type verbose: bool
@@ -1222,7 +597,7 @@ class LUISV2CallingOptions(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(LUISV2CallingOptions, self).__init__(**kwargs)
+        super(LUISCallingOptions, self).__init__(**kwargs)
         self.verbose = kwargs.get('verbose', None)
         self.log = kwargs.get('log', None)
         self.show_all_intents = kwargs.get('show_all_intents', None)
@@ -1231,337 +606,86 @@ class LUISV2CallingOptions(msrest.serialization.Model):
         self.bing_spell_check_subscription_key = kwargs.get('bing_spell_check_subscription_key', None)
 
 
-class LUISV2Parameters(AnalyzeParameters):
-    """This is a set of request parameters for LUIS Generally Available projects and API version v2.0.
+class LUISParameters(AnalyzeParameters):
+    """This is a set of request parameters for LUIS Generally Available projects.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param project_type: Required. The type of the project. It could be one of the following
-     values.Constant filled by server.  Possible values include: "luis_v2", "luis_v3",
-     "luis_deepstack", "question_answering".
-    :type project_type: str or ~azure.ai.language.questionanswering.models.ProjectType
-    :param api_version: The API version to use when call a specific target project.
-    :type api_version: str
-    :param project_parameters: This is a set of request parameters for LUIS Generally Available
-     projects and API version v2.0.
-    :type project_parameters: ~azure.ai.language.questionanswering.models.LUISV2ProjectParameters
-    :param calling_options: This customizes how the service calls LUIS Generally Available V2
-     projects.
-    :type calling_options: ~azure.ai.language.questionanswering.models.LUISV2CallingOptions
-    """
-
-    _validation = {
-        'project_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'project_type': {'key': 'projectType', 'type': 'str'},
-        'api_version': {'key': 'apiVersion', 'type': 'str'},
-        'project_parameters': {'key': 'projectParameters', 'type': 'LUISV2ProjectParameters'},
-        'calling_options': {'key': 'callingOptions', 'type': 'LUISV2CallingOptions'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(LUISV2Parameters, self).__init__(**kwargs)
-        self.project_type = 'luis_v2'  # type: str
-        self.project_parameters = kwargs.get('project_parameters', None)
-        self.calling_options = kwargs.get('calling_options', None)
-
-
-class LUISV2ProjectParameters(msrest.serialization.Model):
-    """This is a set of request parameters for LUIS Generally Available projects and API version v2.0.
-
-    :param query: The utterance to predict.
-    :type query: str
-    """
-
-    _validation = {
-        'query': {'max_length': 500, 'min_length': 0},
-    }
-
-    _attribute_map = {
-        'query': {'key': 'query', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(LUISV2ProjectParameters, self).__init__(**kwargs)
-        self.query = kwargs.get('query', None)
-
-
-class LUISV3CallingOptions(msrest.serialization.Model):
-    """This customizes how the service calls LUIS Generally Available V3 projects.
-
-    :param verbose: Enable verbose response.
-    :type verbose: bool
-    :param log: Save log to add in training utterances later.
-    :type log: bool
-    :param show_all_intents: Set true to show all intents.
-    :type show_all_intents: bool
-    """
-
-    _attribute_map = {
-        'verbose': {'key': 'verbose', 'type': 'bool'},
-        'log': {'key': 'log', 'type': 'bool'},
-        'show_all_intents': {'key': 'show-all-intents', 'type': 'bool'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(LUISV3CallingOptions, self).__init__(**kwargs)
-        self.verbose = kwargs.get('verbose', None)
-        self.log = kwargs.get('log', None)
-        self.show_all_intents = kwargs.get('show_all_intents', None)
-
-
-class LUISV3Parameters(AnalyzeParameters):
-    """This is a set of request parameters for LUIS Generally Available projects and API version v3.0.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param project_type: Required. The type of the project. It could be one of the following
-     values.Constant filled by server.  Possible values include: "luis_v2", "luis_v3",
-     "luis_deepstack", "question_answering".
-    :type project_type: str or ~azure.ai.language.questionanswering.models.ProjectType
-    :param api_version: The API version to use when call a specific target project.
+    :param target_type: Required. The type of a target service.Constant filled by server.  Possible
+     values include: "luis", "luis_deepstack", "question_answering".
+    :type target_type: str or ~azure.ai.language.conversations.models.TargetType
+    :param api_version: The API version to use when call a specific target service.
     :type api_version: str
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
     :type additional_properties: dict[str, any]
-    :param project_parameters: Represents the prediction request parameters.
-    :type project_parameters: ~azure.ai.language.questionanswering.models.PredictionRequest
-    :param calling_options: This customizes how the service calls LUIS Generally Available V3
+    :param query: The utterance to predict.
+    :type query: str
+    :param calling_options: This customizes how the service calls LUIS Generally Available
      projects.
-    :type calling_options: ~azure.ai.language.questionanswering.models.LUISV3CallingOptions
+    :type calling_options: ~azure.ai.language.conversations.models.LUISCallingOptions
     """
 
     _validation = {
-        'project_type': {'required': True},
+        'target_type': {'required': True},
+        'query': {'max_length': 500, 'min_length': 0},
     }
 
     _attribute_map = {
-        'project_type': {'key': 'projectType', 'type': 'str'},
+        'target_type': {'key': 'targetType', 'type': 'str'},
         'api_version': {'key': 'apiVersion', 'type': 'str'},
         'additional_properties': {'key': '', 'type': '{object}'},
-        'project_parameters': {'key': 'projectParameters', 'type': 'PredictionRequest'},
-        'calling_options': {'key': 'callingOptions', 'type': 'LUISV3CallingOptions'},
+        'query': {'key': 'query', 'type': 'str'},
+        'calling_options': {'key': 'callingOptions', 'type': 'LUISCallingOptions'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(LUISV3Parameters, self).__init__(**kwargs)
-        self.project_type = 'luis_v3'  # type: str
+        super(LUISParameters, self).__init__(**kwargs)
+        self.target_type = 'luis'  # type: str
         self.additional_properties = kwargs.get('additional_properties', None)
-        self.project_parameters = kwargs.get('project_parameters', None)
+        self.query = kwargs.get('query', None)
         self.calling_options = kwargs.get('calling_options', None)
 
 
-class MetadataFilter(msrest.serialization.Model):
-    """Find QnAs that are associated with the given list of metadata.
-
-    :param metadata: Dictionary of :code:`<string>`.
-    :type metadata: dict[str, str]
-    :param compound_operation: (Optional) Set to 'OR' for joining metadata using 'OR' operation.
-     Possible values include: "AND", "OR".
-    :type compound_operation: str or
-     ~azure.ai.language.questionanswering.models.CompoundOperationKind
-    """
-
-    _attribute_map = {
-        'metadata': {'key': 'metadata', 'type': '{str}'},
-        'compound_operation': {'key': 'compoundOperation', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(MetadataFilter, self).__init__(**kwargs)
-        self.metadata = kwargs.get('metadata', None)
-        self.compound_operation = kwargs.get('compound_operation', None)
-
-
-class Prediction(msrest.serialization.Model):
-    """Represents the prediction of a query.
+class LUISTargetIntentResult(TargetIntentResult):
+    """It is a wrap up of LUIS Generally Available response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param altered_query: The query after spell checking. Only set if spell check was enabled and a
-     spelling mistake was found.
-    :type altered_query: str
-    :param top_intent: Required. The name of the top scoring intent.
-    :type top_intent: str
-    :param intents: Required. A dictionary representing the intents that fired.
-    :type intents: dict[str, ~azure.ai.language.questionanswering.models.Intent]
-    :param entities: Required. A dictionary representing the entities that fired.
-    :type entities: dict[str, any]
-    :param sentiment: The result of the sentiment analysis.
-    :type sentiment: ~azure.ai.language.questionanswering.models.SentimentAutoGenerated
-    """
-
-    _validation = {
-        'top_intent': {'required': True},
-        'intents': {'required': True},
-        'entities': {'required': True},
-    }
-
-    _attribute_map = {
-        'altered_query': {'key': 'alteredQuery', 'type': 'str'},
-        'top_intent': {'key': 'topIntent', 'type': 'str'},
-        'intents': {'key': 'intents', 'type': '{Intent}'},
-        'entities': {'key': 'entities', 'type': '{object}'},
-        'sentiment': {'key': 'sentiment', 'type': 'SentimentAutoGenerated'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Prediction, self).__init__(**kwargs)
-        self.altered_query = kwargs.get('altered_query', None)
-        self.top_intent = kwargs['top_intent']
-        self.intents = kwargs['intents']
-        self.entities = kwargs['entities']
-        self.sentiment = kwargs.get('sentiment', None)
-
-
-class PredictionRequest(msrest.serialization.Model):
-    """Represents the prediction request parameters.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param query: Required. The query to predict.
-    :type query: str
-    :param options: The custom options defined for this request.
-    :type options: ~azure.ai.language.questionanswering.models.PredictionRequestOptions
-    :param external_entities: The externally predicted entities for this request.
-    :type external_entities: list[~azure.ai.language.questionanswering.models.ExternalEntity]
-    :param dynamic_lists: The dynamically created list entities for this request.
-    :type dynamic_lists: list[~azure.ai.language.questionanswering.models.DynamicList]
-    """
-
-    _validation = {
-        'query': {'required': True},
-    }
-
-    _attribute_map = {
-        'query': {'key': 'query', 'type': 'str'},
-        'options': {'key': 'options', 'type': 'PredictionRequestOptions'},
-        'external_entities': {'key': 'externalEntities', 'type': '[ExternalEntity]'},
-        'dynamic_lists': {'key': 'dynamicLists', 'type': '[DynamicList]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PredictionRequest, self).__init__(**kwargs)
-        self.query = kwargs['query']
-        self.options = kwargs.get('options', None)
-        self.external_entities = kwargs.get('external_entities', None)
-        self.dynamic_lists = kwargs.get('dynamic_lists', None)
-
-
-class PredictionRequestOptions(msrest.serialization.Model):
-    """The custom options for the prediction request.
-
-    :param datetime_reference: The reference DateTime used for predicting datetime entities.
-    :type datetime_reference: ~datetime.datetime
-    :param prefer_external_entities: Whether to make the external entities resolution override the
-     predictions if an overlap occurs.
-    :type prefer_external_entities: bool
-    """
-
-    _attribute_map = {
-        'datetime_reference': {'key': 'datetimeReference', 'type': 'iso-8601'},
-        'prefer_external_entities': {'key': 'preferExternalEntities', 'type': 'bool'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PredictionRequestOptions, self).__init__(**kwargs)
-        self.datetime_reference = kwargs.get('datetime_reference', None)
-        self.prefer_external_entities = kwargs.get('prefer_external_entities', None)
-
-
-class PredictionResponse(msrest.serialization.Model):
-    """Represents the prediction response.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param query: Required. The query used in the prediction.
-    :type query: str
-    :param prediction: Required. The prediction of the requested query.
-    :type prediction: ~azure.ai.language.questionanswering.models.Prediction
-    """
-
-    _validation = {
-        'query': {'required': True},
-        'prediction': {'required': True},
-    }
-
-    _attribute_map = {
-        'query': {'key': 'query', 'type': 'str'},
-        'prediction': {'key': 'prediction', 'type': 'Prediction'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PredictionResponse, self).__init__(**kwargs)
-        self.query = kwargs['query']
-        self.prediction = kwargs['prediction']
-
-
-class QuestionAnsweringIntent(BaseIntent):
-    """It is a wrap up a Question Answering KB response.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param project_type: Required. This discriminator property specifies the type of the target
+    :param target_type: Required. This discriminator property specifies the type of the target
      project that returns the response. 'luis' means the type is LUIS Generally Available.
      'luis_deepstack' means LUIS vNext. 'question_answering' means Question Answering.Constant
-     filled by server.  Possible values include: "luis_v2", "luis_v3", "luis_deepstack",
-     "question_answering".
-    :type project_type: str or ~azure.ai.language.questionanswering.models.ProjectType
-    :param api_version: The API version used to call a target project.
+     filled by server.  Possible values include: "luis", "luis_deepstack", "question_answering".
+    :type target_type: str or ~azure.ai.language.conversations.models.TargetType
+    :param api_version: The API version used to call a target service.
     :type api_version: str
     :param confidence_score: Required. The prediction score and it ranges from 0.0 to 1.0.
     :type confidence_score: float
-    :param result: The generated answer by a Question Answering KB.
-    :type result: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswers
+    :param result: The actual response from a LUIS Generally Available application.
+    :type result: any
     """
 
     _validation = {
-        'project_type': {'required': True},
+        'target_type': {'required': True},
         'confidence_score': {'required': True, 'maximum': 1, 'minimum': 0},
     }
 
     _attribute_map = {
-        'project_type': {'key': 'projectType', 'type': 'str'},
+        'target_type': {'key': 'targetType', 'type': 'str'},
         'api_version': {'key': 'apiVersion', 'type': 'str'},
         'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
-        'result': {'key': 'result', 'type': 'KnowledgeBaseAnswers'},
+        'result': {'key': 'result', 'type': 'object'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(QuestionAnsweringIntent, self).__init__(**kwargs)
-        self.project_type = 'question_answering'  # type: str
+        super(LUISTargetIntentResult, self).__init__(**kwargs)
+        self.target_type = 'luis'  # type: str
         self.result = kwargs.get('result', None)
 
 
@@ -1570,24 +694,23 @@ class QuestionAnsweringParameters(AnalyzeParameters):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param project_type: Required. The type of the project. It could be one of the following
-     values.Constant filled by server.  Possible values include: "luis_v2", "luis_v3",
-     "luis_deepstack", "question_answering".
-    :type project_type: str or ~azure.ai.language.questionanswering.models.ProjectType
-    :param api_version: The API version to use when call a specific target project.
+    :param target_type: Required. The type of a target service.Constant filled by server.  Possible
+     values include: "luis", "luis_deepstack", "question_answering".
+    :type target_type: str or ~azure.ai.language.conversations.models.TargetType
+    :param api_version: The API version to use when call a specific target service.
     :type api_version: str
-    :param project_parameters: The question parameters to answer using a knowledge base.
-    :type project_parameters: ~azure.ai.language.questionanswering.models.KnowledgeBaseQueryOptions
+    :param project_parameters: The parameters send to a Question Answering KB.
+    :type project_parameters: any
     """
 
     _validation = {
-        'project_type': {'required': True},
+        'target_type': {'required': True},
     }
 
     _attribute_map = {
-        'project_type': {'key': 'projectType', 'type': 'str'},
+        'target_type': {'key': 'targetType', 'type': 'str'},
         'api_version': {'key': 'apiVersion', 'type': 'str'},
-        'project_parameters': {'key': 'projectParameters', 'type': 'KnowledgeBaseQueryOptions'},
+        'project_parameters': {'key': 'projectParameters', 'type': 'object'},
     }
 
     def __init__(
@@ -1595,120 +718,80 @@ class QuestionAnsweringParameters(AnalyzeParameters):
         **kwargs
     ):
         super(QuestionAnsweringParameters, self).__init__(**kwargs)
-        self.project_type = 'question_answering'  # type: str
+        self.target_type = 'question_answering'  # type: str
         self.project_parameters = kwargs.get('project_parameters', None)
 
 
-class RequestList(msrest.serialization.Model):
-    """Defines a sub-list to append to an existing list entity.
+class QuestionAnsweringTargetIntentResult(TargetIntentResult):
+    """It is a wrap up a Question Answering KB response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: The name of the sub-list.
-    :type name: str
-    :param canonical_form: Required. The canonical form of the sub-list.
-    :type canonical_form: str
-    :param synonyms: The synonyms of the canonical form.
-    :type synonyms: list[str]
+    :param target_type: Required. This discriminator property specifies the type of the target
+     project that returns the response. 'luis' means the type is LUIS Generally Available.
+     'luis_deepstack' means LUIS vNext. 'question_answering' means Question Answering.Constant
+     filled by server.  Possible values include: "luis", "luis_deepstack", "question_answering".
+    :type target_type: str or ~azure.ai.language.conversations.models.TargetType
+    :param api_version: The API version used to call a target service.
+    :type api_version: str
+    :param confidence_score: Required. The prediction score and it ranges from 0.0 to 1.0.
+    :type confidence_score: float
+    :param result: The generated answer by a Question Answering KB.
+    :type result: any
     """
 
     _validation = {
-        'canonical_form': {'required': True},
+        'target_type': {'required': True},
+        'confidence_score': {'required': True, 'maximum': 1, 'minimum': 0},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'canonical_form': {'key': 'canonicalForm', 'type': 'str'},
-        'synonyms': {'key': 'synonyms', 'type': '[str]'},
+        'target_type': {'key': 'targetType', 'type': 'str'},
+        'api_version': {'key': 'apiVersion', 'type': 'str'},
+        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
+        'result': {'key': 'result', 'type': 'object'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(RequestList, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.canonical_form = kwargs['canonical_form']
-        self.synonyms = kwargs.get('synonyms', None)
+        super(QuestionAnsweringTargetIntentResult, self).__init__(**kwargs)
+        self.target_type = 'question_answering'  # type: str
+        self.result = kwargs.get('result', None)
 
 
-class Sentiment(msrest.serialization.Model):
-    """Sentiment of the input utterance.
-
-    :param label: The polarity of the sentiment, can be positive, neutral or negative.
-    :type label: str
-    :param score: Score of the sentiment, ranges from 0 (most negative) to 1 (most positive).
-    :type score: float
-    """
-
-    _attribute_map = {
-        'label': {'key': 'label', 'type': 'str'},
-        'score': {'key': 'score', 'type': 'float'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Sentiment, self).__init__(**kwargs)
-        self.label = kwargs.get('label', None)
-        self.score = kwargs.get('score', None)
-
-
-class SentimentAutoGenerated(msrest.serialization.Model):
-    """The result of the sentiment analysis.
+class WorkflowPrediction(BasePrediction):
+    """This represents the prediction result of an Workflow project.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param label: The label of the sentiment analysis result.
-    :type label: str
-    :param score: Required. The sentiment score of the query.
-    :type score: float
+    :param project_type: Required. The type of the project.Constant filled by server.  Possible
+     values include: "conversation", "workflow".
+    :type project_type: str or ~azure.ai.language.conversations.models.ProjectType
+    :param top_intent: The intent with the highest score.
+    :type top_intent: str
+    :param intents: Required. A dictionary that contains all intents. A key is an intent name and a
+     value is its confidence score and target type. The top intent's value also contains the actual
+     response from the target project.
+    :type intents: dict[str, ~azure.ai.language.conversations.models.TargetIntentResult]
     """
 
     _validation = {
-        'score': {'required': True},
+        'project_type': {'required': True},
+        'intents': {'required': True},
     }
 
     _attribute_map = {
-        'label': {'key': 'label', 'type': 'str'},
-        'score': {'key': 'score', 'type': 'float'},
+        'project_type': {'key': 'projectType', 'type': 'str'},
+        'top_intent': {'key': 'topIntent', 'type': 'str'},
+        'intents': {'key': 'intents', 'type': '{TargetIntentResult}'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(SentimentAutoGenerated, self).__init__(**kwargs)
-        self.label = kwargs.get('label', None)
-        self.score = kwargs['score']
-
-
-class StrictFilters(msrest.serialization.Model):
-    """filters over knowledge base.
-
-    :param metadata_filter: Find QnAs that are associated with the given list of metadata.
-    :type metadata_filter: ~azure.ai.language.questionanswering.models.MetadataFilter
-    :param source_filter: Find QnAs that are associated with the given list of sources in knowledge
-     base.
-    :type source_filter: list[str]
-    :param compound_operation: (Optional) Set to 'OR' for joining metadata using 'OR' operation.
-     Possible values include: "AND", "OR".
-    :type compound_operation: str or
-     ~azure.ai.language.questionanswering.models.CompoundOperationKind
-    """
-
-    _attribute_map = {
-        'metadata_filter': {'key': 'metadataFilter', 'type': 'MetadataFilter'},
-        'source_filter': {'key': 'sourceFilter', 'type': '[str]'},
-        'compound_operation': {'key': 'compoundOperation', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(StrictFilters, self).__init__(**kwargs)
-        self.metadata_filter = kwargs.get('metadata_filter', None)
-        self.source_filter = kwargs.get('source_filter', None)
-        self.compound_operation = kwargs.get('compound_operation', None)
+        super(WorkflowPrediction, self).__init__(**kwargs)
+        self.project_type = 'workflow'  # type: str
+        self.intents = kwargs['intents']

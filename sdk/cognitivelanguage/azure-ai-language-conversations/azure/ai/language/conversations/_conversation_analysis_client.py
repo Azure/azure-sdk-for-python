@@ -14,28 +14,25 @@ from msrest import Deserializer, Serializer
 
 from . import models
 from ._configuration import ConversationAnalysisClientConfiguration
-from .operations import ConversationAnalysisOperations
+from .operations import ConversationAnalysisClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
+    from typing import Any, Optional
 
     from azure.core.credentials import AzureKeyCredential
     from azure.core.rest import HttpRequest, HttpResponse
 
-class ConversationAnalysisClient(object):
+class ConversationAnalysisClient(ConversationAnalysisClientOperationsMixin):
     """This API accepts a request and mediates among multiple language projects, such as LUIS Generally Available, Question Answering, LUIS Deepstack, and then calls the best candidate service to handle the request. At last, it returns a response with the candidate service's response as a payload.
 
  In some cases, this API needs to forward requests and responses between the caller and an upstream service.
 
-    :ivar conversation_analysis: ConversationAnalysisOperations operations
-    :vartype conversation_analysis:
-     azure.ai.language.questionanswering.operations.ConversationAnalysisOperations
-    :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
     :type endpoint: str
+    :param credential: Credential needed for the client to connect to Azure.
+    :type credential: ~azure.core.credentials.AzureKeyCredential
     """
 
     def __init__(
@@ -45,15 +42,14 @@ class ConversationAnalysisClient(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        base_url = '{Endpoint}/language'
-        self._config = ConversationAnalysisClientConfiguration(credential, endpoint, **kwargs)
-        self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
+        _endpoint = '{Endpoint}/language'
+        self._config = ConversationAnalysisClientConfiguration(endpoint, credential, **kwargs)
+        self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.conversation_analysis = ConversationAnalysisOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
     def send_request(
@@ -64,7 +60,7 @@ class ConversationAnalysisClient(object):
         # type: (...) -> HttpResponse
         """Runs the network request through the client's chained policies.
 
-        We have helper methods to create requests specific to this service in `azure.ai.language.questionanswering.rest`.
+        We have helper methods to create requests specific to this service in `azure.ai.language.conversations.rest`.
         Use these helper methods to create the request you pass to this method.
 
 

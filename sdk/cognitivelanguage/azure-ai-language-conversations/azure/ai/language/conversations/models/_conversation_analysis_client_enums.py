@@ -11,13 +11,6 @@ from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class CompoundOperationKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """(Optional) Set to 'OR' for joining metadata using 'OR' operation.
-    """
-
-    AND_ENUM = "AND"
-    OR_ENUM = "OR"
-
 class ErrorCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Human-readable error code.
     """
@@ -43,17 +36,16 @@ class InnerErrorCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     EXTRACTION_FAILURE = "ExtractionFailure"
 
 class ProjectType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of the project. It could be one of the following values.
+    """The type of the project.
     """
 
-    LUIS_V2 = "luis_v2"
-    LUIS_V3 = "luis_v3"
+    CONVERSATION = "conversation"
+    WORKFLOW = "workflow"
+
+class TargetType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of a target service.
+    """
+
+    LUIS = "luis"
     LUIS_DEEPSTACK = "luis_deepstack"
     QUESTION_ANSWERING = "question_answering"
-
-class RankerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """(Optional) Set to 'QuestionOnly' for using a question only Ranker.
-    """
-
-    DEFAULT = "Default"
-    QUESTION_ONLY = "QuestionOnly"
