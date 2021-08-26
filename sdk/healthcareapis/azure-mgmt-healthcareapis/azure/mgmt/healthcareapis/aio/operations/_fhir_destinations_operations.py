@@ -19,8 +19,8 @@ from ... import models as _models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class Operations:
-    """Operations async operations.
+class FhirDestinationsOperations:
+    """FhirDestinationsOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -41,18 +41,27 @@ class Operations:
         self._deserialize = deserializer
         self._config = config
 
-    def list(
+    def list_by_iot_connector(
         self,
+        resource_group_name: str,
+        workspace_name: str,
+        iot_connector_name: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.ListOperations"]:
-        """Lists all of the available operations supported by Microsoft Healthcare resource provider.
+    ) -> AsyncIterable["_models.IotFhirDestinationCollection"]:
+        """Lists all FHIR destinations for the given IoT Connector.
 
+        :param resource_group_name: The name of the resource group that contains the service instance.
+        :type resource_group_name: str
+        :param workspace_name: The name of workspace resource.
+        :type workspace_name: str
+        :param iot_connector_name: The name of IoT Connector resource.
+        :type iot_connector_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ListOperations or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.healthcareapis.models.ListOperations]
+        :return: An iterator like instance of either IotFhirDestinationCollection or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.healthcareapis.models.IotFhirDestinationCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListOperations"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotFhirDestinationCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -67,7 +76,14 @@ class Operations:
 
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']  # type: ignore
+                url = self.list_by_iot_connector.metadata['url']  # type: ignore
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                    'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=24, min_length=3),
+                    'iotConnectorName': self._serialize.url("iot_connector_name", iot_connector_name, 'str', max_length=24, min_length=3),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
@@ -80,7 +96,7 @@ class Operations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('ListOperations', pipeline_response)
+            deserialized = self._deserialize('IotFhirDestinationCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -102,4 +118,4 @@ class Operations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/providers/Microsoft.HealthcareApis/operations'}  # type: ignore
+    list_by_iot_connector.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HealthcareApis/workspaces/{workspaceName}/iotconnectors/{iotConnectorName}/fhirdestinations'}  # type: ignore
