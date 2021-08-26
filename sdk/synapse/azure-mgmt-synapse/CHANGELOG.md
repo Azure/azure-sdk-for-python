@@ -1,5 +1,25 @@
 # Release History
 
+## 2.1.0b1 (2021-08-26)
+
+**Features**
+
+  - Model Workspace has a new parameter csp_workspace_admin_properties
+  - Model Workspace has a new parameter azure_ad_only_authentication
+  - Model Workspace has a new parameter settings
+  - Model DataLakeStorageAccountDetails has a new parameter resource_id
+  - Model DataLakeStorageAccountDetails has a new parameter create_managed_private_endpoint
+  - Model ManagedIdentity has a new parameter user_assigned_identities
+  - Model IntegrationRuntimeVNetProperties has a new parameter subnet_id
+  - Model SqlPoolPatchInfo has a new parameter source_database_deletion_date
+  - Model CustomerManagedKeyDetails has a new parameter kek_identity
+  - Model SqlPool has a new parameter source_database_deletion_date
+  - Added operation PrivateEndpointConnectionsPrivateLinkHubOperations.get
+  - Added operation IntegrationRuntimesOperations.list_outbound_network_dependencies_endpoints
+  - Added operation group SparkConfigurationsOperations
+  - Added operation group SparkConfigurationOperations
+  - Added operation group AzureADOnlyAuthenticationsOperations
+
 ## 2.0.0 (2021-04-07)
 
 **Features**
