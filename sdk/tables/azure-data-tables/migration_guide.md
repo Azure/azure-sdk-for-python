@@ -130,7 +130,7 @@ service_client = TableServiceClient.from_connection_string(conn_str)
 for table in service_client.list_tables():
     print(table.name)
 
-query_filter = "TableName eq @name1 or TableName gt @name2'
+query_filter = "TableName eq @name1 or TableName gt @name2"
 parameters = {
     "name1": "myTableName1",
     "name2": "myTableName2",
