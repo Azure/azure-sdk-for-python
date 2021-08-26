@@ -460,13 +460,23 @@ class AioHttpTransportResponse(AsyncHttpResponse):
 
 ##################### REST #####################
 
-class _AioHttpTransportResponseBackcompatMixin():
+class _RestAioHttpTransportResponseBackcompatMixin():
 
     async def _load_body(self) -> None:
         """Load in memory the body, so it could be accessible from sync methods."""
         self._content = await self.read()  # type: ignore
 
-class RestAioHttpTransportResponse(RestAsyncHttpResponse, _AioHttpTransportResponseBackcompatMixin):
+    def _stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:
+        """DEPRECATED: Generator for streaming request body data.
+
+        This is deprecated and will be removed in a later release.
+        You should use `iter_bytes` or `iter_raw` instead.
+
+        :rtype: AsyncIterator[bytes]
+        """
+        return AioHttpStreamDownloadGenerator(pipeline, self, **kwargs)
+
+class RestAioHttpTransportResponse(RestAsyncHttpResponse, _RestAioHttpTransportResponseBackcompatMixin):
     def __init__(
         self,
         *,
@@ -482,7 +492,7 @@ class RestAioHttpTransportResponse(RestAsyncHttpResponse, _AioHttpTransportRespo
         self._content = internal_response._body
 
     def __getattr__(self, attr):
-        backcompat_attrs = ["load_body"]
+        backcompat_attrs = ["load_body", "stream_download"]
         if attr in backcompat_attrs:
             attr = "_" + attr
         return super().__getattr__(attr)

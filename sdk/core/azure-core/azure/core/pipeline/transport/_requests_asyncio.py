@@ -207,7 +207,22 @@ class AsyncioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportRespo
 
 ##################### REST #####################
 
-class RestAsyncioRequestsTransportResponse(_RestRequestsTransportResponseBase, RestAsyncHttpResponse): # type: ignore
+class _RestAsyncioRequestsTransportResponseMixin:
+    def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]: # type: ignore
+        """DEPRECATED: Generator for streaming request body data.
+
+        This is deprecated and will be removed in a later release.
+        You should use `iter_bytes` or `iter_raw` instead.
+
+        :rtype: AsyncIterator[bytes]
+        """
+        return AsyncioStreamDownloadGenerator(pipeline, self, **kwargs) # type: ignore
+
+class RestAsyncioRequestsTransportResponse(
+    _RestRequestsTransportResponseBase,
+    RestAsyncHttpResponse,
+    _RestAsyncioRequestsTransportResponseMixin,
+): # type: ignore
     """Asynchronous streaming of data from the response.
     """
 
@@ -258,3 +273,9 @@ class RestAsyncioRequestsTransportResponse(_RestRequestsTransportResponseBase, R
                 parts.append(part)
             self._internal_response._content = b"".join(parts)  # pylint: disable=protected-access
         return self.content
+
+    def __getattr__(self, attr):
+        backcompat_attrs = ["stream_download"]
+        if attr in backcompat_attrs:
+            attr = "_" + attr
+        return super().__getattr__(attr)

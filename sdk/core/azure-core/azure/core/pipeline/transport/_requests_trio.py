@@ -120,6 +120,17 @@ class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse
         """
         return TrioStreamDownloadGenerator(pipeline, self, **kwargs)
 
+class _RestTrioRequestsTransportResponseMixin:
+    def _stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:  # type: ignore
+        """DEPRECATED: Generator for streaming request body data.
+
+        This is deprecated and will be removed in a later release.
+        You should use `iter_bytes` or `iter_raw` instead.
+
+        :rtype: AsyncIterator[bytes]
+        """
+        return TrioStreamDownloadGenerator(pipeline, self, **kwargs)
+
 
 class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
     """Identical implementation as the synchronous RequestsTransport wrapped in a class with
@@ -261,3 +272,9 @@ class RestTrioRequestsTransportResponse(_RestRequestsTransportResponseBase, Rest
         self.is_closed = True
         self._internal_response.close()
         await trio.sleep(0)
+
+    def __getattr__(self, attr):
+        backcompat_attrs = ["stream_download"]
+        if attr in backcompat_attrs:
+            attr = "_" + attr
+        return super().__getattr__(attr)

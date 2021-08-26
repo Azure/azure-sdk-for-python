@@ -385,7 +385,21 @@ def _stream_download_helper(decompress, response):
     for part in stream_download:
         yield part
 
-class RestRequestsTransportResponse(_RestRequestsTransportResponseBase, RestHttpResponse):
+class _RestRequestsTransportResponseMixin(object):
+
+    def _stream_download(self, pipeline, **kwargs):  # pylint: disable=unused-argument
+        """DEPRECATED: Generator for streaming request body data.
+
+        This is deprecated and will be removed in a later release.
+        You should use `iter_bytes` or `iter_raw` instead.
+
+        :rtype: iterator[bytes]
+        """
+        return StreamDownloadGenerator(pipeline, self, **kwargs)
+
+class RestRequestsTransportResponse(
+    _RestRequestsTransportResponseBase, RestHttpResponse, _RestRequestsTransportResponseMixin
+):
 
     def iter_bytes(self):
         # type: () -> Iterator[bytes]
@@ -428,3 +442,9 @@ class RestRequestsTransportResponse(_RestRequestsTransportResponseBase, RestHttp
         if not _has_content(self):
             self._internal_response._content = b"".join(self.iter_bytes())  # pylint: disable=protected-access
         return self.content
+
+    def __getattr__(self, attr):
+        backcompat_attrs = ["stream_download"]
+        if attr in backcompat_attrs:
+            attr = "_" + attr
+        return super().__getattr__(attr)
