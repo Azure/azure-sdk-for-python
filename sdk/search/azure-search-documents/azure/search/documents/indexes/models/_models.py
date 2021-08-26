@@ -81,6 +81,9 @@ class EntityRecognitionSkill(SearchIndexerSkill):
      It will default to the latest available when not specified. We recommend you do not specify
      this value unless absolutely necessary.
     :type model_version: str
+    :param skill_version: The version of the skill to use when calling the Text Analytics service.
+     It will default to V1 when not specified.
+    :type skill_version: ~azure.search.documents.indexes.models.EntityRecognitionSkillVersion
     """
 
     _validation = {
@@ -167,6 +170,9 @@ class SentimentSkill(SearchIndexerSkill):
      It will default to the latest available when not specified. We recommend you do not specify
      this value unless absolutely necessary.
     :type model_version: str
+    :param skill_version: The version of the skill to use when calling the Text Analytics service.
+     It will default to V1 when not specified.
+    :type skill_version: ~azure.search.documents.indexes.models.SentimentSkillVersion
     """
 
     _validation = {
