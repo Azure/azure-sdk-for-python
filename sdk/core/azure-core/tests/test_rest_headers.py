@@ -68,10 +68,9 @@ def test_headers_response_keys(get_response_headers):
     h = get_response_headers(HttpRequest("GET", "/headers/duplicate/numbers"))
     # basically want to make sure this behaves like dict {"a": "123, 456", "b": "789"}
     ref_dict = {"a": "123, 456", "b": "789"}
-    assert list(h.keys()) == list(ref_dict.keys())
-    if sys.version_info < (3, 0):
-        assert repr(h.keys()) == "['a', 'b']"
-    else:
+    assert set(h.keys()) == set(ref_dict.keys())
+    if sys.version_info > (3, 0):
+        # repr is unruly for 2.7
         assert repr(h.keys()) == "KeysView({'a': '123, 456', 'b': '789'})"
     assert "a" in h.keys()
     assert "b" in h.keys()
@@ -91,9 +90,8 @@ def test_headers_response_values(get_response_headers):
     # basically want to make sure this behaves like dict {"a": "123, 456", "b": "789"}
     ref_dict = {"a": "123, 456", "b": "789"}
     assert set(h.values()) == set(ref_dict.values())
-    if sys.version_info < (3, 0):
-        assert repr(h.values()) == "['123, 456', '789']"
-    else:
+    if sys.version_info > (3, 0):
+        # repr is unruly for 2.7
         assert repr(h.values()) == "ValuesView({'a': '123, 456', 'b': '789'})"
     assert '123, 456' in h.values()
     assert '789' in h.values()
@@ -113,7 +111,9 @@ def test_headers_response_items(get_response_headers):
     # basically want to make sure this behaves like dict {"a": "123, 456", "b": "789"}
     ref_dict = {"a": "123, 456", "b": "789"}
     assert set(h.items()) == set(ref_dict.items())
-    assert repr(h.items()) == "ItemsView({'a': '123, 456', 'b': '789'})"
+    if sys.version_info > (3, 0):
+        # repr is unruly for 2.7
+        assert repr(h.items()) == "ItemsView({'a': '123, 456', 'b': '789'})"
     assert ("a", '123, 456') in h.items()
     assert not ("a", '123, 456', '123, 456') in h.items()
     assert not {"a": "blah", "123, 456": "blah"} in h.items()
