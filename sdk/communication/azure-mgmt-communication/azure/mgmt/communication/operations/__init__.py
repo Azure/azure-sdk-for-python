@@ -8,10 +8,8 @@
 
 from ._operations import Operations
 from ._communication_service_operations import CommunicationServiceOperations
-from ._operation_statuses_operations import OperationStatusesOperations
 
 __all__ = [
     'Operations',
     'CommunicationServiceOperations',
-    'OperationStatusesOperations',
 ]

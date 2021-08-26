@@ -21,7 +21,6 @@ try:
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationListResult
-    from ._models_py3 import OperationStatus
     from ._models_py3 import RegenerateKeyParameters
     from ._models_py3 import Resource
     from ._models_py3 import SystemData
@@ -41,7 +40,6 @@ except (SyntaxError, ImportError):
     from ._models import Operation  # type: ignore
     from ._models import OperationDisplay  # type: ignore
     from ._models import OperationListResult  # type: ignore
-    from ._models import OperationStatus  # type: ignore
     from ._models import RegenerateKeyParameters  # type: ignore
     from ._models import Resource  # type: ignore
     from ._models import SystemData  # type: ignore
@@ -53,7 +51,6 @@ from ._communication_service_management_client_enums import (
     KeyType,
     Origin,
     ProvisioningState,
-    Status,
 )
 
 __all__ = [
@@ -71,7 +68,6 @@ __all__ = [
     'Operation',
     'OperationDisplay',
     'OperationListResult',
-    'OperationStatus',
     'RegenerateKeyParameters',
     'Resource',
     'SystemData',
@@ -81,5 +77,4 @@ __all__ = [
     'KeyType',
     'Origin',
     'ProvisioningState',
-    'Status',
 ]

@@ -276,7 +276,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: any
     """
 
     _validation = {
@@ -458,8 +458,8 @@ class NameAvailabilityParameters(msrest.serialization.Model):
     :param type: Required. The resource type. Should be always
      "Microsoft.Communication/CommunicationServices".
     :type type: str
-    :param name: Required. The CommunicationService name to validate. e.g."my-CommunicationService-
-     name-here".
+    :param name: Required. The CommunicationService name to validate.
+     e.g."my-CommunicationService-name-here".
     :type name: str
     """
 
@@ -493,8 +493,8 @@ class Operation(msrest.serialization.Model):
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
      "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
     :vartype name: str
-    :ivar is_data_action: Whether the operation applies to data-plane. This is "true" for data-
-     plane operations and "false" for ARM/control-plane operations.
+    :ivar is_data_action: Whether the operation applies to data-plane. This is "true" for
+     data-plane operations and "false" for ARM/control-plane operations.
     :vartype is_data_action: bool
     :param display: Localized display information for this particular operation.
     :type display: ~communication_service_management_client.models.OperationDisplay
@@ -610,63 +610,11 @@ class OperationListResult(msrest.serialization.Model):
         self.next_link = None
 
 
-class OperationStatus(msrest.serialization.Model):
-    """The current status of an async operation.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified ID for the operation status.
-    :vartype id: str
-    :ivar status: Provisioning state of the resource. Possible values include: "Succeeded",
-     "Failed", "Canceled", "Creating", "Deleting", "Moving".
-    :vartype status: str or ~communication_service_management_client.models.Status
-    :ivar start_time: The start time of the operation.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: The end time of the operation.
-    :vartype end_time: ~datetime.datetime
-    :ivar percent_complete: Percent of the operation that is complete.
-    :vartype percent_complete: float
-    :param error: The error object.
-    :type error: ~communication_service_management_client.models.ErrorDetail
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'status': {'readonly': True},
-        'start_time': {'readonly': True},
-        'end_time': {'readonly': True},
-        'percent_complete': {'readonly': True, 'maximum': 100, 'minimum': 0},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'percent_complete': {'key': 'percentComplete', 'type': 'float'},
-        'error': {'key': 'error.error', 'type': 'ErrorDetail'},
-    }
-
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorDetail"] = None,
-        **kwargs
-    ):
-        super(OperationStatus, self).__init__(**kwargs)
-        self.id = None
-        self.status = None
-        self.start_time = None
-        self.end_time = None
-        self.percent_complete = None
-        self.error = error
-
-
 class RegenerateKeyParameters(msrest.serialization.Model):
     """Parameters describes the request to regenerate access keys.
 
-    :param key_type: The keyType to regenerate. Must be either 'primary' or 'secondary'(case-
-     insensitive). Possible values include: "Primary", "Secondary".
+    :param key_type: The keyType to regenerate. Must be either 'primary' or
+     'secondary'(case-insensitive). Possible values include: "Primary", "Secondary".
     :type key_type: str or ~communication_service_management_client.models.KeyType
     """
 

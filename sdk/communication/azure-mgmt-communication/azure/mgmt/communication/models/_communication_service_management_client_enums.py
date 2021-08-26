@@ -70,14 +70,3 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     UPDATING = "Updating"
     DELETING = "Deleting"
     MOVING = "Moving"
-
-class Status(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Provisioning state of the resource.
-    """
-
-    SUCCEEDED = "Succeeded"
-    FAILED = "Failed"
-    CANCELED = "Canceled"
-    CREATING = "Creating"
-    DELETING = "Deleting"
-    MOVING = "Moving"

@@ -46,7 +46,7 @@ class CommunicationServiceOperations:
     async def check_name_availability(
         self,
         name_availability_parameters: Optional["_models.NameAvailabilityParameters"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NameAvailability":
         """Check Name Availability.
 
@@ -96,7 +96,7 @@ class CommunicationServiceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('NameAvailability', pipeline_response)
@@ -112,7 +112,7 @@ class CommunicationServiceOperations:
         resource_group_name: str,
         communication_service_name: str,
         link_notification_hub_parameters: Optional["_models.LinkNotificationHubParameters"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.LinkedNotificationHub":
         """Link Notification Hub.
 
@@ -142,7 +142,7 @@ class CommunicationServiceOperations:
         url = self.link_notification_hub.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'communicationServiceName': self._serialize.url("communication_service_name", communication_service_name, 'str', max_length=63, min_length=1, pattern=r'^[-\w]+$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -168,7 +168,7 @@ class CommunicationServiceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('LinkedNotificationHub', pipeline_response)
@@ -181,7 +181,7 @@ class CommunicationServiceOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CommunicationServiceResourceList"]:
         """List By Subscription.
 
@@ -237,7 +237,7 @@ class CommunicationServiceOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -251,7 +251,7 @@ class CommunicationServiceOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CommunicationServiceResourceList"]:
         """List By Resource Group.
 
@@ -282,7 +282,7 @@ class CommunicationServiceOperations:
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -310,7 +310,7 @@ class CommunicationServiceOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -326,7 +326,7 @@ class CommunicationServiceOperations:
         resource_group_name: str,
         communication_service_name: str,
         parameters: Optional["_models.CommunicationServiceResource"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CommunicationServiceResource":
         """Update.
 
@@ -356,7 +356,7 @@ class CommunicationServiceOperations:
         url = self.update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'communicationServiceName': self._serialize.url("communication_service_name", communication_service_name, 'str', max_length=63, min_length=1, pattern=r'^[-\w]+$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -382,7 +382,7 @@ class CommunicationServiceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CommunicationServiceResource', pipeline_response)
@@ -397,7 +397,7 @@ class CommunicationServiceOperations:
         self,
         resource_group_name: str,
         communication_service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CommunicationServiceResource":
         """Get.
 
@@ -424,7 +424,7 @@ class CommunicationServiceOperations:
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'communicationServiceName': self._serialize.url("communication_service_name", communication_service_name, 'str', max_length=63, min_length=1, pattern=r'^[-\w]+$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -443,7 +443,7 @@ class CommunicationServiceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CommunicationServiceResource', pipeline_response)
@@ -459,7 +459,7 @@ class CommunicationServiceOperations:
         resource_group_name: str,
         communication_service_name: str,
         parameters: Optional["_models.CommunicationServiceResource"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CommunicationServiceResource":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CommunicationServiceResource"]
         error_map = {
@@ -474,7 +474,7 @@ class CommunicationServiceOperations:
         url = self._create_or_update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'communicationServiceName': self._serialize.url("communication_service_name", communication_service_name, 'str', max_length=63, min_length=1, pattern=r'^[-\w]+$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -500,7 +500,7 @@ class CommunicationServiceOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -522,7 +522,7 @@ class CommunicationServiceOperations:
         resource_group_name: str,
         communication_service_name: str,
         parameters: Optional["_models.CommunicationServiceResource"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.CommunicationServiceResource"]:
         """Create Or Update.
 
@@ -536,8 +536,8 @@ class CommunicationServiceOperations:
         :type parameters: ~communication_service_management_client.models.CommunicationServiceResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either CommunicationServiceResource or the result of cls(response)
@@ -572,7 +572,7 @@ class CommunicationServiceOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'communicationServiceName': self._serialize.url("communication_service_name", communication_service_name, 'str', max_length=63, min_length=1, pattern=r'^[-\w]+$'),
         }
 
@@ -594,7 +594,7 @@ class CommunicationServiceOperations:
         self,
         resource_group_name: str,
         communication_service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -608,7 +608,7 @@ class CommunicationServiceOperations:
         url = self._delete_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'communicationServiceName': self._serialize.url("communication_service_name", communication_service_name, 'str', max_length=63, min_length=1, pattern=r'^[-\w]+$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -627,7 +627,7 @@ class CommunicationServiceOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -643,7 +643,7 @@ class CommunicationServiceOperations:
         self,
         resource_group_name: str,
         communication_service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete.
 
@@ -655,8 +655,8 @@ class CommunicationServiceOperations:
         :type communication_service_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -687,7 +687,7 @@ class CommunicationServiceOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'communicationServiceName': self._serialize.url("communication_service_name", communication_service_name, 'str', max_length=63, min_length=1, pattern=r'^[-\w]+$'),
         }
 
@@ -709,7 +709,7 @@ class CommunicationServiceOperations:
         self,
         resource_group_name: str,
         communication_service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CommunicationServiceKeys":
         """List Keys.
 
@@ -736,7 +736,7 @@ class CommunicationServiceOperations:
         url = self.list_keys.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'communicationServiceName': self._serialize.url("communication_service_name", communication_service_name, 'str', max_length=63, min_length=1, pattern=r'^[-\w]+$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -755,7 +755,7 @@ class CommunicationServiceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CommunicationServiceKeys', pipeline_response)
@@ -771,7 +771,7 @@ class CommunicationServiceOperations:
         resource_group_name: str,
         communication_service_name: str,
         parameters: "_models.RegenerateKeyParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CommunicationServiceKeys":
         """Regenerate Key.
 
@@ -802,7 +802,7 @@ class CommunicationServiceOperations:
         url = self.regenerate_key.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'communicationServiceName': self._serialize.url("communication_service_name", communication_service_name, 'str', max_length=63, min_length=1, pattern=r'^[-\w]+$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -825,7 +825,7 @@ class CommunicationServiceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CommunicationServiceKeys', pipeline_response)
