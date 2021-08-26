@@ -479,6 +479,7 @@ class RestAioHttpTransportResponse(RestAsyncHttpResponse, _AioHttpTransportRespo
         self.reason = internal_response.reason
         self.content_type = internal_response.headers.get('content-type')
         self._decompress = True
+        self._content = internal_response._body
 
     def __getattr__(self, attr):
         backcompat_attrs = ["load_body"]
