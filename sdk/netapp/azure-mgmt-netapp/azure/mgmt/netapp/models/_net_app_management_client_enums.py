@@ -30,25 +30,25 @@ class ActiveDirectoryStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     """Status of the Active Directory
     """
 
-    #: Active Directory created but not in use.
-    CREATED = "Created"
-    #: Active Directory in use by SMB Volume.
-    IN_USE = "InUse"
-    #: Active Directory Deleted.
-    DELETED = "Deleted"
-    #: Error with the Active Directory.
-    ERROR = "Error"
-    #: Active Directory Updating.
-    UPDATING = "Updating"
+    CREATED = "Created"  #: Active Directory created but not in use.
+    IN_USE = "InUse"  #: Active Directory in use by SMB Volume.
+    DELETED = "Deleted"  #: Active Directory Deleted.
+    ERROR = "Error"  #: Error with the Active Directory.
+    UPDATING = "Updating"  #: Active Directory Updating.
+
+class AvsDataStore(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Specifies whether the volume is enabled for Azure VMware Solution (AVS) datastore purpose
+    """
+
+    ENABLED = "Enabled"  #: avsDataStore is enabled.
+    DISABLED = "Disabled"  #: avsDataStore is disabled.
 
 class BackupType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Type of backup Manual or Scheduled
     """
 
-    #: Manual backup.
-    MANUAL = "Manual"
-    #: Scheduled backup.
-    SCHEDULED = "Scheduled"
+    MANUAL = "Manual"  #: Manual backup.
+    SCHEDULED = "Scheduled"  #: Scheduled backup.
 
 class CheckNameResourceTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Resource type used for verification.
@@ -86,6 +86,14 @@ class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
+class EncryptionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Encryption type of the capacity pool, set encryption type for data at rest for this pool and
+    all volumes in it. This value can only be set when creating new pool.
+    """
+
+    SINGLE = "Single"  #: EncryptionType Single, volumes will use single encryption at rest.
+    DOUBLE = "Double"  #: EncryptionType Double, volumes will use double encryption at rest.
+
 class EndpointType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates whether the local volume is the source or destination for the Volume Replication
     """
@@ -102,6 +110,10 @@ class InAvailabilityReasonType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     INVALID = "Invalid"
     ALREADY_EXISTS = "AlreadyExists"
 
+class MetricAggregationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    AVERAGE = "Average"
+
 class MirrorState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The status of the replication
     """
@@ -114,10 +126,8 @@ class QosType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The qos type of the pool
     """
 
-    #: qos type Auto.
-    AUTO = "Auto"
-    #: qos type Manual.
-    MANUAL = "Manual"
+    AUTO = "Auto"  #: qos type Auto.
+    MANUAL = "Manual"  #: qos type Manual.
 
 class RelationshipStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Status of the mirror relationship
@@ -145,9 +155,7 @@ class ServiceLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The service level of the file system
     """
 
-    #: Standard service level.
-    STANDARD = "Standard"
-    #: Premium service level.
-    PREMIUM = "Premium"
-    #: Ultra service level.
-    ULTRA = "Ultra"
+    STANDARD = "Standard"  #: Standard service level.
+    PREMIUM = "Premium"  #: Premium service level.
+    ULTRA = "Ultra"  #: Ultra service level.
+    STANDARD_ZRS = "StandardZRS"  #: Zone redundant storage service level.
