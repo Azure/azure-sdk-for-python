@@ -37,7 +37,6 @@ from azure.core.exceptions import (
     ServiceResponseError
 )
 from azure.core.pipeline import Pipeline
-from ._base import HttpRequest as PipelineTransportHttpRequest
 from ._base_async import (
     AsyncHttpResponse,
     _ResponseStopIteration,
