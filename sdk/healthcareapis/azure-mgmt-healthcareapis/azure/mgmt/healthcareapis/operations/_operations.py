@@ -49,20 +49,20 @@ class Operations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.OperationListResult"]
-        """Lists all of the available Healthcare service REST API operations.
+        # type: (...) -> Iterable["_models.ListOperations"]
+        """Lists all of the available operations supported by Microsoft Healthcare resource provider.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either OperationListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.healthcareapis.models.OperationListResult]
+        :return: An iterator like instance of either ListOperations or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.healthcareapis.models.ListOperations]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListOperations"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-11"
+        api_version = "2021-06-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -85,7 +85,7 @@ class Operations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('OperationListResult', pipeline_response)
+            deserialized = self._deserialize('ListOperations', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
