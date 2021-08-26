@@ -27,7 +27,6 @@ import base64
 import json
 import pickle
 import re
-from tests.utils import is_rest_http_request
 import types
 import unittest
 try:
