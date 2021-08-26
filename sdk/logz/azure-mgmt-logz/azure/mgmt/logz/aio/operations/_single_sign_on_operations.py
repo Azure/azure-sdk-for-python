@@ -67,7 +67,7 @@ class SingleSignOnOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-01-preview"
+        api_version = "2020-10-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -80,7 +80,7 @@ class SingleSignOnOperations:
                 url = self.list.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'monitorName': self._serialize.url("monitor_name", monitor_name, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -133,7 +133,7 @@ class SingleSignOnOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-01-preview"
+        api_version = "2020-10-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -141,7 +141,7 @@ class SingleSignOnOperations:
         url = self._create_or_update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'monitorName': self._serialize.url("monitor_name", monitor_name, 'str'),
             'configurationName': self._serialize.url("configuration_name", configuration_name, 'str'),
         }
@@ -191,9 +191,10 @@ class SingleSignOnOperations:
         body: Optional["_models.LogzSingleSignOnResource"] = None,
         **kwargs: Any
     ) -> AsyncLROPoller["_models.LogzSingleSignOnResource"]:
-        """Configures single-sign-on for this resource.
+        """Configures single-sign-on for this resource. This operation can take upto 10 minutes to complete.
 
-        Configures single-sign-on for this resource.
+        Configures single-sign-on for this resource. This operation can take upto 10 minutes to
+        complete.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
@@ -242,7 +243,7 @@ class SingleSignOnOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'monitorName': self._serialize.url("monitor_name", monitor_name, 'str'),
             'configurationName': self._serialize.url("configuration_name", configuration_name, 'str'),
         }
@@ -288,14 +289,14 @@ class SingleSignOnOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-01-preview"
+        api_version = "2020-10-01"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'monitorName': self._serialize.url("monitor_name", monitor_name, 'str'),
             'configurationName': self._serialize.url("configuration_name", configuration_name, 'str'),
         }
