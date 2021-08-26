@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from enum import Enum, EnumMeta
+from six import with_metaclass
 import msrest.serialization
 from .._generated.models import (
     LexicalAnalyzer,
@@ -13,12 +15,188 @@ from .._generated.models import (
     PatternTokenizer as _PatternTokenizer,
     SearchResourceEncryptionKey as _SearchResourceEncryptionKey,
     SearchIndexerDataSource as _SearchIndexerDataSource,
+    SearchIndexerSkill,
     SynonymMap as _SynonymMap,
     DataSourceCredentials,
     AzureActiveDirectoryApplicationCredentials,
 )
+from .._generated.models._search_client_enums import _CaseInsensitiveEnumMeta
+
 
 DELIMITER = "|"
+
+
+class EntityRecognitionSkillVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Specifies the Entity Recognition skill version to use."""
+
+    #: Use Entity Recognition skill V1.
+    V1 = "#Microsoft.Skills.Text.EntityRecognitionSkill"
+    #: Use Entity Recognition skill V3.
+    V3 = "#Microsoft.Skills.Text.V3.EntityRecognitionSkill"
+    #: Use latest version of Entity Recognition skill.
+    LATEST = "#Microsoft.Skills.Text.V3.EntityRecognitionSkill"
+
+
+class EntityRecognitionSkill(SearchIndexerSkill):
+    """Using the Text Analytics API, extracts entities of different types from text.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+     server.
+    :type odata_type: str
+    :param name: The name of the skill which uniquely identifies it within the skillset. A skill
+     with no name defined will be given a default name of its 1-based index in the skills array,
+     prefixed with the character '#'.
+    :type name: str
+    :param description: The description of the skill which describes the inputs, outputs, and usage
+     of the skill.
+    :type description: str
+    :param context: Represents the level at which operations take place, such as the document root
+     or document content (for example, /document or /document/content). The default is /document.
+    :type context: str
+    :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
+     output of an upstream skill.
+    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :param outputs: Required. The output of a skill is either a field in a search index, or a value
+     that can be consumed as an input by another skill.
+    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :param categories: A list of entity categories that should be extracted.
+    :type categories: list[str or ~azure.search.documents.indexes.models.EntityCategory]
+    :param default_language_code: A value indicating which language code to use. Default is en.
+     Possible values include: "ar", "cs", "zh-Hans", "zh-Hant", "da", "nl", "en", "fi", "fr", "de",
+     "el", "hu", "it", "ja", "ko", "no", "pl", "pt-PT", "pt-BR", "ru", "es", "sv", "tr".
+    :type default_language_code: str or
+     ~azure.search.documents.indexes.models.EntityRecognitionSkillLanguage
+    :param include_typeless_entities: Determines whether or not to include entities which are well
+     known but don't conform to a pre-defined type. If this configuration is not set (default), set
+     to null or set to false, entities which don't conform to one of the pre-defined types will not
+     be surfaced.
+    :type include_typeless_entities: bool
+    :param minimum_precision: A value between 0 and 1 that be used to only include entities whose
+     confidence score is greater than the value specified. If not set (default), or if explicitly
+     set to null, all entities will be included.
+    :type minimum_precision: float
+    :param model_version: The version of the model to use when calling the Text Analytics service.
+     It will default to the latest available when not specified. We recommend you do not specify
+     this value unless absolutely necessary.
+    :type model_version: str
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+        'inputs': {'required': True},
+        'outputs': {'required': True},
+        'minimum_precision': {'maximum': 1, 'minimum': 0},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'context': {'key': 'context', 'type': 'str'},
+        'inputs': {'key': 'inputs', 'type': '[InputFieldMappingEntry]'},
+        'outputs': {'key': 'outputs', 'type': '[OutputFieldMappingEntry]'},
+        'categories': {'key': 'categories', 'type': '[str]'},
+        'default_language_code': {'key': 'defaultLanguageCode', 'type': 'str'},
+        'include_typeless_entities': {'key': 'includeTypelessEntities', 'type': 'bool'},
+        'minimum_precision': {'key': 'minimumPrecision', 'type': 'float'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(EntityRecognitionSkill, self).__init__(**kwargs)   
+        skill_version = kwargs.get('skill_version', EntityRecognitionSkillVersion.V1)
+        self.odata_type = skill_version  # type: str
+        self.categories = kwargs.get('categories', None)
+        self.default_language_code = kwargs.get('default_language_code', None)
+        self.include_typeless_entities = kwargs.get('include_typeless_entities', None)
+        self.minimum_precision = kwargs.get('minimum_precision', None)
+        self.model_version = kwargs.get('model_version', None)
+
+
+class SentimentSkillVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """ Specifies the Sentiment Skill version to use."""
+
+    #: Use Sentiment skill V1.
+    V1 = "#Microsoft.Skills.Text.SentimentSkill"
+    #: Use Sentiment skill V3.
+    V3 = "#Microsoft.Skills.Text.V3.SentimentSkill"
+    #: Use latest version of Sentiment skill.
+    LATEST = "#Microsoft.Skills.Text.V3.SentimentSkill"
+
+
+class SentimentSkill(SearchIndexerSkill):
+    """V1: Text analytics positive-negative sentiment analysis, scored as a floating point value in a range of zero to 1.
+       V3: Using the Text Analytics API, evaluates unstructured text and for each record, provides sentiment labels (such as "negative", "neutral" and "positive") based on the highest confidence score found by the service at a sentence and document-level.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+     server.
+    :type odata_type: str
+    :param name: The name of the skill which uniquely identifies it within the skillset. A skill
+     with no name defined will be given a default name of its 1-based index in the skills array,
+     prefixed with the character '#'.
+    :type name: str
+    :param description: The description of the skill which describes the inputs, outputs, and usage
+     of the skill.
+    :type description: str
+    :param context: Represents the level at which operations take place, such as the document root
+     or document content (for example, /document or /document/content). The default is /document.
+    :type context: str
+    :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
+     output of an upstream skill.
+    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :param outputs: Required. The output of a skill is either a field in a search index, or a value
+     that can be consumed as an input by another skill.
+    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :param default_language_code: A value indicating which language code to use. Default is en.
+     Possible values include: "da", "nl", "en", "fi", "fr", "de", "el", "it", "no", "pl", "pt-PT",
+     "ru", "es", "sv", "tr".
+    :type default_language_code: str or
+     ~azure.search.documents.indexes.models.SentimentSkillLanguage
+    :param include_opinion_mining: If set to true, the skill output will include information from
+     Text Analytics for opinion mining, namely targets (nouns or verbs) and their associated
+     assessment (adjective) in the text. Default is false.
+    :type include_opinion_mining: bool
+    :param model_version: The version of the model to use when calling the Text Analytics service.
+     It will default to the latest available when not specified. We recommend you do not specify
+     this value unless absolutely necessary.
+    :type model_version: str
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+        'inputs': {'required': True},
+        'outputs': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'context': {'key': 'context', 'type': 'str'},
+        'inputs': {'key': 'inputs', 'type': '[InputFieldMappingEntry]'},
+        'outputs': {'key': 'outputs', 'type': '[OutputFieldMappingEntry]'},
+        'default_language_code': {'key': 'defaultLanguageCode', 'type': 'str'},
+        'include_opinion_mining': {'key': 'includeOpinionMining', 'type': 'bool'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SentimentSkill, self).__init__(**kwargs)
+        skill_version = kwargs.get('skill_version', SentimentSkillVersion.V1)
+        self.odata_type = skill_version  # type: str
+        self.default_language_code = kwargs.get('default_language_code', None)
+        self.include_opinion_mining = kwargs.get('include_opinion_mining', False)
+        self.model_version = kwargs.get('model_version', None)
 
 
 class AnalyzeTextOptions(msrest.serialization.Model):
