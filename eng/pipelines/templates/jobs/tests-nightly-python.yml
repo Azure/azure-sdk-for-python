@@ -12,7 +12,7 @@ jobs:
     timeoutInMinutes: 90
 
     pool:
-      vmImage: 'ubuntu-20.04'
+      vmImage: 'windows-2019'
 
     steps:
       - template: /eng/pipelines/templates/steps/use-python-version.yml
