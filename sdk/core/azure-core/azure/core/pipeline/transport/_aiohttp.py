@@ -485,7 +485,7 @@ class RestAioHttpTransportResponse(RestAsyncHttpResponse, _RestAioHttpTransportR
     ):
         super().__init__(request=request, internal_response=internal_response)
         self.status_code = internal_response.status
-        self.headers = _CIMultiDict(internal_response.headers)  # type: ignore
+        self.headers = CIMultiDict(internal_response.headers)  # type: ignore
         self.reason = internal_response.reason
         self.content_type = internal_response.headers.get('content-type')
         self._decompress = True
@@ -522,9 +522,10 @@ class RestAioHttpTransportResponse(RestAsyncHttpResponse, _RestAioHttpTransportR
         await self.close()
 
     def __getstate__(self):
+
         state = self.__dict__.copy()
         # Remove the unpicklable entries.
-        state['internal_response'] = None  # aiohttp response are not pickable (see headers comments)
+        state['_internal_response'] = None  # aiohttp response are not pickable (see headers comments)
         state['headers'] = CIMultiDict(self.headers)  # MultiDictProxy is not pickable
         return state
 

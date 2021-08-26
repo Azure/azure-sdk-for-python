@@ -447,4 +447,4 @@ class RestRequestsTransportResponse(
         backcompat_attrs = ["stream_download"]
         if attr in backcompat_attrs:
             attr = "_" + attr
-        return super().__getattr__(attr)
+        return super(RestRequestsTransportResponse, self).__getattr__(attr)
