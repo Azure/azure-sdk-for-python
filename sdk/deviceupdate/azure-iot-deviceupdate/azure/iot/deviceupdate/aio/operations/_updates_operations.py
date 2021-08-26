@@ -43,7 +43,7 @@ class UpdatesOperations:
     async def import_update(
         self,
         update_to_import: "_models.ImportUpdateInput",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Import new update version.
 
@@ -104,7 +104,7 @@ class UpdatesOperations:
         name: str,
         version: str,
         access_condition: Optional["_models.AccessCondition"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.Update"]:
         """Get a specific update version.
 
@@ -175,7 +175,7 @@ class UpdatesOperations:
         provider: str,
         name: str,
         version: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a specific update version.
 
@@ -232,7 +232,7 @@ class UpdatesOperations:
 
     def get_providers(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PageableListOfStrings"]:
         """Get a list of all update providers that have been imported to Device Update for IoT Hub.
 
@@ -303,7 +303,7 @@ class UpdatesOperations:
     def get_names(
         self,
         provider: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PageableListOfStrings"]:
         """Get a list of all update names that match the specified provider.
 
@@ -379,7 +379,7 @@ class UpdatesOperations:
         self,
         provider: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PageableListOfStrings"]:
         """Get a list of all update versions that match the specified provider and name.
 
@@ -460,7 +460,7 @@ class UpdatesOperations:
         provider: str,
         name: str,
         version: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PageableListOfStrings"]:
         """Get a list of all update file identifiers for the specified version.
 
@@ -547,7 +547,7 @@ class UpdatesOperations:
         version: str,
         file_id: str,
         access_condition: Optional["_models.AccessCondition"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.File"]:
         """Get a specific update file from the version.
 
@@ -620,7 +620,7 @@ class UpdatesOperations:
         self,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PageableListOfOperations"]:
         """Get a list of all import update operations. Completed operations are kept for 7 days before
         auto-deleted. Delete operations are not returned by this API version.
@@ -704,7 +704,7 @@ class UpdatesOperations:
         self,
         operation_id: str,
         access_condition: Optional["_models.AccessCondition"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.Operation"]:
         """Retrieve operation status.
 
