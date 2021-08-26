@@ -129,7 +129,7 @@ class _RestTrioRequestsTransportResponseMixin:
 
         :rtype: AsyncIterator[bytes]
         """
-        return TrioStreamDownloadGenerator(pipeline, self, **kwargs)
+        return TrioStreamDownloadGenerator(pipeline, self, **kwargs)  # type: ignore
 
 
 class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
@@ -227,7 +227,11 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
 
 ##################### REST #####################
 
-class RestTrioRequestsTransportResponse(_RestRequestsTransportResponseBase, RestAsyncHttpResponse): # type: ignore
+class RestTrioRequestsTransportResponse(
+    _RestRequestsTransportResponseBase,
+    RestAsyncHttpResponse,
+    _RestTrioRequestsTransportResponseMixin,
+): # type: ignore
     """Asynchronous streaming of data from the response.
     """
     async def iter_raw(self) -> AsyncIteratorType[bytes]:

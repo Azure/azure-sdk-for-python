@@ -474,7 +474,7 @@ class _RestAioHttpTransportResponseBackcompatMixin():
 
         :rtype: AsyncIterator[bytes]
         """
-        return AioHttpStreamDownloadGenerator(pipeline, self, **kwargs)
+        return AioHttpStreamDownloadGenerator(pipeline, self, **kwargs)  # type: ignore
 
 class RestAioHttpTransportResponse(RestAsyncHttpResponse, _RestAioHttpTransportResponseBackcompatMixin):
     def __init__(

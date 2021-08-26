@@ -352,7 +352,7 @@ class _RestRequestsTransportResponseBase(_RestHttpResponseBase):
     def __init__(self, **kwargs):
         super(_RestRequestsTransportResponseBase, self).__init__(**kwargs)
         self.status_code = self._internal_response.status_code
-        self.headers = _CaseInsensitiveDict(self._internal_response.headers)
+        self.headers = self._internal_response.headers
         self.reason = self._internal_response.reason
         self.content_type = self._internal_response.headers.get('content-type')
 

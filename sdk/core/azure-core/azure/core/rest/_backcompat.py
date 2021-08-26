@@ -311,18 +311,6 @@ class _HttpResponseBackcompatMixinBase(object):
             self, http_response_type, RestHttpClientTransportResponse
         )
 
-    def _stream_download(self, pipeline, **kwargs):  # pylint: disable=unused-argument
-        """DEPRECATED: Generator for streaming request body data.
-
-        This is deprecated and will be removed in a later release.
-        You should use `iter_bytes` or `iter_raw` instead.
-
-        :rtype: iterator[bytes]
-        """
-        if kwargs.get("decompress"):
-            return self.iter_bytes()  # pylint: disable=no-member
-        return self.iter_raw()  # pylint: disable=no-member
-
 class HttpResponseBackcompatMixin(_HttpResponseBackcompatMixinBase):
 
     def __getattr__(self, attr):
