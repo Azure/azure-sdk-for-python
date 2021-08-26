@@ -58,7 +58,7 @@ def test_headers_response(get_response_headers):
     assert h.get("nope", default=[]) == []
     assert list(h) == ['a', 'b']
 
-    assert list(h.keys()) == ["a", "b"]
+    assert set(h.keys()) == set(["a", "b"])
     assert list(h.values()) == ["123, 456", "789"]
     assert list(h.items()) == [("a", "123, 456"), ("b", "789")]
     assert list(h) == ["a", "b"]
@@ -90,7 +90,7 @@ def test_headers_response_values(get_response_headers):
     h = get_response_headers(HttpRequest("GET", "/headers/duplicate/numbers"))
     # basically want to make sure this behaves like dict {"a": "123, 456", "b": "789"}
     ref_dict = {"a": "123, 456", "b": "789"}
-    assert list(h.values()) == list(ref_dict.values())
+    assert set(h.values()) == set(ref_dict.values())
     if sys.version_info < (3, 0):
         assert repr(h.values()) == "['123, 456', '789']"
     else:
@@ -112,7 +112,7 @@ def test_headers_response_items(get_response_headers):
     h = get_response_headers(HttpRequest("GET", "/headers/duplicate/numbers"))
     # basically want to make sure this behaves like dict {"a": "123, 456", "b": "789"}
     ref_dict = {"a": "123, 456", "b": "789"}
-    assert list(h.items()) == list(ref_dict.items())
+    assert set(h.items()) == set(ref_dict.items())
     assert repr(h.items()) == "ItemsView({'a': '123, 456', 'b': '789'})"
     assert ("a", '123, 456') in h.items()
     assert not ("a", '123, 456', '123, 456') in h.items()
@@ -166,7 +166,7 @@ def test_headers_insert_retains_ordering(get_request_headers, get_response_heade
         if sys.version_info >= (3, 6):
             assert list(h.values()) == ["a", "123", "c"]
         else:
-            assert set(list(h.values())) == set(["a", "123", "c"])
+            assert set(h.values()) == set(["a", "123", "c"])
     _header_check(get_request_headers({"a": "a", "b": "b", "c": "c"}))
     _header_check(get_response_headers(HttpRequest("GET", "/headers/ordered")))
 
