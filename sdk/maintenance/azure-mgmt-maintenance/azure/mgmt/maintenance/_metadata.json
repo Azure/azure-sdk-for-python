@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2021-05-01",
-    "total_api_version_list": ["2021-05-01"],
+    "chosen_version": "2021-09-01-preview",
+    "total_api_version_list": ["2021-09-01-preview"],
     "client": {
         "name": "MaintenanceManagementClient",
         "filename": "_maintenance_management_client",
@@ -104,6 +104,7 @@
         "maintenance_configurations": "MaintenanceConfigurationsOperations",
         "maintenance_configurations_for_resource_group": "MaintenanceConfigurationsForResourceGroupOperations",
         "apply_update_for_resource_group": "ApplyUpdateForResourceGroupOperations",
+        "configuration_assignments_within_subscription": "ConfigurationAssignmentsWithinSubscriptionOperations",
         "operations": "Operations",
         "updates": "UpdatesOperations"
     }

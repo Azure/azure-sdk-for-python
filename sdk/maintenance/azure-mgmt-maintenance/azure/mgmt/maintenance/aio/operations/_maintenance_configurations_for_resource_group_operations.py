@@ -44,7 +44,7 @@ class MaintenanceConfigurationsForResourceGroupOperations:
     def list(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListMaintenanceConfigurationsResult"]:
         """Get Configuration records within a subscription and resource group.
 
@@ -62,7 +62,7 @@ class MaintenanceConfigurationsForResourceGroupOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-09-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):

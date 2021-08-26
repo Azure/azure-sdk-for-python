@@ -43,7 +43,7 @@ class PublicMaintenanceConfigurationsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListMaintenanceConfigurationsResult"]:
         """Get Public Maintenance Configuration records.
 
@@ -59,7 +59,7 @@ class PublicMaintenanceConfigurationsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-09-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -113,7 +113,7 @@ class PublicMaintenanceConfigurationsOperations:
     async def get(
         self,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MaintenanceConfiguration":
         """Get Public Maintenance Configuration record.
 
@@ -131,7 +131,7 @@ class PublicMaintenanceConfigurationsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-09-01-preview"
         accept = "application/json"
 
         # Construct URL

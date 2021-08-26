@@ -23,8 +23,8 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class PublicMaintenanceConfigurationsOperations(object):
-    """PublicMaintenanceConfigurationsOperations operations.
+class ConfigurationAssignmentsWithinSubscriptionOperations(object):
+    """ConfigurationAssignmentsWithinSubscriptionOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -49,17 +49,17 @@ class PublicMaintenanceConfigurationsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.ListMaintenanceConfigurationsResult"]
-        """Get Public Maintenance Configuration records.
+        # type: (...) -> Iterable["_models.ListConfigurationAssignmentsResult"]
+        """Get configuration assignment within a subscription.
 
-        Get Public Maintenance Configuration records.
+        Get configuration assignment within a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ListMaintenanceConfigurationsResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.maintenance.models.ListMaintenanceConfigurationsResult]
+        :return: An iterator like instance of either ListConfigurationAssignmentsResult or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.maintenance.models.ListConfigurationAssignmentsResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListMaintenanceConfigurationsResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListConfigurationAssignmentsResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -91,7 +91,7 @@ class PublicMaintenanceConfigurationsOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('ListMaintenanceConfigurationsResult', pipeline_response)
+            deserialized = self._deserialize('ListConfigurationAssignmentsResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -113,62 +113,4 @@ class PublicMaintenanceConfigurationsOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Maintenance/publicMaintenanceConfigurations'}  # type: ignore
-
-    def get(
-        self,
-        resource_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.MaintenanceConfiguration"
-        """Get Public Maintenance Configuration record.
-
-        Get Public Maintenance Configuration record.
-
-        :param resource_name: Maintenance Configuration Name.
-        :type resource_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: MaintenanceConfiguration, or the result of cls(response)
-        :rtype: ~azure.mgmt.maintenance.models.MaintenanceConfiguration
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MaintenanceConfiguration"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-09-01-preview"
-        accept = "application/json"
-
-        # Construct URL
-        url = self.get.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.MaintenanceError, response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('MaintenanceConfiguration', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Maintenance/publicMaintenanceConfigurations/{resourceName}'}  # type: ignore
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Maintenance/configurationAssignments'}  # type: ignore
