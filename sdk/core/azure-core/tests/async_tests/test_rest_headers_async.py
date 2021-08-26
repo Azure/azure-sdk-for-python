@@ -5,6 +5,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import pytest
+import platform
 from azure.core.rest import HttpRequest
 
 # flask returns these response headers, which we don't really need for these following tests
@@ -62,6 +63,10 @@ async def test_headers_response_keys(get_response_headers):
     assert "B" in h.keys()
     assert set(h.keys()) == set(ref_dict.keys())
 
+@pytest.mark.skipif(platform.python_implementation() == 'PyPy', reason="https://github.com/aio-libs/aiohttp/issues/5967")
+@pytest.mark.asyncio
+async def test_headers_response_keys_mutability(get_response_headers):
+    h = await get_response_headers(HttpRequest("GET", "/headers/duplicate/numbers"))
     # test mutability
     before_mutation_keys = h.keys()
     h['c'] = '000'
@@ -78,6 +83,10 @@ async def test_headers_response_values(get_response_headers):
     assert '789' in h.values()
     assert set(h.values()) == set(ref_dict.values())
 
+@pytest.mark.skipif(platform.python_implementation() == 'PyPy', reason="https://github.com/aio-libs/aiohttp/issues/5967")
+@pytest.mark.asyncio
+async def test_headers_response_values_mutability(get_response_headers):
+    h = await get_response_headers(HttpRequest("GET", "/headers/duplicate/numbers"))
     # test mutability
     before_mutation_values = h.values()
     h['c'] = '000'
@@ -98,11 +107,14 @@ async def test_headers_response_items(get_response_headers):
     assert ("B", '789') in h.items()
     assert set(h.items()) == set(ref_dict.items())
 
+@pytest.mark.skipif(platform.python_implementation() == 'PyPy', reason="https://github.com/aio-libs/aiohttp/issues/5967")
+@pytest.mark.asyncio
+async def test_headers_response_items_mutability(get_response_headers):
+    h = await get_response_headers(HttpRequest("GET", "/headers/duplicate/numbers"))
     # test mutability
     before_mutation_items = h.items()
     h['c'] = '000'
     assert ('c', '000') in before_mutation_items
-
 
 @pytest.mark.asyncio
 async def test_header_mutations(get_response_headers):
