@@ -47,7 +47,7 @@ class IotHubResourceOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IotHubDescription":
         """Get the non-security related metadata of an IoT hub.
 
@@ -110,7 +110,7 @@ class IotHubResourceOperations:
         resource_name: str,
         iot_hub_description: "_models.IotHubDescription",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IotHubDescription":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotHubDescription"]
         error_map = {
@@ -171,7 +171,7 @@ class IotHubResourceOperations:
         resource_name: str,
         iot_hub_description: "_models.IotHubDescription",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.IotHubDescription"]:
         """Create or update the metadata of an IoT hub.
 
@@ -190,8 +190,8 @@ class IotHubResourceOperations:
         :type if_match: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either IotHubDescription or the result of cls(response)
@@ -250,7 +250,7 @@ class IotHubResourceOperations:
         resource_group_name: str,
         resource_name: str,
         iot_hub_tags: "_models.TagsResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IotHubDescription":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotHubDescription"]
         error_map = {
@@ -303,7 +303,7 @@ class IotHubResourceOperations:
         resource_group_name: str,
         resource_name: str,
         iot_hub_tags: "_models.TagsResource",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.IotHubDescription"]:
         """Update an existing IoT Hubs tags.
 
@@ -317,8 +317,8 @@ class IotHubResourceOperations:
         :type iot_hub_tags: ~azure.mgmt.iothub.v2021_03_03_preview.models.TagsResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either IotHubDescription or the result of cls(response)
@@ -375,7 +375,7 @@ class IotHubResourceOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional[Union["_models.IotHubDescription", "_models.ErrorDetails"]]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Union["_models.IotHubDescription", "_models.ErrorDetails"]]]
         error_map = {
@@ -431,7 +431,7 @@ class IotHubResourceOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[Union["_models.IotHubDescription", "_models.ErrorDetails"]]:
         """Delete an IoT hub.
 
@@ -443,8 +443,8 @@ class IotHubResourceOperations:
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either IotHubDescription or the result of cls(response)
@@ -498,7 +498,7 @@ class IotHubResourceOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.IotHubDescriptionListResult"]:
         """Get all the IoT hubs in a subscription.
 
@@ -568,7 +568,7 @@ class IotHubResourceOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.IotHubDescriptionListResult"]:
         """Get all the IoT hubs in a resource group.
 
@@ -642,7 +642,7 @@ class IotHubResourceOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RegistryStatistics":
         """Get the statistics from an IoT hub.
 
@@ -703,7 +703,7 @@ class IotHubResourceOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.IotHubSkuDescriptionListResult"]:
         """Get the list of valid SKUs for an IoT hub.
 
@@ -781,7 +781,7 @@ class IotHubResourceOperations:
         resource_group_name: str,
         resource_name: str,
         event_hub_endpoint_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.EventHubConsumerGroupsListResult"]:
         """Get a list of the consumer groups in the Event Hub-compatible device-to-cloud endpoint in an IoT hub.
 
@@ -864,7 +864,7 @@ class IotHubResourceOperations:
         resource_name: str,
         event_hub_endpoint_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.EventHubConsumerGroupInfo":
         """Get a consumer group from the Event Hub-compatible device-to-cloud endpoint for an IoT hub.
 
@@ -934,7 +934,7 @@ class IotHubResourceOperations:
         event_hub_endpoint_name: str,
         name: str,
         consumer_group_body: "_models.EventHubConsumerGroupBodyDescription",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.EventHubConsumerGroupInfo":
         """Add a consumer group to an Event Hub-compatible endpoint in an IoT hub.
 
@@ -1010,7 +1010,7 @@ class IotHubResourceOperations:
         resource_name: str,
         event_hub_endpoint_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a consumer group from an Event Hub-compatible endpoint in an IoT hub.
 
@@ -1074,7 +1074,7 @@ class IotHubResourceOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.JobResponseListResult"]:
         """Get a list of all the jobs in an IoT hub. For more information, see: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-identity-registry.
 
@@ -1153,7 +1153,7 @@ class IotHubResourceOperations:
         resource_group_name: str,
         resource_name: str,
         job_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.JobResponse":
         """Get the details of a job from an IoT hub. For more information, see: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-identity-registry.
 
@@ -1218,7 +1218,7 @@ class IotHubResourceOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.IotHubQuotaMetricInfoListResult"]:
         """Get the quota metrics for an IoT hub.
 
@@ -1295,7 +1295,7 @@ class IotHubResourceOperations:
         self,
         resource_group_name: str,
         iot_hub_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.EndpointHealthDataListResult"]:
         """Get the health for routing endpoints.
 
@@ -1371,7 +1371,7 @@ class IotHubResourceOperations:
     async def check_name_availability(
         self,
         operation_inputs: "_models.OperationInputs",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IotHubNameAvailabilityInfo":
         """Check if an IoT hub name is available.
 
@@ -1435,7 +1435,7 @@ class IotHubResourceOperations:
         iot_hub_name: str,
         resource_group_name: str,
         input: "_models.TestAllRoutesInput",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TestAllRoutesResult":
         """Test all routes.
 
@@ -1504,7 +1504,7 @@ class IotHubResourceOperations:
         iot_hub_name: str,
         resource_group_name: str,
         input: "_models.TestRouteInput",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TestRouteResult":
         """Test the new route.
 
@@ -1572,7 +1572,7 @@ class IotHubResourceOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SharedAccessSignatureAuthorizationRuleListResult"]:
         """Get the security metadata for an IoT hub. For more information, see: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-security.
 
@@ -1651,7 +1651,7 @@ class IotHubResourceOperations:
         resource_group_name: str,
         resource_name: str,
         key_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SharedAccessSignatureAuthorizationRule":
         """Get a shared access policy by name from an IoT hub. For more information, see: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-security.
 
@@ -1717,7 +1717,7 @@ class IotHubResourceOperations:
         resource_group_name: str,
         resource_name: str,
         export_devices_parameters: "_models.ExportDevicesRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.JobResponse":
         """Exports all the device identities in the IoT hub identity registry to an Azure Storage blob container. For more information, see: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-identity-registry#import-and-export-device-identities.
 
@@ -1788,7 +1788,7 @@ class IotHubResourceOperations:
         resource_group_name: str,
         resource_name: str,
         import_devices_parameters: "_models.ImportDevicesRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.JobResponse":
         """Import, update, or delete device identities in the IoT hub identity registry from a blob. For more information, see: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-identity-registry#import-and-export-device-identities.
 

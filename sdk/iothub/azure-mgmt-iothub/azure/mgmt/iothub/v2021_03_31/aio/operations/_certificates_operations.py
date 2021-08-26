@@ -44,7 +44,7 @@ class CertificatesOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CertificateListDescription":
         """Get the certificate list.
 
@@ -106,7 +106,7 @@ class CertificatesOperations:
         resource_group_name: str,
         resource_name: str,
         certificate_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CertificateDescription":
         """Get the certificate.
 
@@ -173,7 +173,7 @@ class CertificatesOperations:
         certificate_name: str,
         certificate_description: "_models.CertificateDescription",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CertificateDescription":
         """Upload the certificate to the IoT hub.
 
@@ -255,7 +255,7 @@ class CertificatesOperations:
         resource_name: str,
         certificate_name: str,
         if_match: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete an X509 certificate.
 
@@ -321,7 +321,7 @@ class CertificatesOperations:
         resource_name: str,
         certificate_name: str,
         if_match: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CertificateWithNonceDescription":
         """Generate verification code for proof of possession flow.
 
@@ -392,7 +392,7 @@ class CertificatesOperations:
         certificate_name: str,
         if_match: str,
         certificate_verification_body: "_models.CertificateVerificationDescription",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CertificateDescription":
         """Verify certificate's private key possession.
 
