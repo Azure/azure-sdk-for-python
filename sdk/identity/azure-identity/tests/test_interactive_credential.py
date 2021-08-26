@@ -134,7 +134,7 @@ def test_interactive_credential(mock_open):
     # Here we patch the private method they use for the sake of test coverage.
     # TODO: this will probably break when this MSAL behavior changes
     app = credential._get_app()
-    app._build_client = lambda *_: app.client  # pylint:disable=protected-access
+    app._build_client = lambda *_, **__: (app.client, app.client)  # pylint:disable=protected-access
     now = time.time()
 
     # expired access token -> credential should use refresh token instead of prompting again
