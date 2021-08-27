@@ -25,12 +25,12 @@
 # --------------------------------------------------------------------------
 from typing import AsyncIterator
 import trio
-from . import AsyncHttpResponse
+from ._http_response_impl_async import AsyncHttpResponseImpl
 from ._requests_basic import _RestRequestsTransportResponseBase, _has_content
 from ._helpers_py3 import iter_bytes_helper, iter_raw_helper
 from ..pipeline.transport._requests_trio import TrioStreamDownloadGenerator
 
-class RestTrioRequestsTransportResponse(AsyncHttpResponse, _RestRequestsTransportResponseBase): # type: ignore
+class RestTrioRequestsTransportResponse(AsyncHttpResponseImpl, _RestRequestsTransportResponseBase): # type: ignore
     """Asynchronous streaming of data from the response.
     """
     async def iter_raw(self) -> AsyncIterator[bytes]:

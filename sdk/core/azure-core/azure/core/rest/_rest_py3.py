@@ -24,22 +24,15 @@
 #
 # --------------------------------------------------------------------------
 import copy
-import collections
-import collections.abc
-from json import loads
 from typing import (
     Any,
     AsyncIterable,
     AsyncIterator,
-    Dict,
     Iterable, Iterator,
     Optional,
-    Type,
     Union,
+    Protocol,
 )
-
-
-from azure.core.exceptions import HttpResponseError
 
 from ..utils._utils import _case_insensitive_dict
 
@@ -47,41 +40,18 @@ from ._helpers import (
     ParamsType,
     FilesType,
     HeadersType,
-    cast,
-    parse_lines_from_text,
     set_json_body,
     set_multipart_body,
     set_urlencoded_body,
     format_parameters,
     to_pipeline_transport_request_helper,
     from_pipeline_transport_request_helper,
-    get_charset_encoding,
-    decode_to_text,
 )
 from ._helpers_py3 import set_content_body
-from ..exceptions import ResponseNotReadError
 
 ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
 
-class _AsyncContextManager(collections.abc.Awaitable):
 
-    def __init__(self, wrapped: collections.abc.Awaitable):
-        super().__init__()
-        self.wrapped = wrapped
-        self.response = None
-
-    def __await__(self):
-        return self.wrapped.__await__()
-
-    async def __aenter__(self):
-        self.response = await self
-        return self.response
-
-    async def __aexit__(self, *args):
-        await self.response.__aexit__(*args)
-
-    async def close(self):
-        await self.response.close()
 
 ################################## CLASSES ######################################
 
@@ -217,34 +187,22 @@ class HttpRequest:
     def _from_pipeline_transport_request(cls, pipeline_transport_request):
         return from_pipeline_transport_request_helper(cls, pipeline_transport_request)
 
-class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
+class _HttpResponseBase(Protocol):
+    """Base Protocol class for HttpResponses
+    """
 
-    def __init__(
-        self,
-        *,
-        request: HttpRequest,
-        **kwargs
-    ):
-        self.request = request
-        self._internal_response = kwargs.pop("internal_response")
-        self.status_code = None
-        self.headers = {}  # type: HeadersType
-        self.reason = None
-        self.is_closed = False
-        self.is_stream_consumed = False
-        self.content_type = None
-        self._connection_data_block_size = None
-        self._json = None  # this is filled in ContentDecodePolicy, when we deserialize
-        self._content = None  # type: Optional[bytes]
-        self._text = None  # type: Optional[str]
+    request: HttpRequest
+    status_code: int
+    headers: Optional[HeadersType]
+    reason: str
+    content_type: str
+    is_closed: bool
+    is_stream_consumed: bool
+
 
     @property
-    def url(self) -> str:
-        """Returns the URL that resulted in this response"""
-        return self.request.url
-
-    @property
-    def encoding(self) -> Optional[str]:
+    def encoding(self):
+        # type: (...) -> Optional[str]
         """Returns the response encoding.
 
         :return: The response encoding. We either return the encoding set by the user,
@@ -252,17 +210,22 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
          we return `None`.
         :rtype: optional[str]
         """
-        try:
-            return self._encoding
-        except AttributeError:
-            self._encoding: Optional[str] = get_charset_encoding(self)
-            return self._encoding
+        ...
 
     @encoding.setter
-    def encoding(self, value: str) -> None:
+    def encoding(self, value):
+        # type: (Optional[str]) -> None
         """Sets the response encoding"""
-        self._encoding = value
-        self._text = None  # clear text cache
+
+    @property
+    def url(self) -> str:
+        """The URL that resulted in this response"""
+        ...
+
+    @property
+    def content(self) -> bytes:
+        """Return the response's content in bytes."""
+        ...
 
     def text(self, encoding: Optional[str] = None) -> str:
         """Returns the response body as a string
@@ -271,10 +234,7 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
          also be set independently through our encoding property
         :return: The response's content decoded as a string.
         """
-        if self._text is None or encoding:
-            encoding_to_pass = encoding or self.encoding
-            self._text = decode_to_text(encoding_to_pass, self.content)
-        return self._text
+        ...
 
     def json(self) -> Any:
         """Returns the whole body as a json object.
@@ -283,29 +243,17 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
         :rtype: any
         :raises json.decoder.JSONDecodeError or ValueError (in python 2.7) if object is not JSON decodable:
         """
-        # this will trigger errors if response is not read in
-        self.content  # pylint: disable=pointless-statement
-        if not self._json:
-            self._json = loads(self.text())
-        return self._json
+        ...
 
     def raise_for_status(self) -> None:
         """Raises an HttpResponseError if the response has an error status code.
 
         If response is good, does nothing.
         """
-        if cast(int, self.status_code) >= 400:
-            raise HttpResponseError(response=self)
-
-    @property
-    def content(self) -> bytes:
-        """Return the response's content in bytes."""
-        if self._content is None:
-            raise ResponseNotReadError(self)
-        return self._content
+        ...
 
 class HttpResponse(_HttpResponseBase):
-    """**Provisional** object that represents an HTTP response.
+    """**Provisional** protocol object that represents an HTTP response.
 
     **This object is provisional**, meaning it may be changed in a future release.
 
@@ -318,8 +266,6 @@ class HttpResponse(_HttpResponseBase):
     >>> response = client.send_request(request)
     <HttpResponse: 200 OK>
 
-    :keyword request: The request that resulted in this response.
-    :paramtype request: ~azure.core.rest.HttpRequest
     :ivar int status_code: The status code of this response
     :ivar mapping headers: The response headers
     :ivar str reason: The reason phrase for this response
@@ -327,7 +273,6 @@ class HttpResponse(_HttpResponseBase):
     :ivar str url: The URL that resulted in this response
     :ivar str encoding: The response encoding. Is settable, by default
      is the response Content-Type header
-    :ivar str text: The response body as a string.
     :ivar request: The request that resulted in this response.
     :vartype request: ~azure.core.rest.HttpRequest
     :ivar str content_type: The content type of the response
@@ -336,20 +281,11 @@ class HttpResponse(_HttpResponseBase):
      whether the stream has been fully consumed
     """
 
-    def __enter__(self) -> "HttpResponse":
-        return self
+    def __enter__(self) -> "HttpResponse": ...
 
-    def close(self) -> None:
-        """Close the response
+    def __exit__(self, *args) -> None: ...
 
-        :return: None
-        :rtype: None
-        """
-        self.is_closed = True
-        self._internal_response.close()
-
-    def __exit__(self, *args) -> None:
-        self.close()
+    def close(self) -> None: ...
 
     def read(self) -> bytes:
         """Read the response's bytes.
@@ -357,9 +293,7 @@ class HttpResponse(_HttpResponseBase):
         :return: The read in bytes
         :rtype: bytes
         """
-        if self._content is None:
-            self._content = b"".join(self.iter_bytes())
-        return self.content
+        ...
 
     def iter_raw(self) -> Iterator[bytes]:
         """Iterates over the response's bytes. Will not decompress in the process
@@ -367,7 +301,7 @@ class HttpResponse(_HttpResponseBase):
         :return: An iterator of bytes from the response
         :rtype: Iterator[str]
         """
-        raise NotImplementedError()
+        ...
 
     def iter_bytes(self) -> Iterator[bytes]:
         """Iterates over the response's bytes. Will decompress in the process
@@ -375,7 +309,7 @@ class HttpResponse(_HttpResponseBase):
         :return: An iterator of bytes from the response
         :rtype: Iterator[str]
         """
-        raise NotImplementedError()
+        ...
 
     def iter_text(self) -> Iterator[str]:
         """Iterates over the text in the response.
@@ -383,9 +317,7 @@ class HttpResponse(_HttpResponseBase):
         :return: An iterator of string. Each string chunk will be a text from the response
         :rtype: Iterator[str]
         """
-        for byte in self.iter_bytes():
-            text = byte.decode(self.encoding or "utf-8")
-            yield text
+        ...
 
     def iter_lines(self) -> Iterator[str]:
         """Iterates over the lines in the response.
@@ -393,21 +325,10 @@ class HttpResponse(_HttpResponseBase):
         :return: An iterator of string. Each string chunk will be a line from the response
         :rtype: Iterator[str]
         """
-        for text in self.iter_text():
-            lines = parse_lines_from_text(text)
-            for line in lines:
-                yield line
-
-    def __repr__(self) -> str:
-        content_type_str = (
-            ", Content-Type: {}".format(self.content_type) if self.content_type else ""
-        )
-        return "<HttpResponse: {} {}{}>".format(
-            self.status_code, self.reason, content_type_str
-        )
+        ...
 
 class AsyncHttpResponse(_HttpResponseBase):
-    """**Provisional** object that represents an Async HTTP response.
+    """**Provisional** protocol object that represents an Async HTTP response.
 
     **This object is provisional**, meaning it may be changed in a future release.
 
@@ -420,8 +341,6 @@ class AsyncHttpResponse(_HttpResponseBase):
     >>> response = await client.send_request(request)
     <AsyncHttpResponse: 200 OK>
 
-    :keyword request: The request that resulted in this response.
-    :paramtype request: ~azure.core.rest.HttpRequest
     :ivar int status_code: The status code of this response
     :ivar mapping headers: The response headers
     :ivar str reason: The reason phrase for this response
@@ -429,7 +348,6 @@ class AsyncHttpResponse(_HttpResponseBase):
     :ivar str url: The URL that resulted in this response
     :ivar str encoding: The response encoding. Is settable, by default
      is the response Content-Type header
-    :ivar str text: The response body as a string.
     :ivar request: The request that resulted in this response.
     :vartype request: ~azure.core.rest.HttpRequest
     :ivar str content_type: The content type of the response
@@ -444,12 +362,7 @@ class AsyncHttpResponse(_HttpResponseBase):
         :return: The response's bytes
         :rtype: bytes
         """
-        if self._content is None:
-            parts = []
-            async for part in self.iter_bytes():
-                parts.append(part)
-            self._content = b"".join(parts)
-        return self._content
+        ...
 
     async def iter_raw(self) -> AsyncIterator[bytes]:
         """Asynchronously iterates over the response's bytes. Will not decompress in the process
@@ -477,9 +390,9 @@ class AsyncHttpResponse(_HttpResponseBase):
         :return: An async iterator of string. Each string chunk will be a text from the response
         :rtype: AsyncIterator[str]
         """
-        async for byte in self.iter_bytes():  # type: ignore
-            text = byte.decode(self.encoding or "utf-8")
-            yield text
+        raise NotImplementedError()
+        # getting around mypy behavior, see https://github.com/python/mypy/issues/10732
+        yield  # pylint: disable=unreachable
 
     async def iter_lines(self) -> AsyncIterator[str]:
         """Asynchronously iterates over the lines in the response.
@@ -487,27 +400,10 @@ class AsyncHttpResponse(_HttpResponseBase):
         :return: An async iterator of string. Each string chunk will be a line from the response
         :rtype: AsyncIterator[str]
         """
-        async for text in self.iter_text():
-            lines = parse_lines_from_text(text)
-            for line in lines:
-                yield line
+        raise NotImplementedError()
+        # getting around mypy behavior, see https://github.com/python/mypy/issues/10732
+        yield  # pylint: disable=unreachable
 
-    async def close(self) -> None:
-        """Close the response.
+    async def close(self) -> None: ...
 
-        :return: None
-        :rtype: None
-        """
-        self.is_closed = True
-        await self._internal_response.close()
-
-    async def __aexit__(self, *args) -> None:
-        await self.close()
-
-    def __repr__(self) -> str:
-        content_type_str = (
-            ", Content-Type: {}".format(self.content_type) if self.content_type else ""
-        )
-        return "<AsyncHttpResponse: {} {}{}>".format(
-            self.status_code, self.reason, content_type_str
-        )
+    async def __aexit__(self, *args) -> None: ...

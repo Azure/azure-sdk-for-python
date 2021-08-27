@@ -24,16 +24,12 @@
 #
 # --------------------------------------------------------------------------
 import copy
-from json import loads
 
-from typing import TYPE_CHECKING, cast
-
-from azure.core.exceptions import HttpResponseError
+from typing import TYPE_CHECKING, Protocol
 
 from ..utils._utils import _case_insensitive_dict
 from ._helpers import (
     FilesType,
-    parse_lines_from_text,
     set_content_body,
     set_json_body,
     set_multipart_body,
@@ -41,10 +37,7 @@ from ._helpers import (
     format_parameters,
     to_pipeline_transport_request_helper,
     from_pipeline_transport_request_helper,
-    get_charset_encoding,
-    decode_to_text,
 )
-from ..exceptions import ResponseNotReadError
 if TYPE_CHECKING:
     from typing import (
         Iterable,
@@ -191,28 +184,14 @@ class HttpRequest(object):
     def _from_pipeline_transport_request(cls, pipeline_transport_request):
         return from_pipeline_transport_request_helper(cls, pipeline_transport_request)
 
-class _HttpResponseBase(object):  # pylint: disable=too-many-instance-attributes
-
-    def __init__(self, **kwargs):
-        # type: (Any) -> None
-        self.request = kwargs.pop("request")
-        self._internal_response = kwargs.pop("internal_response")
-        self.status_code = None
-        self.headers = {}  # type: HeadersType
-        self.reason = None
-        self.is_closed = False
-        self.is_stream_consumed = False
-        self.content_type = None
-        self._json = None  # this is filled in ContentDecodePolicy, when we deserialize
-        self._connection_data_block_size = None  # type: Optional[int]
-        self._content = None  # type: Optional[bytes]
-        self._text = None  # type: Optional[str]
-
-    @property
-    def url(self):
-        # type: (...) -> str
-        """Returns the URL that resulted in this response"""
-        return self.request.url
+class _HttpResponseBase(Protocol):
+    request = None  # type: HttpRequest
+    headers = None  # type: HeadersType
+    status_code = None  # type: int
+    reason = None  # type: str
+    content_type = None  # type: str
+    is_closed = None  # type: bool
+    is_stream_consumed = None  # type: bool
 
     @property
     def encoding(self):
@@ -224,18 +203,16 @@ class _HttpResponseBase(object):  # pylint: disable=too-many-instance-attributes
          we return `None`.
         :rtype: optional[str]
         """
-        try:
-            return self._encoding
-        except AttributeError:
-            self._encoding = get_charset_encoding(self)  # type: Optional[str]
-            return self._encoding
 
     @encoding.setter
     def encoding(self, value):
         # type: (str) -> None
         """Sets the response encoding"""
-        self._encoding = value
-        self._text = None  # clear text cache
+
+    @property
+    def url(self):
+        # type: (...) -> str
+        """Returns the URL that resulted in this response"""
 
     def text(self, encoding=None):
         # type: (Optional[str]) -> str
@@ -245,10 +222,6 @@ class _HttpResponseBase(object):  # pylint: disable=too-many-instance-attributes
          also be set independently through our encoding property
         :return: The response's content decoded as a string.
         """
-        if self._text is None or encoding:
-            encoding_to_pass = encoding or self.encoding
-            self._text = decode_to_text(encoding_to_pass, self.content)
-        return self._text
 
     def json(self):
         # type: (...) -> Any
@@ -258,11 +231,6 @@ class _HttpResponseBase(object):  # pylint: disable=too-many-instance-attributes
         :rtype: any
         :raises json.decoder.JSONDecodeError or ValueError (in python 2.7) if object is not JSON decodable:
         """
-        # this will trigger errors if response is not read in
-        self.content  # pylint: disable=pointless-statement
-        if not self._json:
-            self._json = loads(self.text())
-        return self._json
 
     def raise_for_status(self):
         # type: (...) -> None
@@ -270,28 +238,15 @@ class _HttpResponseBase(object):  # pylint: disable=too-many-instance-attributes
 
         If response is good, does nothing.
         """
-        if cast(int, self.status_code) >= 400:
-            raise HttpResponseError(response=self)
 
     @property
     def content(self):
         # type: (...) -> bytes
         """Return the response's content in bytes."""
-        if self._content is None:
-            raise ResponseNotReadError(self)
-        return self._content
 
-    def __repr__(self):
-        # type: (...) -> str
-        content_type_str = (
-            ", Content-Type: {}".format(self.content_type) if self.content_type else ""
-        )
-        return "<HttpResponse: {} {}{}>".format(
-            self.status_code, self.reason, content_type_str
-        )
 
-class HttpResponse(_HttpResponseBase):  # pylint: disable=too-many-instance-attributes
-    """**Provisional** object that represents an HTTP response.
+class HttpResponse(_HttpResponseBase):
+    """**Provisional** protocol object that represents an HTTP response.
 
     **This object is provisional**, meaning it may be changed in a future release.
 
@@ -324,55 +279,52 @@ class HttpResponse(_HttpResponseBase):  # pylint: disable=too-many-instance-attr
 
     def __enter__(self):
         # type: (...) -> HttpResponse
-        return self
+        """Enter this response"""
 
     def close(self):
         # type: (...) -> None
-        self.is_closed = True
-        self._internal_response.close()
+        """Close this response"""
 
     def __exit__(self, *args):
         # type: (...) -> None
-        self.close()
+        """Exit this response"""
 
     def read(self):
         # type: (...) -> bytes
-        """
-        Read the response's bytes.
+        """Read the response's bytes.
 
+        :return: The read in bytes
+        :rtype: bytes
         """
-        if self._content is None:
-            self._content = b"".join(self.iter_bytes())
-        return self.content
 
     def iter_raw(self):
         # type: () -> Iterator[bytes]
-        """Iterate over the raw response bytes
+        """Iterates over the response's bytes. Will not decompress in the process
+
+        :return: An iterator of bytes from the response
+        :rtype: Iterator[str]
         """
-        raise NotImplementedError()
 
     def iter_bytes(self):
         # type: () -> Iterator[bytes]
-        """Iterate over the response bytes
+        """Iterates over the response's bytes. Will decompress in the process
+
+        :return: An iterator of bytes from the response
+        :rtype: Iterator[str]
         """
-        raise NotImplementedError()
 
     def iter_text(self):
         # type: () -> Iterator[str]
-        """Iterate over the response text
+        """Iterates over the text in the response.
+
+        :return: An iterator of string. Each string chunk will be a text from the response
+        :rtype: Iterator[str]
         """
-        for byte in self.iter_bytes():
-            text = byte.decode(self.encoding or "utf-8")
-            yield text
 
     def iter_lines(self):
         # type: () -> Iterator[str]
-        for text in self.iter_text():
-            lines = parse_lines_from_text(text)
-            for line in lines:
-                yield line
+        """Iterates over the lines in the response.
 
-    def _close_stream(self):
-        # type: (...) -> None
-        self.is_stream_consumed = True
-        self.close()
+        :return: An iterator of string. Each string chunk will be a line from the response
+        :rtype: Iterator[str]
+        """

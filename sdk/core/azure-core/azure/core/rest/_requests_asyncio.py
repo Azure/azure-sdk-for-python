@@ -26,11 +26,11 @@
 from typing import AsyncIterator
 import asyncio
 from ._helpers_py3 import iter_bytes_helper, iter_raw_helper
-from . import AsyncHttpResponse
+from ._http_response_impl_async import AsyncHttpResponseImpl
 from ._requests_basic import _RestRequestsTransportResponseBase, _has_content
 from ..pipeline.transport._requests_asyncio import AsyncioStreamDownloadGenerator
 
-class RestAsyncioRequestsTransportResponse(AsyncHttpResponse, _RestRequestsTransportResponseBase): # type: ignore
+class RestAsyncioRequestsTransportResponse(AsyncHttpResponseImpl, _RestRequestsTransportResponseBase): # type: ignore
     """Asynchronous streaming of data from the response.
     """
 

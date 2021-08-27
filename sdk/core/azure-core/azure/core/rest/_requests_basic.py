@@ -26,7 +26,7 @@
 from typing import TYPE_CHECKING, cast
 
 from ..exceptions import ResponseNotReadError, StreamConsumedError, StreamClosedError
-from ._rest import _HttpResponseBase, HttpResponse
+from ._http_response_impl import _HttpResponseBaseImpl, HttpResponseImpl
 from ..pipeline.transport._requests_basic import StreamDownloadGenerator
 
 if TYPE_CHECKING:
@@ -39,7 +39,7 @@ def _has_content(response):
     except ResponseNotReadError:
         return False
 
-class _RestRequestsTransportResponseBase(_HttpResponseBase):
+class _RestRequestsTransportResponseBase(_HttpResponseBaseImpl):
     def __init__(self, **kwargs):
         super(_RestRequestsTransportResponseBase, self).__init__(**kwargs)
         self.status_code = self._internal_response.status_code
@@ -76,7 +76,7 @@ def _stream_download_helper(decompress, response):
     for part in stream_download:
         yield part
 
-class RestRequestsTransportResponse(HttpResponse, _RestRequestsTransportResponseBase):
+class RestRequestsTransportResponse(HttpResponseImpl, _RestRequestsTransportResponseBase):
 
     def iter_bytes(self):
         # type: () -> Iterator[bytes]

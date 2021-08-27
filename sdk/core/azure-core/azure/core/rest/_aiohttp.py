@@ -27,12 +27,13 @@
 import asyncio
 from typing import AsyncIterator
 from multidict import CIMultiDict
-from . import HttpRequest, AsyncHttpResponse
+from . import HttpRequest
+from ._http_response_impl_async import AsyncHttpResponseImpl
 from ._helpers_py3 import iter_raw_helper, iter_bytes_helper
 from ..pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
 
 
-class RestAioHttpTransportResponse(AsyncHttpResponse):
+class RestAioHttpTransportResponse(AsyncHttpResponseImpl):
     def __init__(
         self,
         *,
