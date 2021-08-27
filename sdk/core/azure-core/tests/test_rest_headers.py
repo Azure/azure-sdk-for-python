@@ -4,8 +4,9 @@
 # license information.
 # -------------------------------------------------------------------------
 import sys
-from typing import ValuesView
+from requests import Response
 import pytest
+from azure.core.rest._requests_basic import RestRequestsTransportResponse
 
 # NOTE: These tests are heavily inspired from the httpx test suite: https://github.com/encode/httpx/tree/master/tests
 # Thank you httpx for your wonderful tests!
@@ -248,3 +249,11 @@ def test_multiple_headers_duplicate_case_insensitive(get_response_headers):
 def test_multiple_headers_commas(get_response_headers):
     h = get_response_headers(HttpRequest("GET", "/headers/duplicate/commas"))
     assert h["Set-Cookie"] == "a,  b, c"
+
+def test_headers_link():
+    headers = {}
+    internal_response = Response()
+    internal_response.headers = headers
+    response = RestRequestsTransportResponse(request=None, internal_response=internal_response)
+    headers["Update"] = "foo"
+    assert response.headers["Update"] == "foo"

@@ -222,13 +222,11 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         *,
-        request: HttpRequest,
-        **kwargs
+        request: HttpRequest
     ):
         self.request = request
-        self._internal_response = kwargs.pop("internal_response")
         self.status_code = None
-        self.headers = {}  # type: HeadersType
+        self.headers = _case_insensitive_dict({})
         self.reason = None
         self.is_closed = False
         self.is_stream_consumed = False
@@ -285,7 +283,7 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
         """
         # this will trigger errors if response is not read in
         self.content  # pylint: disable=pointless-statement
-        if not self._json:
+        if self._json is None:
             self._json = loads(self.text())
         return self._json
 

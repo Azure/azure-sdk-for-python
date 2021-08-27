@@ -32,10 +32,14 @@ from ._rest import _HttpResponseBase, HttpResponse
 from ..pipeline.transport._requests_basic import StreamDownloadGenerator
 
 class _ItemsView(collections.ItemsView):
+
+    def __init__(self, ref):
+        self._ref = ref
+
     def __contains__(self, item):
         if not (isinstance(item, (list, tuple)) and len(item) == 2):
             return False  # requests raises here, we just return False
-        for k, v in self.__iter__():
+        for k, v in self._ref.__iter__():
             if item[0].lower() == k.lower() and item[1] == v:
                 return True
         return False
@@ -51,7 +55,7 @@ class _CaseInsensitiveDict(CaseInsensitiveDict):
 
     def items(self):
         """Return a new view of the dictionary's items."""
-        return _ItemsView(self)
+        return _ItemsView(super(_CaseInsensitiveDict, self).items())
 
 
 if TYPE_CHECKING:

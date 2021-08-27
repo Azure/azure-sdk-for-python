@@ -7,6 +7,8 @@
 import pytest
 import platform
 from azure.core.rest import HttpRequest
+import aiohttp
+from azure.core.rest._aiohttp import RestAioHttpTransportResponse
 
 # flask returns these response headers, which we don't really need for these following tests
 RESPONSE_HEADERS_TO_IGNORE = [
