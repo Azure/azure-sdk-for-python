@@ -11,7 +11,7 @@ import traceback
 
 _NULL = ' '
 _FILE_OUT = 'release_issue_status.csv'
-_FILE_OUT_PYTHON = 'release_python_status.md
+_FILE_OUT_PYTHON = 'release_python_status.md'
 _PYTHON_SDK_ADMINISTRATORS = {'msyyc', 'RAY-316', 'BigCat20196'}
 
 def my_print(cmd):
