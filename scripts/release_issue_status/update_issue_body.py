@@ -84,5 +84,4 @@ def find_readme_link(sdk_repo, issue_number):
         if 'resource-manager' in row:
             readme_link = row + '/readme.md'
             return readme_link
-    else:
-        raise Exception('Not find readme link,please check')
+    raise Exception('Not find readme link,please check')
