@@ -180,6 +180,7 @@ def main():
                 except Exception as e:
                     item.bot_advice = 'failed to modify the body of the new issue. Please modify manually'
                     item.labels.append('attention')
+                    continue
                 item.labels.append('auto-link')
                 item.issue_object.set_labels(*item.labels)
             else:
