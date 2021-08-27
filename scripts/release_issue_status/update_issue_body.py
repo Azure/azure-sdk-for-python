@@ -49,7 +49,10 @@ def get_pkname_and_readme_link(rest_repo, link):
         for pr_changed_file in pr_info.get_files():
             contents_url = pr_changed_file.contents_url
             if '/resource-manager' in contents_url:
-                pk_url_name1 = re.findall(r'/specification/(.*?)/resource-manager/', contents_url)[0]
+                try:
+                    pk_url_name1 = re.findall(r'/specification/(.*?)/resource-manager/', contents_url)[0]
+                except Exception as e:
+                    continue
                 if not pk_url_name:
                     pk_url_name = pk_url_name1
                 elif pk_url_name != pk_url_name1:
