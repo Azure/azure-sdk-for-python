@@ -307,7 +307,7 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
                     _LOGGER.debug("This request has no body")
                     return
                 log_string = "Request URL: '{}'".format(http_request.url)
-                log_string = "/nRequest method: '{}'".format(http_request.method)
+                log_string += "/nRequest method: '{}'".format(http_request.method)
                 log_string += "/nRequest headers:"
                 for header, value in http_request.headers.items():
                     log_string += "/n    '{}': '{}'".format(header, value)
