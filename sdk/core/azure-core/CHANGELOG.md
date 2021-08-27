@@ -10,6 +10,8 @@
 
 - The `text` property on `azure.core.rest.HttpResponse` and `azure.core.rest.AsyncHttpResponse` has changed to a method, which also takes
 an `encoding` parameter.
+- `azure.core.rest.HttpResponse` and `azure.core.rest.AsyncHttpResponse` are now protocols. They should not be initialized directly, instead
+your transport responses should inherit from them and implement their protocol.
 
 ### Bugs Fixed
 
