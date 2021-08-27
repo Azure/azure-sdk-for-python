@@ -252,7 +252,7 @@ class _HttpResponseBase(Protocol):
         """
         ...
 
-class HttpResponse(_HttpResponseBase):
+class HttpResponse(_HttpResponseBase, Protocol):
     """**Provisional** protocol object that represents an HTTP response.
 
     **This object is provisional**, meaning it may be changed in a future release.
@@ -327,7 +327,7 @@ class HttpResponse(_HttpResponseBase):
         """
         ...
 
-class AsyncHttpResponse(_HttpResponseBase):
+class AsyncHttpResponse(_HttpResponseBase, Protocol):
     """**Provisional** protocol object that represents an Async HTTP response.
 
     **This object is provisional**, meaning it may be changed in a future release.

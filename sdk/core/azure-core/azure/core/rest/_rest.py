@@ -245,7 +245,7 @@ class _HttpResponseBase(Protocol):
         """Return the response's content in bytes."""
 
 
-class HttpResponse(_HttpResponseBase):
+class HttpResponse(_HttpResponseBase, Protocol):
     """**Provisional** protocol object that represents an HTTP response.
 
     **This object is provisional**, meaning it may be changed in a future release.
@@ -259,8 +259,6 @@ class HttpResponse(_HttpResponseBase):
     >>> response = client.send_request(request)
     <HttpResponse: 200 OK>
 
-    :keyword request: The request that resulted in this response.
-    :paramtype request: ~azure.core.rest.HttpRequest
     :ivar int status_code: The status code of this response
     :ivar mapping headers: The response headers
     :ivar str reason: The reason phrase for this response
@@ -268,7 +266,6 @@ class HttpResponse(_HttpResponseBase):
     :ivar str url: The URL that resulted in this response
     :ivar str encoding: The response encoding. Is settable, by default
      is the response Content-Type header
-    :ivar str text: The response body as a string.
     :ivar request: The request that resulted in this response.
     :vartype request: ~azure.core.rest.HttpRequest
     :ivar str content_type: The content type of the response
