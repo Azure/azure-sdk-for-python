@@ -26,6 +26,7 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest):
         # submit operation
         poller = await async_client.begin_translation(translation_inputs)
         self.assertIsNotNone(poller.id)
+        self.assertIsNotNone(poller.details.id)
         # wait for result
         doc_statuses = await poller.result()
         # validate

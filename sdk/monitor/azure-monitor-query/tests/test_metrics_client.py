@@ -2,7 +2,7 @@ import pytest
 import os
 from datetime import datetime, timedelta
 from azure.identity import ClientSecretCredential
-from azure.monitor.query import MetricsQueryClient, AggregationType
+from azure.monitor.query import MetricsQueryClient, MetricAggregationType
 
 def _credential():
     credential  = ClientSecretCredential(
@@ -20,7 +20,7 @@ def test_metrics_auth():
         os.environ['METRICS_RESOURCE_URI'],
         metric_names=["MatchedEventCount"],
         timespan=timedelta(days=1),
-        aggregations=[AggregationType.COUNT]
+        aggregations=[MetricAggregationType.COUNT]
         )
     assert response
     assert response.metrics
@@ -34,7 +34,7 @@ def test_metrics_granularity():
         metric_names=["MatchedEventCount"],
         timespan=timedelta(days=1),
         granularity=timedelta(minutes=5),
-        aggregations=[AggregationType.COUNT]
+        aggregations=[MetricAggregationType.COUNT]
         )
     assert response
     assert response.granularity == timedelta(minutes=5)
@@ -51,6 +51,6 @@ def test_metrics_namespaces():
 def test_metrics_definitions():
     client = MetricsQueryClient(_credential())
 
-    response = client.list_metric_definitions(os.environ['METRICS_RESOURCE_URI'], metric_namespace='microsoft.eventgrid/topics')
+    response = client.list_metric_definitions(os.environ['METRICS_RESOURCE_URI'], namespace='microsoft.eventgrid/topics')
 
     assert response is not None

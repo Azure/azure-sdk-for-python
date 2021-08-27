@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 http://docs.oasis-open.org/xliff/v1.2/os/xliff-core-1.2-strict.xsd">
+  <file original="EN-TA.tmx" source-language="en-US" target-language="fr-FR" datatype="xml">
+    <body>
+      <trans-unit id="1" datatype="plaintext">
+        <source>skull</source>
+        <target state="translated">le crâne</target>
+      </trans-unit>
+      <trans-unit id="2" datatype="plaintext">
+        <source>body</source>
+        <target state="translated">corps</target>
+      </trans-unit>
+      <trans-unit id="3" datatype="plaintext">
+        <source>heart</source>
+        <target state="translated">cœur</target>
+      </trans-unit>
+      <trans-unit id="4" datatype="plaintext">
+        <source>lungs</source>
+        <target state="translated">poumons</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
