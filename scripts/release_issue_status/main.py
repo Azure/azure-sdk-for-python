@@ -236,11 +236,6 @@ def main():
     with open(_FILE_OUT, 'rb') as data:
         blob.upload_blob(data, overwrite=True)
         
-    blob_1 = BlobClient.from_connection_string(conn_str=os.getenv('CONN_STR'), container_name=os.getenv('FILE'),
-                                             blob_name=_FILE_OUT_PYTHON)
-    with open(_FILE_OUT_PYTHON, 'rb') as data:
-        blob_1.upload_blob(data, overwrite=True)
-
 
 if __name__ == '__main__':
     main()
