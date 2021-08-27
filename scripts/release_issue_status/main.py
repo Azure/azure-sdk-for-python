@@ -205,7 +205,7 @@ def main():
             item.labels.append('30days attention')
             item.issue_object.set_labels(*item.labels)
             item.issue_object.create_comment(f'hi @{item.author}, the issue is closed since there is no reply for a long time. Please reopen it if necessary or create new one.')
-            issue.issue_object.edit(state='close')
+            item.issue_object.edit(state='close')
         elif item.days_from_latest_commit >= 15 and item.language == 'Python' and '15days attention' not in item.labels:
             item.issue_object.create_comment(f'hi @{item.author}, this release-request has been delayed more than 15 days,'
                                              ' please deal with it ASAP. We will close the issue if there is still no response after 15 days!')
