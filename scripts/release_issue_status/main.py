@@ -111,7 +111,7 @@ def _extract_author_latest_comment(comments):
 def _whether_author_comment(comments):
     q = set(comment.user.login for comment in comments)
     diff = q.difference(_PYTHON_SDK_ADMINISTRATORS)
-
+    return len(diff) > 0
 
 def _latest_comment_time(comments, delay_from_create_date):
     q = [(comment.updated_at.timestamp(), comment.user.login)
