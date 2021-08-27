@@ -3,8 +3,7 @@
 
 import os
 import pandas as pd
-from datetime import datetime, timedelta
-from msrest.serialization import UTC
+from datetime import timedelta
 from azure.monitor.query import LogsQueryClient
 from azure.identity import DefaultAzureCredential
 
@@ -26,12 +25,12 @@ response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=timedelt
 if not response.tables:
     print("No results for the query")
 
-try:
-    table = response.tables[0]
-    df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
-    print(df)
-except TypeError:
-    print(response.error)
+for table in response.tables:
+    try:
+        df = pd.DataFrame(table.rows, columns=table.columns)
+        print(df)
+    except TypeError:
+        print(response.error)
 # [END send_logs_query]
 """
     TimeGenerated                                        _ResourceId          avgRequestDuration

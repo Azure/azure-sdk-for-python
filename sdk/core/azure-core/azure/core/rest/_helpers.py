@@ -50,6 +50,7 @@ try:
     from urlparse import urlparse  # type: ignore
 except ImportError:
     from urllib.parse import urlparse
+from azure.core.serialization import AzureJSONEncoder
 
 ################################### TYPES SECTION #########################
 
@@ -182,7 +183,7 @@ def set_content_body(content):
 
 def set_json_body(json):
     # type: (Any) -> Tuple[Dict[str, str], Any]
-    body = dumps(json)
+    body = dumps(json, cls=AzureJSONEncoder)
     return {
         "Content-Type": "application/json",
         "Content-Length": str(len(body))
@@ -293,6 +294,8 @@ def get_charset_encoding(response):
 
 def decode_to_text(encoding, content):
     # type: (Optional[str], bytes) -> str
+    if not content:
+        return ""
     if encoding == "utf-8":
         encoding = "utf-8-sig"
     if encoding:

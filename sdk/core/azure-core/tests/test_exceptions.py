@@ -24,11 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import json
-import logging
-import os
-
 import requests
-import pytest
 try:
     from unittest.mock import Mock
 except ImportError:
@@ -159,8 +155,8 @@ class TestExceptions(object):
         assert isinstance(error.model, FakeErrorTwo)
         assert isinstance(error.error, ODataV4Format)
 
-    def test_httpresponse_error_with_response(self):
-        response = requests.get("https://bing.com")
+    def test_httpresponse_error_with_response(self, port):
+        response = requests.get("http://localhost:{}/basic/string".format(port))
         http_response = RequestsTransportResponse(None, response)
 
         error = HttpResponseError(response=http_response)

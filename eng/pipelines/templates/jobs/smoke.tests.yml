@@ -159,7 +159,7 @@ jobs:
           timeoutInMinutes: 5
 
         - pwsh: |
-            $packages = Get-ChildItem "$(Pipeline.Workspace)/${{ parameters.ArtifactName }}/*.zip"
+            $packages = Get-ChildItem "$(Pipeline.Workspace)/${{ parameters.ArtifactName }}/${{ parameters.Artifact.name }}/*.zip"
             Write-Host "Artifacts found:"
             $artifacts = $packages | ForEach-Object {
               if ($_.Name -match "([a-zA-Z\-]+)\-(.*).zip") {
@@ -167,7 +167,7 @@ jobs:
                 return @{ "name" = $matches[1]; "version" = $matches[2] }
               }
             }
-            $dependencies = Get-Content $env:REQUIREMENTS | ForEach-Object {
+            $dependencies = Get-Content $(requirements) | ForEach-Object {
               $line = $_
               if ($line -match "([a-zA-Z\-]+)(\W+)(.*)") {
                   $override = ($artifacts | Where-Object { $_.Name -eq $matches[1] }).Version
@@ -179,36 +179,44 @@ jobs:
               return $line
             }
 
-            $dependencies | Out-File $env:REQUIREMENTS
+            $dependencies | Out-File $(requirements)
 
           displayName: Override requirements with pipeline build artifact versions
-          env:
-            REQUIREMENTS: $(requirements)
 
-        - pwsh: pip install -r "$env:REQUIREMENTS" --no-deps --upgrade
+        # Retry for pip install due to delay in package availability after publish
+        # The package is expected to be available for download/installation within 10 minutes 
+        - pwsh: |
+            $ErrorActionPreference = "Continue"
+            while ($retries++ -lt 15) {
+              Write-Host "pip install -r $(requirements) --no-deps --upgrade --no-cache-dir"
+              pip install -r "$(requirements)" --no-deps --upgrade --no-cache-dir
+              if ($LASTEXITCODE) {
+                if ($retries -ge 15) {
+                  exit $LASTEXITCODE
+                }
+                Write-Host "Installation failed, retrying in 1 minute..."
+                sleep 60
+              } else {
+                break
+              }
+            }
           displayName: Install requirements without dependencies
-          env:
-            REQUIREMENTS: $(requirements)
 
       - ${{ if eq(parameters.Daily, true) }}:
         - pwsh: |
-            pip install -r "$env:REQUIREMENTS" --pre --no-deps --upgrade `
+            pip install -r "$(requirements)" --pre --no-deps --upgrade `
               --index-url https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple
 
           displayName: Install requirements from dev feed without dependencies
-          env:
-            REQUIREMENTS: $(requirements)
 
       - pwsh: pip install -r $(Build.SourcesDirectory)/common/smoketest/requirements_async.txt
         displayName: "Install requirements_async.txt"
         condition: and(succeeded(), ne(variables['SkipAsyncInstall'], true))
 
       - pwsh: |
-          python $(Build.SourcesDirectory)/common/smoketest/dependencies.py -r "$env:REQUIREMENTS" `
+          python $(Build.SourcesDirectory)/common/smoketest/dependencies.py -r "$(requirements)" `
             | Out-File $(Build.SourcesDirectory)/common/smoketest/requirements_dependencies.txt
         displayName: Create dependency list from installed packages
-        env:
-          REQUIREMENTS: $(requirements)
 
       - script: pip install -r $(Build.SourcesDirectory)/common/smoketest/requirements_dependencies.txt
         displayName: Install package dependencies from PyPI

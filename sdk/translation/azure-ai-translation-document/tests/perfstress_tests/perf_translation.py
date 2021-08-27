@@ -108,7 +108,7 @@ class TranslationPerfStressTest(PerfStressTest):
 
     def run_sync(self):
         """The synchronous perf test."""
-        statuses = self.service_client.list_all_document_statuses(
+        statuses = self.service_client.list_document_statuses(
             self.translation_id
         )
         for doc in statuses:
@@ -116,7 +116,7 @@ class TranslationPerfStressTest(PerfStressTest):
 
     async def run_async(self):
         """The asynchronous perf test."""
-        statuses = self.async_service_client.list_all_document_statuses(
+        statuses = self.async_service_client.list_document_statuses(
             self.translation_id
         )
         async for doc in statuses:

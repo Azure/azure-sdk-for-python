@@ -42,7 +42,7 @@ async def logs_query():
 
     # if you dont want to use pandas - here's how you can process it.
 
-    #response.tables is a LogsQueryResultTable
+    #response.tables is a LogsTable
     for table in response.tables:
         for col in table.columns: #LogsQueryResultColumn
             print(col.name + "/"+  col.type + " | ", end="")
