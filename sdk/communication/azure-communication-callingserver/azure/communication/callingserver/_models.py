@@ -44,6 +44,7 @@ class CreateCallOptions(object):
         self.requested_media_types = requested_media_types
         self.requested_call_events = requested_call_events
         self.subject = None
+        self._alternate_Caller_Id = None
 
     @property
     def alternate_Caller_Id(self):
@@ -84,9 +85,10 @@ class JoinCallOptions(object):
         if not requested_call_events:
             raise ValueError("requestedCallEvents can not be None or empty")
 
-        self._callback_uri = callback_uri
-        self._requested_media_types = requested_media_types
-        self._requested_call_events = requested_call_events
+        self.callback_uri = callback_uri
+        self.requested_media_types = requested_media_types
+        self.requested_call_events = requested_call_events
+        self._subject = None
 
     @property
     def subject(self):

@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from os import write
 from typing import Any, List
 
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -31,6 +32,7 @@ class CallingServerClient(object):
         **kwargs: Any
     ):
         # type: (...) -> None
+        
         try:
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint

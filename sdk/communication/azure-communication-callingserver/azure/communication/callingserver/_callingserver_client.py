@@ -13,7 +13,7 @@ from ._communication_identifier_serializer import (deserialize_identifier,
                                                    serialize_identifier)
 from ._generated._azure_communication_calling_server_service import \
     AzureCommunicationCallingServerService
-from ._generated.models import CreateCallRequest, PhoneNumberIdentifierModel
+from ._generated.models import CreateCallRequest, PhoneNumberIdentifierModel, JoinCallRequest
 from ._models import CreateCallOptions, JoinCallOptions
 from ._server_call import ServerCall
 from ._shared.models import CommunicationIdentifier
@@ -21,7 +21,7 @@ from ._shared.user_credential import CommunicationTokenCredential
 from ._shared.utils import (get_authentication_policy, get_current_utc_time,
                             parse_connection_str)
 from ._version import SDK_MONIKER
-
+from ._converters import JoinCallRequestConverter
 
 class CallingServerClient(object):
     def __init__(
@@ -31,6 +31,7 @@ class CallingServerClient(object):
         **kwargs: Any
     ):
         # type: (...) -> None
+        
         try:
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
@@ -142,10 +143,10 @@ class CallingServerClient(object):
         if not options:
             raise ValueError("options can not be None")
 
+        join_call_request = JoinCallRequestConverter.convert(source, options)
         join_call_response = self._server_call_client.join_call(
-            server_call_id=server_call_id,
-            source=source,
-            call_options=options,
+            server_call_id,
+            join_call_request,
             **kwargs
         )
 
