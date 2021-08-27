@@ -71,12 +71,7 @@ If your knowledge base is configured for [chit-chat][questionanswering_docs_chat
 
 ## Examples
 
-The `azure-ai-language-questionanswering` client library provides both synchronous and asynchronous APIs.
-
-The following examples show common scenarios using the `client` [created above](#create-questionansweringclient).
-- [Ask a question](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/sample_query_knowledgebase.py)
-- [Ask a follow-up question](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/sample_chat.py)
-- [Asynchronous operations](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/async_samples)
+Coming soon!
 
 ## Optional Configuration
 Optional keyword arguments can be passed in at the client and per-operation level. The azure-core [reference documentation][azure_core_ref_docs] describes available configurations for retries, logging, transport protocols, and more.
