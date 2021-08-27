@@ -11,6 +11,7 @@ import time
 from azure_devtools.scenario_tests import RecordingProcessor
 import six
 
+from helpers import FAKE_CLIENT_ID
 
 SECRET_FIELDS = frozenset(
     {
@@ -79,10 +80,7 @@ class RecordingRedactor(RecordingProcessor):
 
 class IdTokenProcessor(RecordingProcessor):
     def process_response(self, response):
-        """Changes the "exp" claim of recorded id tokens to be in the future during playback
-
-        This is necessary because msal always validates id tokens, raising an exception when they've expired.
-        """
+        """Modifies an id token's claims to pass MSAL validation during playback"""
         try:
             # decode the recorded token
             body = json.loads(six.ensure_str(response["body"]["string"]))
@@ -92,6 +90,9 @@ class IdTokenProcessor(RecordingProcessor):
             # set the token's expiry time to one hour from now
             payload = json.loads(six.ensure_str(decoded_payload))
             payload["exp"] = int(time.time()) + 3600
+
+            # set the audience to match the client ID used in test playback
+            payload["aud"] = FAKE_CLIENT_ID
 
             # write the modified token to the response body
             new_payload = six.ensure_binary(json.dumps(payload))
