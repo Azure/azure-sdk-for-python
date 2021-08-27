@@ -59,78 +59,24 @@ client = QuestionAnsweringClient(endpoint, credential)
 The [QuestionAnsweringClient][questionanswering_client_class] is the primary interface for asking questions using a knowledge base with your own information, or text input using pre-trained models. 
 For asynchronous operations, an async `QuestionAnsweringClient` is in the `azure.ai.language.questionanswering.aio` namespace.
 
+#### Ask a question
+
+The `QuestionAnsweringClient` allows you ask a question of either a pre-configured knowledge base, or from a set of supplied text references.
+You can set options with your question to limit the number of answers, specify a minimum confidence score, and more.
+
+
+#### Ask a follow-up question
+
+If your knowledge base is configured for [chit-chat][questionanswering_docs_chat], the answers from the knowledge base may include suggested [prompts for follow-up questions][questionanswering_refdocs_prompts] to initiate a conversation. You can ask a follow-up question by providing the ID of your chosen answer as the context for the continued conversation.
+
 ## Examples
 
 The `azure-ai-language-questionanswering` client library provides both synchronous and asynchronous APIs.
 
 The following examples show common scenarios using the `client` [created above](#create-questionansweringclient).
-- [Ask a question](#ask-a-question)
-- [Ask a follow-up question](#ask-a-follow-up-question)
-- [Asynchronous operations](#asynchronous-operations)
-
-### Ask a question
-
-The only input required to ask a question using a knowledge base is just the question itself:
-
-```python
-from azure.ai.language.questionanswering import models as qna
-
-params = qna.KnowledgeBaseQueryOptions(
-    question="How long should my Surface battery last?"
-)
-
-output = client.query_knowledgebase(
-    params,
-    project_name="FAQ",
-)
-for candidate in output.answers:
-    print("({}) {}".format(candidate.confidence_score, candidate.answer))
-    print("Source: {}".format(candidate.source))
-
-```
-
-You can set additional properties on `KnowledgeBaseQueryOptions` to limit the number of answers, specify a minimum confidence score, and more.
-
-### Ask a follow-up question
-
-If your knowledge base is configured for [chit-chat][questionanswering_docs_chat], the answers from the knowledge base may include suggested [prompts for follow-up questions][questionanswering_refdocs_prompts] to initiate a conversation. You can ask a follow-up question by providing the ID of your chosen answer as the context for the continued conversation:
-
-```python
-params = qna.models.KnowledgeBaseQueryOptions(
-    question="How long should charging take?"
-    context=qna.models.KnowledgeBaseAnswerRequestContext(
-        previous_qna_id=previous_answer.id
-    )
-)
-
-output = client.query_knowledgebase(
-    params,
-    project_name="FAQ"
-)
-for candidate in output.answers:
-    print("({}) {}".format(candidate.confidence_score, candidate.answer))
-    print("Source: {}".format(candidate.source))
-
-```
-### Asynchronous operations
-
-The above examples can also be run asynchronously using the client in the `aio` namespace:
-```python
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.language.questionanswering.aio import QuestionAnsweringClient
-from azure.ai.language.questionanswering import models as qna
-
-client = QuestionAnsweringClient(endpoint, credential)
-
-params = qna.KnowledgeBaseQueryOptions(
-    question="How long should my Surface battery last?"
-)
-
-output = await client.query_knowledgebase(
-    params,
-    project_name="FAQ"
-)
-```
+- [Ask a question](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/sample_query_knowledgebase.py)
+- [Ask a follow-up question](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/sample_chat.py)
+- [Asynchronous operations](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/async_samples)
 
 ## Optional Configuration
 Optional keyword arguments can be passed in at the client and per-operation level. The azure-core [reference documentation][azure_core_ref_docs] describes available configurations for retries, logging, transport protocols, and more.
