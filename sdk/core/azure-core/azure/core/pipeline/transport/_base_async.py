@@ -171,6 +171,11 @@ class RestAsyncHttpClientTransportResponse(_RestHttpClientTransportResponse, Res
     async def iter_raw(self):
         raise TypeError("We do not support iter_raw for this transport response")
 
+    async def read(self):
+        if self._content is None:
+            self._content = self._internal_response.read()
+        return self._content
+
 
 class AsyncHttpTransport(
     AbstractAsyncContextManager,

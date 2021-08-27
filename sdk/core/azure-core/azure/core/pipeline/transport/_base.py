@@ -537,13 +537,7 @@ class _RestHttpClientTransportResponse(_RestHttpResponseBase):
         self.headers = _case_insensitive_dict(self._internal_response.getheaders())
         self.reason = self._internal_response.reason
         self.content_type = self.headers.get("Content-Type")
-        self._data = None
-
-    @property
-    def content(self):
-        if self._data is None:
-            self._data = self._internal_response.read()
-        return self._data
+        self._content = None
 
 class RestHttpClientTransportResponse(_RestHttpClientTransportResponse, RestHttpResponse):
     """Create a Rest HTTPResponse from an http.client response.
@@ -554,6 +548,11 @@ class RestHttpClientTransportResponse(_RestHttpClientTransportResponse, RestHttp
 
     def iter_raw(self):
         raise TypeError("We do not support iter_raw for this transport response")
+
+    def read(self):
+        if self._content is None:
+            self._content = self._internal_response.read()
+        return self._content
 
 
 class BytesIOSocket(object):
