@@ -576,6 +576,8 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
             mime_type = "application/json"
 
         # Rely on transport implementation to give me "text()" decoded correctly
+        if hasattr(response, "read"):
+            response.read()
         return cls.deserialize_from_text(response.text(encoding), mime_type, response=response)
 
     def on_request(self, request):
