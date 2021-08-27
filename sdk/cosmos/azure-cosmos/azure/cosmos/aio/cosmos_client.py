@@ -31,7 +31,7 @@ from ..cosmos_client import _parse_connection_str, _build_auth
 from ._cosmos_client_connection_async import CosmosClientConnection
 from .._base import build_options
 from ._retry_utility import ConnectionRetryPolicy
-# from .database import DatabaseProxy
+from .database import DatabaseProxy
 from ..documents import ConnectionPolicy, DatabaseAccount
 from ..exceptions import CosmosResourceNotFoundError
 
@@ -86,8 +86,6 @@ def _build_connection_policy(kwargs):
     policy.ConnectionRetryConfiguration = connection_retry
 
     return policy
-
-
 
 class CosmosClient(object):
     """A client-side logical representation of an Azure Cosmos DB account.
@@ -161,3 +159,35 @@ class CosmosClient(object):
             consistency_level=consistency_level,
             **kwargs
         )
+
+    @staticmethod
+    def _get_database_link(database_or_id):
+        # type: (Union[DatabaseProxy, str, Dict[str, str]]) -> str
+        if isinstance(database_or_id, six.string_types):
+            return "dbs/{}".format(database_or_id)
+        try:
+            return cast("DatabaseProxy", database_or_id).database_link
+        except AttributeError:
+            pass
+        database_id = cast("Dict[str, str]", database_or_id)["id"]
+        return "dbs/{}".format(database_id)
+
+    def get_database_client(self, database):
+        # type: (Union[str, DatabaseProxy, Dict[str, Any]]) -> DatabaseProxy
+        """Retrieve an existing database with the ID (name) `id`.
+
+        :param database: The ID (name), dict representing the properties or
+            `DatabaseProxy` instance of the database to read.
+        :type database: str or dict(str, str) or ~azure.cosmos.DatabaseProxy
+        :returns: A `DatabaseProxy` instance representing the retrieved database.
+        :rtype: ~azure.cosmos.DatabaseProxy
+        """
+        if isinstance(database, DatabaseProxy):
+            id_value = database.id
+        else:
+            try:
+                id_value = database["id"]
+            except TypeError:
+                id_value = database
+
+        return DatabaseProxy(self.client_connection, id_value)

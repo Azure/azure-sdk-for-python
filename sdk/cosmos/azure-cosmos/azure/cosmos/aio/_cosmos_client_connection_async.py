@@ -213,3 +213,73 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         if not 'database_account' in self._setup_kwargs:
             self._setup_kwargs['database_account'] = await self._global_endpoint_manager._GetDatabaseAccount(**self._setup_kwargs)
             await self._global_endpoint_manager.force_refresh(self._setup_kwargs['database_account'])
+
+    async def ReadDatabase(self, database_link, options=None, **kwargs):
+        """Reads a database.
+
+        :param str database_link:
+            The link to the database.
+        :param dict options:
+            The request options for the request.
+        :return:
+            The Database that was read.
+        :rtype: dict
+
+        """
+        if options is None:
+            options = {}
+
+        path = base.GetPathFromLink(database_link)
+        database_id = base.GetResourceIdOrFullNameFromLink(database_link)
+        return await self.Read(path, "dbs", database_id, None, options, **kwargs)
+
+    async def Read(self, path, typ, id, initial_headers, options=None, **kwargs):  # pylint: disable=redefined-builtin
+        """Reads a Azure Cosmos resource and returns it.
+
+        :param str path:
+        :param str typ:
+        :param str id:
+        :param dict initial_headers:
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The upserted Azure Cosmos resource.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        initial_headers = initial_headers or self.default_headers
+        headers = base.GetHeaders(self, initial_headers, "get", path, id, typ, options)
+        # Read will use ReadEndpoint since it uses GET operation
+        request_params = _request_object.RequestObject(typ, documents._OperationType.Read)
+        result, self.last_response_headers = await self.__Get(path, request_params, headers, **kwargs)
+        return result
+
+    async def __Get(self, path, request_params, req_headers, **kwargs):
+        """Azure Cosmos 'GET' async http request.
+
+        :params str url:
+        :params str path:
+        :params dict req_headers:
+
+        :return:
+            Tuple of (result, headers).
+        :rtype:
+            tuple of (dict, dict)
+
+        """
+        request = self.pipeline_client.get(url=path, headers=req_headers)
+        return await asynchronous_request.AsynchronousRequest(
+            client=self,
+            request_params=request_params,
+            global_endpoint_manager=self._global_endpoint_manager,
+            connection_policy=self.connection_policy,
+            pipeline_client=self.pipeline_client,
+            request=request,
+            request_data=None,
+            **kwargs
+        )
