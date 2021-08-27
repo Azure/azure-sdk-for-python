@@ -110,10 +110,7 @@ def _extract_author_latest_comment(comments):
 
 def _whether_author_comment(comments):
     q = set(comment.user.login for comment in comments)
-    for administrators in _PYTHON_SDK_ADMINISTRATORS:
-        q.discard(administrators)
-
-    return True if len(q) > 0 else False
+    diff = q.difference(_PYTHON_SDK_ADMINISTRATORS)
 
 
 def _latest_comment_time(comments, delay_from_create_date):
