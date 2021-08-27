@@ -111,6 +111,7 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
         envelope.tags["ai.operation.parentId"] = "{:016x}".format(
             span.parent.span_id
         )
+    # pylint: disable=too-many-nested-blocks
     if span.kind in (SpanKind.CONSUMER, SpanKind.SERVER):
         envelope.name = "Microsoft.ApplicationInsights.Request"
         data = RequestData(
@@ -189,7 +190,7 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
                 # This logic assumes default ports never conflict across dependency types
                 if port != _get_default_port_http(span.attributes["http.scheme"]) and \
                     port != _get_default_port_db(span.attributes["db.system"]):
-                    target = "{}:{}".format(target,port)
+                    target = "{}:{}".format(target, port)
         if span.kind is SpanKind.CLIENT:
             if "http.method" in span.attributes:  # HTTP
                 data.type = "HTTP"
@@ -293,25 +294,23 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
 def _get_default_port_db(dbsystem):
     if dbsystem == "postgresql":
         return 5432
-    elif dbsystem == "mysql":
+    if dbsystem == "mysql":
         return 3306
-    elif dbsystem == "memcached":
+    if dbsystem == "memcached":
         return 11211
-    elif dbsystem == "mongodb":
+    if dbsystem == "mongodb":
         return 27017
-    elif dbsystem == "redis":
+    if dbsystem == "redis":
         return 6379
-    else:
-        return 0
+    return 0
 
 
 def _get_default_port_http(scheme):
     if scheme == "http":
         return 80
-    elif scheme == "https":
+    if scheme == "https":
         return 443
-    else:
-        return 0
+    return 0
 
 
 def _is_relational_db(dbsystem):
