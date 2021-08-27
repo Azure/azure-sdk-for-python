@@ -69,9 +69,10 @@ class RestTrioRequestsTransportResponse(AsyncHttpResponseImpl, _RestRequestsTran
             async for part in self.iter_bytes():  # type: ignore
                 parts.append(part)
             self._internal_response._content = b"".join(parts)  # pylint: disable=protected-access
+        self._is_stream_consumed = True
         return self.content
 
     async def close(self) -> None:
-        self.is_closed = True
+        self._is_closed = True
         self._internal_response.close()
         await trio.sleep(0)

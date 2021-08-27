@@ -29,6 +29,7 @@ from typing import AsyncIterator
 from multidict import CIMultiDict
 from . import HttpRequest
 from ._http_response_impl_async import AsyncHttpResponseImpl
+from ._helpers import HeadersType
 from ._helpers_py3 import iter_raw_helper, iter_bytes_helper
 from ..pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
 
@@ -41,10 +42,27 @@ class RestAioHttpTransportResponse(AsyncHttpResponseImpl):
         internal_response,
     ):
         super().__init__(request=request, internal_response=internal_response)
-        self.status_code = internal_response.status
-        self.headers = CIMultiDict(internal_response.headers)  # type: ignore
-        self.reason = internal_response.reason
-        self.content_type = internal_response.headers.get('content-type')
+        self._headers = CIMultiDict(internal_response.headers)  # type: ignore
+
+    @property
+    def status_code(self) -> int:
+        """The status code of this response"""
+        return self._internal_response.status
+
+    @property
+    def headers(self) -> HeadersType:
+        """The response headers"""
+        return self._headers
+
+    @property
+    def content_type(self) -> str:
+        """The content type of the response"""
+        return self._internal_response.headers.get('content-type')
+
+    @property
+    def reason(self) -> str:
+        """The reason phrase for this response"""
+        return self._internal_response.reason
 
     async def iter_raw(self) -> AsyncIterator[bytes]:
         """Asynchronously iterates over the response's bytes. Will not decompress in the process
@@ -83,6 +101,6 @@ class RestAioHttpTransportResponse(AsyncHttpResponseImpl):
         :return: None
         :rtype: None
         """
-        self.is_closed = True
+        self._is_closed = True
         self._internal_response.close()
         await asyncio.sleep(0)

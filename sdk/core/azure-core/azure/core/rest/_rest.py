@@ -23,9 +23,10 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import abc
 import copy
 
-from typing import TYPE_CHECKING, Protocol
+from typing import TYPE_CHECKING
 
 from ..utils._utils import _case_insensitive_dict
 from ._helpers import (
@@ -53,7 +54,10 @@ if TYPE_CHECKING:
 
     from ._helpers import HeadersType, ContentTypeBase as ContentType
 
-
+try:
+    ABC = abc.ABC
+except AttributeError:  # Python 2.7, abc exists, but not ABC
+    ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
 
 ################################## CLASSES ######################################
 
@@ -184,16 +188,52 @@ class HttpRequest(object):
     def _from_pipeline_transport_request(cls, pipeline_transport_request):
         return from_pipeline_transport_request_helper(cls, pipeline_transport_request)
 
-class _HttpResponseBase(Protocol):
-    request = None  # type: HttpRequest
-    headers = None  # type: HeadersType
-    status_code = None  # type: int
-    reason = None  # type: str
-    content_type = None  # type: str
-    is_closed = None  # type: bool
-    is_stream_consumed = None  # type: bool
+class _HttpResponseBase(ABC):
 
     @property
+    @abc.abstractmethod
+    def request(self):
+        # type: (...) -> HttpRequest
+        """The request that resulted in this response."""
+
+    @property
+    @abc.abstractmethod
+    def status_code(self):
+        # type: (...) -> int
+        """The status code of this response"""
+
+    @property
+    @abc.abstractmethod
+    def headers(self):
+        # type: (...) -> Optional[HeadersType]
+        """The response headers"""
+
+    @property
+    @abc.abstractmethod
+    def reason(self):
+        # type: (...) -> str
+        """The reason phrase for this response"""
+
+    @property
+    @abc.abstractmethod
+    def content_type(self):
+        # type: (...) -> str
+        """The content type of the response"""
+
+    @property
+    @abc.abstractmethod
+    def is_closed(self):
+        # type: (...) -> bool
+        """Whether the network connection has been closed yet"""
+
+    @property
+    @abc.abstractmethod
+    def is_stream_consumed(self):
+        # type: (...) -> bool
+        """Whether the stream has been fully consumed"""
+
+    @property
+    @abc.abstractmethod
     def encoding(self):
         # type: (...) -> Optional[str]
         """Returns the response encoding.
@@ -210,10 +250,12 @@ class _HttpResponseBase(Protocol):
         """Sets the response encoding"""
 
     @property
+    @abc.abstractmethod
     def url(self):
         # type: (...) -> str
         """Returns the URL that resulted in this response"""
 
+    @abc.abstractmethod
     def text(self, encoding=None):
         # type: (Optional[str]) -> str
         """Returns the response body as a string
@@ -223,6 +265,7 @@ class _HttpResponseBase(Protocol):
         :return: The response's content decoded as a string.
         """
 
+    @abc.abstractmethod
     def json(self):
         # type: (...) -> Any
         """Returns the whole body as a json object.
@@ -232,6 +275,7 @@ class _HttpResponseBase(Protocol):
         :raises json.decoder.JSONDecodeError or ValueError (in python 2.7) if object is not JSON decodable:
         """
 
+    @abc.abstractmethod
     def raise_for_status(self):
         # type: (...) -> None
         """Raises an HttpResponseError if the response has an error status code.
@@ -240,15 +284,17 @@ class _HttpResponseBase(Protocol):
         """
 
     @property
+    @abc.abstractmethod
     def content(self):
         # type: (...) -> bytes
         """Return the response's content in bytes."""
 
 
-class HttpResponse(_HttpResponseBase, Protocol):
-    """**Provisional** protocol object that represents an HTTP response.
+class HttpResponse(_HttpResponseBase):
+    """**Provisional** abstract base class for HTTP responses.
 
     **This object is provisional**, meaning it may be changed in a future release.
+    Use this abstract base class to create your own transport responses.
 
     It is returned from your client's `send_request` method if you pass in
     an :class:`~azure.core.rest.HttpRequest`
@@ -274,18 +320,22 @@ class HttpResponse(_HttpResponseBase, Protocol):
      whether the stream has been fully consumed
     """
 
+    @abc.abstractmethod
     def __enter__(self):
         # type: (...) -> HttpResponse
         """Enter this response"""
 
+    @abc.abstractmethod
     def close(self):
         # type: (...) -> None
         """Close this response"""
 
+    @abc.abstractmethod
     def __exit__(self, *args):
         # type: (...) -> None
         """Exit this response"""
 
+    @abc.abstractmethod
     def read(self):
         # type: (...) -> bytes
         """Read the response's bytes.
@@ -294,6 +344,7 @@ class HttpResponse(_HttpResponseBase, Protocol):
         :rtype: bytes
         """
 
+    @abc.abstractmethod
     def iter_raw(self):
         # type: () -> Iterator[bytes]
         """Iterates over the response's bytes. Will not decompress in the process
@@ -302,6 +353,7 @@ class HttpResponse(_HttpResponseBase, Protocol):
         :rtype: Iterator[str]
         """
 
+    @abc.abstractmethod
     def iter_bytes(self):
         # type: () -> Iterator[bytes]
         """Iterates over the response's bytes. Will decompress in the process
@@ -310,6 +362,7 @@ class HttpResponse(_HttpResponseBase, Protocol):
         :rtype: Iterator[str]
         """
 
+    @abc.abstractmethod
     def iter_text(self):
         # type: () -> Iterator[str]
         """Iterates over the text in the response.
@@ -318,6 +371,7 @@ class HttpResponse(_HttpResponseBase, Protocol):
         :rtype: Iterator[str]
         """
 
+    @abc.abstractmethod
     def iter_lines(self):
         # type: () -> Iterator[str]
         """Iterates over the lines in the response.

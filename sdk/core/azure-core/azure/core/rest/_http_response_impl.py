@@ -33,31 +33,55 @@ from ._helpers import (
 )
 from ..exceptions import HttpResponseError, ResponseNotReadError
 try:
-    from ._rest_py3 import _HttpResponseBase, HttpResponse as _HttpResponse
+    from ._rest_py3 import (
+        _HttpResponseBase,
+        HttpResponse as _HttpResponse,
+        HttpRequest as _HttpRequest
+    )
 except (SyntaxError, ImportError):
-    from ._rest import _HttpResponseBase, HttpResponse as _HttpResponse  # type: ignore
+    from ._rest import (  # type: ignore
+        _HttpResponseBase,
+        HttpResponse as _HttpResponse,
+        HttpRequest as _HttpRequest
+    )
 
 
-class _HttpResponseBaseImpl(_HttpResponseBase):  # pylint: disable=too-many-instance-attributes
+class _HttpResponseBaseImpl(_HttpResponseBase):
 
     def __init__(self, **kwargs):
         # type: (Any) -> None
         super(_HttpResponseBaseImpl, self).__init__()
-        self.request = kwargs.pop("request")
+        self._request = kwargs.pop("request")
         self._internal_response = kwargs.pop("internal_response")
-        self.headers = {}  # type: HeadersType
-        self.is_closed = False
-        self.is_stream_consumed = False
+        self._is_closed = False
+        self._is_stream_consumed = False
         self._connection_data_block_size = None
         self._json = None  # this is filled in ContentDecodePolicy, when we deserialize
         self._content = None  # type: Optional[bytes]
         self._text = None  # type: Optional[str]
 
     @property
+    def request(self):
+        # type: (...) -> _HttpRequest
+        return self._request
+
+    @property
     def url(self):
         # type: (...) -> str
         """Returns the URL that resulted in this response"""
         return self.request.url
+
+    @property
+    def is_closed(self):
+        # type: (...) -> bool
+        """Whether the network connection has been closed yet"""
+        return self._is_closed
+
+    @property
+    def is_stream_consumed(self):
+        # type: (...) -> bool
+        """Whether the stream has been fully consumed"""
+        return self._is_stream_consumed
 
     @property
     def encoding(self):
@@ -135,7 +159,7 @@ class _HttpResponseBaseImpl(_HttpResponseBase):  # pylint: disable=too-many-inst
             self.status_code, self.reason, content_type_str
         )
 
-class HttpResponseImpl(_HttpResponseBaseImpl, _HttpResponse):  # pylint: disable=too-many-instance-attributes
+class HttpResponseImpl(_HttpResponseBaseImpl, _HttpResponse):
     """HttpResponseImpl built on top of our HttpResponse protocol class.
 
     Helper impl for creating our transport responses
@@ -147,7 +171,7 @@ class HttpResponseImpl(_HttpResponseBaseImpl, _HttpResponse):  # pylint: disable
 
     def close(self):
         # type: (...) -> None
-        self.is_closed = True
+        self._is_closed = True
         self._internal_response.close()
 
     def __exit__(self, *args):
@@ -181,5 +205,5 @@ class HttpResponseImpl(_HttpResponseBaseImpl, _HttpResponse):  # pylint: disable
 
     def _close_stream(self):
         # type: (...) -> None
-        self.is_stream_consumed = True
+        self._is_stream_consumed = True
         self.close()

@@ -55,8 +55,7 @@ def _get_response_type(pipeline_transport_response):
             return RestTrioRequestsTransportResponse
     except ImportError:
         pass
-    from ..rest import AsyncHttpResponse
-    return AsyncHttpResponse
+    raise ValueError("Unknown transport response")
 
 def to_rest_response(pipeline_transport_response):
     response_type = _get_response_type(pipeline_transport_response)

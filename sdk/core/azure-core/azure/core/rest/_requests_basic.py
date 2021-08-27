@@ -28,6 +28,7 @@ from typing import TYPE_CHECKING, cast
 from ..exceptions import ResponseNotReadError, StreamConsumedError, StreamClosedError
 from ._http_response_impl import _HttpResponseBaseImpl, HttpResponseImpl
 from ..pipeline.transport._requests_basic import StreamDownloadGenerator
+from ._helpers import HeadersType
 
 if TYPE_CHECKING:
     from typing import Iterator, Optional
@@ -40,12 +41,30 @@ def _has_content(response):
         return False
 
 class _RestRequestsTransportResponseBase(_HttpResponseBaseImpl):
-    def __init__(self, **kwargs):
-        super(_RestRequestsTransportResponseBase, self).__init__(**kwargs)
-        self.status_code = self._internal_response.status_code
-        self.headers = self._internal_response.headers
-        self.reason = self._internal_response.reason
-        self.content_type = self._internal_response.headers.get('content-type')
+
+    @property
+    def status_code(self):
+        # type: (...) -> int
+        """The status code of this response"""
+        return self._internal_response.status_code
+
+    @property
+    def headers(self):
+        # type: (...) -> Optional[HeadersType]
+        return self._internal_response.headers
+
+    @property
+    def reason(self):
+        # type: (...) -> str
+        """The response headers"""
+        return self._internal_response.reason
+
+    @property
+    def content_type(self):
+        # type: (...) -> str
+        """The content type of the response"""
+        return self._internal_response.headers.get('content-type')
+
 
     @property
     def content(self):
@@ -62,12 +81,13 @@ class _RestRequestsTransportResponseBase(_HttpResponseBaseImpl):
             raise ResponseNotReadError(self)
 
 def _stream_download_helper(decompress, response):
+    # type: (bool, _RestRequestsTransportResponseBase) -> Iterator[bytes]
     if response.is_stream_consumed:
         raise StreamConsumedError(response)
     if response.is_closed:
         raise StreamClosedError(response)
 
-    response.is_stream_consumed = True
+    response._is_stream_consumed = True  # pylint: disable=protected-access
     stream_download = StreamDownloadGenerator(
         pipeline=None,
         response=response,
@@ -118,4 +138,5 @@ class RestRequestsTransportResponse(HttpResponseImpl, _RestRequestsTransportResp
         """
         if not _has_content(self):
             self._internal_response._content = b"".join(self.iter_bytes())  # pylint: disable=protected-access
+        self._is_stream_consumed = True
         return self.content

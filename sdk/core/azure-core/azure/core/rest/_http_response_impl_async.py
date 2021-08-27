@@ -45,6 +45,7 @@ class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse):
             async for part in self.iter_bytes():
                 parts.append(part)
             self._content = b"".join(parts)
+        self._is_stream_consumed = True
         return self._content
 
     async def iter_text(self) -> AsyncIterator[str]:
@@ -94,7 +95,7 @@ class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse):
         :return: None
         :rtype: None
         """
-        self.is_closed = True
+        self._is_closed = True
         await self._internal_response.close()
 
     async def __aexit__(self, *args) -> None:

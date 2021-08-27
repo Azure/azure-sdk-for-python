@@ -65,7 +65,7 @@ class RestAsyncioRequestsTransportResponse(AsyncHttpResponseImpl, _RestRequestsT
         :return: None
         :rtype: None
         """
-        self.is_closed = True
+        self._is_closed = True
         self._internal_response.close()
         await asyncio.sleep(0)
 
@@ -80,4 +80,5 @@ class RestAsyncioRequestsTransportResponse(AsyncHttpResponseImpl, _RestRequestsT
             async for part in self.iter_bytes():  # type: ignore
                 parts.append(part)
             self._internal_response._content = b"".join(parts)  # pylint: disable=protected-access
+        self._is_stream_consumed = True
         return self.content

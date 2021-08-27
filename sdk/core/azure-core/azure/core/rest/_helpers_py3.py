@@ -65,7 +65,7 @@ def _stream_download_helper(
     if response.is_closed:
         raise StreamClosedError(response)
 
-    response.is_stream_consumed = True
+    response._is_stream_consumed = True  # pylint: disable=protected-access
     return stream_download_generator(
         pipeline=None,
         response=response,

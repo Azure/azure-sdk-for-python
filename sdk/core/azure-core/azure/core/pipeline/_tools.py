@@ -46,11 +46,10 @@ def to_rest_request(pipeline_transport_request):
 def to_rest_response(pipeline_transport_response):
     from .transport._requests_basic import RequestsTransportResponse
     from ..rest._requests_basic import RestRequestsTransportResponse
-    from ..rest import HttpResponse
     if isinstance(pipeline_transport_response, RequestsTransportResponse):
         response_type = RestRequestsTransportResponse
     else:
-        response_type = HttpResponse
+        raise ValueError("Unknown transport response")
     response = response_type(
         request=to_rest_request(pipeline_transport_response.request),
         internal_response=pipeline_transport_response.internal_response,

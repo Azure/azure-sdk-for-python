@@ -23,6 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import abc
 import copy
 from typing import (
     Any,
@@ -31,7 +32,6 @@ from typing import (
     Iterable, Iterator,
     Optional,
     Union,
-    Protocol,
 )
 
 from ..utils._utils import _case_insensitive_dict
@@ -50,8 +50,6 @@ from ._helpers import (
 from ._helpers_py3 import set_content_body
 
 ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
-
-
 
 ################################## CLASSES ######################################
 
@@ -187,22 +185,55 @@ class HttpRequest:
     def _from_pipeline_transport_request(cls, pipeline_transport_request):
         return from_pipeline_transport_request_helper(cls, pipeline_transport_request)
 
-class _HttpResponseBase(Protocol):
-    """Base Protocol class for HttpResponses
+class _HttpResponseBase(abc.ABC):
+    """Base abstract base class for HttpResponses
     """
 
-    request: HttpRequest
-    status_code: int
-    headers: Optional[HeadersType]
-    reason: str
-    content_type: str
-    is_closed: bool
-    is_stream_consumed: bool
-
+    @property
+    @abc.abstractmethod
+    def request(self) -> HttpRequest:
+        """The request that resulted in this response."""
+        ...
 
     @property
-    def encoding(self):
-        # type: (...) -> Optional[str]
+    @abc.abstractmethod
+    def status_code(self) -> int:
+        """The status code of this response"""
+        ...
+
+    @property
+    @abc.abstractmethod
+    def headers(self) -> Optional[HeadersType]:
+        """The response headers"""
+        ...
+
+    @property
+    @abc.abstractmethod
+    def reason(self) -> str:
+        """The reason phrase for this response"""
+        ...
+
+    @property
+    @abc.abstractmethod
+    def content_type(self) -> str:
+        """The content type of the response"""
+        ...
+
+    @property
+    @abc.abstractmethod
+    def is_closed(self) -> bool:
+        """Whether the network connection has been closed yet"""
+        ...
+
+    @property
+    @abc.abstractmethod
+    def is_stream_consumed(self) -> bool:
+        """Whether the stream has been fully consumed"""
+        ...
+
+    @property
+    @abc.abstractmethod
+    def encoding(self) -> Optional[str]:
         """Returns the response encoding.
 
         :return: The response encoding. We either return the encoding set by the user,
@@ -213,20 +244,22 @@ class _HttpResponseBase(Protocol):
         ...
 
     @encoding.setter
-    def encoding(self, value):
-        # type: (Optional[str]) -> None
+    def encoding(self, value: Optional[str]) -> None:
         """Sets the response encoding"""
 
     @property
+    @abc.abstractmethod
     def url(self) -> str:
         """The URL that resulted in this response"""
         ...
 
     @property
+    @abc.abstractmethod
     def content(self) -> bytes:
         """Return the response's content in bytes."""
         ...
 
+    @abc.abstractmethod
     def text(self, encoding: Optional[str] = None) -> str:
         """Returns the response body as a string
 
@@ -236,6 +269,7 @@ class _HttpResponseBase(Protocol):
         """
         ...
 
+    @abc.abstractmethod
     def json(self) -> Any:
         """Returns the whole body as a json object.
 
@@ -245,6 +279,7 @@ class _HttpResponseBase(Protocol):
         """
         ...
 
+    @abc.abstractmethod
     def raise_for_status(self) -> None:
         """Raises an HttpResponseError if the response has an error status code.
 
@@ -252,10 +287,11 @@ class _HttpResponseBase(Protocol):
         """
         ...
 
-class HttpResponse(_HttpResponseBase, Protocol):
-    """**Provisional** protocol object that represents an HTTP response.
+class HttpResponse(_HttpResponseBase):
+    """**Provisional** abstract base class for HTTP responses.
 
     **This object is provisional**, meaning it may be changed in a future release.
+    Use this abstract base class to create your own transport responses.
 
     It is returned from your client's `send_request` method if you pass in
     an :class:`~azure.core.rest.HttpRequest`
@@ -281,12 +317,19 @@ class HttpResponse(_HttpResponseBase, Protocol):
      whether the stream has been fully consumed
     """
 
-    def __enter__(self) -> "HttpResponse": ...
+    @abc.abstractmethod
+    def __enter__(self) -> "HttpResponse":
+        ...
 
-    def __exit__(self, *args) -> None: ...
+    @abc.abstractmethod
+    def __exit__(self, *args) -> None:
+        ...
 
-    def close(self) -> None: ...
+    @abc.abstractmethod
+    def close(self) -> None:
+        ...
 
+    @abc.abstractmethod
     def read(self) -> bytes:
         """Read the response's bytes.
 
@@ -295,6 +338,7 @@ class HttpResponse(_HttpResponseBase, Protocol):
         """
         ...
 
+    @abc.abstractmethod
     def iter_raw(self) -> Iterator[bytes]:
         """Iterates over the response's bytes. Will not decompress in the process
 
@@ -303,6 +347,7 @@ class HttpResponse(_HttpResponseBase, Protocol):
         """
         ...
 
+    @abc.abstractmethod
     def iter_bytes(self) -> Iterator[bytes]:
         """Iterates over the response's bytes. Will decompress in the process
 
@@ -311,6 +356,7 @@ class HttpResponse(_HttpResponseBase, Protocol):
         """
         ...
 
+    @abc.abstractmethod
     def iter_text(self) -> Iterator[str]:
         """Iterates over the text in the response.
 
@@ -319,6 +365,7 @@ class HttpResponse(_HttpResponseBase, Protocol):
         """
         ...
 
+    @abc.abstractmethod
     def iter_lines(self) -> Iterator[str]:
         """Iterates over the lines in the response.
 
@@ -327,10 +374,11 @@ class HttpResponse(_HttpResponseBase, Protocol):
         """
         ...
 
-class AsyncHttpResponse(_HttpResponseBase, Protocol):
-    """**Provisional** protocol object that represents an Async HTTP response.
+class AsyncHttpResponse(_HttpResponseBase):
+    """**Provisional** abstract base class for Async HTTP responses.
 
     **This object is provisional**, meaning it may be changed in a future release.
+    Use this abstract base class to create your own transport responses.
 
     It is returned from your async client's `send_request` method if you pass in
     an :class:`~azure.core.rest.HttpRequest`
@@ -356,6 +404,7 @@ class AsyncHttpResponse(_HttpResponseBase, Protocol):
      whether the stream has been fully consumed
     """
 
+    @abc.abstractmethod
     async def read(self) -> bytes:
         """Read the response's bytes into memory.
 
@@ -364,6 +413,7 @@ class AsyncHttpResponse(_HttpResponseBase, Protocol):
         """
         ...
 
+    @abc.abstractmethod
     async def iter_raw(self) -> AsyncIterator[bytes]:
         """Asynchronously iterates over the response's bytes. Will not decompress in the process
 
@@ -374,6 +424,7 @@ class AsyncHttpResponse(_HttpResponseBase, Protocol):
         # getting around mypy behavior, see https://github.com/python/mypy/issues/10732
         yield  # pylint: disable=unreachable
 
+    @abc.abstractmethod
     async def iter_bytes(self) -> AsyncIterator[bytes]:
         """Asynchronously iterates over the response's bytes. Will decompress in the process
 
@@ -384,6 +435,7 @@ class AsyncHttpResponse(_HttpResponseBase, Protocol):
         # getting around mypy behavior, see https://github.com/python/mypy/issues/10732
         yield  # pylint: disable=unreachable
 
+    @abc.abstractmethod
     async def iter_text(self) -> AsyncIterator[str]:
         """Asynchronously iterates over the text in the response.
 
@@ -394,6 +446,7 @@ class AsyncHttpResponse(_HttpResponseBase, Protocol):
         # getting around mypy behavior, see https://github.com/python/mypy/issues/10732
         yield  # pylint: disable=unreachable
 
+    @abc.abstractmethod
     async def iter_lines(self) -> AsyncIterator[str]:
         """Asynchronously iterates over the lines in the response.
 
@@ -404,6 +457,10 @@ class AsyncHttpResponse(_HttpResponseBase, Protocol):
         # getting around mypy behavior, see https://github.com/python/mypy/issues/10732
         yield  # pylint: disable=unreachable
 
-    async def close(self) -> None: ...
+    @abc.abstractmethod
+    async def close(self) -> None:
+        ...
 
-    async def __aexit__(self, *args) -> None: ...
+    @abc.abstractmethod
+    async def __aexit__(self, *args) -> None:
+        ...
