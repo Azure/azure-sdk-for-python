@@ -105,12 +105,11 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
             envelope.tags["ai.cloud.roleInstance"] = platform.node()  # hostname default
         envelope.tags["ai.internal.nodeName"] = envelope.tags["ai.cloud.roleInstance"]
     envelope.tags["ai.operation.id"] = "{:032x}".format(span.context.trace_id)
-    if "user_id" in span.attributes:
+    if "enduser.id" in span.attributes:
         envelope.tags["ai.user.id"] = span.attributes["enduser.id"]
-    parent = span.parent
-    if parent:
+    if span.parent:
         envelope.tags["ai.operation.parentId"] = "{:016x}".format(
-            parent.span_id
+            span.parent.span_id
         )
     if span.kind in (SpanKind.CONSUMER, SpanKind.SERVER):
         envelope.name = "Microsoft.ApplicationInsights.Request"
@@ -179,14 +178,42 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
         target = None
         if "peer.service" in span.attributes:
             target = span.attributes["peer.service"]
-        if span.kind in (SpanKind.CLIENT, SpanKind.PRODUCER):
+        else:
+            if "net.peer.name" in span.attributes:
+                target = span.attributes["net.peer.name"]
+            elif "net.peer.ip" in span.attributes:
+                target = span.attributes["net.peer.ip"]
+            if "net.peer.port" in span.attributes:
+                port = span.attributes["net.peer.port"]
+                # TODO: check default port for rpc
+                # This logic assumes default ports never conflict across dependency types
+                if port != _get_default_port_http(span.attributes["http.scheme"]) and \
+                    port != _get_default_port_db(span.attributes["db.system"]):
+                    target = "{}:{}".format(target,port)
+        if span.kind is SpanKind.CLIENT:
             if "http.method" in span.attributes:  # HTTP
                 data.type = "HTTP"
-                scheme = span.attributes["http.scheme"]
-                if "http.host" in span.attributes:
+                scheme = span.attributes.get("http.scheme")
+                if "http.url" in span.attributes:
+                    url = span.attributes["http.url"]
+                    # data is the url
+                    data.data = url
+                    # http specific logic for target
+                    if "peer.service" not in span.attributes:
+                        try:
+                            parse_url = urlparse(url)
+                            if parse_url.port == _get_default_port_http(scheme):
+                                target = parse_url.hostname
+                            else:
+                                target = parse_url.netloc
+                        except Exception:  # pylint: disable=broad-except
+                            logger.warning("Error while parsing url.")
+                # http specific logic for target
+                if "peer.service" not in span.attributes and "http.host" in span.attributes:
                     host = span.attributes["http.host"]
                     try:
                         # urlparse insists on absolute URLs starting with "//"
+                        # This logic assumes host does not include a "//"
                         host_name = urlparse("//" + host)
                         if host_name.port == _get_default_port_http(scheme):
                             target = host_name.hostname
@@ -194,34 +221,10 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
                             target = host
                     except Exception:  # pylint: disable=broad-except
                         logger.warning("Error while parsing hostname.")
-                elif "http.url" in span.attributes:
-                    url = span.attributes["http.url"]
-                    # data is the url
-                    data.data = url
-                    try:
-                        parse_url = urlparse(url)
-                        if parse_url.port == _get_default_port_http(scheme):
-                            target = parse_url.hostname
-                        else:
-                            target = parse_url.netloc
-                    except Exception:  # pylint: disable=broad-except
-                        logger.warning("Error while parsing url.")
                 if "http.status_code" in span.attributes:
                     status_code = span.attributes["http.status_code"]
                     data.result_code = str(status_code)
-            if target is None:
-                if "net.peer.name" in span.attributes:
-                    target = span.attributes["net.peer.name"]
-                elif "net.peer.ip" in span.attributes:
-                    target = span.attributes["net.peer.ip"]
-                if "net.peer.port" in span.attributes:
-                    port = span.attributes["net.peer.port"]
-                    # TODO: check default port for rpc
-                    # This logic assumes default ports never conflict across dependency types
-                    if port != _get_default_port_http(span.attributes["http.scheme"]) and \
-                        port != _get_default_port_db(span.attributes["db.system"]):
-                        target = "{}:{}".format(target,port)
-            if "db.system" in span.attributes:  # Database
+            elif "db.system" in span.attributes:  # Database
                 db = span.attributes["db.system"]
                 if _is_relational_db(db):
                     data.type = "SQL"
@@ -230,8 +233,9 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
                 # data is the full statement
                 if "db.statement" in span.attributes:
                     data.data = span.attributes["db.statement"]
+                # db specific logic for target
                 if "db.name" in span.attributes:
-                    db_name = span.attributes
+                    db_name = span.attributes["db.name"]
                     if target is None:
                         target = db_name
                     else:
@@ -239,7 +243,8 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
             elif "rpc.system" in span.attributes:  # Rpc
                 data.type = "rpc.system"
                 # TODO: data.data for rpc
-                if target is None:
+                # rpc specific logic for target
+                if "peer.service" not in span.attributes:
                     target = span.attributes["rpc.system"]
             else:
                 # TODO: Azure specific types
@@ -256,7 +261,7 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
             data.result_code = data.result_code[:1024]
         if data.data:
             data.data = data.data[:8192]
-        if data.target:
+        if target:
             data.target = target[:1024]
     for key, val in span.attributes.items():
         # Remove Opentelemetry related span attributes from custom dimensions
