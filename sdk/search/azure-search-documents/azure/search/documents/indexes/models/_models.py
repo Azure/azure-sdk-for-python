@@ -11,11 +11,16 @@ from .._generated.models import (
     LexicalTokenizer,
     AnalyzeRequest,
     CustomAnalyzer as _CustomAnalyzer,
+    EntityRecognitionSkill as _EntityRecognitionSkillV1,
+    EntityRecognitionSkillV3 as _EntityRecognitionSkillV3,
     PatternAnalyzer as _PatternAnalyzer,
     PatternTokenizer as _PatternTokenizer,
     SearchResourceEncryptionKey as _SearchResourceEncryptionKey,
     SearchIndexerDataSource as _SearchIndexerDataSource,
     SearchIndexerSkill,
+    SearchIndexerSkillset as _SearchIndexerSkillset,
+    SentimentSkill as _SentimentSkillV1,
+    SentimentSkillV3 as _SentimentSkillV3,
     SynonymMap as _SynonymMap,
     DataSourceCredentials,
     AzureActiveDirectoryApplicationCredentials,
@@ -24,6 +29,79 @@ from .._generated.models._search_client_enums import _CaseInsensitiveEnumMeta
 
 
 DELIMITER = "|"
+
+
+class SearchIndexerSkillset(_SearchIndexerSkillset):
+    """A list of skills.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the skillset.
+    :type name: str
+    :param description: The description of the skillset.
+    :type description: str
+    :param skills: Required. A list of skills in the skillset.
+    :type skills: list[~azure.search.documents.indexes.models.SearchIndexerSkill]
+    :param cognitive_services_account: Details about cognitive services to be used when running
+     skills.
+    :type cognitive_services_account:
+     ~azure.search.documents.indexes.models.CognitiveServicesAccount
+    :param knowledge_store: Definition of additional projections to azure blob, table, or files, of
+     enriched data.
+    :type knowledge_store: ~azure.search.documents.indexes.models.SearchIndexerKnowledgeStore
+    :param e_tag: The ETag of the skillset.
+    :type e_tag: str
+    :param encryption_key: A description of an encryption key that you create in Azure Key Vault.
+     This key is used to provide an additional level of encryption-at-rest for your skillset
+     definition when you want full assurance that no one, not even Microsoft, can decrypt your
+     skillset definition in Azure Cognitive Search. Once you have encrypted your skillset
+     definition, it will always remain encrypted. Azure Cognitive Search will ignore attempts to set
+     this property to null. You can change this property as needed if you want to rotate your
+     encryption key; Your skillset definition will be unaffected. Encryption with customer-managed
+     keys is not available for free search services, and is only available for paid services created
+     on or after January 1, 2019.
+    :type encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(_SearchIndexerSkillset, self).__init__(**kwargs)
+
+    def _to_generated(self):
+        generated_skills = []
+        for skill in self.skills:
+            if hasattr(skill, '_to_generated'):
+                generated_skills.append(skill._to_generated())
+            else:
+                generated_skills.append(skill)
+        assert len(generated_skills) == len(self.skills)
+        return _SearchIndexerSkillset(
+            name=getattr(self, 'name', None),
+            description=getattr(self, 'description', None),
+            skills=generated_skills,
+            cognitive_services_account=getattr(self, 'cognitive_services_account', None),
+            knowledge_store=getattr(self, 'knowledge_store', None),
+            e_tag=getattr(self, 'e_tag', None),
+            encryption_key=getattr(self, 'encryption_key', None)
+        )
+
+    @classmethod
+    def _from_generated(cls, skillset):
+        custom_skills = []
+        for skill in skillset.skills:
+            skill_cls = type(skill)
+            if skill_cls in [_EntityRecognitionSkillV1, _EntityRecognitionSkillV3]:
+                custom_skills.append(EntityRecognitionSkill._from_generated(skill))
+            elif skill_cls in [_SentimentSkillV1, _SentimentSkillV3]:
+                custom_skills.append(SentimentSkill._from_generated(skill))
+            else:
+                custom_skills.append(skill)
+        assert len(skillset.skills) == len(custom_skills)
+        kwargs = skillset.as_dict()
+        kwargs['skills'] = custom_skills
+        return cls(**kwargs)
 
 
 class EntityRecognitionSkillVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
@@ -111,14 +189,56 @@ class EntityRecognitionSkill(SearchIndexerSkill):
         self,
         **kwargs
     ):
-        super(EntityRecognitionSkill, self).__init__(**kwargs)   
-        skill_version = kwargs.get('skill_version', EntityRecognitionSkillVersion.V1)
-        self.odata_type = skill_version  # type: str
+        super(EntityRecognitionSkill, self).__init__(**kwargs)
+        self.skill_version = kwargs.get('skill_version', EntityRecognitionSkillVersion.V1)
+        self.odata_type = self.skill_version  # type: str
         self.categories = kwargs.get('categories', None)
         self.default_language_code = kwargs.get('default_language_code', None)
         self.include_typeless_entities = kwargs.get('include_typeless_entities', None)
         self.minimum_precision = kwargs.get('minimum_precision', None)
         self.model_version = kwargs.get('model_version', None)
+
+    def _to_generated(self):
+        if self.skill_version == EntityRecognitionSkillVersion.V1:
+            return _EntityRecognitionSkillV1(
+                inputs=self.inputs,
+                outputs=self.outputs,
+                name=self.name,
+                odata_type=self.odata_type,
+                categories=self.categories,
+                default_language_code=self.default_language_code,
+                include_typeless_entities=self.include_typeless_entities,
+                minimum_precision=self.minimum_precision,
+                model_version = self.model_version
+            )
+        if self.skill_version in [EntityRecognitionSkillVersion.V3, EntityRecognitionSkillVersion.LATEST]:
+            return _EntityRecognitionSkillV3(
+                inputs=self.inputs,
+                outputs=self.outputs,
+                name=self.name,
+                odata_type=self.odata_type,
+                categories=self.categories,
+                default_language_code=self.default_language_code,
+                include_typeless_entities=self.include_typeless_entities,
+                minimum_precision=self.minimum_precision,
+                model_version = self.model_version
+            )
+
+    @classmethod
+    def _from_generated(cls, skill):
+        if not skill:
+            return None
+        kwargs = skill.as_dict()
+        if isinstance(skill, _EntityRecognitionSkillV1):
+            return EntityRecognitionSkill(
+                **kwargs,
+                skill_version=EntityRecognitionSkillVersion.V1
+            )
+        if isinstance(skill, _EntityRecognitionSkillV3):
+            return EntityRecognitionSkill(
+                **kwargs,
+                skill_version=EntityRecognitionSkillVersion.V3
+            )
 
 
 class SentimentSkillVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
@@ -198,11 +318,42 @@ class SentimentSkill(SearchIndexerSkill):
         **kwargs
     ):
         super(SentimentSkill, self).__init__(**kwargs)
-        skill_version = kwargs.get('skill_version', SentimentSkillVersion.V1)
-        self.odata_type = skill_version  # type: str
+        self.skill_version = kwargs.get('skill_version', SentimentSkillVersion.V1)
+        self.odata_type = self.skill_version  # type: str
         self.default_language_code = kwargs.get('default_language_code', None)
-        self.include_opinion_mining = kwargs.get('include_opinion_mining', False)
+        self.include_opinion_mining = kwargs.get('include_opinion_mining', False )
         self.model_version = kwargs.get('model_version', None)
+
+    def _to_generated(self):
+        if self.skill_version == SentimentSkillVersion.V1:
+            return _SentimentSkillV1(
+                name=self.name,
+                odata_type=self.odata_type,
+                default_language_code = self.default_language_code,
+                include_opinion_mining = self.include_opinion_mining,
+                model_version = self.model_version
+            )
+        if self.skill_version in [SentimentSkillVersion.V3, SentimentSkillVersion.LATEST]:
+            return _SentimentSkillV3(
+                name=self.name,
+                odata_type=self.odata_type,
+                default_language_code = self.default_language_code,
+                include_opinion_mining = self.include_opinion_mining,
+                model_version = self.model_version
+            )
+
+    @classmethod
+    def _from_generated(cls, skill):
+        if not skill:
+            return None
+        if isinstance(cls, _SentimentSkillV1):
+            return SentimentSkill(
+                skill_version=SentimentSkillVersion.V1
+            )
+        if isinstance(cls, _SentimentSkillV3):
+            return SentimentSkill(
+                skill_version=SentimentSkillVersion.V3
+            )
 
 
 class AnalyzeTextOptions(msrest.serialization.Model):

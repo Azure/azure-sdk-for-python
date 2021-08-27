@@ -22,9 +22,14 @@ from search_service_preparer import SearchServicePreparer, SearchResourceGroupPr
 from azure.core.exceptions import HttpResponseError
 from azure.search.documents.indexes.models import(
     EntityRecognitionSkill,
+    EntityRecognitionSkillVersion,
     InputFieldMappingEntry,
     OutputFieldMappingEntry,
     SearchIndexerSkillset,
+)
+from azure.search.documents.indexes._generated.models import (
+    EntityRecognitionSkill as EntityRecognitionSkillV1,
+    EntityRecognitionSkillV3
 )
 from azure.search.documents.indexes.aio import SearchIndexerClient
 
@@ -57,15 +62,19 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
 
         s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
+        sv3 = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
+                                   outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")],
+                                   skill_version=EntityRecognitionSkillVersion.V3)
 
-        skillset = SearchIndexerSkillset(name='test-ss', skills=list([s]), description="desc")
+        skillset = SearchIndexerSkillset(name='test-ss', skills=list([s, sv3]), description="desc")
         result = await client.create_skillset(skillset)
         assert isinstance(result, SearchIndexerSkillset)
         assert result.name == "test-ss"
         assert result.description == "desc"
         assert result.e_tag
-        assert len(result.skills) == 1
-        assert isinstance(result.skills[0], EntityRecognitionSkill)
+        assert len(result.skills) == 2
+        assert isinstance(result.skills[0], EntityRecognitionSkillV1)
+        assert isinstance(result.skills[1], EntityRecognitionSkillV3)
 
         assert len(await client.get_skillsets()) == 1
 
