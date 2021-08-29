@@ -23,23 +23,16 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import abc
 import copy
-import collections
-import collections.abc
-from json import loads
 from typing import (
     Any,
     AsyncIterable,
     AsyncIterator,
-    Dict,
     Iterable, Iterator,
     Optional,
-    Type,
     Union,
 )
-
-
-from azure.core.exceptions import HttpResponseError
 
 from ..utils._utils import _case_insensitive_dict
 
@@ -47,41 +40,16 @@ from ._helpers import (
     ParamsType,
     FilesType,
     HeadersType,
-    cast,
-    parse_lines_from_text,
     set_json_body,
     set_multipart_body,
     set_urlencoded_body,
     format_parameters,
-    get_charset_encoding,
-    decode_to_text,
 )
 from ._backcompat import HttpRequestBackcompatMixin, HttpResponseBackcompatMixin
 from ._backcompat_async import AsyncHttpResponseBackcompatMixin
 from ._helpers_py3 import set_content_body
-from ..exceptions import ResponseNotReadError
 
 ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
-
-class _AsyncContextManager(collections.abc.Awaitable):
-
-    def __init__(self, wrapped: collections.abc.Awaitable):
-        super().__init__()
-        self.wrapped = wrapped
-        self.response = None
-
-    def __await__(self):
-        return self.wrapped.__await__()
-
-    async def __aenter__(self):
-        self.response = await self
-        return self.response
-
-    async def __aexit__(self, *args):
-        await self.response.__aexit__(*args)
-
-    async def close(self):
-        await self.response.close()
 
 ################################## CLASSES ######################################
 
@@ -210,33 +178,54 @@ class HttpRequest(HttpRequestBackcompatMixin):
         except (ValueError, TypeError):
             return copy.copy(self)
 
-class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
-
-    def __init__(
-        self,
-        *,
-        request: HttpRequest,
-        **kwargs
-    ):
-        self.request = request
-        self._internal_response = kwargs.pop("internal_response")
-        self.status_code = None
-        self.headers = {}  # type: HeadersType
-        self.reason = None
-        self.is_closed = False
-        self.is_stream_consumed = False
-        self.content_type = None
-        self._connection_data_block_size: Optional[int] = None
-        self._json = None  # this is filled in ContentDecodePolicy, when we deserialize
-        self._content = None  # type: Optional[bytes]
-        self._text = None  # type: Optional[str]
+class _HttpResponseBase(abc.ABC):
+    """Base abstract base class for HttpResponses
+    """
 
     @property
-    def url(self) -> str:
-        """Returns the URL that resulted in this response"""
-        return self.request.url
+    @abc.abstractmethod
+    def request(self) -> HttpRequest:
+        """The request that resulted in this response."""
+        ...
 
     @property
+    @abc.abstractmethod
+    def status_code(self) -> int:
+        """The status code of this response"""
+        ...
+
+    @property
+    @abc.abstractmethod
+    def headers(self) -> Optional[HeadersType]:
+        """The response headers"""
+        ...
+
+    @property
+    @abc.abstractmethod
+    def reason(self) -> str:
+        """The reason phrase for this response"""
+        ...
+
+    @property
+    @abc.abstractmethod
+    def content_type(self) -> str:
+        """The content type of the response"""
+        ...
+
+    @property
+    @abc.abstractmethod
+    def is_closed(self) -> bool:
+        """Whether the network connection has been closed yet"""
+        ...
+
+    @property
+    @abc.abstractmethod
+    def is_stream_consumed(self) -> bool:
+        """Whether the stream has been fully consumed"""
+        ...
+
+    @property
+    @abc.abstractmethod
     def encoding(self) -> Optional[str]:
         """Returns the response encoding.
 
@@ -245,18 +234,25 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
          we return `None`.
         :rtype: optional[str]
         """
-        try:
-            return self._encoding
-        except AttributeError:
-            self._encoding: Optional[str] = get_charset_encoding(self)
-            return self._encoding
+        ...
 
     @encoding.setter
-    def encoding(self, value: str) -> None:
+    def encoding(self, value: Optional[str]) -> None:
         """Sets the response encoding"""
-        self._encoding = value
-        self._text = None  # clear text cache
 
+    @property
+    @abc.abstractmethod
+    def url(self) -> str:
+        """The URL that resulted in this response"""
+        ...
+
+    @property
+    @abc.abstractmethod
+    def content(self) -> bytes:
+        """Return the response's content in bytes."""
+        ...
+
+    @abc.abstractmethod
     def text(self, encoding: Optional[str] = None) -> str:
         """Returns the response body as a string
 
@@ -264,11 +260,9 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
          also be set independently through our encoding property
         :return: The response's content decoded as a string.
         """
-        if self._text is None or encoding:
-            encoding_to_pass = encoding or self.encoding
-            self._text = decode_to_text(encoding_to_pass, self.content)
-        return self._text
+        ...
 
+    @abc.abstractmethod
     def json(self) -> Any:
         """Returns the whole body as a json object.
 
@@ -276,31 +270,21 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
         :rtype: any
         :raises json.decoder.JSONDecodeError or ValueError (in python 2.7) if object is not JSON decodable:
         """
-        # this will trigger errors if response is not read in
-        self.content  # pylint: disable=pointless-statement
-        if not self._json:
-            self._json = loads(self.text())
-        return self._json
+        ...
 
+    @abc.abstractmethod
     def raise_for_status(self) -> None:
         """Raises an HttpResponseError if the response has an error status code.
 
         If response is good, does nothing.
         """
-        if cast(int, self.status_code) >= 400:
-            raise HttpResponseError(response=self)
+        ...
 
-    @property
-    def content(self) -> bytes:
-        """Return the response's content in bytes."""
-        if self._content is None:
-            raise ResponseNotReadError(self)
-        return self._content
-
-class HttpResponse(_HttpResponseBase, HttpResponseBackcompatMixin):
-    """**Provisional** object that represents an HTTP response.
+class HttpResponse(_HttpResponseBase):
+    """**Provisional** abstract base class for HTTP responses.
 
     **This object is provisional**, meaning it may be changed in a future release.
+    Use this abstract base class to create your own transport responses.
 
     It is returned from your client's `send_request` method if you pass in
     an :class:`~azure.core.rest.HttpRequest`
@@ -311,8 +295,6 @@ class HttpResponse(_HttpResponseBase, HttpResponseBackcompatMixin):
     >>> response = client.send_request(request)
     <HttpResponse: 200 OK>
 
-    :keyword request: The request that resulted in this response.
-    :paramtype request: ~azure.core.rest.HttpRequest
     :ivar int status_code: The status code of this response
     :ivar mapping headers: The case-insensitive response headers.
      While looking up headers is case-insensitive, when looking up
@@ -322,7 +304,6 @@ class HttpResponse(_HttpResponseBase, HttpResponseBackcompatMixin):
     :ivar str url: The URL that resulted in this response
     :ivar str encoding: The response encoding. Is settable, by default
      is the response Content-Type header
-    :ivar str text: The response body as a string.
     :ivar request: The request that resulted in this response.
     :vartype request: ~azure.core.rest.HttpRequest
     :ivar str content_type: The content type of the response
@@ -331,80 +312,68 @@ class HttpResponse(_HttpResponseBase, HttpResponseBackcompatMixin):
      whether the stream has been fully consumed
     """
 
+    @abc.abstractmethod
     def __enter__(self) -> "HttpResponse":
-        return self
+        ...
 
-    def close(self) -> None:
-        """Close the response
-
-        :return: None
-        :rtype: None
-        """
-        self.is_closed = True
-        self._internal_response.close()
-
+    @abc.abstractmethod
     def __exit__(self, *args) -> None:
-        self.close()
+        ...
 
+    @abc.abstractmethod
+    def close(self) -> None:
+        ...
+
+    @abc.abstractmethod
     def read(self) -> bytes:
         """Read the response's bytes.
 
         :return: The read in bytes
         :rtype: bytes
         """
-        if self._content is None:
-            self._content = b"".join(self.iter_bytes())
-        return self.content
+        ...
 
+    @abc.abstractmethod
     def iter_raw(self) -> Iterator[bytes]:
         """Iterates over the response's bytes. Will not decompress in the process
 
         :return: An iterator of bytes from the response
         :rtype: Iterator[str]
         """
-        raise NotImplementedError()
+        ...
 
+    @abc.abstractmethod
     def iter_bytes(self) -> Iterator[bytes]:
         """Iterates over the response's bytes. Will decompress in the process
 
         :return: An iterator of bytes from the response
         :rtype: Iterator[str]
         """
-        raise NotImplementedError()
+        ...
 
+    @abc.abstractmethod
     def iter_text(self) -> Iterator[str]:
         """Iterates over the text in the response.
 
         :return: An iterator of string. Each string chunk will be a text from the response
         :rtype: Iterator[str]
         """
-        for byte in self.iter_bytes():
-            text = byte.decode(self.encoding or "utf-8")
-            yield text
+        ...
 
+    @abc.abstractmethod
     def iter_lines(self) -> Iterator[str]:
         """Iterates over the lines in the response.
 
         :return: An iterator of string. Each string chunk will be a line from the response
         :rtype: Iterator[str]
         """
-        for text in self.iter_text():
-            lines = parse_lines_from_text(text)
-            for line in lines:
-                yield line
+        ...
 
-    def __repr__(self) -> str:
-        content_type_str = (
-            ", Content-Type: {}".format(self.content_type) if self.content_type else ""
-        )
-        return "<HttpResponse: {} {}{}>".format(
-            self.status_code, self.reason, content_type_str
-        )
-
-class AsyncHttpResponse(_HttpResponseBase, AsyncHttpResponseBackcompatMixin):
-    """**Provisional** object that represents an Async HTTP response.
+class AsyncHttpResponse(_HttpResponseBase):
+    """**Provisional** abstract base class for Async HTTP responses.
 
     **This object is provisional**, meaning it may be changed in a future release.
+    Use this abstract base class to create your own transport responses.
 
     It is returned from your async client's `send_request` method if you pass in
     an :class:`~azure.core.rest.HttpRequest`
@@ -415,8 +384,6 @@ class AsyncHttpResponse(_HttpResponseBase, AsyncHttpResponseBackcompatMixin):
     >>> response = await client.send_request(request)
     <AsyncHttpResponse: 200 OK>
 
-    :keyword request: The request that resulted in this response.
-    :paramtype request: ~azure.core.rest.HttpRequest
     :ivar int status_code: The status code of this response
     :ivar mapping headers: The response headers
     :ivar str reason: The reason phrase for this response
@@ -424,7 +391,6 @@ class AsyncHttpResponse(_HttpResponseBase, AsyncHttpResponseBackcompatMixin):
     :ivar str url: The URL that resulted in this response
     :ivar str encoding: The response encoding. Is settable, by default
      is the response Content-Type header
-    :ivar str text: The response body as a string.
     :ivar request: The request that resulted in this response.
     :vartype request: ~azure.core.rest.HttpRequest
     :ivar str content_type: The content type of the response
@@ -433,19 +399,16 @@ class AsyncHttpResponse(_HttpResponseBase, AsyncHttpResponseBackcompatMixin):
      whether the stream has been fully consumed
     """
 
+    @abc.abstractmethod
     async def read(self) -> bytes:
         """Read the response's bytes into memory.
 
         :return: The response's bytes
         :rtype: bytes
         """
-        if self._content is None:
-            parts = []
-            async for part in self.iter_bytes():
-                parts.append(part)
-            self._content = b"".join(parts)
-        return self._content
+        ...
 
+    @abc.abstractmethod
     async def iter_raw(self) -> AsyncIterator[bytes]:
         """Asynchronously iterates over the response's bytes. Will not decompress in the process
 
@@ -456,6 +419,7 @@ class AsyncHttpResponse(_HttpResponseBase, AsyncHttpResponseBackcompatMixin):
         # getting around mypy behavior, see https://github.com/python/mypy/issues/10732
         yield  # pylint: disable=unreachable
 
+    @abc.abstractmethod
     async def iter_bytes(self) -> AsyncIterator[bytes]:
         """Asynchronously iterates over the response's bytes. Will decompress in the process
 
@@ -466,43 +430,32 @@ class AsyncHttpResponse(_HttpResponseBase, AsyncHttpResponseBackcompatMixin):
         # getting around mypy behavior, see https://github.com/python/mypy/issues/10732
         yield  # pylint: disable=unreachable
 
+    @abc.abstractmethod
     async def iter_text(self) -> AsyncIterator[str]:
         """Asynchronously iterates over the text in the response.
 
         :return: An async iterator of string. Each string chunk will be a text from the response
         :rtype: AsyncIterator[str]
         """
-        async for byte in self.iter_bytes():  # type: ignore
-            text = byte.decode(self.encoding or "utf-8")
-            yield text
+        raise NotImplementedError()
+        # getting around mypy behavior, see https://github.com/python/mypy/issues/10732
+        yield  # pylint: disable=unreachable
 
+    @abc.abstractmethod
     async def iter_lines(self) -> AsyncIterator[str]:
         """Asynchronously iterates over the lines in the response.
 
         :return: An async iterator of string. Each string chunk will be a line from the response
         :rtype: AsyncIterator[str]
         """
-        async for text in self.iter_text():
-            lines = parse_lines_from_text(text)
-            for line in lines:
-                yield line
+        raise NotImplementedError()
+        # getting around mypy behavior, see https://github.com/python/mypy/issues/10732
+        yield  # pylint: disable=unreachable
 
+    @abc.abstractmethod
     async def close(self) -> None:
-        """Close the response.
+        ...
 
-        :return: None
-        :rtype: None
-        """
-        self.is_closed = True
-        await self._internal_response.close()
-
+    @abc.abstractmethod
     async def __aexit__(self, *args) -> None:
-        await self.close()
-
-    def __repr__(self) -> str:
-        content_type_str = (
-            ", Content-Type: {}".format(self.content_type) if self.content_type else ""
-        )
-        return "<AsyncHttpResponse: {} {}{}>".format(
-            self.status_code, self.reason, content_type_str
-        )
+        ...

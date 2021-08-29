@@ -5,10 +5,11 @@
 # -------------------------------------------------------------------------
 from azure.core.pipeline.transport import AsyncioRequestsTransport
 from azure.core.rest import HttpRequest
+from azure.core.rest._requests_asyncio import RestAsyncioRequestsTransportResponse
 from rest_client_async import AsyncTestRestClient
 
 import pytest
-
+from utils import readonly_checks
 
 @pytest.mark.asyncio
 async def test_async_gen_data(port):
@@ -39,3 +40,14 @@ async def test_send_data(port):
         response = await client.send_request(request)
 
         assert response.json()['data'] == "azerty"
+
+@pytest.mark.asyncio
+async def test_readonly(port):
+    """Make sure everything that is readonly is readonly"""
+    async with AsyncioRequestsTransport() as transport:
+        client = AsyncTestRestClient(port, transport=transport)
+        response = await client.send_request(HttpRequest("GET", "/health"))
+        response.raise_for_status()
+
+    assert isinstance(response, RestAsyncioRequestsTransportResponse)
+    readonly_checks(response)

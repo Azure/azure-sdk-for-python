@@ -221,15 +221,6 @@ def format_parameters(url, params):
     url += query
     return url
 
-def lookup_encoding(encoding):
-    # type: (str) -> bool
-    # including check for whether encoding is known taken from httpx
-    try:
-        codecs.lookup(encoding)
-        return True
-    except LookupError:
-        return False
-
 def parse_lines_from_text(text):
     # largely taken from httpx's LineDecoder code
     lines = []
@@ -263,25 +254,3 @@ def parse_lines_from_text(text):
     elif last_chunk_of_text:
         lines.append(last_chunk_of_text)
     return lines
-
-def get_charset_encoding(response):
-    # type: (...) -> Optional[str]
-    content_type = response.headers.get("Content-Type")
-
-    if not content_type:
-        return None
-    _, params = cgi.parse_header(content_type)
-    encoding = params.get('charset') # -> utf-8
-    if encoding is None or not lookup_encoding(encoding):
-        return None
-    return encoding
-
-def decode_to_text(encoding, content):
-    # type: (Optional[str], bytes) -> str
-    if not content:
-        return ""
-    if encoding == "utf-8":
-        encoding = "utf-8-sig"
-    if encoding:
-        return content.decode(encoding)
-    return codecs.getincrementaldecoder("utf-8-sig")(errors="replace").decode(content)

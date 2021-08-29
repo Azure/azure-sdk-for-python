@@ -9,8 +9,10 @@
 import io
 import pytest
 import zlib
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, AsyncHttpResponse
+from azure.core.pipeline.transport._aiohttp import RestAioHttpTransportResponse
 from azure.core.exceptions import HttpResponseError
+from utils import readonly_checks
 
 @pytest.fixture
 def send_request(client):
@@ -306,3 +308,16 @@ async def test_aiohttp_response_decompression_negative(send_request):
 #         files=files,
 #     )
 #     await send_request(request)
+
+def test_initialize_response_abc():
+    with pytest.raises(TypeError) as ex:
+        AsyncHttpResponse()
+    assert "Can't instantiate abstract class" in str(ex)
+
+@pytest.mark.asyncio
+async def test_readonly(send_request):
+    """Make sure everything that is readonly is readonly"""
+    response = await send_request(HttpRequest("GET", "/health"))
+
+    assert isinstance(response, RestAioHttpTransportResponse)
+    readonly_checks(response)

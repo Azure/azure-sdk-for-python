@@ -5,8 +5,9 @@
 # -------------------------------------------------------------------------
 from azure.core.pipeline.transport import TrioRequestsTransport
 from azure.core.rest import HttpRequest
+from azure.core.rest._requests_trio import RestTrioRequestsTransportResponse
 from rest_client_async import AsyncTestRestClient
-
+from utils import readonly_checks
 import pytest
 
 
@@ -39,3 +40,15 @@ async def test_send_data(port):
         response = await client.send_request(request)
 
         assert response.json()['data'] == "azerty"
+
+@pytest.mark.trio
+async def test_readonly(port):
+    """Make sure everything that is readonly is readonly"""
+    async with TrioRequestsTransport() as transport:
+        request = HttpRequest('GET', 'http://localhost:{}/health'.format(port))
+        client = AsyncTestRestClient(port, transport=transport)
+        response = await client.send_request(HttpRequest("GET", "/health"))
+        response.raise_for_status()
+
+    assert isinstance(response, RestTrioRequestsTransportResponse)
+    readonly_checks(response)

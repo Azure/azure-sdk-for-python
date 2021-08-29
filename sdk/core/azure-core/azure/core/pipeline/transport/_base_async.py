@@ -28,7 +28,7 @@ import asyncio
 import abc
 from collections.abc import AsyncIterator
 
-from typing import AsyncIterator as AsyncIteratorType, TypeVar, Generic, Any
+from typing import AsyncIterator as AsyncIteratorType, TypeVar, Generic, Any, Callable, Optional
 from ._base import (
     _HttpResponseBase,
     _HttpClientTransportResponse,
@@ -36,10 +36,12 @@ from ._base import (
     PipelineContext,
     PipelineRequest,
     PipelineResponse,
+    RestHttpResponseImpl,
 )
 from .._tools_async import await_result as _await_result
 from ...rest import AsyncHttpResponse as RestAsyncHttpResponse
-
+from ...rest._backcompat_async import AsyncHttpResponseBackcompatMixin as _RestAsyncHttpResponseBackcompatMixin
+from ...exceptions import StreamConsumedError, StreamClosedError
 try:
     from contextlib import AbstractAsyncContextManager  # type: ignore
 except ImportError:  # Python <= 3.7
@@ -200,3 +202,131 @@ class AsyncHttpTransport(
 
     async def sleep(self, duration):
         await asyncio.sleep(duration)
+
+####################### REST #######################
+
+class RestAsyncHttpResponseImpl(
+    RestAsyncHttpResponse, RestHttpResponseImpl, _RestAsyncHttpResponseBackcompatMixin
+):
+    """AsyncHttpResponseImpl built on top of our HttpResponse protocol class.
+
+    Helper impl for creating our transport responses
+    """
+
+    def _stream_download_helper(
+        self,
+        decompress: bool,
+        stream_download_generator: Callable,
+    ) -> AsyncIteratorType[bytes]:
+        if self.is_stream_consumed:
+            raise StreamConsumedError(self)
+        if self.is_closed:
+            raise StreamClosedError(self)
+
+        self._is_stream_consumed = True  # pylint: disable=protected-access
+        return stream_download_generator(
+            pipeline=None,
+            response=self,
+            decompress=decompress,
+        )
+
+    async def _iter_raw_helper(
+        self,
+        stream_download_generator: Callable,
+    ) -> AsyncIteratorType[bytes]:
+        async for part in self._stream_download_helper(
+            decompress=False,
+            stream_download_generator=stream_download_generator,
+        ):
+            yield part
+
+    async def _iter_bytes_helper(
+        self,
+        stream_download_generator: Callable,
+        content: Optional[bytes],
+    ) -> AsyncIteratorType[bytes]:
+        if content:
+            chunk_size = self._connection_data_block_size  # pylint: disable=protected-access
+            for i in range(0, len(content), chunk_size):
+                yield content[i : i + chunk_size]
+        else:
+            async for part in self._stream_download_helper(
+                decompress=True,
+                stream_download_generator=stream_download_generator,
+            ):
+                yield part
+
+    async def read(self) -> bytes:
+        """Read the response's bytes into memory.
+
+        :return: The response's bytes
+        :rtype: bytes
+        """
+        if self._content is None:
+            parts = []
+            async for part in self.iter_bytes():
+                parts.append(part)
+            self._content = b"".join(parts)
+        self._is_stream_consumed = True
+        return self._content
+
+    async def iter_text(self) -> AsyncIteratorType[str]:
+        """Asynchronously iterates over the text in the response.
+
+        :return: An async iterator of string. Each string chunk will be a text from the response
+        :rtype: AsyncIterator[str]
+        """
+        async for byte in self.iter_bytes():  # type: ignore
+            text = byte.decode(self.encoding or "utf-8")
+            yield text
+
+    async def iter_lines(self) -> AsyncIteratorType[str]:
+        """Asynchronously iterates over the lines in the response.
+
+        :return: An async iterator of string. Each string chunk will be a line from the response
+        :rtype: AsyncIterator[str]
+        """
+        async for text in self.iter_text():
+            lines = self._parse_lines_from_text(text)
+            for line in lines:
+                yield line
+
+    async def iter_raw(self) -> AsyncIteratorType[bytes]:
+        """Asynchronously iterates over the response's bytes. Will not decompress in the process
+
+        :return: An async iterator of bytes from the response
+        :rtype: AsyncIterator[bytes]
+        """
+        async for part in self.stream_download(pipeline=None):
+            yield part
+        await self.close()
+
+    async def iter_bytes(self) -> AsyncIteratorType[bytes]:
+        """Asynchronously iterates over the response's bytes. Will decompress in the process
+
+        :return: An async iterator of bytes from the response
+        :rtype: AsyncIterator[bytes]
+        """
+        raise NotImplementedError()
+        # getting around mypy behavior, see https://github.com/python/mypy/issues/10732
+        yield  # pylint: disable=unreachable
+
+    async def close(self) -> None:
+        """Close the response.
+
+        :return: None
+        :rtype: None
+        """
+        self._is_closed = True
+        await self._internal_response.close()
+
+    async def __aexit__(self, *args) -> None:
+        await self.close()
+
+    def __repr__(self) -> str:
+        content_type_str = (
+            ", Content-Type: {}".format(self.content_type) if self.content_type else ""
+        )
+        return "<AsyncHttpResponse: {} {}{}>".format(
+            self.status_code, self.reason, content_type_str
+        )
