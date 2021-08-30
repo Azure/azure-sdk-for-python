@@ -28,7 +28,7 @@ def update_issue_body(sdk_repo, rest_repo, issue_number):
         issue_body_up += raw + '\n'
 
     issue_info.edit(body=issue_body_up)
-    return readme_link
+    return package_name, readme_link
         
 
 def get_pkname_and_readme_link(rest_repo, link):
