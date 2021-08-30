@@ -201,6 +201,8 @@ def main():
     # rule6: if delay from created date is over 30 days and owner never reply, close it.
     # rule7: if delay from created date is over 15 days and owner never reply, remind owner to handle it.
     for item in issue_status:
+        if item.issue_object.number in [1826, 1896]:
+            print("1111111111--: ", item.author_latest_comment)
         if item.status == 'release':
             item.bot_advice = 'better to release asap.'
         elif item.author_latest_comment and not item.author_latest_comment in _PYTHON_SDK_ADMINISTRATORS:
