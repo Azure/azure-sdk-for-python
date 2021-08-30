@@ -19,7 +19,7 @@ interactions:
     uri: https://search54491a19.search.windows.net/datasources?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search54491a19.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D96C0164CA8559\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null,"identity":null}'
+      string: '{"@odata.context":"https://search54491a19.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D96C10573031CB\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null,"identity":null}'
     headers:
       cache-control:
       - no-cache
@@ -28,11 +28,11 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Mon, 30 Aug 2021 21:59:09 GMT
+      - Mon, 30 Aug 2021 23:46:08 GMT
       elapsed-time:
-      - '32'
+      - '44'
       etag:
-      - W/"0x8D96C0164CA8559"
+      - W/"0x8D96C10573031CB"
       expires:
       - '-1'
       location:
@@ -44,7 +44,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 80a614f8-09dd-11ec-9141-74c63bed1137
+      - 73205fb3-09ec-11ec-9967-74c63bed1137
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
@@ -70,7 +70,7 @@ interactions:
     uri: https://search54491a19.search.windows.net/indexes?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search54491a19.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D96C01658C243F\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]}],"scoringProfiles":[],"corsOptions":null,"suggesters":[],"analyzers":[],"normalizers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":{"@odata.type":"#Microsoft.Azure.Search.BM25Similarity","k1":null,"b":null}}'
+      string: '{"@odata.context":"https://search54491a19.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D96C1057B1AE4F\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]}],"scoringProfiles":[],"corsOptions":null,"suggesters":[],"analyzers":[],"normalizers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":{"@odata.type":"#Microsoft.Azure.Search.BM25Similarity","k1":null,"b":null}}'
     headers:
       cache-control:
       - no-cache
@@ -79,11 +79,11 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Mon, 30 Aug 2021 21:59:10 GMT
+      - Mon, 30 Aug 2021 23:46:09 GMT
       elapsed-time:
-      - '946'
+      - '602'
       etag:
-      - W/"0x8D96C01658C243F"
+      - W/"0x8D96C1057B1AE4F"
       expires:
       - '-1'
       location:
@@ -95,7 +95,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 80ce13fb-09dd-11ec-b3cd-74c63bed1137
+      - 734a9db8-09ec-11ec-84e1-74c63bed1137
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
@@ -141,9 +141,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Mon, 30 Aug 2021 21:59:11 GMT
+      - Mon, 30 Aug 2021 23:46:10 GMT
       elapsed-time:
-      - '584'
+      - '521'
       expires:
       - '-1'
       odata-version:
@@ -153,7 +153,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 818fb488-09dd-11ec-b48d-74c63bed1137
+      - 73cb498f-09ec-11ec-98cc-74c63bed1137
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:

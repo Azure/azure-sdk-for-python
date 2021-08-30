@@ -20,7 +20,7 @@ interactions:
     uri: https://searchb71c225d.search.windows.net/datasources?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://searchb71c225d.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D96BF33114EBB8\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null,"identity":null}'
+      string: '{"@odata.context":"https://searchb71c225d.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D96C10F3B4F073\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null,"identity":null}'
     headers:
       cache-control:
       - no-cache
@@ -29,11 +29,11 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Mon, 30 Aug 2021 20:17:28 GMT
+      - Mon, 30 Aug 2021 23:50:30 GMT
       elapsed-time:
-      - '41'
+      - '37'
       etag:
-      - W/"0x8D96BF33114EBB8"
+      - W/"0x8D96C10F3B4F073"
       expires:
       - '-1'
       location:
@@ -45,7 +45,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 4cd536f5-09cf-11ec-845e-74c63bed1137
+      - 0fa7a6e3-09ed-11ec-8621-74c63bed1137
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
@@ -74,7 +74,7 @@ interactions:
     uri: https://searchb71c225d.search.windows.net/datasources('sample-datasource')?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://searchb71c225d.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D96BF3311FEA3E\"","name":"sample-datasource","description":"updated","type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null,"identity":null}'
+      string: '{"@odata.context":"https://searchb71c225d.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D96C10F3C4839E\"","name":"sample-datasource","description":"updated","type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null,"identity":null}'
     headers:
       cache-control:
       - no-cache
@@ -83,11 +83,11 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Mon, 30 Aug 2021 20:17:29 GMT
+      - Mon, 30 Aug 2021 23:50:30 GMT
       elapsed-time:
-      - '28'
+      - '40'
       etag:
-      - W/"0x8D96BF3311FEA3E"
+      - W/"0x8D96C10F3C4839E"
       expires:
       - '-1'
       odata-version:
@@ -97,7 +97,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 4d02a187-09cf-11ec-b289-74c63bed1137
+      - 0fcf71cd-09ed-11ec-a48c-74c63bed1137
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

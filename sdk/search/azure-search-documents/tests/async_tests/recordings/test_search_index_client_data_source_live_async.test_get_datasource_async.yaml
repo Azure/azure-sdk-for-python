@@ -16,20 +16,20 @@ interactions:
     uri: https://search54ec1df4.search.windows.net/datasources?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search54ec1df4.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D96BF5A2FFE0FF\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null,"identity":null}'
+      string: '{"@odata.context":"https://search54ec1df4.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D96C113D930248\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null,"identity":null}'
     headers:
       cache-control: no-cache
       content-length: '407'
       content-type: application/json; odata.metadata=minimal
-      date: Mon, 30 Aug 2021 20:34:59 GMT
-      elapsed-time: '34'
-      etag: W/"0x8D96BF5A2FFE0FF"
+      date: Mon, 30 Aug 2021 23:52:35 GMT
+      elapsed-time: '42'
+      etag: W/"0x8D96C113D930248"
       expires: '-1'
       location: https://search54ec1df4.search.windows.net/datasources('sample-datasource')?api-version=2021-04-30-Preview
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: bed0d507-09d1-11ec-b06b-74c63bed1137
+      request-id: 598f80a2-09ed-11ec-8898-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 201
@@ -46,19 +46,19 @@ interactions:
     uri: https://search54ec1df4.search.windows.net/datasources('sample-datasource')?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search54ec1df4.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D96BF5A2FFE0FF\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null,"identity":null}'
+      string: '{"@odata.context":"https://search54ec1df4.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D96C113D930248\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null,"identity":null}'
     headers:
       cache-control: no-cache
       content-length: '375'
       content-type: application/json; odata.metadata=minimal
-      date: Mon, 30 Aug 2021 20:34:59 GMT
+      date: Mon, 30 Aug 2021 23:52:35 GMT
       elapsed-time: '9'
-      etag: W/"0x8D96BF5A2FFE0FF"
+      etag: W/"0x8D96C113D930248"
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: bef1def9-09d1-11ec-847b-74c63bed1137
+      request-id: 59ad2531-09ed-11ec-8a91-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:

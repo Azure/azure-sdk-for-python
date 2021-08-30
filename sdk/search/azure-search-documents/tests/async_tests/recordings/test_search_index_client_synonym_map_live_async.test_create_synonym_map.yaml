@@ -15,21 +15,21 @@ interactions:
     uri: https://search23141d6a.search.windows.net/synonymmaps?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search23141d6a.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D96BF65E6C61D9\"","name":"test-syn-map","format":"solr","synonyms":"USA,
+      string: '{"@odata.context":"https://search23141d6a.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D96C08634328E0\"","name":"test-syn-map","format":"solr","synonyms":"USA,
         United States, United States of America\nWashington, Wash. => WA","encryptionKey":null}'
     headers:
       cache-control: no-cache
       content-length: '272'
       content-type: application/json; odata.metadata=minimal
-      date: Mon, 30 Aug 2021 20:40:13 GMT
-      elapsed-time: '29'
-      etag: W/"0x8D96BF65E6C61D9"
+      date: Mon, 30 Aug 2021 22:49:13 GMT
+      elapsed-time: '34'
+      etag: W/"0x8D96C08634328E0"
       expires: '-1'
       location: https://search23141d6a.search.windows.net/synonymmaps('test-syn-map')?api-version=2021-04-30-Preview
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 7a410bad-09d2-11ec-8251-74c63bed1137
+      request-id: 7f318a84-09e4-11ec-b3ff-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 201
@@ -46,19 +46,19 @@ interactions:
     uri: https://search23141d6a.search.windows.net/synonymmaps?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search23141d6a.search.windows.net/$metadata#synonymmaps","value":[{"@odata.etag":"\"0x8D96BF65E6C61D9\"","name":"test-syn-map","format":"solr","synonyms":"USA,
+      string: '{"@odata.context":"https://search23141d6a.search.windows.net/$metadata#synonymmaps","value":[{"@odata.etag":"\"0x8D96C08634328E0\"","name":"test-syn-map","format":"solr","synonyms":"USA,
         United States, United States of America\nWashington, Wash. => WA","encryptionKey":null}]}'
     headers:
       cache-control: no-cache
-      content-length: '337'
+      content-length: '336'
       content-type: application/json; odata.metadata=minimal
-      date: Mon, 30 Aug 2021 20:40:13 GMT
-      elapsed-time: '15'
+      date: Mon, 30 Aug 2021 22:49:13 GMT
+      elapsed-time: '11'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 7a5e41fd-09d2-11ec-a800-74c63bed1137
+      request-id: 7f4f7d30-09e4-11ec-8022-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
