@@ -1,5 +1,41 @@
 # Release History
 
+## 19.1.0 (2021-08-30)
+
+**Features**
+
+  - Model ApplicationGatewayRequestRoutingRule has a new parameter load_distribution_policy
+  - Model VnetRoute has a new parameter bgp_connections
+  - Model ServiceTagInformation has a new parameter service_tag_change_number
+  - Model FirewallPolicy has a new parameter sql
+  - Model FirewallPolicy has a new parameter explicit_proxy_settings
+  - Model PrivateEndpoint has a new parameter custom_network_interface_name
+  - Model PrivateEndpoint has a new parameter application_security_groups
+  - Model PrivateEndpoint has a new parameter ip_configurations
+  - Model ServiceEndpointPolicyDefinition has a new parameter type
+  - Model VpnGateway has a new parameter enable_bgp_route_translation_for_nat
+  - Model ApplicationGatewayPathRule has a new parameter load_distribution_policy
+  - Model DscpConfiguration has a new parameter qos_definition_collection
+  - Model NetworkVirtualAppliance has a new parameter ssh_public_key
+  - Model InboundNatRule has a new parameter frontend_port_range_end
+  - Model InboundNatRule has a new parameter frontend_port_range_start
+  - Model InboundNatRule has a new parameter backend_address_pool
+  - Model VirtualHub has a new parameter kind
+  - Model BgpConnection has a new parameter hub_virtual_network_connection
+  - Model BastionHost has a new parameter scale_units
+  - Model BastionHost has a new parameter enable_shareable_link
+  - Model BastionHost has a new parameter disable_copy_paste
+  - Model BastionHost has a new parameter enable_ip_connect
+  - Model BastionHost has a new parameter enable_tunneling
+  - Model BastionHost has a new parameter enable_file_copy
+  - Model ApplicationGateway has a new parameter load_distribution_policies
+  - Model ApplicationGateway has a new parameter global_configuration
+  - Model ServiceEndpointPolicy has a new parameter contextual_service_endpoint_policies
+  - Model ServiceEndpointPolicy has a new parameter service_alias
+  - Model ApplicationGatewayUrlPathMap has a new parameter default_load_distribution_policy
+  - Added operation BastionHostsOperations.begin_update_tags
+  - Added operation group ServiceTagInformationOperations
+
 ## 19.0.0 (2021-05-14)
 
 **Features**
