@@ -13,8 +13,8 @@ from azure.cosmos.partition_key import PartitionKey
 import config
 import heroes
 
-endpoint = ''
-key = ''
+endpoint = 'https://simonmoreno-sql.documents.azure.com:443/'
+key = 'Z8HFr11W7ci3wqxs8RvqtzP2IyA9RZw3M11g0LR3jAFe3V1ijJ3BPas6My8pusXx6bPQO89MMxripXvcZDrJkg=='
 
 def creation():
 
@@ -127,5 +127,13 @@ async def async_read_test():
 	# container = db.get_container_client(id="AsyncContainer")
 	# print(container.read())
 
+async def with_read_test():
+	async with AsyncClient(endpoint, key) as client:
+		print(client)
+		db = client.get_database_client(db_name)
+		if db: print(db)
+		x = await db.read()
+		print(x)
 
-asyncio.run(async_read_test())
+# asyncio.run(async_read_test())
+asyncio.run(with_read_test())

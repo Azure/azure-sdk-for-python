@@ -59,7 +59,7 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
     # Every request tries to perform a refresh
     client_timeout = kwargs.get('timeout')
     start_time = time.time()
-    global_endpoint_manager.refresh_endpoint_list(None, **kwargs)
+    await global_endpoint_manager.refresh_endpoint_list(None, **kwargs)
     if client_timeout is not None:
         kwargs['timeout'] = client_timeout - (time.time() - start_time)
         if kwargs['timeout'] <= 0:

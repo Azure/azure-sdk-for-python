@@ -32,7 +32,6 @@ import asyncio
 from urllib3.util.retry import Retry
 from azure.core.async_paging import AsyncItemPaged
 from azure.core import AsyncPipelineClient
-from azure.core import PipelineClient
 from azure.core.exceptions import raise_with_traceback  # type: ignore
 from azure.core.pipeline.policies import (
     AsyncHTTPPolicy,
@@ -53,9 +52,7 @@ from .. import http_constants
 from .. import _query_iterable as query_iterable
 from .. import _runtime_constants as runtime_constants
 from .. import _request_object
-from .. import _synchronized_request as synchronized_request
 from . import _asynchronous_request as asynchronous_request
-from .. import _global_endpoint_manager as global_endpoint_manager
 from . import _global_endpoint_manager_async as global_endpoint_manager_async
 from .._routing import routing_map_provider
 from ._retry_utility import ConnectionRetryPolicy
@@ -157,7 +154,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             self.session = None  # type: ignore
 
         self._useMultipleWriteLocations = False
-        self._global_endpoint_manager = global_endpoint_manager._GlobalEndpointManager(self)
+        self._global_endpoint_manager = global_endpoint_manager_async._GlobalEndpointManager(self)
 
         retry_policy = None
         if isinstance(self.connection_policy.ConnectionRetryConfiguration, AsyncHTTPPolicy):
@@ -213,6 +210,51 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         if not 'database_account' in self._setup_kwargs:
             self._setup_kwargs['database_account'] = await self._global_endpoint_manager._GetDatabaseAccount(**self._setup_kwargs)
             await self._global_endpoint_manager.force_refresh(self._setup_kwargs['database_account'])
+
+    async def GetDatabaseAccount(self, url_connection=None, **kwargs):
+        """Gets database account info.
+
+        :return:
+            The Database Account.
+        :rtype:
+            documents.DatabaseAccount
+
+        """
+        if url_connection is None:
+            url_connection = self.url_connection
+
+        initial_headers = dict(self.default_headers)
+        headers = base.GetHeaders(self, initial_headers, "get", "", "", "", {})  # path  # id  # type
+
+        request_params = _request_object.RequestObject("databaseaccount", documents._OperationType.Read, url_connection)
+        result, self.last_response_headers = await self.__Get("", request_params, headers, **kwargs)
+        database_account = documents.DatabaseAccount()
+        database_account.DatabasesLink = "/dbs/"
+        database_account.MediaLink = "/media/"
+        if http_constants.HttpHeaders.MaxMediaStorageUsageInMB in self.last_response_headers:
+            database_account.MaxMediaStorageUsageInMB = self.last_response_headers[
+                http_constants.HttpHeaders.MaxMediaStorageUsageInMB
+            ]
+        if http_constants.HttpHeaders.CurrentMediaStorageUsageInMB in self.last_response_headers:
+            database_account.CurrentMediaStorageUsageInMB = self.last_response_headers[
+                http_constants.HttpHeaders.CurrentMediaStorageUsageInMB
+            ]
+        database_account.ConsistencyPolicy = result.get(constants._Constants.UserConsistencyPolicy)
+
+        # WritableLocations and ReadableLocations fields will be available only for geo-replicated database accounts
+        if constants._Constants.WritableLocations in result:
+            database_account._WritableLocations = result[constants._Constants.WritableLocations]
+        if constants._Constants.ReadableLocations in result:
+            database_account._ReadableLocations = result[constants._Constants.ReadableLocations]
+        if constants._Constants.EnableMultipleWritableLocations in result:
+            database_account._EnableMultipleWritableLocations = result[
+                constants._Constants.EnableMultipleWritableLocations
+            ]
+
+        self._useMultipleWriteLocations = (
+            self.connection_policy.UseMultipleWriteLocations and database_account._EnableMultipleWritableLocations
+        )
+        return database_account
 
     async def ReadDatabase(self, database_link, options=None, **kwargs):
         """Reads a database.
