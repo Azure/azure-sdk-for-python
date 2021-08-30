@@ -176,6 +176,7 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
                 self._running_dispatcher.clear()
                 self._last_activity_timestamp = None
                 return
+            time.sleep(self._sleep_time)  # save cpu cycles if there's currently no task in self._renew_tasks
 
     def _auto_lock_renew_task(
         self,

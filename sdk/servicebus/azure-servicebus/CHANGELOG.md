@@ -11,6 +11,7 @@
 ### Other Changes
 
 - Improved memory usage of `ServiceBusClient` by automatically de-registering spawned `ServiceBusSender` and `ServiceBusReceiver` that are closed.
+- Reduced CPU load of `azure.servicebus.AutoLockRenewer` during lock renewal.
 
 ## 7.3.2 (2021-08-10)
 
