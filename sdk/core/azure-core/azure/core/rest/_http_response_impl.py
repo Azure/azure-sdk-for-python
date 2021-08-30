@@ -62,18 +62,28 @@ class _HttpResponseBaseImpl(_HttpResponseBase):
     @property
     def request(self):
         # type: (...) -> _HttpRequest
+        """The request that resulted in this response.
+
+        :rtype: ~azure.core.rest.HttpRequest
+        """
         return self._request
 
     @property
     def url(self):
         # type: (...) -> str
-        """Returns the URL that resulted in this response"""
+        """The URL that resulted in this response.
+
+        :rtype: str
+        """
         return self.request.url
 
     @property
     def is_closed(self):
         # type: (...) -> bool
-        """Whether the network connection has been closed yet"""
+        """Whether the network connection has been closed yet.
+
+        :rtype: bool
+        """
         return self._is_closed
 
     @property

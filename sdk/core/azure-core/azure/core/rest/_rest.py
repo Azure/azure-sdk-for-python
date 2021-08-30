@@ -194,43 +194,64 @@ class _HttpResponseBase(ABC):
     @abc.abstractmethod
     def request(self):
         # type: (...) -> HttpRequest
-        """The request that resulted in this response."""
+        """The request that resulted in this response.
+
+        :rtype: ~azure.core.rest.HttpRequest
+        """
 
     @property
     @abc.abstractmethod
     def status_code(self):
         # type: (...) -> int
-        """The status code of this response"""
+        """The status code of this response.
+
+        :rtype: int
+        """
 
     @property
     @abc.abstractmethod
     def headers(self):
         # type: (...) -> Optional[MutableMapping[str, str]]
-        """The response headers"""
+        """The response headers.
+
+        :rtype: MutableMapping[str, str]
+        """
 
     @property
     @abc.abstractmethod
     def reason(self):
         # type: (...) -> str
-        """The reason phrase for this response"""
+        """The reason phrase for this response.
+
+        :rtype: str
+        """
 
     @property
     @abc.abstractmethod
     def content_type(self):
         # type: (...) -> str
-        """The content type of the response"""
+        """The content type of the response.
+
+        :rtype: str
+        """
 
     @property
     @abc.abstractmethod
     def is_closed(self):
         # type: (...) -> bool
-        """Whether the network connection has been closed yet"""
+        """Whether the network connection has been closed yet.
+
+        :rtype: bool
+        """
 
     @property
     @abc.abstractmethod
     def is_stream_consumed(self):
         # type: (...) -> bool
-        """Whether the stream has been fully consumed"""
+        """Whether the stream has been fully consumed.
+
+        :rtype: bool
+        """
 
     @property
     @abc.abstractmethod
@@ -247,22 +268,29 @@ class _HttpResponseBase(ABC):
     @encoding.setter
     def encoding(self, value):
         # type: (str) -> None
-        """Sets the response encoding"""
+        """Sets the response encoding.
+
+        :rtype: None
+        """
 
     @property
     @abc.abstractmethod
     def url(self):
         # type: (...) -> str
-        """Returns the URL that resulted in this response"""
+        """The URL that resulted in this response.
+
+        :rtype: str
+        """
 
     @abc.abstractmethod
     def text(self, encoding=None):
         # type: (Optional[str]) -> str
-        """Returns the response body as a string
+        """Returns the response body as a string.
 
         :param optional[str] encoding: The encoding you want to decode the text with. Can
          also be set independently through our encoding property
         :return: The response's content decoded as a string.
+        :rtype: str
         """
 
     @abc.abstractmethod
@@ -281,13 +309,19 @@ class _HttpResponseBase(ABC):
         """Raises an HttpResponseError if the response has an error status code.
 
         If response is good, does nothing.
+
+        :rtype: None
+        :raises ~azure.core.HttpResponseError if the object has an error status code.:
         """
 
     @property
     @abc.abstractmethod
     def content(self):
         # type: (...) -> bytes
-        """Return the response's content in bytes."""
+        """Return the response's content in bytes.
+
+        :rtype: bytes
+        """
 
 
 class HttpResponse(_HttpResponseBase):
@@ -333,7 +367,7 @@ class HttpResponse(_HttpResponseBase):
     @abc.abstractmethod
     def iter_raw(self):
         # type: () -> Iterator[bytes]
-        """Iterates over the response's bytes. Will not decompress in the process
+        """Iterates over the response's bytes. Will not decompress in the process.
 
         :return: An iterator of bytes from the response
         :rtype: Iterator[str]
@@ -342,7 +376,7 @@ class HttpResponse(_HttpResponseBase):
     @abc.abstractmethod
     def iter_bytes(self):
         # type: () -> Iterator[bytes]
-        """Iterates over the response's bytes. Will decompress in the process
+        """Iterates over the response's bytes. Will decompress in the process.
 
         :return: An iterator of bytes from the response
         :rtype: Iterator[str]
@@ -353,7 +387,7 @@ class HttpResponse(_HttpResponseBase):
         # type: () -> Iterator[str]
         """Iterates over the text in the response.
 
-        :return: An iterator of string. Each string chunk will be a text from the response
+        :return: An iterator of string. Each string chunk will be a text from the response.
         :rtype: Iterator[str]
         """
 
@@ -362,6 +396,6 @@ class HttpResponse(_HttpResponseBase):
         # type: () -> Iterator[str]
         """Iterates over the lines in the response.
 
-        :return: An iterator of string. Each string chunk will be a line from the response
+        :return: An iterator of string. Each string chunk will be a line from the response.
         :rtype: Iterator[str]
         """
