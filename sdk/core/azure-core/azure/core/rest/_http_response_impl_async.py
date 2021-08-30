@@ -46,6 +46,10 @@ class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse):
     :keyword Callable stream_download_generator: The stream download generator that we use to stream the response.
     """
 
+    async def _set_read_checks(self):
+        self._is_stream_consumed = True
+        await self.close()
+
     async def read(self) -> bytes:
         """Read the response's bytes into memory.
 
@@ -57,7 +61,7 @@ class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse):
             async for part in self.iter_bytes():
                 parts.append(part)
             self._content = b"".join(parts)
-        self._is_stream_consumed = True
+        await self._set_read_checks()
         return self._content
 
     async def iter_raw(self) -> AsyncIterator[bytes]:
