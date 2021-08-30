@@ -50,7 +50,7 @@ class AsyncDocumentTranslationLROPoller(AsyncLROPoller[PollingReturnType]):
         return TranslationStatus(id=self._polling_method._get_id_from_headers())  # type: ignore # pylint: disable=protected-access
 
     @classmethod
-    def from_continuation_token(
+    def from_continuation_token(  # type: ignore
         cls,
         polling_method: "AsyncDocumentTranslationLROPollingMethod",
         continuation_token: str,
@@ -63,7 +63,7 @@ class AsyncDocumentTranslationLROPoller(AsyncLROPoller[PollingReturnType]):
             deserialization_callback,
         ) = polling_method.from_continuation_token(continuation_token, **kwargs)
 
-        return cls(client, initial_response, deserialization_callback, polling_method)
+        return cls(client, initial_response, deserialization_callback, polling_method)  # type: ignore
 
 
 class AsyncDocumentTranslationLROPollingMethod(AsyncLROBasePolling):
@@ -105,7 +105,7 @@ class AsyncDocumentTranslationLROPollingMethod(AsyncLROBasePolling):
             return self._current_body.id
         return self._get_id_from_headers()
 
-    def from_continuation_token(self, continuation_token: str, **kwargs: Any) -> Tuple:
+    def from_continuation_token(self, continuation_token: str, **kwargs: Any) -> Tuple:  # type: ignore
         try:
             client = kwargs["client"]
         except KeyError:

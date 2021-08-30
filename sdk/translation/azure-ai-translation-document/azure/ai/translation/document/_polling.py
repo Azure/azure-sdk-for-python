@@ -70,7 +70,7 @@ class DocumentTranslationLROPoller(LROPoller):
         return TranslationStatus(id=self._polling_method._get_id_from_headers())  # type: ignore # pylint: disable=protected-access
 
     @classmethod
-    def from_continuation_token(cls, polling_method, continuation_token, **kwargs):
+    def from_continuation_token(cls, polling_method, continuation_token, **kwargs):  # type: ignore
         # type: (DocumentTranslationLROPollingMethod, str, **Any) -> DocumentTranslationLROPoller
 
         (
@@ -124,7 +124,7 @@ class DocumentTranslationLROPollingMethod(LROBasePolling):
             return self._current_body.id
         return self._get_id_from_headers()
 
-    def from_continuation_token(self, continuation_token, **kwargs):
+    def from_continuation_token(self, continuation_token, **kwargs):  # type: ignore
         # type: (str, Any) -> Tuple
         try:
             client = kwargs["client"]
