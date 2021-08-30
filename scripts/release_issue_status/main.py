@@ -205,7 +205,7 @@ def main():
             print("1111111111--: ", item.author_latest_comment)
         if item.status == 'release':
             item.bot_advice = 'better to release asap.'
-        elif item.author_latest_comment and not item.author_latest_comment in _PYTHON_SDK_ADMINISTRATORS:
+        elif (item.author_latest_comment) and (not item.author_latest_comment in _PYTHON_SDK_ADMINISTRATORS):
             item.bot_advice = 'new comment for author.'
         elif item.comment_num == 0 and 'Python' in item.labels:
             item.bot_advice = 'new issue and better to confirm quickly.'
