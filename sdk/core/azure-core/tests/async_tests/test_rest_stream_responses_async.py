@@ -66,25 +66,25 @@ async def test_iter_bytes(client):
         assert response.is_closed
         assert raw == b"Hello, world!"
 
-@pytest.mark.asyncio
-async def test_iter_text(client):
-    request = HttpRequest("GET", "/basic/string")
+# @pytest.mark.asyncio
+# async def test_iter_text(client):
+#     request = HttpRequest("GET", "/basic/string")
 
-    async with client.send_request(request, stream=True) as response:
-        content = ""
-        async for part in response.iter_text():
-            content += part
-        assert content == "Hello, world!"
+#     async with client.send_request(request, stream=True) as response:
+#         content = ""
+#         async for part in response.iter_text():
+#             content += part
+#         assert content == "Hello, world!"
 
-@pytest.mark.asyncio
-async def test_iter_lines(client):
-    request = HttpRequest("GET", "/basic/lines")
+# @pytest.mark.asyncio
+# async def test_iter_lines(client):
+#     request = HttpRequest("GET", "/basic/lines")
 
-    async with client.send_request(request, stream=True) as response:
-        content = []
-        async for line in response.iter_lines():
-            content.append(line)
-        assert content == ["Hello,\n", "world!"]
+#     async with client.send_request(request, stream=True) as response:
+#         content = []
+#         async for line in response.iter_lines():
+#             content.append(line)
+#         assert content == ["Hello,\n", "world!"]
 
 
 @pytest.mark.asyncio
@@ -161,10 +161,10 @@ async def test_iter_read_back_and_forth(client):
     # the reason why the code flow is like this, is because the 'iter_x' functions don't
     # actually read the contents into the response, the output them. Once they're yielded,
     # the stream is closed, so you have to catch the output when you iterate through it
-    request = HttpRequest("GET", "/basic/lines")
+    request = HttpRequest("GET", "/basic/string")
 
     async with client.send_request(request, stream=True) as response:
-        async for line in response.iter_lines():
+        async for line in response.iter_bytes():
             assert line
         with pytest.raises(ResponseNotReadError):
             response.text()
@@ -175,16 +175,16 @@ async def test_iter_read_back_and_forth(client):
 
 @pytest.mark.asyncio
 async def test_stream_with_return_pipeline_response(client):
-    request = HttpRequest("GET", "/basic/lines")
+    request = HttpRequest("GET", "/basic/string")
     pipeline_response = await client.send_request(request, stream=True, _return_pipeline_response=True)
     assert hasattr(pipeline_response, "http_request")
     assert hasattr(pipeline_response.http_request, "content")
     assert hasattr(pipeline_response, "http_response")
     assert hasattr(pipeline_response, "context")
     parts = []
-    async for line in pipeline_response.http_response.iter_lines():
+    async for line in pipeline_response.http_response.iter_bytes():
         parts.append(line)
-    assert parts == ['Hello,\n', 'world!']
+    assert parts == [b'Hello, world!']
     await client.close()
 
 @pytest.mark.asyncio
