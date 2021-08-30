@@ -8,17 +8,17 @@ from typing import TYPE_CHECKING
 from azure.core.exceptions import ClientAuthenticationError
 
 from .._internal import AadClient, AsyncContextManager
-from .._internal.decorators import log_get_token_async
+from .._internal.get_token_mixin import GetTokenMixin
 from ..._internal import validate_tenant_id
 
 if TYPE_CHECKING:
-    from typing import Any
+    from typing import Any, Optional
     from azure.core.credentials import AccessToken
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class OnBehalfOfCredential(AsyncContextManager):
+class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
     """Authenticates a service principal via the on-behalf-of flow.
 
     This flow is typically used by middle-tier services that authorize requests to other services with a delegated
@@ -44,6 +44,7 @@ class OnBehalfOfCredential(AsyncContextManager):
     def __init__(
         self, tenant_id: str, client_id: str, client_secret: str, user_assertion: str, **kwargs: "Any"
     ) -> None:
+        super().__init__()
         validate_tenant_id(tenant_id)
 
         # note AadClient handles "allow_multitenant_authentication", "authority", and any pipeline kwargs
@@ -58,37 +59,23 @@ class OnBehalfOfCredential(AsyncContextManager):
     async def close(self):
         await self._client.close()
 
-    @log_get_token_async
-    async def get_token(self, *scopes: "Any", **kwargs: "Any") -> "AccessToken":
-        """Asynchronously request an access token for `scopes`.
+    async def _acquire_token_silently(self, *scopes: str, **kwargs: "Any") -> "Optional[AccessToken]":
+        return self._client.get_cached_access_token(scopes, **kwargs)
 
-        This method is called automatically by Azure SDK clients.
+    async def _request_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
+        # Note we assume the cache has tokens for one user only. That's okay because each instance of this class is
+        # locked to a single user (assertion). This assumption will become unsafe if this class allows applications
+        # to change an instance's assertion.
+        refresh_tokens = self._client.get_cached_refresh_tokens(scopes)
+        if len(refresh_tokens) == 1:  # there should be only one
+            try:
+                refresh_token = refresh_tokens[0]["secret"]
+                return await self._client.obtain_token_by_refresh_token(scopes, refresh_token, **kwargs)
+            except ClientAuthenticationError as ex:
+                _LOGGER.debug("silent authentication failed: %s", ex, exc_info=True)
+            except (IndexError, KeyError, TypeError) as ex:
+                # this is purely defensive, hasn't been observed in practice
+                _LOGGER.debug("silent authentication failed due to malformed refresh token: %s", ex, exc_info=True)
 
-        :param str scopes: desired scope for the access token
-
-        :rtype: :class:`azure.core.credentials.AccessToken`
-        """
-        if not scopes:
-            raise ValueError('"get_token" requires at least one scope')
-
-        token = self._client.get_cached_access_token(scopes, **kwargs)
-        if not token:
-            # Note we assume the cache has tokens for one user only. That's okay because each instance of this class is
-            # locked to a single user (assertion). This assumption will become unsafe if this class allows applications
-            # to change an instance's assertion.
-            refresh_tokens = self._client.get_cached_refresh_tokens(scopes)
-            if len(refresh_tokens) == 1:  # there should be only one
-                try:
-                    refresh_token = refresh_tokens[0]["secret"]
-                    token = await self._client.obtain_token_by_refresh_token(scopes, refresh_token, **kwargs)
-                except ClientAuthenticationError as ex:
-                    _LOGGER.debug("silent authentication failed: %s", ex, exc_info=True)
-                except (IndexError, KeyError, TypeError) as ex:
-                    # this is purely defensive, hasn't been observed in practice
-                    _LOGGER.debug("silent authentication failed due to malformed refresh token: %s", ex, exc_info=True)
-
-            if not token:
-                # we don't have a refresh token, or silent auth failed: acquire a new token from the assertion
-                token = await self._client.obtain_token_on_behalf_of(scopes, self._secret, self._assertion, **kwargs)
-
-        return token
+        # we don't have a refresh token, or silent auth failed: acquire a new token from the assertion
+        return await self._client.obtain_token_on_behalf_of(scopes, self._secret, self._assertion, **kwargs)

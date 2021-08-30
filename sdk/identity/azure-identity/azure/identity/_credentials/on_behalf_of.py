@@ -10,14 +10,14 @@ import msal
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
-from .._internal.decorators import log_get_token
+from .._internal.get_token_mixin import GetTokenMixin
 from .._internal.msal_credentials import MsalCredential
 
 if TYPE_CHECKING:
-    from typing import Any
+    from typing import Any, Optional
 
 
-class OnBehalfOfCredential(MsalCredential):
+class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
     """Authenticates a service principal via the on-behalf-of flow.
 
     This flow is typically used by middle-tier services that authorize requests to other services with a delegated
@@ -45,20 +45,17 @@ class OnBehalfOfCredential(MsalCredential):
         super(OnBehalfOfCredential, self).__init__(client_id, client_secret, tenant_id=tenant_id, **kwargs)
         self._assertion = user_assertion
 
-    @log_get_token("OnBehalfOfCredential")
-    def get_token(self, *scopes, **kwargs):
+    def _acquire_token_silently(self, *scopes, **kwargs):
+        # type: (*str, **Any) -> Optional[AccessToken]
+        app = self._get_app(**kwargs)  # type: msal.ConfidentialClientApplication
+        request_time = int(time.time())
+        result = app.acquire_token_on_behalf_of(self._assertion, list(scopes), claims_challenge=kwargs.get("claims"))
+        if result and "access_token" in result and "expires_in" in result:
+            return AccessToken(result["access_token"], request_time + int(result["expires_in"]))
+        return None
+
+    def _request_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
-        """Request an access token for `scopes`.
-
-        This method is called automatically by Azure SDK clients.
-
-        :param str scopes: desired scope for the access token
-
-        :rtype: :class:`azure.core.credentials.AccessToken`
-        """
-        if not scopes:
-            raise ValueError('"get_token" requires at least one scope')
-
         app = self._get_app(**kwargs)  # type: msal.ConfidentialClientApplication
         request_time = int(time.time())
         result = app.acquire_token_on_behalf_of(self._assertion, list(scopes), claims_challenge=kwargs.get("claims"))
