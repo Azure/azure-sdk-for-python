@@ -29,11 +29,13 @@ from typing import (
     Any,
     AsyncIterable,
     AsyncIterator,
-    Iterable, Iterator,
+    Iterable,
+    Iterator,
     Optional,
     Union,
+    Tuple,
 )
-
+import collections.abc
 from ..utils._utils import _case_insensitive_dict
 
 from ._helpers import (
@@ -44,14 +46,26 @@ from ._helpers import (
     set_multipart_body,
     set_urlencoded_body,
     format_parameters,
+    _shared_set_content_body,
+    HttpRequestBackcompatMixin,
 )
-from ._backcompat import HttpRequestBackcompatMixin, HttpResponseBackcompatMixin
-from ._backcompat_async import AsyncHttpResponseBackcompatMixin
-from ._helpers_py3 import set_content_body
 
 ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
 
 ################################## CLASSES ######################################
+
+def set_content_body(content: ContentType) -> Tuple[
+    HeadersType, ContentType
+]:
+    headers, body = _shared_set_content_body(content)
+    if body is not None:
+        return headers, body
+    if isinstance(content, collections.abc.AsyncIterable):
+        return {}, content
+    raise TypeError(
+        "Unexpected type for 'content': '{}'. ".format(type(content)) +
+        "We expect 'content' to either be str, bytes, or an Iterable / AsyncIterable"
+    )
 
 class HttpRequest(HttpRequestBackcompatMixin):
     """**Provisional** object that represents an HTTP request.
@@ -415,9 +429,7 @@ class AsyncHttpResponse(_HttpResponseBase):
         :return: An async iterator of bytes from the response
         :rtype: AsyncIterator[bytes]
         """
-        raise NotImplementedError()
-        # getting around mypy behavior, see https://github.com/python/mypy/issues/10732
-        yield  # pylint: disable=unreachable
+        ...
 
     @abc.abstractmethod
     async def iter_bytes(self) -> AsyncIterator[bytes]:
@@ -426,9 +438,7 @@ class AsyncHttpResponse(_HttpResponseBase):
         :return: An async iterator of bytes from the response
         :rtype: AsyncIterator[bytes]
         """
-        raise NotImplementedError()
-        # getting around mypy behavior, see https://github.com/python/mypy/issues/10732
-        yield  # pylint: disable=unreachable
+        ...
 
     @abc.abstractmethod
     async def iter_text(self) -> AsyncIterator[str]:
@@ -437,9 +447,7 @@ class AsyncHttpResponse(_HttpResponseBase):
         :return: An async iterator of string. Each string chunk will be a text from the response
         :rtype: AsyncIterator[str]
         """
-        raise NotImplementedError()
-        # getting around mypy behavior, see https://github.com/python/mypy/issues/10732
-        yield  # pylint: disable=unreachable
+        ...
 
     @abc.abstractmethod
     async def iter_lines(self) -> AsyncIterator[str]:
@@ -448,9 +456,7 @@ class AsyncHttpResponse(_HttpResponseBase):
         :return: An async iterator of string. Each string chunk will be a line from the response
         :rtype: AsyncIterator[str]
         """
-        raise NotImplementedError()
-        # getting around mypy behavior, see https://github.com/python/mypy/issues/10732
-        yield  # pylint: disable=unreachable
+        ...
 
     @abc.abstractmethod
     async def close(self) -> None:

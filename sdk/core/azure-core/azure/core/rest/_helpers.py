@@ -24,8 +24,6 @@
 #
 # --------------------------------------------------------------------------
 import os
-import codecs
-import cgi
 from enum import Enum
 from json import dumps
 try:
@@ -37,15 +35,12 @@ from typing import (
     Union,
     Mapping,
     Sequence,
-    List,
     Tuple,
     IO,
     Any,
     Dict,
     Iterable,
-    Iterator,
     cast,
-    Callable,
 )
 import xml.etree.ElementTree as ET
 import six
@@ -54,6 +49,12 @@ try:
 except ImportError:
     from urllib.parse import urlparse
 from azure.core.serialization import AzureJSONEncoder
+from ..utils._pipeline_transport_rest_shared import (
+    _format_parameters_helper,
+    _pad_attr_name,
+    _prepare_multipart_body_helper,
+    _serialize_request,
+)
 
 ################################### TYPES SECTION #########################
 
@@ -84,10 +85,6 @@ class HttpVerbs(str, Enum):
     PATCH = "PATCH"
     DELETE = "DELETE"
     MERGE = "MERGE"
-
-########################### ERRORS SECTION #################################
-
-
 
 ########################### HELPER SECTION #################################
 
@@ -221,36 +218,209 @@ def format_parameters(url, params):
     url += query
     return url
 
-def parse_lines_from_text(text):
-    # largely taken from httpx's LineDecoder code
-    lines = []
-    last_chunk_of_text = ""
-    while text:
-        text_length = len(text)
-        for idx in range(text_length):
-            curr_char = text[idx]
-            next_char = None if idx == len(text) - 1 else text[idx + 1]
-            if curr_char == "\n":
-                lines.append(text[: idx + 1])
-                text = text[idx + 1: ]
-                break
-            if curr_char == "\r" and next_char == "\n":
-                # if it ends with \r\n, we only do \n
-                lines.append(text[:idx] + "\n")
-                text = text[idx + 2:]
-                break
-            if curr_char == "\r" and next_char is not None:
-                # if it's \r then a normal character, we switch \r to \n
-                lines.append(text[:idx] + "\n")
-                text = text[idx + 1:]
-                break
-            if next_char is None:
-                last_chunk_of_text += text
-                text = ""
-                break
-    if last_chunk_of_text.endswith("\r"):
-        # if ends with \r, we switch \r to \n
-        lines.append(last_chunk_of_text[:-1] + "\n")
-    elif last_chunk_of_text:
-        lines.append(last_chunk_of_text)
-    return lines
+
+class HttpRequestBackcompatMixin(object):
+
+    def __getattr__(self, attr):
+        backcompat_attrs = [
+            "files",
+            "data",
+            "multipart_mixed_info",
+            "query",
+            "body",
+            "format_parameters",
+            "set_streamed_data_body",
+            "set_text_body",
+            "set_xml_body",
+            "set_json_body",
+            "set_formdata_body",
+            "set_bytes_body",
+            "set_multipart_mixed",
+            "prepare_multipart_body",
+            "serialize",
+        ]
+        attr = _pad_attr_name(attr, backcompat_attrs)
+        return self.__getattribute__(attr)
+
+    def __setattr__(self, attr, value):
+        backcompat_attrs = [
+            "multipart_mixed_info",
+            "files",
+            "data",
+            "body",
+        ]
+        attr = _pad_attr_name(attr, backcompat_attrs)
+        super(HttpRequestBackcompatMixin, self).__setattr__(attr, value)
+
+    @property
+    def _multipart_mixed_info(self):
+        """DEPRECATED: Information used to make multipart mixed requests.
+
+        This is deprecated and will be removed in a later release.
+        """
+        try:
+            return self.__multipart_mixed_info
+        except AttributeError:
+            return None
+
+    @_multipart_mixed_info.setter
+    def _multipart_mixed_info(self, val):
+        """DEPRECATED: Set information to make multipart mixed requests.
+
+        This is deprecated and will be removed in a later release.
+        """
+        self.__multipart_mixed_info = val
+
+    @property
+    def _query(self):
+        """DEPRECATED: Query parameters passed in by user
+
+        This is deprecated and will be removed in a later release.
+        """
+        query = urlparse(self.url).query
+        if query:
+            return {p[0]: p[-1] for p in [p.partition("=") for p in query.split("&")]}
+        return {}
+
+    @property
+    def _body(self):
+        """DEPRECATED: Body of the request. You should use the `content` property instead
+
+        This is deprecated and will be removed in a later release.
+        """
+        return self._data
+
+    @_body.setter
+    def _body(self, val):
+        """DEPRECATED: Set the body of the request
+
+        This is deprecated and will be removed in a later release.
+        """
+        self._data = val
+
+    @staticmethod
+    def _format_data(data):
+        from ..pipeline.transport._base import HttpRequest as PipelineTransportHttpRequest
+        return PipelineTransportHttpRequest._format_data(data)  # pylint: disable=protected-access
+
+    def _format_parameters(self, params):
+        """DEPRECATED: Format the query parameters
+
+        This is deprecated and will be removed in a later release.
+        You should pass the query parameters through the kwarg `params`
+        instead.
+        """
+        return _format_parameters_helper(self, params)
+
+    def _set_streamed_data_body(self, data):
+        """DEPRECATED: Set the streamed request body.
+
+        This is deprecated and will be removed in a later release.
+        You should pass your stream content through the `content` kwarg instead
+        """
+        if not isinstance(data, binary_type) and not any(
+            hasattr(data, attr) for attr in ["read", "__iter__", "__aiter__"]
+        ):
+            raise TypeError(
+                "A streamable data source must be an open file-like object or iterable."
+            )
+        self._data = data
+        self._files = None
+
+    def _set_text_body(self, data):
+        """DEPRECATED: Set the text body
+
+        This is deprecated and will be removed in a later release.
+        You should pass your text content through the `content` kwarg instead
+        """
+        if data is None:
+            self._data = None
+        else:
+            self._data = data
+            self.headers["Content-Length"] = str(len(self._data))
+        self._files = None
+
+    def _set_xml_body(self, data):
+        """DEPRECATED: Set the xml body.
+
+        This is deprecated and will be removed in a later release.
+        You should pass your xml content through the `content` kwarg instead
+        """
+        if data is None:
+            self._data = None
+        else:
+            bytes_data = ET.tostring(data, encoding="utf8")
+            self._data = bytes_data.replace(b"encoding='utf8'", b"encoding='utf-8'")
+            self.headers["Content-Length"] = str(len(self._data))
+        self._files = None
+
+    def _set_json_body(self, data):
+        """DEPRECATED: Set the json request body.
+
+        This is deprecated and will be removed in a later release.
+        You should pass your json content through the `json` kwarg instead
+        """
+        if data is None:
+            self._data = None
+        else:
+            self._data = dumps(data)
+            self.headers["Content-Length"] = str(len(self._data))
+        self._files = None
+
+    def _set_formdata_body(self, data=None):
+        """DEPRECATED: Set the formrequest body.
+
+        This is deprecated and will be removed in a later release.
+        You should pass your stream content through the `files` kwarg instead
+        """
+        if data is None:
+            data = {}
+        content_type = self.headers.pop("Content-Type", None) if self.headers else None
+
+        if content_type and content_type.lower() == "application/x-www-form-urlencoded":
+            self._data = {f: d for f, d in data.items() if d is not None}
+            self._files = None
+        else:  # Assume "multipart/form-data"
+            self._files = {
+                f: self._format_data(d) for f, d in data.items() if d is not None
+            }
+            self._data = None
+
+    def _set_bytes_body(self, data):
+        """DEPRECATED: Set the bytes request body.
+
+        This is deprecated and will be removed in a later release.
+        You should pass your bytes content through the `content` kwarg instead
+        """
+        if data:
+            self.headers["Content-Length"] = str(len(data))
+        self._data = data
+        self._files = None
+
+    def _set_multipart_mixed(self, *requests, **kwargs):
+        """DEPRECATED: Set the multipart mixed info.
+
+        This is deprecated and will be removed in a later release.
+        """
+        self.multipart_mixed_info = (
+            requests,
+            kwargs.pop("policies", []),
+            kwargs.pop("boundary", None),
+            kwargs
+        )
+
+    def _prepare_multipart_body(self, content_index=0):
+        """DEPRECATED: Prepare your request body for multipart requests.
+
+        This is deprecated and will be removed in a later release.
+        """
+        return _prepare_multipart_body_helper(self, content_index)
+
+    def _serialize(self):
+        """DEPRECATED: Serialize this request using application/http spec.
+
+        This is deprecated and will be removed in a later release.
+
+        :rtype: bytes
+        """
+        return _serialize_request(self)

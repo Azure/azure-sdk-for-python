@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import pytest
+import abc
 ############################## LISTS USED TO PARAMETERIZE TESTS ##############################
 from azure.core.pipeline.transport import(
     HttpRequest as PipelineTransportHttpRequest,
@@ -12,7 +13,6 @@ from azure.core.pipeline.transport._base import RestHttpResponseImpl
 
 from azure.core.rest import (
     HttpRequest as RestHttpRequest,
-    HttpResponse as RestHttpResponse,
 )
 
 HTTP_REQUESTS = [PipelineTransportHttpRequest, RestHttpRequest]
@@ -24,7 +24,7 @@ try:
     from azure.core.pipeline.transport._base_async import RestAsyncHttpResponseImpl
     ASYNC_HTTP_RESPONSES = [PipelineTransportAsyncHttpResponse, RestAsyncHttpResponseImpl]
 except (SyntaxError, ImportError):
-    ASYNC_HTTP_RESPONSES = None
+    ASYNC_HTTP_RESPONSES = []
 
 try:
     from azure.core.pipeline.transport._requests_basic import (
@@ -33,7 +33,7 @@ try:
     )
     REQUESTS_TRANSPORT_RESPONSES = [PipelineTransportRequestsTransportResponse, RestRequestsTransportResponse]
 except (SyntaxError, ImportError):
-    REQUESTS_TRANSPORT_RESPONSES = None
+    REQUESTS_TRANSPORT_RESPONSES = []
 
 try:
     from azure.core.pipeline.transport._aiohttp import (
@@ -42,7 +42,7 @@ try:
     )
     AIOHTTP_TRANSPORT_RESPONSES = [PipelineTransportAioHttpTransportResponse, RestAioHttpTransportResponse]
 except (SyntaxError, ImportError):
-    AIOHTTP_TRANSPORT_RESPONSES = None
+    AIOHTTP_TRANSPORT_RESPONSES = []
 
 
 try:
@@ -52,7 +52,7 @@ try:
     )
     ASYNCIO_REQUESTS_TRANSPORT_RESPONSES = [PipelineTransportAsyncioRequestsTransportResponse, RestAsyncioRequestsTransportResponse]
 except (SyntaxError, ImportError):
-    ASYNCIO_REQUESTS_TRANSPORT_RESPONSES = None
+    ASYNCIO_REQUESTS_TRANSPORT_RESPONSES = []
 
 def pipeline_transport_and_rest_product(*args):
     # add pipeline transport requests / responses
@@ -99,7 +99,22 @@ def create_http_response(http_response, *args, **kwargs):
             block_size = args[2]
         else:
             block_size = None
-        response = http_response(request=args[0], internal_response=args[1], block_size=block_size, **kwargs)
+        if type(http_response) == abc.ABCMeta:
+            # this means it's either RestHttpResponseImpl or AsyncHttpResponseImpl
+            # so we need to pass in more kwargs, i.e., status_code etc.
+            kwargs.update({
+                "status_code": 200,
+                "reason": "OK",
+                "content_type": "application/json",
+                "headers": {},
+                "stream_download_generator": None,
+            })
+        response = http_response(
+            request=args[0],
+            internal_response=args[1],
+            block_size=block_size,
+            **kwargs
+        )
         return response
     return http_response(*args, **kwargs)
 

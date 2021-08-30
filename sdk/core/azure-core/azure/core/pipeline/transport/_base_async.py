@@ -32,16 +32,16 @@ from typing import AsyncIterator as AsyncIteratorType, TypeVar, Generic, Any, Ca
 from ._base import (
     _HttpResponseBase,
     _HttpClientTransportResponse,
-    _RestHttpClientTransportResponse,
+    _RestHttpClientTransportResponseBase,
     PipelineContext,
     PipelineRequest,
     PipelineResponse,
     _RestHttpResponseBaseImpl,
+    _RestHttpResponseBackcompatMixinBase,
 )
 from .._tools_async import await_result as _await_result
+from ...utils._pipeline_transport_rest_shared import _pad_attr_name
 from ...rest import AsyncHttpResponse as RestAsyncHttpResponse
-from ...rest._backcompat_async import AsyncHttpResponseBackcompatMixin as _RestAsyncHttpResponseBackcompatMixin
-from ...exceptions import StreamConsumedError, StreamClosedError
 try:
     from contextlib import AbstractAsyncContextManager  # type: ignore
 except ImportError:  # Python <= 3.7
@@ -189,6 +189,27 @@ class AsyncHttpTransport(
 
 ####################### REST #######################
 
+class _RestAsyncHttpResponseBackcompatMixin(_RestHttpResponseBackcompatMixinBase):
+    def __getattr__(self, attr):
+        backcompat_attrs = ["parts"]
+        attr = _pad_attr_name(attr, backcompat_attrs)
+        return super().__getattr__(attr)
+
+    def parts(self):
+        """DEPRECATED: Assuming the content-type is multipart/mixed, will return the parts as an async iterator.
+
+        This is deprecated and will be removed in a later release.
+
+        :rtype: AsyncIterator
+        :raises ValueError: If the content is not multipart/mixed
+        """
+        if not self.content_type or not self.content_type.startswith("multipart/mixed"):
+            raise ValueError(
+                "You can't get parts if the response is not multipart/mixed"
+            )
+
+        return _PartGenerator(self)
+
 class RestAsyncHttpResponseImpl(
     RestAsyncHttpResponse, _RestHttpResponseBaseImpl, _RestAsyncHttpResponseBackcompatMixin
 ):
@@ -196,21 +217,6 @@ class RestAsyncHttpResponseImpl(
 
     Helper impl for creating our transport responses
     """
-
-    async def _iter_bytes_helper(
-        self,
-        stream_download_generator: Callable,
-        content: Optional[bytes],
-    ) -> AsyncIteratorType[bytes]:
-        if content:
-            for i in range(0, len(content), self._block_size):
-                yield content[i : i + self._block_size]
-        else:
-            async for part in self._stream_download_helper(
-                decompress=True,
-                stream_download_generator=stream_download_generator,
-            ):
-                yield part
 
     async def read(self) -> bytes:
         """Read the response's bytes into memory.
@@ -254,7 +260,9 @@ class RestAsyncHttpResponseImpl(
         :rtype: AsyncIterator[bytes]
         """
         self._stream_download_check()
-        async for part in self.stream_download(pipeline=None, decompress=False):
+        async for part in self._stream_download_generator(
+            response=self, pipeline=None, decompress=False
+        ):
             yield part
         await self.close()
 
@@ -269,7 +277,8 @@ class RestAsyncHttpResponseImpl(
             for i in range(0, len(self.content), self._block_size):
                 yield self.content[i : i + self._block_size]
         else:
-            async for part in self.stream_download(
+            async for part in self._stream_download_generator(
+                response=self,
                 pipeline=None,
                 decompress=True
             ):
@@ -295,7 +304,7 @@ class RestAsyncHttpResponseImpl(
             self.status_code, self.reason, content_type_str
         )
 
-class RestAsyncHttpClientTransportResponse(_RestHttpClientTransportResponse, RestAsyncHttpResponseImpl):
+class RestAsyncHttpClientTransportResponse(_RestHttpClientTransportResponseBase, RestAsyncHttpResponseImpl):
     """Create a Rest HTTPResponse from an http.client response.
     """
 
@@ -309,4 +318,3 @@ class RestAsyncHttpClientTransportResponse(_RestHttpClientTransportResponse, Res
         if self._content is None:
             self._content = self._internal_response.read()
         return self._content
-

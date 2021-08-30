@@ -36,8 +36,8 @@ from ._helpers import (
     set_multipart_body,
     set_urlencoded_body,
     format_parameters,
+    HttpRequestBackcompatMixin,
 )
-from ._backcompat import HttpRequestBackcompatMixin, HttpResponseBackcompatMixin
 from ..exceptions import ResponseNotReadError
 if TYPE_CHECKING:
     from typing import (

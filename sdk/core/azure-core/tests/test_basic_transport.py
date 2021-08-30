@@ -28,7 +28,7 @@ from azure.core.pipeline import Pipeline
 from azure.core.exceptions import HttpResponseError
 import logging
 import pytest
-from utils import HTTP_REQUESTS, pipeline_transport_and_rest_product, create_http_response
+from utils import HTTP_REQUESTS, pipeline_transport_and_rest_product, create_http_response, is_rest_http_response
 
 class PipelineTransportMockResponse(PipelineTransportHttpResponse):
     def __init__(self, request, body, content_type):
@@ -49,6 +49,7 @@ class RestMockResponse(RestHttpResponseImpl):
             status_code=200,
             reason="OK",
             headers={},
+            stream_download_generator=None,
         )
         self._content = body
 
@@ -136,6 +137,8 @@ def test_http_client_response(port, http_request, http_response):
     r1 = conn.getresponse()
 
     response = create_http_response(http_response, request, r1)
+    if is_rest_http_response(response):
+        response.read()
 
     # Don't assume too much in those assert, since we reach a real server
     assert response.internal_response is r1

@@ -193,6 +193,13 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
             internal_response.close()
             raise
 
+class AsyncioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse): # type: ignore
+    """Asynchronous streaming of data from the response.
+    """
+    def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]: # type: ignore
+        """Generator for streaming request body data."""
+        return AsyncioStreamDownloadGenerator(pipeline, self, **kwargs) # type: ignore
+
 ##################### REST #####################
 
 class RestAsyncioRequestsTransportResponse(

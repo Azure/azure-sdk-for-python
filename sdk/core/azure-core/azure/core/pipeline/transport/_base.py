@@ -61,7 +61,7 @@ from typing import (
     Type
 )
 
-from six.moves.http_client import HTTPConnection, HTTPResponse as _HTTPResponse
+from six.moves.http_client import HTTPResponse as _HTTPResponse
 
 from azure.core.exceptions import HttpResponseError, ResponseNotReadError, StreamClosedError, StreamConsumedError
 from azure.core.pipeline import (
@@ -73,15 +73,10 @@ from azure.core.pipeline import (
 )
 from ...utils._utils import _case_insensitive_dict
 from ...utils._pipeline_transport_rest_shared import (
-    _decode_parts_helper,
-    _get_raw_parts_helper,
-    _prepare_multipart_body_helper,
     _format_parameters_helper,
-    _parts_helper,
-)
-from ...rest._backcompat import (
-    _HttpResponseBackcompatMixinBase as _RestHttpResponseBackcompatMixinBase,
-    HttpResponseBackcompatMixin as _RestHttpResponseBackcompatMixin
+    _pad_attr_name,
+    _prepare_multipart_body_helper,
+    _serialize_request,
 )
 try:
     from ...rest._rest_py3 import (
@@ -100,12 +95,18 @@ if TYPE_CHECKING:
     from ..policies import SansIOHTTPPolicy
     from collections.abc import MutableMapping
 
+try:
+    from email import message_from_bytes as message_parser
+except ImportError:  # 2.7
+    from email import message_from_string as message_parser  # type: ignore
+
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 PipelineType = TypeVar("PipelineType")
 
 _LOGGER = logging.getLogger(__name__)
 
+from ...pipeline._tools import await_result as _await_result
 
 def _format_url_section(template, **kwargs):
     """String format the template with the kwargs, auto-skip sections of the template that are NOT in the kwargs.
@@ -146,34 +147,82 @@ def _urljoin(base_url, stub_url):
     parsed = parsed._replace(path=parsed.path.rstrip("/") + "/" + stub_url)
     return parsed.geturl()
 
+def _decode_parts_helper(
+    http_response, message, http_response_type, requests, deserialize_response_callable
+):
+    responses = []
+    for index, raw_reponse in enumerate(message.get_payload()):
+        content_type = raw_reponse.get_content_type()
+        if content_type == "application/http":
+            responses.append(
+                deserialize_response_callable(
+                    raw_reponse.get_payload(decode=True),
+                    requests[index],
+                    http_response_type=http_response_type,
+                )
+            )
+        elif content_type == "multipart/mixed" and requests[index].multipart_mixed_info:
+            # The message batch contains one or more change sets
+            changeset_requests = requests[index].multipart_mixed_info[0]  # type: ignore
+            changeset_responses = http_response._decode_parts(  # pylint: disable=protected-access
+                raw_reponse,
+                http_response_type,
+                changeset_requests
+            )
+            responses.extend(changeset_responses)
+        else:
+            raise ValueError(
+                "Multipart doesn't support part other than application/http for now"
+            )
+    return responses
 
-class _HTTPSerializer(HTTPConnection, object):
-    """Hacking the stdlib HTTPConnection to serialize HTTP request as strings.
-    """
+def _get_raw_parts_helper(http_response, http_response_type, default_http_response_type):
+    if http_response_type is None:
+        http_response_type = default_http_response_type
 
-    def __init__(self, *args, **kwargs):
-        self.buffer = b""
-        kwargs.setdefault("host", "fakehost")
-        super(_HTTPSerializer, self).__init__(*args, **kwargs)
-
-    def putheader(self, header, *values):
-        if header in ["Host", "Accept-Encoding"]:
-            return
-        super(_HTTPSerializer, self).putheader(header, *values)
-
-    def send(self, data):
-        self.buffer += data
-
-
-def _serialize_request(http_request):
-    serializer = _HTTPSerializer()
-    serializer.request(
-        method=http_request.method,
-        url=http_request.url,
-        body=http_request.body,
-        headers=http_request.headers,
+    body_as_bytes = http_response.body()
+    # In order to use email.message parser, I need full HTTP bytes. Faking something to make the parser happy
+    http_body = (
+        b"Content-Type: "
+        + http_response.content_type.encode("ascii")
+        + b"\r\n\r\n"
+        + body_as_bytes
     )
-    return serializer.buffer
+    message = message_parser(http_body)  # type: Message
+    requests = http_response.request.multipart_mixed_info[0]  # type: List[HttpRequest]
+    return http_response._decode_parts(message, http_response_type, requests)  # pylint: disable=protected-access
+
+def _parts_helper(http_response):
+    if not http_response.content_type or not http_response.content_type.startswith("multipart/mixed"):
+        raise ValueError(
+            "You can't get parts if the response is not multipart/mixed"
+        )
+
+    responses = http_response._get_raw_parts()  # pylint: disable=protected-access
+    if http_response.request.multipart_mixed_info:
+        policies = http_response.request.multipart_mixed_info[1]  # type: List[SansIOHTTPPolicy]
+
+        # Apply on_response concurrently to all requests
+        import concurrent.futures
+
+        def parse_responses(response):
+            http_request = response.request
+            context = PipelineContext(None)
+            pipeline_request = PipelineRequest(http_request, context)
+            pipeline_response = PipelineResponse(
+                http_request, response, context=context
+            )
+
+            for policy in policies:
+                _await_result(policy.on_response, pipeline_request, pipeline_response)
+
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            # List comprehension to raise exceptions if happened
+            [  # pylint: disable=expression-not-assigned, unnecessary-comprehension
+                _ for _ in executor.map(parse_responses, responses)
+            ]
+
+    return responses
 
 class HttpTransport(
     AbstractContextManager, ABC, Generic[HTTPRequestType, HTTPResponseType]
@@ -848,9 +897,86 @@ def _lookup_encoding(encoding):
     except LookupError:
         return False
 
+class _RestHttpResponseBackcompatMixinBase(object):
+
+    def __getattr__(self, attr):
+        backcompat_attrs = [
+            "body",
+            "internal_response",
+            "block_size",
+            "stream_download",
+        ]
+        attr = _pad_attr_name(attr, backcompat_attrs)
+        return self.__getattribute__(attr)
+
+    def __setattr__(self, attr, value):
+        backcompat_attrs = [
+            "block_size",
+            "internal_response",
+            "request",
+            "status_code",
+            "headers",
+            "reason",
+            "content_type",
+            "stream_download",
+        ]
+        attr = _pad_attr_name(attr, backcompat_attrs)
+        super(_RestHttpResponseBackcompatMixinBase, self).__setattr__(attr, value)
+
+    def _body(self):
+        """DEPRECATED: Get the response body.
+
+        This is deprecated and will be removed in a later release.
+        You should get it through the `content` property instead
+        """
+        return self.content  # pylint: disable=no-member
+
+    def _decode_parts(self, message, http_response_type, requests):
+        def _deserialize_response(
+            http_response_as_bytes, http_request, http_response_type
+        ):
+            local_socket = BytesIOSocket(http_response_as_bytes)
+            response = _HTTPResponse(local_socket, method=http_request.method)
+            response.begin()
+            return http_response_type(request=http_request, internal_response=response)
+        return _decode_parts_helper(
+            self, message, http_response_type, requests, _deserialize_response
+        )
+
+    def _get_raw_parts(self, http_response_type=None):
+        return _get_raw_parts_helper(
+            self, http_response_type, RestHttpClientTransportResponse
+        )
+
+    def _stream_download(self, pipeline, **kwargs):
+        """DEPRECATED: Generator for streaming request body data.
+
+        This is deprecated and will be removed in a later release.
+        You should use `iter_bytes` or `iter_raw` instead.
+
+        :rtype: iterator[bytes]
+        """
+        return self._stream_download_generator(pipeline, self, **kwargs)
+
+class _RestHttpResponseBackcompatMixin(_RestHttpResponseBackcompatMixinBase):
+
+    def __getattr__(self, attr):
+        backcompat_attrs = ["parts"]
+        attr = _pad_attr_name(attr, backcompat_attrs)
+        return super(_RestHttpResponseBackcompatMixin, self).__getattr__(attr)
+
+    def parts(self):
+        """DEPRECATED: Assuming the content-type is multipart/mixed, will return the parts as an async iterator.
+
+        This is deprecated and will be removed in a later release.
+
+        :rtype: Iterator
+        :raises ValueError: If the content is not multipart/mixed
+        """
+        return _parts_helper(self)
+
 class _RestHttpResponseBaseImpl(
-    _RestHttpResponseBase,
-    _RestHttpResponseBackcompatMixinBase
+    _RestHttpResponseBase, _RestHttpResponseBackcompatMixin
 ):
 
     def __init__(self, **kwargs):
@@ -860,7 +986,7 @@ class _RestHttpResponseBaseImpl(
         self._internal_response = kwargs.pop("internal_response")
         self._is_closed = False
         self._is_stream_consumed = False
-        self._block_size = kwargs.pop("block_size") or 4096  # type: int
+        self._block_size = kwargs.get("block_size", None) or 4096  # type: int
         self._status_code = kwargs.pop("status_code")  # type: int
         self._reason = kwargs.pop("reason")  # type: str
         self._content_type = kwargs.pop("content_type")  # type: str
@@ -1066,7 +1192,7 @@ class _RestHttpResponseBaseImpl(
         self._is_stream_consumed = True  # pylint: disable=protected-access
 
 class RestHttpResponseImpl(
-    _RestHttpResponseBaseImpl, RestHttpResponse, _RestHttpResponseBackcompatMixinBase,
+    _RestHttpResponseBaseImpl, RestHttpResponse, _RestHttpResponseBackcompatMixinBase
 ):
     """HttpResponseImpl built on top of our HttpResponse protocol class.
 
@@ -1107,7 +1233,8 @@ class RestHttpResponseImpl(
             for i in range(0, len(self.content), chunk_size):
                 yield self.content[i : i + chunk_size]
         else:
-            for part in self.stream_download(
+            for part in self._stream_download_generator(
+                response=self,
                 pipeline=None,
                 decompress=True,
             ):
@@ -1121,7 +1248,9 @@ class RestHttpResponseImpl(
         :rtype: Iterator[str]
         """
         self._stream_download_check()
-        for part in self.stream_download(pipeline=None, decompress=False):
+        for part in self._stream_download_generator(
+            response=self, pipeline=None, decompress=False
+        ):
             yield part
         self.close()
 
@@ -1145,17 +1274,22 @@ class RestHttpResponseImpl(
         self._is_stream_consumed = True
         self.close()
 
-class _RestHttpClientTransportResponse(_RestHttpResponseBaseImpl):
+class _RestHttpClientTransportResponseBase(_RestHttpResponseBaseImpl):
 
     def __init__(self, **kwargs):
-        super(_RestHttpClientTransportResponse, self).__init__(**kwargs)
-        self._status_code = self._internal_response.status
-        self._headers = _case_insensitive_dict(self._internal_response.getheaders())
-        self._reason = self._internal_response.reason
-        self._content_type = self.headers.get("Content-Type")
-        self._content = None
+        internal_response = kwargs.pop("internal_response")
+        headers = _case_insensitive_dict(internal_response.getheaders())
+        super(_RestHttpClientTransportResponseBase, self).__init__(
+            internal_response=internal_response,
+            status_code=internal_response.status,
+            reason=internal_response.reason,
+            headers=headers,
+            content_type=headers.get("Content-Type"),
+            stream_download_generator=None,
+            **kwargs
+        )
 
-class RestHttpClientTransportResponse(_RestHttpClientTransportResponse, RestHttpResponseImpl):
+class RestHttpClientTransportResponse(_RestHttpClientTransportResponseBase, RestHttpResponseImpl):
     """Create a Rest HTTPResponse from an http.client response.
     """
 

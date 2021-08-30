@@ -30,15 +30,12 @@ from azure.core.exceptions import (
     map_error,
     ErrorMap,
 )
-from utils import is_rest_http_response, pipeline_transport_and_rest_product, HTTP_RESPONSES, HTTP_REQUESTS
+from utils import create_http_response, pipeline_transport_and_rest_product, HTTP_RESPONSES, HTTP_REQUESTS
 
 @pytest.mark.parametrize("http_request,http_response", pipeline_transport_and_rest_product(HTTP_REQUESTS, HTTP_RESPONSES))
 def test_error_map(http_request, http_response):
     request = http_request("GET", "")
-    if is_rest_http_response(http_response):
-        response = http_response(request=request, internal_response=None)
-    else:
-        response = http_response(request, None)
+    response = create_http_response(http_response, request, None)
     error_map = {
         404: ResourceNotFoundError
     }
@@ -48,10 +45,7 @@ def test_error_map(http_request, http_response):
 @pytest.mark.parametrize("http_request,http_response", pipeline_transport_and_rest_product(HTTP_REQUESTS, HTTP_RESPONSES))
 def test_error_map_no_default(http_request, http_response):
     request = http_request("GET", "")
-    if is_rest_http_response(http_response):
-        response = http_response(request=request, internal_response=None)
-    else:
-        response = http_response(request, None)
+    response = create_http_response(http_response, request, None)
     error_map = ErrorMap({
         404: ResourceNotFoundError
     })
@@ -61,10 +55,7 @@ def test_error_map_no_default(http_request, http_response):
 @pytest.mark.parametrize("http_request,http_response", pipeline_transport_and_rest_product(HTTP_REQUESTS, HTTP_RESPONSES))
 def test_error_map_with_default(http_request, http_response):
     request = http_request("GET", "")
-    if is_rest_http_response(http_response):
-        response = http_response(request=request, internal_response=None)
-    else:
-        response = http_response(request, None)
+    response = create_http_response(http_response, request, None)
     error_map = ErrorMap({
         404: ResourceNotFoundError
     }, default_error=ResourceExistsError)
@@ -74,10 +65,7 @@ def test_error_map_with_default(http_request, http_response):
 @pytest.mark.parametrize("http_request,http_response", pipeline_transport_and_rest_product(HTTP_REQUESTS, HTTP_RESPONSES))
 def test_only_default(http_request, http_response):
     request = http_request("GET", "")
-    if is_rest_http_response(http_response):
-        response = http_response(request=request, internal_response=None)
-    else:
-        response = http_response(request, None)
+    response = create_http_response(http_response, request, None)
     error_map = ErrorMap(default_error=ResourceExistsError)
     with pytest.raises(ResourceExistsError):
         map_error(401, response, error_map)
