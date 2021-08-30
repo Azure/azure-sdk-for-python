@@ -218,6 +218,9 @@ def get_authority(endpoint):
     if ".azurecr.us" in endpoint:
         logger.warning("US Gov Authority:")
         return AzureAuthorityHosts.AZURE_GOVERNMENT
+    if ".azurecr.de" in endpoint:
+        logger.warning("Germany Authority:")
+        return AzureAuthorityHosts.AZURE_GERMANY
     raise ValueError("Endpoint ({}) could not be understood".format(endpoint))
 
 
@@ -231,6 +234,9 @@ def get_audience(authority):
     if authority == AzureAuthorityHosts.AZURE_GOVERNMENT:
         logger.warning("US Gov scope")
         return ContainerRegistryAudience.ARM_GOVERNMENT_VALUE
+    if authority == AzureAuthorityHosts.AZURE_GERMANY:
+        logger.warning("Germany scope")
+        return ContainerRegistryAudience.ARM_GERMANY_VALUE
 
 def get_base_url(authority):
     if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
@@ -242,11 +248,14 @@ def get_base_url(authority):
     if authority == AzureAuthorityHosts.AZURE_GOVERNMENT:
         logger.warning("US Gov scope")
         return AZURE_US_GOV_CLOUD
+    if authority == AzureAuthorityHosts.AZURE_GERMANY:
+        logger.warning("Germany scope")
+        return AZURE_GERMAN_CLOUD
 
 
 
 from azure.identity import ClientSecretCredential
-from msrestazure.azure_cloud import AZURE_CHINA_CLOUD, AZURE_US_GOV_CLOUD, AZURE_PUBLIC_CLOUD
+from msrestazure.azure_cloud import AZURE_CHINA_CLOUD, AZURE_US_GOV_CLOUD, AZURE_PUBLIC_CLOUD, AZURE_GERMAN_CLOUD
 
 # Moving this out of testcase so the fixture and individual tests can use it
 def import_image(authority, repository, tags):
