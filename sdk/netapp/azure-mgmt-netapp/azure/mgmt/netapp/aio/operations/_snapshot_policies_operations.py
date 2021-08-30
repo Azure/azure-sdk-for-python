@@ -65,7 +65,7 @@ class SnapshotPoliciesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -130,7 +130,7 @@ class SnapshotPoliciesOperations:
         :type resource_group_name: str
         :param account_name: The name of the NetApp account.
         :type account_name: str
-        :param snapshot_policy_name: The name of the snapshot policy target.
+        :param snapshot_policy_name: The name of the snapshot policy.
         :type snapshot_policy_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SnapshotPolicy, or the result of cls(response)
@@ -142,7 +142,7 @@ class SnapshotPoliciesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -193,7 +193,7 @@ class SnapshotPoliciesOperations:
         :type resource_group_name: str
         :param account_name: The name of the NetApp account.
         :type account_name: str
-        :param snapshot_policy_name: The name of the snapshot policy target.
+        :param snapshot_policy_name: The name of the snapshot policy.
         :type snapshot_policy_name: str
         :param body: Snapshot policy object supplied in the body of the operation.
         :type body: ~azure.mgmt.netapp.models.SnapshotPolicy
@@ -207,7 +207,7 @@ class SnapshotPoliciesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -266,7 +266,7 @@ class SnapshotPoliciesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -326,7 +326,7 @@ class SnapshotPoliciesOperations:
         :type resource_group_name: str
         :param account_name: The name of the NetApp account.
         :type account_name: str
-        :param snapshot_policy_name: The name of the snapshot policy target.
+        :param snapshot_policy_name: The name of the snapshot policy.
         :type snapshot_policy_name: str
         :param body: Snapshot policy object supplied in the body of the operation.
         :type body: ~azure.mgmt.netapp.models.SnapshotPolicyPatch
@@ -400,7 +400,7 @@ class SnapshotPoliciesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01"
+        api_version = "2021-06-01"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -445,7 +445,7 @@ class SnapshotPoliciesOperations:
         :type resource_group_name: str
         :param account_name: The name of the NetApp account.
         :type account_name: str
-        :param snapshot_policy_name: The name of the snapshot policy target.
+        :param snapshot_policy_name: The name of the snapshot policy.
         :type snapshot_policy_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -516,7 +516,7 @@ class SnapshotPoliciesOperations:
         :type resource_group_name: str
         :param account_name: The name of the NetApp account.
         :type account_name: str
-        :param snapshot_policy_name: The name of the snapshot policy target.
+        :param snapshot_policy_name: The name of the snapshot policy.
         :type snapshot_policy_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SnapshotPolicyVolumeList, or the result of cls(response)
@@ -528,7 +528,7 @@ class SnapshotPoliciesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
