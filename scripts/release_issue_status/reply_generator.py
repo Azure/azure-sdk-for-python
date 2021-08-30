@@ -95,11 +95,11 @@ def add_label(label_name, labels):
     issue_object_rg.set_labels(*labels)
 
 
-def begin_reply_generate(issue_object, rest_repo, readme_link):
+def begin_reply_generate(item, rest_repo, readme_link):
     global issue_object_rg
-    issue_object_rg = issue_object
+    issue_object_rg = item.issue_object
     link_dict = get_links(readme_link)
-    labels = [label.name for label in issue_object.labels]
+    labels = item.labels
     whether_change_readme = weather_change_readme(rest_repo, link_dict, labels)
 
     if not whether_change_readme:
