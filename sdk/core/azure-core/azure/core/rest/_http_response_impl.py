@@ -26,7 +26,6 @@
 from json import loads
 from typing import cast, Any, Optional, Iterator
 from ._helpers import (
-    HeadersType,
     get_charset_encoding,
     decode_to_text,
     parse_lines_from_text,
