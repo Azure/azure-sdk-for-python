@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Reduced CPU load of `azure.servicebus.AutoLockRenewer` during lock renewal.
+
 ## 7.3.2 (2021-08-10)
 
 ### Bugs Fixed

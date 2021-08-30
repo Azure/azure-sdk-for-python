@@ -26,7 +26,6 @@ from .operations import ManagedHsmsOperations
 from .operations import MHSMPrivateEndpointConnectionsOperations
 from .operations import MHSMPrivateLinkResourcesOperations
 from .operations import Operations
-from .operations import SecretsOperations
 from . import models
 
 
@@ -47,8 +46,6 @@ class KeyVaultManagementClient(object):
     :vartype mhsm_private_link_resources: azure.mgmt.keyvault.v2021_04_01_preview.operations.MHSMPrivateLinkResourcesOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.keyvault.v2021_04_01_preview.operations.Operations
-    :ivar secrets: SecretsOperations operations
-    :vartype secrets: azure.mgmt.keyvault.v2021_04_01_preview.operations.SecretsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
@@ -88,8 +85,6 @@ class KeyVaultManagementClient(object):
         self.mhsm_private_link_resources = MHSMPrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.secrets = SecretsOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, http_request, **kwargs):

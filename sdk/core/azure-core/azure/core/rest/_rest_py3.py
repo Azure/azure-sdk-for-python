@@ -376,24 +376,6 @@ class HttpResponse(_HttpResponseBase):
         """
         ...
 
-    @abc.abstractmethod
-    def iter_text(self) -> Iterator[str]:
-        """Iterates over the text in the response.
-
-        :return: An iterator of string. Each string chunk will be a text from the response.
-        :rtype: Iterator[str]
-        """
-        ...
-
-    @abc.abstractmethod
-    def iter_lines(self) -> Iterator[str]:
-        """Iterates over the lines in the response.
-
-        :return: An iterator of string. Each string chunk will be a line from the response.
-        :rtype: Iterator[str]
-        """
-        ...
-
 class AsyncHttpResponse(_HttpResponseBase):
     """**Provisional** abstract base class for Async HTTP responses.
 
@@ -436,28 +418,6 @@ class AsyncHttpResponse(_HttpResponseBase):
 
         :return: An async iterator of bytes from the response
         :rtype: AsyncIterator[bytes]
-        """
-        raise NotImplementedError()
-        # getting around mypy behavior, see https://github.com/python/mypy/issues/10732
-        yield  # pylint: disable=unreachable
-
-    @abc.abstractmethod
-    async def iter_text(self) -> AsyncIterator[str]:
-        """Asynchronously iterates over the text in the response.
-
-        :return: An async iterator of string. Each string chunk will be a text from the response
-        :rtype: AsyncIterator[str]
-        """
-        raise NotImplementedError()
-        # getting around mypy behavior, see https://github.com/python/mypy/issues/10732
-        yield  # pylint: disable=unreachable
-
-    @abc.abstractmethod
-    async def iter_lines(self) -> AsyncIterator[str]:
-        """Asynchronously iterates over the lines in the response.
-
-        :return: An async iterator of string. Each string chunk will be a line from the response.
-        :rtype: AsyncIterator[str]
         """
         raise NotImplementedError()
         # getting around mypy behavior, see https://github.com/python/mypy/issues/10732

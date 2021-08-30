@@ -381,21 +381,3 @@ class HttpResponse(_HttpResponseBase):
         :return: An iterator of bytes from the response
         :rtype: Iterator[str]
         """
-
-    @abc.abstractmethod
-    def iter_text(self):
-        # type: () -> Iterator[str]
-        """Iterates over the text in the response.
-
-        :return: An iterator of string. Each string chunk will be a text from the response.
-        :rtype: Iterator[str]
-        """
-
-    @abc.abstractmethod
-    def iter_lines(self):
-        # type: () -> Iterator[str]
-        """Iterates over the lines in the response.
-
-        :return: An iterator of string. Each string chunk will be a line from the response.
-        :rtype: Iterator[str]
-        """

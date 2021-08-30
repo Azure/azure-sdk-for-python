@@ -12,6 +12,7 @@
 an `encoding` parameter.
 - `azure.core.rest.HttpResponse` and `azure.core.rest.AsyncHttpResponse` are now abstract base classes. They should not be initialized directly, instead
 your transport responses should inherit from them and implement them.
+- Removed `iter_text` and `iter_lines` from `azure.core.rest.HttpResponse` and `azure.core.rest.AsyncHttpResponse`
 
 ### Bugs Fixed
 

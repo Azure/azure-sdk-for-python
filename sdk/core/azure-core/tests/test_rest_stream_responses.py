@@ -79,23 +79,23 @@ def test_iter_bytes(client):
         assert response.is_stream_consumed
         assert raw == b"Hello, world!"
 
-def test_iter_text(client):
-    request = HttpRequest("GET", "/basic/string")
+# def test_iter_text(client):
+#     request = HttpRequest("GET", "/basic/string")
 
-    with client.send_request(request, stream=True) as response:
-        content = ""
-        for part in response.iter_text():
-            content += part
-        assert content == "Hello, world!"
+#     with client.send_request(request, stream=True) as response:
+#         content = ""
+#         for part in response.iter_text():
+#             content += part
+#         assert content == "Hello, world!"
 
-def test_iter_lines(client):
-    request = HttpRequest("GET", "/basic/lines")
+# def test_iter_lines(client):
+#     request = HttpRequest("GET", "/basic/lines")
 
-    with client.send_request(request, stream=True) as response:
-        content = []
-        for line in response.iter_lines():
-            content.append(line)
-        assert content == ["Hello,\n", "world!"]
+#     with client.send_request(request, stream=True) as response:
+#         content = []
+#         for line in response.iter_lines():
+#             content.append(line)
+#         assert content == ["Hello,\n", "world!"]
 
 def test_sync_streaming_response(client):
     request = HttpRequest("GET", "/streams/basic")
@@ -175,16 +175,16 @@ def test_decompress_compressed_header(client):
     url = "https://{}.blob.core.windows.net/tests/test_with_header.tar.gz".format(account_name)
     request = HttpRequest("GET", url)
     response = client.send_request(request, stream=True)
-    iter = response.iter_text()
-    data = "".join(list(iter))
-    assert data == "test"
+    iter = response.iter_bytes()
+    data = b"".join(list(iter))
+    assert data == b"test"
 
 def test_iter_read(client):
     # thanks to McCoy Patiño for this test!
-    request = HttpRequest("GET", "/basic/lines")
+    request = HttpRequest("GET", "/basic/string")
     response = client.send_request(request, stream=True)
     response.read()
-    iterator = response.iter_lines()
+    iterator = response.iter_bytes()
     for line in iterator:
         assert line
     assert response.text()
@@ -196,9 +196,9 @@ def test_iter_read_back_and_forth(client):
     # the reason why the code flow is like this, is because the 'iter_x' functions don't
     # actually read the contents into the response, the output them. Once they're yielded,
     # the stream is closed, so you have to catch the output when you iterate through it
-    request = HttpRequest("GET", "/basic/lines")
+    request = HttpRequest("GET", "/basic/string")
     response = client.send_request(request, stream=True)
-    iterator = response.iter_lines()
+    iterator = response.iter_bytes()
     for line in iterator:
         assert line
     with pytest.raises(ResponseNotReadError):
@@ -209,12 +209,12 @@ def test_iter_read_back_and_forth(client):
         response.text()
 
 def test_stream_with_return_pipeline_response(client):
-    request = HttpRequest("GET", "/basic/lines")
+    request = HttpRequest("GET", "/basic/string")
     pipeline_response = client.send_request(request, stream=True, _return_pipeline_response=True)
     assert hasattr(pipeline_response, "http_request")
     assert hasattr(pipeline_response, "http_response")
     assert hasattr(pipeline_response, "context")
-    assert list(pipeline_response.http_response.iter_lines()) == ['Hello,\n', 'world!']
+    assert list(pipeline_response.http_response.iter_bytes()) == [b'Hello, world!']
 
 def test_error_reading(client):
     request = HttpRequest("GET", "/errors/403")
