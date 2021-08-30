@@ -14,76 +14,33 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/virtualWans/virtualwan?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/virtualWans/virtualwan?api-version=2021-03-01
   response:
     body:
       string: "{\r\n  \"name\": \"virtualwan\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/virtualWans/virtualwan\",\r\n
-        \ \"etag\": \"W/\\\"24715622-15f8-4c97-bfe9-7a970eadfc08\\\"\",\r\n  \"type\":
+        \ \"etag\": \"W/\\\"a935a87c-ec38-4240-b5a1-ffa03cae2f2a\\\"\",\r\n  \"type\":
         \"Microsoft.Network/virtualWans\",\r\n  \"location\": \"westus\",\r\n  \"tags\":
         {\r\n    \"key1\": \"value1\"\r\n  },\r\n  \"properties\": {\r\n    \"provisioningState\":
-        \"Updating\",\r\n    \"disableVpnEncryption\": false,\r\n    \"allowBranchToBranchTraffic\":
+        \"Succeeded\",\r\n    \"disableVpnEncryption\": false,\r\n    \"allowBranchToBranchTraffic\":
         true,\r\n    \"office365LocalBreakoutCategory\": \"None\",\r\n    \"type\":
-        \"Basic\"\r\n  }\r\n}"
+        \"Basic\",\r\n    \"virtualHubs\": [\r\n      {\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/virtualHubs/virtualhub\"\r\n
+        \     }\r\n    ]\r\n  }\r\n}"
     headers:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/1af2c663-dcc6-4649-995e-a456ccfd402b?api-version=2021-02-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/0033506b-708c-4328-a46b-c621fc07adf5?api-version=2021-03-01
       cache-control:
       - no-cache
       content-length:
-      - '590'
+      - '831'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 04:38:02 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - 07e3217a-533b-4370-907d-46aa2f8e72a6
-      x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/1af2c663-dcc6-4649-995e-a456ccfd402b?api-version=2021-02-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '29'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 14 May 2021 04:38:12 GMT
+      - Mon, 30 Aug 2021 10:04:25 GMT
       expires:
       - '-1'
       pragma:
@@ -100,7 +57,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 6fccd640-f7a6-485d-9af5-281156836ae0
+      - 27f784c8-df18-4587-b83f-338a942052f9
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1196'
     status:
       code: 200
       message: OK
@@ -114,30 +73,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/virtualWans/virtualwan?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/0033506b-708c-4328-a46b-c621fc07adf5?api-version=2021-03-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualwan\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/virtualWans/virtualwan\",\r\n
-        \ \"etag\": \"W/\\\"ce83e3c4-8858-47d9-856b-98815fe77dc5\\\"\",\r\n  \"type\":
-        \"Microsoft.Network/virtualWans\",\r\n  \"location\": \"westus\",\r\n  \"tags\":
-        {\r\n    \"key1\": \"value1\"\r\n  },\r\n  \"properties\": {\r\n    \"provisioningState\":
-        \"Succeeded\",\r\n    \"disableVpnEncryption\": false,\r\n    \"allowBranchToBranchTraffic\":
-        true,\r\n    \"office365LocalBreakoutCategory\": \"None\",\r\n    \"type\":
-        \"Basic\"\r\n  }\r\n}"
+      string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '591'
+      - '29'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 04:38:12 GMT
-      etag:
-      - W/"ce83e3c4-8858-47d9-856b-98815fe77dc5"
+      - Mon, 30 Aug 2021 10:04:55 GMT
       expires:
       - '-1'
       pragma:
@@ -154,7 +105,62 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 65f9594c-7518-4f20-afe6-7a4d0a75bece
+      - f37a8915-8a14-46dc-b4ae-51f53d13683c
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/virtualWans/virtualwan?api-version=2021-03-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"virtualwan\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/virtualWans/virtualwan\",\r\n
+        \ \"etag\": \"W/\\\"a935a87c-ec38-4240-b5a1-ffa03cae2f2a\\\"\",\r\n  \"type\":
+        \"Microsoft.Network/virtualWans\",\r\n  \"location\": \"westus\",\r\n  \"tags\":
+        {\r\n    \"key1\": \"value1\"\r\n  },\r\n  \"properties\": {\r\n    \"provisioningState\":
+        \"Succeeded\",\r\n    \"disableVpnEncryption\": false,\r\n    \"allowBranchToBranchTraffic\":
+        true,\r\n    \"office365LocalBreakoutCategory\": \"None\",\r\n    \"type\":
+        \"Basic\",\r\n    \"virtualHubs\": [\r\n      {\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/virtualHubs/virtualhub\"\r\n
+        \     }\r\n    ]\r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '831'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 30 Aug 2021 10:04:55 GMT
+      etag:
+      - W/"a935a87c-ec38-4240-b5a1-ffa03cae2f2a"
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - 586112c9-4be4-43d8-ac3b-795135514c03
     status:
       code: 200
       message: OK
@@ -174,35 +180,37 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/virtualHubs/virtualhub?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/virtualHubs/virtualhub?api-version=2021-03-01
   response:
     body:
       string: "{\r\n  \"name\": \"virtualhub\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/virtualHubs/virtualhub\",\r\n
-        \ \"etag\": \"W/\\\"1f7cb730-c0d2-4b0d-9a9d-defb27733b09\\\"\",\r\n  \"type\":
+        \ \"etag\": \"W/\\\"9a37e980-b58a-4ff2-96d9-777cc045ee38\\\"\",\r\n  \"type\":
         \"Microsoft.Network/virtualHubs\",\r\n  \"location\": \"westus\",\r\n  \"tags\":
         {\r\n    \"key1\": \"value1\"\r\n  },\r\n  \"properties\": {\r\n    \"provisioningState\":
-        \"Updating\",\r\n    \"virtualHubRouteTableV2s\": [],\r\n    \"addressPrefix\":
-        \"10.168.0.0/24\",\r\n    \"virtualRouterAsn\": 0,\r\n    \"virtualRouterIps\":
-        [],\r\n    \"routeTable\": {\r\n      \"routes\": []\r\n    },\r\n    \"virtualWan\":
-        {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/virtualWans/virtualwan\"\r\n
-        \   },\r\n    \"sku\": \"Basic\",\r\n    \"routingState\": \"None\",\r\n    \"allowBranchToBranchTraffic\":
-        false,\r\n    \"preferredRoutingGateway\": \"ExpressRoute\"\r\n  }\r\n}"
+        \"Succeeded\",\r\n    \"virtualHubRouteTableV2s\": [],\r\n    \"addressPrefix\":
+        \"10.168.0.0/24\",\r\n    \"virtualRouterAsn\": 65515,\r\n    \"virtualRouterIps\":
+        [\r\n      \"10.168.0.69\",\r\n      \"10.168.0.68\"\r\n    ],\r\n    \"routeTable\":
+        {\r\n      \"routes\": []\r\n    },\r\n    \"virtualWan\": {\r\n      \"id\":
+        \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/virtualWans/virtualwan\"\r\n
+        \   },\r\n    \"sku\": \"Basic\",\r\n    \"routingState\": \"Provisioned\",\r\n
+        \   \"allowBranchToBranchTraffic\": false,\r\n    \"preferredRoutingGateway\":
+        \"ExpressRoute\"\r\n  }\r\n}"
     headers:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/3b5bc464-3a3f-4fa9-9d29-598f788ca1ca?api-version=2021-02-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/086ec73a-cff4-4d75-afdd-c4722d065c3b?api-version=2021-03-01
       cache-control:
       - no-cache
       content-length:
-      - '984'
+      - '1045'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 04:38:13 GMT
+      - Mon, 30 Aug 2021 10:04:56 GMT
       expires:
       - '-1'
       pragma:
@@ -212,58 +220,16 @@ interactions:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
       - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 0f880910-8a41-497b-92a6-ab2ef51a4197
+      - ce40b0f0-3963-42ae-a54e-fdef3fa0e09e
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/3b5bc464-3a3f-4fa9-9d29-598f788ca1ca?api-version=2021-02-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 14 May 2021 04:38:24 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - db62e373-cff3-4330-af0b-cfb461f7c1fb
+      - '1195'
     status:
       code: 200
       message: OK
@@ -277,240 +243,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/3b5bc464-3a3f-4fa9-9d29-598f788ca1ca?api-version=2021-02-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 14 May 2021 04:38:34 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - 4a7c0b64-0ad3-4fe9-9938-f5f2aba39ab1
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/3b5bc464-3a3f-4fa9-9d29-598f788ca1ca?api-version=2021-02-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 14 May 2021 04:38:54 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - 7bdbe1fc-f292-4fa6-9935-3c380ff3bfef
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/3b5bc464-3a3f-4fa9-9d29-598f788ca1ca?api-version=2021-02-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 14 May 2021 04:39:14 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - 7ec95d73-2ca7-40a8-b5c2-6424b9a320a0
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/3b5bc464-3a3f-4fa9-9d29-598f788ca1ca?api-version=2021-02-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 14 May 2021 04:39:54 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - 18934569-5533-469e-8a47-0d969e98b917
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/3b5bc464-3a3f-4fa9-9d29-598f788ca1ca?api-version=2021-02-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 14 May 2021 04:40:35 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - a469f981-3041-4d4e-a2d2-f7284637bab8
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/3b5bc464-3a3f-4fa9-9d29-598f788ca1ca?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/086ec73a-cff4-4d75-afdd-c4722d065c3b?api-version=2021-03-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -522,7 +258,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 04:41:55 GMT
+      - Mon, 30 Aug 2021 10:05:26 GMT
       expires:
       - '-1'
       pragma:
@@ -539,7 +275,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 0815d297-5e64-449f-adc2-7a8e942fce3e
+      - ca545e8c-a879-41a2-a54f-e60f2e2a3b7d
     status:
       code: 200
       message: OK
@@ -553,32 +289,33 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/virtualHubs/virtualhub?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/virtualHubs/virtualhub?api-version=2021-03-01
   response:
     body:
       string: "{\r\n  \"name\": \"virtualhub\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/virtualHubs/virtualhub\",\r\n
-        \ \"etag\": \"W/\\\"ed6fdbbb-a209-4363-a14c-8ae3700be06b\\\"\",\r\n  \"type\":
+        \ \"etag\": \"W/\\\"9a37e980-b58a-4ff2-96d9-777cc045ee38\\\"\",\r\n  \"type\":
         \"Microsoft.Network/virtualHubs\",\r\n  \"location\": \"westus\",\r\n  \"tags\":
         {\r\n    \"key1\": \"value1\"\r\n  },\r\n  \"properties\": {\r\n    \"provisioningState\":
         \"Succeeded\",\r\n    \"virtualHubRouteTableV2s\": [],\r\n    \"addressPrefix\":
-        \"10.168.0.0/24\",\r\n    \"virtualRouterAsn\": 0,\r\n    \"virtualRouterIps\":
-        [],\r\n    \"routeTable\": {\r\n      \"routes\": []\r\n    },\r\n    \"virtualWan\":
-        {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/virtualWans/virtualwan\"\r\n
-        \   },\r\n    \"sku\": \"Basic\",\r\n    \"routingState\": \"Provisioning\",\r\n
+        \"10.168.0.0/24\",\r\n    \"virtualRouterAsn\": 65515,\r\n    \"virtualRouterIps\":
+        [\r\n      \"10.168.0.69\",\r\n      \"10.168.0.68\"\r\n    ],\r\n    \"routeTable\":
+        {\r\n      \"routes\": []\r\n    },\r\n    \"virtualWan\": {\r\n      \"id\":
+        \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/virtualWans/virtualwan\"\r\n
+        \   },\r\n    \"sku\": \"Basic\",\r\n    \"routingState\": \"Provisioned\",\r\n
         \   \"allowBranchToBranchTraffic\": false,\r\n    \"preferredRoutingGateway\":
         \"ExpressRoute\"\r\n  }\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '993'
+      - '1045'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 04:41:55 GMT
+      - Mon, 30 Aug 2021 10:05:26 GMT
       expires:
       - '-1'
       pragma:
@@ -595,7 +332,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - be4d265a-a558-4ffd-8168-7d62c3d2f795
+      - 55d43723-fce7-4d00-b568-22976007ca19
     status:
       code: 200
       message: OK
@@ -614,10 +351,10 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/firewallPolicies/firewallpolicy?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/firewallPolicies/firewallpolicy?api-version=2021-03-01
   response:
     body:
       string: "{\r\n  \"properties\": {\r\n    \"sku\": {\r\n      \"tier\": \"Standard\"\r\n
@@ -625,11 +362,11 @@ interactions:
         \   \"ruleCollectionGroups\": [],\r\n    \"firewalls\": [],\r\n    \"provisioningState\":
         \"Updating\"\r\n  },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/firewallPolicies/firewallpolicy\",\r\n
         \ \"name\": \"firewallpolicy\",\r\n  \"type\": \"Microsoft.Network/FirewallPolicies\",\r\n
-        \ \"etag\": \"b754d44d-7ceb-4928-80fe-fa221547aa74\",\r\n  \"location\": \"eastus\",\r\n
+        \ \"etag\": \"c80efd75-fa6b-4849-8ef2-29294080f1e8\",\r\n  \"location\": \"eastus\",\r\n
         \ \"tags\": {\r\n    \"key1\": \"value1\"\r\n  }\r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/nfvOperations/7b1de0a1-66d8-4cad-a777-e6f9335a1bb8?api-version=2021-02-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/nfvOperations/c95cf317-6a2b-458d-810a-b29b71a039af?api-version=2021-03-01
       cache-control:
       - no-cache
       content-length:
@@ -637,7 +374,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 04:41:57 GMT
+      - Mon, 30 Aug 2021 10:05:27 GMT
       expires:
       - '-1'
       pragma:
@@ -649,7 +386,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1196'
+      - '1194'
     status:
       code: 201
       message: Created
@@ -663,10 +400,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/nfvOperations/7b1de0a1-66d8-4cad-a777-e6f9335a1bb8?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/nfvOperations/c95cf317-6a2b-458d-810a-b29b71a039af?api-version=2021-03-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -678,7 +415,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 04:42:06 GMT
+      - Mon, 30 Aug 2021 10:05:37 GMT
       expires:
       - '-1'
       pragma:
@@ -706,10 +443,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/firewallPolicies/firewallpolicy?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/firewallPolicies/firewallpolicy?api-version=2021-03-01
   response:
     body:
       string: "{\r\n  \"properties\": {\r\n    \"sku\": {\r\n      \"tier\": \"Standard\"\r\n
@@ -717,7 +454,7 @@ interactions:
         \   \"ruleCollectionGroups\": [],\r\n    \"firewalls\": [],\r\n    \"provisioningState\":
         \"Succeeded\"\r\n  },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/firewallPolicies/firewallpolicy\",\r\n
         \ \"name\": \"firewallpolicy\",\r\n  \"type\": \"Microsoft.Network/FirewallPolicies\",\r\n
-        \ \"etag\": \"b754d44d-7ceb-4928-80fe-fa221547aa74\",\r\n  \"location\": \"eastus\",\r\n
+        \ \"etag\": \"c80efd75-fa6b-4849-8ef2-29294080f1e8\",\r\n  \"location\": \"eastus\",\r\n
         \ \"tags\": {\r\n    \"key1\": \"value1\"\r\n  }\r\n}"
     headers:
       cache-control:
@@ -727,9 +464,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 04:42:06 GMT
+      - Mon, 30 Aug 2021 10:05:37 GMT
       etag:
-      - '"b754d44d-7ceb-4928-80fe-fa221547aa74"'
+      - '"c80efd75-fa6b-4849-8ef2-29294080f1e8"'
       expires:
       - '-1'
       pragma:
@@ -765,14 +502,14 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/azureFirewalls/azurefirewall?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/azureFirewalls/azurefirewall?api-version=2021-03-01
   response:
     body:
       string: "{\r\n  \"name\": \"azurefirewall\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/azureFirewalls/azurefirewall\",\r\n
-        \ \"etag\": \"W/\\\"0aadb3ea-5f59-4d86-a59b-6d2c59a6a317\\\"\",\r\n  \"type\":
+        \ \"etag\": \"W/\\\"3f90944b-6a05-4bbf-b8d2-ddb701c7d8f6\\\"\",\r\n  \"type\":
         \"Microsoft.Network/azureFirewalls\",\r\n  \"location\": \"westus\",\r\n  \"tags\":
         {\r\n    \"key1\": \"value1\"\r\n  },\r\n  \"properties\": {\r\n    \"provisioningState\":
         \"Updating\",\r\n    \"sku\": {\r\n      \"name\": \"AZFW_Hub\",\r\n      \"tier\":
@@ -786,7 +523,7 @@ interactions:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/3eb14eed-b160-45b0-81da-9f20a1613c42?api-version=2021-02-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/c6cdf2b0-bd11-46ab-bef8-fc83a8fb9361?api-version=2021-03-01
       cache-control:
       - no-cache
       content-length:
@@ -794,7 +531,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 04:42:10 GMT
+      - Mon, 30 Aug 2021 10:05:41 GMT
       expires:
       - '-1'
       pragma:
@@ -807,9 +544,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - f998e43a-c581-44db-ade2-ba00ad553c49
+      - 7aebb730-4ed0-4d5b-8f36-cad7acccb519
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1195'
+      - '1193'
     status:
       code: 201
       message: Created
@@ -823,10 +560,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/3eb14eed-b160-45b0-81da-9f20a1613c42?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/c6cdf2b0-bd11-46ab-bef8-fc83a8fb9361?api-version=2021-03-01
   response:
     body:
       string: "{\r\n  \"status\": \"InProgress\"\r\n}"
@@ -838,7 +575,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 04:42:21 GMT
+      - Mon, 30 Aug 2021 10:05:52 GMT
       expires:
       - '-1'
       pragma:
@@ -855,7 +592,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 66661e77-0c3b-4a45-b051-75e1ae8579e3
+      - 570ceada-b3e5-429b-8a0d-564d651c8024
     status:
       code: 200
       message: OK
@@ -869,10 +606,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/3eb14eed-b160-45b0-81da-9f20a1613c42?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/c6cdf2b0-bd11-46ab-bef8-fc83a8fb9361?api-version=2021-03-01
   response:
     body:
       string: "{\r\n  \"status\": \"InProgress\"\r\n}"
@@ -884,7 +621,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 04:42:31 GMT
+      - Mon, 30 Aug 2021 10:06:02 GMT
       expires:
       - '-1'
       pragma:
@@ -901,7 +638,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - bd37a311-b6f1-44d4-9fa0-117f8eb99e5a
+      - 9bfd4627-0d41-4b0c-8f49-09597f69c33d
     status:
       code: 200
       message: OK
@@ -915,10 +652,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/3eb14eed-b160-45b0-81da-9f20a1613c42?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/c6cdf2b0-bd11-46ab-bef8-fc83a8fb9361?api-version=2021-03-01
   response:
     body:
       string: "{\r\n  \"status\": \"InProgress\"\r\n}"
@@ -930,7 +667,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 04:42:50 GMT
+      - Mon, 30 Aug 2021 10:06:22 GMT
       expires:
       - '-1'
       pragma:
@@ -947,7 +684,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 61c2bbc0-790d-4de8-bac8-90dcecdf513f
+      - 43ca1a9b-66c2-4ef6-b1ec-740a4dbf1391
     status:
       code: 200
       message: OK
@@ -961,10 +698,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/3eb14eed-b160-45b0-81da-9f20a1613c42?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/c6cdf2b0-bd11-46ab-bef8-fc83a8fb9361?api-version=2021-03-01
   response:
     body:
       string: "{\r\n  \"status\": \"InProgress\"\r\n}"
@@ -976,7 +713,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 04:43:11 GMT
+      - Mon, 30 Aug 2021 10:06:42 GMT
       expires:
       - '-1'
       pragma:
@@ -993,7 +730,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - d01bd863-4cc5-4f08-aca5-7fee26472dce
+      - 3be0a73f-4e7c-41ac-8ce8-179edad4aaa4
     status:
       code: 200
       message: OK
@@ -1007,10 +744,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/3eb14eed-b160-45b0-81da-9f20a1613c42?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/c6cdf2b0-bd11-46ab-bef8-fc83a8fb9361?api-version=2021-03-01
   response:
     body:
       string: "{\r\n  \"status\": \"InProgress\"\r\n}"
@@ -1022,7 +759,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 04:43:51 GMT
+      - Mon, 30 Aug 2021 10:07:21 GMT
       expires:
       - '-1'
       pragma:
@@ -1039,7 +776,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 3a0114df-0dd3-46d4-897c-b4f097d3f294
+      - d75bdb77-8799-4410-a6af-30c0979c1d4e
     status:
       code: 200
       message: OK
@@ -1053,10 +790,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/3eb14eed-b160-45b0-81da-9f20a1613c42?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/c6cdf2b0-bd11-46ab-bef8-fc83a8fb9361?api-version=2021-03-01
   response:
     body:
       string: "{\r\n  \"status\": \"InProgress\"\r\n}"
@@ -1068,7 +805,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 04:44:30 GMT
+      - Mon, 30 Aug 2021 10:08:02 GMT
       expires:
       - '-1'
       pragma:
@@ -1085,7 +822,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - a6ccc40a-bf0a-4606-8dd2-2acc3850d1f3
+      - 8d1b59e7-26e4-420d-b609-b926aac75891
     status:
       code: 200
       message: OK
@@ -1099,10 +836,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/3eb14eed-b160-45b0-81da-9f20a1613c42?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/c6cdf2b0-bd11-46ab-bef8-fc83a8fb9361?api-version=2021-03-01
   response:
     body:
       string: "{\r\n  \"status\": \"InProgress\"\r\n}"
@@ -1114,7 +851,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 04:45:51 GMT
+      - Mon, 30 Aug 2021 10:09:21 GMT
       expires:
       - '-1'
       pragma:
@@ -1131,7 +868,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 3c94d1a9-0bea-4717-bc3b-4249b2193d37
+      - f4496b04-c883-497b-ae7d-67f4faf79e25
     status:
       code: 200
       message: OK
@@ -1145,332 +882,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/3eb14eed-b160-45b0-81da-9f20a1613c42?api-version=2021-02-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 14 May 2021 04:48:31 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - 8d30b0d7-7705-48fe-a1cc-5f50693303e8
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/3eb14eed-b160-45b0-81da-9f20a1613c42?api-version=2021-02-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 14 May 2021 04:50:11 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - f44801f2-37c9-446f-aee0-1865d1cf8ada
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/3eb14eed-b160-45b0-81da-9f20a1613c42?api-version=2021-02-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 14 May 2021 04:51:51 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - 126cad61-e8c9-4188-94b4-14221bb4883b
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/3eb14eed-b160-45b0-81da-9f20a1613c42?api-version=2021-02-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 14 May 2021 04:53:32 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - 38cf44b8-8d55-4b74-a16f-9774b04c2716
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/3eb14eed-b160-45b0-81da-9f20a1613c42?api-version=2021-02-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 14 May 2021 04:55:12 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - 31ef68f3-fb9d-418d-95dd-796eca508755
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/3eb14eed-b160-45b0-81da-9f20a1613c42?api-version=2021-02-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 14 May 2021 04:56:52 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - 91ba537f-d2fc-42ca-914a-d6417ffbdbc7
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/3eb14eed-b160-45b0-81da-9f20a1613c42?api-version=2021-02-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 14 May 2021 04:58:33 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - 77939326-55fe-44da-8d07-f63cfe3fb597
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/3eb14eed-b160-45b0-81da-9f20a1613c42?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/c6cdf2b0-bd11-46ab-bef8-fc83a8fb9361?api-version=2021-03-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -1482,7 +897,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 05:00:13 GMT
+      - Mon, 30 Aug 2021 10:12:03 GMT
       expires:
       - '-1'
       pragma:
@@ -1499,7 +914,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 1bd32724-9a95-4bf3-aee9-c41dfccd9bac
+      - 7f690bf0-0e26-4e3c-b840-4eb68efbf34e
     status:
       code: 200
       message: OK
@@ -1513,14 +928,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/azureFirewalls/azurefirewall?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/azureFirewalls/azurefirewall?api-version=2021-03-01
   response:
     body:
       string: "{\r\n  \"name\": \"azurefirewall\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/azureFirewalls/azurefirewall\",\r\n
-        \ \"etag\": \"W/\\\"a83e30e1-20b4-4047-a1bd-e1b8257b7556\\\"\",\r\n  \"type\":
+        \ \"etag\": \"W/\\\"c14b61d5-25e3-4aa4-ad0e-486cb35f9b7c\\\"\",\r\n  \"type\":
         \"Microsoft.Network/azureFirewalls\",\r\n  \"location\": \"westus\",\r\n  \"tags\":
         {\r\n    \"key1\": \"value1\"\r\n  },\r\n  \"properties\": {\r\n    \"provisioningState\":
         \"Succeeded\",\r\n    \"sku\": {\r\n      \"name\": \"AZFW_Hub\",\r\n      \"tier\":
@@ -1528,20 +943,20 @@ interactions:
         {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/virtualHubs/virtualhub\"\r\n
         \   },\r\n    \"hubIPAddresses\": {\r\n      \"privateIPAddress\": \"10.168.0.132\",\r\n
         \     \"publicIPs\": {\r\n        \"addresses\": [\r\n          {\r\n            \"address\":
-        \"138.91.155.214\"\r\n          }\r\n        ],\r\n        \"count\": 1\r\n
+        \"13.88.62.169\"\r\n          }\r\n        ],\r\n        \"count\": 1\r\n
         \     }\r\n    },\r\n    \"firewallPolicy\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/firewallPolicies/firewallpolicy\"\r\n
         \   }\r\n  }\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1246'
+      - '1244'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 05:00:14 GMT
+      - Mon, 30 Aug 2021 10:12:03 GMT
       etag:
-      - W/"a83e30e1-20b4-4047-a1bd-e1b8257b7556"
+      - W/"c14b61d5-25e3-4aa4-ad0e-486cb35f9b7c"
       expires:
       - '-1'
       pragma:
@@ -1558,7 +973,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 2dd3196d-6ca6-4710-b674-1f9421878677
+      - 588e495e-ef53-4e37-9b0e-68623dcc3805
     status:
       code: 200
       message: OK
@@ -1572,14 +987,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/azureFirewalls/azurefirewall?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/azureFirewalls/azurefirewall?api-version=2021-03-01
   response:
     body:
       string: "{\r\n  \"name\": \"azurefirewall\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/azureFirewalls/azurefirewall\",\r\n
-        \ \"etag\": \"W/\\\"a83e30e1-20b4-4047-a1bd-e1b8257b7556\\\"\",\r\n  \"type\":
+        \ \"etag\": \"W/\\\"c14b61d5-25e3-4aa4-ad0e-486cb35f9b7c\\\"\",\r\n  \"type\":
         \"Microsoft.Network/azureFirewalls\",\r\n  \"location\": \"westus\",\r\n  \"tags\":
         {\r\n    \"key1\": \"value1\"\r\n  },\r\n  \"properties\": {\r\n    \"provisioningState\":
         \"Succeeded\",\r\n    \"sku\": {\r\n      \"name\": \"AZFW_Hub\",\r\n      \"tier\":
@@ -1587,20 +1002,20 @@ interactions:
         {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/virtualHubs/virtualhub\"\r\n
         \   },\r\n    \"hubIPAddresses\": {\r\n      \"privateIPAddress\": \"10.168.0.132\",\r\n
         \     \"publicIPs\": {\r\n        \"addresses\": [\r\n          {\r\n            \"address\":
-        \"138.91.155.214\"\r\n          }\r\n        ],\r\n        \"count\": 1\r\n
+        \"13.88.62.169\"\r\n          }\r\n        ],\r\n        \"count\": 1\r\n
         \     }\r\n    },\r\n    \"firewallPolicy\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/firewallPolicies/firewallpolicy\"\r\n
         \   }\r\n  }\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1246'
+      - '1244'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 05:00:14 GMT
+      - Mon, 30 Aug 2021 10:12:03 GMT
       etag:
-      - W/"a83e30e1-20b4-4047-a1bd-e1b8257b7556"
+      - W/"c14b61d5-25e3-4aa4-ad0e-486cb35f9b7c"
       expires:
       - '-1'
       pragma:
@@ -1617,7 +1032,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 8ce69020-297d-4bcd-bdad-4a66f3469660
+      - 0f27f253-7c85-48c9-9237-688011de88f5
     status:
       code: 200
       message: OK
@@ -1635,14 +1050,14 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/azureFirewalls/azurefirewall?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/azureFirewalls/azurefirewall?api-version=2021-03-01
   response:
     body:
       string: "{\r\n  \"name\": \"azurefirewall\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/azureFirewalls/azurefirewall\",\r\n
-        \ \"etag\": \"W/\\\"bfbb222d-ebaa-4381-bbf5-bf48c8b5bcf4\\\"\",\r\n  \"type\":
+        \ \"etag\": \"W/\\\"d6d10835-35ff-4cbc-be87-ef596880f6d8\\\"\",\r\n  \"type\":
         \"Microsoft.Network/azureFirewalls\",\r\n  \"location\": \"westus\",\r\n  \"tags\":
         {\r\n    \"tag1\": \"value1\",\r\n    \"tag2\": \"value2\"\r\n  },\r\n  \"properties\":
         {\r\n    \"provisioningState\": \"Updating\",\r\n    \"sku\": {\r\n      \"name\":
@@ -1650,7 +1065,7 @@ interactions:
         {},\r\n    \"virtualHub\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/virtualHubs/virtualhub\"\r\n
         \   },\r\n    \"hubIPAddresses\": {\r\n      \"privateIPAddress\": \"10.168.0.132\",\r\n
         \     \"publicIPs\": {\r\n        \"addresses\": [\r\n          {\r\n            \"address\":
-        \"138.91.155.214\"\r\n          }\r\n        ],\r\n        \"count\": 1\r\n
+        \"13.88.62.169\"\r\n          }\r\n        ],\r\n        \"count\": 1\r\n
         \     }\r\n    },\r\n    \"firewallPolicy\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/firewallPolicies/firewallpolicy\"\r\n
         \   }\r\n  }\r\n}"
     headers:
@@ -1659,11 +1074,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '1268'
+      - '1266'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 05:00:14 GMT
+      - Mon, 30 Aug 2021 10:12:03 GMT
       expires:
       - '-1'
       pragma:
@@ -1680,7 +1095,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 5e09d048-3d9d-4444-a6a1-86ca94670f91
+      - d4b9a729-bc74-4fed-a3dc-b824d08ecc75
       x-ms-ratelimit-remaining-subscription-writes:
       - '1190'
     status:
@@ -1696,14 +1111,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/azureFirewalls/azurefirewall?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/azureFirewalls/azurefirewall?api-version=2021-03-01
   response:
     body:
       string: "{\r\n  \"name\": \"azurefirewall\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/azureFirewalls/azurefirewall\",\r\n
-        \ \"etag\": \"W/\\\"bfbb222d-ebaa-4381-bbf5-bf48c8b5bcf4\\\"\",\r\n  \"type\":
+        \ \"etag\": \"W/\\\"d6d10835-35ff-4cbc-be87-ef596880f6d8\\\"\",\r\n  \"type\":
         \"Microsoft.Network/azureFirewalls\",\r\n  \"location\": \"westus\",\r\n  \"tags\":
         {\r\n    \"tag1\": \"value1\",\r\n    \"tag2\": \"value2\"\r\n  },\r\n  \"properties\":
         {\r\n    \"provisioningState\": \"Updating\",\r\n    \"sku\": {\r\n      \"name\":
@@ -1711,20 +1126,20 @@ interactions:
         {},\r\n    \"virtualHub\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/virtualHubs/virtualhub\"\r\n
         \   },\r\n    \"hubIPAddresses\": {\r\n      \"privateIPAddress\": \"10.168.0.132\",\r\n
         \     \"publicIPs\": {\r\n        \"addresses\": [\r\n          {\r\n            \"address\":
-        \"138.91.155.214\"\r\n          }\r\n        ],\r\n        \"count\": 1\r\n
+        \"13.88.62.169\"\r\n          }\r\n        ],\r\n        \"count\": 1\r\n
         \     }\r\n    },\r\n    \"firewallPolicy\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/firewallPolicies/firewallpolicy\"\r\n
         \   }\r\n  }\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1268'
+      - '1266'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 05:00:24 GMT
+      - Mon, 30 Aug 2021 10:12:13 GMT
       etag:
-      - W/"bfbb222d-ebaa-4381-bbf5-bf48c8b5bcf4"
+      - W/"d6d10835-35ff-4cbc-be87-ef596880f6d8"
       expires:
       - '-1'
       pragma:
@@ -1741,7 +1156,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - e26ed6f4-9d71-4ee1-9560-35e2a3e51196
+      - ef38c484-5f89-4cdb-b7a8-6f1a11dee8fa
     status:
       code: 200
       message: OK
@@ -1755,14 +1170,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/azureFirewalls/azurefirewall?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/azureFirewalls/azurefirewall?api-version=2021-03-01
   response:
     body:
       string: "{\r\n  \"name\": \"azurefirewall\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/azureFirewalls/azurefirewall\",\r\n
-        \ \"etag\": \"W/\\\"bfbb222d-ebaa-4381-bbf5-bf48c8b5bcf4\\\"\",\r\n  \"type\":
+        \ \"etag\": \"W/\\\"d6d10835-35ff-4cbc-be87-ef596880f6d8\\\"\",\r\n  \"type\":
         \"Microsoft.Network/azureFirewalls\",\r\n  \"location\": \"westus\",\r\n  \"tags\":
         {\r\n    \"tag1\": \"value1\",\r\n    \"tag2\": \"value2\"\r\n  },\r\n  \"properties\":
         {\r\n    \"provisioningState\": \"Updating\",\r\n    \"sku\": {\r\n      \"name\":
@@ -1770,20 +1185,20 @@ interactions:
         {},\r\n    \"virtualHub\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/virtualHubs/virtualhub\"\r\n
         \   },\r\n    \"hubIPAddresses\": {\r\n      \"privateIPAddress\": \"10.168.0.132\",\r\n
         \     \"publicIPs\": {\r\n        \"addresses\": [\r\n          {\r\n            \"address\":
-        \"138.91.155.214\"\r\n          }\r\n        ],\r\n        \"count\": 1\r\n
+        \"13.88.62.169\"\r\n          }\r\n        ],\r\n        \"count\": 1\r\n
         \     }\r\n    },\r\n    \"firewallPolicy\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/firewallPolicies/firewallpolicy\"\r\n
         \   }\r\n  }\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1268'
+      - '1266'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 05:00:54 GMT
+      - Mon, 30 Aug 2021 10:12:43 GMT
       etag:
-      - W/"bfbb222d-ebaa-4381-bbf5-bf48c8b5bcf4"
+      - W/"d6d10835-35ff-4cbc-be87-ef596880f6d8"
       expires:
       - '-1'
       pragma:
@@ -1800,7 +1215,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - d744931b-1b2f-4972-8902-af7bd2c803a8
+      - 6245377a-8fe2-4508-8829-9fe201213180
     status:
       code: 200
       message: OK
@@ -1814,14 +1229,132 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/azureFirewalls/azurefirewall?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/azureFirewalls/azurefirewall?api-version=2021-03-01
   response:
     body:
       string: "{\r\n  \"name\": \"azurefirewall\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/azureFirewalls/azurefirewall\",\r\n
-        \ \"etag\": \"W/\\\"bd8a2d48-4dca-4e60-9a5b-80ae664bc3a1\\\"\",\r\n  \"type\":
+        \ \"etag\": \"W/\\\"d6d10835-35ff-4cbc-be87-ef596880f6d8\\\"\",\r\n  \"type\":
+        \"Microsoft.Network/azureFirewalls\",\r\n  \"location\": \"westus\",\r\n  \"tags\":
+        {\r\n    \"tag1\": \"value1\",\r\n    \"tag2\": \"value2\"\r\n  },\r\n  \"properties\":
+        {\r\n    \"provisioningState\": \"Updating\",\r\n    \"sku\": {\r\n      \"name\":
+        \"AZFW_Hub\",\r\n      \"tier\": \"Standard\"\r\n    },\r\n    \"additionalProperties\":
+        {},\r\n    \"virtualHub\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/virtualHubs/virtualhub\"\r\n
+        \   },\r\n    \"hubIPAddresses\": {\r\n      \"privateIPAddress\": \"10.168.0.132\",\r\n
+        \     \"publicIPs\": {\r\n        \"addresses\": [\r\n          {\r\n            \"address\":
+        \"13.88.62.169\"\r\n          }\r\n        ],\r\n        \"count\": 1\r\n
+        \     }\r\n    },\r\n    \"firewallPolicy\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/firewallPolicies/firewallpolicy\"\r\n
+        \   }\r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1266'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 30 Aug 2021 10:13:13 GMT
+      etag:
+      - W/"d6d10835-35ff-4cbc-be87-ef596880f6d8"
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - bf976866-5842-4343-99dc-beb005014454
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/azureFirewalls/azurefirewall?api-version=2021-03-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"azurefirewall\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/azureFirewalls/azurefirewall\",\r\n
+        \ \"etag\": \"W/\\\"d6d10835-35ff-4cbc-be87-ef596880f6d8\\\"\",\r\n  \"type\":
+        \"Microsoft.Network/azureFirewalls\",\r\n  \"location\": \"westus\",\r\n  \"tags\":
+        {\r\n    \"tag1\": \"value1\",\r\n    \"tag2\": \"value2\"\r\n  },\r\n  \"properties\":
+        {\r\n    \"provisioningState\": \"Updating\",\r\n    \"sku\": {\r\n      \"name\":
+        \"AZFW_Hub\",\r\n      \"tier\": \"Standard\"\r\n    },\r\n    \"additionalProperties\":
+        {},\r\n    \"virtualHub\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/virtualHubs/virtualhub\"\r\n
+        \   },\r\n    \"hubIPAddresses\": {\r\n      \"privateIPAddress\": \"10.168.0.132\",\r\n
+        \     \"publicIPs\": {\r\n        \"addresses\": [\r\n          {\r\n            \"address\":
+        \"13.88.62.169\"\r\n          }\r\n        ],\r\n        \"count\": 1\r\n
+        \     }\r\n    },\r\n    \"firewallPolicy\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/firewallPolicies/firewallpolicy\"\r\n
+        \   }\r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1266'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 30 Aug 2021 10:13:43 GMT
+      etag:
+      - W/"d6d10835-35ff-4cbc-be87-ef596880f6d8"
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - cf797339-f926-4616-b105-660dc7938b15
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/azureFirewalls/azurefirewall?api-version=2021-03-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"azurefirewall\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/azureFirewalls/azurefirewall\",\r\n
+        \ \"etag\": \"W/\\\"0c97511c-03c1-4f90-ace3-9139a67fbb1e\\\"\",\r\n  \"type\":
         \"Microsoft.Network/azureFirewalls\",\r\n  \"location\": \"westus\",\r\n  \"tags\":
         {\r\n    \"tag1\": \"value1\",\r\n    \"tag2\": \"value2\"\r\n  },\r\n  \"properties\":
         {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"sku\": {\r\n      \"name\":
@@ -1829,20 +1362,20 @@ interactions:
         {},\r\n    \"virtualHub\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/virtualHubs/virtualhub\"\r\n
         \   },\r\n    \"hubIPAddresses\": {\r\n      \"privateIPAddress\": \"10.168.0.132\",\r\n
         \     \"publicIPs\": {\r\n        \"addresses\": [\r\n          {\r\n            \"address\":
-        \"138.91.155.214\"\r\n          }\r\n        ],\r\n        \"count\": 1\r\n
+        \"13.88.62.169\"\r\n          }\r\n        ],\r\n        \"count\": 1\r\n
         \     }\r\n    },\r\n    \"firewallPolicy\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/firewallPolicies/firewallpolicy\"\r\n
         \   }\r\n  }\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1269'
+      - '1267'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 05:01:24 GMT
+      - Mon, 30 Aug 2021 10:14:14 GMT
       etag:
-      - W/"bd8a2d48-4dca-4e60-9a5b-80ae664bc3a1"
+      - W/"0c97511c-03c1-4f90-ace3-9139a67fbb1e"
       expires:
       - '-1'
       pragma:
@@ -1859,7 +1392,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 62891187-8a5b-4af0-b226-88b1d21328f1
+      - 780e5cb0-2cba-4cbc-b2b4-e66b322b7c20
     status:
       code: 200
       message: OK
@@ -1875,10 +1408,10 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/azureFirewalls/azurefirewall?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/azureFirewalls/azurefirewall?api-version=2021-03-01
   response:
     body:
       string: ''
@@ -1886,17 +1419,17 @@ interactions:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/eb601eb1-58b5-4392-87a2-68473b00496f?api-version=2021-02-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/9ad9da7a-ee10-4e69-b165-1fad4a588a34?api-version=2021-03-01
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Fri, 14 May 2021 05:01:25 GMT
+      - Mon, 30 Aug 2021 10:14:14 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operationResults/eb601eb1-58b5-4392-87a2-68473b00496f?api-version=2021-02-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operationResults/9ad9da7a-ee10-4e69-b165-1fad4a588a34?api-version=2021-03-01
       pragma:
       - no-cache
       server:
@@ -1907,7 +1440,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 68fa435c-375c-4ddc-bafd-cf699176a876
+      - 755a2077-1dcb-4ad8-90c4-3d5af3ddd536
       x-ms-ratelimit-remaining-subscription-deletes:
       - '14987'
     status:
@@ -1923,10 +1456,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/eb601eb1-58b5-4392-87a2-68473b00496f?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/9ad9da7a-ee10-4e69-b165-1fad4a588a34?api-version=2021-03-01
   response:
     body:
       string: "{\r\n  \"status\": \"InProgress\"\r\n}"
@@ -1938,7 +1471,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 05:01:35 GMT
+      - Mon, 30 Aug 2021 10:14:24 GMT
       expires:
       - '-1'
       pragma:
@@ -1955,7 +1488,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - aa269fbf-6912-4ead-a2aa-4f4aac81015e
+      - c4e0de1a-088e-4ae7-86f8-90e62d82c5d4
     status:
       code: 200
       message: OK
@@ -1969,10 +1502,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/eb601eb1-58b5-4392-87a2-68473b00496f?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/9ad9da7a-ee10-4e69-b165-1fad4a588a34?api-version=2021-03-01
   response:
     body:
       string: "{\r\n  \"status\": \"InProgress\"\r\n}"
@@ -1984,7 +1517,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 05:01:44 GMT
+      - Mon, 30 Aug 2021 10:14:34 GMT
       expires:
       - '-1'
       pragma:
@@ -2001,7 +1534,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 8cb379a2-f2a8-4678-8f88-027e4d37103d
+      - 1d767260-3f88-46e2-8874-241a44368f9b
     status:
       code: 200
       message: OK
@@ -2015,10 +1548,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/eb601eb1-58b5-4392-87a2-68473b00496f?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/9ad9da7a-ee10-4e69-b165-1fad4a588a34?api-version=2021-03-01
   response:
     body:
       string: "{\r\n  \"status\": \"InProgress\"\r\n}"
@@ -2030,7 +1563,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 05:02:04 GMT
+      - Mon, 30 Aug 2021 10:14:55 GMT
       expires:
       - '-1'
       pragma:
@@ -2047,7 +1580,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 20db2680-df7b-4608-b861-b8a23b5f2c05
+      - ff6ce8ac-028b-4cd7-a042-e401b26d4549
     status:
       code: 200
       message: OK
@@ -2061,10 +1594,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/eb601eb1-58b5-4392-87a2-68473b00496f?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/9ad9da7a-ee10-4e69-b165-1fad4a588a34?api-version=2021-03-01
   response:
     body:
       string: "{\r\n  \"status\": \"InProgress\"\r\n}"
@@ -2076,7 +1609,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 05:02:24 GMT
+      - Mon, 30 Aug 2021 10:15:15 GMT
       expires:
       - '-1'
       pragma:
@@ -2093,7 +1626,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - c4378b21-e554-4cf5-9b00-80af9eff892d
+      - 96eaac2d-2a3f-421e-b16c-09eb89cfee82
     status:
       code: 200
       message: OK
@@ -2107,10 +1640,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/eb601eb1-58b5-4392-87a2-68473b00496f?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/9ad9da7a-ee10-4e69-b165-1fad4a588a34?api-version=2021-03-01
   response:
     body:
       string: "{\r\n  \"status\": \"InProgress\"\r\n}"
@@ -2122,7 +1655,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 05:03:05 GMT
+      - Mon, 30 Aug 2021 10:15:54 GMT
       expires:
       - '-1'
       pragma:
@@ -2139,7 +1672,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 17aa839e-b2b4-42a4-8075-9bd98e617068
+      - 82c4b682-2473-4db6-9ca3-57c76dfeef4e
     status:
       code: 200
       message: OK
@@ -2153,10 +1686,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/eb601eb1-58b5-4392-87a2-68473b00496f?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/9ad9da7a-ee10-4e69-b165-1fad4a588a34?api-version=2021-03-01
   response:
     body:
       string: "{\r\n  \"status\": \"InProgress\"\r\n}"
@@ -2168,7 +1701,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 05:03:45 GMT
+      - Mon, 30 Aug 2021 10:16:35 GMT
       expires:
       - '-1'
       pragma:
@@ -2185,7 +1718,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - b9b18b84-6edb-4e45-a390-f06a280d15fd
+      - bcf84d92-04d2-4aec-a33d-e6e1d6de47a5
     status:
       code: 200
       message: OK
@@ -2199,10 +1732,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/eb601eb1-58b5-4392-87a2-68473b00496f?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/9ad9da7a-ee10-4e69-b165-1fad4a588a34?api-version=2021-03-01
   response:
     body:
       string: "{\r\n  \"status\": \"InProgress\"\r\n}"
@@ -2214,7 +1747,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 05:05:06 GMT
+      - Mon, 30 Aug 2021 10:17:55 GMT
       expires:
       - '-1'
       pragma:
@@ -2231,7 +1764,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 6fb9208b-6cee-40a8-8a5e-ea72fd1e6cf3
+      - 392ed5ed-aed9-48d6-a64a-fe8120953668
     status:
       code: 200
       message: OK
@@ -2245,286 +1778,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.8.11 (Linux-5.8.0-1039-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/eb601eb1-58b5-4392-87a2-68473b00496f?api-version=2021-02-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 14 May 2021 05:07:45 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - faeae708-6cb8-4628-97f5-7cf574d0714f
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/eb601eb1-58b5-4392-87a2-68473b00496f?api-version=2021-02-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 14 May 2021 05:09:26 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - fda42897-1b2b-4880-b105-5b099ff982da
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/eb601eb1-58b5-4392-87a2-68473b00496f?api-version=2021-02-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 14 May 2021 05:11:05 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - 2bc0d8ab-c541-443b-a51b-dad39b231bb5
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/eb601eb1-58b5-4392-87a2-68473b00496f?api-version=2021-02-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 14 May 2021 05:12:46 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - d2cd85a2-172a-4d1d-8ac6-d64c0e1089b9
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/eb601eb1-58b5-4392-87a2-68473b00496f?api-version=2021-02-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 14 May 2021 05:14:27 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - 5eb2f609-9c7f-46ee-aa51-6c07ca9ac8ab
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/eb601eb1-58b5-4392-87a2-68473b00496f?api-version=2021-02-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 14 May 2021 05:16:07 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - 7ba1f900-678c-4cca-a99c-8ec1c6971677
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/eb601eb1-58b5-4392-87a2-68473b00496f?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/9ad9da7a-ee10-4e69-b165-1fad4a588a34?api-version=2021-03-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -2536,7 +1793,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 05:17:47 GMT
+      - Mon, 30 Aug 2021 10:20:36 GMT
       expires:
       - '-1'
       pragma:
@@ -2553,7 +1810,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 0c9c8511-740b-45c1-99f8-cacf36f1cc5a
+      - be9772ec-51f2-4e2a-ac7d-6145b939e3bc
     status:
       code: 200
       message: OK
