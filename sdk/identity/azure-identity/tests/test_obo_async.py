@@ -87,7 +87,7 @@ async def test_allow_multitenant_authentication():
     second_token = first_token * 2
 
     async def send(request, **_):
-        assert request.headers["User-Agent"] == USER_AGENT
+        assert request.headers["User-Agent"].startswith(USER_AGENT)
         parsed = urlparse(request.url)
         tenant = parsed.path.split("/")[1]
         assert tenant in (first_tenant, second_tenant), 'unexpected tenant "{}"'.format(tenant)
