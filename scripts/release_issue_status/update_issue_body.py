@@ -53,9 +53,7 @@ def get_pkname_and_readme_link(rest_repo, link):
                     pk_url_name.add(re.findall(r'/specification/(.*?)/resource-manager/', contents_url)[0])
                 except Exception as e:
                     continue
-                if not pk_url_name:
-                    pk_url_name = pk_url_name1
-                elif pk_url_name != pk_url_name1:
+                if len(pk_url_name) > 1:
                     print("\nexists multiple package names: {}, {} \n".format(pk_url_name, pk_url_name1))
                     raise Exception('Not find readme link, because it exists multiple package names')
 
