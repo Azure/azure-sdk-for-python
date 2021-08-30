@@ -121,6 +121,34 @@ def _latest_comment_time(comments, delay_from_create_date):
     return delay_from_create_date if not q else int((time.time() - q[-1][0]) / 3600 / 24)
 
 
+def auto_reply(item, sdk_repo, rest_repo):
+    if 'auto-link' not in item.labels:
+        try:
+            readme_link = update_issue_body(sdk_repo, rest_repo, item.link)
+        except Exception as e:
+            item.bot_advice = 'failed to modify the body of the new issue. Please modify manually'
+            item.labels.append('attention')
+            raise
+        item.labels.append('auto-link')
+        item.issue_object.set_labels(*item.labels)
+    else:
+        try:
+            readme_link = find_readme_link(sdk_repo, item.issue_object.number)
+        except Exception as e:
+            print('Issue: {}  updates body failed'.format(item.issue_object.number))
+            item.bot_advice = 'failed to find Readme link, Please check !!'
+            item.labels.append('attention')
+            raise
+    try:
+        reply = rg.begin_reply_generate(issue_object=item.issue_object, rest_repo=rest_repo, readme_link=readme_link)
+    except Exception as e:
+        item.bot_advice = 'auto reply failed, Please intervene manually !!'
+        print('Error from auto reply ========================')
+        print('Issue:{}'.format(item.issue_object.number))
+        print(traceback.format_exc())
+        print('==============================================')
+
+
 def main():
     # get latest issue status
     g = Github(os.getenv('TOKEN'))  # please fill user_token
@@ -174,31 +202,10 @@ def main():
             item.bot_advice = 'new comment for author.'
         elif item.comment_num == 0 and 'Python' in item.labels:
             item.bot_advice = 'new issue and better to confirm quickly.'
-            if 'auto-link' not in item.labels:
-                try:
-                    readme_link = update_issue_body(sdk_repo, rest_repo, item.link)
-                except Exception as e:
-                    item.bot_advice = 'failed to modify the body of the new issue. Please modify manually'
-                    item.labels.append('attention')
-                    continue
-                item.labels.append('auto-link')
-                item.issue_object.set_labels(*item.labels)
-            else:
-                try:
-                    readme_link = find_readme_link(sdk_repo, item.issue_object.number)
-                except Exception as e:
-                    print('Issue: {}  updates body failed'.format(item.issue_object.number))
-                    item.bot_advice = 'failed to find Readme link, Please check !!'
-                    item.labels.append('attention')
-                    continue
             try:
-                reply = rg.begin_reply_generate(issue_object=item.issue_object, rest_repo=rest_repo, readme_link=readme_link)
+                auto_reply(item, sdk_repo, rest_repo)
             except Exception as e:
-                item.bot_advice = 'auto reply failed, Please intervene manually !!'
-                print('Error from auto reply ========================')
-                print('Issue:{}'.format(item.issue_object.number))
-                print(traceback.format_exc())
-                print('==============================================')
+                continue
         elif item.delay_from_latest_update >= 7:
             item.bot_advice = 'delay for a long time and better to handle now.'
 
