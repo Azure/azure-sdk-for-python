@@ -33,30 +33,6 @@ async def await_result(func, *args, **kwargs):
         return await result  # type: ignore
     return result
 
-def _get_response_type(pipeline_transport_response):
-    try:
-        from .transport import AioHttpTransportResponse
-        from ..rest._aiohttp import RestAioHttpTransportResponse
-        if isinstance(pipeline_transport_response, AioHttpTransportResponse):
-            return RestAioHttpTransportResponse
-    except ImportError:
-        pass
-    try:
-        from .transport import AsyncioRequestsTransportResponse
-        from ..rest._requests_asyncio import RestAsyncioRequestsTransportResponse
-        if isinstance(pipeline_transport_response, AsyncioRequestsTransportResponse):
-            return RestAsyncioRequestsTransportResponse
-    except ImportError:
-        pass
-    try:
-        from .transport import TrioRequestsTransportResponse
-        from ..rest._requests_trio import RestTrioRequestsTransportResponse
-        if isinstance(pipeline_transport_response, TrioRequestsTransportResponse):
-            return RestTrioRequestsTransportResponse
-    except ImportError:
-        pass
-    raise ValueError("Unknown transport response")
-
 async def read_in_response(response, is_stream_response: Optional[bool]) -> None:
     try:
         if not is_stream_response:

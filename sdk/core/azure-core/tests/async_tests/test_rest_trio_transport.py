@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 from azure.core.pipeline.transport import TrioRequestsTransport
 from azure.core.rest import HttpRequest
-from azure.core.rest._requests_trio import RestTrioRequestsTransportResponse
+from azure.core.pipeline.transport._requests_trio import RestTrioRequestsTransportResponse
 from rest_client_async import AsyncTestRestClient
 from utils import readonly_checks
 import pytest

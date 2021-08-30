@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 from azure.core.pipeline.transport import AsyncioRequestsTransport
 from azure.core.rest import HttpRequest
-from azure.core.rest._requests_asyncio import RestAsyncioRequestsTransportResponse
+from azure.core.pipeline.transport._requests_asyncio import RestAsyncioRequestsTransportResponse
 from rest_client_async import AsyncTestRestClient
 
 import pytest

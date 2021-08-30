@@ -40,22 +40,18 @@ from azure.core.pipeline import Pipeline
 from ._base_async import (
     AsyncHttpResponse,
     _ResponseStopIteration,
-    _iterate_response_content)
+    _iterate_response_content,
+    RestAsyncHttpResponseImpl,
+)
 from ._requests_basic import (
     _RestRequestsTransportResponseBase,
     RequestsTransportResponse,
     _read_raw_stream,
-    _has_content,
 )
 from ._base_requests_async import RequestsAsyncTransportBase
-from .._tools import get_block_size as _get_block_size, get_internal_response as _get_internal_response
 
 from .._tools_async import read_in_response as _read_in_response
 from ...rest import HttpRequest, AsyncHttpResponse as RestAsyncHttpResponse
-from ...rest._helpers_py3 import (
-    iter_raw_helper as _iter_raw_helper,
-    iter_bytes_helper as _iter_bytes_helper,
-)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -144,8 +140,8 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         retval = RestAsyncioRequestsTransportResponse(
             request=request,
             internal_response=response,
+            block_size=self.connection_config.data_block_size
         )
-        retval._connection_data_block_size = self.connection_config.data_block_size  # pylint: disable=protected-access
         await _read_in_response(retval, kwargs.get("stream"))
         return retval
 
@@ -161,11 +157,11 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
-        self.block_size = _get_block_size(response)
+        self.block_size = response.block_size
         decompress = kwargs.pop("decompress", True)
         if len(kwargs) > 0:
             raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
-        internal_response = _get_internal_response(response)
+        internal_response = response.internal_response
         if decompress:
             self.iter_content_func = internal_response.iter_content(self.block_size)
         else:
@@ -177,7 +173,7 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
 
     async def __anext__(self):
         loop = _get_running_loop()
-        internal_response = _get_internal_response(self.response)
+        internal_response = self.response.internal_response
         try:
             chunk = await loop.run_in_executor(
                 None,
@@ -197,59 +193,20 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
             internal_response.close()
             raise
 
-
-class AsyncioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse): # type: ignore
-    """Asynchronous streaming of data from the response.
-    """
-    def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]: # type: ignore
-        """Generator for streaming request body data."""
-        return AsyncioStreamDownloadGenerator(pipeline, self, **kwargs) # type: ignore
-
 ##################### REST #####################
-
-class _RestAsyncioRequestsTransportResponseMixin:
-    def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]: # type: ignore
-        """DEPRECATED: Generator for streaming request body data.
-
-        This is deprecated and will be removed in a later release.
-        You should use `iter_bytes` or `iter_raw` instead.
-
-        :rtype: AsyncIterator[bytes]
-        """
-        return AsyncioStreamDownloadGenerator(pipeline, self, **kwargs) # type: ignore
 
 class RestAsyncioRequestsTransportResponse(
     _RestRequestsTransportResponseBase,
-    RestAsyncHttpResponse,
-    _RestAsyncioRequestsTransportResponseMixin,
+    RestAsyncHttpResponseImpl,
 ): # type: ignore
     """Asynchronous streaming of data from the response.
     """
 
-    async def iter_raw(self) -> AsyncIteratorType[bytes]:
-        """Asynchronously iterates over the response's bytes. Will not decompress in the process
-
-        :return: An async iterator of bytes from the response
-        :rtype: AsyncIterator[bytes]
-        """
-
-        async for part in _iter_raw_helper(AsyncioStreamDownloadGenerator, self):
-            yield part
-        await self.close()
-
-    async def iter_bytes(self) -> AsyncIteratorType[bytes]:
-        """Asynchronously iterates over the response's bytes. Will decompress in the process
-
-        :return: An async iterator of bytes from the response
-        :rtype: AsyncIterator[bytes]
-        """
-        async for part in _iter_bytes_helper(
-            AsyncioStreamDownloadGenerator,
-            self,
-            content=self.content if _has_content(self) else None
-        ):
-            yield part
-        await self.close()
+    def __init__(self, **kwargs):
+        super().__init__(
+            stream_download_generator=AsyncioStreamDownloadGenerator,
+            **kwargs
+        )
 
     async def close(self) -> None:
         """Close the response.
@@ -257,7 +214,7 @@ class RestAsyncioRequestsTransportResponse(
         :return: None
         :rtype: None
         """
-        self.is_closed = True
+        self._is_closed = True
         self._internal_response.close()
         await asyncio.sleep(0)
 
@@ -267,15 +224,9 @@ class RestAsyncioRequestsTransportResponse(
         :return: The response's bytes
         :rtype: bytes
         """
-        if not _has_content(self):
+        if not self._has_content():
             parts = []
             async for part in self.iter_bytes():  # type: ignore
                 parts.append(part)
             self._internal_response._content = b"".join(parts)  # pylint: disable=protected-access
         return self.content
-
-    def __getattr__(self, attr):
-        backcompat_attrs = ["stream_download"]
-        if attr in backcompat_attrs:
-            attr = "_" + attr
-        return super().__getattr__(attr)

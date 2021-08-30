@@ -8,6 +8,7 @@ from azure.core.pipeline.transport import(
     HttpRequest as PipelineTransportHttpRequest,
     HttpResponse as PipelineTransportHttpResponse,
 )
+from azure.core.pipeline.transport._base import RestHttpResponseImpl
 
 from azure.core.rest import (
     HttpRequest as RestHttpRequest,
@@ -15,12 +16,13 @@ from azure.core.rest import (
 )
 
 HTTP_REQUESTS = [PipelineTransportHttpRequest, RestHttpRequest]
-HTTP_RESPONSES = [PipelineTransportHttpResponse, RestHttpResponse]
+
+HTTP_RESPONSES = [PipelineTransportHttpResponse, RestHttpResponseImpl]
 
 try:
     from azure.core.pipeline.transport import AsyncHttpResponse as PipelineTransportAsyncHttpResponse
-    from azure.core.rest import AsyncHttpResponse as RestAsyncHttpResponse
-    ASYNC_HTTP_RESPONSES = [PipelineTransportAsyncHttpResponse, RestAsyncHttpResponse]
+    from azure.core.pipeline.transport._base_async import RestAsyncHttpResponseImpl
+    ASYNC_HTTP_RESPONSES = [PipelineTransportAsyncHttpResponse, RestAsyncHttpResponseImpl]
 except (SyntaxError, ImportError):
     ASYNC_HTTP_RESPONSES = None
 
@@ -93,9 +95,11 @@ def create_http_request(http_request, *args, **kwargs):
 
 def create_http_response(http_response, *args, **kwargs):
     if hasattr(http_response, "content"):
-        response = http_response(request=args[0], internal_response=args[1], **kwargs)
         if len(args) > 2:
-            response._connection_data_block_size = args[2]
+            block_size = args[2]
+        else:
+            block_size = None
+        response = http_response(request=args[0], internal_response=args[1], block_size=block_size, **kwargs)
         return response
     return http_response(*args, **kwargs)
 

@@ -50,16 +50,15 @@ from azure.core.exceptions import (
 from ._base import (
     HttpTransport,
     HttpResponse,
-    _HttpResponseBase
+    _HttpResponseBase,
+    RestHttpResponseImpl,
+    _RestHttpResponseBaseImpl,
 )
 from ._bigger_block_size_http_adapters import BiggerBlockSizeHTTPAdapter
 from .._tools import (
-    get_block_size as _get_block_size,
-    get_internal_response as _get_internal_response,
     read_in_response as _read_in_response,
 )
 from ...rest import HttpRequest as RestHttpRequest, HttpResponse as RestHttpResponse
-from ...rest._rest import _HttpResponseBase as _RestHttpResponseBase
 
 PipelineType = TypeVar("PipelineType")
 
@@ -167,11 +166,11 @@ class StreamDownloadGenerator(object):
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
-        self.block_size = _get_block_size(response)
+        self.block_size = response.block_size
         decompress = kwargs.pop("decompress", True)
         if len(kwargs) > 0:
             raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
-        internal_response = _get_internal_response(response)
+        internal_response = response.internal_response
         if decompress:
             self.iter_content_func = internal_response.iter_content(self.block_size)
         else:
@@ -185,7 +184,7 @@ class StreamDownloadGenerator(object):
         return self
 
     def __next__(self):
-        internal_response = _get_internal_response(self.response)
+        internal_response = self.response.internal_response
         try:
             chunk = next(self.iter_content_func)
             if not chunk:
@@ -334,27 +333,24 @@ class RequestsTransport(HttpTransport):
         retval = RestRequestsTransportResponse(
             request=request,
             internal_response=response,
+            block_size=self.connection_config.data_block_size
         )
-        retval._connection_data_block_size = self.connection_config.data_block_size  # pylint: disable=protected-access
         _read_in_response(retval, kwargs.get("stream"))
         return retval
 
 ##################### REST #####################
 
-def _has_content(response):
-    try:
-        response.content  # pylint: disable=pointless-statement
-        return True
-    except ResponseNotReadError:
-        return False
-
-class _RestRequestsTransportResponseBase(_RestHttpResponseBase):
+class _RestRequestsTransportResponseBase(_RestHttpResponseBaseImpl):
     def __init__(self, **kwargs):
-        super(_RestRequestsTransportResponseBase, self).__init__(**kwargs)
-        self.status_code = self._internal_response.status_code
-        self.headers = self._internal_response.headers
-        self.reason = self._internal_response.reason
-        self.content_type = self._internal_response.headers.get('content-type')
+        internal_response = kwargs.pop("internal_response")
+        super(_RestRequestsTransportResponseBase, self).__init__(
+            internal_response=internal_response,
+            status_code=internal_response.status_code,
+            headers=internal_response.headers,
+            reason=internal_response.reason,
+            content_type=internal_response.headers.get('content-type'),
+            **kwargs
+        )
 
     @property
     def content(self):
@@ -370,67 +366,14 @@ class _RestRequestsTransportResponseBase(_RestHttpResponseBase):
             # requests throws a RuntimeError if the content for a response is already consumed
             raise ResponseNotReadError(self)
 
-def _stream_download_helper(decompress, response):
-    if response.is_stream_consumed:
-        raise StreamConsumedError(response)
-    if response.is_closed:
-        raise StreamClosedError(response)
-
-    response.is_stream_consumed = True
-    stream_download = StreamDownloadGenerator(
-        pipeline=None,
-        response=response,
-        decompress=decompress,
-    )
-    for part in stream_download:
-        yield part
-
-class _RestRequestsTransportResponseMixin(object):
-
-    def _stream_download(self, pipeline, **kwargs):  # pylint: disable=unused-argument
-        """DEPRECATED: Generator for streaming request body data.
-
-        This is deprecated and will be removed in a later release.
-        You should use `iter_bytes` or `iter_raw` instead.
-
-        :rtype: iterator[bytes]
-        """
-        return StreamDownloadGenerator(pipeline, self, **kwargs)
-
 class RestRequestsTransportResponse(
-    _RestRequestsTransportResponseBase, RestHttpResponse, _RestRequestsTransportResponseMixin
+    _RestRequestsTransportResponseBase, RestHttpResponseImpl
 ):
-
-    def iter_bytes(self):
-        # type: () -> Iterator[bytes]
-        """Iterates over the response's bytes. Will decompress in the process
-        :return: An iterator of bytes from the response
-        :rtype: Iterator[str]
-        """
-        if _has_content(self):
-            chunk_size = cast(int, self._connection_data_block_size)
-            for i in range(0, len(self.content), chunk_size):
-                yield self.content[i : i + chunk_size]
-        else:
-            for part in _stream_download_helper(
-                decompress=True,
-                response=self,
-            ):
-                yield part
-        self.close()
-
-    def iter_raw(self):
-        # type: () -> Iterator[bytes]
-        """Iterates over the response's bytes. Will not decompress in the process
-        :return: An iterator of bytes from the response
-        :rtype: Iterator[str]
-        """
-        for raw_bytes in _stream_download_helper(
-            decompress=False,
-            response=self,
-        ):
-            yield raw_bytes
-        self.close()
+    def __init__(self, **kwargs):
+        super(RestRequestsTransportResponse, self).__init__(
+            stream_download_generator=StreamDownloadGenerator,
+            **kwargs
+        )
 
     def read(self):
         # type: () -> bytes
@@ -439,12 +382,6 @@ class RestRequestsTransportResponse(
         :return: The read in bytes
         :rtype: bytes
         """
-        if not _has_content(self):
+        if not self._has_content():
             self._internal_response._content = b"".join(self.iter_bytes())  # pylint: disable=protected-access
         return self.content
-
-    def __getattr__(self, attr):
-        backcompat_attrs = ["stream_download"]
-        if attr in backcompat_attrs:
-            attr = "_" + attr
-        return super(RestRequestsTransportResponse, self).__getattr__(attr)

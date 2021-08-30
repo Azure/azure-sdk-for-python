@@ -36,7 +36,7 @@ from ._base import (
     PipelineContext,
     PipelineRequest,
     PipelineResponse,
-    RestHttpResponseImpl,
+    _RestHttpResponseBaseImpl,
 )
 from .._tools_async import await_result as _await_result
 from ...rest import AsyncHttpResponse as RestAsyncHttpResponse
@@ -163,22 +163,6 @@ class AsyncHttpClientTransportResponse(_HttpClientTransportResponse, AsyncHttpRe
     :param httpclient_response: The object returned from an HTTP(S)Connection from http.client
     """
 
-class RestAsyncHttpClientTransportResponse(_RestHttpClientTransportResponse, RestAsyncHttpResponse):
-    """Create a Rest HTTPResponse from an http.client response.
-    """
-
-    async def iter_bytes(self):
-        raise TypeError("We do not support iter_bytes for this transport response")
-
-    async def iter_raw(self):
-        raise TypeError("We do not support iter_raw for this transport response")
-
-    async def read(self):
-        if self._content is None:
-            self._content = self._internal_response.read()
-        return self._content
-
-
 class AsyncHttpTransport(
     AbstractAsyncContextManager,
     abc.ABC,
@@ -206,39 +190,12 @@ class AsyncHttpTransport(
 ####################### REST #######################
 
 class RestAsyncHttpResponseImpl(
-    RestAsyncHttpResponse, RestHttpResponseImpl, _RestAsyncHttpResponseBackcompatMixin
+    RestAsyncHttpResponse, _RestHttpResponseBaseImpl, _RestAsyncHttpResponseBackcompatMixin
 ):
     """AsyncHttpResponseImpl built on top of our HttpResponse protocol class.
 
     Helper impl for creating our transport responses
     """
-
-    def _stream_download_helper(
-        self,
-        decompress: bool,
-        stream_download_generator: Callable,
-    ) -> AsyncIteratorType[bytes]:
-        if self.is_stream_consumed:
-            raise StreamConsumedError(self)
-        if self.is_closed:
-            raise StreamClosedError(self)
-
-        self._is_stream_consumed = True  # pylint: disable=protected-access
-        return stream_download_generator(
-            pipeline=None,
-            response=self,
-            decompress=decompress,
-        )
-
-    async def _iter_raw_helper(
-        self,
-        stream_download_generator: Callable,
-    ) -> AsyncIteratorType[bytes]:
-        async for part in self._stream_download_helper(
-            decompress=False,
-            stream_download_generator=stream_download_generator,
-        ):
-            yield part
 
     async def _iter_bytes_helper(
         self,
@@ -246,9 +203,8 @@ class RestAsyncHttpResponseImpl(
         content: Optional[bytes],
     ) -> AsyncIteratorType[bytes]:
         if content:
-            chunk_size = self._connection_data_block_size  # pylint: disable=protected-access
-            for i in range(0, len(content), chunk_size):
-                yield content[i : i + chunk_size]
+            for i in range(0, len(content), self._block_size):
+                yield content[i : i + self._block_size]
         else:
             async for part in self._stream_download_helper(
                 decompress=True,
@@ -297,7 +253,8 @@ class RestAsyncHttpResponseImpl(
         :return: An async iterator of bytes from the response
         :rtype: AsyncIterator[bytes]
         """
-        async for part in self.stream_download(pipeline=None):
+        self._stream_download_check()
+        async for part in self.stream_download(pipeline=None, decompress=False):
             yield part
         await self.close()
 
@@ -307,9 +264,16 @@ class RestAsyncHttpResponseImpl(
         :return: An async iterator of bytes from the response
         :rtype: AsyncIterator[bytes]
         """
-        raise NotImplementedError()
-        # getting around mypy behavior, see https://github.com/python/mypy/issues/10732
-        yield  # pylint: disable=unreachable
+        self._stream_download_check()
+        if self._has_content():
+            for i in range(0, len(self.content), self._block_size):
+                yield self.content[i : i + self._block_size]
+        else:
+            async for part in self.stream_download(
+                pipeline=None,
+                decompress=True
+            ):
+                yield part
 
     async def close(self) -> None:
         """Close the response.
@@ -330,3 +294,19 @@ class RestAsyncHttpResponseImpl(
         return "<AsyncHttpResponse: {} {}{}>".format(
             self.status_code, self.reason, content_type_str
         )
+
+class RestAsyncHttpClientTransportResponse(_RestHttpClientTransportResponse, RestAsyncHttpResponseImpl):
+    """Create a Rest HTTPResponse from an http.client response.
+    """
+
+    async def iter_bytes(self):
+        raise TypeError("We do not support iter_bytes for this transport response")
+
+    async def iter_raw(self):
+        raise TypeError("We do not support iter_raw for this transport response")
+
+    async def read(self):
+        if self._content is None:
+            self._content = self._internal_response.read()
+        return self._content
+

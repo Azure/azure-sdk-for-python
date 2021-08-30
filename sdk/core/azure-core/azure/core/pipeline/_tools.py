@@ -33,18 +33,6 @@ def await_result(func, *args, **kwargs):
         )
     return result
 
-def get_block_size(response):
-    try:
-        return response._connection_data_block_size  # pylint: disable=protected-access
-    except AttributeError:
-        return response.block_size
-
-def get_internal_response(response):
-    try:
-        return response._internal_response  # pylint: disable=protected-access
-    except AttributeError:
-        return response.internal_response
-
 def read_in_response(response, is_stream_response):
     try:
         if not is_stream_response:

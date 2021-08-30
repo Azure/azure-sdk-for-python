@@ -12,7 +12,7 @@ import io
 import sys
 import pytest
 from azure.core.rest import HttpRequest, HttpResponse
-from azure.core.rest._requests_basic import RestRequestsTransportResponse
+from azure.core.pipeline.transport._requests_basic import RestRequestsTransportResponse
 from azure.core.exceptions import HttpResponseError
 import xml.etree.ElementTree as ET
 from utils import readonly_checks

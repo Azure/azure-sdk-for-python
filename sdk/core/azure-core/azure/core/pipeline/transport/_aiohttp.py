@@ -45,18 +45,14 @@ from ._base import HttpRequest as PipelineTransportHttpRequest
 from ._base_async import (
     AsyncHttpTransport,
     AsyncHttpResponse,
-    _ResponseStopIteration)
-from .._tools import get_block_size as _get_block_size, get_internal_response as _get_internal_response
+    _ResponseStopIteration,
+    RestAsyncHttpResponseImpl,
+)
 
 from .._tools_async import read_in_response as _read_in_response
 from ...rest import (
     HttpRequest as RestHttpRequest, AsyncHttpResponse as RestAsyncHttpResponse
 )
-from ...rest._helpers_py3 import (
-    iter_raw_helper as _iter_raw_helper,
-    iter_bytes_helper as _iter_bytes_helper,
-)
-
 
 # Matching requests, because why not?
 CONTENT_CHUNK_SIZE = 10 * 1024
@@ -288,9 +284,12 @@ class AioHttpTransport(AsyncHttpTransport):
                 allow_redirects=False,
                 **config
             )
-            response = RestAioHttpTransportResponse(request=request, internal_response=result)
-            response._connection_data_block_size = self.connection_config.data_block_size  # pylint: disable=protected-access
-            response._decompress = not auto_decompress  # pylint: disable=protected-access
+            response = RestAioHttpTransportResponse(
+                request=request,
+                internal_response=result,
+                block_size=self.connection_config.data_block_size,
+                decompress=not auto_decompress,
+            )
             await _read_in_response(response, stream_response)
 
         except aiohttp.client_exceptions.ClientResponseError as err:
@@ -313,17 +312,16 @@ class AioHttpStreamDownloadGenerator(collections.abc.AsyncIterator):
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
-        self.block_size = _get_block_size(response)
+        self.block_size = response.block_size
         self._decompress = decompress
-        internal_response = _get_internal_response(response)
-        self.content_length = int(internal_response.headers.get('Content-Length', 0))
+        self.content_length = int(response.internal_response.headers.get('Content-Length', 0))
         self._decompressor = None
 
     def __len__(self):
         return self.content_length
 
     async def __anext__(self):
-        internal_response = _get_internal_response(self.response)
+        internal_response = self.response.internal_response
         try:
             chunk = await internal_response.content.read(self.block_size)
             if not chunk:
@@ -466,60 +464,31 @@ class _RestAioHttpTransportResponseBackcompatMixin():
         """Load in memory the body, so it could be accessible from sync methods."""
         self._content = await self.read()  # type: ignore
 
-    def _stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:
-        """DEPRECATED: Generator for streaming request body data.
-
-        This is deprecated and will be removed in a later release.
-        You should use `iter_bytes` or `iter_raw` instead.
-
-        :rtype: AsyncIterator[bytes]
-        """
-        return AioHttpStreamDownloadGenerator(pipeline, self, **kwargs)  # type: ignore
-
-class RestAioHttpTransportResponse(RestAsyncHttpResponse, _RestAioHttpTransportResponseBackcompatMixin):
+class RestAioHttpTransportResponse(RestAsyncHttpResponseImpl, _RestAioHttpTransportResponseBackcompatMixin):
     def __init__(
         self,
         *,
-        request: RestHttpRequest,
         internal_response,
+        decompress: bool = False,
+        **kwargs
     ):
-        super().__init__(request=request, internal_response=internal_response)
-        self.status_code = internal_response.status
-        self.headers = CIMultiDict(internal_response.headers)  # type: ignore
-        self.reason = internal_response.reason
-        self.content_type = internal_response.headers.get('content-type')
-        self._decompress = True
+        super().__init__(
+            internal_response=internal_response,
+            status_code=internal_response.status,
+            headers=CIMultiDict(internal_response.headers),
+            reason=internal_response.reason,
+            content_type=internal_response.headers.get('content-type'),
+            stream_download_generator=AioHttpStreamDownloadGenerator,
+            **kwargs
+        )
+        self._decompress = decompress
         self._content = internal_response._body
 
     def __getattr__(self, attr):
-        backcompat_attrs = ["load_body", "stream_download"]
+        backcompat_attrs = ["load_body"]
         if attr in backcompat_attrs:
             attr = "_" + attr
         return super().__getattr__(attr)
-
-    async def iter_raw(self) -> AsyncIteratorType[bytes]:
-        """Asynchronously iterates over the response's bytes. Will not decompress in the process
-
-        :return: An async iterator of bytes from the response
-        :rtype: AsyncIterator[bytes]
-        """
-        async for part in _iter_raw_helper(AioHttpStreamDownloadGenerator, self):
-            yield part
-        await self.close()
-
-    async def iter_bytes(self) -> AsyncIteratorType[bytes]:
-        """Asynchronously iterates over the response's bytes. Will decompress in the process
-
-        :return: An async iterator of bytes from the response
-        :rtype: AsyncIterator[bytes]
-        """
-        async for part in _iter_bytes_helper(
-            AioHttpStreamDownloadGenerator,
-            self,
-            content=self._content
-        ):
-            yield part
-        await self.close()
 
     def __getstate__(self):
 
@@ -535,7 +504,7 @@ class RestAioHttpTransportResponse(RestAsyncHttpResponse, _RestAioHttpTransportR
         :return: None
         :rtype: None
         """
-        self.is_closed = True
+        self._is_closed = True
         self._internal_response.close()
         await asyncio.sleep(0)
 

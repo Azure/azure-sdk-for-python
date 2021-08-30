@@ -15,13 +15,13 @@ except ImportError:
 from azure.core.pipeline.transport import (
     HttpResponse as PipelineTransportHttpResponse, RequestsTransport
 )
-from azure.core.rest import HttpResponse as RestHttpResponse
 from azure.core.pipeline.transport._base import (
     HttpClientTransportResponse as PipelineTransportHttpClientTransportResponse,
     RestHttpClientTransportResponse,
     HttpTransport,
     _deserialize_response,
     _urljoin,
+    RestHttpResponseImpl,
 )
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.pipeline import Pipeline
@@ -39,11 +39,18 @@ class PipelineTransportMockResponse(PipelineTransportHttpResponse):
     def body(self):
         return self._body
 
-class RestMockResponse(RestHttpResponse):
+class RestMockResponse(RestHttpResponseImpl):
     def __init__(self, request, body, content_type):
-        super(RestMockResponse, self).__init__(request=request, internal_response=None)
+        super(RestMockResponse, self).__init__(
+            request=request,
+            internal_response=None,
+            content_type=content_type,
+            block_size=None,
+            status_code=200,
+            reason="OK",
+            headers={},
+        )
         self._content = body
-        self.content_type = content_type
 
     @property
     def content(self):

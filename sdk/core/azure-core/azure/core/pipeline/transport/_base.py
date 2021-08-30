@@ -51,6 +51,7 @@ from typing import (
     IO,
     List,
     Union,
+    Callable,
     Any,
     Mapping,
     Dict,
@@ -62,7 +63,7 @@ from typing import (
 
 from six.moves.http_client import HTTPConnection, HTTPResponse as _HTTPResponse
 
-from azure.core.exceptions import HttpResponseError, ResponseNotReadError
+from azure.core.exceptions import HttpResponseError, ResponseNotReadError, StreamClosedError, StreamConsumedError
 from azure.core.pipeline import (
     ABC,
     AbstractContextManager,
@@ -544,32 +545,6 @@ class HttpClientTransportResponse(_HttpClientTransportResponse, HttpResponse):
     Body will NOT be read by the constructor. Call "body()" to load the body in memory if necessary.
     """
 
-class _RestHttpClientTransportResponse(_RestHttpResponseBase):
-
-    def __init__(self, **kwargs):
-        super(_RestHttpClientTransportResponse, self).__init__(**kwargs)
-        self.status_code = self._internal_response.status
-        self.headers = _case_insensitive_dict(self._internal_response.getheaders())
-        self.reason = self._internal_response.reason
-        self.content_type = self.headers.get("Content-Type")
-        self._content = None
-
-class RestHttpClientTransportResponse(_RestHttpClientTransportResponse, RestHttpResponse):
-    """Create a Rest HTTPResponse from an http.client response.
-    """
-
-    def iter_bytes(self):
-        raise TypeError("We do not support iter_bytes for this transport response")
-
-    def iter_raw(self):
-        raise TypeError("We do not support iter_raw for this transport response")
-
-    def read(self):
-        if self._content is None:
-            self._content = self._internal_response.read()
-        return self._content
-
-
 class BytesIOSocket(object):
     """Mocking the "makefile" of socket for HTTPResponse.
 
@@ -881,14 +856,43 @@ class _RestHttpResponseBaseImpl(
     def __init__(self, **kwargs):
         # type: (Any) -> None
         super(_RestHttpResponseBaseImpl, self).__init__()
-        self._request = kwargs.pop("request")
+        self._request = kwargs.pop("request")  # type: RestHttpRequest
         self._internal_response = kwargs.pop("internal_response")
         self._is_closed = False
         self._is_stream_consumed = False
-        self._connection_data_block_size = None
+        self._block_size = kwargs.pop("block_size") or 4096  # type: int
+        self._status_code = kwargs.pop("status_code")  # type: int
+        self._reason = kwargs.pop("reason")  # type: str
+        self._content_type = kwargs.pop("content_type")  # type: str
+        self._headers = kwargs.pop("headers")  # type: Optional[HeadersType]
+        self._stream_download_generator = kwargs.pop("stream_download_generator")  # type: Callable
         self._json = None  # this is filled in ContentDecodePolicy, when we deserialize
         self._content = None  # type: Optional[bytes]
         self._text = None  # type: Optional[str]
+
+
+    @property
+    def status_code(self):
+        # type: (...) -> int
+        """The status code of this response"""
+        return self._status_code
+
+    @property
+    def headers(self):
+        # type: (...) -> Optional[HeadersType]
+        return self._headers
+
+    @property
+    def reason(self):
+        # type: (...) -> str
+        """The response headers"""
+        return self._reason
+
+    @property
+    def content_type(self):
+        # type: (...) -> Optional[str]
+        """The content type of the response"""
+        return self._content_type
 
     @property
     def request(self):
@@ -1002,6 +1006,13 @@ class _RestHttpResponseBaseImpl(
             raise ResponseNotReadError(self)
         return self._content
 
+    def _has_content(self):
+        try:
+            self.content  # pylint: disable=pointless-statement
+            return True
+        except ResponseNotReadError:
+            return False
+
     def __repr__(self):
         # type: (...) -> str
         content_type_str = (
@@ -1046,8 +1057,16 @@ class _RestHttpResponseBaseImpl(
             lines.append(last_chunk_of_text)
         return lines
 
+    def _stream_download_check(self):
+        if self.is_stream_consumed:
+            raise StreamConsumedError(self)
+        if self.is_closed:
+            raise StreamClosedError(self)
+
+        self._is_stream_consumed = True  # pylint: disable=protected-access
+
 class RestHttpResponseImpl(
-    RestHttpResponse, _RestHttpResponseBaseImpl, _RestHttpResponseBackcompatMixinBase
+    _RestHttpResponseBaseImpl, RestHttpResponse, _RestHttpResponseBackcompatMixinBase,
 ):
     """HttpResponseImpl built on top of our HttpResponse protocol class.
 
@@ -1077,6 +1096,35 @@ class RestHttpResponseImpl(
             self._content = b"".join(self.iter_bytes())
         return self.content
 
+    def iter_bytes(self):
+        # type: () -> Iterator[bytes]
+        """Iterates over the response's bytes. Will decompress in the process
+        :return: An iterator of bytes from the response
+        :rtype: Iterator[str]
+        """
+        if self._has_content():
+            chunk_size = cast(int, self._block_size)
+            for i in range(0, len(self.content), chunk_size):
+                yield self.content[i : i + chunk_size]
+        else:
+            for part in self.stream_download(
+                pipeline=None,
+                decompress=True,
+            ):
+                yield part
+        self.close()
+
+    def iter_raw(self):
+        # type: () -> Iterator[bytes]
+        """Iterates over the response's bytes. Will not decompress in the process
+        :return: An iterator of bytes from the response
+        :rtype: Iterator[str]
+        """
+        self._stream_download_check()
+        for part in self.stream_download(pipeline=None, decompress=False):
+            yield part
+        self.close()
+
     def iter_text(self):
         # type: () -> Iterator[str]
         """Iterate over the response text
@@ -1096,3 +1144,28 @@ class RestHttpResponseImpl(
         # type: (...) -> None
         self._is_stream_consumed = True
         self.close()
+
+class _RestHttpClientTransportResponse(_RestHttpResponseBaseImpl):
+
+    def __init__(self, **kwargs):
+        super(_RestHttpClientTransportResponse, self).__init__(**kwargs)
+        self._status_code = self._internal_response.status
+        self._headers = _case_insensitive_dict(self._internal_response.getheaders())
+        self._reason = self._internal_response.reason
+        self._content_type = self.headers.get("Content-Type")
+        self._content = None
+
+class RestHttpClientTransportResponse(_RestHttpClientTransportResponse, RestHttpResponseImpl):
+    """Create a Rest HTTPResponse from an http.client response.
+    """
+
+    def iter_bytes(self):
+        raise TypeError("We do not support iter_bytes for this transport response")
+
+    def iter_raw(self):
+        raise TypeError("We do not support iter_raw for this transport response")
+
+    def read(self):
+        if not self._has_content():
+            self._content = self._internal_response.read()
+        return self._content

@@ -264,7 +264,16 @@ class _HttpResponseBackcompatMixinBase(object):
         return self.__getattribute__(attr)
 
     def __setattr__(self, attr, value):
-        backcompat_attrs = ["block_size", "internal_response"]
+        backcompat_attrs = [
+            "block_size",
+            "internal_response",
+            "request",
+            "status_code",
+            "headers",
+            "reason",
+            "content_type",
+            "stream_download",
+        ]
         attr = _pad_attr_name(attr, backcompat_attrs)
         super(_HttpResponseBackcompatMixinBase, self).__setattr__(attr, value)
 
@@ -275,22 +284,6 @@ class _HttpResponseBackcompatMixinBase(object):
         You should get it through the `content` property instead
         """
         return self.content  # pylint: disable=no-member
-
-    @property
-    def _block_size(self):
-        """DEPRECATED: Get the block size of the response content.
-
-        This is deprecated and will be removed in a later release.
-        """
-        return self._connection_data_block_size
-
-    @_block_size.setter
-    def _block_size(self, val):
-        """DEPRECATED: Set the block size of the response content.
-
-        This is deprecated and will be removed in a later release.
-        """
-        self._connection_data_block_size = val  # type: Optional[int]
 
     def _decode_parts(self, message, http_response_type, requests):
         from ..pipeline.transport._base import BytesIOSocket, _HTTPResponse
@@ -310,6 +303,16 @@ class _HttpResponseBackcompatMixinBase(object):
         return _get_raw_parts_helper(
             self, http_response_type, RestHttpClientTransportResponse
         )
+
+    def _stream_download(self, pipeline, **kwargs):
+        """DEPRECATED: Generator for streaming request body data.
+
+        This is deprecated and will be removed in a later release.
+        You should use `iter_bytes` or `iter_raw` instead.
+
+        :rtype: iterator[bytes]
+        """
+        return self._stream_download_generator(pipeline, self, **kwargs)
 
 class HttpResponseBackcompatMixin(_HttpResponseBackcompatMixinBase):
 
