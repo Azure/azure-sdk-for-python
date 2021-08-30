@@ -45,8 +45,10 @@ from typing import (
 import xml.etree.ElementTree as ET
 import six
 try:
+    binary_type = str
     from urlparse import urlparse  # type: ignore
 except ImportError:
+    binary_type = bytes  # type: ignore
     from urllib.parse import urlparse
 from azure.core.serialization import AzureJSONEncoder
 from ..utils._pipeline_transport_rest_shared import (

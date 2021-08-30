@@ -609,7 +609,7 @@ class BytesIOSocket(object):
 
 
 def _deserialize_response(
-    http_response_as_bytes, http_request, http_response_type=HttpClientTransportResponse
+    http_response_as_bytes, http_request, http_response_type=HttpClientTransportResponse,
 ):
     local_socket = BytesIOSocket(http_response_as_bytes)
     response = _HTTPResponse(local_socket, method=http_request.method)
@@ -929,6 +929,7 @@ class _RestHttpResponseBackcompatMixinBase(object):
         This is deprecated and will be removed in a later release.
         You should get it through the `content` property instead
         """
+        self.read()
         return self.content  # pylint: disable=no-member
 
     def _decode_parts(self, message, http_response_type, requests):
@@ -1189,7 +1190,7 @@ class _RestHttpResponseBaseImpl(
         if self.is_closed:
             raise StreamClosedError(self)
 
-        self._is_stream_consumed = True  # pylint: disable=protected-access
+        self._is_stream_consumed = True
 
 class RestHttpResponseImpl(
     _RestHttpResponseBaseImpl, RestHttpResponse, _RestHttpResponseBackcompatMixinBase
@@ -1205,8 +1206,9 @@ class RestHttpResponseImpl(
 
     def close(self):
         # type: (...) -> None
-        self._is_closed = True
-        self._internal_response.close()
+        if not self.is_closed:
+            self._is_closed = True
+            self._internal_response.close()
 
     def __exit__(self, *args):
         # type: (...) -> None
@@ -1233,13 +1235,14 @@ class RestHttpResponseImpl(
             for i in range(0, len(self.content), chunk_size):
                 yield self.content[i : i + chunk_size]
         else:
+            self._stream_download_check()
             for part in self._stream_download_generator(
                 response=self,
                 pipeline=None,
                 decompress=True,
             ):
                 yield part
-        self.close()
+            self.close()
 
     def iter_raw(self):
         # type: () -> Iterator[bytes]
@@ -1268,11 +1271,6 @@ class RestHttpResponseImpl(
             lines = self._parse_lines_from_text(text)
             for line in lines:
                 yield line
-
-    def _close_stream(self):
-        # type: (...) -> None
-        self._is_stream_consumed = True
-        self.close()
 
 class _RestHttpClientTransportResponseBase(_RestHttpResponseBaseImpl):
 

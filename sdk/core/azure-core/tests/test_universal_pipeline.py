@@ -50,7 +50,7 @@ from azure.core.pipeline.policies import (
     HTTPPolicy,
 )
 from azure.core.pipeline.transport import HttpResponse as PipelineTransportHttpResponse
-from azure.core.rest import HttpResponse as RestHttpResponse
+from azure.core.pipeline.transport._base import RestHttpResponseImpl
 from utils import (
     create_http_request,
     create_http_response,
@@ -219,11 +219,18 @@ def test_raw_deserializer(http_request, http_response, requests_transport_respon
             def body(self):
                 return self._body
 
-        class RestMockResponse(RestHttpResponse):
+        class RestMockResponse(RestHttpResponseImpl):
             def __init__(self, body, content_type):
-                super(RestMockResponse, self).__init__(request=None, internal_response=None)
+                super(RestMockResponse, self).__init__(
+                    request=None,
+                    internal_response=None,
+                    status_code=200,
+                    reason="OK",
+                    content_type=content_type,
+                    headers={},
+                    stream_download_generator=None,
+                )
                 self._content = body
-                self.content_type = content_type
 
             @property
             def content(self):

@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from typing import Type
 import pytest
 import abc
 ############################## LISTS USED TO PARAMETERIZE TESTS ##############################
@@ -99,9 +100,14 @@ def create_http_response(http_response, *args, **kwargs):
             block_size = args[2]
         else:
             block_size = None
-        if type(http_response) == abc.ABCMeta:
-            # this means it's either RestHttpResponseImpl or AsyncHttpResponseImpl
-            # so we need to pass in more kwargs, i.e., status_code etc.
+        try:
+            response = http_response(
+                request=args[0],
+                internal_response=args[1],
+                block_size=block_size,
+                **kwargs
+            )
+        except KeyError:
             kwargs.update({
                 "status_code": 200,
                 "reason": "OK",
@@ -109,12 +115,12 @@ def create_http_response(http_response, *args, **kwargs):
                 "headers": {},
                 "stream_download_generator": None,
             })
-        response = http_response(
-            request=args[0],
-            internal_response=args[1],
-            block_size=block_size,
-            **kwargs
-        )
+            response = http_response(
+                request=args[0],
+                internal_response=args[1],
+                block_size=block_size,
+                **kwargs
+            )
         return response
     return http_response(*args, **kwargs)
 

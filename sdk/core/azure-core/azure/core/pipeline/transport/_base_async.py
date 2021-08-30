@@ -272,17 +272,18 @@ class RestAsyncHttpResponseImpl(
         :return: An async iterator of bytes from the response
         :rtype: AsyncIterator[bytes]
         """
-        self._stream_download_check()
         if self._has_content():
             for i in range(0, len(self.content), self._block_size):
                 yield self.content[i : i + self._block_size]
         else:
+            self._stream_download_check()
             async for part in self._stream_download_generator(
                 response=self,
                 pipeline=None,
                 decompress=True
             ):
                 yield part
+            await self.close()
 
     async def close(self) -> None:
         """Close the response.
@@ -290,8 +291,9 @@ class RestAsyncHttpResponseImpl(
         :return: None
         :rtype: None
         """
-        self._is_closed = True
-        await self._internal_response.close()
+        if not self.is_closed:
+            self._is_closed = True
+            await self._internal_response.close()
 
     async def __aexit__(self, *args) -> None:
         await self.close()
