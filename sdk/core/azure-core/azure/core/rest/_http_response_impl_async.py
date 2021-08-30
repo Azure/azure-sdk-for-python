@@ -26,12 +26,24 @@
 from typing import AsyncIterator
 from ._rest_py3 import AsyncHttpResponse as _AsyncHttpResponse
 from ._http_response_impl import _HttpResponseBaseImpl
-from ._helpers import parse_lines_from_text
 
 class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse):
     """AsyncHttpResponseImpl built on top of our HttpResponse protocol class.
 
-    Helper impl for creating our transport responses
+    Since ~azure.core.rest.AsyncHttpResponse is an abstract base class, we need to
+    implement HttpResponse for each of our transports. This is an implementation
+    that each of the sync transport responses can be built on.
+
+    :keyword request: The request that led to the response
+    :type request: ~azure.core.rest.HttpRequest
+    :keyword any internal_response: The response we get directly from the transport. For example, for our requests
+     transport, this will be a requests.Response.
+    :keyword optional[int] block_size: The block size we are using in our transport
+    :keyword int status_code: The status code of the response
+    :keyword str reason: The HTTP reason
+    :keyword str content_type: The content type of the response
+    :keyword MutableMapping[str, str] headers: The response headers
+    :keyword Callable stream_download_generator: The stream download generator that we use to stream the response.
     """
 
     async def read(self) -> bytes:
@@ -48,46 +60,35 @@ class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse):
         self._is_stream_consumed = True
         return self._content
 
-    async def iter_text(self) -> AsyncIterator[str]:
-        """Asynchronously iterates over the text in the response.
-
-        :return: An async iterator of string. Each string chunk will be a text from the response
-        :rtype: AsyncIterator[str]
-        """
-        async for byte in self.iter_bytes():  # type: ignore
-            text = byte.decode(self.encoding or "utf-8")
-            yield text
-
-    async def iter_lines(self) -> AsyncIterator[str]:
-        """Asynchronously iterates over the lines in the response.
-
-        :return: An async iterator of string. Each string chunk will be a line from the response
-        :rtype: AsyncIterator[str]
-        """
-        async for text in self.iter_text():
-            lines = parse_lines_from_text(text)
-            for line in lines:
-                yield line
-
     async def iter_raw(self) -> AsyncIterator[bytes]:
         """Asynchronously iterates over the response's bytes. Will not decompress in the process
-
         :return: An async iterator of bytes from the response
         :rtype: AsyncIterator[bytes]
         """
-        raise NotImplementedError()
-        # getting around mypy behavior, see https://github.com/python/mypy/issues/10732
-        yield  # pylint: disable=unreachable
+        self._stream_download_check()
+        async for part in self._stream_download_generator(
+            response=self, pipeline=None, decompress=False
+        ):
+            yield part
+        await self.close()
 
     async def iter_bytes(self) -> AsyncIterator[bytes]:
         """Asynchronously iterates over the response's bytes. Will decompress in the process
-
         :return: An async iterator of bytes from the response
         :rtype: AsyncIterator[bytes]
         """
-        raise NotImplementedError()
-        # getting around mypy behavior, see https://github.com/python/mypy/issues/10732
-        yield  # pylint: disable=unreachable
+        if self._content is not None:
+            for i in range(0, len(self.content), self._block_size):
+                yield self.content[i : i + self._block_size]
+        else:
+            self._stream_download_check()
+            async for part in self._stream_download_generator(
+                response=self,
+                pipeline=None,
+                decompress=True
+            ):
+                yield part
+            await self.close()
 
     async def close(self) -> None:
         """Close the response.
@@ -95,8 +96,9 @@ class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse):
         :return: None
         :rtype: None
         """
-        self._is_closed = True
-        await self._internal_response.close()
+        if not self.is_closed:
+            self._is_closed = True
+            await self._internal_response.close()
 
     async def __aexit__(self, *args) -> None:
         await self.close()

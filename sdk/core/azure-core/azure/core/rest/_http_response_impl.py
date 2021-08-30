@@ -24,13 +24,12 @@
 #
 # --------------------------------------------------------------------------
 from json import loads
-from typing import cast, Any, Optional, Iterator
+from typing import cast, TYPE_CHECKING
 from ._helpers import (
     get_charset_encoding,
     decode_to_text,
-    parse_lines_from_text,
 )
-from ..exceptions import HttpResponseError, ResponseNotReadError
+from ..exceptions import HttpResponseError, ResponseNotReadError, StreamConsumedError, StreamClosedError
 try:
     from ._rest_py3 import (
         _HttpResponseBase,
@@ -44,17 +43,42 @@ except (SyntaxError, ImportError):
         HttpRequest as _HttpRequest
     )
 
+if TYPE_CHECKING:
+    from typing import Any, Optional, Iterator, MutableMapping, Callable
 
-class _HttpResponseBaseImpl(_HttpResponseBase):
+
+class _HttpResponseBaseImpl(_HttpResponseBase):  # pylint: disable=too-many-instance-attributes
+    """Base Implementation class for azure.core.rest.HttpRespone and azure.core.rest.AsyncHttpResponse
+
+    Since the rest responses are abstract base classes, we need to implement them for each of our transport
+    responses. This is the base implementation class shared by HttpResponseImpl and AsyncHttpResponseImpl.
+    The transport responses will be built on top of HttpResponseImpl and AsyncHttpResponseImpl
+
+    :keyword request: The request that led to the response
+    :type request: ~azure.core.rest.HttpRequest
+    :keyword any internal_response: The response we get directly from the transport. For example, for our requests
+     transport, this will be a requests.Response.
+    :keyword optional[int] block_size: The block size we are using in our transport
+    :keyword int status_code: The status code of the response
+    :keyword str reason: The HTTP reason
+    :keyword str content_type: The content type of the response
+    :keyword MutableMapping[str, str] headers: The response headers
+    :keyword Callable stream_download_generator: The stream download generator that we use to stream the response.
+    """
 
     def __init__(self, **kwargs):
         # type: (Any) -> None
         super(_HttpResponseBaseImpl, self).__init__()
         self._request = kwargs.pop("request")
         self._internal_response = kwargs.pop("internal_response")
+        self._block_size = kwargs.pop("block_size", None) or 4096  # type: int
+        self._status_code = kwargs.pop("status_code")  # type: int
+        self._reason = kwargs.pop("reason")  # type: str
+        self._content_type = kwargs.pop("content_type")  # type: str
+        self._headers = kwargs.pop("headers")  # type: MutableMapping[str, str]
+        self._stream_download_generator = kwargs.pop("stream_download_generator")  # type: Callable
         self._is_closed = False
         self._is_stream_consumed = False
-        self._connection_data_block_size = None
         self._json = None  # this is filled in ContentDecodePolicy, when we deserialize
         self._content = None  # type: Optional[bytes]
         self._text = None  # type: Optional[str]
@@ -91,6 +115,42 @@ class _HttpResponseBaseImpl(_HttpResponseBase):
         # type: (...) -> bool
         """Whether the stream has been fully consumed"""
         return self._is_stream_consumed
+
+    @property
+    def status_code(self):
+        # type: (...) -> int
+        """The status code of this response.
+
+        :rtype: int
+        """
+        return self._status_code
+
+    @property
+    def headers(self):
+        # type: (...) -> MutableMapping[str, str]
+        """The response headers.
+
+        :rtype: MutableMapping[str, str]
+        """
+        return self._headers
+
+    @property
+    def content_type(self):
+        # type: (...) -> str
+        """The content type of the response.
+
+        :rtype: str
+        """
+        return self._content_type
+
+    @property
+    def reason(self):
+        # type: (...) -> str
+        """The reason phrase for this response.
+
+        :rtype: str
+        """
+        return self._reason
 
     @property
     def encoding(self):
@@ -142,6 +202,14 @@ class _HttpResponseBaseImpl(_HttpResponseBase):
             self._json = loads(self.text())
         return self._json
 
+    def _stream_download_check(self):
+        if self.is_stream_consumed:
+            raise StreamConsumedError(self)
+        if self.is_closed:
+            raise StreamClosedError(self)
+
+        self._is_stream_consumed = True
+
     def raise_for_status(self):
         # type: (...) -> None
         """Raises an HttpResponseError if the response has an error status code.
@@ -171,7 +239,20 @@ class _HttpResponseBaseImpl(_HttpResponseBase):
 class HttpResponseImpl(_HttpResponseBaseImpl, _HttpResponse):
     """HttpResponseImpl built on top of our HttpResponse protocol class.
 
-    Helper impl for creating our transport responses
+    Since ~azure.core.rest.HttpResponse is an abstract base class, we need to
+    implement HttpResponse for each of our transports. This is an implementation
+    that each of the sync transport responses can be built on.
+
+    :keyword request: The request that led to the response
+    :type request: ~azure.core.rest.HttpRequest
+    :keyword any internal_response: The response we get directly from the transport. For example, for our requests
+     transport, this will be a requests.Response.
+    :keyword optional[int] block_size: The block size we are using in our transport
+    :keyword int status_code: The status code of the response
+    :keyword str reason: The HTTP reason
+    :keyword str content_type: The content type of the response
+    :keyword MutableMapping[str, str] headers: The response headers
+    :keyword Callable stream_download_generator: The stream download generator that we use to stream the response.
     """
 
     def __enter__(self):
@@ -180,8 +261,9 @@ class HttpResponseImpl(_HttpResponseBaseImpl, _HttpResponse):
 
     def close(self):
         # type: (...) -> None
-        self._is_closed = True
-        self._internal_response.close()
+        if not self.is_closed:
+            self._is_closed = True
+            self._internal_response.close()
 
     def __exit__(self, *args):
         # type: (...) -> None
@@ -202,22 +284,37 @@ class HttpResponseImpl(_HttpResponseBaseImpl, _HttpResponse):
         self._set_read_checks()
         return self.content
 
-    def iter_text(self):
-        # type: () -> Iterator[str]
-        """Iterate over the response text
+    def iter_bytes(self):
+        # type: () -> Iterator[bytes]
+        """Iterates over the response's bytes. Will decompress in the process.
+
+        :return: An iterator of bytes from the response
+        :rtype: Iterator[str]
         """
-        for byte in self.iter_bytes():
-            text = byte.decode(self.encoding or "utf-8")
-            yield text
+        if self._content is not None:
+            chunk_size = cast(int, self._block_size)
+            for i in range(0, len(self.content), chunk_size):
+                yield self.content[i : i + chunk_size]
+        else:
+            self._stream_download_check()
+            for part in self._stream_download_generator(
+                response=self,
+                pipeline=None,
+                decompress=True,
+            ):
+                yield part
+        self.close()
 
-    def iter_lines(self):
-        # type: () -> Iterator[str]
-        for text in self.iter_text():
-            lines = parse_lines_from_text(text)
-            for line in lines:
-                yield line
+    def iter_raw(self):
+        # type: () -> Iterator[bytes]
+        """Iterates over the response's bytes. Will not decompress in the process.
 
-    def _close_stream(self):
-        # type: (...) -> None
-        self._is_stream_consumed = True
+        :return: An iterator of bytes from the response
+        :rtype: Iterator[str]
+        """
+        self._stream_download_check()
+        for part in self._stream_download_generator(
+            response=self, pipeline=None, decompress=False
+        ):
+            yield part
         self.close()

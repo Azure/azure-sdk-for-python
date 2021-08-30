@@ -28,7 +28,10 @@ import codecs
 import cgi
 from enum import Enum
 from json import dumps
-import collections
+try:
+    import collections.abc as collections
+except ImportError:
+    import collections  # type: ignore
 from typing import (
     Optional,
     Union,
@@ -40,9 +43,7 @@ from typing import (
     Any,
     Dict,
     Iterable,
-    Iterator,
     cast,
-    Callable,
     MutableMapping,
 )
 import xml.etree.ElementTree as ET

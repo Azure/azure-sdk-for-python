@@ -25,67 +25,29 @@
 # --------------------------------------------------------------------------
 
 import asyncio
-from typing import AsyncIterator, MutableMapping
 from multidict import CIMultiDict
-from . import HttpRequest
 from ._http_response_impl_async import AsyncHttpResponseImpl
-from ._helpers_py3 import iter_raw_helper, iter_bytes_helper
 from ..pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
-
 
 class RestAioHttpTransportResponse(AsyncHttpResponseImpl):
     def __init__(
         self,
         *,
-        request: HttpRequest,
         internal_response,
+        decompress: bool = False,
+        **kwargs
     ):
-        super().__init__(request=request, internal_response=internal_response)
-        self._headers = CIMultiDict(internal_response.headers)  # type: ignore
-
-    @property
-    def status_code(self) -> int:
-        """The status code of this response"""
-        return self._internal_response.status
-
-    @property
-    def headers(self) -> MutableMapping[str, str]:
-        """The response headers"""
-        return self._headers
-
-    @property
-    def content_type(self) -> str:
-        """The content type of the response"""
-        return self._internal_response.headers.get('content-type')
-
-    @property
-    def reason(self) -> str:
-        """The reason phrase for this response"""
-        return self._internal_response.reason
-
-    async def iter_raw(self) -> AsyncIterator[bytes]:
-        """Asynchronously iterates over the response's bytes. Will not decompress in the process
-
-        :return: An async iterator of bytes from the response
-        :rtype: AsyncIterator[bytes]
-        """
-        async for part in iter_raw_helper(AioHttpStreamDownloadGenerator, self):
-            yield part
-        await self.close()
-
-    async def iter_bytes(self) -> AsyncIterator[bytes]:
-        """Asynchronously iterates over the response's bytes. Will decompress in the process
-
-        :return: An async iterator of bytes from the response
-        :rtype: AsyncIterator[bytes]
-        """
-        async for part in iter_bytes_helper(
-            AioHttpStreamDownloadGenerator,
-            self,
-            content=self._content
-        ):
-            yield part
-        await self.close()
+        super().__init__(
+            internal_response=internal_response,
+            status_code=internal_response.status,
+            headers=CIMultiDict(internal_response.headers),
+            content_type=internal_response.headers.get('content-type'),
+            reason=internal_response.reason,
+            stream_download_generator=AioHttpStreamDownloadGenerator,
+            content=None,
+            **kwargs
+        )
+        self._decompress = decompress
 
     def __getstate__(self):
         state = self.__dict__.copy()
@@ -100,6 +62,7 @@ class RestAioHttpTransportResponse(AsyncHttpResponseImpl):
         :return: None
         :rtype: None
         """
-        self._is_closed = True
-        self._internal_response.close()
-        await asyncio.sleep(0)
+        if not self.is_closed:
+            self._is_closed = True
+            self._internal_response.close()
+            await asyncio.sleep(0)

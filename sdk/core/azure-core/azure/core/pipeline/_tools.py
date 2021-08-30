@@ -53,13 +53,13 @@ def to_rest_response(pipeline_transport_response):
     response = response_type(
         request=to_rest_request(pipeline_transport_response.request),
         internal_response=pipeline_transport_response.internal_response,
+        block_size=pipeline_transport_response.block_size
     )
-    response._connection_data_block_size = pipeline_transport_response.block_size  # pylint: disable=protected-access
     return response
 
 def get_block_size(response):
     try:
-        return response._connection_data_block_size  # pylint: disable=protected-access
+        return response._block_size  # pylint: disable=protected-access
     except AttributeError:
         return response.block_size
 
