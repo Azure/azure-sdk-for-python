@@ -26,7 +26,7 @@ class KeysOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.keyvault.v2019_09_01.models
+    :type models: ~azure.mgmt.keyvault.v2020_04_01_preview.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -61,10 +61,10 @@ class KeysOperations:
         :param key_name: The name of the key to be created.
         :type key_name: str
         :param parameters: The parameters used to create the specified key.
-        :type parameters: ~azure.mgmt.keyvault.v2019_09_01.models.KeyCreateParameters
+        :type parameters: ~azure.mgmt.keyvault.v2020_04_01_preview.models.KeyCreateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Key, or the result of cls(response)
-        :rtype: ~azure.mgmt.keyvault.v2019_09_01.models.Key
+        :rtype: ~azure.mgmt.keyvault.v2020_04_01_preview.models.Key
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Key"]
@@ -72,7 +72,7 @@ class KeysOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-09-01"
+        api_version = "2020-04-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -132,7 +132,7 @@ class KeysOperations:
         :type key_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Key, or the result of cls(response)
-        :rtype: ~azure.mgmt.keyvault.v2019_09_01.models.Key
+        :rtype: ~azure.mgmt.keyvault.v2020_04_01_preview.models.Key
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Key"]
@@ -140,7 +140,7 @@ class KeysOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-09-01"
+        api_version = "2020-04-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -192,7 +192,7 @@ class KeysOperations:
         :type vault_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either KeyListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.keyvault.v2019_09_01.models.KeyListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.keyvault.v2020_04_01_preview.models.KeyListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyListResult"]
@@ -200,7 +200,7 @@ class KeysOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-09-01"
+        api_version = "2020-04-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -273,7 +273,7 @@ class KeysOperations:
         :type key_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Key, or the result of cls(response)
-        :rtype: ~azure.mgmt.keyvault.v2019_09_01.models.Key
+        :rtype: ~azure.mgmt.keyvault.v2020_04_01_preview.models.Key
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Key"]
@@ -281,7 +281,7 @@ class KeysOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-09-01"
+        api_version = "2020-04-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -337,7 +337,7 @@ class KeysOperations:
         :type key_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either KeyListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.keyvault.v2019_09_01.models.KeyListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.keyvault.v2020_04_01_preview.models.KeyListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyListResult"]
@@ -345,7 +345,7 @@ class KeysOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-09-01"
+        api_version = "2020-04-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):

@@ -19,6 +19,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 from ._configuration import KeyVaultManagementClientConfiguration
+from .operations import KeysOperations
 from .operations import VaultsOperations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import PrivateLinkResourcesOperations
@@ -31,6 +32,8 @@ from . import models
 class KeyVaultManagementClient(object):
     """The Azure management API provides a RESTful set of web services that interact with Azure Key Vault.
 
+    :ivar keys: KeysOperations operations
+    :vartype keys: azure.mgmt.keyvault.v2020_04_01_preview.operations.KeysOperations
     :ivar vaults: VaultsOperations operations
     :vartype vaults: azure.mgmt.keyvault.v2020_04_01_preview.operations.VaultsOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
@@ -69,6 +72,8 @@ class KeyVaultManagementClient(object):
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
+        self.keys = KeysOperations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.vaults = VaultsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
