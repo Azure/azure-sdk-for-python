@@ -122,9 +122,11 @@ def _latest_comment_time(comments, delay_from_create_date):
 
 
 def auto_reply(item, sdk_repo, rest_repo):
+    print("+++++++++++issue number: {}".format(item.issue_object.number))
     if 'auto-link' not in item.labels:
         try:
             package_name, readme_link = update_issue_body(sdk_repo, rest_repo, item.issue_object.number)
+            print("----------------pkname, readme", package_name, readme_link)
             item.package = package_name
             key = (issue.language, issue.package)
             duplicated_issue[key] = duplicated_issue.get(key, 0) + 1
