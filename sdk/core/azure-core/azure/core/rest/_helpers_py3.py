@@ -32,18 +32,16 @@ from typing import (
     Union,
     Callable,
     Optional,
-    AsyncIterator as AsyncIteratorType
+    AsyncIterator as AsyncIteratorType,
+    MutableMapping,
 )
 from ..exceptions import StreamConsumedError, StreamClosedError
 
-from ._helpers import (
-    _shared_set_content_body,
-    HeadersType
-)
+from ._helpers import _shared_set_content_body
 ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
 
 def set_content_body(content: ContentType) -> Tuple[
-    HeadersType, ContentType
+    MutableMapping[str, str], ContentType
 ]:
     headers, body = _shared_set_content_body(content)
     if body is not None:

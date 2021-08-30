@@ -47,12 +47,12 @@ if TYPE_CHECKING:
         Iterator,
         Union,
         Dict,
+        MutableMapping,
     )
-    from ._helpers import HeadersType
     ByteStream = Iterable[bytes]
     ContentType = Union[str, bytes, ByteStream]
 
-    from ._helpers import HeadersType, ContentTypeBase as ContentType
+    from ._helpers import ContentTypeBase as ContentType
 
 try:
     ABC = abc.ABC
@@ -126,7 +126,7 @@ class HttpRequest(object):
             )
 
     def _set_body(self, content, data, files, json):
-        # type: (Optional[ContentType], Optional[dict], Optional[FilesType], Any) -> HeadersType
+        # type: (Optional[ContentType], Optional[dict], Optional[FilesType], Any) -> MutableMapping[str, str]
         """Sets the body of the request, and returns the default headers
         """
         default_headers = {}
@@ -205,7 +205,7 @@ class _HttpResponseBase(ABC):
     @property
     @abc.abstractmethod
     def headers(self):
-        # type: (...) -> Optional[HeadersType]
+        # type: (...) -> Optional[MutableMapping[str, str]]
         """The response headers"""
 
     @property

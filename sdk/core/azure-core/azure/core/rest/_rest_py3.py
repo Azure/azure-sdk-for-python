@@ -32,6 +32,7 @@ from typing import (
     Iterable, Iterator,
     Optional,
     Union,
+    MutableMapping,
 )
 
 from ..utils._utils import _case_insensitive_dict
@@ -39,7 +40,6 @@ from ..utils._utils import _case_insensitive_dict
 from ._helpers import (
     ParamsType,
     FilesType,
-    HeadersType,
     set_json_body,
     set_multipart_body,
     set_urlencoded_body,
@@ -95,7 +95,7 @@ class HttpRequest:
         url: str,
         *,
         params: Optional[ParamsType] = None,
-        headers: Optional[HeadersType] = None,
+        headers: Optional[MutableMapping[str, str]] = None,
         json: Any = None,
         content: Optional[ContentType] = None,
         data: Optional[dict] = None,
@@ -132,10 +132,10 @@ class HttpRequest:
         data: Optional[dict],
         files: Optional[FilesType],
         json: Any,
-    ) -> HeadersType:
+    ) -> MutableMapping[str, str]:
         """Sets the body of the request, and returns the default headers
         """
-        default_headers = {}  # type: HeadersType
+        default_headers = {}  # type: MutableMapping[str, str]
         if data is not None and not isinstance(data, dict):
             # should we warn?
             content = data
@@ -203,7 +203,7 @@ class _HttpResponseBase(abc.ABC):
 
     @property
     @abc.abstractmethod
-    def headers(self) -> Optional[HeadersType]:
+    def headers(self) -> Optional[MutableMapping[str, str]]:
         """The response headers"""
         ...
 

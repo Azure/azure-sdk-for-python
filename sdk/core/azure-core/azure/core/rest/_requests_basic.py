@@ -28,10 +28,9 @@ from typing import TYPE_CHECKING, cast
 from ..exceptions import ResponseNotReadError, StreamConsumedError, StreamClosedError
 from ._http_response_impl import _HttpResponseBaseImpl, HttpResponseImpl
 from ..pipeline.transport._requests_basic import StreamDownloadGenerator
-from ._helpers import HeadersType
 
 if TYPE_CHECKING:
-    from typing import Iterator, Optional
+    from typing import Iterator, Optional, MutableMapping
 
 def _has_content(response):
     try:
@@ -50,7 +49,7 @@ class _RestRequestsTransportResponseBase(_HttpResponseBaseImpl):
 
     @property
     def headers(self):
-        # type: (...) -> Optional[HeadersType]
+        # type: (...) -> Optional[MutableMapping[str, str]]
         return self._internal_response.headers
 
     @property

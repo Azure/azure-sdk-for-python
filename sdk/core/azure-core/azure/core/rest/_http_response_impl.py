@@ -177,6 +177,10 @@ class HttpResponseImpl(_HttpResponseBaseImpl, _HttpResponse):
         # type: (...) -> None
         self.close()
 
+    def _set_read_checks(self):
+        self._is_stream_consumed = True
+        self.close()
+
     def read(self):
         # type: (...) -> bytes
         """
@@ -185,6 +189,7 @@ class HttpResponseImpl(_HttpResponseBaseImpl, _HttpResponse):
         """
         if self._content is None:
             self._content = b"".join(self.iter_bytes())
+        self._set_read_checks()
         return self.content
 
     def iter_text(self):

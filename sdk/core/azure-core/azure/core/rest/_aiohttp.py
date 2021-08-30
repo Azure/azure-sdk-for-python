@@ -25,11 +25,10 @@
 # --------------------------------------------------------------------------
 
 import asyncio
-from typing import AsyncIterator
+from typing import AsyncIterator, MutableMapping
 from multidict import CIMultiDict
 from . import HttpRequest
 from ._http_response_impl_async import AsyncHttpResponseImpl
-from ._helpers import HeadersType
 from ._helpers_py3 import iter_raw_helper, iter_bytes_helper
 from ..pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
 
@@ -50,7 +49,7 @@ class RestAioHttpTransportResponse(AsyncHttpResponseImpl):
         return self._internal_response.status
 
     @property
-    def headers(self) -> HeadersType:
+    def headers(self) -> MutableMapping[str, str]:
         """The response headers"""
         return self._headers
 
