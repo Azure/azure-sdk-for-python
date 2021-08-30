@@ -207,6 +207,7 @@ def main():
             item.bot_advice = 'new comment for author.'
         elif item.comment_num == 0 and 'Python' in item.labels:
             item.bot_advice = 'new issue and better to confirm quickly.'
+            print("#########", item.issue_object.number)
             try:
                 auto_reply(item, sdk_repo, rest_repo)
             except Exception as e:
