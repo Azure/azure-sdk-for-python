@@ -47,7 +47,7 @@ class SecretsOperations:
         vault_name: str,
         secret_name: str,
         parameters: "_models.SecretCreateOrUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Secret":
         """Create or update a secret in a key vault in the specified subscription.  NOTE: This API is
         intended for internal use in ARM deployments. Users should use the data-plane REST service for
@@ -123,7 +123,7 @@ class SecretsOperations:
         vault_name: str,
         secret_name: str,
         parameters: "_models.SecretPatchParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Secret":
         """Update a secret in the specified subscription.  NOTE: This API is intended for internal use in
         ARM deployments.  Users should use the data-plane REST service for interaction with vault
@@ -198,7 +198,7 @@ class SecretsOperations:
         resource_group_name: str,
         vault_name: str,
         secret_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Secret":
         """Gets the specified secret.  NOTE: This API is intended for internal use in ARM deployments.
         Users should use the data-plane REST service for interaction with vault secrets.
@@ -261,7 +261,7 @@ class SecretsOperations:
         resource_group_name: str,
         vault_name: str,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SecretListResult"]:
         """The List operation gets information about the secrets in a vault.  NOTE: This API is intended
         for internal use in ARM deployments. Users should use the data-plane REST service for
