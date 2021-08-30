@@ -67,7 +67,7 @@ class SearchIndexerSkillset(_SearchIndexerSkillset):
         self,
         **kwargs
     ):
-        super(_SearchIndexerSkillset, self).__init__(**kwargs)
+        super(SearchIndexerSkillset, self).__init__(**kwargs)
 
     def _to_generated(self):
         generated_skills = []

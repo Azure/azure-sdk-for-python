@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.3.0b1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://search498a15a3.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2021-04-30-Preview
   response:
@@ -74,9 +74,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Wed, 30 Jun 2021 23:03:53 GMT
+      - Mon, 30 Aug 2021 20:15:44 GMT
       elapsed-time:
-      - '96'
+      - '149'
       expires:
       - '-1'
       odata-version:
@@ -86,7 +86,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 70a0eb57-d9f7-11eb-b25d-a0481ca055a9
+      - 0e6fdc8f-09cf-11ec-b15b-74c63bed1137
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -108,7 +108,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.3.0b1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://search498a15a3.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2021-04-30-Preview
   response:
@@ -142,9 +142,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Wed, 30 Jun 2021 23:03:53 GMT
+      - Mon, 30 Aug 2021 20:15:44 GMT
       elapsed-time:
-      - '7'
+      - '12'
       expires:
       - '-1'
       odata-version:
@@ -154,7 +154,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 70ea106e-d9f7-11eb-9c51-a0481ca055a9
+      - 0ea2f266-09cf-11ec-a140-74c63bed1137
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

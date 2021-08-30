@@ -17,6 +17,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
 from azure.search.documents.indexes.models import(
     EntityRecognitionSkill,
+    EntityRecognitionSkillVersion,
     InputFieldMappingEntry,
     OutputFieldMappingEntry,
     SearchIndexerSkillset,
@@ -39,19 +40,28 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_skillset(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
+        name = "test-ss"
 
-        s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
-                                   outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
+        s1 = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
+                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizationsV1")])
 
-        skillset = SearchIndexerSkillset(name='test-ss', skills=list([s]), description="desc")
+        s2 = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
+                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizationsV3")],
+                                    skill_version=EntityRecognitionSkillVersion.V3)
+
+        skillset = SearchIndexerSkillset(name=name, skills=list([s1, s2]), description="desc")
 
         result = client.create_skillset(skillset)
+
         assert isinstance(result, SearchIndexerSkillset)
-        assert result.name == "test-ss"
+        assert result.name == name
         assert result.description == "desc"
         assert result.e_tag
-        assert len(result.skills) == 1
+        assert len(result.skills) == 2
         assert isinstance(result.skills[0], EntityRecognitionSkill)
+        assert result.skills[0].skill_version == EntityRecognitionSkillVersion.V1
+        assert isinstance(result.skills[1], EntityRecognitionSkill)
+        assert result.skills[1].skill_version == EntityRecognitionSkillVersion.V3
 
         assert len(client.get_skillsets()) == 1
 

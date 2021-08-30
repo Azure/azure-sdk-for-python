@@ -2,66 +2,39 @@ interactions:
 - request:
     body: '{"name": "test-ss", "description": "desc", "skills": [{"@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
       "inputs": [{"name": "text", "source": "/document/content"}], "outputs": [{"name":
-      "organizations", "targetName": "organizations"}]}]}'
+      "organizations", "targetName": "organizationsV1"}]}, {"@odata.type": "#Microsoft.Skills.Text.V3.EntityRecognitionSkill",
+      "inputs": [{"name": "text", "source": "/document/content"}], "outputs": [{"name":
+      "organizations", "targetName": "organizationsV3"}]}]}'
     headers:
       Accept:
       - application/json;odata.metadata=minimal
       Content-Length:
-      - '252'
+      - '457'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.3.0b1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://search75151acc.search.windows.net/skillsets?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search75151acc.search.windows.net/$metadata#skillsets/$entity","@odata.etag":"\"0x8D93C21913A6629\"","name":"test-ss","description":"desc","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":null,"description":null,"context":null,"categories":[],"defaultLanguageCode":null,"minimumPrecision":null,"includeTypelessEntities":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizations"}]}],"cognitiveServices":null,"knowledgeStore":null,"encryptionKey":null}'
+      string: '{"@odata.context":"https://search75151acc.search.windows.net/$metadata#skillsets/$entity","@odata.etag":"\"0x8D96BFAC98F6DA8\"","name":"test-ss","description":"desc","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":null,"description":null,"context":null,"categories":[],"defaultLanguageCode":null,"minimumPrecision":null,"includeTypelessEntities":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizationsV1"}]},{"@odata.type":"#Microsoft.Skills.Text.V3.EntityRecognitionSkill","name":null,"description":null,"context":null,"categories":[],"defaultLanguageCode":null,"minimumPrecision":null,"modelVersion":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizationsV3"}]}],"cognitiveServices":null,"knowledgeStore":null,"encryptionKey":null}'
     headers:
       cache-control: no-cache
-      content-length: '608'
+      content-length: '967'
       content-type: application/json; odata.metadata=minimal
-      date: Wed, 30 Jun 2021 23:48:31 GMT
-      elapsed-time: '1670'
-      etag: W/"0x8D93C21913A6629"
+      date: Mon, 30 Aug 2021 21:11:51 GMT
+      elapsed-time: '42'
+      etag: W/"0x8D96BFAC98F6DA8"
       expires: '-1'
       location: https://search75151acc.search.windows.net/skillsets('test-ss')?api-version=2021-04-30-Preview
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: abfa914e-d9fd-11eb-98d2-a0481ca055a9
+      request-id: e569dc27-09d6-11ec-9f98-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 201
       message: Created
-    url: https://search75151acc.search.windows.net/skillsets?api-version=2021-04-30-Preview
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json;odata.metadata=minimal
-      User-Agent:
-      - azsdk-python-search-documents/11.3.0b1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://search75151acc.search.windows.net/skillsets?api-version=2021-04-30-Preview
-  response:
-    body:
-      string: '{"@odata.context":"https://search75151acc.search.windows.net/$metadata#skillsets","value":[{"@odata.etag":"\"0x8D93C21913A6629\"","name":"test-ss","description":"desc","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":"#1","description":null,"context":"/document","categories":["Person","Quantity","Organization","URL","Email","Location","DateTime"],"defaultLanguageCode":"en","minimumPrecision":null,"includeTypelessEntities":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizations"}]}],"cognitiveServices":null,"knowledgeStore":null,"encryptionKey":null}]}'
-    headers:
-      cache-control: no-cache
-      content-length: '532'
-      content-type: application/json; odata.metadata=minimal
-      date: Wed, 30 Jun 2021 23:48:31 GMT
-      elapsed-time: '86'
-      expires: '-1'
-      odata-version: '4.0'
-      pragma: no-cache
-      preference-applied: odata.include-annotations="*"
-      request-id: ad15c706-d9fd-11eb-adcc-a0481ca055a9
-      strict-transport-security: max-age=15724800; includeSubDomains
-      vary: Accept-Encoding
-    status:
-      code: 200
-      message: OK
     url: https://search75151acc.search.windows.net/skillsets?api-version=2021-04-30-Preview
 version: 1

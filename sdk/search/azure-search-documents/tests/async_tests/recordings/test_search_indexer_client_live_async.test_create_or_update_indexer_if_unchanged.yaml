@@ -6,29 +6,29 @@ interactions:
       Accept:
       - application/json;odata.metadata=minimal
       Content-Length:
-      - '325'
+      - '319'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.3.0b1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://search323b20b9.search.windows.net/datasources?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search323b20b9.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D93C1FB0313D9D\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null,"identity":null}'
+      string: '{"@odata.context":"https://search323b20b9.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D96BF7426E1A70\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null,"identity":null}'
     headers:
       cache-control: no-cache
       content-length: '407'
       content-type: application/json; odata.metadata=minimal
-      date: Wed, 30 Jun 2021 23:35:04 GMT
-      elapsed-time: '152'
-      etag: W/"0x8D93C1FB0313D9D"
+      date: Mon, 30 Aug 2021 20:46:36 GMT
+      elapsed-time: '33'
+      etag: W/"0x8D96BF7426E1A70"
       expires: '-1'
       location: https://search323b20b9.search.windows.net/datasources('sample-datasource')?api-version=2021-04-30-Preview
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: cbd9902e-d9fb-11eb-b613-a0481ca055a9
+      request-id: 5e390168-09d3-11ec-bb3b-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 201
@@ -45,25 +45,25 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.3.0b1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://search323b20b9.search.windows.net/indexes?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search323b20b9.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D93C1FB2958D5D\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]}],"scoringProfiles":[],"corsOptions":null,"suggesters":[],"analyzers":[],"normalizers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":{"@odata.type":"#Microsoft.Azure.Search.BM25Similarity","k1":null,"b":null}}'
+      string: '{"@odata.context":"https://search323b20b9.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D96BF742D79DEE\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]}],"scoringProfiles":[],"corsOptions":null,"suggesters":[],"analyzers":[],"normalizers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":{"@odata.type":"#Microsoft.Azure.Search.BM25Similarity","k1":null,"b":null}}'
     headers:
       cache-control: no-cache
       content-length: '664'
       content-type: application/json; odata.metadata=minimal
-      date: Wed, 30 Jun 2021 23:35:08 GMT
-      elapsed-time: '3854'
-      etag: W/"0x8D93C1FB2958D5D"
+      date: Mon, 30 Aug 2021 20:46:36 GMT
+      elapsed-time: '532'
+      etag: W/"0x8D96BF742D79DEE"
       expires: '-1'
       location: https://search323b20b9.search.windows.net/indexes('hotels')?api-version=2021-04-30-Preview
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: cc0cdde8-d9fb-11eb-afde-a0481ca055a9
+      request-id: 5e624245-09d3-11ec-a263-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 201
@@ -80,106 +80,36 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.3.0b1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://search323b20b9.search.windows.net/indexers?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search323b20b9.search.windows.net/$metadata#indexers/$entity","@odata.etag":"\"0x8D93C1FBD415BDA\"","name":"sample-indexer","description":null,"dataSourceName":"sample-datasource","skillsetName":null,"targetIndexName":"hotels","disabled":false,"schedule":null,"parameters":null,"fieldMappings":[],"outputFieldMappings":[],"cache":null,"encryptionKey":null}'
-    headers:
-      cache-control: no-cache
-      content-length: '383'
-      content-type: application/json; odata.metadata=minimal
-      date: Wed, 30 Jun 2021 23:35:26 GMT
-      elapsed-time: '17747'
-      etag: W/"0x8D93C1FBD415BDA"
-      expires: '-1'
-      location: https://search323b20b9.search.windows.net/indexers('sample-indexer')?api-version=2021-04-30-Preview
-      odata-version: '4.0'
-      pragma: no-cache
-      preference-applied: odata.include-annotations="*"
-      request-id: ce75e590-d9fb-11eb-b41b-a0481ca055a9
-      strict-transport-security: max-age=15724800; includeSubDomains
-    status:
-      code: 201
-      message: Created
-    url: https://search323b20b9.search.windows.net/indexers?api-version=2021-04-30-Preview
-- request:
-    body: '{"name": "sample-indexer", "description": "updated", "dataSourceName":
-      "sample-datasource", "targetIndexName": "hotels", "disabled": false}'
-    headers:
-      Accept:
-      - application/json;odata.metadata=minimal
-      Content-Length:
-      - '139'
-      Content-Type:
-      - application/json
-      Prefer:
-      - return=representation
-      User-Agent:
-      - azsdk-python-search-documents/11.3.0b1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
-    method: PUT
-    uri: https://search323b20b9.search.windows.net/indexers('sample-indexer')?api-version=2021-04-30-Preview
-  response:
-    body:
-      string: '{"@odata.context":"https://search323b20b9.search.windows.net/$metadata#indexers/$entity","@odata.etag":"\"0x8D93C1FBD9731F9\"","name":"sample-indexer","description":"updated","dataSourceName":"sample-datasource","skillsetName":null,"targetIndexName":"hotels","disabled":false,"schedule":null,"parameters":null,"fieldMappings":[],"outputFieldMappings":[],"cache":null,"encryptionKey":null}'
-    headers:
-      cache-control: no-cache
-      content-length: '379'
-      content-type: application/json; odata.metadata=minimal
-      date: Wed, 30 Jun 2021 23:35:26 GMT
-      elapsed-time: '367'
-      etag: W/"0x8D93C1FBD9731F9"
-      expires: '-1'
-      odata-version: '4.0'
-      pragma: no-cache
-      preference-applied: odata.include-annotations="*"
-      request-id: d933402d-d9fb-11eb-92e1-a0481ca055a9
-      strict-transport-security: max-age=15724800; includeSubDomains
-      vary: Accept-Encoding
-    status:
-      code: 200
-      message: OK
-    url: https://search323b20b9.search.windows.net/indexers('sample-indexer')?api-version=2021-04-30-Preview
-- request:
-    body: '{"name": "sample-indexer", "description": "updated", "dataSourceName":
-      "sample-datasource", "targetIndexName": "hotels", "disabled": false, "@odata.etag":
-      "\"0x8D93C1FBD415BDA\""}'
-    headers:
-      Accept:
-      - application/json;odata.metadata=minimal
-      Content-Length:
-      - '179'
-      Content-Type:
-      - application/json
-      If-Match:
-      - '"0x8D93C1FBD415BDA"'
-      Prefer:
-      - return=representation
-      User-Agent:
-      - azsdk-python-search-documents/11.3.0b1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
-    method: PUT
-    uri: https://search323b20b9.search.windows.net/indexers('sample-indexer')?api-version=2021-04-30-Preview
-  response:
-    body:
-      string: '{"error":{"code":"","message":"The precondition given in one of the
-        request headers evaluated to false. No change was made to the resource from
-        this request."}}'
+      string: '{"error":{"code":"","message":"Error with data source: Credentials
+        provided in the connection string are invalid or have expired.\r\nAs a result
+        of a one-time maintenance activity, your search service went through a change
+        of the IP address for its API endpoint. This caused indexers that depend on
+        network access rules on the data source to stop working. In order to address
+        this issue, please update the network access rules in your data source to
+        use the new IP address. We apologize for the inconvenience.\r\nFor more information
+        on troubleshooting connection issues to Azure Storage accounts, please see
+        https://go.microsoft.com/fwlink/?linkid=2049388  Please adjust your data source
+        definition in order to proceed."}}'
     headers:
       cache-control: no-cache
       content-language: en
-      content-length: '160'
+      content-length: '723'
       content-type: application/json; odata.metadata=minimal
-      date: Wed, 30 Jun 2021 23:35:26 GMT
-      elapsed-time: '9'
+      date: Mon, 30 Aug 2021 20:46:37 GMT
+      elapsed-time: '502'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: d9737db8-d9fb-11eb-9d67-a0481ca055a9
+      request-id: 5ecb6fb1-09d3-11ec-a185-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
-      code: 412
-      message: Precondition Failed
-    url: https://search323b20b9.search.windows.net/indexers('sample-indexer')?api-version=2021-04-30-Preview
+      code: 400
+      message: Bad Request
+    url: https://search323b20b9.search.windows.net/indexers?api-version=2021-04-30-Preview
 version: 1
