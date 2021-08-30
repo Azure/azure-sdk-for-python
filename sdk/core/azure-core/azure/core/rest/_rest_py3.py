@@ -293,28 +293,14 @@ class HttpResponse(_HttpResponseBase):
     **This object is provisional**, meaning it may be changed in a future release.
     Use this abstract base class to create your own transport responses.
 
-    It is returned from your client's `send_request` method if you pass in
-    an :class:`~azure.core.rest.HttpRequest`
+    Responses implementing this ABC are returned from your client's `send_request` method
+    if you pass in an :class:`~azure.core.rest.HttpRequest`
 
     >>> from azure.core.rest import HttpRequest
     >>> request = HttpRequest('GET', 'http://www.example.com')
     <HttpRequest [GET], url: 'http://www.example.com'>
     >>> response = client.send_request(request)
     <HttpResponse: 200 OK>
-
-    :ivar int status_code: The status code of this response
-    :ivar mapping headers: The response headers
-    :ivar str reason: The reason phrase for this response
-    :ivar bytes content: The response content in bytes.
-    :ivar str url: The URL that resulted in this response
-    :ivar str encoding: The response encoding. Is settable, by default
-     is the response Content-Type header
-    :ivar request: The request that resulted in this response.
-    :vartype request: ~azure.core.rest.HttpRequest
-    :ivar str content_type: The content type of the response
-    :ivar bool is_closed: Whether the network connection has been closed yet
-    :ivar bool is_stream_consumed: When getting a stream response, checks
-     whether the stream has been fully consumed
     """
 
     @abc.abstractmethod
@@ -380,28 +366,14 @@ class AsyncHttpResponse(_HttpResponseBase):
     **This object is provisional**, meaning it may be changed in a future release.
     Use this abstract base class to create your own transport responses.
 
-    It is returned from your async client's `send_request` method if you pass in
-    an :class:`~azure.core.rest.HttpRequest`
+    Responses implementing this ABC are returned from your async client's `send_request`
+    method if you pass in an :class:`~azure.core.rest.HttpRequest`
 
     >>> from azure.core.rest import HttpRequest
     >>> request = HttpRequest('GET', 'http://www.example.com')
     <HttpRequest [GET], url: 'http://www.example.com'>
     >>> response = await client.send_request(request)
     <AsyncHttpResponse: 200 OK>
-
-    :ivar int status_code: The status code of this response
-    :ivar mapping headers: The response headers
-    :ivar str reason: The reason phrase for this response
-    :ivar bytes content: The response content in bytes.
-    :ivar str url: The URL that resulted in this response
-    :ivar str encoding: The response encoding. Is settable, by default
-     is the response Content-Type header
-    :ivar request: The request that resulted in this response.
-    :vartype request: ~azure.core.rest.HttpRequest
-    :ivar str content_type: The content type of the response
-    :ivar bool is_closed: Whether the network connection has been closed yet
-    :ivar bool is_stream_consumed: When getting a stream response, checks
-     whether the stream has been fully consumed
     """
 
     @abc.abstractmethod
