@@ -13,8 +13,8 @@ from azure.cosmos.partition_key import PartitionKey
 import config
 import heroes
 
-endpoint = 'https://simonmoreno-sql.documents.azure.com:443/'
-key = 'Z8HFr11W7ci3wqxs8RvqtzP2IyA9RZw3M11g0LR3jAFe3V1ijJ3BPas6My8pusXx6bPQO89MMxripXvcZDrJkg=='
+endpoint = ''
+key = ''
 
 def creation():
 
