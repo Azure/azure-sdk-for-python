@@ -1597,8 +1597,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1
         with auto_lock_renew: # Check that in normal operation it does not get called
-            auto_lock_renew.register(receiver, renewable=MockReceivedMessage(), on_lock_renew_failure=callback_mock)
-            time.sleep(3)
+            auto_lock_renew.register(receiver, renewable=MockReceivedMessage(lock_duration=5), on_lock_renew_failure=callback_mock)
+            time.sleep(6)
             assert not results
             assert not errors
 
