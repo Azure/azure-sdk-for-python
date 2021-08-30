@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 from azure.core.exceptions import ClientAuthenticationError
 
-from .._internal import AadClient
+from .._internal import AadClient, AsyncContextManager
 from .._internal.decorators import log_get_token_async
 from ..._internal import validate_tenant_id
 
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class OnBehalfOfCredential:
+class OnBehalfOfCredential(AsyncContextManager):
     """Authenticates a service principal via the on-behalf-of flow.
 
     This flow is typically used by middle-tier services that authorize requests to other services with a delegated
@@ -50,6 +50,13 @@ class OnBehalfOfCredential:
         self._client = AadClient(tenant_id, client_id, **kwargs)
         self._assertion = user_assertion
         self._secret = client_secret
+
+    async def __aenter__(self):
+        await self._client.__aenter__()
+        return self
+
+    async def close(self):
+        await self._client.close()
 
     @log_get_token_async
     async def get_token(self, *scopes: "Any", **kwargs: "Any") -> "AccessToken":

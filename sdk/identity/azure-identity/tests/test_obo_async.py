@@ -15,6 +15,7 @@ from azure.mgmt.resource.subscriptions.aio import SubscriptionClient
 import pytest
 
 from helpers import build_aad_response, FAKE_CLIENT_ID, get_discovery_response, mock_response
+from helpers_async import AsyncMockTransport
 from recorded_test_case import RecordedTestCase
 from test_obo import SubscriptionListRemover
 
@@ -75,6 +76,29 @@ class RecordedTests(RecordedTestCase):
         client = SubscriptionClient(credential)
         async for _ in client.subscriptions.list():
             pass
+
+
+@pytest.mark.asyncio
+async def test_close():
+    transport = AsyncMockTransport()
+    credential = OnBehalfOfCredential("tenant-id", "client-id", "client-secret", "assertion", transport=transport)
+
+    await credential.close()
+
+    assert transport.__aexit__.call_count == 1
+
+
+@pytest.mark.asyncio
+async def test_context_manager():
+    transport = AsyncMockTransport()
+    credential = OnBehalfOfCredential("tenant-id", "client-id", "client-secret", "assertion", transport=transport)
+
+    async with credential:
+        assert transport.__aenter__.call_count == 1
+        assert not transport.__aexit__.called
+
+    assert transport.__aenter__.call_count == 1
+    assert transport.__aexit__.call_count == 1
 
 
 @pytest.mark.asyncio
