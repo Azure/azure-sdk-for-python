@@ -124,7 +124,10 @@ def _latest_comment_time(comments, delay_from_create_date):
 def auto_reply(item, sdk_repo, rest_repo):
     if 'auto-link' not in item.labels:
         try:
-            readme_link = update_issue_body(sdk_repo, rest_repo, item.issue_object.number)
+            package_name, readme_link = update_issue_body(sdk_repo, rest_repo, item.issue_object.number)
+            item.package = package_name
+            key = (issue.language, issue.package)
+            duplicated_issue[key] = duplicated_issue.get(key, 0) + 1
         except Exception as e:
             item.bot_advice = 'failed to modify the body of the new issue. Please modify manually'
             item.labels.append('attention')
