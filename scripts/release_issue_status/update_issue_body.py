@@ -50,7 +50,7 @@ def get_pkname_and_readme_link(rest_repo, link):
             contents_url = pr_changed_file.contents_url
             if '/resource-manager' in contents_url:
                 try:
-                    pk_url_name1 = re.findall(r'/specification/(.*?)/resource-manager/', contents_url)[0]
+                    pk_url_name.add(re.findall(r'/specification/(.*?)/resource-manager/', contents_url)[0])
                 except Exception as e:
                     continue
                 if not pk_url_name:
