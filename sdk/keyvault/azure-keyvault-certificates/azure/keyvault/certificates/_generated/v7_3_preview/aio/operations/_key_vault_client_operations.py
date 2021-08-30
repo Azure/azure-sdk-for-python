@@ -42,7 +42,7 @@ class KeyVaultClientOperationsMixin:
         :type include_pending: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either CertificateListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_2.models.CertificateListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_3_preview.models.CertificateListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateListResult"]
@@ -50,7 +50,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -127,7 +127,7 @@ class KeyVaultClientOperationsMixin:
         :type certificate_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeletedCertificateBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.DeletedCertificateBundle
+        :rtype: ~azure.keyvault.v7_3_preview.models.DeletedCertificateBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedCertificateBundle"]
@@ -135,7 +135,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         # Construct URL
@@ -185,10 +185,10 @@ class KeyVaultClientOperationsMixin:
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param contacts: The contacts for the key vault certificate.
-        :type contacts: ~azure.keyvault.v7_2.models.Contacts
+        :type contacts: ~azure.keyvault.v7_3_preview.models.Contacts
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Contacts, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.Contacts
+        :rtype: ~azure.keyvault.v7_3_preview.models.Contacts
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Contacts"]
@@ -196,7 +196,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -250,7 +250,7 @@ class KeyVaultClientOperationsMixin:
         :type vault_base_url: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Contacts, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.Contacts
+        :rtype: ~azure.keyvault.v7_3_preview.models.Contacts
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Contacts"]
@@ -258,7 +258,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         # Construct URL
@@ -307,7 +307,7 @@ class KeyVaultClientOperationsMixin:
         :type vault_base_url: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Contacts, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.Contacts
+        :rtype: ~azure.keyvault.v7_3_preview.models.Contacts
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Contacts"]
@@ -315,7 +315,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         # Construct URL
@@ -369,7 +369,7 @@ class KeyVaultClientOperationsMixin:
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either CertificateIssuerListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_2.models.CertificateIssuerListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_3_preview.models.CertificateIssuerListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateIssuerListResult"]
@@ -377,7 +377,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -451,10 +451,10 @@ class KeyVaultClientOperationsMixin:
         :param issuer_name: The name of the issuer.
         :type issuer_name: str
         :param parameter: Certificate issuer set parameter.
-        :type parameter: ~azure.keyvault.v7_2.models.CertificateIssuerSetParameters
+        :type parameter: ~azure.keyvault.v7_3_preview.models.CertificateIssuerSetParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IssuerBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.IssuerBundle
+        :rtype: ~azure.keyvault.v7_3_preview.models.IssuerBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.IssuerBundle"]
@@ -462,7 +462,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -520,10 +520,10 @@ class KeyVaultClientOperationsMixin:
         :param issuer_name: The name of the issuer.
         :type issuer_name: str
         :param parameter: Certificate issuer update parameter.
-        :type parameter: ~azure.keyvault.v7_2.models.CertificateIssuerUpdateParameters
+        :type parameter: ~azure.keyvault.v7_3_preview.models.CertificateIssuerUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IssuerBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.IssuerBundle
+        :rtype: ~azure.keyvault.v7_3_preview.models.IssuerBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.IssuerBundle"]
@@ -531,7 +531,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -590,7 +590,7 @@ class KeyVaultClientOperationsMixin:
         :type issuer_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IssuerBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.IssuerBundle
+        :rtype: ~azure.keyvault.v7_3_preview.models.IssuerBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.IssuerBundle"]
@@ -598,7 +598,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         # Construct URL
@@ -651,7 +651,7 @@ class KeyVaultClientOperationsMixin:
         :type issuer_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IssuerBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.IssuerBundle
+        :rtype: ~azure.keyvault.v7_3_preview.models.IssuerBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.IssuerBundle"]
@@ -659,7 +659,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         # Construct URL
@@ -712,10 +712,10 @@ class KeyVaultClientOperationsMixin:
         :param certificate_name: The name of the certificate.
         :type certificate_name: str
         :param parameters: The parameters to create a certificate.
-        :type parameters: ~azure.keyvault.v7_2.models.CertificateCreateParameters
+        :type parameters: ~azure.keyvault.v7_3_preview.models.CertificateCreateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateOperation, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.CertificateOperation
+        :rtype: ~azure.keyvault.v7_3_preview.models.CertificateOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateOperation"]
@@ -723,7 +723,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -773,20 +773,20 @@ class KeyVaultClientOperationsMixin:
     ) -> "_models.CertificateBundle":
         """Imports a certificate into a specified key vault.
 
-        Imports an existing valid certificate, containing a private key, into Azure Key Vault. The
-        certificate to be imported can be in either PFX or PEM format. If the certificate is in PEM
-        format the PEM file must contain the key as well as x509 certificates. This operation requires
-        the certificates/import permission.
+        Imports an existing valid certificate, containing a private key, into Azure Key Vault. This
+        operation requires the certificates/import permission. The certificate to be imported can be in
+        either PFX or PEM format. If the certificate is in PEM format the PEM file must contain the key
+        as well as x509 certificates. Key Vault will only accept a key in PKCS#8 format.
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param certificate_name: The name of the certificate.
         :type certificate_name: str
         :param parameters: The parameters to import the certificate.
-        :type parameters: ~azure.keyvault.v7_2.models.CertificateImportParameters
+        :type parameters: ~azure.keyvault.v7_3_preview.models.CertificateImportParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.CertificateBundle
+        :rtype: ~azure.keyvault.v7_3_preview.models.CertificateBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateBundle"]
@@ -794,7 +794,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -856,7 +856,7 @@ class KeyVaultClientOperationsMixin:
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either CertificateListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_2.models.CertificateListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_3_preview.models.CertificateListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateListResult"]
@@ -864,7 +864,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -940,7 +940,7 @@ class KeyVaultClientOperationsMixin:
         :type certificate_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificatePolicy, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.CertificatePolicy
+        :rtype: ~azure.keyvault.v7_3_preview.models.CertificatePolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificatePolicy"]
@@ -948,7 +948,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         # Construct URL
@@ -1001,10 +1001,10 @@ class KeyVaultClientOperationsMixin:
         :param certificate_name: The name of the certificate in the given vault.
         :type certificate_name: str
         :param certificate_policy: The policy for the certificate.
-        :type certificate_policy: ~azure.keyvault.v7_2.models.CertificatePolicy
+        :type certificate_policy: ~azure.keyvault.v7_3_preview.models.CertificatePolicy
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificatePolicy, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.CertificatePolicy
+        :rtype: ~azure.keyvault.v7_3_preview.models.CertificatePolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificatePolicy"]
@@ -1012,7 +1012,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -1074,10 +1074,10 @@ class KeyVaultClientOperationsMixin:
         :param certificate_version: The version of the certificate.
         :type certificate_version: str
         :param parameters: The parameters for certificate update.
-        :type parameters: ~azure.keyvault.v7_2.models.CertificateUpdateParameters
+        :type parameters: ~azure.keyvault.v7_3_preview.models.CertificateUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.CertificateBundle
+        :rtype: ~azure.keyvault.v7_3_preview.models.CertificateBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateBundle"]
@@ -1085,7 +1085,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -1148,7 +1148,7 @@ class KeyVaultClientOperationsMixin:
         :type certificate_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.CertificateBundle
+        :rtype: ~azure.keyvault.v7_3_preview.models.CertificateBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateBundle"]
@@ -1156,7 +1156,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         # Construct URL
@@ -1210,10 +1210,10 @@ class KeyVaultClientOperationsMixin:
         :param certificate_name: The name of the certificate.
         :type certificate_name: str
         :param certificate_operation: The certificate operation response.
-        :type certificate_operation: ~azure.keyvault.v7_2.models.CertificateOperationUpdateParameter
+        :type certificate_operation: ~azure.keyvault.v7_3_preview.models.CertificateOperationUpdateParameter
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateOperation, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.CertificateOperation
+        :rtype: ~azure.keyvault.v7_3_preview.models.CertificateOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateOperation"]
@@ -1221,7 +1221,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -1279,7 +1279,7 @@ class KeyVaultClientOperationsMixin:
         :type certificate_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateOperation, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.CertificateOperation
+        :rtype: ~azure.keyvault.v7_3_preview.models.CertificateOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateOperation"]
@@ -1287,7 +1287,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         # Construct URL
@@ -1341,7 +1341,7 @@ class KeyVaultClientOperationsMixin:
         :type certificate_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateOperation, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.CertificateOperation
+        :rtype: ~azure.keyvault.v7_3_preview.models.CertificateOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateOperation"]
@@ -1349,7 +1349,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         # Construct URL
@@ -1403,10 +1403,10 @@ class KeyVaultClientOperationsMixin:
         :param certificate_name: The name of the certificate.
         :type certificate_name: str
         :param parameters: The parameters to merge certificate.
-        :type parameters: ~azure.keyvault.v7_2.models.CertificateMergeParameters
+        :type parameters: ~azure.keyvault.v7_3_preview.models.CertificateMergeParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.CertificateBundle
+        :rtype: ~azure.keyvault.v7_3_preview.models.CertificateBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateBundle"]
@@ -1414,7 +1414,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -1473,7 +1473,7 @@ class KeyVaultClientOperationsMixin:
         :type certificate_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BackupCertificateResult, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.BackupCertificateResult
+        :rtype: ~azure.keyvault.v7_3_preview.models.BackupCertificateResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupCertificateResult"]
@@ -1481,7 +1481,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         # Construct URL
@@ -1531,10 +1531,10 @@ class KeyVaultClientOperationsMixin:
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param parameters: The parameters to restore the certificate.
-        :type parameters: ~azure.keyvault.v7_2.models.CertificateRestoreParameters
+        :type parameters: ~azure.keyvault.v7_3_preview.models.CertificateRestoreParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.CertificateBundle
+        :rtype: ~azure.keyvault.v7_3_preview.models.CertificateBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateBundle"]
@@ -1542,7 +1542,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -1606,7 +1606,7 @@ class KeyVaultClientOperationsMixin:
         :type include_pending: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DeletedCertificateListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_2.models.DeletedCertificateListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_3_preview.models.DeletedCertificateListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedCertificateListResult"]
@@ -1614,7 +1614,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -1691,7 +1691,7 @@ class KeyVaultClientOperationsMixin:
         :type certificate_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeletedCertificateBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.DeletedCertificateBundle
+        :rtype: ~azure.keyvault.v7_3_preview.models.DeletedCertificateBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedCertificateBundle"]
@@ -1699,7 +1699,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         # Construct URL
@@ -1761,7 +1761,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         # Construct URL
@@ -1813,7 +1813,7 @@ class KeyVaultClientOperationsMixin:
         :type certificate_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.CertificateBundle
+        :rtype: ~azure.keyvault.v7_3_preview.models.CertificateBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateBundle"]
@@ -1821,7 +1821,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         # Construct URL
