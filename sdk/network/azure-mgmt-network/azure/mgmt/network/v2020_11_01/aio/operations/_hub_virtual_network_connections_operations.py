@@ -49,7 +49,7 @@ class HubVirtualNetworkConnectionsOperations:
         virtual_hub_name: str,
         connection_name: str,
         hub_virtual_network_connection_parameters: "_models.HubVirtualNetworkConnection",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HubVirtualNetworkConnection":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.HubVirtualNetworkConnection"]
         error_map = {
@@ -108,7 +108,7 @@ class HubVirtualNetworkConnectionsOperations:
         virtual_hub_name: str,
         connection_name: str,
         hub_virtual_network_connection_parameters: "_models.HubVirtualNetworkConnection",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.HubVirtualNetworkConnection"]:
         """Creates a hub virtual network connection if it doesn't exist else updates the existing one.
 
@@ -123,8 +123,8 @@ class HubVirtualNetworkConnectionsOperations:
         :type hub_virtual_network_connection_parameters: ~azure.mgmt.network.v2020_11_01.models.HubVirtualNetworkConnection
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either HubVirtualNetworkConnection or the result of cls(response)
@@ -184,7 +184,7 @@ class HubVirtualNetworkConnectionsOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -230,7 +230,7 @@ class HubVirtualNetworkConnectionsOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a HubVirtualNetworkConnection.
 
@@ -242,8 +242,8 @@ class HubVirtualNetworkConnectionsOperations:
         :type connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -299,7 +299,7 @@ class HubVirtualNetworkConnectionsOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HubVirtualNetworkConnection":
         """Retrieves the details of a HubVirtualNetworkConnection.
 
@@ -360,7 +360,7 @@ class HubVirtualNetworkConnectionsOperations:
         self,
         resource_group_name: str,
         virtual_hub_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListHubVirtualNetworkConnectionsResult"]:
         """Retrieves the details of all HubVirtualNetworkConnections.
 

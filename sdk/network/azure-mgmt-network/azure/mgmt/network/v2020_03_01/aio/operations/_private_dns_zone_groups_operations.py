@@ -48,7 +48,7 @@ class PrivateDnsZoneGroupsOperations:
         resource_group_name: str,
         private_endpoint_name: str,
         private_dns_zone_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -94,7 +94,7 @@ class PrivateDnsZoneGroupsOperations:
         resource_group_name: str,
         private_endpoint_name: str,
         private_dns_zone_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified private dns zone group.
 
@@ -106,8 +106,8 @@ class PrivateDnsZoneGroupsOperations:
         :type private_dns_zone_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -163,7 +163,7 @@ class PrivateDnsZoneGroupsOperations:
         resource_group_name: str,
         private_endpoint_name: str,
         private_dns_zone_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateDnsZoneGroup":
         """Gets the private dns zone group resource by specified private dns zone group name.
 
@@ -226,7 +226,7 @@ class PrivateDnsZoneGroupsOperations:
         private_endpoint_name: str,
         private_dns_zone_group_name: str,
         parameters: "_models.PrivateDnsZoneGroup",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateDnsZoneGroup":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateDnsZoneGroup"]
         error_map = {
@@ -285,7 +285,7 @@ class PrivateDnsZoneGroupsOperations:
         private_endpoint_name: str,
         private_dns_zone_group_name: str,
         parameters: "_models.PrivateDnsZoneGroup",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.PrivateDnsZoneGroup"]:
         """Creates or updates a private dns zone group in the specified private endpoint.
 
@@ -300,8 +300,8 @@ class PrivateDnsZoneGroupsOperations:
         :type parameters: ~azure.mgmt.network.v2020_03_01.models.PrivateDnsZoneGroup
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either PrivateDnsZoneGroup or the result of cls(response)
@@ -360,7 +360,7 @@ class PrivateDnsZoneGroupsOperations:
         self,
         private_endpoint_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PrivateDnsZoneGroupListResult"]:
         """Gets all private dns zone groups in a private endpoint.
 

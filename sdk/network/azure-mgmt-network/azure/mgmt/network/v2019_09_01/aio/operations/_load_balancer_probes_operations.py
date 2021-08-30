@@ -45,7 +45,7 @@ class LoadBalancerProbesOperations:
         self,
         resource_group_name: str,
         load_balancer_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.LoadBalancerProbeListResult"]:
         """Gets all the load balancer probes.
 
@@ -120,7 +120,7 @@ class LoadBalancerProbesOperations:
         resource_group_name: str,
         load_balancer_name: str,
         probe_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Probe":
         """Gets load balancer probe.
 

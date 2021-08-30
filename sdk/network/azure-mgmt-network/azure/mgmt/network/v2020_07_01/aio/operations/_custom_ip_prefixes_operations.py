@@ -47,7 +47,7 @@ class CustomIPPrefixesOperations:
         self,
         resource_group_name: str,
         custom_ip_prefix_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -91,7 +91,7 @@ class CustomIPPrefixesOperations:
         self,
         resource_group_name: str,
         custom_ip_prefix_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified custom IP prefix.
 
@@ -101,8 +101,8 @@ class CustomIPPrefixesOperations:
         :type custom_ip_prefix_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -156,7 +156,7 @@ class CustomIPPrefixesOperations:
         resource_group_name: str,
         custom_ip_prefix_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CustomIpPrefix":
         """Gets the specified custom IP prefix in a specified resource group.
 
@@ -219,7 +219,7 @@ class CustomIPPrefixesOperations:
         resource_group_name: str,
         custom_ip_prefix_name: str,
         parameters: "_models.CustomIpPrefix",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CustomIpPrefix":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CustomIpPrefix"]
         error_map = {
@@ -276,7 +276,7 @@ class CustomIPPrefixesOperations:
         resource_group_name: str,
         custom_ip_prefix_name: str,
         parameters: "_models.CustomIpPrefix",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.CustomIpPrefix"]:
         """Creates or updates a custom IP prefix.
 
@@ -288,8 +288,8 @@ class CustomIPPrefixesOperations:
         :type parameters: ~azure.mgmt.network.v2020_07_01.models.CustomIpPrefix
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either CustomIpPrefix or the result of cls(response)
@@ -347,7 +347,7 @@ class CustomIPPrefixesOperations:
         resource_group_name: str,
         custom_ip_prefix_name: str,
         parameters: "_models.TagsObject",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CustomIpPrefix":
         """Updates custom IP prefix tags.
 
@@ -410,7 +410,7 @@ class CustomIPPrefixesOperations:
 
     def list_all(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CustomIpPrefixListResult"]:
         """Gets all the custom IP prefixes in a subscription.
 
@@ -477,7 +477,7 @@ class CustomIPPrefixesOperations:
     def list(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CustomIpPrefixListResult"]:
         """Gets all custom IP prefixes in a resource group.
 

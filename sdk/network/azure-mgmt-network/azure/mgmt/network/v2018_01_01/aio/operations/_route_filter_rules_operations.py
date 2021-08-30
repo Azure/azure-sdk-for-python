@@ -48,7 +48,7 @@ class RouteFilterRulesOperations:
         resource_group_name: str,
         route_filter_name: str,
         rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -92,7 +92,7 @@ class RouteFilterRulesOperations:
         resource_group_name: str,
         route_filter_name: str,
         rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified rule from a route filter.
 
@@ -104,8 +104,8 @@ class RouteFilterRulesOperations:
         :type rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -161,7 +161,7 @@ class RouteFilterRulesOperations:
         resource_group_name: str,
         route_filter_name: str,
         rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RouteFilterRule":
         """Gets the specified rule from a route filter.
 
@@ -224,7 +224,7 @@ class RouteFilterRulesOperations:
         route_filter_name: str,
         rule_name: str,
         route_filter_rule_parameters: "_models.RouteFilterRule",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RouteFilterRule":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RouteFilterRule"]
         error_map = {
@@ -283,7 +283,7 @@ class RouteFilterRulesOperations:
         route_filter_name: str,
         rule_name: str,
         route_filter_rule_parameters: "_models.RouteFilterRule",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.RouteFilterRule"]:
         """Creates or updates a route in the specified route filter.
 
@@ -298,8 +298,8 @@ class RouteFilterRulesOperations:
         :type route_filter_rule_parameters: ~azure.mgmt.network.v2018_01_01.models.RouteFilterRule
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either RouteFilterRule or the result of cls(response)
@@ -360,7 +360,7 @@ class RouteFilterRulesOperations:
         route_filter_name: str,
         rule_name: str,
         route_filter_rule_parameters: "_models.PatchRouteFilterRule",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RouteFilterRule":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RouteFilterRule"]
         error_map = {
@@ -415,7 +415,7 @@ class RouteFilterRulesOperations:
         route_filter_name: str,
         rule_name: str,
         route_filter_rule_parameters: "_models.PatchRouteFilterRule",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.RouteFilterRule"]:
         """Updates a route in the specified route filter.
 
@@ -430,8 +430,8 @@ class RouteFilterRulesOperations:
         :type route_filter_rule_parameters: ~azure.mgmt.network.v2018_01_01.models.PatchRouteFilterRule
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either RouteFilterRule or the result of cls(response)
@@ -490,7 +490,7 @@ class RouteFilterRulesOperations:
         self,
         resource_group_name: str,
         route_filter_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RouteFilterRuleListResult"]:
         """Gets all RouteFilterRules in a route filter.
 

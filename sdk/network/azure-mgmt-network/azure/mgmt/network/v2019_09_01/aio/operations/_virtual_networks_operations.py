@@ -47,7 +47,7 @@ class VirtualNetworksOperations:
         self,
         resource_group_name: str,
         virtual_network_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -91,7 +91,7 @@ class VirtualNetworksOperations:
         self,
         resource_group_name: str,
         virtual_network_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified virtual network.
 
@@ -101,8 +101,8 @@ class VirtualNetworksOperations:
         :type virtual_network_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -156,7 +156,7 @@ class VirtualNetworksOperations:
         resource_group_name: str,
         virtual_network_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualNetwork":
         """Gets the specified virtual network by resource group.
 
@@ -219,7 +219,7 @@ class VirtualNetworksOperations:
         resource_group_name: str,
         virtual_network_name: str,
         parameters: "_models.VirtualNetwork",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualNetwork":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetwork"]
         error_map = {
@@ -276,7 +276,7 @@ class VirtualNetworksOperations:
         resource_group_name: str,
         virtual_network_name: str,
         parameters: "_models.VirtualNetwork",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.VirtualNetwork"]:
         """Creates or updates a virtual network in the specified resource group.
 
@@ -288,8 +288,8 @@ class VirtualNetworksOperations:
         :type parameters: ~azure.mgmt.network.v2019_09_01.models.VirtualNetwork
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VirtualNetwork or the result of cls(response)
@@ -347,7 +347,7 @@ class VirtualNetworksOperations:
         resource_group_name: str,
         virtual_network_name: str,
         parameters: "_models.TagsObject",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualNetwork":
         """Updates a virtual network tags.
 
@@ -410,7 +410,7 @@ class VirtualNetworksOperations:
 
     def list_all(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.VirtualNetworkListResult"]:
         """Gets all virtual networks in a subscription.
 
@@ -477,7 +477,7 @@ class VirtualNetworksOperations:
     def list(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.VirtualNetworkListResult"]:
         """Gets all virtual networks in a resource group.
 
@@ -549,7 +549,7 @@ class VirtualNetworksOperations:
         resource_group_name: str,
         virtual_network_name: str,
         ip_address: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IPAddressAvailabilityResult":
         """Checks whether a private IP address is available for use.
 
@@ -610,7 +610,7 @@ class VirtualNetworksOperations:
         self,
         resource_group_name: str,
         virtual_network_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.VirtualNetworkListUsageResult"]:
         """Lists usage stats.
 

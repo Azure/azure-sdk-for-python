@@ -48,7 +48,7 @@ class FirewallPolicyRuleCollectionGroupsOperations:
         resource_group_name: str,
         firewall_policy_name: str,
         rule_collection_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -94,7 +94,7 @@ class FirewallPolicyRuleCollectionGroupsOperations:
         resource_group_name: str,
         firewall_policy_name: str,
         rule_collection_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified FirewallPolicyRuleCollectionGroup.
 
@@ -106,8 +106,8 @@ class FirewallPolicyRuleCollectionGroupsOperations:
         :type rule_collection_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -163,7 +163,7 @@ class FirewallPolicyRuleCollectionGroupsOperations:
         resource_group_name: str,
         firewall_policy_name: str,
         rule_collection_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FirewallPolicyRuleCollectionGroup":
         """Gets the specified FirewallPolicyRuleCollectionGroup.
 
@@ -226,7 +226,7 @@ class FirewallPolicyRuleCollectionGroupsOperations:
         firewall_policy_name: str,
         rule_collection_group_name: str,
         parameters: "_models.FirewallPolicyRuleCollectionGroup",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FirewallPolicyRuleCollectionGroup":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.FirewallPolicyRuleCollectionGroup"]
         error_map = {
@@ -285,7 +285,7 @@ class FirewallPolicyRuleCollectionGroupsOperations:
         firewall_policy_name: str,
         rule_collection_group_name: str,
         parameters: "_models.FirewallPolicyRuleCollectionGroup",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.FirewallPolicyRuleCollectionGroup"]:
         """Creates or updates the specified FirewallPolicyRuleCollectionGroup.
 
@@ -300,8 +300,8 @@ class FirewallPolicyRuleCollectionGroupsOperations:
         :type parameters: ~azure.mgmt.network.v2020_05_01.models.FirewallPolicyRuleCollectionGroup
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either FirewallPolicyRuleCollectionGroup or the result of cls(response)
@@ -360,7 +360,7 @@ class FirewallPolicyRuleCollectionGroupsOperations:
         self,
         resource_group_name: str,
         firewall_policy_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.FirewallPolicyRuleCollectionGroupListResult"]:
         """Lists all FirewallPolicyRuleCollectionGroups in a FirewallPolicy resource.
 

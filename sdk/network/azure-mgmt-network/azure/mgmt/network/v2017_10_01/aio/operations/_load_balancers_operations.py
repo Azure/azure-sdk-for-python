@@ -47,7 +47,7 @@ class LoadBalancersOperations:
         self,
         resource_group_name: str,
         load_balancer_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -89,7 +89,7 @@ class LoadBalancersOperations:
         self,
         resource_group_name: str,
         load_balancer_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified load balancer.
 
@@ -99,8 +99,8 @@ class LoadBalancersOperations:
         :type load_balancer_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -154,7 +154,7 @@ class LoadBalancersOperations:
         resource_group_name: str,
         load_balancer_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.LoadBalancer":
         """Gets the specified load balancer.
 
@@ -217,7 +217,7 @@ class LoadBalancersOperations:
         resource_group_name: str,
         load_balancer_name: str,
         parameters: "_models.LoadBalancer",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.LoadBalancer":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.LoadBalancer"]
         error_map = {
@@ -274,7 +274,7 @@ class LoadBalancersOperations:
         resource_group_name: str,
         load_balancer_name: str,
         parameters: "_models.LoadBalancer",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.LoadBalancer"]:
         """Creates or updates a load balancer.
 
@@ -286,8 +286,8 @@ class LoadBalancersOperations:
         :type parameters: ~azure.mgmt.network.v2017_10_01.models.LoadBalancer
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either LoadBalancer or the result of cls(response)
@@ -345,7 +345,7 @@ class LoadBalancersOperations:
         resource_group_name: str,
         load_balancer_name: str,
         parameters: "_models.TagsObject",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.LoadBalancer":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.LoadBalancer"]
         error_map = {
@@ -398,7 +398,7 @@ class LoadBalancersOperations:
         resource_group_name: str,
         load_balancer_name: str,
         parameters: "_models.TagsObject",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.LoadBalancer"]:
         """Updates a load balancer tags.
 
@@ -410,8 +410,8 @@ class LoadBalancersOperations:
         :type parameters: ~azure.mgmt.network.v2017_10_01.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either LoadBalancer or the result of cls(response)
@@ -466,7 +466,7 @@ class LoadBalancersOperations:
 
     def list_all(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.LoadBalancerListResult"]:
         """Gets all the load balancers in a subscription.
 
@@ -533,7 +533,7 @@ class LoadBalancersOperations:
     def list(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.LoadBalancerListResult"]:
         """Gets all the load balancers in a resource group.
 

@@ -47,7 +47,7 @@ class ExpressRouteCircuitsOperations:
         self,
         resource_group_name: str,
         circuit_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -89,7 +89,7 @@ class ExpressRouteCircuitsOperations:
         self,
         resource_group_name: str,
         circuit_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified express route circuit.
 
@@ -99,8 +99,8 @@ class ExpressRouteCircuitsOperations:
         :type circuit_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -153,7 +153,7 @@ class ExpressRouteCircuitsOperations:
         self,
         resource_group_name: str,
         circuit_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ExpressRouteCircuit":
         """Gets information about the specified express route circuit.
 
@@ -212,7 +212,7 @@ class ExpressRouteCircuitsOperations:
         resource_group_name: str,
         circuit_name: str,
         parameters: "_models.ExpressRouteCircuit",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ExpressRouteCircuit":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteCircuit"]
         error_map = {
@@ -269,7 +269,7 @@ class ExpressRouteCircuitsOperations:
         resource_group_name: str,
         circuit_name: str,
         parameters: "_models.ExpressRouteCircuit",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ExpressRouteCircuit"]:
         """Creates or updates an express route circuit.
 
@@ -281,8 +281,8 @@ class ExpressRouteCircuitsOperations:
         :type parameters: ~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuit
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ExpressRouteCircuit or the result of cls(response)
@@ -339,7 +339,7 @@ class ExpressRouteCircuitsOperations:
         self,
         resource_group_name: str,
         circuit_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ExpressRouteCircuitsArpTableListResult"]:
         """The ListArpTable from ExpressRouteCircuit operation retrieves the currently advertised arp
         table associated with the ExpressRouteCircuits in a resource group.
@@ -414,7 +414,7 @@ class ExpressRouteCircuitsOperations:
         self,
         resource_group_name: str,
         circuit_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ExpressRouteCircuitsRoutesTableListResult"]:
         """The ListRoutesTable from ExpressRouteCircuit operation retrieves the currently advertised
         routes table associated with the ExpressRouteCircuits in a resource group.
@@ -489,7 +489,7 @@ class ExpressRouteCircuitsOperations:
         self,
         resource_group_name: str,
         circuit_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ExpressRouteCircuitsStatsListResult"]:
         """The ListStats ExpressRouteCircuit operation retrieves all the stats from a ExpressRouteCircuits
         in a resource group.
@@ -563,7 +563,7 @@ class ExpressRouteCircuitsOperations:
     def list(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ExpressRouteCircuitListResult"]:
         """Gets all the express route circuits in a resource group.
 
@@ -632,7 +632,7 @@ class ExpressRouteCircuitsOperations:
 
     def list_all(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ExpressRouteCircuitListResult"]:
         """Gets all the express route circuits in a subscription.
 
