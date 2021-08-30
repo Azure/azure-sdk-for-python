@@ -106,6 +106,6 @@ def begin_reply_generate(issue_object, rest_repo, readme_link):
         latest_pr_number = get_latest_pr_from_readme(rest_repo,link_dict)
         reply_content = latest_pr_parse(rest_repo, latest_pr_number)
         reply_owner(reply_content)
-        add_label('P1', labels)
+        add_label('auto-ask-check', labels)
     else:
         print('issue {} need config readme***********'.format(issue_object.number))
