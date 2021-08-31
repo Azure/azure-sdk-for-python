@@ -1,6 +1,6 @@
 # Release History
 
-## 1.17.1 (Unreleased)
+## 1.18.0 (Unreleased)
 
 ### Features Added
 
@@ -10,6 +10,7 @@
 
 - The `text` property on `azure.core.rest.HttpResponse` and `azure.core.rest.AsyncHttpResponse` has changed to a method, which also takes
 an `encoding` parameter.
+- Removed `iter_text` and `iter_lines` from `azure.core.rest.HttpResponse` and `azure.core.rest.AsyncHttpResponse`
 
 ### Bugs Fixed
 

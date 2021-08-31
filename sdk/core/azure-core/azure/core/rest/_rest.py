@@ -33,7 +33,6 @@ from azure.core.exceptions import HttpResponseError
 from ..utils._utils import _case_insensitive_dict
 from ._helpers import (
     FilesType,
-    parse_lines_from_text,
     set_content_body,
     set_json_body,
     set_multipart_body,
@@ -356,21 +355,6 @@ class HttpResponse(_HttpResponseBase):  # pylint: disable=too-many-instance-attr
         """Iterate over the response bytes
         """
         raise NotImplementedError()
-
-    def iter_text(self):
-        # type: () -> Iterator[str]
-        """Iterate over the response text
-        """
-        for byte in self.iter_bytes():
-            text = byte.decode(self.encoding or "utf-8")
-            yield text
-
-    def iter_lines(self):
-        # type: () -> Iterator[str]
-        for text in self.iter_text():
-            lines = parse_lines_from_text(text)
-            for line in lines:
-                yield line
 
     def _close_stream(self):
         # type: (...) -> None

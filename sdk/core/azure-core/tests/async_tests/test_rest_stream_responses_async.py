@@ -66,6 +66,7 @@ async def test_iter_bytes(client):
         assert response.is_closed
         assert raw == b"Hello, world!"
 
+@pytest.mark.skip(reason="We've gotten rid of iter_text for now")
 @pytest.mark.asyncio
 async def test_iter_text(client):
     request = HttpRequest("GET", "/basic/string")
@@ -76,14 +77,15 @@ async def test_iter_text(client):
             content += part
         assert content == "Hello, world!"
 
+@pytest.mark.skip(reason="We've gotten rid of iter_lines for now")
 @pytest.mark.asyncio
 async def test_iter_lines(client):
     request = HttpRequest("GET", "/basic/lines")
 
     async with client.send_request(request, stream=True) as response:
         content = []
-        async for line in response.iter_lines():
-            content.append(line)
+        async for part in response.iter_lines():
+            content.append(part)
         assert content == ["Hello,\n", "world!"]
 
 
@@ -161,11 +163,11 @@ async def test_iter_read_back_and_forth(client):
     # the reason why the code flow is like this, is because the 'iter_x' functions don't
     # actually read the contents into the response, the output them. Once they're yielded,
     # the stream is closed, so you have to catch the output when you iterate through it
-    request = HttpRequest("GET", "/basic/lines")
+    request = HttpRequest("GET", "/basic/string")
 
     async with client.send_request(request, stream=True) as response:
-        async for line in response.iter_lines():
-            assert line
+        async for part in response.iter_bytes():
+            assert part
         with pytest.raises(ResponseNotReadError):
             response.text()
         with pytest.raises(StreamConsumedError):
@@ -175,16 +177,16 @@ async def test_iter_read_back_and_forth(client):
 
 @pytest.mark.asyncio
 async def test_stream_with_return_pipeline_response(client):
-    request = HttpRequest("GET", "/basic/lines")
+    request = HttpRequest("GET", "/basic/string")
     pipeline_response = await client.send_request(request, stream=True, _return_pipeline_response=True)
     assert hasattr(pipeline_response, "http_request")
     assert hasattr(pipeline_response.http_request, "content")
     assert hasattr(pipeline_response, "http_response")
     assert hasattr(pipeline_response, "context")
     parts = []
-    async for line in pipeline_response.http_response.iter_lines():
-        parts.append(line)
-    assert parts == ['Hello,\n', 'world!']
+    async for part in pipeline_response.http_response.iter_bytes():
+        parts.append(part)
+    assert parts == [b'Hello, world!']
     await client.close()
 
 @pytest.mark.asyncio
