@@ -41,7 +41,7 @@ class SchemaRegistryAvroSerializer(object):
     :type schema_registry: ~azure.schemaregistry.SchemaRegistryClient
     :param str schema_group: Schema group under which schema should be registered.
     :keyword bool auto_register_schemas: When true, register new schemas passed to serialize.
-        Otherwise, and by default, fail if it has not been pre-registered in the registry.
+    Otherwise, and by default, fail if it has not been pre-registered in the registry.
     :keyword str codec: The writer codec. If None, let the avro library decides.
 
     """
@@ -52,6 +52,11 @@ class SchemaRegistryAvroSerializer(object):
         self._avro_serializer = AvroObjectSerializer(codec=kwargs.get("codec"))
         self._schema_registry_client = schema_registry  # type: "SchemaRegistryClient"
         self._auto_register_schemas = kwargs.get("auto_register_schemas", False)
+        self._auto_register_schema_func = (
+                self._schema_registry_client.register_schema
+                if self._auto_register_schemas
+                else self._schema_registry_client.get_schema_id
+            )
         self._id_to_schema = {}
         self._schema_to_id = {}
         self._user_input_schema_cache = {}
@@ -89,12 +94,7 @@ class SchemaRegistryAvroSerializer(object):
         try:
             return self._schema_to_id[schema_str]
         except KeyError:
-            schema_id_func = (
-                self._schema_registry_client.register_schema
-                if self._auto_register_schemas
-                else self._schema_registry_client.get_schema_id
-            )
-            schema_id = schema_id_func(
+            schema_id = self._auto_register_schema_func(
                 self._schema_group, schema_name, "Avro", schema_str, **kwargs
             ).schema_id
             self._schema_to_id[schema_str] = schema_id
