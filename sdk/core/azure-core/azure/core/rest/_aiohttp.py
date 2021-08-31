@@ -34,7 +34,7 @@ class RestAioHttpTransportResponse(AsyncHttpResponseImpl):
         self,
         *,
         internal_response,
-        decompress: bool = False,
+        decompress: bool = True,
         **kwargs
     ):
         super().__init__(

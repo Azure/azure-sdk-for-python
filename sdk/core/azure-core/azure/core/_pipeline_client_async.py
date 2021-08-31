@@ -210,7 +210,6 @@ class AsyncPipelineClient(PipelineClientBase):
                     # to the internal content
                     rest_response._content = response.body()  # pylint: disable=protected-access
                     await rest_response._set_read_checks()  # pylint: disable=protected-access
-                    await rest_response.close()
                 except Exception as exc:
                     await rest_response.close()
                     raise exc
