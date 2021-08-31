@@ -240,13 +240,13 @@ class EntityRecognitionSkill(SearchIndexerSkill):
         kwargs = skill.as_dict()
         if isinstance(skill, _EntityRecognitionSkillV1):
             return EntityRecognitionSkill(
-                **kwargs,
-                skill_version=EntityRecognitionSkillVersion.V1
+                skill_version=EntityRecognitionSkillVersion.V1,
+                **kwargs
             )
         if isinstance(skill, _EntityRecognitionSkillV3):
             return EntityRecognitionSkill(
-                **kwargs,
-                skill_version=EntityRecognitionSkillVersion.V3
+                skill_version=EntityRecognitionSkillVersion.V3,
+                **kwargs
             )
 
 
