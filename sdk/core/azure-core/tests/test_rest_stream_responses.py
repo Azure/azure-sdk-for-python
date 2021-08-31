@@ -79,23 +79,24 @@ def test_iter_bytes(client):
         assert response.is_stream_consumed
         assert raw == b"Hello, world!"
 
-# def test_iter_text(client):
-#     request = HttpRequest("GET", "/basic/string")
+@pytest.mark.skip(reason="We've gotten rid of iter_text for now")
+def test_iter_text(client):
+    request = HttpRequest("GET", "/basic/string")
+    with client.send_request(request, stream=True) as response:
+        content = ""
+        for part in response.iter_text():
+            content += part
+        assert content == "Hello, world!"
 
-#     with client.send_request(request, stream=True) as response:
-#         content = ""
-#         for part in response.iter_text():
-#             content += part
-#         assert content == "Hello, world!"
+@pytest.mark.skip(reason="We've gotten rid of iter_lines for now")
+def test_iter_lines(client):
+    request = HttpRequest("GET", "/basic/lines")
 
-# def test_iter_lines(client):
-#     request = HttpRequest("GET", "/basic/lines")
-
-#     with client.send_request(request, stream=True) as response:
-#         content = []
-#         for line in response.iter_lines():
-#             content.append(line)
-#         assert content == ["Hello,\n", "world!"]
+    with client.send_request(request, stream=True) as response:
+        content = []
+        for line in response.iter_lines():
+            content.append(line)
+        assert content == ["Hello,\n", "world!"]
 
 def test_sync_streaming_response(client):
     request = HttpRequest("GET", "/streams/basic")
@@ -185,8 +186,8 @@ def test_iter_read(client):
     response = client.send_request(request, stream=True)
     response.read()
     iterator = response.iter_bytes()
-    for line in iterator:
-        assert line
+    for part in iterator:
+        assert part
     assert response.text()
 
 def test_iter_read_back_and_forth(client):
@@ -199,8 +200,8 @@ def test_iter_read_back_and_forth(client):
     request = HttpRequest("GET", "/basic/string")
     response = client.send_request(request, stream=True)
     iterator = response.iter_bytes()
-    for line in iterator:
-        assert line
+    for part in iterator:
+        assert part
     with pytest.raises(ResponseNotReadError):
         response.text()
     with pytest.raises(StreamConsumedError):

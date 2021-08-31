@@ -376,6 +376,14 @@ class HttpResponse(_HttpResponseBase):
         """
         ...
 
+    def __repr__(self) -> str:
+        content_type_str = (
+            ", Content-Type: {}".format(self.content_type) if self.content_type else ""
+        )
+        return "<HttpResponse: {} {}{}>".format(
+            self.status_code, self.reason, content_type_str
+        )
+
 class AsyncHttpResponse(_HttpResponseBase):
     """**Provisional** abstract base class for Async HTTP responses.
 
