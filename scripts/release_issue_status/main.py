@@ -228,7 +228,7 @@ def main():
 
         # judge whether there is duplicated issue for same package
         if item.package != _NULL and duplicated_issue.get((item.language, item.package)) > 1:
-            item.bot_advice = f'Warning:There is duplicated issue for {item.package}. ' + item.bot_advice
+            item.bot_advice = f'Warning:There is duplicated issue for {item.package}. <br/>' + item.bot_advice
             
         if item.language == 'Python':
             issue_status_python.append(item)
