@@ -99,4 +99,15 @@ class SchemaRegistryAvroSerializerTests(AzureTestCase):
         assert decoded_data["favorite_number"] == 7
         assert decoded_data["favorite_color"] == u"red"
 
+        sr_avro_serializer._schema_to_id = {}
+        sr_avro_serializer._id_to_schema = {}
+        sr_avro_serializer = SchemaRegistryAvroSerializer(sr_client, schemaregistry_group, auto_register_schemas=True)
+        encoded_data = sr_avro_serializer.serialize(dict_data, schema_str)
+        assert encoded_data is not None
+        sr_avro_serializer._schema_to_id = {}
+        sr_avro_serializer._id_to_schema = {}
+        sr_avro_serializer = SchemaRegistryAvroSerializer(sr_client, schemaregistry_group, auto_register_schemas=False)
+        encoded_data = sr_avro_serializer.serialize(dict_data, schema_str)
+        assert encoded_data is not None
+
         sr_avro_serializer.close()
