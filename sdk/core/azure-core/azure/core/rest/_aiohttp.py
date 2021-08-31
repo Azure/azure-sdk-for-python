@@ -32,8 +32,6 @@ from . import HttpRequest, AsyncHttpResponse
 from ._helpers_py3 import iter_raw_helper, iter_bytes_helper
 from ..pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
 
-_SENTINEL = object()
-
 class _ItemsView(collections.abc.ItemsView):
     def __init__(self, ref):
         super().__init__(ref)
