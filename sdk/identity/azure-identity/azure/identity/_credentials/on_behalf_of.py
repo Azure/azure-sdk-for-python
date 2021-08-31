@@ -3,18 +3,23 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-from typing import TYPE_CHECKING
+from typing import cast, TYPE_CHECKING
 
 import msal
+import six
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
+from .certificate import get_client_credential
+from .._internal.decorators import wrap_exceptions
 from .._internal.get_token_mixin import GetTokenMixin
+from .._internal.interactive import _build_auth_record
 from .._internal.msal_credentials import MsalCredential
 
 if TYPE_CHECKING:
-    from typing import Any, Optional
+    from typing import Any, Dict, Optional, Union
+    from .. import AuthenticationRecord
 
 
 class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
@@ -28,7 +33,9 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
 
     :param str tenant_id: ID of the service principal's tenant. Also called its "directory" ID.
     :param str client_id: the service principal's client ID
-    :param str client_secret: one of the service principal's client secrets
+    :param client_credential: a credential to authenticate the service principal, either one of its client secrets (a
+        string) or the bytes of a certificate in PEM or PKCS12 format including the private key
+    :type client_credential: str or bytes
     :param str user_assertion: the access token the credential will use as the user assertion when requesting
         on-behalf-of tokens
 
@@ -38,30 +45,59 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
+    :keyword password: a certificate password. Used only when **client_credential** is certificate bytes. If this value
+        is a unicode string, it will be encoded as UTF-8. If the certificate requires a different encoding, pass
+        appropriately encoded bytes instead.
+    :paramtype password: str or bytes
     """
 
-    def __init__(self, tenant_id, client_id, client_secret, user_assertion, **kwargs):
-        # type: (str, str, str, str, **Any) -> None
-        super(OnBehalfOfCredential, self).__init__(client_id, client_secret, tenant_id=tenant_id, **kwargs)
-        self._assertion = user_assertion
+    def __init__(self, tenant_id, client_id, client_credential, user_assertion, **kwargs):
+        # type: (str, str, Union[bytes, str], str, **Any) -> None
+        credential = cast("Union[Dict, str]", client_credential)
+        if isinstance(client_credential, six.binary_type):
+            try:
+                credential = get_client_credential(
+                    certificate_path=None, password=kwargs.pop("password", None), certificate_data=client_credential
+                )
+            except ValueError:
+                # client_credential isn't a cert, which is to be expected on 2.7 where str == bytes
+                pass
 
+        super(OnBehalfOfCredential, self).__init__(client_id, credential, tenant_id=tenant_id, **kwargs)
+        self._assertion = user_assertion
+        self._auth_record = None  # type: Optional[AuthenticationRecord]
+
+    @wrap_exceptions
     def _acquire_token_silently(self, *scopes, **kwargs):
         # type: (*str, **Any) -> Optional[AccessToken]
-        app = self._get_app(**kwargs)  # type: msal.ConfidentialClientApplication
-        request_time = int(time.time())
-        result = app.acquire_token_on_behalf_of(self._assertion, list(scopes), claims_challenge=kwargs.get("claims"))
-        if result and "access_token" in result and "expires_in" in result:
-            return AccessToken(result["access_token"], request_time + int(result["expires_in"]))
+        if self._auth_record:
+            claims = kwargs.get("claims")
+            app = self._get_app(**kwargs)
+            for account in app.get_accounts(username=self._auth_record.username):
+                if account.get("home_account_id") != self._auth_record.home_account_id:
+                    continue
+
+                now = int(time.time())
+                result = app.acquire_token_silent_with_error(list(scopes), account=account, claims_challenge=claims)
+                if result and "access_token" in result and "expires_in" in result:
+                    return AccessToken(result["access_token"], now + int(result["expires_in"]))
+
         return None
 
+    @wrap_exceptions
     def _request_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         app = self._get_app(**kwargs)  # type: msal.ConfidentialClientApplication
         request_time = int(time.time())
         result = app.acquire_token_on_behalf_of(self._assertion, list(scopes), claims_challenge=kwargs.get("claims"))
-        if "access_token" not in result:
+        if "access_token" not in result or "expires_in" not in result:
             message = "Authentication failed: {}".format(result.get("error_description") or result.get("error"))
             response = self._client.get_error_response(result)
             raise ClientAuthenticationError(message=message, response=response)
+
+        try:
+            self._auth_record = _build_auth_record(result)
+        except ClientAuthenticationError:
+            pass  # non-fatal; we'll use the assertion again next time instead of a refresh token
 
         return AccessToken(result["access_token"], request_time + int(result["expires_in"]))

@@ -9,10 +9,11 @@ from azure.core.exceptions import ClientAuthenticationError
 
 from .._internal import AadClient, AsyncContextManager
 from .._internal.get_token_mixin import GetTokenMixin
-from ..._internal import validate_tenant_id
+from ..._credentials.certificate import get_client_credential
+from ..._internal import AadClientCertificate, validate_tenant_id
 
 if TYPE_CHECKING:
-    from typing import Any, Optional
+    from typing import Any, Optional, Union
     from azure.core.credentials import AccessToken
 
 _LOGGER = logging.getLogger(__name__)
@@ -29,7 +30,9 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
 
     :param str tenant_id: ID of the service principal's tenant. Also called its "directory" ID.
     :param str client_id: the service principal's client ID
-    :param str client_secret: one of the service principal's client secrets
+    :param client_credential: a credential to authenticate the service principal, either one of its client secrets (a
+        string) or the bytes of a certificate in PEM or PKCS12 format including the private key
+    :paramtype client_credential: str or bytes
     :param str user_assertion: the access token the credential will use as the user assertion when requesting
         on-behalf-of tokens
 
@@ -39,18 +42,34 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
+    :keyword password: a certificate password. Used only when **client_credential** is certificate bytes. If this value
+        is a unicode string, it will be encoded as UTF-8. If the certificate requires a different encoding, pass
+        appropriately encoded bytes instead.
+    :paramtype password: str or bytes
     """
 
     def __init__(
-        self, tenant_id: str, client_id: str, client_secret: str, user_assertion: str, **kwargs: "Any"
+        self,
+        tenant_id: str,
+        client_id: str,
+        client_credential: "Union[bytes, str]",
+        user_assertion: str,
+        **kwargs: "Any"
     ) -> None:
         super().__init__()
         validate_tenant_id(tenant_id)
 
+        if isinstance(client_credential, bytes):
+            cert = get_client_credential(None, kwargs.pop("password", None), client_credential)
+            self._credential = AadClientCertificate(
+                cert["private_key"], password=cert.get("passphrase")
+            )  # type: Union[str, AadClientCertificate]
+        else:
+            self._credential = client_credential
+
         # note AadClient handles "allow_multitenant_authentication", "authority", and any pipeline kwargs
         self._client = AadClient(tenant_id, client_id, **kwargs)
         self._assertion = user_assertion
-        self._secret = client_secret
 
     async def __aenter__(self):
         await self._client.__aenter__()
@@ -78,4 +97,4 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
                 _LOGGER.debug("silent authentication failed due to malformed refresh token: %s", ex, exc_info=True)
 
         # we don't have a refresh token, or silent auth failed: acquire a new token from the assertion
-        return await self._client.obtain_token_on_behalf_of(scopes, self._secret, self._assertion, **kwargs)
+        return await self._client.obtain_token_on_behalf_of(scopes, self._credential, self._assertion, **kwargs)
