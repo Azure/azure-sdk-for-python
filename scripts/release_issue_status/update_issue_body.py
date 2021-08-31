@@ -5,7 +5,6 @@ def update_issue_body(sdk_repo, rest_repo, issue_number):
     # Get Issue Number
     issue_info = sdk_repo.get_issue(number=issue_number)
     issue_body = issue_info.body
-    print("Got the issue body")
     issue_body_list = [i for i in issue_body.split("\n") if i]
     # Get the link in issue body
     for row in issue_body_list:
@@ -27,7 +26,9 @@ def update_issue_body(sdk_repo, rest_repo, issue_number):
             issue_body_up += '\n'
         issue_body_up += raw + '\n'
 
+    print("begin to update body")
     issue_info.edit(body=issue_body_up)
+    print("update body success")
     return package_name, readme_link
         
 
@@ -45,7 +46,6 @@ def get_pkname_and_readme_link(rest_repo, link):
 
         # Get Readme link
         pr_info = rest_repo.get_pull(number=pr_number)
-        print("Got the PR")
         pk_url_name = {}
         for pr_changed_file in pr_info.get_files():
             contents_url = pr_changed_file.contents_url
