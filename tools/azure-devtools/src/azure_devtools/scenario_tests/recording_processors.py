@@ -237,8 +237,6 @@ class GeneralNameReplacer(RecordingProcessor):
             self.replace_header(response, "operation-location", old, new)
             self.replace_header(response, "azure-asyncoperation", old, new)
             self.replace_header(response, "www-authenticate", old, new)
-            self.replace_header(response, "schema-id-location", old, new)
-            self.replace_header(response, "schema-versions-location", old, new)
 
         try:
             response["url"] = replace_subscription_id(response["url"])

@@ -20,22 +20,22 @@ interactions:
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-update423f1009?api-version=2020-09-01-preview
   response:
     body:
-      string: '{"id":"780092710c854850aea1d57fa7ed3a22"}'
+      string: '{"id":"b4e5e156d10747128b9d61698ca6c130"}'
     headers:
       content-type:
       - application/json
       date:
-      - Tue, 31 Aug 2021 20:33:36 GMT
+      - Tue, 31 Aug 2021 22:25:26 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update423f1009/versions/1?api-version=2020-09-01-preview
       schema-id:
-      - 780092710c854850aea1d57fa7ed3a22
+      - b4e5e156d10747128b9d61698ca6c130
       schema-id-location:
-      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/780092710c854850aea1d57fa7ed3a22?api-version=2020-09-01-preview
+      - https://sr-playground.servicebus.windows.net:443/$schemagroups/getschemabyid/b4e5e156d10747128b9d61698ca6c130?api-version=2020-09-01-preview
       schema-version:
       - '1'
       schema-versions-location:
-      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update423f1009/versions?api-version=2020-09-01-preview
+      - https://sr-playground.servicebus.windows.net:443/$schemagroups/yuling-test-group/schemas/test-schema-update423f1009/versions?api-version=2020-09-01-preview
       serialization-type:
       - Avro
       server:
@@ -68,22 +68,22 @@ interactions:
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-update423f1009?api-version=2020-09-01-preview
   response:
     body:
-      string: '{"id":"34cec9efaa134e8fa1504f767051ec86"}'
+      string: '{"id":"2247f93fcb074f8eb117d05419db8a2e"}'
     headers:
       content-type:
       - application/json
       date:
-      - Tue, 31 Aug 2021 20:33:36 GMT
+      - Tue, 31 Aug 2021 22:25:26 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update423f1009/versions/2?api-version=2020-09-01-preview
       schema-id:
-      - 34cec9efaa134e8fa1504f767051ec86
+      - 2247f93fcb074f8eb117d05419db8a2e
       schema-id-location:
-      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/34cec9efaa134e8fa1504f767051ec86?api-version=2020-09-01-preview
+      - https://sr-playground.servicebus.windows.net:443/$schemagroups/getschemabyid/2247f93fcb074f8eb117d05419db8a2e?api-version=2020-09-01-preview
       schema-version:
       - '2'
       schema-versions-location:
-      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update423f1009/versions?api-version=2020-09-01-preview
+      - https://sr-playground.servicebus.windows.net:443/$schemagroups/yuling-test-group/schemas/test-schema-update423f1009/versions?api-version=2020-09-01-preview
       serialization-type:
       - Avro
       server:
@@ -107,7 +107,7 @@ interactions:
       User-Agent:
       - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://fake_resource.servicebus.windows.net/$schemagroups/getSchemaById/34cec9efaa134e8fa1504f767051ec86?api-version=2020-09-01-preview
+    uri: https://fake_resource.servicebus.windows.net/$schemagroups/getSchemaById/2247f93fcb074f8eb117d05419db8a2e?api-version=2020-09-01-preview
   response:
     body:
       string: '{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_food","type":["string","null"]}]}'
@@ -115,17 +115,17 @@ interactions:
       content-type:
       - application/json
       date:
-      - Tue, 31 Aug 2021 20:33:37 GMT
+      - Tue, 31 Aug 2021 22:25:27 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update423f1009/versions/2?api-version=2020-09-01-preview
       schema-id:
-      - 34cec9efaa134e8fa1504f767051ec86
+      - 2247f93fcb074f8eb117d05419db8a2e
       schema-id-location:
-      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/34cec9efaa134e8fa1504f767051ec86?api-version=2020-09-01-preview
+      - https://sr-playground.servicebus.windows.net:443/$schemagroups/getschemabyid/2247f93fcb074f8eb117d05419db8a2e?api-version=2020-09-01-preview
       schema-version:
       - '2'
       schema-versions-location:
-      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update423f1009/versions?api-version=2020-09-01-preview
+      - https://sr-playground.servicebus.windows.net:443/$schemagroups/yuling-test-group/schemas/test-schema-update423f1009/versions?api-version=2020-09-01-preview
       serialization-type:
       - Avro
       server:
@@ -149,7 +149,7 @@ interactions:
       User-Agent:
       - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://fake_resource.servicebus.windows.net/$schemagroups/getSchemaById/34cec9efaa134e8fa1504f767051ec86?api-version=2020-09-01-preview
+    uri: https://fake_resource.servicebus.windows.net/$schemagroups/getSchemaById/2247f93fcb074f8eb117d05419db8a2e?api-version=2020-09-01-preview
   response:
     body:
       string: '{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_food","type":["string","null"]}]}'
@@ -157,17 +157,17 @@ interactions:
       content-type:
       - application/json
       date:
-      - Tue, 31 Aug 2021 20:33:37 GMT
+      - Tue, 31 Aug 2021 22:25:27 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update423f1009/versions/2?api-version=2020-09-01-preview
       schema-id:
-      - 34cec9efaa134e8fa1504f767051ec86
+      - 2247f93fcb074f8eb117d05419db8a2e
       schema-id-location:
-      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/34cec9efaa134e8fa1504f767051ec86?api-version=2020-09-01-preview
+      - https://sr-playground.servicebus.windows.net:443/$schemagroups/getschemabyid/2247f93fcb074f8eb117d05419db8a2e?api-version=2020-09-01-preview
       schema-version:
       - '2'
       schema-versions-location:
-      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update423f1009/versions?api-version=2020-09-01-preview
+      - https://sr-playground.servicebus.windows.net:443/$schemagroups/yuling-test-group/schemas/test-schema-update423f1009/versions?api-version=2020-09-01-preview
       serialization-type:
       - Avro
       server:
@@ -200,22 +200,22 @@ interactions:
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-update423f1009?api-version=2020-09-01-preview
   response:
     body:
-      string: '{"id":"34cec9efaa134e8fa1504f767051ec86"}'
+      string: '{"id":"2247f93fcb074f8eb117d05419db8a2e"}'
     headers:
       content-type:
       - application/json
       date:
-      - Tue, 31 Aug 2021 20:33:37 GMT
+      - Tue, 31 Aug 2021 22:25:27 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update423f1009/versions/2?api-version=2020-09-01-preview
       schema-id:
-      - 34cec9efaa134e8fa1504f767051ec86
+      - 2247f93fcb074f8eb117d05419db8a2e
       schema-id-location:
-      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/34cec9efaa134e8fa1504f767051ec86?api-version=2020-09-01-preview
+      - https://sr-playground.servicebus.windows.net:443/$schemagroups/getschemabyid/2247f93fcb074f8eb117d05419db8a2e?api-version=2020-09-01-preview
       schema-version:
       - '2'
       schema-versions-location:
-      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-update423f1009/versions?api-version=2020-09-01-preview
+      - https://sr-playground.servicebus.windows.net:443/$schemagroups/yuling-test-group/schemas/test-schema-update423f1009/versions?api-version=2020-09-01-preview
       serialization-type:
       - Avro
       server:
