@@ -1,8 +1,9 @@
 # Release History
 
-## 4.3.1 (Unreleased)
+## 4.4.0b1 (Unreleased)
 
 ### Features Added
+- Key Vault API version 7.3-preview is now the default
 
 ### Breaking Changes
 
