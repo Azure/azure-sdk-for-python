@@ -26,9 +26,7 @@ def update_issue_body(sdk_repo, rest_repo, issue_number):
             issue_body_up += '\n'
         issue_body_up += raw + '\n'
 
-    print("begin to update body")
     issue_info.edit(body=issue_body_up)
-    print("update body success")
     return package_name, readme_link
         
 
@@ -47,7 +45,6 @@ def get_pkname_and_readme_link(rest_repo, link):
         # Get Readme link
         pr_info = rest_repo.get_pull(number=pr_number)
         pk_url_name = set()
-        print("Got file change")
         for pr_changed_file in pr_info.get_files():
             contents_url = pr_changed_file.contents_url
             if '/resource-manager' in contents_url:
@@ -60,7 +57,7 @@ def get_pkname_and_readme_link(rest_repo, link):
                     raise Exception('Not find readme link, because it exists multiple package names')
 
         readme_link = 'https://github.com/Azure/azure-rest-api-specs/blob/main/specification/{}/' \
-                      'resource-manager/readme.python.md'.format(pk_url_name)
+                      'resource-manager/readme.python.md'.format(list(pk_url_name)[0])
 
 
     # if link is a rest url(i.e. https://github.com/Azure/azure-rest-api-specs/blob/main/specification/xxx/resource-manager/readme.python.md)
@@ -71,7 +68,6 @@ def get_pkname_and_readme_link(rest_repo, link):
         readme_link = link.split('/resource-manager')[0] + '/resource-manager/readme.python.md'
     # get the package name by readme link
     readme_link_part = '/specification' + readme_link.split('/specification')[-1]
-    print("Get Readme contents")
     readme_contents = str(rest_repo.get_contents(readme_link_part).decoded_content)
     pk_name = re.findall(r'package-name: (.*?)\\n', readme_contents)[0]
     readme_link = readme_link.replace('python.', '')
