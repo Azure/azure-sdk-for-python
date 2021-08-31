@@ -209,7 +209,7 @@ def main():
             item.bot_advice = 'new issue and better to confirm quickly.'
             print("#########", item.issue_object.number)
             try:
-                auto_reply(item, sdk_repo, rest_repo)
+                auto_reply(item, sdk_repo, rest_repo, duplicated_issue)
             except Exception as e:
                 continue
         elif not item.author_latest_comment in _PYTHON_SDK_ADMINISTRATORS:
