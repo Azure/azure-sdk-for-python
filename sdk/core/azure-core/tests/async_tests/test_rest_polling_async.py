@@ -24,7 +24,7 @@
 #
 #--------------------------------------------------------------------------
 import pytest
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import ServiceRequestError
 from azure.core.rest import HttpRequest
 from azure.core.polling import AsyncLROPoller
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
@@ -86,13 +86,13 @@ async def test_put_initial_response_body_invalid(lro_poller):
 
 @pytest.mark.asyncio
 async def test_put_operation_location_polling_fail(lro_poller):
-    with pytest.raises(HttpResponseError):
-        await (await lro_poller(HttpRequest("PUT", "/polling/put/bad-operation-location"))).result()
+    with pytest.raises(ServiceRequestError):
+        await (await lro_poller(HttpRequest("PUT", "/polling/bad-operation-location"), retry_total=0)).result()
 
 @pytest.mark.asyncio
 async def test_put_location_polling_fail(lro_poller):
-    with pytest.raises(HttpResponseError):
-        await (await lro_poller(HttpRequest("PUT", "/polling/bad-location"))).result()
+    with pytest.raises(ServiceRequestError):
+        await (await lro_poller(HttpRequest("PUT", "/polling/bad-location"), retry_total=0)).result()
 
 @pytest.mark.asyncio
 async def test_patch_location(lro_poller):
@@ -101,13 +101,13 @@ async def test_patch_location(lro_poller):
 
 @pytest.mark.asyncio
 async def test_patch_operation_location_polling_fail(lro_poller):
-    with pytest.raises(HttpResponseError):
-        await (await lro_poller(HttpRequest("PUT", "/polling/bad-operation-location"))).result()
+    with pytest.raises(ServiceRequestError):
+        await (await lro_poller(HttpRequest("PUT", "/polling/bad-operation-location"), retry_total=0)).result()
 
 @pytest.mark.asyncio
 async def test_patch_location_polling_fail(lro_poller):
-    with pytest.raises(HttpResponseError):
-        await (await lro_poller(HttpRequest("PUT", "/polling/bad-location"))).result()
+    with pytest.raises(ServiceRequestError):
+        await (await lro_poller(HttpRequest("PUT", "/polling/bad-location"), retry_total=0)).result()
 
 @pytest.mark.asyncio
 async def test_delete_operation_location(lro_poller):

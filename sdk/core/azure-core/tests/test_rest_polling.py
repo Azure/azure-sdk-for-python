@@ -24,7 +24,7 @@
 #
 #--------------------------------------------------------------------------
 import pytest
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import ServiceRequestError
 from azure.core.rest import HttpRequest
 from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import LROBasePolling
@@ -79,24 +79,24 @@ def test_put_initial_response_body_invalid(lro_poller):
     assert result['location_result']
 
 def test_put_operation_location_polling_fail(lro_poller):
-    with pytest.raises(HttpResponseError):
-        lro_poller(HttpRequest("PUT", "/polling/put/bad-operation-location")).result()
+    with pytest.raises(ServiceRequestError):
+        lro_poller(HttpRequest("PUT", "/polling/bad-operation-location"), retry_total=0).result()
 
 def test_put_location_polling_fail(lro_poller):
-    with pytest.raises(HttpResponseError):
-        lro_poller(HttpRequest("PUT", "/polling/bad-location")).result()
+    with pytest.raises(ServiceRequestError):
+        lro_poller(HttpRequest("PUT", "/polling/bad-location"), retry_total=0).result()
 
 def test_patch_location(lro_poller):
     result = lro_poller(HttpRequest("PATCH", "/polling/location")).result()
     assert result['location_result']
 
 def test_patch_operation_location_polling_fail(lro_poller):
-    with pytest.raises(HttpResponseError):
-        lro_poller(HttpRequest("PUT", "/polling/bad-operation-location")).result()
+    with pytest.raises(ServiceRequestError):
+        lro_poller(HttpRequest("PUT", "/polling/bad-operation-location"), retry_total=0).result()
 
 def test_patch_location_polling_fail(lro_poller):
-    with pytest.raises(HttpResponseError):
-        lro_poller(HttpRequest("PUT", "/polling/bad-location")).result()
+    with pytest.raises(ServiceRequestError):
+        lro_poller(HttpRequest("PUT", "/polling/bad-location"), retry_total=0).result()
 
 def test_delete_operation_location(lro_poller):
     result = lro_poller(HttpRequest("DELETE", "/polling/operation-location")).result()
