@@ -2005,7 +2005,8 @@ class ServerPropertiesForDefaultCreate(ServerPropertiesForCreate):
      Possible values include: "Default", "PointInTimeRestore", "GeoRestore", "Replica".
     :type create_mode: str or ~azure.mgmt.rdbms.mysql.models.CreateMode
     :param administrator_login: Required. The administrator's login name of a server. Can only be
-     specified when the server is being created (and is required for creation).
+     specified when the server is being created (and is required for creation). The login name is
+     required when updating password.
     :type administrator_login: str
     :param administrator_login_password: Required. The password of the administrator login.
     :type administrator_login_password: str
