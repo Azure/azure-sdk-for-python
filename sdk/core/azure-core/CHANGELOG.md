@@ -14,7 +14,7 @@ an `encoding` parameter.
 
 ### Bugs Fixed
 
-- `azure.core.rest.AsyncHttpResponse`s returned with our `aiohttp` transport can now handle duplicate case-insensitive keys, we return a comma separated string of those values.
+- The behaviour of the headers returned in `azure.core.rest` responses now aligns across sync and async. Items can now be checked case-insensitively and without raising an error for format.
 
 ### Other Changes
 
