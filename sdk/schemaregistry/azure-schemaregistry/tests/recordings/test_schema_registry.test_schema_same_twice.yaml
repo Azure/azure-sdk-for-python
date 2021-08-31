@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}'
+    body: '{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"age","type":["int","null"]},{"name":"city","type":["string","null"]}]}'
     headers:
       Accept:
       - application/json
@@ -9,29 +9,29 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '201'
+      - '179'
       Content-Type:
       - application/json
       Serialization-Type:
       - Avro
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b2 Python/3.7.10 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: PUT
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7?api-version=2020-09-01-preview
   response:
     body:
-      string: '{"id":"bcdf7c2c36584a2f8ce5f8b6cd8ba9e8"}'
+      string: '{"id":"96bad53a483746d5b913ec7a6db4ce62"}'
     headers:
       content-type:
       - application/json
       date:
-      - Wed, 25 Aug 2021 17:20:33 GMT
+      - Tue, 31 Aug 2021 20:33:34 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7/versions/1?api-version=2020-09-01-preview
       schema-id:
-      - bcdf7c2c36584a2f8ce5f8b6cd8ba9e8
+      - 96bad53a483746d5b913ec7a6db4ce62
       schema-id-location:
-      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/bcdf7c2c36584a2f8ce5f8b6cd8ba9e8?api-version=2020-09-01-preview
+      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/96bad53a483746d5b913ec7a6db4ce62?api-version=2020-09-01-preview
       schema-version:
       - '1'
       schema-versions-location:
@@ -48,7 +48,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}'
+    body: '{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"age","type":["int","null"]},{"name":"city","type":["string","null"]}]}'
     headers:
       Accept:
       - application/json
@@ -57,29 +57,29 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '201'
+      - '179'
       Content-Type:
       - application/json
       Serialization-Type:
       - Avro
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b2 Python/3.7.10 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: PUT
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7?api-version=2020-09-01-preview
   response:
     body:
-      string: '{"id":"bcdf7c2c36584a2f8ce5f8b6cd8ba9e8"}'
+      string: '{"id":"96bad53a483746d5b913ec7a6db4ce62"}'
     headers:
       content-type:
       - application/json
       date:
-      - Wed, 25 Aug 2021 17:20:33 GMT
+      - Tue, 31 Aug 2021 20:33:34 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7/versions/1?api-version=2020-09-01-preview
       schema-id:
-      - bcdf7c2c36584a2f8ce5f8b6cd8ba9e8
+      - 96bad53a483746d5b913ec7a6db4ce62
       schema-id-location:
-      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/bcdf7c2c36584a2f8ce5f8b6cd8ba9e8?api-version=2020-09-01-preview
+      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/96bad53a483746d5b913ec7a6db4ce62?api-version=2020-09-01-preview
       schema-version:
       - '1'
       schema-versions-location:

@@ -29,7 +29,7 @@ from .._common._constants import SerializationType
 from .._common._schema import Schema, SchemaProperties
 from .._common._response_handlers import (
     _parse_response_schema,
-    _parse_response_schema_id,
+    _parse_response_schema_properties,
 )
 
 from .._generated.aio._azure_schema_registry import AzureSchemaRegistry
@@ -128,7 +128,7 @@ class SchemaRegistryClient(object):
 
         response = await self._generated_client.send_request(request)
         response.raise_for_status()
-        schema_properties = _parse_response_schema_id(response)
+        schema_properties = _parse_response_schema_properties(response)
 
         schema_description = (
             schema_group,
@@ -226,7 +226,7 @@ class SchemaRegistryClient(object):
 
             response = await self._generated_client.send_request(request, **kwargs)
             response.raise_for_status()
-            schema_properties = _parse_response_schema_id(response)
+            schema_properties = _parse_response_schema_properties(response)
 
             if not self._id_to_schema.get(schema_properties.schema_id):
                 self._id_to_schema[schema_properties.schema_id] = Schema(schema_content, schema_properties)

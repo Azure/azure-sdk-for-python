@@ -11,18 +11,18 @@ interactions:
       Serialization-Type:
       - Avro
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b2 Python/3.7.10 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: PUT
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-basic-asynce5e1482?api-version=2020-09-01-preview
   response:
     body:
-      string: '{"id":"1c0ffaa8f0fd4e26be8ae530e39ef69b"}'
+      string: '{"id":"8e0c4e17ea784643a963e86432ee7b19"}'
     headers:
       content-type: application/json
-      date: Wed, 25 Aug 2021 17:20:37 GMT
+      date: Tue, 31 Aug 2021 20:33:39 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-basic-asynce5e1482/versions/1?api-version=2020-09-01-preview
-      schema-id: 1c0ffaa8f0fd4e26be8ae530e39ef69b
-      schema-id-location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/1c0ffaa8f0fd4e26be8ae530e39ef69b?api-version=2020-09-01-preview
+      schema-id: 8e0c4e17ea784643a963e86432ee7b19
+      schema-id-location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/8e0c4e17ea784643a963e86432ee7b19?api-version=2020-09-01-preview
       schema-version: '1'
       schema-versions-location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-basic-asynce5e1482/versions?api-version=2020-09-01-preview
       serialization-type: Avro
@@ -45,18 +45,18 @@ interactions:
       Serialization-Type:
       - Avro
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b2 Python/3.7.10 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-basic-asynce5e1482?api-version=2020-09-01-preview
   response:
     body:
-      string: '{"id":"1c0ffaa8f0fd4e26be8ae530e39ef69b"}'
+      string: '{"id":"8e0c4e17ea784643a963e86432ee7b19"}'
     headers:
       content-type: application/json
-      date: Wed, 25 Aug 2021 17:20:37 GMT
+      date: Tue, 31 Aug 2021 20:33:39 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-basic-asynce5e1482/versions/1?api-version=2020-09-01-preview
-      schema-id: 1c0ffaa8f0fd4e26be8ae530e39ef69b
-      schema-id-location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/1c0ffaa8f0fd4e26be8ae530e39ef69b?api-version=2020-09-01-preview
+      schema-id: 8e0c4e17ea784643a963e86432ee7b19
+      schema-id-location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/getschemabyid/8e0c4e17ea784643a963e86432ee7b19?api-version=2020-09-01-preview
       schema-version: '1'
       schema-versions-location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-basic-asynce5e1482/versions?api-version=2020-09-01-preview
       serialization-type: Avro

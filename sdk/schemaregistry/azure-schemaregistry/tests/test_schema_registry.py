@@ -142,7 +142,7 @@ class SchemaRegistryTests(AzureTestCase):
     def test_schema_same_twice(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
         client = self.create_client(schemaregistry_endpoint)
         schema_name = self.get_resource_name('test-schema-twice')
-        schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
+        schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"age","type":["int","null"]},{"name":"city","type":["string","null"]}]}"""
         serialization_type = "Avro"
         schema_properties = client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
         schema_cache_length = len(client._id_to_schema)
