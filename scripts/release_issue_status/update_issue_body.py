@@ -47,6 +47,7 @@ def get_pkname_and_readme_link(rest_repo, link):
         # Get Readme link
         pr_info = rest_repo.get_pull(number=pr_number)
         pk_url_name = {}
+        print("Got file change")
         for pr_changed_file in pr_info.get_files():
             contents_url = pr_changed_file.contents_url
             if '/resource-manager' in contents_url:
@@ -70,6 +71,7 @@ def get_pkname_and_readme_link(rest_repo, link):
         readme_link = link.split('/resource-manager')[0] + '/resource-manager/readme.python.md'
     # get the package name by readme link
     readme_link_part = '/specification' + readme_link.split('/specification')[-1]
+    print("Get Readme contents")
     readme_contents = str(rest_repo.get_contents(readme_link_part).decoded_content)
     pk_name = re.findall(r'package-name: (.*?)\\n', readme_contents)[0]
     readme_link = readme_link.replace('python.', '')
