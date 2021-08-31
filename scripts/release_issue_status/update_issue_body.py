@@ -46,7 +46,7 @@ def get_pkname_and_readme_link(rest_repo, link):
 
         # Get Readme link
         pr_info = rest_repo.get_pull(number=pr_number)
-        pk_url_name = {}
+        pk_url_name = set()
         print("Got file change")
         for pr_changed_file in pr_info.get_files():
             contents_url = pr_changed_file.contents_url
