@@ -55,8 +55,8 @@ class LogsQueryClient(object):
         :param workspace_id: ID of the workspace. This is Workspace ID from the Properties blade in the
          Azure portal.
         :type workspace_id: str
-        :param query: The Analytics query. Learn more about the `Analytics query syntax
-         <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
+        :param query: The Kusto query. Learn more about the `Kusto query syntax
+         <https://docs.microsoft.com/azure/data-explorer/kusto/query/>`_.
         :type query: str
         :param timespan: The timespan for which to query the data. This can be a timedelta,
          a timedelta and a start datetime, or a start datetime/end datetime.
@@ -69,7 +69,7 @@ class LogsQueryClient(object):
          visualization options. By default, the API does not return information regarding the type of
          visualization to show. If your client requires this information, specify the preference
         :keyword additional_workspaces: A list of workspaces that are included in the query.
-         These can be qualified workspace names, workspsce Ids or Azure resource Ids.
+         These can be qualified workspace names, workspace Ids or Azure resource Ids.
         :paramtype additional_workspaces: list[str]
         :return: QueryResults, or the result of cls(response)
         :rtype: ~azure.monitor.query.LogsQueryResult
@@ -121,7 +121,7 @@ class LogsQueryClient(object):
 
         The response is returned in the same order as that of the requests sent.
 
-        :param queries: The list of queries that should be processed
+        :param queries: The list of Kusto queries to execute.
         :type queries: list[dict] or list[~azure.monitor.query.LogsBatchQuery]
         :return: list of LogsQueryResult objects, or the result of cls(response)
         :rtype: list[~azure.monitor.query.LogsQueryResult]
