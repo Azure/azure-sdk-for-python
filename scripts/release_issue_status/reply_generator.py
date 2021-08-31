@@ -108,4 +108,4 @@ def begin_reply_generate(item, rest_repo, readme_link):
         reply_owner(reply_content)
         add_label('auto-ask-check', labels)
     else:
-        print('issue {} need config readme***********'.format(issue_object.number))
+        print('issue {} need config readme***********'.format(issue_object_rg.number))
