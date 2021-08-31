@@ -26,7 +26,8 @@ if TYPE_CHECKING:
 
 
 class ContainerRegistryClient(ContainerRegistryBaseClient):
-    def __init__(self, endpoint: str, credential: Optional["AsyncTokenCredential"] = None, *, audience, **kwargs: Any) -> None:
+    def __init__(
+        self, endpoint: str, credential: Optional["AsyncTokenCredential"] = None, *, audience, **kwargs: Any) -> None:
         """Create a ContainerRegistryClient from an endpoint and a credential
 
         :param endpoint: An ACR endpoint
@@ -46,13 +47,14 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 :language: python
                 :dedent: 8
                 :caption: Instantiate an instance of `ContainerRegistryClient`
-        """       
+        """
         defaultScope = [audience + "/.default"]
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
         self._credential = credential
-        super(ContainerRegistryClient, self).__init__(endpoint=endpoint, credential=credential, credential_scopes=defaultScope, **kwargs)
+        super(ContainerRegistryClient, self).__init__(
+            endpoint=endpoint, credential=credential, credential_scopes=defaultScope, **kwargs)
 
     async def _get_digest_from_tag(self, repository: str, tag: str) -> str:
         tag_props = await self.get_tag_properties(repository, tag)

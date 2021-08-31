@@ -52,8 +52,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
-        self._credential = credential   
-        super(ContainerRegistryClient, self).__init__(endpoint=endpoint, credential=credential, credential_scopes=defaultScope, **kwargs)
+        self._credential = credential
+        super(ContainerRegistryClient, self).__init__(
+            endpoint=endpoint, credential=credential, credential_scopes=defaultScope, **kwargs)
 
     def _get_digest_from_tag(self, repository, tag):
         # type: (str, str) -> str
