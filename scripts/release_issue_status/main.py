@@ -121,7 +121,7 @@ def _latest_comment_time(comments, delay_from_create_date):
     return delay_from_create_date if not q else int((time.time() - q[-1][0]) / 3600 / 24)
 
 
-def auto_reply(item, sdk_repo, rest_repo):
+def auto_reply(item, sdk_repo, rest_repo, duplicated_issue):
     print("+++++++++++issue number: {}".format(item.issue_object.number))
     if 'auto-link' not in item.labels:
         try:
