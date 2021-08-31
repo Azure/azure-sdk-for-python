@@ -81,7 +81,7 @@ class _GlobalEndpointManager(object):
 
     async def force_refresh(self, database_account):
         self.refresh_needed = True
-        self.refresh_endpoint_list(database_account)
+        await self.refresh_endpoint_list(database_account)
 
     async def refresh_endpoint_list(self, database_account, **kwargs):
         async with self.refresh_lock:

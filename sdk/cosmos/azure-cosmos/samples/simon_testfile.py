@@ -124,6 +124,7 @@ async def async_read_test():
 	if db: print(db)
 	x = await db.read()
 	print(x)
+	await client.__aexit__()
 	# container = db.get_container_client(id="AsyncContainer")
 	# print(container.read())
 
