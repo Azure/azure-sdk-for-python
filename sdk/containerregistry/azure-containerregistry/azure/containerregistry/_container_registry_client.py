@@ -45,7 +45,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 :dedent: 8
                 :caption: Instantiate an instance of `ContainerRegistryClient`
         """
-        audience =  kwargs.pop("audience", None)
+        audience = kwargs.pop("audience", None)
         if not audience:
             raise ValueError("The argument audience must be set to initialize ContainerRegistryClient.")
         defaultScope = [audience + "/.default"]
