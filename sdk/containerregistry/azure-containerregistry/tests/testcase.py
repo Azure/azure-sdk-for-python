@@ -227,16 +227,16 @@ def get_authority(endpoint):
 def get_audience(authority):
     if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
         logger.warning("Public auth scope")
-        return ContainerRegistryAudience.ARM_PUBLIC_CLOUD_VALUE
+        return ContainerRegistryAudience.ARM_PUBLIC_CLOUD
     if authority == AzureAuthorityHosts.AZURE_CHINA:
         logger.warning("China scope")
-        return ContainerRegistryAudience.ARM_CHINA_VALUE
+        return ContainerRegistryAudience.ARM_CHINA
     if authority == AzureAuthorityHosts.AZURE_GOVERNMENT:
         logger.warning("US Gov scope")
-        return ContainerRegistryAudience.ARM_GOVERNMENT_VALUE
+        return ContainerRegistryAudience.ARM_GOVERNMENT
     if authority == AzureAuthorityHosts.AZURE_GERMANY:
         logger.warning("Germany scope")
-        return ContainerRegistryAudience.ARM_GERMANY_VALUE
+        return ContainerRegistryAudience.ARM_GERMANY
 
 def get_base_url(authority):
     if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
