@@ -16,10 +16,12 @@ from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 from azure.mgmt.resource import SubscriptionClient
 import pytest
+import six
 from six.moves.urllib_parse import urlparse
 
 from helpers import build_aad_response, FAKE_CLIENT_ID, get_discovery_response, mock_response
 from recorded_test_case import RecordedTestCase
+from test_certificate_credential import PEM_CERT_PATH
 
 
 class SubscriptionListRemover(RecordingProcessor):
@@ -29,14 +31,15 @@ class SubscriptionListRemover(RecordingProcessor):
         return response
 
 
-class RecordedTests(RecordedTestCase):
+class OboRecordedTestCase(RecordedTestCase):
     def __init__(self, *args, **kwargs):
-        super(RecordedTests, self).__init__(*args, **kwargs)
+        super(OboRecordedTestCase, self).__init__(*args, **kwargs)
 
         if self.is_live:
             missing_variables = [
                 var
                 for var in (
+                    "OBO_CERT_BYTES",
                     "OBO_CLIENT_ID",
                     "OBO_CLIENT_SECRET",
                     "OBO_PASSWORD",
@@ -49,8 +52,8 @@ class RecordedTests(RecordedTestCase):
             if any(missing_variables):
                 pytest.skip("No value for environment variables: " + ", ".join(missing_variables))
 
-            self.recording_processors.append(SubscriptionListRemover())
             self.obo_settings = {
+                "cert_bytes": six.ensure_binary(os.environ["OBO_CERT_BYTES"]),
                 "client_id": os.environ["OBO_CLIENT_ID"],
                 "client_secret": os.environ["OBO_CLIENT_SECRET"],
                 "password": os.environ["OBO_PASSWORD"],
@@ -58,11 +61,14 @@ class RecordedTests(RecordedTestCase):
                 "tenant_id": os.environ["OBO_TENANT_ID"],
                 "username": os.environ["OBO_USERNAME"],
             }
+
+            self.recording_processors.append(SubscriptionListRemover())
             self.scrubber.register_name_pair(self.obo_settings["tenant_id"], "tenant")
             self.scrubber.register_name_pair(self.obo_settings["username"], "username")
 
         else:
             self.obo_settings = {
+                "cert_bytes": open(PEM_CERT_PATH, "rb").read(),
                 "client_id": FAKE_CLIENT_ID,
                 "client_secret": "secret",
                 "password": "fake-password",
@@ -71,16 +77,29 @@ class RecordedTests(RecordedTestCase):
                 "username": "username",
             }
 
+
+class RecordedTests(OboRecordedTestCase):
     def test_obo(self):
         client_id = self.obo_settings["client_id"]
-        client_secret = self.obo_settings["client_secret"]
         tenant_id = self.obo_settings["tenant_id"]
 
         user_credential = UsernamePasswordCredential(
             client_id, self.obo_settings["username"], self.obo_settings["password"], tenant_id=tenant_id
         )
         assertion = user_credential.get_token(self.obo_settings["scope"]).token
-        credential = OnBehalfOfCredential(tenant_id, client_id, client_secret, assertion)
+        credential = OnBehalfOfCredential(tenant_id, client_id, self.obo_settings["client_secret"], assertion)
+        client = SubscriptionClient(credential)
+        list(client.subscriptions.list())
+
+    def test_obo_cert(self):
+        client_id = self.obo_settings["client_id"]
+        tenant_id = self.obo_settings["tenant_id"]
+
+        user_credential = UsernamePasswordCredential(
+            client_id, self.obo_settings["username"], self.obo_settings["password"], tenant_id=tenant_id
+        )
+        assertion = user_credential.get_token(self.obo_settings["scope"]).token
+        credential = OnBehalfOfCredential(tenant_id, client_id, self.obo_settings["cert_bytes"], assertion)
         client = SubscriptionClient(credential)
         list(client.subscriptions.list())
 

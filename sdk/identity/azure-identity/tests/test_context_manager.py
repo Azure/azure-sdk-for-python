@@ -61,7 +61,8 @@ FIXTURES = (
     ),
     CredentialFixture(InteractiveBrowserCredential),
     CredentialFixture(
-        OnBehalfOfCredential, {kwarg: "..." for kwarg in ("tenant_id", "client_id", "client_secret", "user_assertion")}
+        OnBehalfOfCredential,
+        {kwarg: "..." for kwarg in ("tenant_id", "client_id", "client_credential", "user_assertion")},
     ),
     CredentialFixture(UsernamePasswordCredential, {"client_id": "...", "username": "...", "password": "..."}),
     CredentialFixture(VisualStudioCodeCredential, ctor_patch_factory=lambda: patch(GET_USER_SETTINGS, lambda: {})),

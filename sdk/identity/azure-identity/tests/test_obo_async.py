@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import os
 from urllib.parse import urlparse
 from unittest.mock import Mock, patch
 
@@ -14,54 +13,13 @@ from azure.identity.aio import OnBehalfOfCredential
 from azure.mgmt.resource.subscriptions.aio import SubscriptionClient
 import pytest
 
-from helpers import build_aad_response, FAKE_CLIENT_ID, get_discovery_response, mock_response
+from helpers import build_aad_response, get_discovery_response, mock_response
 from helpers_async import AsyncMockTransport
 from recorded_test_case import RecordedTestCase
-from test_obo import SubscriptionListRemover
+from test_obo import OboRecordedTestCase
 
 
-class RecordedTests(RecordedTestCase):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        if self.is_live:
-            missing_variables = [
-                var
-                for var in (
-                    "OBO_CLIENT_ID",
-                    "OBO_CLIENT_SECRET",
-                    "OBO_PASSWORD",
-                    "OBO_SCOPE",
-                    "OBO_TENANT_ID",
-                    "OBO_USERNAME",
-                )
-                if var not in os.environ
-            ]
-            if any(missing_variables):
-                pytest.skip("No value for environment variables: " + ", ".join(missing_variables))
-
-            self.recording_processors.append(SubscriptionListRemover())
-            self.obo_settings = {
-                "client_id": os.environ["OBO_CLIENT_ID"],
-                "client_secret": os.environ["OBO_CLIENT_SECRET"],
-                "password": os.environ["OBO_PASSWORD"],
-                "scope": os.environ["OBO_SCOPE"],
-                "tenant_id": os.environ["OBO_TENANT_ID"],
-                "username": os.environ["OBO_USERNAME"],
-            }
-            self.scrubber.register_name_pair(self.obo_settings["tenant_id"], "tenant")
-            self.scrubber.register_name_pair(self.obo_settings["username"], "username")
-
-        else:
-            self.obo_settings = {
-                "client_id": FAKE_CLIENT_ID,
-                "client_secret": "secret",
-                "password": "fake-password",
-                "scope": "api://scope",
-                "tenant_id": "tenant",
-                "username": "username",
-            }
-
+class RecordedTests(OboRecordedTestCase):
     @RecordedTestCase.await_prepared_test
     async def test_obo(self):
         client_id = self.obo_settings["client_id"]
@@ -73,6 +31,20 @@ class RecordedTests(RecordedTestCase):
         )
         assertion = user_credential.get_token(self.obo_settings["scope"]).token
         credential = OnBehalfOfCredential(tenant_id, client_id, client_secret, assertion)
+        client = SubscriptionClient(credential)
+        async for _ in client.subscriptions.list():
+            pass
+
+    @RecordedTestCase.await_prepared_test
+    async def test_obo_cert(self):
+        client_id = self.obo_settings["client_id"]
+        tenant_id = self.obo_settings["tenant_id"]
+
+        user_credential = UsernamePasswordCredential(
+            client_id, self.obo_settings["username"], self.obo_settings["password"], tenant_id=tenant_id
+        )
+        assertion = user_credential.get_token(self.obo_settings["scope"]).token
+        credential = OnBehalfOfCredential(tenant_id, client_id, self.obo_settings["cert_bytes"], assertion)
         client = SubscriptionClient(credential)
         async for _ in client.subscriptions.list():
             pass

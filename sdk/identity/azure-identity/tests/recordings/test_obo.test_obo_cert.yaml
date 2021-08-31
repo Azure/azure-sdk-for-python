@@ -44,13 +44,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 31 Aug 2021 16:25:25 GMT
+      - Tue, 31 Aug 2021 16:25:27 GMT
       p3p:
       - CP="DSP CUR OTPi IND OTRi ONL FIN"
       set-cookie:
-      - fpc=Apf8i1HQc7xLkQJZ0dZ9cOE; expires=Thu, 30-Sep-2021 16:25:26 GMT; path=/;
+      - fpc=AlRn0BAECQZLn7zGBZWWwxs; expires=Thu, 30-Sep-2021 16:25:27 GMT; path=/;
         secure; HttpOnly; SameSite=None
-      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrFtaYmN647hZNghQsL-lUtuj_p_Sr8EotifV35mWTMgAYV0tY4tunU7fRoHpwptzUk4NHMXlPcGXGzqhyqYexqIpmUtQNqtJZtwTjiBtboSM12E2-QQKWlVBnm4BScZMi2mwn238IZiQUIScNU7ifJKqHPDUM5fxkB-YHghWw8lwgAA;
+      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7Wevrth-z-ExnkLrQcl-fQWU-pmCdD2cBu972IX985_iVDbUl1iJm6QIvIgXvkm4qRtkGLHDnfcYq3Ifp63AU6kPqJB39NvlOzWdEFYAf6FQZvevr9C7pq_zHecZiCfubiiZmFoz5qgX4bgZqYqnJwR2dIkqwEY0SeZb-HJR4AIQX8G4gAA;
         domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None
       - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
       - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
@@ -59,7 +59,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ests-server:
-      - 2.1.11961.11 - SCUS ProdSlices
+      - 2.1.11984.12 - WUS2 ProdSlices
     status:
       code: 200
       message: OK
@@ -73,8 +73,8 @@ interactions:
       Connection:
       - keep-alive
       Cookie:
-      - stsservicecookie=estsfd; fpc=Apf8i1HQc7xLkQJZ0dZ9cOE; x-ms-gateway-slice=estsfd;
-        esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrFtaYmN647hZNghQsL-lUtuj_p_Sr8EotifV35mWTMgAYV0tY4tunU7fRoHpwptzUk4NHMXlPcGXGzqhyqYexqIpmUtQNqtJZtwTjiBtboSM12E2-QQKWlVBnm4BScZMi2mwn238IZiQUIScNU7ifJKqHPDUM5fxkB-YHghWw8lwgAA
+      - stsservicecookie=estsfd; fpc=AlRn0BAECQZLn7zGBZWWwxs; x-ms-gateway-slice=estsfd;
+        esctx=AQABAAAAAAD--DLA3VO7QrddgJg7Wevrth-z-ExnkLrQcl-fQWU-pmCdD2cBu972IX985_iVDbUl1iJm6QIvIgXvkm4qRtkGLHDnfcYq3Ifp63AU6kPqJB39NvlOzWdEFYAf6FQZvevr9C7pq_zHecZiCfubiiZmFoz5qgX4bgZqYqnJwR2dIkqwEY0SeZb-HJR4AIQX8G4gAA
       User-Agent:
       - azsdk-python-identity/1.7.0b4 Python/2.7.17 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-20.04-focal)
     method: GET
@@ -94,7 +94,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 31 Aug 2021 16:25:26 GMT
+      - Tue, 31 Aug 2021 16:25:27 GMT
       expires:
       - '-1'
       p3p:
@@ -102,7 +102,7 @@ interactions:
       pragma:
       - no-cache
       set-cookie:
-      - fpc=Apf8i1HQc7xLkQJZ0dZ9cOE; expires=Thu, 30-Sep-2021 16:25:26 GMT; path=/;
+      - fpc=AlRn0BAECQZLn7zGBZWWwxs; expires=Thu, 30-Sep-2021 16:25:28 GMT; path=/;
         secure; HttpOnly; SameSite=None
       - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
       - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
@@ -129,8 +129,8 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       Cookie:
-      - stsservicecookie=estsfd; fpc=Apf8i1HQc7xLkQJZ0dZ9cOE; x-ms-gateway-slice=estsfd;
-        esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrFtaYmN647hZNghQsL-lUtuj_p_Sr8EotifV35mWTMgAYV0tY4tunU7fRoHpwptzUk4NHMXlPcGXGzqhyqYexqIpmUtQNqtJZtwTjiBtboSM12E2-QQKWlVBnm4BScZMi2mwn238IZiQUIScNU7ifJKqHPDUM5fxkB-YHghWw8lwgAA
+      - stsservicecookie=estsfd; fpc=AlRn0BAECQZLn7zGBZWWwxs; x-ms-gateway-slice=estsfd;
+        esctx=AQABAAAAAAD--DLA3VO7QrddgJg7Wevrth-z-ExnkLrQcl-fQWU-pmCdD2cBu972IX985_iVDbUl1iJm6QIvIgXvkm4qRtkGLHDnfcYq3Ifp63AU6kPqJB39NvlOzWdEFYAf6FQZvevr9C7pq_zHecZiCfubiiZmFoz5qgX4bgZqYqnJwR2dIkqwEY0SeZb-HJR4AIQX8G4gAA
       User-Agent:
       - azsdk-python-identity/1.7.0b4 Python/2.7.17 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-20.04-focal)
       x-client-cpu:
@@ -151,7 +151,7 @@ interactions:
     body:
       string: !!python/unicode '{"access_token": "redacted", "ext_expires_in": 3599,
         "expires_in": 3599, "client_info": "eyJ1aWQiOiJjZGQ2ZWUyNi1lNGJhLTQyNGUtODJlNS1lN2ZhNzc4M2I1ODAiLCJ1dGlkIjoiM2M2MzFiYjctYTlmNy00MzQzLWE1YmEtYTYxNTkxMzVmMWZjIn0",
-        "token_type": "Bearer", "id_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyJ9.eyJzdWIiOiAiREVlWDVqRGVVOXQ1NFpCaVZ1SnZLZ3BUUTdHLWFrNi1qYnRmbmh6dURZVSIsICJ1dGkiOiAiWkNUcHdiNldIVUMwUmhTd3ljSXhBQSIsICJ2ZXIiOiAiMi4wIiwgIm5hbWUiOiAicmVkYWN0ZWQiLCAiaXNzIjogImh0dHBzOi8vbG9naW4ubWljcm9zb2Z0b25saW5lLmNvbS8zYzYzMWJiNy1hOWY3LTQzNDMtYTViYS1hNjE1OTEzNWYxZmMvdjIuMCIsICJvaWQiOiAiY2RkNmVlMjYtZTRiYS00MjRlLTgyZTUtZTdmYTc3ODNiNTgwIiwgInByZWZlcnJlZF91c2VybmFtZSI6ICJyZWRhY3RlZCIsICJleHAiOiAxNjMwNDMwNzI2LCAidGlkIjogIjNjNjMxYmI3LWE5ZjctNDM0My1hNWJhLWE2MTU5MTM1ZjFmYyIsICJpYXQiOiAxNjMwNDI2ODI2LCAicmgiOiAiMC5BUmNBdHh0alBQZXBRME9sdXFZVmtUWHhfSzdGRDlma1VwVkl2eHVKUVFQWDd4UVhBUHMuIiwgIm5iZiI6IDE2MzA0MjY4MjYsICJhdWQiOiAiZDcwZmM1YWUtNTJlNC00ODk1LWJmMWItODk0MTAzZDdlZjE0In0=.g3g9G4qF6_wwrHTQfsaLHulF_ok8m3lxBOEFw6LJrq4PsTBSGS7MBVhR9rrJUVmz9wpuou9Uq682ZuEfbvRFDd0g-rzCZ6Jbe1KoRGkjxXm3eUdadyFwa_BzcGmzFpkyiPZPuVja844x7d1z8AVhdV28Sjs5uPDz5ornGW8iMgKKD4kCHmVlFcKrFrDmzWFhWViHUPZDAO7YycCv1apEIcTHC8uNmQm78vyssAF9nv2KIYwLmzCMGk38S7JIEjX5ZbHYjO7XXv8YsPiLlZx1cGytdTdGgtZx6afttHsR6M8y9L_9Bezx3J1SI54UMF7-KRxQBQSVB_6PLUm6azwKtg",
+        "token_type": "Bearer", "id_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyJ9.eyJzdWIiOiAiREVlWDVqRGVVOXQ1NFpCaVZ1SnZLZ3BUUTdHLWFrNi1qYnRmbmh6dURZVSIsICJ1dGkiOiAiVU1ibTJZNmJma0tOM3NzVVNxRTZBQSIsICJ2ZXIiOiAiMi4wIiwgIm5hbWUiOiAicmVkYWN0ZWQiLCAiaXNzIjogImh0dHBzOi8vbG9naW4ubWljcm9zb2Z0b25saW5lLmNvbS8zYzYzMWJiNy1hOWY3LTQzNDMtYTViYS1hNjE1OTEzNWYxZmMvdjIuMCIsICJvaWQiOiAiY2RkNmVlMjYtZTRiYS00MjRlLTgyZTUtZTdmYTc3ODNiNTgwIiwgInByZWZlcnJlZF91c2VybmFtZSI6ICJyZWRhY3RlZCIsICJleHAiOiAxNjMwNDMwNzI4LCAidGlkIjogIjNjNjMxYmI3LWE5ZjctNDM0My1hNWJhLWE2MTU5MTM1ZjFmYyIsICJpYXQiOiAxNjMwNDI2ODI4LCAicmgiOiAiMC5BUmNBdHh0alBQZXBRME9sdXFZVmtUWHhfSzdGRDlma1VwVkl2eHVKUVFQWDd4UVhBUHMuIiwgIm5iZiI6IDE2MzA0MjY4MjgsICJhdWQiOiAiZDcwZmM1YWUtNTJlNC00ODk1LWJmMWItODk0MTAzZDdlZjE0In0=.lldD44jYmDU2kNBIjdG-XPpztFqJZbPgGc6uUfa985b7OzUHiwlqaELnbKNp7VOc9qL9XvKTAnBCTDHefje2q7Tv_WQQvCjI4Zjz7GO2TaHMs63Tfwa7XBP_YVTBKRPfDEgXtkRwPFaFXPuw81UNo6ZpLMBb1Xovu_IydO7c1DFgOgzAzKH3v9EmBdcCm2x_odia_i8yzqGO59O6U_L0CjVi-AB3E08eyA1uu0qYgxOlYeBQd9u1RksPClGPOaFA0oZX6m3mZfqjX_BdS2KqZ-95gkViEz-7u3BrHSYKtxEtEk_6PESrIJAZ67Y2rtcbtZ-3vqi8_iml94g9FhaK_g",
         "scope": "api://foo/Foo", "refresh_token": "redacted"}'
     headers:
       cache-control:
@@ -161,7 +161,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 31 Aug 2021 16:25:26 GMT
+      - Tue, 31 Aug 2021 16:25:27 GMT
       expires:
       - '-1'
       p3p:
@@ -169,8 +169,8 @@ interactions:
       pragma:
       - no-cache
       set-cookie:
-      - fpc=Apf8i1HQc7xLkQJZ0dZ9cOHArTo4AQAAAPZOwNgOAAAA; expires=Thu, 30-Sep-2021
-        16:25:26 GMT; path=/; secure; HttpOnly; SameSite=None
+      - fpc=AlRn0BAECQZLn7zGBZWWwxvArTo4AQAAAPdOwNgOAAAA; expires=Thu, 30-Sep-2021
+        16:25:28 GMT; path=/; secure; HttpOnly; SameSite=None
       - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
       - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
       strict-transport-security:
@@ -229,13 +229,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 31 Aug 2021 16:25:26 GMT
+      - Tue, 31 Aug 2021 16:25:28 GMT
       p3p:
       - CP="DSP CUR OTPi IND OTRi ONL FIN"
       set-cookie:
-      - fpc=At6tqNbf9WJJu6fvgY8Tue4; expires=Thu, 30-Sep-2021 16:25:27 GMT; path=/;
+      - fpc=AhpCwg7nXolElOYV8ZYRD4M; expires=Thu, 30-Sep-2021 16:25:28 GMT; path=/;
         secure; HttpOnly; SameSite=None
-      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrmaDcAL78s8Hk8NXHRi2UdmdsMNOTXjMFrea8E_7rywhRvtVIPMl-5bozcv7j0hOt8rdQRk1iAlhnL_JWFb3B5CvFSN9h-EL5d4LTZpMz1X-dXL1eUKjtTh4m6AAWfuhmBGgjnBVksvRp6TfCPaHgRF15F6uDBkKjhcOE7GYJGcsgAA;
+      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrszouIFQe6sBE5mJYc6-KDI4WcIOvAcgDid2UotGPc7ln1DxPrqob_6EZotD0nTG_5XW2m_kDu5u0POfZGWLxI5tNCDB0BE1MNzw5dfv7AKzuXMl2JwKD3YdgBBBJt3lKmCDNvEG04WExEP7HoDTahTAqzbG0agT5cjb-IajkK2QgAA;
         domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None
       - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
       - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
@@ -244,7 +244,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ests-server:
-      - 2.1.11961.11 - SCUS ProdSlices
+      - 2.1.11984.12 - WUS2 ProdSlices
     status:
       code: 200
       message: OK
@@ -258,12 +258,12 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1825'
+      - '2682'
       Content-Type:
       - application/x-www-form-urlencoded
       Cookie:
-      - stsservicecookie=estsfd; fpc=At6tqNbf9WJJu6fvgY8Tue4; x-ms-gateway-slice=estsfd;
-        esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrmaDcAL78s8Hk8NXHRi2UdmdsMNOTXjMFrea8E_7rywhRvtVIPMl-5bozcv7j0hOt8rdQRk1iAlhnL_JWFb3B5CvFSN9h-EL5d4LTZpMz1X-dXL1eUKjtTh4m6AAWfuhmBGgjnBVksvRp6TfCPaHgRF15F6uDBkKjhcOE7GYJGcsgAA
+      - stsservicecookie=estsfd; fpc=AhpCwg7nXolElOYV8ZYRD4M; x-ms-gateway-slice=estsfd;
+        esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrszouIFQe6sBE5mJYc6-KDI4WcIOvAcgDid2UotGPc7ln1DxPrqob_6EZotD0nTG_5XW2m_kDu5u0POfZGWLxI5tNCDB0BE1MNzw5dfv7AKzuXMl2JwKD3YdgBBBJt3lKmCDNvEG04WExEP7HoDTahTAqzbG0agT5cjb-IajkK2QgAA
       User-Agent:
       - azsdk-python-identity/1.7.0b4 Python/2.7.17 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-20.04-focal)
       x-client-cpu:
@@ -284,7 +284,7 @@ interactions:
     body:
       string: !!python/unicode '{"access_token": "redacted", "ext_expires_in": 3597,
         "expires_in": 3597, "client_info": "eyJ1aWQiOiJjZGQ2ZWUyNi1lNGJhLTQyNGUtODJlNS1lN2ZhNzc4M2I1ODAiLCJ1dGlkIjoiM2M2MzFiYjctYTlmNy00MzQzLWE1YmEtYTYxNTkxMzVmMWZjIn0",
-        "token_type": "Bearer", "id_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyJ9.eyJzdWIiOiAiREVlWDVqRGVVOXQ1NFpCaVZ1SnZLZ3BUUTdHLWFrNi1qYnRmbmh6dURZVSIsICJ1dGkiOiAiNkNLQVNpVzJpMEtHSWtyOUpvaV9BQSIsICJ2ZXIiOiAiMi4wIiwgIm5hbWUiOiAicmVkYWN0ZWQiLCAiaXNzIjogImh0dHBzOi8vbG9naW4ubWljcm9zb2Z0b25saW5lLmNvbS8zYzYzMWJiNy1hOWY3LTQzNDMtYTViYS1hNjE1OTEzNWYxZmMvdjIuMCIsICJvaWQiOiAiY2RkNmVlMjYtZTRiYS00MjRlLTgyZTUtZTdmYTc3ODNiNTgwIiwgInByZWZlcnJlZF91c2VybmFtZSI6ICJyZWRhY3RlZCIsICJleHAiOiAxNjMwNDMwNzI1LCAidGlkIjogIjNjNjMxYmI3LWE5ZjctNDM0My1hNWJhLWE2MTU5MTM1ZjFmYyIsICJpYXQiOiAxNjMwNDI2ODI3LCAicmgiOiAiMC5BUmNBdHh0alBQZXBRME9sdXFZVmtUWHhfSzdGRDlma1VwVkl2eHVKUVFQWDd4UVhBUHMuIiwgIm5iZiI6IDE2MzA0MjY4MjcsICJhdWQiOiAiZDcwZmM1YWUtNTJlNC00ODk1LWJmMWItODk0MTAzZDdlZjE0In0=.f9i12I0RIoIRG-9D9nKg3nHMM9oFW5a4RypnuUIM7h_wvSHced_8-Oa2sPk8KhvuWYQbkn_bMjoLP7yiAH0T-3WzP3cGIu4xUtt91v9P5oPRXBuA5yZtA5D_785W1L7zGz5k64i1D1190S1v84Hm4PfO9vR9sGSk1WtbTZSG-N5LR9xCMj8LpAMiamlBctVAn4KtoZbEYVOkg8_MWQOIAEUg8b0I22FbzjXNPadnn7vv61AzI1jwNBrEtX2IE7crmLg0LS3BvZ3CDlnZN6bkbojBRfSjFbfToSW98h94lhqjCRTbV4yJNn006edEaQ-xjYJu9B9lvJePpJNzQEawyg",
+        "token_type": "Bearer", "id_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyJ9.eyJzdWIiOiAiREVlWDVqRGVVOXQ1NFpCaVZ1SnZLZ3BUUTdHLWFrNi1qYnRmbmh6dURZVSIsICJ1dGkiOiAiSnpLNmhFUUhmRS1SNXowVVhoWE5BQSIsICJ2ZXIiOiAiMi4wIiwgIm5hbWUiOiAicmVkYWN0ZWQiLCAiaXNzIjogImh0dHBzOi8vbG9naW4ubWljcm9zb2Z0b25saW5lLmNvbS8zYzYzMWJiNy1hOWY3LTQzNDMtYTViYS1hNjE1OTEzNWYxZmMvdjIuMCIsICJvaWQiOiAiY2RkNmVlMjYtZTRiYS00MjRlLTgyZTUtZTdmYTc3ODNiNTgwIiwgInByZWZlcnJlZF91c2VybmFtZSI6ICJyZWRhY3RlZCIsICJleHAiOiAxNjMwNDMwNzI2LCAidGlkIjogIjNjNjMxYmI3LWE5ZjctNDM0My1hNWJhLWE2MTU5MTM1ZjFmYyIsICJpYXQiOiAxNjMwNDI2ODI4LCAicmgiOiAiMC5BUmNBdHh0alBQZXBRME9sdXFZVmtUWHhfSzdGRDlma1VwVkl2eHVKUVFQWDd4UVhBUHMuIiwgIm5iZiI6IDE2MzA0MjY4MjgsICJhdWQiOiAiZDcwZmM1YWUtNTJlNC00ODk1LWJmMWItODk0MTAzZDdlZjE0In0=.P-tjPtkwwW6wfgF5-UWdMMW5spPEXWcDUNqGrDkAJViWBFGwaZjIHtsx-zTLY9rZrGTp4crl54_kLfnuC0ylpEVVdo-x7CGvfR72lysNJGXvHnqd9MnZQ3xDq5qcc_zv4215A-CH4wq1hgrKeTggOKVUxCandrmsQld25fd2Fpi4anxfZ40zC6vDueOQ249TcOTUaSeS40bWWM3Ecfzk_LpcGhYCJJtN6NAbEJqYLUGUOpnUuhsFU1FIwhJ7WAvSchBqw6I_qIqU-Bmhble2hW57svFS688_LWNv2GZDLi1fC34_YYMxffSffqJ62FkrmSgc0owNIl0dIPQjTfYH_A",
         "scope": "https://management.azure.com/user_impersonation https://management.azure.com/.default",
         "refresh_token": "redacted"}'
     headers:
@@ -295,7 +295,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 31 Aug 2021 16:25:26 GMT
+      - Tue, 31 Aug 2021 16:25:28 GMT
       expires:
       - '-1'
       p3p:
@@ -303,8 +303,8 @@ interactions:
       pragma:
       - no-cache
       set-cookie:
-      - fpc=At6tqNbf9WJJu6fvgY8Tue70CaNgAQAAAPZOwNgOAAAA; expires=Thu, 30-Sep-2021
-        16:25:27 GMT; path=/; secure; HttpOnly; SameSite=None
+      - fpc=AhpCwg7nXolElOYV8ZYRD4P0CaNgAQAAAPhOwNgOAAAA; expires=Thu, 30-Sep-2021
+        16:25:29 GMT; path=/; secure; HttpOnly; SameSite=None
       - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
       - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
       strict-transport-security:
@@ -314,7 +314,7 @@ interactions:
       x-ms-clitelem:
       - 1,0,0,,
       x-ms-ests-server:
-      - 2.1.11961.11 - SCUS ProdSlices
+      - 2.1.11961.11 - EUS ProdSlices
     status:
       code: 200
       message: OK
@@ -342,7 +342,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 31 Aug 2021 16:25:27 GMT
+      - Tue, 31 Aug 2021 16:25:28 GMT
       expires:
       - '-1'
       pragma:
