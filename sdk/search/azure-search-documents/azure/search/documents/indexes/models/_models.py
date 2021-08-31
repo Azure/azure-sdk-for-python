@@ -73,7 +73,7 @@ class SearchIndexerSkillset(_SearchIndexerSkillset):
         generated_skills = []
         for skill in self.skills:
             if hasattr(skill, '_to_generated'):
-                generated_skills.append(skill._to_generated())
+                generated_skills.append(skill._to_generated()) # pylint:disable=protected-access
             else:
                 generated_skills.append(skill)
         assert len(generated_skills) == len(self.skills)
@@ -93,9 +93,9 @@ class SearchIndexerSkillset(_SearchIndexerSkillset):
         for skill in skillset.skills:
             skill_cls = type(skill)
             if skill_cls in [_EntityRecognitionSkillV1, _EntityRecognitionSkillV3]:
-                custom_skills.append(EntityRecognitionSkill._from_generated(skill))
+                custom_skills.append(EntityRecognitionSkill._from_generated(skill)) # pylint:disable=protected-access
             elif skill_cls in [_SentimentSkillV1, _SentimentSkillV3]:
-                custom_skills.append(SentimentSkill._from_generated(skill))
+                custom_skills.append(SentimentSkill._from_generated(skill)) # pylint:disable=protected-access
             else:
                 custom_skills.append(skill)
         assert len(skillset.skills) == len(custom_skills)
@@ -262,7 +262,7 @@ class SentimentSkillVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
 
 
 class SentimentSkill(SearchIndexerSkill):
-    """V1: Text analytics positive-negative sentiment analysis, scored as a floating point value in a range of zero 
+    """V1: Text analytics positive-negative sentiment analysis, scored as a floating point value in a range of zero
     to 1.
     V3: Using the Text Analytics API, evaluates unstructured text and for each record, provides sentiment labels
     (such as "negative", "neutral" and "positive") based on the highest confidence score found by the service at
@@ -340,7 +340,7 @@ class SentimentSkill(SearchIndexerSkill):
         self.skill_version = kwargs.get('skill_version', SentimentSkillVersion.V1)
         self.odata_type = self.skill_version  # type: str
         self.default_language_code = kwargs.get('default_language_code', None)
-        self.include_opinion_mining = kwargs.get('include_opinion_mining', False )
+        self.include_opinion_mining = kwargs.get('include_opinion_mining', False)
         self.model_version = kwargs.get('model_version', None)
 
     def _to_generated(self):

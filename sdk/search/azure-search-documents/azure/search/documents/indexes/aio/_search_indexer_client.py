@@ -462,7 +462,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.skillsets.list(**kwargs)
-        return [SearchIndexerSkillset._from_generated(skillset) for skillset in result.skillsets]
+        return [SearchIndexerSkillset._from_generated(skillset) for skillset in result.skillsets] # pylint:disable=protected-access
 
     @distributed_trace_async
     async def get_skillset_names(self, **kwargs):
@@ -501,7 +501,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.skillsets.get(name, **kwargs)
-        return SearchIndexerSkillset._from_generated(result)
+        return SearchIndexerSkillset._from_generated(result) # pylint:disable=protected-access
 
     @distributed_trace_async
     async def delete_skillset(self, skillset, **kwargs):
@@ -559,7 +559,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
 
         result = await self._client.skillsets.create(skillset, **kwargs)
-        return SearchIndexerSkillset._from_generated(result)
+        return SearchIndexerSkillset._from_generated(result) # pylint:disable=protected-access
 
     @distributed_trace_async
     async def create_or_update_skillset(self, skillset, **kwargs):
@@ -583,8 +583,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         result = await self._client.skillsets.create_or_update(
             skillset_name=skillset.name,
-            skillset=skillset._to_generated(),
+            skillset=skillset._to_generated(), # pylint:disable=protected-access
             error_map=error_map,
             **kwargs
         )
-        return SearchIndexerSkillset._from_generated(result)
+        return SearchIndexerSkillset._from_generated(result) # pylint:disable=protected-access

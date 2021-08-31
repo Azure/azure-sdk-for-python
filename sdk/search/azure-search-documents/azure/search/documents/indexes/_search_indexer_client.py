@@ -469,7 +469,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.skillsets.list(**kwargs)
-        return [SearchIndexerSkillset._from_generated(skillset) for skillset in result.skillsets]
+        return [SearchIndexerSkillset._from_generated(skillset) for skillset in result.skillsets] # pylint:disable=protected-access
 
     @distributed_trace
     def get_skillset_names(self, **kwargs):
@@ -508,7 +508,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.skillsets.get(name, **kwargs)
-        return SearchIndexerSkillset._from_generated(result)
+        return SearchIndexerSkillset._from_generated(result) # pylint:disable=protected-access
 
     @distributed_trace
     def delete_skillset(self, skillset, **kwargs):
@@ -564,8 +564,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result =  self._client.skillsets.create(skillset._to_generated(), **kwargs)
-        return SearchIndexerSkillset._from_generated(result)
+        result = self._client.skillsets.create(skillset._to_generated(), **kwargs) # pylint:disable=protected-access
+        return SearchIndexerSkillset._from_generated(result) # pylint:disable=protected-access
 
 
     @distributed_trace
@@ -590,8 +590,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         result = self._client.skillsets.create_or_update(
             skillset_name=skillset.name,
-            skillset=skillset._to_generated(),
+            skillset=skillset._to_generated(), # pylint:disable=protected-access
             error_map=error_map,
             **kwargs
         )
-        return SearchIndexerSkillset._from_generated(result)
+        return SearchIndexerSkillset._from_generated(result) # pylint:disable=protected-access
