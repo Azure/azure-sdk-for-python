@@ -136,5 +136,9 @@ async def with_read_test():
 		x = await db.read()
 		print(x)
 
-# asyncio.run(async_read_test())
-asyncio.run(with_read_test())
+async def main():
+    await with_read_test()
+
+if __name__ == "__main__":
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
