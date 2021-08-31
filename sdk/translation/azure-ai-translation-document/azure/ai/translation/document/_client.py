@@ -100,13 +100,13 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         """Close the :class:`~azure.ai.translation.document.DocumentTranslationClient` session."""
         return self._client.close()
 
-    @overload
-    def begin_translation(self, source_url, target_url, target_language_code, **kwargs):
+    @overload  # type: ignore
+    def begin_translation(self, source_url, target_url, target_language_code, **kwargs):  # type: ignore
         # type: (str, str, str, **Any) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]
         pass
 
-    @overload
-    def begin_translation(self, inputs, **kwargs):
+    @overload  # type: ignore
+    def begin_translation(self, inputs, **kwargs):  # type: ignore
         # type: (List[DocumentTranslationInput], **Any) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]
         pass
 
@@ -301,7 +301,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
             ],
         )
 
-        return self._client.document_translation.get_translations_status(
+        return self._client.document_translation.get_translations_status(  # type: ignore
             cls=model_conversion_function,
             maxpagesize=results_per_page,
             created_date_time_utc_start=created_after,
@@ -375,7 +375,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
             ],
         )
 
-        return self._client.document_translation.get_documents_status(
+        return self._client.document_translation.get_documents_status(  # type: ignore
             id=translation_id,
             cls=model_conversion_function,
             maxpagesize=results_per_page,
