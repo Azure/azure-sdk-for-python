@@ -52,6 +52,7 @@ class CallingServerClient(object):
 
         self._call_connection_client = self._callingserver_service_client.call_connections
         self._server_call_client = self._callingserver_service_client.server_calls
+        self._content_downloader_client = self._callingserver_service_client.content_downloader
 
     @classmethod
     def from_connection_string(
@@ -84,7 +85,7 @@ class CallingServerClient(object):
         if not server_call_id:
             raise ValueError("call_connection_id can not be None")
 
-        return ServerCall(server_call_id, self._server_call_client)
+        return ServerCall(server_call_id, self._server_call_client, self._content_downloader_client)
 
     @distributed_trace()
     def create_call_connection(

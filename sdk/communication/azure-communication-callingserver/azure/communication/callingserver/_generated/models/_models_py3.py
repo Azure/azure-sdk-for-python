@@ -214,6 +214,29 @@ class CallRecordingProperties(msrest.serialization.Model):
         self.recording_state = recording_state
 
 
+class DownloadedContentProperties(msrest.serialization.Model):
+    """The response payload of download content via url operation.
+
+    All required parameters must be populated in order to send to Azure.
+
+    """
+
+    _validation = {
+        'stream_data': {'required': True},
+    }
+
+    _attribute_map = {
+        'stream_data': {'key': 'contentStream', 'type': 'bytearray'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DownloadedContentProperties, self).__init__(**kwargs)
+        self.stream_data = kwargs['stream_data']
+
+
 class CallRecordingStateChangeEvent(msrest.serialization.Model):
     """The call recording state change event.
 
@@ -915,6 +938,14 @@ class StartCallRecordingResult(msrest.serialization.Model):
         super(StartCallRecordingResult, self).__init__(**kwargs)
         self.recording_id = recording_id
 
+    @classmethod
+    def _from_generated(cls, start_recording_result):
+        if start_recording_result is None:
+            return None
+
+        return cls(
+            recording_id=start_recording_result.recording_id
+        )
 
 class ToneInfo(msrest.serialization.Model):
     """The information about the tone.
