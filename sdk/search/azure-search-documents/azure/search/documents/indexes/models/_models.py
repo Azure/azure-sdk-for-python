@@ -218,7 +218,7 @@ class EntityRecognitionSkill(SearchIndexerSkill):
                 default_language_code=self.default_language_code,
                 include_typeless_entities=self.include_typeless_entities,
                 minimum_precision=self.minimum_precision,
-                model_version = self.model_version
+                model_version=self.model_version
             )
         if self.skill_version in [EntityRecognitionSkillVersion.V3, EntityRecognitionSkillVersion.LATEST]:
             return _EntityRecognitionSkillV3(
@@ -230,7 +230,7 @@ class EntityRecognitionSkill(SearchIndexerSkill):
                 default_language_code=self.default_language_code,
                 include_typeless_entities=self.include_typeless_entities,
                 minimum_precision=self.minimum_precision,
-                model_version = self.model_version
+                model_version=self.model_version
             )
 
     @classmethod
@@ -262,8 +262,11 @@ class SentimentSkillVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
 
 
 class SentimentSkill(SearchIndexerSkill):
-    """V1: Text analytics positive-negative sentiment analysis, scored as a floating point value in a range of zero to 1.
-       V3: Using the Text Analytics API, evaluates unstructured text and for each record, provides sentiment labels (such as "negative", "neutral" and "positive") based on the highest confidence score found by the service at a sentence and document-level.
+    """V1: Text analytics positive-negative sentiment analysis, scored as a floating point value in a range of zero 
+    to 1.
+    V3: Using the Text Analytics API, evaluates unstructured text and for each record, provides sentiment labels
+    (such as "negative", "neutral" and "positive") based on the highest confidence score found by the service at
+    a sentence and document-level.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -345,17 +348,17 @@ class SentimentSkill(SearchIndexerSkill):
             return _SentimentSkillV1(
                 name=self.name,
                 odata_type=self.odata_type,
-                default_language_code = self.default_language_code,
-                include_opinion_mining = self.include_opinion_mining,
-                model_version = self.model_version
+                default_language_code=self.default_language_code,
+                include_opinion_mining=self.include_opinion_mining,
+                model_version=self.model_version
             )
         if self.skill_version in [SentimentSkillVersion.V3, SentimentSkillVersion.LATEST]:
             return _SentimentSkillV3(
                 name=self.name,
                 odata_type=self.odata_type,
-                default_language_code = self.default_language_code,
-                include_opinion_mining = self.include_opinion_mining,
-                model_version = self.model_version
+                default_language_code=self.default_language_code,
+                include_opinion_mining=self.include_opinion_mining,
+                model_version=self.model_version
             )
 
     @classmethod
