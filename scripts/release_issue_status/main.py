@@ -128,11 +128,12 @@ def auto_reply(item, sdk_repo, rest_repo, duplicated_issue):
             package_name, readme_link = update_issue_body(sdk_repo, rest_repo, item.issue_object.number)
             print("----------------pkname, readme", package_name, readme_link)
             item.package = package_name
-            key = (issue.language, issue.package)
+            key = ('Python', item.package)
             duplicated_issue[key] = duplicated_issue.get(key, 0) + 1
         except Exception as e:
             item.bot_advice = 'failed to modify the body of the new issue. Please modify manually'
             item.labels.append('attention')
+            print(e)
             raise
         item.labels.append('auto-link')
         item.issue_object.set_labels(*item.labels)
@@ -201,13 +202,10 @@ def main():
     # rule6: if delay from created date is over 30 days and owner never reply, close it.
     # rule7: if delay from created date is over 15 days and owner never reply, remind owner to handle it.
     for item in issue_status:
-        if item.issue_object.number in [1826, 1896]:
-            print("1111111111--: ", item.author_latest_comment)
         if item.status == 'release':
             item.bot_advice = 'better to release asap.'
         elif item.comment_num == 0 and 'Python' in item.labels:
             item.bot_advice = 'new issue and better to confirm quickly.'
-            print("#########", item.issue_object.number)
             try:
                 auto_reply(item, sdk_repo, rest_repo, duplicated_issue)
             except Exception as e:
