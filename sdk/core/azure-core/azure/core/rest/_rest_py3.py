@@ -48,7 +48,6 @@ from ._helpers import (
     FilesType,
     HeadersType,
     cast,
-    parse_lines_from_text,
     set_json_body,
     set_multipart_body,
     set_urlencoded_body,
@@ -377,27 +376,6 @@ class HttpResponse(_HttpResponseBase):
         """
         raise NotImplementedError()
 
-    def iter_text(self) -> Iterator[str]:
-        """Iterates over the text in the response.
-
-        :return: An iterator of string. Each string chunk will be a text from the response
-        :rtype: Iterator[str]
-        """
-        for byte in self.iter_bytes():
-            text = byte.decode(self.encoding or "utf-8")
-            yield text
-
-    def iter_lines(self) -> Iterator[str]:
-        """Iterates over the lines in the response.
-
-        :return: An iterator of string. Each string chunk will be a line from the response
-        :rtype: Iterator[str]
-        """
-        for text in self.iter_text():
-            lines = parse_lines_from_text(text)
-            for line in lines:
-                yield line
-
     def __repr__(self) -> str:
         content_type_str = (
             ", Content-Type: {}".format(self.content_type) if self.content_type else ""
@@ -470,27 +448,6 @@ class AsyncHttpResponse(_HttpResponseBase):
         raise NotImplementedError()
         # getting around mypy behavior, see https://github.com/python/mypy/issues/10732
         yield  # pylint: disable=unreachable
-
-    async def iter_text(self) -> AsyncIterator[str]:
-        """Asynchronously iterates over the text in the response.
-
-        :return: An async iterator of string. Each string chunk will be a text from the response
-        :rtype: AsyncIterator[str]
-        """
-        async for byte in self.iter_bytes():  # type: ignore
-            text = byte.decode(self.encoding or "utf-8")
-            yield text
-
-    async def iter_lines(self) -> AsyncIterator[str]:
-        """Asynchronously iterates over the lines in the response.
-
-        :return: An async iterator of string. Each string chunk will be a line from the response
-        :rtype: AsyncIterator[str]
-        """
-        async for text in self.iter_text():
-            lines = parse_lines_from_text(text)
-            for line in lines:
-                yield line
 
     async def close(self) -> None:
         """Close the response.

@@ -13,7 +13,7 @@ from ._generated._monitor_query_client import MonitorQueryClient
 
 from ._generated.models import BatchRequest, QueryBody as LogsQueryBody
 from ._helpers import get_authentication_policy, process_error, construct_iso8601, order_results
-from ._models import LogsQueryResult, LogsBatchQuery, LogsBatchQueryResult
+from ._models import LogsBatchQuery, LogsQueryResult
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -60,8 +60,8 @@ class LogsQueryClient(object):
         :param workspace_id: ID of the workspace. This is Workspace ID from the Properties blade in the
          Azure portal.
         :type workspace_id: str
-        :param query: The Analytics query. Learn more about the `Analytics query syntax
-         <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
+        :param query: The Kusto query. Learn more about the `Kusto query syntax
+         <https://docs.microsoft.com/azure/data-explorer/kusto/query/>`_.
         :type query: str
         :keyword timespan: The timespan for which to query the data. This can be a timedelta,
          a timedelta and a start datetime, or a start datetime/end datetime.
@@ -128,16 +128,16 @@ class LogsQueryClient(object):
 
     @distributed_trace
     def query_batch(self, queries, **kwargs):
-        # type: (Union[Sequence[Dict], Sequence[LogsBatchQuery]], Any) -> List[LogsBatchQueryResult]
+        # type: (Union[Sequence[Dict], Sequence[LogsBatchQuery]], Any) -> List[LogsQueryResult]
         """Execute a list of analytics queries. Each request can be either a LogQueryRequest
         object or an equivalent serialized model.
 
         The response is returned in the same order as that of the requests sent.
 
-        :param queries: The list of queries that should be processed
+        :param queries: The list of Kusto queries to execute.
         :type queries: list[dict] or list[~azure.monitor.query.LogsBatchQuery]
-        :return: List of LogsBatchQueryResult, or the result of cls(response)
-        :rtype: list[~azure.monitor.query.LogsBatchQueryResult]
+        :return: List of LogsQueryResult, or the result of cls(response)
+        :rtype: list[~azure.monitor.query.LogsQueryResult]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -160,11 +160,8 @@ class LogsQueryClient(object):
             request_order = [req['id'] for req in queries]
         batch = BatchRequest(requests=queries)
         generated = self._query_op.batch(batch, **kwargs)
-        return order_results(
-            request_order,
-            [
-                LogsBatchQueryResult._from_generated(rsp) for rsp in generated.responses # pylint: disable=protected-access
-            ])
+        mapping = {item.id: item for item in generated.responses}
+        return order_results(request_order, mapping, LogsQueryResult)
 
     def close(self):
         # type: () -> None

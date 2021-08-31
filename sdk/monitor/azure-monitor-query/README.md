@@ -215,14 +215,12 @@ for rsp in response:
 
 #### Handling the response for Logs Query
 
-The `query` API returns the `LogsQueryResult` while the `batch_query` API returns the `LogsBatchQueryResult`.
+The `query` API returns the `LogsQueryResult` while the `batch_query` API returns list of `LogsQueryResult`.
 
 Here is a heirarchy of the response:
 
 ```
-LogsQueryResult / LogsBatchQueryResult
-|---id (this exists in `LogsBatchQueryResult` object only)
-|---status (this exists in `LogsBatchQueryResult` object only)
+LogsQueryResult
 |---statistics
 |---visualization
 |---error
