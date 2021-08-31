@@ -310,7 +310,7 @@ class DocumentTranslationClient(object):
             ],
         )
 
-        return self._client.document_translation.get_translations_status(
+        return self._client.document_translation.get_translations_status(  # type: ignore
             cls=model_conversion_function,
             maxpagesize=results_per_page,
             created_date_time_utc_start=created_after,
@@ -383,7 +383,7 @@ class DocumentTranslationClient(object):
             ],
         )
 
-        return self._client.document_translation.get_documents_status(
+        return self._client.document_translation.get_documents_status(  # type: ignore
             id=translation_id,
             cls=model_conversion_function,
             maxpagesize=results_per_page,

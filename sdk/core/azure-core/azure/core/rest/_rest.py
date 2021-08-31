@@ -378,6 +378,7 @@ class HttpResponse(_HttpResponseBase):
         # type: () -> Iterator[bytes]
         """Iterates over the response's bytes. Will decompress in the process.
 
-        :return: An iterator of bytes from the response
-        :rtype: Iterator[str]
-        """
+    def _close_stream(self):
+        # type: (...) -> None
+        self.is_stream_consumed = True
+        self.close()

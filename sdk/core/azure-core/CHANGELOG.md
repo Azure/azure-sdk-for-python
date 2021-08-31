@@ -1,17 +1,16 @@
 # Release History
 
-## 1.17.1 (Unreleased)
+## 1.18.0 (Unreleased)
 
 ### Features Added
 
+- `azure.core.serialization.AzureJSONEncoder` (introduced in 1.17.0) serializes `datetime.datetime` objects in ISO 8601 format, conforming to RFC 3339's specification.    #20190
 - We now use `azure.core.serialization.AzureJSONEncoder` to serialize `json` input to `azure.core.rest.HttpRequest`.
 
 ### Breaking Changes in the Provisional `azure.core.rest` package
 
 - The `text` property on `azure.core.rest.HttpResponse` and `azure.core.rest.AsyncHttpResponse` has changed to a method, which also takes
 an `encoding` parameter.
-- `azure.core.rest.HttpResponse` and `azure.core.rest.AsyncHttpResponse` are now abstract base classes. They should not be initialized directly, instead
-your transport responses should inherit from them and implement them.
 - Removed `iter_text` and `iter_lines` from `azure.core.rest.HttpResponse` and `azure.core.rest.AsyncHttpResponse`
 
 ### Bugs Fixed

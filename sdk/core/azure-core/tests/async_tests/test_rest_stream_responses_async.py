@@ -66,9 +66,10 @@ async def test_iter_bytes(client):
         assert response.is_closed
         assert raw == b"Hello, world!"
 
-# @pytest.mark.asyncio
-# async def test_iter_text(client):
-#     request = HttpRequest("GET", "/basic/string")
+@pytest.mark.skip(reason="We've gotten rid of iter_text for now")
+@pytest.mark.asyncio
+async def test_iter_text(client):
+    request = HttpRequest("GET", "/basic/string")
 
 #     async with client.send_request(request, stream=True) as response:
 #         content = ""
@@ -76,15 +77,16 @@ async def test_iter_bytes(client):
 #             content += part
 #         assert content == "Hello, world!"
 
-# @pytest.mark.asyncio
-# async def test_iter_lines(client):
-#     request = HttpRequest("GET", "/basic/lines")
+@pytest.mark.skip(reason="We've gotten rid of iter_lines for now")
+@pytest.mark.asyncio
+async def test_iter_lines(client):
+    request = HttpRequest("GET", "/basic/lines")
 
-#     async with client.send_request(request, stream=True) as response:
-#         content = []
-#         async for line in response.iter_lines():
-#             content.append(line)
-#         assert content == ["Hello,\n", "world!"]
+    async with client.send_request(request, stream=True) as response:
+        content = []
+        async for part in response.iter_lines():
+            content.append(part)
+        assert content == ["Hello,\n", "world!"]
 
 
 @pytest.mark.asyncio
@@ -164,8 +166,8 @@ async def test_iter_read_back_and_forth(client):
     request = HttpRequest("GET", "/basic/string")
 
     async with client.send_request(request, stream=True) as response:
-        async for line in response.iter_bytes():
-            assert line
+        async for part in response.iter_bytes():
+            assert part
         with pytest.raises(ResponseNotReadError):
             response.text()
         with pytest.raises(StreamConsumedError):
@@ -182,8 +184,8 @@ async def test_stream_with_return_pipeline_response(client):
     assert hasattr(pipeline_response, "http_response")
     assert hasattr(pipeline_response, "context")
     parts = []
-    async for line in pipeline_response.http_response.iter_bytes():
-        parts.append(line)
+    async for part in pipeline_response.http_response.iter_bytes():
+        parts.append(part)
     assert parts == [b'Hello, world!']
     await client.close()
 

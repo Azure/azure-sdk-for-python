@@ -40,6 +40,8 @@ from ..utils._utils import _case_insensitive_dict
 from ._helpers import (
     ParamsType,
     FilesType,
+    HeadersType,
+    cast,
     set_json_body,
     set_multipart_body,
     set_urlencoded_body,
@@ -374,7 +376,15 @@ class HttpResponse(_HttpResponseBase):
         :return: An iterator of bytes from the response
         :rtype: Iterator[str]
         """
-        ...
+        raise NotImplementedError()
+
+    def __repr__(self) -> str:
+        content_type_str = (
+            ", Content-Type: {}".format(self.content_type) if self.content_type else ""
+        )
+        return "<HttpResponse: {} {}{}>".format(
+            self.status_code, self.reason, content_type_str
+        )
 
 class AsyncHttpResponse(_HttpResponseBase):
     """**Provisional** abstract base class for Async HTTP responses.
@@ -423,7 +433,6 @@ class AsyncHttpResponse(_HttpResponseBase):
         # getting around mypy behavior, see https://github.com/python/mypy/issues/10732
         yield  # pylint: disable=unreachable
 
-    @abc.abstractmethod
     async def close(self) -> None:
         ...
 
