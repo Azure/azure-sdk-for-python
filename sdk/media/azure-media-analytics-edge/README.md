@@ -92,7 +92,7 @@ from azure.iot.hub import IoTHubRegistryManager
 from azure.iot.hub.models import CloudToDeviceMethod
 
 module_d = "mediaedge"
-connection_string = "HostName=samplehost.azure-devices.net;SharedAccessKeyName={sasKeyName};SharedAccessKey={sasKey}"
+connection_string = "test"
 set_method_request = MediaGraphTopologySetRequest(graph=graph_topology)
 direct_method = CloudToDeviceMethod(method_name=set_method_request.method_name, payload=set_method_request.serialize())
 registry_manager = IoTHubRegistryManager(connection_string)
