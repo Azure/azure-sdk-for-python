@@ -146,7 +146,7 @@ def auto_reply(item, sdk_repo, rest_repo, duplicated_issue):
             item.labels.append('attention')
             raise
     try:
-        reply = rg.begin_reply_generate(issue_object=item, rest_repo=rest_repo, readme_link=readme_link)
+        reply = rg.begin_reply_generate(item=item, rest_repo=rest_repo, readme_link=readme_link)
     except Exception as e:
         item.bot_advice = 'auto reply failed, Please intervene manually !!'
         print('Error from auto reply ========================')
