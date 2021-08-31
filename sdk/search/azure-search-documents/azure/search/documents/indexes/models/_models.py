@@ -149,7 +149,7 @@ class EntityRecognitionSkill(SearchIndexerSkill):
     :param include_typeless_entities: Determines whether or not to include entities which are well
      known but don't conform to a pre-defined type. If this configuration is not set (default), set
      to null or set to false, entities which don't conform to one of the pre-defined types will not
-     be surfaced.
+     be surfaced. Only valid for skill version 1.
     :type include_typeless_entities: bool
     :param minimum_precision: A value between 0 and 1 that be used to only include entities whose
      confidence score is greater than the value specified. If not set (default), or if explicitly
@@ -157,7 +157,7 @@ class EntityRecognitionSkill(SearchIndexerSkill):
     :type minimum_precision: float
     :param model_version: The version of the model to use when calling the Text Analytics service.
      It will default to the latest available when not specified. We recommend you do not specify
-     this value unless absolutely necessary.
+     this value unless absolutely necessary. Only valid from skill version 3.
     :type model_version: str
     :param skill_version: The version of the skill to use when calling the Text Analytics service.
      It will default to V1 when not specified.
@@ -189,14 +189,23 @@ class EntityRecognitionSkill(SearchIndexerSkill):
         self,
         **kwargs
     ):
+        # pop skill_version from kwargs to avoid warning in msrest
+        skill_version = kwargs.pop('skill_version', EntityRecognitionSkillVersion.V1)
+        # client-side validation
+        if skill_version == EntityRecognitionSkillVersion.V1:
+            validate(kwargs, '1', 'model_version')
+        if skill_version in [EntityRecognitionSkillVersion.V3, EntityRecognitionSkillVersion.LATEST]:
+            validate(kwargs, '3', 'include_typeless_entities')
+
         super(EntityRecognitionSkill, self).__init__(**kwargs)
-        self.skill_version = kwargs.get('skill_version', EntityRecognitionSkillVersion.V1)
+        self.skill_version = skill_version
         self.odata_type = self.skill_version  # type: str
         self.categories = kwargs.get('categories', None)
         self.default_language_code = kwargs.get('default_language_code', None)
-        self.include_typeless_entities = kwargs.get('include_typeless_entities', None)
         self.minimum_precision = kwargs.get('minimum_precision', None)
+        self.include_typeless_entities = kwargs.get('include_typeless_entities', None)
         self.model_version = kwargs.get('model_version', None)
+
 
     def _to_generated(self):
         if self.skill_version == EntityRecognitionSkillVersion.V1:
@@ -317,6 +326,13 @@ class SentimentSkill(SearchIndexerSkill):
         self,
         **kwargs
     ):
+        # pop skill_version from kwargs to avoid warning in msrest
+        skill_version = kwargs.pop('skill_version', SentimentSkillVersion.V1)
+
+        # client-side validation
+        if skill_version == SentimentSkillVersion.V1:
+            validate(kwargs, '1', ['include_opinion_mining', 'model_version'])
+
         super(SentimentSkill, self).__init__(**kwargs)
         self.skill_version = kwargs.get('skill_version', SentimentSkillVersion.V1)
         self.odata_type = self.skill_version  # type: str
@@ -931,3 +947,13 @@ def unpack_analyzer(analyzer):
             analyzer
         )
     return analyzer
+
+
+def validate(kwargs, version, unsupported):
+    unsupported = [unsupported] if isinstance(unsupported, str) else unsupported
+    errors = []
+    for param in unsupported:
+        if param in kwargs:
+            errors.append(param)
+    if errors:
+        raise ValueError("Unsupported parameters for skill version {}: {}".format(version, ', '.join(errors)))
