@@ -28,10 +28,7 @@ import codecs
 import cgi
 from enum import Enum
 from json import dumps
-try:
-    import collections.abc as collections
-except ImportError:
-    import collections  # type: ignore
+import collections
 from typing import (
     Optional,
     Union,
@@ -43,8 +40,9 @@ from typing import (
     Any,
     Dict,
     Iterable,
+    Iterator,
     cast,
-    MutableMapping,
+    Callable,
 )
 import xml.etree.ElementTree as ET
 import six
@@ -60,6 +58,8 @@ PrimitiveData = Optional[Union[str, int, float, bool]]
 
 
 ParamsType = Mapping[str, Union[PrimitiveData, Sequence[PrimitiveData]]]
+
+HeadersType = Mapping[str, str]
 
 FileContent = Union[str, bytes, IO[str], IO[bytes]]
 FileType = Union[
@@ -154,8 +154,8 @@ def set_xml_body(content):
     return headers, body
 
 def _shared_set_content_body(content):
-    # type: (Any) -> Tuple[MutableMapping[str, str], Optional[ContentTypeBase]]
-    headers = {}  # type: MutableMapping[str, str]
+    # type: (Any) -> Tuple[HeadersType, Optional[ContentTypeBase]]
+    headers = {}  # type: HeadersType
 
     if isinstance(content, ET.Element):
         # XML body

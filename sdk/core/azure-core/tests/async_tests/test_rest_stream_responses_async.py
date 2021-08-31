@@ -71,11 +71,11 @@ async def test_iter_bytes(client):
 async def test_iter_text(client):
     request = HttpRequest("GET", "/basic/string")
 
-#     async with client.send_request(request, stream=True) as response:
-#         content = ""
-#         async for part in response.iter_text():
-#             content += part
-#         assert content == "Hello, world!"
+    async with client.send_request(request, stream=True) as response:
+        content = ""
+        async for part in response.iter_text():
+            content += part
+        assert content == "Hello, world!"
 
 @pytest.mark.skip(reason="We've gotten rid of iter_lines for now")
 @pytest.mark.asyncio

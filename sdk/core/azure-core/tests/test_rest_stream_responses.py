@@ -83,21 +83,21 @@ def test_iter_bytes(client):
 def test_iter_text(client):
     request = HttpRequest("GET", "/basic/string")
 
-#     with client.send_request(request, stream=True) as response:
-#         content = ""
-#         for part in response.iter_text():
-#             content += part
-#         assert content == "Hello, world!"
+    with client.send_request(request, stream=True) as response:
+        content = ""
+        for part in response.iter_text():
+            content += part
+        assert content == "Hello, world!"
 
 @pytest.mark.skip(reason="We've gotten rid of iter_lines for now")
 def test_iter_lines(client):
     request = HttpRequest("GET", "/basic/lines")
 
-#     with client.send_request(request, stream=True) as response:
-#         content = []
-#         for line in response.iter_lines():
-#             content.append(line)
-#         assert content == ["Hello,\n", "world!"]
+    with client.send_request(request, stream=True) as response:
+        content = []
+        for line in response.iter_lines():
+            content.append(line)
+        assert content == ["Hello,\n", "world!"]
 
 def test_sync_streaming_response(client):
     request = HttpRequest("GET", "/streams/basic")
