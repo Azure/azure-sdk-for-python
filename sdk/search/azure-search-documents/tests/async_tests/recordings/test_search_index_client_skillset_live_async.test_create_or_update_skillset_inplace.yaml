@@ -19,20 +19,20 @@ interactions:
     uri: https://search9d362229.search.windows.net/skillsets('test-ss')?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search9d362229.search.windows.net/$metadata#skillsets/$entity","@odata.etag":"\"0x8D96C07C2CE19BB\"","name":"test-ss","description":"desc1","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":null,"description":null,"context":null,"categories":[],"defaultLanguageCode":null,"minimumPrecision":null,"includeTypelessEntities":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizations"}]}],"cognitiveServices":null,"knowledgeStore":null,"encryptionKey":null}'
+      string: '{"@odata.context":"https://search9d362229.search.windows.net/$metadata#skillsets/$entity","@odata.etag":"\"0x8D96CA5D577A0EC\"","name":"test-ss","description":"desc1","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":null,"description":null,"context":null,"categories":[],"defaultLanguageCode":null,"minimumPrecision":null,"includeTypelessEntities":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizations"}]}],"cognitiveServices":null,"knowledgeStore":null,"encryptionKey":null}'
     headers:
       cache-control: no-cache
       content-length: '609'
       content-type: application/json; odata.metadata=minimal
-      date: Mon, 30 Aug 2021 22:44:43 GMT
-      elapsed-time: '40'
-      etag: W/"0x8D96C07C2CE19BB"
+      date: Tue, 31 Aug 2021 17:36:14 GMT
+      elapsed-time: '54'
+      etag: W/"0x8D96CA5D577A0EC"
       expires: '-1'
       location: https://search9d362229.search.windows.net/skillsets('test-ss')?api-version=2021-04-30-Preview
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: debb3cb9-09e3-11ec-b405-74c63bed1137
+      request-id: f23fc68a-0a81-11ec-b8f7-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 201
@@ -58,19 +58,19 @@ interactions:
     uri: https://search9d362229.search.windows.net/skillsets('test-ss')?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search9d362229.search.windows.net/$metadata#skillsets/$entity","@odata.etag":"\"0x8D96C07C2DA7801\"","name":"test-ss","description":"desc2","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":null,"description":null,"context":null,"categories":[],"defaultLanguageCode":null,"minimumPrecision":null,"includeTypelessEntities":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizations"}]}],"cognitiveServices":null,"knowledgeStore":null,"encryptionKey":null}'
+      string: '{"@odata.context":"https://search9d362229.search.windows.net/$metadata#skillsets/$entity","@odata.etag":"\"0x8D96CA5D5858703\"","name":"test-ss","description":"desc2","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":null,"description":null,"context":null,"categories":[],"defaultLanguageCode":null,"minimumPrecision":null,"includeTypelessEntities":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizations"}]}],"cognitiveServices":null,"knowledgeStore":null,"encryptionKey":null}'
     headers:
       cache-control: no-cache
-      content-length: '476'
+      content-length: '477'
       content-type: application/json; odata.metadata=minimal
-      date: Mon, 30 Aug 2021 22:44:43 GMT
-      elapsed-time: '37'
-      etag: W/"0x8D96C07C2DA7801"
+      date: Tue, 31 Aug 2021 17:36:14 GMT
+      elapsed-time: '47'
+      etag: W/"0x8D96CA5D5858703"
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: ded9dabd-09e3-11ec-aa9f-74c63bed1137
+      request-id: f27018a2-0a81-11ec-ba02-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
@@ -88,18 +88,18 @@ interactions:
     uri: https://search9d362229.search.windows.net/skillsets?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search9d362229.search.windows.net/$metadata#skillsets","value":[{"@odata.etag":"\"0x8D96C07C2DA7801\"","name":"test-ss","description":"desc2","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":"#1","description":null,"context":"/document","categories":["Person","Quantity","Organization","URL","Email","Location","DateTime"],"defaultLanguageCode":"en","minimumPrecision":null,"includeTypelessEntities":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizations"}]}],"cognitiveServices":null,"knowledgeStore":null,"encryptionKey":null}]}'
+      string: '{"@odata.context":"https://search9d362229.search.windows.net/$metadata#skillsets","value":[{"@odata.etag":"\"0x8D96CA5D5858703\"","name":"test-ss","description":"desc2","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":"#1","description":null,"context":"/document","categories":["Person","Quantity","Organization","URL","Email","Location","DateTime"],"defaultLanguageCode":"en","minimumPrecision":null,"includeTypelessEntities":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizations"}]}],"cognitiveServices":null,"knowledgeStore":null,"encryptionKey":null}]}'
     headers:
       cache-control: no-cache
-      content-length: '533'
+      content-length: '534'
       content-type: application/json; odata.metadata=minimal
-      date: Mon, 30 Aug 2021 22:44:43 GMT
-      elapsed-time: '14'
+      date: Tue, 31 Aug 2021 17:36:14 GMT
+      elapsed-time: '37'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: dee67008-09e3-11ec-94b1-74c63bed1137
+      request-id: f27da9a7-0a81-11ec-9aaf-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
@@ -117,19 +117,19 @@ interactions:
     uri: https://search9d362229.search.windows.net/skillsets('test-ss')?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search9d362229.search.windows.net/$metadata#skillsets/$entity","@odata.etag":"\"0x8D96C07C2DA7801\"","name":"test-ss","description":"desc2","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":"#1","description":null,"context":"/document","categories":["Person","Quantity","Organization","URL","Email","Location","DateTime"],"defaultLanguageCode":"en","minimumPrecision":null,"includeTypelessEntities":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizations"}]}],"cognitiveServices":null,"knowledgeStore":null,"encryptionKey":null}'
+      string: '{"@odata.context":"https://search9d362229.search.windows.net/$metadata#skillsets/$entity","@odata.etag":"\"0x8D96CA5D5858703\"","name":"test-ss","description":"desc2","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":"#1","description":null,"context":"/document","categories":["Person","Quantity","Organization","URL","Email","Location","DateTime"],"defaultLanguageCode":"en","minimumPrecision":null,"includeTypelessEntities":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizations"}]}],"cognitiveServices":null,"knowledgeStore":null,"encryptionKey":null}'
     headers:
       cache-control: no-cache
       content-length: '531'
       content-type: application/json; odata.metadata=minimal
-      date: Mon, 30 Aug 2021 22:44:43 GMT
-      elapsed-time: '9'
-      etag: W/"0x8D96C07C2DA7801"
+      date: Tue, 31 Aug 2021 17:36:14 GMT
+      elapsed-time: '30'
+      etag: W/"0x8D96CA5D5858703"
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: deee85e5-09e3-11ec-a1a9-74c63bed1137
+      request-id: f29216a9-0a81-11ec-977a-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:

@@ -20,7 +20,7 @@ interactions:
     uri: https://search549e1a2d.search.windows.net/datasources?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search549e1a2d.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D96C10E2D24222\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null,"identity":null}'
+      string: '{"@odata.context":"https://search549e1a2d.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D96CA2BC5A871B\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null,"identity":null}'
     headers:
       cache-control:
       - no-cache
@@ -29,11 +29,11 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Mon, 30 Aug 2021 23:50:03 GMT
+      - Tue, 31 Aug 2021 17:14:05 GMT
       elapsed-time:
-      - '43'
+      - '50'
       etag:
-      - W/"0x8D96C10E2D24222"
+      - W/"0x8D96CA2BC5A871B"
       expires:
       - '-1'
       location:
@@ -45,7 +45,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - fec46198-09ec-11ec-b57b-74c63bed1137
+      - d91ebf13-0a7e-11ec-85c8-74c63bed1137
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
@@ -66,7 +66,7 @@ interactions:
     uri: https://search549e1a2d.search.windows.net/datasources?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search549e1a2d.search.windows.net/$metadata#datasources","value":[{"@odata.etag":"\"0x8D96C10E2D24222\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null,"identity":null}]}'
+      string: '{"@odata.context":"https://search549e1a2d.search.windows.net/$metadata#datasources","value":[{"@odata.etag":"\"0x8D96CA2BC5A871B\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null,"identity":null}]}'
     headers:
       cache-control:
       - no-cache
@@ -75,9 +75,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Mon, 30 Aug 2021 23:50:03 GMT
+      - Tue, 31 Aug 2021 17:14:05 GMT
       elapsed-time:
-      - '18'
+      - '45'
       expires:
       - '-1'
       odata-version:
@@ -87,7 +87,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - feecf14b-09ec-11ec-91fa-74c63bed1137
+      - d94f920a-0a7e-11ec-8dec-74c63bed1137
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -117,15 +117,15 @@ interactions:
       cache-control:
       - no-cache
       date:
-      - Mon, 30 Aug 2021 23:50:03 GMT
+      - Tue, 31 Aug 2021 17:14:05 GMT
       elapsed-time:
-      - '24'
+      - '25'
       expires:
       - '-1'
       pragma:
       - no-cache
       request-id:
-      - fef8b689-09ec-11ec-949e-74c63bed1137
+      - d95de0dc-0a7e-11ec-b53e-74c63bed1137
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
@@ -155,7 +155,7 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Mon, 30 Aug 2021 23:50:03 GMT
+      - Tue, 31 Aug 2021 17:14:05 GMT
       elapsed-time:
       - '7'
       expires:
@@ -167,7 +167,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - ff04c563-09ec-11ec-ae44-74c63bed1137
+      - d96872ce-0a7e-11ec-8a06-74c63bed1137
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

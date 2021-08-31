@@ -19,7 +19,7 @@ interactions:
     uri: https://search78461aed.search.windows.net/synonymmaps?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search78461aed.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D96BF401CE8F75\"","name":"test-syn-map","format":"solr","synonyms":"USA,
+      string: '{"@odata.context":"https://search78461aed.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D96CA3A3E643C0\"","name":"test-syn-map","format":"solr","synonyms":"USA,
         United States, United States of America\nWashington, Wash. => WA","encryptionKey":null}'
     headers:
       cache-control:
@@ -29,11 +29,11 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Mon, 30 Aug 2021 20:23:19 GMT
+      - Tue, 31 Aug 2021 17:20:33 GMT
       elapsed-time:
-      - '202'
+      - '169'
       etag:
-      - W/"0x8D96BF401CE8F75"
+      - W/"0x8D96CA3A3E643C0"
       expires:
       - '-1'
       location:
@@ -45,7 +45,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 1d71340c-09d0-11ec-a8c8-74c63bed1137
+      - c0a50a75-0a7f-11ec-9cb3-74c63bed1137
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
@@ -66,7 +66,7 @@ interactions:
     uri: https://search78461aed.search.windows.net/synonymmaps?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search78461aed.search.windows.net/$metadata#synonymmaps","value":[{"@odata.etag":"\"0x8D96BF401CE8F75\"","name":"test-syn-map","format":"solr","synonyms":"USA,
+      string: '{"@odata.context":"https://search78461aed.search.windows.net/$metadata#synonymmaps","value":[{"@odata.etag":"\"0x8D96CA3A3E643C0\"","name":"test-syn-map","format":"solr","synonyms":"USA,
         United States, United States of America\nWashington, Wash. => WA","encryptionKey":null}]}'
     headers:
       cache-control:
@@ -76,9 +76,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Mon, 30 Aug 2021 20:23:19 GMT
+      - Tue, 31 Aug 2021 17:20:33 GMT
       elapsed-time:
-      - '70'
+      - '23'
       expires:
       - '-1'
       odata-version:
@@ -88,7 +88,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 1dbda7af-09d0-11ec-b25d-74c63bed1137
+      - c0d9f676-0a7f-11ec-b390-74c63bed1137
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
