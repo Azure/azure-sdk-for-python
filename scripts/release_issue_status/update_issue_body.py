@@ -11,10 +11,8 @@ def update_issue_body(sdk_repo, rest_repo, issue_number):
     for row in issue_body_list:
         if 'link' in row.lower():
             link = row.split(":", 1)[-1].strip()
-            break
         if 'readme tag' in row.lower():
             readme_tag = row.split(":", 1)[-1].strip()
-            print("find readme tag: ", readme_tag)
         if link and readme_tag:
             break
 
