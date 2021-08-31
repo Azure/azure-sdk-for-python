@@ -124,7 +124,9 @@ class AsyncLROBasePolling(LROBasePolling):
             # want to keep making azure.core.rest calls
             from azure.core.rest import HttpRequest as RestHttpRequest
             request = RestHttpRequest("GET", status_link)
-            return await self._client.send_request(request, _return_pipeline_response=True)
+            return await self._client.send_request(
+                request, _return_pipeline_response=True, **self._operation_config
+            )
         # if I am a azure.core.pipeline.transport.HttpResponse
         request = self._client.get(status_link)
 

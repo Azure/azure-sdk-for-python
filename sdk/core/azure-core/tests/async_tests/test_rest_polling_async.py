@@ -37,7 +37,7 @@ def deserialization_callback():
 
 @pytest.fixture
 def lro_poller(client, deserialization_callback):
-    async def _callback(request):
+    async def _callback(request, **kwargs):
         initial_response = await client.send_request(
             request=request,
             _return_pipeline_response=True
@@ -46,7 +46,7 @@ def lro_poller(client, deserialization_callback):
             client._client,
             initial_response,
             deserialization_callback,
-            AsyncLROBasePolling(0)
+            AsyncLROBasePolling(0, **kwargs)
         )
     return _callback
 
@@ -113,3 +113,8 @@ async def test_patch_location_polling_fail(lro_poller):
 async def test_delete_operation_location(lro_poller):
     result = await (await lro_poller(HttpRequest("DELETE", "/polling/operation-location"))).result()
     assert result['status'] == 'Succeeded'
+
+@pytest.mark.asyncio
+async def test_request_id(lro_poller):
+    result = await (await lro_poller(HttpRequest("POST", "/polling/request-id"), request_id="123456789")).result()
+    assert result['status'] == "Succeeded"

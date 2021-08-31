@@ -8,7 +8,7 @@ from flask import (
     Blueprint,
     request,
 )
-from .helpers import get_base_url
+from .helpers import get_base_url, assert_with_message
 
 polling_api = Blueprint('polling_api', __name__)
 
@@ -131,4 +131,23 @@ def initial_body_invalid():
         headers={
             'location': '{}/polling/location-url'.format(base_url),
         }
+    )
+
+@polling_api.route('/request-id', methods=["POST"])
+def request_id():
+    base_url = get_base_url(request)
+    return Response(
+        "",
+        status=201,
+        headers={
+            'location': '{}/polling/request-id-location'.format(base_url),
+        }
+    )
+
+@polling_api.route('/request-id-location', methods=["GET"])
+def request_id_location():
+    assert_with_message("request id", request.headers['X-Ms-Client-Request-Id'], "123456789")
+    return Response(
+        '{"status": "Succeeded"}',
+        status=200
     )
