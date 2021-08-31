@@ -22,6 +22,7 @@ from .._shared.utils import (get_authentication_policy, get_current_utc_time,
 from .._version import SDK_MONIKER
 from ._call_connection_async import CallConnection
 from ._server_call_async import ServerCall
+from .._converters import JoinCallRequestConverter
 
 
 class CallingServerClient(object):
@@ -143,10 +144,10 @@ class CallingServerClient(object):
         if not options:
             raise ValueError("options can not be None")
 
+        join_call_request = JoinCallRequestConverter.convert(source, options)
         join_call_response = await self._server_call_client.join_call(
-            server_call_id=server_call_id,
-            source=source,
-            call_options=options,
+            server_call_id,
+            join_call_request,
             **kwargs
         )
 

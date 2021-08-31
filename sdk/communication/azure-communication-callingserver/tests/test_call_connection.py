@@ -5,27 +5,21 @@
 # --------------------------------------------------------------------------
 
 import unittest
-import calendar
-from datetime import datetime
 import json
 
-from msrest.serialization import TZ_UTC
-from azure.core.credentials import AccessToken
 from azure.communication.callingserver._shared.models import CommunicationUserIdentifier
 from azure.communication.callingserver._models import (CreateCallOptions, MediaType,
     EventSubscriptionType, JoinCallOptions)
 from azure.communication.callingserver import CallingServerClient
 
 try:
-    from unittest.mock import Mock, patch
+    from unittest.mock import Mock
 except ImportError:  # python < 3.3
-    from mock import Mock, patch  # type: ignore
+    from mock import Mock  # type: ignore
 
 CALL_ID = "callId"
 CALLBACK_URI = "callBackUri"
-
-def _convert_datetime_to_utc_int(time_input):
-    return int(calendar.timegm(time_input.utctimetuple()))
+CONNECTION_STRING = "endpoint=https://REDACTED.communication.azure.com/;accesskey=eyJhbG=="
 
 def _create_mock_call_connection(status_code, payload):
     calling_server_client = _create_mock_calling_server_client(status_code, payload)
@@ -39,8 +33,8 @@ def _create_mock_calling_server_client(status_code, payload):
 
 def _create_calling_server_client(mock_transport=None):
     if mock_transport is None:
-        return CallingServerClient("https://endpoint", TestCallingServerClient.credential)
-    return CallingServerClient("https://endpoint", TestCallingServerClient.credential,
+        return CallingServerClient.from_connection_string(CONNECTION_STRING)
+    return CallingServerClient.from_connection_string(CONNECTION_STRING,
         transport=Mock(send=mock_transport))
 
 def _mock_response(status_code=200, headers=None, json_payload=None):
@@ -57,14 +51,6 @@ def _mock_response(status_code=200, headers=None, json_payload=None):
 
 class TestCallingServerClient(unittest.TestCase):
     """ UnitTesting Calling Server client methods. """
-
-    @classmethod
-    @patch('azure.communication.identity._shared.user_credential.CommunicationTokenCredential')
-    def setUpClass(cls, credential):
-        credential.get_token = Mock(return_value=AccessToken(
-            "some_token", _convert_datetime_to_utc_int(datetime.now().replace(tzinfo=TZ_UTC))
-        ))
-        TestCallingServerClient.credential = credential
 
     def test_create_connection(self):
         calling_server_client = _create_mock_calling_server_client(status_code=201, payload={
