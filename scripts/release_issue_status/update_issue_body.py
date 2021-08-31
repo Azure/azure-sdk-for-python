@@ -6,10 +6,15 @@ def update_issue_body(sdk_repo, rest_repo, issue_number):
     issue_info = sdk_repo.get_issue(number=issue_number)
     issue_body = issue_info.body
     issue_body_list = [i for i in issue_body.split("\n") if i]
-    # Get the link in issue body
+    # Get the link and readme tag in issue body
+    link, readme_tag = '', ''
     for row in issue_body_list:
         if 'link' in row.lower():
             link = row.split(":", 1)[-1].strip()
+            break
+        if 'readme tag' in row.lower():
+            readme_tag = row.split(":", 1)[-1].strip()
+        if link and readme_tag:
             break
 
     if link.count('https') > 1:
@@ -17,6 +22,11 @@ def update_issue_body(sdk_repo, rest_repo, issue_number):
         link = link.replace('[', "").replace(']', "").replace('(', "").replace(')', "")
 
     package_name, readme_link = get_pkname_and_readme_link(rest_repo, link)
+    
+    # Check readme tag format
+    if 'package' not in readme_tag:
+        readme_tag = 'package-{}'.format(readme_tag)
+        issue_body_list.insert(0, f'Readme Tag: {readme_tag}')
 
     issue_body_list.insert(0, f'\n{readme_link.replace("/readme.md", "")}')
     issue_body_list.insert(1, package_name)
