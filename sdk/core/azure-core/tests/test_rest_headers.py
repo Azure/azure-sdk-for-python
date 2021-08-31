@@ -250,10 +250,9 @@ def test_multiple_headers_commas(get_response_headers):
     h = get_response_headers(HttpRequest("GET", "/headers/duplicate/commas"))
     assert h["Set-Cookie"] == "a,  b, c"
 
-def test_headers_link():
-    headers = {}
-    internal_response = Response()
-    internal_response.headers = headers
-    response = RestRequestsTransportResponse(request=None, internal_response=internal_response)
-    headers["Update"] = "foo"
-    assert response.headers["Update"] == "foo"
+def test_update(get_response_headers):
+    h = get_response_headers(HttpRequest("GET", "/headers/duplicate/commas"))
+    assert h["Set-Cookie"] == "a,  b, c"
+    h.update({"Set-Cookie": "override", "new-key": "new-value"})
+    assert h['Set-Cookie'] == 'override'
+    assert h["new-key"] == "new-value"

@@ -221,9 +221,11 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         *,
-        request: HttpRequest
+        request: HttpRequest,
+        **kwargs
     ):
         self.request = request
+        self._internal_response = kwargs.pop("internal_response")
         self.status_code = None
         self.headers = _case_insensitive_dict({})
         self.reason = None
