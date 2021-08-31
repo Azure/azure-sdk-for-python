@@ -13,6 +13,8 @@ import six
 
 from helpers import FAKE_CLIENT_ID
 
+ID_TOKEN_PII_CLAIMS = ("email", "name", "preferred_username", "unique_name")
+
 SECRET_FIELDS = frozenset(
     {
         "access_token",
@@ -33,6 +35,19 @@ SECRET_HEADERS = frozenset(
         "X-IDENTITY-SECRET",
     }
 )
+
+
+def set_jwt_claims(jwt, claims):
+    header, encoded_payload, signed = jwt.split(".")
+    decoded_payload = base64.b64decode(encoded_payload + "=" * (-len(encoded_payload) % 4))
+
+    payload = json.loads(six.ensure_str(decoded_payload))
+    for name, value in claims:
+        if name in payload:
+            payload[name] = value
+
+    new_payload = six.ensure_binary(json.dumps(payload))
+    return ".".join((header, base64.b64encode(new_payload).decode("utf-8"), signed))
 
 
 class RecordingRedactor(RecordingProcessor):
@@ -63,7 +78,10 @@ class RecordingRedactor(RecordingProcessor):
             return response
 
         for field in body:
-            if field in SECRET_FIELDS:
+            if field == "id_token":
+                scrubbed = set_jwt_claims(body["id_token"], [(claim, "redacted") for claim in ID_TOKEN_PII_CLAIMS])
+                body["id_token"] = scrubbed
+            elif field in SECRET_FIELDS:
                 fake_value = self._get_fake_value(body[field])
                 body[field] = fake_value
 
@@ -82,21 +100,9 @@ class IdTokenProcessor(RecordingProcessor):
     def process_response(self, response):
         """Modifies an id token's claims to pass MSAL validation during playback"""
         try:
-            # decode the recorded token
             body = json.loads(six.ensure_str(response["body"]["string"]))
-            header, encoded_payload, signed = body["id_token"].split(".")
-            decoded_payload = base64.b64decode(encoded_payload + "=" * (4 - len(encoded_payload) % 4))
-
-            # set the token's expiry time to one hour from now
-            payload = json.loads(six.ensure_str(decoded_payload))
-            payload["exp"] = int(time.time()) + 3600
-
-            # set the audience to match the client ID used in test playback
-            payload["aud"] = FAKE_CLIENT_ID
-
-            # write the modified token to the response body
-            new_payload = six.ensure_binary(json.dumps(payload))
-            body["id_token"] = ".".join((header, base64.b64encode(new_payload).decode("utf-8"), signed))
+            new_jwt = set_jwt_claims(body["id_token"], [("exp", int(time.time()) + 3600), ("aud", FAKE_CLIENT_ID)])
+            body["id_token"] = new_jwt
             response["body"]["string"] = six.ensure_binary(json.dumps(body))
         except KeyError:
             pass
