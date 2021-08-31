@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import json 
+import json
 from typing import Any, TYPE_CHECKING, List, Union, overload
 from azure.core.tracing.decorator import distributed_trace
 from ._generated import (
@@ -100,12 +100,12 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         """Close the :class:`~azure.ai.translation.document.DocumentTranslationClient` session."""
         return self._client.close()
 
-    @overload
+    @overload  # type: ignore
     def begin_translation(self, source_url, target_url, target_language_code, **kwargs):  # type: ignore
         # type: (str, str, str, **Any) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]
         pass
 
-    @overload
+    @overload  # type: ignore
     def begin_translation(self, inputs, **kwargs):  # type: ignore
         # type: (List[DocumentTranslationInput], **Any) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]
         pass
