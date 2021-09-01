@@ -30,7 +30,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async  # type: 
 
 from ._cosmos_client_connection_async import CosmosClientConnection
 from .._base import build_options
-# from .container import ContainerProxy
+from .container import ContainerProxy
 from ..offer import Offer
 from ..http_constants import StatusCodes
 from ..exceptions import CosmosResourceNotFoundError
@@ -112,3 +112,31 @@ class DatabaseProxy(object):
             response_hook(self.client_connection.last_response_headers, self._properties)
 
         return cast('Dict[str, Any]', self._properties)
+
+    def get_container_client(self, container):
+        # type: (Union[str, ContainerProxy, Dict[str, Any]]) -> ContainerProxy
+        """Get a `ContainerProxy` for a container with specified ID (name).
+
+        :param container: The ID (name) of the container, a :class:`ContainerProxy` instance,
+            or a dict representing the properties of the container to be retrieved.
+        :rtype: ~azure.cosmos.ContainerProxy
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/examples.py
+                :start-after: [START get_container]
+                :end-before: [END get_container]
+                :language: python
+                :dedent: 0
+                :caption: Get an existing container, handling a failure if encountered:
+                :name: get_container
+        """
+        if isinstance(container, ContainerProxy):
+            id_value = container.id
+        else:
+            try:
+                id_value = container["id"]
+            except TypeError:
+                id_value = container
+
+        return ContainerProxy(self.client_connection, self.database_link, id_value)

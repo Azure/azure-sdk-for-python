@@ -100,13 +100,13 @@ def get_test_item():
     return async_item
 
 db_name = "AsyncDB"
-c_name = "AsyncContainer"
+cont_name = "AsyncContainer"
 
 def create_test():
     client = SyncClient(endpoint, key)
     db = client.create_database(id=db_name)
     container = db.create_container(
-        id=c_name,
+        id=cont_name,
 		partition_key=PartitionKey(path="/id"))
     ids = []
     for i in range(10):
@@ -134,6 +134,10 @@ async def with_read_test():
 		db = client.get_database_client(db_name)
 		if db: print(db)
 		x = await db.read()
+		print(x)
+		cont = db.get_container_client(cont_name)
+		if cont: print(cont)
+		x = await cont.read()
 		print(x)
 
 async def main():

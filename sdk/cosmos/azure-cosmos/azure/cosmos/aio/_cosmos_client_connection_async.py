@@ -275,6 +275,27 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
         return await self.Read(path, "dbs", database_id, None, options, **kwargs)
 
+    async def ReadContainer(self, collection_link, options=None, **kwargs):
+        """Reads a collection.
+
+        :param str collection_link:
+            The link to the document collection.
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The read Collection.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        path = base.GetPathFromLink(collection_link)
+        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
+        return await self.Read(path, "colls", collection_id, None, options, **kwargs)
+
     async def Read(self, path, typ, id, initial_headers, options=None, **kwargs):  # pylint: disable=redefined-builtin
         """Reads a Azure Cosmos resource and returns it.
 
