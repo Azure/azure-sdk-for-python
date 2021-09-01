@@ -77,7 +77,7 @@ class SchemaRegistryAvroSerializerTests(AzureTestCase):
     @SchemaRegistryPowerShellPreparer()
     def test_basic_sr_avro_serializer(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
         sr_client = self.create_basic_client(SchemaRegistryClient, endpoint=schemaregistry_endpoint)
-        sr_avro_serializer = SchemaRegistryAvroSerializer(sr_client, schemaregistry_group)
+        sr_avro_serializer = SchemaRegistryAvroSerializer(sr_client, schemaregistry_group, auto_register_schemas=True)
 
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         schema = avro.schema.parse(schema_str)
@@ -102,9 +102,9 @@ class SchemaRegistryAvroSerializerTests(AzureTestCase):
         sr_avro_serializer.close()
 
     @SchemaRegistryPowerShellPreparer()
-    def test_basic_sr_avro_serializer_with_auto_register_schemas(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
+    def test_basic_sr_avro_serializer_without_auto_register_schemas(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
         sr_client = self.create_basic_client(SchemaRegistryClient, endpoint=schemaregistry_endpoint)
-        sr_avro_serializer = SchemaRegistryAvroSerializer(sr_client, schemaregistry_group, auto_register_schemas=True)
+        sr_avro_serializer = SchemaRegistryAvroSerializer(sr_client, schemaregistry_group)
 
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         schema = avro.schema.parse(schema_str)
