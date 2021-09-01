@@ -40,14 +40,23 @@ class SchemaRegistryAvroSerializer(object):
      which is used to register schema and retrieve schema from the service.
     :type schema_registry: ~azure.schemaregistry.SchemaRegistryClient
     :param str schema_group: Schema group under which schema should be registered.
+    :keyword bool auto_register_schemas: When true, register new schemas passed to serialize.
+     Otherwise, and by default, fail if it has not been pre-registered in the registry.
     :keyword str codec: The writer codec. If None, let the avro library decides.
 
     """
+
     def __init__(self, schema_registry, schema_group, **kwargs):
         # type: ("SchemaRegistryClient", str, Any) -> None
         self._schema_group = schema_group
         self._avro_serializer = AvroObjectSerializer(codec=kwargs.get("codec"))
         self._schema_registry_client = schema_registry  # type: "SchemaRegistryClient"
+        self._auto_register_schemas = kwargs.get("auto_register_schemas", False)
+        self._auto_register_schema_func = (
+                self._schema_registry_client.register_schema
+                if self._auto_register_schemas
+                else self._schema_registry_client.get_schema_id
+            )
         self._id_to_schema = {}
         self._schema_to_id = {}
         self._user_input_schema_cache = {}
@@ -63,7 +72,7 @@ class SchemaRegistryAvroSerializer(object):
 
     def close(self):
         # type: () -> None
-        """ This method is to close the sockets opened by the client.
+        """This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
         """
         self._schema_registry_client.close()
@@ -85,12 +94,8 @@ class SchemaRegistryAvroSerializer(object):
         try:
             return self._schema_to_id[schema_str]
         except KeyError:
-            schema_id = self._schema_registry_client.register_schema(
-                self._schema_group,
-                schema_name,
-                "Avro",
-                schema_str,
-                **kwargs
+            schema_id = self._auto_register_schema_func(
+                self._schema_group, schema_name, "Avro", schema_str, **kwargs
             ).schema_id
             self._schema_to_id[schema_str] = schema_id
             self._id_to_schema[schema_id] = schema_str
@@ -108,7 +113,9 @@ class SchemaRegistryAvroSerializer(object):
         try:
             return self._id_to_schema[schema_id]
         except KeyError:
-            schema_str = self._schema_registry_client.get_schema(schema_id, **kwargs).schema_content
+            schema_str = self._schema_registry_client.get_schema(
+                schema_id, **kwargs
+            ).schema_content
             self._id_to_schema[schema_id] = schema_str
             self._schema_to_id[schema_str] = schema_id
             return schema_str
@@ -133,14 +140,14 @@ class SchemaRegistryAvroSerializer(object):
             self._user_input_schema_cache[raw_input_schema] = parsed_schema
             cached_schema = parsed_schema
 
-        record_format_identifier = b'\0\0\0\0'
+        record_format_identifier = b"\0\0\0\0"
         schema_id = self._get_schema_id(cached_schema.fullname, cached_schema, **kwargs)
         data_bytes = self._avro_serializer.serialize(data, cached_schema)
 
         stream = BytesIO()
 
         stream.write(record_format_identifier)
-        stream.write(schema_id.encode('utf-8'))
+        stream.write(schema_id.encode("utf-8"))
         stream.write(data_bytes)
         stream.flush()
 
@@ -157,8 +164,12 @@ class SchemaRegistryAvroSerializer(object):
         :rtype: Dict[str, Any]
         """
         # record_format_identifier = data[0:4]  # The first 4 bytes are retained for future record format identifier.
-        schema_id = data[SCHEMA_ID_START_INDEX:(SCHEMA_ID_START_INDEX + SCHEMA_ID_LENGTH)].decode('utf-8')
+        schema_id = data[
+            SCHEMA_ID_START_INDEX : (SCHEMA_ID_START_INDEX + SCHEMA_ID_LENGTH)
+        ].decode("utf-8")
         schema_content = self._get_schema(schema_id, **kwargs)
 
-        dict_data = self._avro_serializer.deserialize(data[DATA_START_INDEX:], schema_content)
+        dict_data = self._avro_serializer.deserialize(
+            data[DATA_START_INDEX:], schema_content
+        )
         return dict_data
