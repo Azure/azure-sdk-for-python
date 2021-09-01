@@ -128,15 +128,48 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
                 span.attributes["http.method"],
                 span.name,
             )
+            data.properties["request.name"] = data.name
+            url = ""
             if "http.user_agent" in span.attributes:
                 envelope.tags["ai.user.userAgent"] = span.attributes["http.user_agent"]
             if "http.client_ip" in span.attributes:
                 envelope.tags["ai.location.ip"] = span.attributes["http.client_ip"]
             elif "net.peer.ip" in span.attributes:
                 envelope.tags["ai.location.ip"] = span.attributes["net.peer.ip"]
+            # url
             if "http.url" in span.attributes:
-                data.url = span.attributes["http.url"][:2048]  # Breeze max length
-                data.properties["request.url"] = span.attributes["http.url"]
+                url = span.attributes["http.url"]
+            elif "http.scheme" in span.attributes and "http.target" in span.attributes:
+                scheme = span.attributes["http.scheme"]
+                http_target = span.attributes["http.target"]
+                if "http.host" in span.attributes:
+                    url = "{}://{}{}".format(
+                        scheme,
+                        span.attributes["http.host"],
+                        http_target,
+                    )
+                elif "net.host.port" in span.attributes:
+                    host_port = span.attributes["net.host.port"]
+                    if "http.server_name" in span.attributes:
+                        server_name = span.attributes["http.server_name"]
+                        url = "{}://{}:{}{}".format(
+                            scheme,
+                            server_name,
+                            host_port,
+                            http_target,
+                        )
+                    elif "net.host.name" in span.attributes:
+                        host_name = span.attributes["net.host.name"]
+                        url = "{}://{}:{}{}".format(
+                            scheme,
+                            host_name,
+                            host_port,
+                            http_target,
+                        )
+            if url:
+                url = url[:2048]  # Breeze max length
+            data.url = url
+            data.properties["request.url"] = url
             if "http.status_code" in span.attributes:
                 status_code = span.attributes["http.status_code"]
                 data.response_code = str(status_code)
@@ -188,17 +221,17 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
                 port = span.attributes["net.peer.port"]
                 # TODO: check default port for rpc
                 # This logic assumes default ports never conflict across dependency types
-                if port != _get_default_port_http(span.attributes["http.scheme"]) and \
-                    port != _get_default_port_db(span.attributes["db.system"]):
+                if port != _get_default_port_http(span.attributes.get("http.scheme")) and \
+                    port != _get_default_port_db(span.attributes.get("db.system")):
                     target = "{}:{}".format(target, port)
         if span.kind is SpanKind.CLIENT:
             if "http.method" in span.attributes:  # HTTP
                 data.type = "HTTP"
                 scheme = span.attributes.get("http.scheme")
+                url = ""
+                # Target
                 if "http.url" in span.attributes:
                     url = span.attributes["http.url"]
-                    # data is the url
-                    data.data = url
                     # http specific logic for target
                     if "peer.service" not in span.attributes:
                         try:
@@ -222,6 +255,36 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
                             target = host
                     except Exception:  # pylint: disable=broad-except
                         logger.warning("Error while parsing hostname.")
+                # url
+                if not url:
+                    if scheme and "http.target" in span.attributes:
+                        http_target = span.attributes["http.target"]
+                        if "http.host" in span.attributes:
+                            url = "{}://{}{}".format(
+                                scheme,
+                                span.attributes["http.host"],
+                                http_target,
+                            )
+                        elif "net.peer.port" in span.attributes:
+                            peer_port = span.attributes["net.peer.port"]
+                            if "net.peer.name" in span.attributes:
+                                peer_name = span.attributes["net.peer.name"]
+                                url = "{}://{}:{}{}".format(
+                                    scheme,
+                                    peer_name,
+                                    peer_port,
+                                    http_target,
+                                )
+                            elif "net.peer.ip" in span.attributes:
+                                peer_ip = span.attributes["net.peer.ip"]
+                                url = "{}://{}:{}{}".format(
+                                    scheme,
+                                    peer_ip,
+                                    peer_port,
+                                    http_target,
+                                )
+                # data is url
+                data.data = url
                 if "http.status_code" in span.attributes:
                     status_code = span.attributes["http.status_code"]
                     data.result_code = str(status_code)

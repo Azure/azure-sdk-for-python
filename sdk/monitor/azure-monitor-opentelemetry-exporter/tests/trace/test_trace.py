@@ -291,6 +291,36 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.target, "www.wikipedia.org")
 
+        # url
+        span._attributes = {
+            "http.method": "GET",
+            "http.scheme": "https",
+            "http.host": "www.wikipedia.org",
+            "http.target": "/path/12314/?q=ddds#123"
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.data, "https://www.wikipedia.org/path/12314/?q=ddds#123")
+
+        span._attributes = {
+            "http.method": "GET",
+            "http.scheme": "https",
+            "net.peer.port": "8080",
+            "net.peer.name": "example.com",
+            "http.target": "/path/12314/?q=ddds#123"
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.data, "https://example.com:8080/path/12314/?q=ddds#123")
+
+        span._attributes = {
+            "http.method": "GET",
+            "http.scheme": "https",
+            "net.peer.port": "8080",
+            "net.peer.ip": "192.168.0.1",
+            "http.target": "/path/12314/?q=ddds#123"
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.data, "https://192.168.0.1:8080/path/12314/?q=ddds#123")
+
     def test_span_to_envelope_client_db(self):
         exporter = self._exporter
         start_time = 1575494316027613500
@@ -507,6 +537,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.tags["ai.user.userAgent"], "agent")
         self.assertEqual(envelope.tags["ai.location.ip"], "client_ip")
         self.assertEqual(envelope.data.base_data.url, "https://www.wikipedia.org/wiki/Rabbit")
+        self.assertEqual(envelope.data.base_data.properties["request.name"], "test")
         self.assertEqual(envelope.data.base_data.properties["request.url"], "https://www.wikipedia.org/wiki/Rabbit")
         
         # location
@@ -516,6 +547,36 @@ class TestAzureTraceExporter(unittest.TestCase):
         }
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.tags["ai.location.ip"], "peer_ip")
+
+        # url
+        span._attributes = {
+            "http.method": "GET",
+            "http.scheme": "https",
+            "http.target": "/path",
+            "http.host": "www.example.org",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.url, "https://www.example.org/path")
+
+        span._attributes = {
+            "http.method": "GET",
+            "http.scheme": "https",
+            "http.target": "/path",
+            "net.host.port": "35555",
+            "http.server_name": "example.com",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.url, "https://example.com:35555/path")
+
+        span._attributes = {
+            "http.method": "GET",
+            "http.scheme": "https",
+            "http.target": "/path",
+            "net.host.port": "35555",
+            "net.host.name": "localhost",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.url, "https://localhost:35555/path")
 
     def test_span_envelope_server_messaging(self):
         exporter = self._exporter
