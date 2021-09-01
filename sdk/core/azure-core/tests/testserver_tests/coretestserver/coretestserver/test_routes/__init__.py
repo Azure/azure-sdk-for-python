@@ -13,6 +13,7 @@ from .polling import polling_api
 from .streams import streams_api
 from .urlencoded import urlencoded_api
 from .xml_route import xml_api
+from .headers import headers_api
 
 __all__ = [
     "basic_api",
@@ -23,4 +24,5 @@ __all__ = [
     "streams_api",
     "urlencoded_api",
     "xml_api",
+    "headers_api",
 ]
