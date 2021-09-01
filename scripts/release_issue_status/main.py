@@ -216,7 +216,7 @@ def main():
             item.bot_advice = 'new comment for author.'
         elif item.delay_from_latest_update >= 7:
             item.bot_advice = 'delay for a long time and better to handle now.'
-        if item.comment_num > 1:
+        if item.comment_num > 1 and item.language == 'Python':
             try:
                 auto_close_issue(request_repo, item.issue_object.number, item.package)
             except Exception as e:
