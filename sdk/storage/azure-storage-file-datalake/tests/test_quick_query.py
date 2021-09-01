@@ -905,7 +905,7 @@ class StorageQuickQueryTest(StorageTestCase):
         with open(parquet_path, "rb") as parquet_data:
             file_client.upload_data(parquet_data, overwrite=True)
 
-        reader = file_client.query_file(expression, file_format=QuickQueryDialect.ParquetDialect)
+        reader = file_client.query_file(expression, file_format=QuickQueryDialect.Parquet)
         real_data = reader.readall()
 
         self.assertEqual(real_data, expected_data)
@@ -924,7 +924,7 @@ class StorageQuickQueryTest(StorageTestCase):
 
         with self.assertRaises(ValueError):
             file_client.query_file(
-                expression, file_format=QuickQueryDialect.ParquetDialect,
-                output_format=QuickQueryDialect.ParquetDialect)
+                expression, file_format=QuickQueryDialect.Parquet,
+                output_format=QuickQueryDialect.Parquet)
 
 # ------------------------------------------------------------------------------
