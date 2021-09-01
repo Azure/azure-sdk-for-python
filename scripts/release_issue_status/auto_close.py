@@ -9,6 +9,7 @@ def auto_close_issue(sdk_repo, issue_number, package_name):
     issue_author = issue_info.user.login
     last_comment = list(issue_info.get_comments())[-1]
     last_comment_date = last_comment.created_at
+    print("************{}    {}*******".format(issue_number, package_name))
     last_version, last_time = get_last_released_date(package_name)
     if last_time > last_comment_date:
         comment = f'Hi @{issue_author}, pypi link: https://pypi.org/project/{package_name}/{last_version}/'
