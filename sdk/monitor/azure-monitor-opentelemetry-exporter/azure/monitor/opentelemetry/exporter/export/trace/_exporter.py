@@ -82,6 +82,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
 
 # pylint: disable=too-many-statements
 # pylint: disable=too-many-branches
+# pylint: disable=too-many-locals
 def _convert_span_to_envelope(span: Span) -> TelemetryItem:
     envelope = TelemetryItem(
         name="",
