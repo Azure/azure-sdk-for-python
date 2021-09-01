@@ -99,6 +99,8 @@ class SchemaRegistryAvroSerializerTests(AzureTestCase):
         assert decoded_data["favorite_number"] == 7
         assert decoded_data["favorite_color"] == u"red"
 
+        sr_avro_serializer.close()
+
     @SchemaRegistryPowerShellPreparer()
     def test_basic_sr_avro_serializer_with_auto_register_schemas(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
         sr_client = self.create_basic_client(SchemaRegistryClient, endpoint=schemaregistry_endpoint)
