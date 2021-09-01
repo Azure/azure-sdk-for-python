@@ -41,7 +41,7 @@ class SchemaRegistryAvroSerializer(object):
     :type schema_registry: ~azure.schemaregistry.SchemaRegistryClient
     :param str schema_group: Schema group under which schema should be registered.
     :keyword bool auto_register_schemas: When true, register new schemas passed to serialize.
-    Otherwise, and by default, fail if it has not been pre-registered in the registry.
+     Otherwise, and by default, fail if it has not been pre-registered in the registry.
     :keyword str codec: The writer codec. If None, let the avro library decides.
 
     """
