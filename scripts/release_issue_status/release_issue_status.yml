@@ -36,7 +36,7 @@ jobs:
         export CONN_STR=$(ENV_CONN_STR)
         export FILE=$(ENV_FILE)
         export TOKEN=$(USR_TOKEN)
-        export COOKIE=$(COOKIE)
+        export HEADERS=$(PIPELINE_HEADERS)
 
         # create virtual env
         python -m venv venv-sdk
