@@ -15,6 +15,7 @@
   - `azure.search.documents.indexes.models.SearchIndexerDataIdentity`
   - `azure.search.documents.indexes.models.SearchIndexerDataNoneIdentity`
   - `azure.search.documents.indexes.models.SearchIndexerDataUserAssignedIdentity`
+- Added `normalizer_name` property to `AnalyzeTextOptions` model.
 
 ## 11.3.0b2 (2021-08-10)
 
