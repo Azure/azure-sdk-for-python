@@ -47,7 +47,7 @@ class AzureSchemaRegistryConfiguration(Configuration):
 
         self.credential = credential
         self.endpoint = endpoint
-        self.api_version = "2017-04"
+        self.api_version = "2020-09-01-preview"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://eventhubs.azure.net/.default'])
         kwargs.setdefault('sdk_moniker', 'azureschemaregistry/{}'.format(VERSION))
         self._configure(**kwargs)
