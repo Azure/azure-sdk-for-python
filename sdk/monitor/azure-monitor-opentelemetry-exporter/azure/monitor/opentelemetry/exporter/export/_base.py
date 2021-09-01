@@ -132,25 +132,25 @@ class BaseExporter:
                     return ExportResult.FAILED_RETRYABLE
                 if _is_redirect_code(response_error.status_code):
                     self._consecutive_redirects = self._consecutive_redirects + 1
-                    if self._consecutive_redirects < self.client._config.redirect_policy.max_redirects:
+                    if self._consecutive_redirects < self.client._config.redirect_policy.max_redirects:  # pylint: disable=W0212
                         if response_error.response and response_error.response.headers:
                             location = response_error.response.headers.get("location")
                             if location:
                                 url = urlparse(location)
                                 if url.scheme and url.netloc:
                                     # Change the host to the new redirected host
-                                    self.client._config.host = "{}://{}".format(url.scheme, url.netloc)
+                                    self.client._config.host = "{}://{}".format(url.scheme, url.netloc)  # pylint: disable=W0212
                                     # Attempt to export again
                                     return self._transmit(envelopes)
                         logger.error(
                             "Error parsing redirect information."
                         )
-                        return ExportResult.FAILED_NOT_RETRYABLE 
-                    else:
-                        logger.error(
-                            "Error sending telemetry because of circular redirects. Please check the integrity of your connection string."
-                        )
                         return ExportResult.FAILED_NOT_RETRYABLE
+                    logger.error(
+                        "Error sending telemetry because of circular redirects." \
+                        "Please check the integrity of your connection string."
+                    )
+                    return ExportResult.FAILED_NOT_RETRYABLE
                 return ExportResult.FAILED_NOT_RETRYABLE
             except ServiceRequestError as request_error:
                 # Errors when we're fairly sure that the server did not receive the

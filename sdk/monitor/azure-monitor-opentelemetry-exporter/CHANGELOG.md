@@ -2,7 +2,7 @@
 
   **Features**
   - Support stamp specific redirect in exporters
-      ([#16580](https://github.com/Azure/azure-sdk-for-python/pull/16580))
+      ([#20489](https://github.com/Azure/azure-sdk-for-python/pull/20489))
 
 ## 1.0.0b4 (2021-04-06)
 
