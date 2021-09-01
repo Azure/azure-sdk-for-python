@@ -23,10 +23,7 @@ class SecretProperties(object):
         # type: (Optional[_models.SecretAttributes], Optional[str], **Any) -> None
         self._attributes = attributes
         self._id = vault_id
-        if vault_id is None:
-            self._vault_id = None
-        else:
-            self._vault_id = KeyVaultSecretIdentifier(vault_id)
+        self._vault_id = KeyVaultSecretIdentifier(vault_id) if vault_id else None
         self._content_type = kwargs.get("content_type", None)
         self._key_id = kwargs.get("key_id", None)
         self._managed = kwargs.get("managed", None)
@@ -93,55 +90,45 @@ class SecretProperties(object):
         # type: () -> Union[bool, None]
         """Whether the secret is enabled for use
 
-        :rtype: Union[bool, None]
+        :rtype: union[bool, None]
         """
-        if self._attributes is None:
-            return None
-        return self._attributes.enabled
+        return self._attributes.enabled if self._attributes else None
 
     @property
     def not_before(self):
         # type: () -> Union[datetime, None]
         """The time before which the secret can not be used, in UTC
 
-        :rtype: Union[~datetime.datetime, None]
+        :rtype: union[~datetime.datetime, None]
         """
-        if self._attributes is None:
-            return None
-        return self._attributes.not_before
+        return self._attributes.not_before if self._attributes else None
 
     @property
     def expires_on(self):
         # type: () -> Union[datetime, None]
         """When the secret expires, in UTC
 
-        :rtype: Union[~datetime.datetime, None]
+        :rtype: union[~datetime.datetime, None]
         """
-        if self._attributes is None:
-            return None
-        return self._attributes.expires
+        return self._attributes.expires if self._attributes else None
 
     @property
     def created_on(self):
         # type: () -> Union[datetime, None]
         """When the secret was created, in UTC
 
-        :rtype: Union[~datetime.datetime, None]
+        :rtype: union[~datetime.datetime, None]
         """
-        if self._attributes is None:
-            return None
-        return self._attributes.created
+        return self._attributes.created if self._attributes else None
 
     @property
     def updated_on(self):
         # type: () -> Union[datetime, None]
         """When the secret was last updated, in UTC
 
-        :rtype: Union[~datetime.datetime, None]
+        :rtype: union[~datetime.datetime, None]
         """
-        if self._attributes is None:
-            return None
-        return self._attributes.updated
+        return self._attributes.updated if self._attributes else None
 
     @property
     def recoverable_days(self):
@@ -162,9 +149,7 @@ class SecretProperties(object):
 
         :rtype: union[str, None]
         """
-        if self._attributes is None:
-            return None
-        return self._attributes.recovery_level
+        return self._attributes.recovery_level if self._attributes else None
 
     @property
     def vault_url(self):
@@ -173,9 +158,7 @@ class SecretProperties(object):
 
         :rtype: union[str, None]
         """
-        if self._vault_id is None:
-            return None
-        return self._vault_id.vault_url
+        return self._vault_id.vault_url if self._vault_id else None
 
     @property
     def name(self):
@@ -184,9 +167,7 @@ class SecretProperties(object):
 
         :rtype: union[str, None]
         """
-        if self._vault_id is None:
-            return None
-        return self._vault_id.name
+        return self._vault_id.name if self._vault_id else None
 
     @property
     def version(self):
@@ -195,9 +176,7 @@ class SecretProperties(object):
 
         :rtype: union[str, None]
         """
-        if self._vault_id is None:
-            return None
-        return self._vault_id.version
+        return self._vault_id.version if self._vault_id else None
 
     @property
     def tags(self):
