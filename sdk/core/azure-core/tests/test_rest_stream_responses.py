@@ -79,6 +79,7 @@ def test_iter_bytes(client):
         assert response.is_stream_consumed
         assert raw == b"Hello, world!"
 
+@pytest.mark.skip(reason="We've gotten rid of iter_text for now")
 def test_iter_text(client):
     request = HttpRequest("GET", "/basic/string")
 
@@ -88,6 +89,7 @@ def test_iter_text(client):
             content += part
         assert content == "Hello, world!"
 
+@pytest.mark.skip(reason="We've gotten rid of iter_lines for now")
 def test_iter_lines(client):
     request = HttpRequest("GET", "/basic/lines")
 
@@ -175,18 +177,18 @@ def test_decompress_compressed_header(client):
     url = "https://{}.blob.core.windows.net/tests/test_with_header.tar.gz".format(account_name)
     request = HttpRequest("GET", url)
     response = client.send_request(request, stream=True)
-    iter = response.iter_text()
-    data = "".join(list(iter))
-    assert data == "test"
+    iter = response.iter_bytes()
+    data = b"".join(list(iter))
+    assert data == b"test"
 
 def test_iter_read(client):
     # thanks to McCoy Patiño for this test!
-    request = HttpRequest("GET", "/basic/lines")
+    request = HttpRequest("GET", "/basic/string")
     response = client.send_request(request, stream=True)
     response.read()
-    iterator = response.iter_lines()
-    for line in iterator:
-        assert line
+    iterator = response.iter_bytes()
+    for part in iterator:
+        assert part
     assert response.text()
 
 def test_iter_read_back_and_forth(client):
@@ -196,11 +198,11 @@ def test_iter_read_back_and_forth(client):
     # the reason why the code flow is like this, is because the 'iter_x' functions don't
     # actually read the contents into the response, the output them. Once they're yielded,
     # the stream is closed, so you have to catch the output when you iterate through it
-    request = HttpRequest("GET", "/basic/lines")
+    request = HttpRequest("GET", "/basic/string")
     response = client.send_request(request, stream=True)
-    iterator = response.iter_lines()
-    for line in iterator:
-        assert line
+    iterator = response.iter_bytes()
+    for part in iterator:
+        assert part
     with pytest.raises(ResponseNotReadError):
         response.text()
     with pytest.raises(StreamConsumedError):
@@ -209,12 +211,12 @@ def test_iter_read_back_and_forth(client):
         response.text()
 
 def test_stream_with_return_pipeline_response(client):
-    request = HttpRequest("GET", "/basic/lines")
+    request = HttpRequest("GET", "/basic/string")
     pipeline_response = client.send_request(request, stream=True, _return_pipeline_response=True)
     assert hasattr(pipeline_response, "http_request")
     assert hasattr(pipeline_response, "http_response")
     assert hasattr(pipeline_response, "context")
-    assert list(pipeline_response.http_response.iter_lines()) == ['Hello,\n', 'world!']
+    assert list(pipeline_response.http_response.iter_bytes()) == [b'Hello, world!']
 
 def test_error_reading(client):
     request = HttpRequest("GET", "/errors/403")

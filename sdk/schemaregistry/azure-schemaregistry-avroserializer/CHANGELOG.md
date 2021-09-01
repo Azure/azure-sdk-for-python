@@ -6,6 +6,12 @@
 
 - `auto_register_schemas` keyword argument has been added to `SchemaRegistryAvroSerializer`, which will allow for automatically registering schemas passed in to the `serialize`.
 
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.0.0b2 (2021-08-18)
 
 This version and all future versions will require Python 2.7 or Python 3.6+, Python 3.5 is no longer supported.

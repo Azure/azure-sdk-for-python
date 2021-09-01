@@ -970,14 +970,14 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
                                                          rk=row_key_with_single_quote)
 
             sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
-            resp = await self.table.upsert_entity(mode=UpdateMode.MERGE, entity=sent_entity)
+            resp = await self.table.upsert_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             self._assert_valid_metadata(resp)
             received_entity = await self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
             self._assert_updated_entity(received_entity)
 
             sent_entity['newField'] = u'newFieldValue'
-            resp = await self.table.update_entity(mode=UpdateMode.MERGE, entity=sent_entity)
+            resp = await self.table.update_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             self._assert_valid_metadata(resp)
             received_entity = await self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
@@ -2016,5 +2016,58 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             assert result['content']['PartitionKey'] == partition
             assert result['content']['Value'] == 'foobar'
             assert result['content']['Answer'] == 42
+        finally:
+            await self._tear_down()
+
+    @tables_decorator_async
+    async def test_keys_with_specialchar(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            table2_name = self._get_table_reference('table2')
+            table2 = self.ts.get_table_client(table2_name)
+            await table2.create_table()
+
+            # Act
+            entity1 = {
+                'PartitionKey': "A'aaa\"_bbbb2",
+                'RowKey': '"A\'aaa"_bbbb2',
+                'test': '"A\'aaa"_bbbb2'
+            }
+
+            await self.table.create_entity(entity1.copy())
+            get_entity = await self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
+            await self.table.upsert_entity(entity1.copy(), mode='merge')
+            get_entity = await self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
+            await self.table.upsert_entity(entity1.copy(), mode='replace')
+            get_entity = await self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
+            await self.table.update_entity(entity1.copy(), mode='merge')
+            get_entity = await self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
+            await self.table.update_entity(entity1.copy(), mode='replace')
+            get_entity = await self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
+
+            entity_results = self.table.list_entities()
+            async for entity in entity_results:
+                assert entity == entity1
+                get_entity = await self.table.get_entity(
+                    partition_key=entity['PartitionKey'],
+                    row_key=entity['RowKey'])
+                assert get_entity == entity1
+
         finally:
             await self._tear_down()
