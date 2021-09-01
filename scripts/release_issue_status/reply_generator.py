@@ -1,3 +1,4 @@
+import auto_pipeline_run as apr
 import re
 
 issue_object_rg = None
@@ -76,13 +77,16 @@ def swagger_generator_parse(context, latest_pr_number):
     python_track2_info = re.search(pattern_python_track2, python).group()
     track2_info_model = '<details open><summary><b> python-track2</b></summary>{} </details>'.format(
         python_track2_info)
+    pattern_sdk_changes = re.compile('/azure-sdk-for-python/pull/\d*">Release SDK Changes</a>', re.DOTALL)
+    sdk_link = re.search(pattern_sdk_changes, python_track2_info).group()
+    sdk_link_number = re.search(re.compile('[0-9]+'), sdk_link).group()
     info_model = 'hi @{} Please check the package whether works well and the changelog info is as below:\n' \
                  '{}\n{}\n' \
                  '\n* (The version of the package is only a temporary version for testing)\n' \
                  '\nhttps://github.com/Azure/azure-rest-api-specs/pull/{}\n' \
         .format(issue_object_rg.user.login, track1_info_model, track2_info_model, str(latest_pr_number))
 
-    return info_model
+    return info_model, sdk_link_number
 
 
 def reply_owner(reply_content):
@@ -95,7 +99,7 @@ def add_label(label_name, labels):
     issue_object_rg.set_labels(*labels)
 
 
-def begin_reply_generate(item, rest_repo, readme_link):
+def begin_reply_generate(item, rest_repo, readme_link, sdk_repo):
     global issue_object_rg
     issue_object_rg = item.issue_object
     link_dict = get_links(readme_link)
@@ -103,8 +107,14 @@ def begin_reply_generate(item, rest_repo, readme_link):
     whether_change_readme = weather_change_readme(rest_repo, link_dict, labels)
 
     if not whether_change_readme:
-        latest_pr_number = get_latest_pr_from_readme(rest_repo,link_dict)
-        reply_content = latest_pr_parse(rest_repo, latest_pr_number)
+        latest_pr_number = get_latest_pr_from_readme(rest_repo, link_dict)
+        reply_content, sdk_link_number = latest_pr_parse(rest_repo, latest_pr_number)
+        run_pipeline = apr.run_pipeline(issue_link=issue_object_rg.html_url,
+                                        sdk_issue_object=sdk_repo.get_pull(int(sdk_link_number)))
+        if run_pipeline:
+            print(f'{issue_object_rg.number} run pipeline successfully')
+        else:
+            print(f'{issue_object_rg.number} run pipeline fail')
         reply_owner(reply_content)
         add_label('auto-ask-check', labels)
     else:
