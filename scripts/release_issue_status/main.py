@@ -121,11 +121,11 @@ def _latest_comment_time(comments, delay_from_create_date):
     return delay_from_create_date if not q else int((time.time() - q[-1][0]) / 3600 / 24)
 
 
-def auto_reply(item, sdk_repo, rest_repo, duplicated_issue):
+def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue):
     print("==========new issue number: {}".format(item.issue_object.number))
     if 'auto-link' not in item.labels:
         try:
-            package_name, readme_link = update_issue_body(sdk_repo, rest_repo, item.issue_object.number)
+            package_name, readme_link = update_issue_body(request_repo, rest_repo, item.issue_object.number)
             print("pkname, readme", package_name, readme_link)
             item.package = package_name
             key = ('Python', item.package)
@@ -139,14 +139,14 @@ def auto_reply(item, sdk_repo, rest_repo, duplicated_issue):
         item.issue_object.set_labels(*item.labels)
     else:
         try:
-            readme_link = find_readme_link(sdk_repo, item.issue_object.number)
+            readme_link = find_readme_link(request_repo, item.issue_object.number)
         except Exception as e:
             print('Issue: {}  updates body failed'.format(item.issue_object.number))
             item.bot_advice = 'failed to find Readme link, Please check !!'
             item.labels.append('attention')
             raise
     try:
-        reply = rg.begin_reply_generate(item=item, rest_repo=rest_repo, readme_link=readme_link)
+        reply = rg.begin_reply_generate(item=item, rest_repo=rest_repo, readme_link=readme_link,sdk_repo=sdk_repo)
     except Exception as e:
         item.bot_advice = 'auto reply failed, Please intervene manually !!'
         print('Error from auto reply ========================')
@@ -158,10 +158,11 @@ def auto_reply(item, sdk_repo, rest_repo, duplicated_issue):
 def main():
     # get latest issue status
     g = Github(os.getenv('TOKEN'))  # please fill user_token
-    sdk_repo = g.get_repo('Azure/sdk-release-request')
-    rest_repo = g.get_repo('Azure/azure-rest-api-specs')
-    label1 = sdk_repo.get_label('ManagementPlane')
-    open_issues = sdk_repo.get_issues(state='open', labels=[label1])
+    request_repo = g.get_repo('Azure/sdk-release-request')
+    rest_repo = g.get_repo('Azure/azure-rest-api-specs')   
+    sdk_repo = g.get_repo('Azure/azure-sdk-for-python')
+    label1 = request_repo.get_label('ManagementPlane')
+    open_issues = request_repo.get_issues(state='open', labels=[label1])
     issue_status = []
     issue_status_python = []
     duplicated_issue = dict()
@@ -207,7 +208,7 @@ def main():
         elif item.comment_num == 0 and 'Python' in item.labels:
             item.bot_advice = 'new issue and better to confirm quickly.'
             try:
-                auto_reply(item, sdk_repo, rest_repo, duplicated_issue)
+                auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue)
             except Exception as e:
                 continue
         elif not item.author_latest_comment in _PYTHON_SDK_ADMINISTRATORS:
