@@ -1,15 +1,10 @@
 # Release History
 
-## 7.3.3 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 7.3.3 (2021-09-08)
 
 ### Bugs Fixed
 
-### Other Changes
-
+- Improved memory usage of `ServiceBusClient` to automatically discard spawned `ServiceBusSender` or `ServiceBusReceiver` from its handler set when no strong reference to the sender or receiver exists anymore.
 - Reduced CPU load of `azure.servicebus.AutoLockRenewer` during lock renewal.
 
 ## 7.3.2 (2021-08-10)
