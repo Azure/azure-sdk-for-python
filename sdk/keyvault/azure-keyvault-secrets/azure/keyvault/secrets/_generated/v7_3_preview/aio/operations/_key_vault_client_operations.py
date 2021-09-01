@@ -38,10 +38,10 @@ class KeyVaultClientOperationsMixin:
         :param secret_name: The name of the secret.
         :type secret_name: str
         :param parameters: The parameters for setting the secret.
-        :type parameters: ~azure.keyvault.v7_1.models.SecretSetParameters
+        :type parameters: ~azure.keyvault.v7_3_preview.models.SecretSetParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_3_preview.models.SecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecretBundle"]
@@ -49,7 +49,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
+        api_version = "7.3-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -107,7 +107,7 @@ class KeyVaultClientOperationsMixin:
         :type secret_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeletedSecretBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.DeletedSecretBundle
+        :rtype: ~azure.keyvault.v7_3_preview.models.DeletedSecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedSecretBundle"]
@@ -115,7 +115,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         # Construct URL
@@ -172,10 +172,10 @@ class KeyVaultClientOperationsMixin:
         :param secret_version: The version of the secret.
         :type secret_version: str
         :param parameters: The parameters for update secret operation.
-        :type parameters: ~azure.keyvault.v7_1.models.SecretUpdateParameters
+        :type parameters: ~azure.keyvault.v7_3_preview.models.SecretUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_3_preview.models.SecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecretBundle"]
@@ -183,7 +183,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
+        api_version = "7.3-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -246,7 +246,7 @@ class KeyVaultClientOperationsMixin:
         :type secret_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_3_preview.models.SecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecretBundle"]
@@ -254,7 +254,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         # Construct URL
@@ -310,7 +310,7 @@ class KeyVaultClientOperationsMixin:
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SecretListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_1.models.SecretListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_3_preview.models.SecretListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecretListResult"]
@@ -318,7 +318,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -396,7 +396,7 @@ class KeyVaultClientOperationsMixin:
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SecretListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_1.models.SecretListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_3_preview.models.SecretListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecretListResult"]
@@ -404,7 +404,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -481,7 +481,7 @@ class KeyVaultClientOperationsMixin:
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DeletedSecretListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_1.models.DeletedSecretListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_3_preview.models.DeletedSecretListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedSecretListResult"]
@@ -489,7 +489,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -563,7 +563,7 @@ class KeyVaultClientOperationsMixin:
         :type secret_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeletedSecretBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.DeletedSecretBundle
+        :rtype: ~azure.keyvault.v7_3_preview.models.DeletedSecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedSecretBundle"]
@@ -571,7 +571,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         # Construct URL
@@ -633,7 +633,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         # Construct URL
@@ -683,7 +683,7 @@ class KeyVaultClientOperationsMixin:
         :type secret_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_3_preview.models.SecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecretBundle"]
@@ -691,7 +691,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         # Construct URL
@@ -744,7 +744,7 @@ class KeyVaultClientOperationsMixin:
         :type secret_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BackupSecretResult, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.BackupSecretResult
+        :rtype: ~azure.keyvault.v7_3_preview.models.BackupSecretResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupSecretResult"]
@@ -752,7 +752,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         # Construct URL
@@ -802,10 +802,10 @@ class KeyVaultClientOperationsMixin:
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param parameters: The parameters to restore the secret.
-        :type parameters: ~azure.keyvault.v7_1.models.SecretRestoreParameters
+        :type parameters: ~azure.keyvault.v7_3_preview.models.SecretRestoreParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_3_preview.models.SecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecretBundle"]
@@ -813,7 +813,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
+        api_version = "7.3-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
