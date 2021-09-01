@@ -3,8 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from enum import Enum, EnumMeta
-from six import with_metaclass
+from enum import Enum
 import msrest.serialization
 from .._generated.models import (
     LexicalAnalyzer,
@@ -25,7 +24,6 @@ from .._generated.models import (
     DataSourceCredentials,
     AzureActiveDirectoryApplicationCredentials,
 )
-from .._generated.models._search_client_enums import _CaseInsensitiveEnumMeta
 
 
 DELIMITER = "|"
@@ -104,7 +102,7 @@ class SearchIndexerSkillset(_SearchIndexerSkillset):
         return cls(**kwargs)
 
 
-class EntityRecognitionSkillVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class EntityRecognitionSkillVersion(str, Enum):
     """Specifies the Entity Recognition skill version to use."""
 
     #: Use Entity Recognition skill V1.
@@ -232,6 +230,7 @@ class EntityRecognitionSkill(SearchIndexerSkill):
                 minimum_precision=self.minimum_precision,
                 model_version=self.model_version
             )
+        return None
 
     @classmethod
     def _from_generated(cls, skill):
@@ -248,9 +247,10 @@ class EntityRecognitionSkill(SearchIndexerSkill):
                 skill_version=EntityRecognitionSkillVersion.V3,
                 **kwargs
             )
+        return None
 
 
-class SentimentSkillVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SentimentSkillVersion(str, Enum):
     """ Specifies the Sentiment Skill version to use."""
 
     #: Use Sentiment skill V1.
@@ -346,6 +346,8 @@ class SentimentSkill(SearchIndexerSkill):
     def _to_generated(self):
         if self.skill_version == SentimentSkillVersion.V1:
             return _SentimentSkillV1(
+                inputs=self.inputs,
+                outputs=self.outputs,
                 name=self.name,
                 odata_type=self.odata_type,
                 default_language_code=self.default_language_code,
@@ -354,25 +356,32 @@ class SentimentSkill(SearchIndexerSkill):
             )
         if self.skill_version in [SentimentSkillVersion.V3, SentimentSkillVersion.LATEST]:
             return _SentimentSkillV3(
+                inputs=self.inputs,
+                outputs=self.outputs,
                 name=self.name,
                 odata_type=self.odata_type,
                 default_language_code=self.default_language_code,
                 include_opinion_mining=self.include_opinion_mining,
                 model_version=self.model_version
             )
+        return None
 
     @classmethod
     def _from_generated(cls, skill):
         if not skill:
             return None
+        kwargs = skill.as_dict()
         if isinstance(cls, _SentimentSkillV1):
             return SentimentSkill(
-                skill_version=SentimentSkillVersion.V1
+                skill_version=SentimentSkillVersion.V1,
+                **kwargs
             )
         if isinstance(cls, _SentimentSkillV3):
             return SentimentSkill(
-                skill_version=SentimentSkillVersion.V3
+                skill_version=SentimentSkillVersion.V3,
+                **kwargs
             )
+        return None
 
 
 class AnalyzeTextOptions(msrest.serialization.Model):
