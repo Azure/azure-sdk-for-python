@@ -28,7 +28,7 @@ from azure.storage.blob import (
     AccessPolicy, generate_account_sas, ResourceTypes, AccountSasPermissions, generate_blob_sas, BlobSasPermissions,
     generate_container_sas, CustomerProvidedEncryptionKey,
 )
-from blob_settings_fake import CPK_KEY_HASH, CPK_KEY_VALUE
+from fake_credentials import CPK_KEY_HASH, CPK_KEY_VALUE
 from _shared.testcase import GlobalStorageAccountPreparer
 from devtools_testutils.storage.aio import AsyncStorageTestCase
 

@@ -18,7 +18,7 @@ import zlib
 
 from azure_devtools.scenario_tests import RecordingProcessor
 from devtools_testutils import AzureTestCase, PowerShellPreparer
-from data_lake_settings_fake import STORAGE_DATA_LAKE_ACCOUNT_FAKE_KEY
+from fake_credentials import STORAGE_DATA_LAKE_ACCOUNT_FAKE_KEY
 
 try:
     from cStringIO import StringIO      # Python 2
