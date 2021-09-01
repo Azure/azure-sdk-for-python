@@ -9,7 +9,6 @@
 from enum import Enum, EnumMeta
 from six import with_metaclass
 
-
 class _CaseInsensitiveEnumMeta(EnumMeta):
     def __getitem__(self, name):
         return super().__getitem__(name.upper())
@@ -41,7 +40,6 @@ class Answers(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: expressed as a question in natural language.
     EXTRACTIVE = "extractive"
 
-
 class AutocompleteMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the mode for Autocomplete. The default is 'oneTerm'. Use 'twoTerms' to get shingles
     and 'oneTermWithContext' to use the current context in producing autocomplete terms.
@@ -59,7 +57,6 @@ class AutocompleteMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: terms could include 'washington medicaid' and 'washington medical'.
     ONE_TERM_WITH_CONTEXT = "oneTermWithContext"
 
-
 class Captions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """This parameter is only valid if the query type is 'semantic'. If set, the query returns
     captions extracted from key passages in the highest ranked documents. When Captions is set to
@@ -74,9 +71,9 @@ class Captions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: query.
     EXTRACTIVE = "extractive"
 
-
 class IndexActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The operation to perform on a document in an indexing batch."""
+    """The operation to perform on a document in an indexing batch.
+    """
 
     #: Inserts the document into the index if it is new and updates it if it exists. All fields are
     #: replaced in the update case.
@@ -93,15 +90,14 @@ class IndexActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: document, use merge instead and set the field explicitly to null.
     DELETE = "delete"
 
-
 class QueryLanguage(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The language of the query."""
+    """The language of the query.
+    """
 
     #: Query language not specified.
     NONE = "none"
     #: English.
     EN_US = "en-us"
-
 
 class QueryType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the syntax of the search query. The default is 'simple'. Use 'full' if your query
@@ -121,7 +117,6 @@ class QueryType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: on the Web corpus.
     SEMANTIC = "semantic"
 
-
 class ScoringStatistics(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """A value that specifies whether we want to calculate scoring statistics (such as document
     frequency) globally for more consistent scoring, or locally, for lower latency. The default is
@@ -134,7 +129,6 @@ class ScoringStatistics(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: The scoring statistics will be calculated globally for more consistent scoring.
     GLOBAL_ENUM = "global"
 
-
 class SearchMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies whether any or all of the search terms must be matched in order to count the document
     as a match.
@@ -145,9 +139,9 @@ class SearchMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: All of the search terms must be matched in order to count the document as a match.
     ALL = "all"
 
-
 class Speller(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Improve search recall by spell-correcting individual search query terms."""
+    """Improve search recall by spell-correcting individual search query terms.
+    """
 
     #: Speller not enabled.
     NONE = "none"

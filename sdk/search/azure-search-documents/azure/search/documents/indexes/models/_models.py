@@ -54,6 +54,9 @@ class AnalyzeTextOptions(msrest.serialization.Model):
      "letter", "lowercase", "microsoft_language_tokenizer", "microsoft_language_stemming_tokenizer",
      "nGram", "path_hierarchy_v2", "pattern", "standard_v2", "uax_url_email", "whitespace".
     :type tokenizer_name: str or ~azure.search.documents.indexes.models.LexicalTokenizerName
+    :param normalizer_name: The name of the normalizer to use to normalize the given text. Possible
+     values include: "asciifolding", "elision", "lowercase", "standard", "uppercase".
+    :type normalizer_name: str or ~azure.search.documents.indexes.models.LexicalNormalizerName
     :param token_filters: An optional list of token filters to use when breaking the given text.
      This parameter can only be set when using the tokenizer parameter.
     :type token_filters: list[str or ~azure.search.documents.indexes.models.TokenFilterName]
@@ -70,6 +73,7 @@ class AnalyzeTextOptions(msrest.serialization.Model):
         "text": {"key": "text", "type": "str"},
         "analyzer_name": {"key": "analyzerName", "type": "str"},
         "tokenizer_name": {"key": "tokenizerName", "type": "str"},
+        "normalizer_name": {"key": "normalizerName", "type": "str"},
         "token_filters": {"key": "tokenFilters", "type": "[str]"},
         "char_filters": {"key": "charFilters", "type": "[str]"},
     }
@@ -79,6 +83,7 @@ class AnalyzeTextOptions(msrest.serialization.Model):
         self.text = kwargs["text"]
         self.analyzer_name = kwargs.get("analyzer_name", None)
         self.tokenizer_name = kwargs.get("tokenizer_name", None)
+        self.normalizer_name = kwargs.get("normalizer_name", None)
         self.token_filters = kwargs.get("token_filters", None)
         self.char_filters = kwargs.get("char_filters", None)
 
@@ -87,6 +92,7 @@ class AnalyzeTextOptions(msrest.serialization.Model):
             text=self.text,
             analyzer=self.analyzer_name,
             tokenizer=self.tokenizer_name,
+            normalizer=self.normalizer_name,
             token_filters=self.token_filters,
             char_filters=self.char_filters,
         )
