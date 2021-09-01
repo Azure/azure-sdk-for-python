@@ -6,6 +6,16 @@ import logging
 import time
 
 from azure.core.polling import PollingMethod
+from azure.keyvault.certificates import KeyVaultCertificate, CertificateOperation
+
+try:
+    from typing import TYPE_CHECKING
+except ImportError:
+    TYPE_CHECKING = False
+
+if TYPE_CHECKING:
+    # pylint: disable=ungrouped-imports
+    from typing import Any, Callable, Union
 
 logger = logging.getLogger(__name__)
 
