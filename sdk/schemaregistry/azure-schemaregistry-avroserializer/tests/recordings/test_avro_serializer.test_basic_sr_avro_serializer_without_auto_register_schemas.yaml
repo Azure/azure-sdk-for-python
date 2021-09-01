@@ -19,7 +19,7 @@ interactions:
       - azsdk-python-azureschemaregistry/1.0.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       X-Schema-Type:
       - Avro
-    method: PUT
+    method: POST
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/example.avro.User?api-version=2017-04
   response:
     body:
@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 01 Sep 2021 17:08:23 GMT
+      - Wed, 01 Sep 2021 17:08:24 GMT
       location:
       - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/example.avro.User/versions/1?api-version=2017-04
       server:

@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- `auto_register_schemas` keyword argument has been added to `SchemaRegistryAvroSerializer`, which will allow for automatically registering schemas passed in to the `serialize`.
+
 ### Breaking Changes
 
 ### Bugs Fixed
