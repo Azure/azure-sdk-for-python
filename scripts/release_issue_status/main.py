@@ -7,6 +7,7 @@ import subprocess as sp
 from azure.storage.blob import BlobClient
 import reply_generator as rg
 from update_issue_body import update_issue_body, find_readme_link
+from auto_close import auto_close_issue
 import traceback
 
 _NULL = ' '
@@ -215,6 +216,8 @@ def main():
             item.bot_advice = 'new comment for author.'
         elif item.delay_from_latest_update >= 7:
             item.bot_advice = 'delay for a long time and better to handle now.'
+        if item.comment_num > 1:
+            auto_close_issue(request_repo, item.issue_object.number, item.package)
 
         if item.days_from_latest_commit >= 30 and item.language == 'Python' and '30days attention' not in item.labels:
             item.labels.append('30days attention')
