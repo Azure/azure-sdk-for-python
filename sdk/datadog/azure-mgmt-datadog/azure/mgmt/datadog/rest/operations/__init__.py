@@ -6,16 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._marketplace_agreements_operations import MarketplaceAgreementsOperations
-from ._monitors_operations import MonitorsOperations
-from ._operations import Operations
-from ._tag_rules_operations import TagRulesOperations
-from ._single_sign_on_configurations_operations import SingleSignOnConfigurationsOperations
+try:
+    from ._request_builders_py3 import build_list_request
+except (SyntaxError, ImportError):
+    from ._request_builders import build_list_request  # type: ignore
 
 __all__ = [
-    'MarketplaceAgreementsOperations',
-    'MonitorsOperations',
-    'Operations',
-    'TagRulesOperations',
-    'SingleSignOnConfigurationsOperations',
+    'build_list_request',
 ]

@@ -10,13 +10,14 @@ from typing import Any, TYPE_CHECKING
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
-from azure.mgmt.core.policies import ARMHttpLoggingPolicy
+from azure.mgmt.core.policies import ARMHttpLoggingPolicy, AsyncARMChallengeAuthenticationPolicy
+
+from .._version import VERSION
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-VERSION = "unknown"
 
 class MicrosoftDatadogClientConfiguration(Configuration):
     """Configuration for MicrosoftDatadogClient.
@@ -24,26 +25,26 @@ class MicrosoftDatadogClientConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
+    :param credential: Credential needed for the client to connect to Azure.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     """
 
     def __init__(
         self,
-        credential: "AsyncTokenCredential",
         subscription_id: str,
+        credential: "AsyncTokenCredential",
         **kwargs: Any
     ) -> None:
-        if credential is None:
-            raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
+        if credential is None:
+            raise ValueError("Parameter 'credential' must not be None.")
         super(MicrosoftDatadogClientConfiguration, self).__init__(**kwargs)
 
-        self.credential = credential
         self.subscription_id = subscription_id
+        self.credential = credential
         self.api_version = "2021-03-01"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-datadog/{}'.format(VERSION))
@@ -63,4 +64,4 @@ class MicrosoftDatadogClientConfiguration(Configuration):
         self.redirect_policy = kwargs.get('redirect_policy') or policies.AsyncRedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get('authentication_policy')
         if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
+            self.authentication_policy = AsyncARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)

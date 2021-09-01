@@ -6,94 +6,78 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from copy import deepcopy
 from typing import TYPE_CHECKING
 
 from azure.mgmt.core import ARMPipelineClient
 from msrest import Deserializer, Serializer
 
+from ._configuration import MicrosoftDatadogClientConfiguration
+
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
+    from typing import Any, Dict, Optional
 
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
-
-from ._configuration import MicrosoftDatadogClientConfiguration
-from .operations import MarketplaceAgreementsOperations
-from .operations import MonitorsOperations
-from .operations import Operations
-from .operations import TagRulesOperations
-from .operations import SingleSignOnConfigurationsOperations
-from . import models
-
+    from azure.core.rest import HttpRequest, HttpResponse
 
 class MicrosoftDatadogClient(object):
     """MicrosoftDatadogClient.
 
-    :ivar marketplace_agreements: MarketplaceAgreementsOperations operations
-    :vartype marketplace_agreements: microsoft_datadog_client.operations.MarketplaceAgreementsOperations
-    :ivar monitors: MonitorsOperations operations
-    :vartype monitors: microsoft_datadog_client.operations.MonitorsOperations
-    :ivar operations: Operations operations
-    :vartype operations: microsoft_datadog_client.operations.Operations
-    :ivar tag_rules: TagRulesOperations operations
-    :vartype tag_rules: microsoft_datadog_client.operations.TagRulesOperations
-    :ivar single_sign_on_configurations: SingleSignOnConfigurationsOperations operations
-    :vartype single_sign_on_configurations: microsoft_datadog_client.operations.SingleSignOnConfigurationsOperations
-    :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param str base_url: Service URL
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+    :param credential: Credential needed for the client to connect to Azure.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :keyword endpoint: Service URL. Default value is 'https://management.azure.com'.
+    :paramtype endpoint: str
     """
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
         subscription_id,  # type: str
-        base_url=None,  # type: Optional[str]
+        credential,  # type: "TokenCredential"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        if not base_url:
-            base_url = 'https://management.azure.com'
-        self._config = MicrosoftDatadogClientConfiguration(credential, subscription_id, **kwargs)
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        endpoint = kwargs.pop('endpoint', "https://management.azure.com")  # type: str
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self._serialize = Serializer(client_models)
+        self._config = MicrosoftDatadogClientConfiguration(subscription_id, credential, **kwargs)
+        self._client = ARMPipelineClient(base_url=endpoint, config=self._config, **kwargs)
+
+        self._serialize = Serializer()
+        self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self._deserialize = Deserializer(client_models)
 
-        self.marketplace_agreements = MarketplaceAgreementsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.monitors = MonitorsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.tag_rules = TagRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.single_sign_on_configurations = SingleSignOnConfigurationsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
 
-    def _send_request(self, http_request, **kwargs):
-        # type: (HttpRequest, Any) -> HttpResponse
+    def send_request(
+        self,
+        request,  # type: HttpRequest
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> HttpResponse
         """Runs the network request through the client's chained policies.
 
-        :param http_request: The network request you want to make. Required.
-        :type http_request: ~azure.core.pipeline.transport.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        We have helper methods to create requests specific to this service in `microsoft_datadog_client.rest`.
+        Use these helper methods to create the request you pass to this method.
+
+        >>> from microsoft_datadog_client.rest import marketplace_agreements
+        >>> request = marketplace_agreements.build_list_request(subscription_id, **kwargs)
+        <HttpRequest [GET], url: '/subscriptions/{subscriptionId}/providers/Microsoft.Datadog/agreements'>
+        >>> response = client.send_request(request)
+        <HttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        :rtype: ~azure.core.rest.HttpResponse
         """
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-        }
-        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
-        stream = kwargs.pop("stream", True)
-        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
-        return pipeline_response.http_response
+
+        request_copy = deepcopy(request)
+        request_copy.url = self._client.format_url(request_copy.url)
+        return self._client.send_request(request_copy, **kwargs)
 
     def close(self):
         # type: () -> None
