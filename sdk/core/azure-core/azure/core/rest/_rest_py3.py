@@ -227,7 +227,7 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
         self.request = request
         self._internal_response = kwargs.pop("internal_response")
         self.status_code = None
-        self.headers = {}  # type: HeadersType
+        self.headers = _case_insensitive_dict({})
         self.reason = None
         self.is_closed = False
         self.is_stream_consumed = False
@@ -284,7 +284,7 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
         """
         # this will trigger errors if response is not read in
         self.content  # pylint: disable=pointless-statement
-        if not self._json:
+        if self._json is None:
             self._json = loads(self.text())
         return self._json
 
@@ -320,7 +320,9 @@ class HttpResponse(_HttpResponseBase):
     :keyword request: The request that resulted in this response.
     :paramtype request: ~azure.core.rest.HttpRequest
     :ivar int status_code: The status code of this response
-    :ivar mapping headers: The response headers
+    :ivar mapping headers: The case-insensitive response headers.
+     While looking up headers is case-insensitive, when looking up
+     keys in `header.keys()`, we recommend using lowercase.
     :ivar str reason: The reason phrase for this response
     :ivar bytes content: The response content in bytes.
     :ivar str url: The URL that resulted in this response
