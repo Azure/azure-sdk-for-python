@@ -18,7 +18,6 @@ def auto_close_issue(sdk_repo, issue_number, package_name):
         print(f"issue number：{issue_number} has been closed!")
 
 
-
 def get_last_released_date(package_name):
     pypi_link = f'https://pypi.org/project/{package_name}/#history'
     res = requests.get(pypi_link)
