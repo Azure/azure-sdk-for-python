@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 from typing import Any, List, Union, TYPE_CHECKING
 import logging
+from weakref import WeakSet
 
 import uamqp
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
@@ -90,7 +91,7 @@ class ServiceBusClient(object):
             self._auth_uri = "{}/{}".format(self._auth_uri, self._entity_name)
         # Internal flag for switching whether to apply connection sharing, pending fix in uamqp library
         self._connection_sharing = False
-        self._handlers = []  # type: List[BaseHandler]
+        self._handlers = WeakSet()  # type: WeakSet
 
     async def __aenter__(self):
         if self._connection_sharing:
@@ -107,12 +108,6 @@ class ServiceBusClient(object):
             sasl=auth,
             debug=self._config.logging_enable,
         )
-
-    def _deregister_handler(self, handler):
-        try:
-            self._handlers.remove(handler)
-        except ValueError:
-            pass  # the handler has already been removed from the client._handlers
 
     @classmethod
     def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "ServiceBusClient":
@@ -168,7 +163,7 @@ class ServiceBusClient(object):
 
         :return: None
         """
-        for handler in set(self._handlers):
+        for handler in self._handlers:
             try:
                 await handler.close()
             except Exception as exception:  # pylint: disable=broad-except
@@ -177,7 +172,7 @@ class ServiceBusClient(object):
                     handler._container_id,  # pylint: disable=protected-access
                     exception,
                 )
-        del self._handlers[:]
+        self._handlers.clear()
 
         if self._connection_sharing and self._connection:
             await self._connection.destroy_async()
@@ -218,10 +213,9 @@ class ServiceBusClient(object):
             retry_total=self._config.retry_total,
             retry_backoff_factor=self._config.retry_backoff_factor,
             retry_backoff_max=self._config.retry_backoff_max,
-            deregister_from_client_func=self._deregister_handler,
             **kwargs
         )
-        self._handlers.append(handler)
+        self._handlers.add(handler)
         return handler
 
     def get_queue_receiver(self, queue_name: str, **kwargs: Any) -> ServiceBusReceiver:
@@ -308,10 +302,9 @@ class ServiceBusClient(object):
             retry_total=self._config.retry_total,
             retry_backoff_factor=self._config.retry_backoff_factor,
             retry_backoff_max=self._config.retry_backoff_max,
-            deregister_from_client_func=self._deregister_handler,
             **kwargs
         )
-        self._handlers.append(handler)
+        self._handlers.add(handler)
         return handler
 
     def get_topic_sender(self, topic_name: str, **kwargs: Any) -> ServiceBusSender:
@@ -349,10 +342,9 @@ class ServiceBusClient(object):
             retry_total=self._config.retry_total,
             retry_backoff_factor=self._config.retry_backoff_factor,
             retry_backoff_max=self._config.retry_backoff_max,
-            deregister_from_client_func=self._deregister_handler,
             **kwargs
         )
-        self._handlers.append(handler)
+        self._handlers.add(handler)
         return handler
 
     def get_subscription_receiver(
@@ -440,7 +432,6 @@ class ServiceBusClient(object):
                 retry_total=self._config.retry_total,
                 retry_backoff_factor=self._config.retry_backoff_factor,
                 retry_backoff_max=self._config.retry_backoff_max,
-                deregister_from_client_func=self._deregister_handler,
                 **kwargs
             )
         except ValueError:
@@ -461,8 +452,7 @@ class ServiceBusClient(object):
                 retry_total=self._config.retry_total,
                 retry_backoff_factor=self._config.retry_backoff_factor,
                 retry_backoff_max=self._config.retry_backoff_max,
-                deregister_from_client_func=self._deregister_handler,
                 **kwargs
             )
-        self._handlers.append(handler)
+        self._handlers.add(handler)
         return handler

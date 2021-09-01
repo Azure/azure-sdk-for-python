@@ -263,8 +263,6 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         self._auth_uri = None
         self._properties = create_properties(self._config.user_agent)
         self._shutdown = threading.Event()
-        self._deregister_from_client_func = kwargs.pop("deregister_from_client_func", None)
-
 
     @classmethod
     def _convert_connection_string_to_kwargs(cls, conn_str, **kwargs):
@@ -538,5 +536,3 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         """
         self._close_handler()
         self._shutdown.set()
-        if self._deregister_from_client_func:
-            self._deregister_from_client_func(self)

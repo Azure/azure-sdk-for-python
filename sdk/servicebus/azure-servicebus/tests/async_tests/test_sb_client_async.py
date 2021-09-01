@@ -181,34 +181,47 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
         queue_sender = client.get_queue_sender(servicebus_queue.name)
         queue_receiver = client.get_queue_receiver(servicebus_queue.name)
         assert len(client._handlers) == 2
-        async with queue_sender, queue_receiver:
-            pass
-        assert len(client._handlers) == 0
+        queue_sender = client.get_queue_sender(servicebus_queue.name)
+        queue_receiver = client.get_queue_receiver(servicebus_queue.name)
+        # the previous sender/receiver can not longer be referenced, there might be a delay in CPython
+        # to remove the reference, so len of handlers should be less than 4
+        assert len(client._handlers) < 4
+        await client.close()
 
         queue_sender = client.get_queue_sender(servicebus_queue.name)
         queue_receiver = client.get_queue_receiver(servicebus_queue.name)
         assert len(client._handlers) == 2
-        await queue_sender.close()
-        await queue_sender.close()
-        await queue_receiver.close()
-        await queue_receiver.close()
-        assert len(client._handlers) == 0
+        queue_sender = None
+        queue_receiver = None
+        assert len(client._handlers) < 2
 
+        await client.close()
         topic_sender = client.get_topic_sender(servicebus_topic.name)
         subscription_receiver = client.get_subscription_receiver(servicebus_topic.name, servicebus_subscription.name)
         assert len(client._handlers) == 2
-        async with topic_sender, subscription_receiver:
-            pass
-        assert len(client._handlers) == 0
+        topic_sender = None
+        subscription_receiver = None
+        # the previous sender/receiver can not longer be referenced, so len of handlers should just be 2 instead of 4
+        assert len(client._handlers) < 4
 
+        await client.close()
         topic_sender = client.get_topic_sender(servicebus_topic.name)
         subscription_receiver = client.get_subscription_receiver(servicebus_topic.name, servicebus_subscription.name)
         assert len(client._handlers) == 2
-        await topic_sender.close()
-        await topic_sender.close()
-        await subscription_receiver.close()
-        await subscription_receiver.close()
-        assert len(client._handlers) == 0
+        topic_sender = client.get_topic_sender(servicebus_topic.name)
+        subscription_receiver = client.get_subscription_receiver(servicebus_topic.name, servicebus_subscription.name)
+        # the previous sender/receiver can not longer be referenced, so len of handlers should just be 2 instead of 4
+        assert len(client._handlers) < 4
+
+        await client.close()
+        for _ in range(5):
+            queue_sender = client.get_queue_sender(servicebus_queue.name)
+            queue_receiver = client.get_queue_receiver(servicebus_queue.name)
+            topic_sender = client.get_topic_sender(servicebus_topic.name)
+            subscription_receiver = client.get_subscription_receiver(servicebus_topic.name,
+                                                                     servicebus_subscription.name)
+        assert len(client._handlers) < 15
+        await client.close()
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
