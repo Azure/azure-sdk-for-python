@@ -91,6 +91,6 @@ def find_readme_link(sdk_repo, issue_number):
     issue_body_list = issue_body.split("\n")
     for row in issue_body_list:
         if 'resource-manager' in row:
-            readme_link = row + '/readme.md'
+            readme_link = '{}/readme.md'.format(row.strip("\r"))
             return readme_link
     raise Exception('Not find readme link,please check')
