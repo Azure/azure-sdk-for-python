@@ -5,7 +5,6 @@
 import time
 from typing import cast, TYPE_CHECKING
 
-import msal
 import six
 
 from azure.core.credentials import AccessToken
@@ -19,6 +18,7 @@ from .._internal.msal_credentials import MsalCredential
 
 if TYPE_CHECKING:
     from typing import Any, Dict, Optional, Union
+    import msal
     from .. import AuthenticationRecord
 
 
