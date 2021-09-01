@@ -294,7 +294,7 @@ class SecretClient(KeyVaultClientBase):
 
     @distributed_trace
     def begin_delete_secret(self, name, **kwargs):
-        # type: (str, **Any) -> DeletedSecret
+        # type: (str, **Any) -> KeyVaultOperationPoller
         """Delete all versions of a secret. Requires secrets/delete permission.
 
         When this method returns Key Vault has begun deleting the secret. Deletion may take several seconds in a vault
@@ -416,7 +416,7 @@ class SecretClient(KeyVaultClientBase):
 
     @distributed_trace
     def begin_recover_deleted_secret(self, name, **kwargs):
-        # type: (str, **Any) -> SecretProperties
+        # type: (str, **Any) -> KeyVaultOperationPoller
         """Recover a deleted secret to its latest version. Possible only in a vault with soft-delete enabled.
 
         If the vault does not have soft-delete enabled, :func:`begin_delete_secret` is permanent, and this method will
