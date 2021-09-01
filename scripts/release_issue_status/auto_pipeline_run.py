@@ -26,7 +26,7 @@ def run_pipeline(issue_link, sdk_issue_object):
             }
         }
     })
-    headers = json.loads(os.getenv('HEADERS'))
+    headers = json.dumps(json.loads(os.getenv('HEADERS')))
     response = requests.request("POST", url, headers=headers, data=payload)
     if 200 <= response.status_code < 300:
         return True
