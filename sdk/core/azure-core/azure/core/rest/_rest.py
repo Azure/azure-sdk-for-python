@@ -306,7 +306,9 @@ class HttpResponse(_HttpResponseBase):  # pylint: disable=too-many-instance-attr
     :keyword request: The request that resulted in this response.
     :paramtype request: ~azure.core.rest.HttpRequest
     :ivar int status_code: The status code of this response
-    :ivar mapping headers: The response headers
+    :ivar mapping headers: The case-insensitive response headers.
+     While looking up headers is case-insensitive, when looking up
+     keys in `header.keys()`, we recommend using lowercase.
     :ivar str reason: The reason phrase for this response
     :ivar bytes content: The response content in bytes.
     :ivar str url: The URL that resulted in this response
