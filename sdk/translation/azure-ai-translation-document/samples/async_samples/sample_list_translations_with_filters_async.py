@@ -47,13 +47,13 @@ async def sample_list_translations_with_filters_async():
         '''
         start = datetime(2021, 4, 12)
         end = datetime(2021, 4, 14)
-        statuses = ["Cancelled", "Failed"]
+        statuses = ["Canceled", "Failed"]
         order_by = ["created_on desc"]
         results_per_page = 2
         skip = 3
 
         # list translation operations
-        submitted_translations = client.list_all_translation_statuses(
+        submitted_translations = client.list_translation_statuses(
             # filters
             statuses=statuses,
             created_after=start,
@@ -81,7 +81,7 @@ def display_translation_info(translation):
     print("\nOf total documents...")
     print("{} failed".format(translation.documents_failed_count))
     print("{} succeeded".format(translation.documents_succeeded_count))
-    print("{} cancelled\n".format(translation.documents_cancelled_count))
+    print("{} canceled\n".format(translation.documents_canceled_count))
 
 
 async def main():

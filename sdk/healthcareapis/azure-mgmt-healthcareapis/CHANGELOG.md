@@ -1,5 +1,16 @@
 # Release History
 
+## 1.1.0b1 (2021-08-26)
+
+**Features**
+
+  - Added operation group IotConnectorFhirDestinationOperations
+  - Added operation group WorkspacesOperations
+  - Added operation group FhirDestinationsOperations
+  - Added operation group DicomServicesOperations
+  - Added operation group FhirServicesOperations
+  - Added operation group IotConnectorsOperations
+
 ## 1.0.0 (2021-04-12)
 
 **Features**

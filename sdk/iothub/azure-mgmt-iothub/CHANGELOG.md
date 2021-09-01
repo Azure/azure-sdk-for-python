@@ -1,5 +1,16 @@
 # Release History
 
+## 2.1.0 (2021-08-25)
+
+**Features**
+
+  - Model IotHubProperties has a new parameter disable_local_auth
+  - Model IotHubProperties has a new parameter disable_device_sas
+  - Model IotHubProperties has a new parameter restrict_outbound_network_access
+  - Model IotHubProperties has a new parameter allowed_fqdn_list
+  - Model IotHubProperties has a new parameter disable_module_sas
+  - Model CertificateBodyDescription has a new parameter is_verified
+
 ## 2.0.0 (2021-05-14)
 
 **Features**

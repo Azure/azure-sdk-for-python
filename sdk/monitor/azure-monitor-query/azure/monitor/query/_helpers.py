@@ -45,10 +45,9 @@ def process_error(exception):
     raise_error = HttpResponseError
     raise raise_error(message=exception.message, response=exception.response)
 
-def order_results(request_order, responses):
-    mapping = {item.id: item for item in responses}
+def order_results(request_order, mapping, obj):
     ordered = [mapping[id] for id in request_order]
-    return ordered
+    return [obj._from_generated(rsp) for rsp in ordered] # pylint: disable=protected-access
 
 def construct_iso8601(timespan=None):
     if not timespan:
@@ -90,4 +89,4 @@ def native_col_type(col_type, value):
     return value
 
 def process_row(col_types, row):
-    return [native_col_type(col_types[ind].type, val) for ind, val in enumerate(row)]
+    return [native_col_type(col_types[ind], val) for ind, val in enumerate(row)]
