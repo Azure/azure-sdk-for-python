@@ -70,9 +70,9 @@ class PremiumPageBlobTier(str, Enum):
 class QuickQueryDialect(str, Enum):
     """Specifies the quick query input/output dialect."""
 
-    DelimitedText = 'DelimitedText'
-    DelimitedJson = 'DelimitedJson'
-    Parquet = 'Parquet'
+    DelimitedText = 'DelimitedTextDialect'
+    DelimitedJson = 'DelimitedJsonDialect'
+    Parquet = 'ParquetDialect'
 
 
 class SequenceNumberAction(str, Enum):
