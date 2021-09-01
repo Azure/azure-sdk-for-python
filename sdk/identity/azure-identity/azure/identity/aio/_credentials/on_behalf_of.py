@@ -60,12 +60,19 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         validate_tenant_id(tenant_id)
 
         if isinstance(client_credential, bytes):
-            cert = get_client_credential(None, kwargs.pop("password", None), client_credential)
-            self._credential = AadClientCertificate(
+            try:
+                cert = get_client_credential(None, kwargs.pop("password", None), client_credential)
+            except ValueError as ex:
+                message = (
+                    '"client_credential" should be either a client secret (a string)'
+                    + " or the bytes of a certificate in PEM or PKCS12 format"
+                )
+                raise ValueError(message) from ex
+            self._client_credential = AadClientCertificate(
                 cert["private_key"], password=cert.get("passphrase")
             )  # type: Union[str, AadClientCertificate]
         else:
-            self._credential = client_credential
+            self._client_credential = client_credential
 
         # note AadClient handles "allow_multitenant_authentication", "authority", and any pipeline kwargs
         self._client = AadClient(tenant_id, client_id, **kwargs)
@@ -97,4 +104,4 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
                 _LOGGER.debug("silent authentication failed due to malformed refresh token: %s", ex, exc_info=True)
 
         # we don't have a refresh token, or silent auth failed: acquire a new token from the assertion
-        return await self._client.obtain_token_on_behalf_of(scopes, self._credential, self._assertion, **kwargs)
+        return await self._client.obtain_token_on_behalf_of(scopes, self._client_credential, self._assertion, **kwargs)

@@ -164,6 +164,12 @@ async def test_policies_configurable():
     assert policy.on_request.called
 
 
+def test_invalid_cert():
+    """The credential should raise ValueError when given invalid cert bytes"""
+    with pytest.raises(ValueError):
+        OnBehalfOfCredential("tenant-id", "client-id", b"not a cert", "assertion")
+
+
 @pytest.mark.asyncio
 async def test_refresh_token():
     first_token = "***"
