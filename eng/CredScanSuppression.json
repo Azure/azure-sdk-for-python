@@ -11,6 +11,7 @@
                 "kt#_gahr!@aGERDXA",
                 "Aa1!zyx_",
                 "Aa!1()-xyz",
+                ":code:`<pfx-file-password>`",
                 "000000000000000000000000000000000000000000000000000",
                 "UsernameAndPassword",
                 "123456",
@@ -37,8 +38,11 @@
         {
             "file":[
                 "eng/common/testproxy/dotnet-devcert.pfx",
+                "sdk/confidentialledger/azure-confidentialledger/tests/_shared/constants.py",
                 "sdk/keyvault/azure-keyvault-certificates/tests/ca.key",
                 "sdk/identity/azure-identity/tests/ec-certificate.pem",
+                "sdk/identity/azure-identity/tests/certificate.pfx",
+                "sdk/identity/azure-identity/tests/certificate-with-password.pfx",
                 "sdk/core/azure-servicemanagement-legacy/tests/legacy_mgmt_settings_fake.py",
                 "sdk/storage/azure-storage-blob/tests/blob_settings_fake.py",
                 "sdk/storage/azure-storage-file-datalake/tests/data_lake_settings_fake.py",
