@@ -19,7 +19,7 @@
 # --------------------------------------------------------------------------
 import functools
 import pytest
-import uuid
+import json
 
 from azure.schemaregistry import SchemaRegistryClient
 from azure.identity import ClientSecretCredential
@@ -28,6 +28,7 @@ from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 
 SchemaRegistryPowerShellPreparer = functools.partial(PowerShellPreparer, "schemaregistry", schemaregistry_endpoint="fake_resource.servicebus.windows.net/", schemaregistry_group="fakegroup")
+
 
 class SchemaRegistryTests(AzureTestCase):
 

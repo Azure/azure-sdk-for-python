@@ -33,6 +33,7 @@ Example to show basic usage of schema registry:
 
 
 import os
+import json
 
 from azure.identity import ClientSecretCredential
 from azure.schemaregistry import SchemaRegistryClient, SerializationType
@@ -45,7 +46,27 @@ SCHEMA_REGISTRY_ENDPOINT = os.environ['SCHEMA_REGISTRY_ENDPOINT']
 SCHEMA_GROUP = os.environ['SCHEMA_REGISTRY_GROUP']
 SCHEMA_NAME = 'your-schema-name'
 SERIALIZATION_TYPE = SerializationType.AVRO
-SCHEMA_STRING = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
+
+SCHEMA_JSON = {
+    "namespace": "example.avro",
+    "type": "record",
+    "name": "User",
+    "fields": [
+        {
+            "name": "name",
+            "type": "string"
+        },
+        {
+            "name": "favorite_number",
+            "type": ["int", "null"]},
+        {
+            "name": "favorite_color",
+            "type": ["string", "null"]
+        }
+    ]
+}
+
+SCHEMA_STRING = json.dumps(SCHEMA_JSON, separators=(',', ':'))
 
 
 def register_schema(client, schema_group, schema_name, serialization_type, schema_string):
