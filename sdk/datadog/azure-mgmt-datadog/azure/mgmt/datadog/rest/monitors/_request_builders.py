@@ -49,13 +49,13 @@ def build_list_api_keys_request(
 
             # response body for status code(s): 200
             response.json() == {
-                "nextLink": "None", # optional.
+                "nextLink": "str", # optional.
                 "value": [
                     {
-                        "created": "None", # optional.
-                        "createdBy": "None", # optional.
-                        "key": "None",
-                        "name": "None", # optional.
+                        "created": "str", # optional.
+                        "createdBy": "str", # optional.
+                        "key": "str",
+                        "name": "str" # optional.
                     }
                 ]
             }
@@ -120,10 +120,10 @@ def build_get_default_key_request(
 
             # response body for status code(s): 200
             response.json() == {
-                "created": "None", # optional.
-                "createdBy": "None", # optional.
-                "key": "None",
-                "name": "None", # optional.
+                "created": "str", # optional.
+                "createdBy": "str", # optional.
+                "key": "str",
+                "name": "str" # optional.
             }
     """
 
@@ -192,10 +192,10 @@ def build_set_default_key_request(
 
             # JSON input template you can fill out and use as your body input.
             json = {
-                "created": "None", # optional.
-                "createdBy": "None", # optional.
-                "key": "None",
-                "name": "None", # optional.
+                "created": "str", # optional.
+                "createdBy": "str", # optional.
+                "key": "str",
+                "name": "str" # optional.
             }
     """
 
@@ -262,27 +262,27 @@ def build_list_hosts_request(
 
             # response body for status code(s): 200
             response.json() == {
-                "nextLink": "None", # optional.
+                "nextLink": "str", # optional.
                 "value": [
                     {
                         "aliases": [
-                            "None", # optional.
+                            "str" # optional.
                         ],
                         "apps": [
-                            "None", # optional.
+                            "str" # optional.
                         ],
                         "meta": {
-                            "agentVersion": "None", # optional.
+                            "agentVersion": "str", # optional.
                             "installMethod": {
-                                "installerVersion": "None", # optional.
-                                "tool": "None", # optional.
-                                "toolVersion": "None", # optional.
+                                "installerVersion": "str", # optional.
+                                "tool": "str", # optional.
+                                "toolVersion": "str" # optional.
                             },
                             "logsAgent": {
-                                "transport": "None", # optional.
+                                "transport": "str" # optional.
                             }
                         },
-                        "name": "None", # optional.
+                        "name": "str" # optional.
                     }
                 ]
             }
@@ -347,10 +347,10 @@ def build_list_linked_resources_request(
 
             # response body for status code(s): 200
             response.json() == {
-                "nextLink": "None", # optional.
+                "nextLink": "str", # optional.
                 "value": [
                     {
-                        "id": "None", # optional.
+                        "id": "str" # optional.
                     }
                 ]
             }
@@ -415,14 +415,14 @@ def build_list_monitored_resources_request(
 
             # response body for status code(s): 200
             response.json() == {
-                "nextLink": "None", # optional.
+                "nextLink": "str", # optional.
                 "value": [
                     {
-                        "id": "None", # optional.
-                        "reasonForLogsStatus": "None", # optional.
-                        "reasonForMetricsStatus": "None", # optional.
-                        "sendingLogs": "None", # optional.
-                        "sendingMetrics": "None", # optional.
+                        "id": "str", # optional.
+                        "reasonForLogsStatus": "str", # optional.
+                        "reasonForMetricsStatus": "str", # optional.
+                        "sendingLogs": "True", # optional.
+                        "sendingMetrics": "True" # optional.
                     }
                 ]
             }
@@ -481,54 +481,54 @@ def build_list_request(
 
             # response body for status code(s): 200
             response.json() == {
-                "nextLink": "None", # optional.
+                "nextLink": "str", # optional.
                 "value": [
                     {
-                        "id": "None", # optional.
+                        "id": "str", # optional.
                         "identity": {
-                            "principalId": "None", # optional.
-                            "tenantId": "None", # optional.
-                            "type": "None", # optional.
+                            "principalId": "str", # optional.
+                            "tenantId": "str", # optional.
+                            "type": "str" # optional.
                         },
-                        "location": "None",
-                        "name": "None", # optional.
+                        "location": "str",
+                        "name": "str", # optional.
                         "properties": {
                             "datadogOrganizationProperties": {
-                                "apiKey": "None", # optional.
-                                "applicationKey": "None", # optional.
-                                "enterpriseAppId": "None", # optional.
-                                "id": "None", # optional.
-                                "linkingAuthCode": "None", # optional.
-                                "linkingClientId": "None", # optional.
-                                "name": "None", # optional.
-                                "redirectUri": "None", # optional.
+                                "apiKey": "str", # optional.
+                                "applicationKey": "str", # optional.
+                                "enterpriseAppId": "str", # optional.
+                                "id": "str", # optional.
+                                "linkingAuthCode": "str", # optional.
+                                "linkingClientId": "str", # optional.
+                                "name": "str", # optional.
+                                "redirectUri": "str" # optional.
                             },
-                            "liftrResourceCategory": "None", # optional.
-                            "liftrResourcePreference": "None", # optional.
-                            "marketplaceSubscriptionStatus": "None", # optional.
+                            "liftrResourceCategory": "str", # optional.
+                            "liftrResourcePreference": "0", # optional.
+                            "marketplaceSubscriptionStatus": "str", # optional.
                             "monitoringStatus": "Enabled", # optional.
-                            "provisioningState": "None", # optional.
+                            "provisioningState": "str", # optional.
                             "userInfo": {
-                                "emailAddress": "None", # optional.
-                                "name": "None", # optional.
-                                "phoneNumber": "None", # optional.
+                                "emailAddress": "str", # optional.
+                                "name": "str", # optional.
+                                "phoneNumber": "str" # optional.
                             }
                         },
                         "sku": {
-                            "name": "None"
+                            "name": "str"
                         },
                         "systemData": {
-                            "createdAt": "None", # optional.
-                            "createdBy": "None", # optional.
-                            "createdByType": "None", # optional.
-                            "lastModifiedAt": "None", # optional.
-                            "lastModifiedBy": "None", # optional.
-                            "lastModifiedByType": "None", # optional.
+                            "createdAt": "datetime", # optional.
+                            "createdBy": "str", # optional.
+                            "createdByType": "str", # optional.
+                            "lastModifiedAt": "datetime", # optional.
+                            "lastModifiedBy": "str", # optional.
+                            "lastModifiedByType": "str" # optional.
                         },
                         "tags": {
-                            "str": "None", # optional.
+                            "str": "str" # optional.
                         },
-                        "type": "None", # optional.
+                        "type": "str" # optional.
                     }
                 ]
             }
@@ -588,54 +588,54 @@ def build_list_by_resource_group_request(
 
             # response body for status code(s): 200
             response.json() == {
-                "nextLink": "None", # optional.
+                "nextLink": "str", # optional.
                 "value": [
                     {
-                        "id": "None", # optional.
+                        "id": "str", # optional.
                         "identity": {
-                            "principalId": "None", # optional.
-                            "tenantId": "None", # optional.
-                            "type": "None", # optional.
+                            "principalId": "str", # optional.
+                            "tenantId": "str", # optional.
+                            "type": "str" # optional.
                         },
-                        "location": "None",
-                        "name": "None", # optional.
+                        "location": "str",
+                        "name": "str", # optional.
                         "properties": {
                             "datadogOrganizationProperties": {
-                                "apiKey": "None", # optional.
-                                "applicationKey": "None", # optional.
-                                "enterpriseAppId": "None", # optional.
-                                "id": "None", # optional.
-                                "linkingAuthCode": "None", # optional.
-                                "linkingClientId": "None", # optional.
-                                "name": "None", # optional.
-                                "redirectUri": "None", # optional.
+                                "apiKey": "str", # optional.
+                                "applicationKey": "str", # optional.
+                                "enterpriseAppId": "str", # optional.
+                                "id": "str", # optional.
+                                "linkingAuthCode": "str", # optional.
+                                "linkingClientId": "str", # optional.
+                                "name": "str", # optional.
+                                "redirectUri": "str" # optional.
                             },
-                            "liftrResourceCategory": "None", # optional.
-                            "liftrResourcePreference": "None", # optional.
-                            "marketplaceSubscriptionStatus": "None", # optional.
+                            "liftrResourceCategory": "str", # optional.
+                            "liftrResourcePreference": "0", # optional.
+                            "marketplaceSubscriptionStatus": "str", # optional.
                             "monitoringStatus": "Enabled", # optional.
-                            "provisioningState": "None", # optional.
+                            "provisioningState": "str", # optional.
                             "userInfo": {
-                                "emailAddress": "None", # optional.
-                                "name": "None", # optional.
-                                "phoneNumber": "None", # optional.
+                                "emailAddress": "str", # optional.
+                                "name": "str", # optional.
+                                "phoneNumber": "str" # optional.
                             }
                         },
                         "sku": {
-                            "name": "None"
+                            "name": "str"
                         },
                         "systemData": {
-                            "createdAt": "None", # optional.
-                            "createdBy": "None", # optional.
-                            "createdByType": "None", # optional.
-                            "lastModifiedAt": "None", # optional.
-                            "lastModifiedBy": "None", # optional.
-                            "lastModifiedByType": "None", # optional.
+                            "createdAt": "datetime", # optional.
+                            "createdBy": "str", # optional.
+                            "createdByType": "str", # optional.
+                            "lastModifiedAt": "datetime", # optional.
+                            "lastModifiedBy": "str", # optional.
+                            "lastModifiedByType": "str" # optional.
                         },
                         "tags": {
-                            "str": "None", # optional.
+                            "str": "str" # optional.
                         },
-                        "type": "None", # optional.
+                        "type": "str" # optional.
                     }
                 ]
             }
@@ -699,51 +699,51 @@ def build_get_request(
 
             # response body for status code(s): 200
             response.json() == {
-                "id": "None", # optional.
+                "id": "str", # optional.
                 "identity": {
-                    "principalId": "None", # optional.
-                    "tenantId": "None", # optional.
-                    "type": "None", # optional.
+                    "principalId": "str", # optional.
+                    "tenantId": "str", # optional.
+                    "type": "str" # optional.
                 },
-                "location": "None",
-                "name": "None", # optional.
+                "location": "str",
+                "name": "str", # optional.
                 "properties": {
                     "datadogOrganizationProperties": {
-                        "apiKey": "None", # optional.
-                        "applicationKey": "None", # optional.
-                        "enterpriseAppId": "None", # optional.
-                        "id": "None", # optional.
-                        "linkingAuthCode": "None", # optional.
-                        "linkingClientId": "None", # optional.
-                        "name": "None", # optional.
-                        "redirectUri": "None", # optional.
+                        "apiKey": "str", # optional.
+                        "applicationKey": "str", # optional.
+                        "enterpriseAppId": "str", # optional.
+                        "id": "str", # optional.
+                        "linkingAuthCode": "str", # optional.
+                        "linkingClientId": "str", # optional.
+                        "name": "str", # optional.
+                        "redirectUri": "str" # optional.
                     },
-                    "liftrResourceCategory": "None", # optional.
-                    "liftrResourcePreference": "None", # optional.
-                    "marketplaceSubscriptionStatus": "None", # optional.
+                    "liftrResourceCategory": "str", # optional.
+                    "liftrResourcePreference": "0", # optional.
+                    "marketplaceSubscriptionStatus": "str", # optional.
                     "monitoringStatus": "Enabled", # optional.
-                    "provisioningState": "None", # optional.
+                    "provisioningState": "str", # optional.
                     "userInfo": {
-                        "emailAddress": "None", # optional.
-                        "name": "None", # optional.
-                        "phoneNumber": "None", # optional.
+                        "emailAddress": "str", # optional.
+                        "name": "str", # optional.
+                        "phoneNumber": "str" # optional.
                     }
                 },
                 "sku": {
-                    "name": "None"
+                    "name": "str"
                 },
                 "systemData": {
-                    "createdAt": "None", # optional.
-                    "createdBy": "None", # optional.
-                    "createdByType": "None", # optional.
-                    "lastModifiedAt": "None", # optional.
-                    "lastModifiedBy": "None", # optional.
-                    "lastModifiedByType": "None", # optional.
+                    "createdAt": "datetime", # optional.
+                    "createdBy": "str", # optional.
+                    "createdByType": "str", # optional.
+                    "lastModifiedAt": "datetime", # optional.
+                    "lastModifiedBy": "str", # optional.
+                    "lastModifiedByType": "str" # optional.
                 },
                 "tags": {
-                    "str": "None", # optional.
+                    "str": "str" # optional.
                 },
-                "type": "None", # optional.
+                "type": "str" # optional.
             }
     """
 
@@ -812,100 +812,100 @@ def build_create_request(
 
             # JSON input template you can fill out and use as your body input.
             json = {
-                "id": "None", # optional.
+                "id": "str", # optional.
                 "identity": {
-                    "principalId": "None", # optional.
-                    "tenantId": "None", # optional.
-                    "type": "None", # optional.
+                    "principalId": "str", # optional.
+                    "tenantId": "str", # optional.
+                    "type": "str" # optional.
                 },
-                "location": "None",
-                "name": "None", # optional.
+                "location": "str",
+                "name": "str", # optional.
                 "properties": {
                     "datadogOrganizationProperties": {
-                        "apiKey": "None", # optional.
-                        "applicationKey": "None", # optional.
-                        "enterpriseAppId": "None", # optional.
-                        "id": "None", # optional.
-                        "linkingAuthCode": "None", # optional.
-                        "linkingClientId": "None", # optional.
-                        "name": "None", # optional.
-                        "redirectUri": "None", # optional.
+                        "apiKey": "str", # optional.
+                        "applicationKey": "str", # optional.
+                        "enterpriseAppId": "str", # optional.
+                        "id": "str", # optional.
+                        "linkingAuthCode": "str", # optional.
+                        "linkingClientId": "str", # optional.
+                        "name": "str", # optional.
+                        "redirectUri": "str" # optional.
                     },
-                    "liftrResourceCategory": "None", # optional.
-                    "liftrResourcePreference": "None", # optional.
-                    "marketplaceSubscriptionStatus": "None", # optional.
+                    "liftrResourceCategory": "str", # optional.
+                    "liftrResourcePreference": "0", # optional.
+                    "marketplaceSubscriptionStatus": "str", # optional.
                     "monitoringStatus": "Enabled", # optional.
-                    "provisioningState": "None", # optional.
+                    "provisioningState": "str", # optional.
                     "userInfo": {
-                        "emailAddress": "None", # optional.
-                        "name": "None", # optional.
-                        "phoneNumber": "None", # optional.
+                        "emailAddress": "str", # optional.
+                        "name": "str", # optional.
+                        "phoneNumber": "str" # optional.
                     }
                 },
                 "sku": {
-                    "name": "None"
+                    "name": "str"
                 },
                 "systemData": {
-                    "createdAt": "None", # optional.
-                    "createdBy": "None", # optional.
-                    "createdByType": "None", # optional.
-                    "lastModifiedAt": "None", # optional.
-                    "lastModifiedBy": "None", # optional.
-                    "lastModifiedByType": "None", # optional.
+                    "createdAt": "datetime", # optional.
+                    "createdBy": "str", # optional.
+                    "createdByType": "str", # optional.
+                    "lastModifiedAt": "datetime", # optional.
+                    "lastModifiedBy": "str", # optional.
+                    "lastModifiedByType": "str" # optional.
                 },
                 "tags": {
-                    "str": "None", # optional.
+                    "str": "str" # optional.
                 },
-                "type": "None", # optional.
+                "type": "str" # optional.
             }
 
             # response body for status code(s): 200, 201
             response.json() == {
-                "id": "None", # optional.
+                "id": "str", # optional.
                 "identity": {
-                    "principalId": "None", # optional.
-                    "tenantId": "None", # optional.
-                    "type": "None", # optional.
+                    "principalId": "str", # optional.
+                    "tenantId": "str", # optional.
+                    "type": "str" # optional.
                 },
-                "location": "None",
-                "name": "None", # optional.
+                "location": "str",
+                "name": "str", # optional.
                 "properties": {
                     "datadogOrganizationProperties": {
-                        "apiKey": "None", # optional.
-                        "applicationKey": "None", # optional.
-                        "enterpriseAppId": "None", # optional.
-                        "id": "None", # optional.
-                        "linkingAuthCode": "None", # optional.
-                        "linkingClientId": "None", # optional.
-                        "name": "None", # optional.
-                        "redirectUri": "None", # optional.
+                        "apiKey": "str", # optional.
+                        "applicationKey": "str", # optional.
+                        "enterpriseAppId": "str", # optional.
+                        "id": "str", # optional.
+                        "linkingAuthCode": "str", # optional.
+                        "linkingClientId": "str", # optional.
+                        "name": "str", # optional.
+                        "redirectUri": "str" # optional.
                     },
-                    "liftrResourceCategory": "None", # optional.
-                    "liftrResourcePreference": "None", # optional.
-                    "marketplaceSubscriptionStatus": "None", # optional.
+                    "liftrResourceCategory": "str", # optional.
+                    "liftrResourcePreference": "0", # optional.
+                    "marketplaceSubscriptionStatus": "str", # optional.
                     "monitoringStatus": "Enabled", # optional.
-                    "provisioningState": "None", # optional.
+                    "provisioningState": "str", # optional.
                     "userInfo": {
-                        "emailAddress": "None", # optional.
-                        "name": "None", # optional.
-                        "phoneNumber": "None", # optional.
+                        "emailAddress": "str", # optional.
+                        "name": "str", # optional.
+                        "phoneNumber": "str" # optional.
                     }
                 },
                 "sku": {
-                    "name": "None"
+                    "name": "str"
                 },
                 "systemData": {
-                    "createdAt": "None", # optional.
-                    "createdBy": "None", # optional.
-                    "createdByType": "None", # optional.
-                    "lastModifiedAt": "None", # optional.
-                    "lastModifiedBy": "None", # optional.
-                    "lastModifiedByType": "None", # optional.
+                    "createdAt": "datetime", # optional.
+                    "createdBy": "str", # optional.
+                    "createdByType": "str", # optional.
+                    "lastModifiedAt": "datetime", # optional.
+                    "lastModifiedBy": "str", # optional.
+                    "lastModifiedByType": "str" # optional.
                 },
                 "tags": {
-                    "str": "None", # optional.
+                    "str": "str" # optional.
                 },
-                "type": "None", # optional.
+                "type": "str" # optional.
             }
     """
 
@@ -979,63 +979,63 @@ def build_update_request(
             # JSON input template you can fill out and use as your body input.
             json = {
                 "properties": {
-                    "monitoringStatus": "Enabled", # optional.
+                    "monitoringStatus": "Enabled" # optional.
                 },
                 "sku": {
-                    "name": "None"
+                    "name": "str"
                 },
                 "tags": {
-                    "str": "None", # optional.
+                    "str": "str" # optional.
                 }
             }
 
             # response body for status code(s): 200, 201
             response.json() == {
-                "id": "None", # optional.
+                "id": "str", # optional.
                 "identity": {
-                    "principalId": "None", # optional.
-                    "tenantId": "None", # optional.
-                    "type": "None", # optional.
+                    "principalId": "str", # optional.
+                    "tenantId": "str", # optional.
+                    "type": "str" # optional.
                 },
-                "location": "None",
-                "name": "None", # optional.
+                "location": "str",
+                "name": "str", # optional.
                 "properties": {
                     "datadogOrganizationProperties": {
-                        "apiKey": "None", # optional.
-                        "applicationKey": "None", # optional.
-                        "enterpriseAppId": "None", # optional.
-                        "id": "None", # optional.
-                        "linkingAuthCode": "None", # optional.
-                        "linkingClientId": "None", # optional.
-                        "name": "None", # optional.
-                        "redirectUri": "None", # optional.
+                        "apiKey": "str", # optional.
+                        "applicationKey": "str", # optional.
+                        "enterpriseAppId": "str", # optional.
+                        "id": "str", # optional.
+                        "linkingAuthCode": "str", # optional.
+                        "linkingClientId": "str", # optional.
+                        "name": "str", # optional.
+                        "redirectUri": "str" # optional.
                     },
-                    "liftrResourceCategory": "None", # optional.
-                    "liftrResourcePreference": "None", # optional.
-                    "marketplaceSubscriptionStatus": "None", # optional.
+                    "liftrResourceCategory": "str", # optional.
+                    "liftrResourcePreference": "0", # optional.
+                    "marketplaceSubscriptionStatus": "str", # optional.
                     "monitoringStatus": "Enabled", # optional.
-                    "provisioningState": "None", # optional.
+                    "provisioningState": "str", # optional.
                     "userInfo": {
-                        "emailAddress": "None", # optional.
-                        "name": "None", # optional.
-                        "phoneNumber": "None", # optional.
+                        "emailAddress": "str", # optional.
+                        "name": "str", # optional.
+                        "phoneNumber": "str" # optional.
                     }
                 },
                 "sku": {
-                    "name": "None"
+                    "name": "str"
                 },
                 "systemData": {
-                    "createdAt": "None", # optional.
-                    "createdBy": "None", # optional.
-                    "createdByType": "None", # optional.
-                    "lastModifiedAt": "None", # optional.
-                    "lastModifiedBy": "None", # optional.
-                    "lastModifiedByType": "None", # optional.
+                    "createdAt": "datetime", # optional.
+                    "createdBy": "str", # optional.
+                    "createdByType": "str", # optional.
+                    "lastModifiedAt": "datetime", # optional.
+                    "lastModifiedBy": "str", # optional.
+                    "lastModifiedByType": "str" # optional.
                 },
                 "tags": {
-                    "str": "None", # optional.
+                    "str": "str" # optional.
                 },
-                "type": "None", # optional.
+                "type": "str" # optional.
             }
     """
 
@@ -1157,7 +1157,7 @@ def build_refresh_set_password_link_request(
 
             # response body for status code(s): 200
             response.json() == {
-                "setPasswordLink": "None", # optional.
+                "setPasswordLink": "str" # optional.
             }
     """
 

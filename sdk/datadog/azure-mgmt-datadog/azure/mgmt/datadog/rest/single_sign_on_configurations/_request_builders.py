@@ -49,26 +49,26 @@ def build_list_request(
 
             # response body for status code(s): 200
             response.json() == {
-                "nextLink": "None", # optional.
+                "nextLink": "str", # optional.
                 "value": [
                     {
-                        "id": "None", # optional.
-                        "name": "None", # optional.
+                        "id": "str", # optional.
+                        "name": "str", # optional.
                         "properties": {
-                            "enterpriseAppId": "None", # optional.
-                            "provisioningState": "None", # optional.
-                            "singleSignOnState": "None", # optional.
-                            "singleSignOnUrl": "None", # optional.
+                            "enterpriseAppId": "str", # optional.
+                            "provisioningState": "str", # optional.
+                            "singleSignOnState": "str", # optional.
+                            "singleSignOnUrl": "str" # optional.
                         },
                         "systemData": {
-                            "createdAt": "None", # optional.
-                            "createdBy": "None", # optional.
-                            "createdByType": "None", # optional.
-                            "lastModifiedAt": "None", # optional.
-                            "lastModifiedBy": "None", # optional.
-                            "lastModifiedByType": "None", # optional.
+                            "createdAt": "datetime", # optional.
+                            "createdBy": "str", # optional.
+                            "createdByType": "str", # optional.
+                            "lastModifiedAt": "datetime", # optional.
+                            "lastModifiedBy": "str", # optional.
+                            "lastModifiedByType": "str" # optional.
                         },
-                        "type": "None", # optional.
+                        "type": "str" # optional.
                     }
                 ]
             }
@@ -142,44 +142,44 @@ def build_create_or_update_request(
 
             # JSON input template you can fill out and use as your body input.
             json = {
-                "id": "None", # optional.
-                "name": "None", # optional.
+                "id": "str", # optional.
+                "name": "str", # optional.
                 "properties": {
-                    "enterpriseAppId": "None", # optional.
-                    "provisioningState": "None", # optional.
-                    "singleSignOnState": "None", # optional.
-                    "singleSignOnUrl": "None", # optional.
+                    "enterpriseAppId": "str", # optional.
+                    "provisioningState": "str", # optional.
+                    "singleSignOnState": "str", # optional.
+                    "singleSignOnUrl": "str" # optional.
                 },
                 "systemData": {
-                    "createdAt": "None", # optional.
-                    "createdBy": "None", # optional.
-                    "createdByType": "None", # optional.
-                    "lastModifiedAt": "None", # optional.
-                    "lastModifiedBy": "None", # optional.
-                    "lastModifiedByType": "None", # optional.
+                    "createdAt": "datetime", # optional.
+                    "createdBy": "str", # optional.
+                    "createdByType": "str", # optional.
+                    "lastModifiedAt": "datetime", # optional.
+                    "lastModifiedBy": "str", # optional.
+                    "lastModifiedByType": "str" # optional.
                 },
-                "type": "None", # optional.
+                "type": "str" # optional.
             }
 
             # response body for status code(s): 200, 201
             response.json() == {
-                "id": "None", # optional.
-                "name": "None", # optional.
+                "id": "str", # optional.
+                "name": "str", # optional.
                 "properties": {
-                    "enterpriseAppId": "None", # optional.
-                    "provisioningState": "None", # optional.
-                    "singleSignOnState": "None", # optional.
-                    "singleSignOnUrl": "None", # optional.
+                    "enterpriseAppId": "str", # optional.
+                    "provisioningState": "str", # optional.
+                    "singleSignOnState": "str", # optional.
+                    "singleSignOnUrl": "str" # optional.
                 },
                 "systemData": {
-                    "createdAt": "None", # optional.
-                    "createdBy": "None", # optional.
-                    "createdByType": "None", # optional.
-                    "lastModifiedAt": "None", # optional.
-                    "lastModifiedBy": "None", # optional.
-                    "lastModifiedByType": "None", # optional.
+                    "createdAt": "datetime", # optional.
+                    "createdBy": "str", # optional.
+                    "createdByType": "str", # optional.
+                    "lastModifiedAt": "datetime", # optional.
+                    "lastModifiedBy": "str", # optional.
+                    "lastModifiedByType": "str" # optional.
                 },
-                "type": "None", # optional.
+                "type": "str" # optional.
             }
     """
 
@@ -250,23 +250,23 @@ def build_get_request(
 
             # response body for status code(s): 200
             response.json() == {
-                "id": "None", # optional.
-                "name": "None", # optional.
+                "id": "str", # optional.
+                "name": "str", # optional.
                 "properties": {
-                    "enterpriseAppId": "None", # optional.
-                    "provisioningState": "None", # optional.
-                    "singleSignOnState": "None", # optional.
-                    "singleSignOnUrl": "None", # optional.
+                    "enterpriseAppId": "str", # optional.
+                    "provisioningState": "str", # optional.
+                    "singleSignOnState": "str", # optional.
+                    "singleSignOnUrl": "str" # optional.
                 },
                 "systemData": {
-                    "createdAt": "None", # optional.
-                    "createdBy": "None", # optional.
-                    "createdByType": "None", # optional.
-                    "lastModifiedAt": "None", # optional.
-                    "lastModifiedBy": "None", # optional.
-                    "lastModifiedByType": "None", # optional.
+                    "createdAt": "datetime", # optional.
+                    "createdBy": "str", # optional.
+                    "createdByType": "str", # optional.
+                    "lastModifiedAt": "datetime", # optional.
+                    "lastModifiedBy": "str", # optional.
+                    "lastModifiedByType": "str" # optional.
                 },
-                "type": "None", # optional.
+                "type": "str" # optional.
             }
     """
 

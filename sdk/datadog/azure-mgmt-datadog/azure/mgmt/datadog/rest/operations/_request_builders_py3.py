@@ -34,17 +34,17 @@ def build_list_request(
 
             # response body for status code(s): 200
             response.json() == {
-                "nextLink": "None", # optional.
+                "nextLink": "str", # optional.
                 "value": [
                     {
                         "display": {
-                            "description": "None", # optional.
-                            "operation": "None", # optional.
-                            "provider": "None", # optional.
-                            "resource": "None", # optional.
+                            "description": "str", # optional.
+                            "operation": "str", # optional.
+                            "provider": "str", # optional.
+                            "resource": "str" # optional.
                         },
-                        "isDataAction": "None", # optional.
-                        "name": "None", # optional.
+                        "isDataAction": "True", # optional.
+                        "name": "str" # optional.
                     }
                 ]
             }
