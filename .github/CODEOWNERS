@@ -89,7 +89,7 @@
 /sdk/schemaregistry/                                                 @yunhaoling
 
 # PRLabel: %Search
-/sdk/search/                                                         @xiangyan99
+/sdk/search/                                                         @tjprescott
 
 # PRLabel: %Service Fabric
 /sdk/servicefabric/                                                  @QingChenmsft @samedder
