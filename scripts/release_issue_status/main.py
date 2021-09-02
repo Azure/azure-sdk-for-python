@@ -125,6 +125,8 @@ def _latest_comment_time(comments, delay_from_create_date):
 def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue):
     print("==========new issue number: {}".format(item.issue_object.number))
     if 'auto-link' not in item.labels:
+        item.labels.append('auto-link')
+        item.issue_object.set_labels(*item.labels)
         try:
             package_name, readme_link = update_issue_body(request_repo, rest_repo, item.issue_object.number)
             print("pkname, readme", package_name, readme_link)
@@ -134,10 +136,9 @@ def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue):
         except Exception as e:
             item.bot_advice = 'failed to modify the body of the new issue. Please modify manually'
             item.labels.append('attention')
+            item.issue_object.set_labels(*item.labels)
             print(e)
             raise
-        item.labels.append('auto-link')
-        item.issue_object.set_labels(*item.labels)
     else:
         try:
             readme_link = find_readme_link(request_repo, item.issue_object.number)
@@ -145,6 +146,7 @@ def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue):
             print('Issue: {}  updates body failed'.format(item.issue_object.number))
             item.bot_advice = 'failed to find Readme link, Please check !!'
             item.labels.append('attention')
+            item.issue_object.set_labels(*item.labels)
             raise
     try:
         reply = rg.begin_reply_generate(item=item, rest_repo=rest_repo, readme_link=readme_link,sdk_repo=sdk_repo)
