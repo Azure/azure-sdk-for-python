@@ -220,7 +220,9 @@ def main():
             item.bot_advice = 'delay for a long time and better to handle now.'
         if item.comment_num > 1 and item.language == 'Python':
             try:
-                auto_close_issue(request_repo, item.issue_object.number, item.package)
+                if auto_close_issue(request_repo, item.issue_object.number, item.package):
+                    item.labels.append('auto-closed')
+                    item.issue_object.set_labels(*item.labels)          
             except Exception as e:
                 item.bot_advice = 'auto-close failed, please check!'
                 print(f"=====issue: {item.issue_object.number}, {e}")
