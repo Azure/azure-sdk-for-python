@@ -17,8 +17,6 @@ an `encoding` parameter.
 
 - The behaviour of the headers returned in `azure.core.rest` responses now aligns across sync and async. Items can now be checked case-insensitively and without raising an error for format.
 
-### Other Changes
-
 ## 1.17.0 (2021-08-05)
 
 ### Features Added
