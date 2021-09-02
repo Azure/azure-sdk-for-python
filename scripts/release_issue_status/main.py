@@ -220,7 +220,7 @@ def main():
             try:
                 auto_close_issue(request_repo, item.issue_object.number, item.package)
             except Exception as e:
-                print(e)
+                print(f"=====issue: {item.issue_object.number}, {e}")
 
         if item.days_from_latest_commit >= 30 and item.language == 'Python' and '30days attention' not in item.labels:
             item.labels.append('30days attention')
