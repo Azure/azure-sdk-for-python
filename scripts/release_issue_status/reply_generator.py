@@ -8,11 +8,10 @@ def weather_change_readme(rest_repo, link_dict, labels):
     # to see whether need change readme
     contents = str(rest_repo.get_contents(link_dict['readme_path']).decoded_content)
     pattern_tag = re.compile(r'tag: package-[\w+-.]+')
-    package_tag = pattern_tag.search(contents).group()
-    package_tag = package_tag.split(':')[1].strip()
+    package_tag = pattern_tag.findall(contents)
     readme_python_contents = str(rest_repo.get_contents(link_dict['readme_python_path']).decoded_content)
     whether_multi_api = 'multi-api' in readme_python_contents
-    whether_same_tag = package_tag == link_dict['readme_tag']
+    whether_same_tag = link_dict['readme_tag'] in package_tag
     whether_change_readme = not whether_same_tag or whether_multi_api and not 'MultiAPI' in labels
     return whether_change_readme
 
@@ -29,7 +28,7 @@ def get_links(readme_link):
     resource_manager = pattern_resource_manager.search(readme_link).group()
     link_dict['readme_path'] = readme_path
     link_dict['readme_python_path'] = readme_path[:readme_path.rfind('/')] + '/readme.python.md'
-    link_dict['readme_tag'] = readme_tag
+    link_dict['readme_tag'] = 'tag: ' + readme_tag
     link_dict['resource_manager'] = resource_manager
     return link_dict
 
