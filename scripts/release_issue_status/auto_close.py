@@ -15,6 +15,9 @@ def auto_close_issue(sdk_repo, issue_number, package_name):
         issue_info.create_comment(body=comment)
         issue_info.edit(state='closed')
         print(f"issue number：{issue_number} has been closed!")
+        return True
+    else: 
+        return False
 
 
 def get_last_released_date(package_name):
