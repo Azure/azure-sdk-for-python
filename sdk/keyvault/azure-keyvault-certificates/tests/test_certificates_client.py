@@ -381,6 +381,9 @@ class CertificateClientTests(CertificatesTestCase, KeyVaultTestCase):
     @all_api_versions()
     @client_setup
     def test_async_request_cancellation_and_deletion(self, client, **kwargs):
+        if self.is_live:
+            pytest.skip("Skipping by default because of operation flakiness in pipeline testing")
+
         cert_name = self.get_resource_name("asyncCanceledDeletedCert")
         cert_policy = CertificatePolicy.get_default()
         # create certificate
