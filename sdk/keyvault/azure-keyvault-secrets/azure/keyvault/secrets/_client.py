@@ -4,6 +4,7 @@
 # ------------------------------------
 from functools import partial
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.polling import LROPoller
 
 from ._models import KeyVaultSecret, DeletedSecret, SecretProperties
 from ._shared import KeyVaultClientBase
@@ -294,7 +295,7 @@ class SecretClient(KeyVaultClientBase):
 
     @distributed_trace
     def begin_delete_secret(self, name, **kwargs):
-        # type: (str, **Any) -> KeyVaultOperationPoller
+        # type: (str, **Any) -> LROPoller
         """Delete all versions of a secret. Requires secrets/delete permission.
 
         When this method returns Key Vault has begun deleting the secret. Deletion may take several seconds in a vault

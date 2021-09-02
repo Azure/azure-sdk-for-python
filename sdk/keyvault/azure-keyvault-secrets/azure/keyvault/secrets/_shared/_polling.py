@@ -33,7 +33,7 @@ class KeyVaultOperationPoller(LROPoller):
     # pylint: disable=arguments-differ
     def __init__(self, polling_method):
         # type: (PollingMethod) -> None
-        super(KeyVaultOperationPoller, self).__init__(None, None, self.result, NoPolling())
+        super(KeyVaultOperationPoller, self).__init__(None, None, lambda *_: None, NoPolling())
         self._polling_method = polling_method
 
     # pylint: disable=arguments-differ
