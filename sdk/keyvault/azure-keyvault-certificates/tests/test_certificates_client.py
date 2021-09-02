@@ -382,7 +382,7 @@ class CertificateClientTests(CertificatesTestCase, KeyVaultTestCase):
     @client_setup
     def test_async_request_cancellation_and_deletion(self, client, **kwargs):
         if self.is_live:
-            pytest.skip("Skipping by default because of operation flakiness in pipeline testing")
+            pytest.skip("Skipping by default because of pipeline test flakiness: https://github.com/Azure/azure-sdk-for-python/issues/16333")
 
         cert_name = self.get_resource_name("asyncCanceledDeletedCert")
         cert_policy = CertificatePolicy.get_default()
