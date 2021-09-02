@@ -1,5 +1,9 @@
 # Release History
 
+  **Breaking Changes**
+  - Change exporter OT to AI mapping fields following common schema
+      ([#20445](https://github.com/Azure/azure-sdk-for-python/pull/20445))
+
 ## 1.0.0b4 (2021-04-06)
 
   **Features**
