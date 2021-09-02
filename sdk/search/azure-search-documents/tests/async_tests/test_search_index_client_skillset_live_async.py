@@ -21,11 +21,14 @@ from search_service_preparer import SearchServicePreparer, SearchResourceGroupPr
 
 from azure.core.exceptions import HttpResponseError
 from azure.search.documents.indexes.models import(
+    EntityLinkingSkill,
     EntityRecognitionSkill,
     EntityRecognitionSkillVersion,
     InputFieldMappingEntry,
     OutputFieldMappingEntry,
     SearchIndexerSkillset,
+    SentimentSkill,
+    SentimentSkillVersion
 )
 from azure.search.documents.indexes.aio import SearchIndexerClient
 
@@ -57,25 +60,51 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
         name = "test-ss"
 
         s1 = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
-                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizationsV1")])
+                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizationsS1")],
+                                    description="Skill Version 1",
+                                    model_version="1",
+                                    include_typeless_entities=True)
 
         s2 = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
-                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizationsV3")],
-                                    skill_version=EntityRecognitionSkillVersion.V3)
+                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizationsS2")],
+                                    skill_version=EntityRecognitionSkillVersion.LATEST,
+                                    description="Skill Version 3",
+                                    model_version="3",
+                                    include_typeless_entities=True)
+        s3 = SentimentSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
+                            outputs=[OutputFieldMappingEntry(name="score", target_name="scoreS3")],
+                            skill_version=SentimentSkillVersion.V1,
+                            description="Sentiment V1",
+                            include_opinion_mining=True)
 
-        skillset = SearchIndexerSkillset(name=name, skills=list([s1, s2]), description="desc")
+        s4 = SentimentSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
+                            outputs=[OutputFieldMappingEntry(name="confidenceScores", target_name="scoreS4")],
+                            skill_version=SentimentSkillVersion.V3,
+                            description="Sentiment V3",
+                            include_opinion_mining=True)
 
+        s5 = EntityLinkingSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
+                                outputs=[OutputFieldMappingEntry(name="entities", target_name="entitiesS5")],
+                                minimum_precision=0.5)
+
+        skillset = SearchIndexerSkillset(name=name, skills=list([s1, s2, s3, s4, s5]), description="desc")
         result = await client.create_skillset(skillset)
 
         assert isinstance(result, SearchIndexerSkillset)
-        assert result.name == name
+        assert result.name == "test-ss"
         assert result.description == "desc"
         assert result.e_tag
-        assert len(result.skills) == 2
+        assert len(result.skills) == 5
         assert isinstance(result.skills[0], EntityRecognitionSkill)
         assert result.skills[0].skill_version == EntityRecognitionSkillVersion.V1
         assert isinstance(result.skills[1], EntityRecognitionSkill)
         assert result.skills[1].skill_version == EntityRecognitionSkillVersion.V3
+        assert isinstance(result.skills[2], SentimentSkill)
+        assert result.skills[2].skill_version == SentimentSkillVersion.V1
+        assert isinstance(result.skills[3], SentimentSkill)
+        assert result.skills[3].skill_version == SentimentSkillVersion.V3
+        assert isinstance(result.skills[4], EntityLinkingSkill)
+        assert result.skills[4].minimum_precision == 0.5
 
         assert len(await client.get_skillsets()) == 1
 
