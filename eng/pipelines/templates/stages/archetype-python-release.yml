@@ -23,7 +23,7 @@ stages:
             environment: github
 
             pool:
-              name: azsdk-pool-mms-ubuntu-1804-general
+              name: azsdk-pool-mms-ubuntu-2004-general
               vmImage: MMSUbuntu20.04
 
             strategy:
@@ -65,7 +65,7 @@ stages:
               dependsOn: TagRepository
 
               pool:
-                name: azsdk-pool-mms-ubuntu-1804-general
+                name: azsdk-pool-mms-ubuntu-2004-general
                 vmImage: MMSUbuntu20.04
 
               strategy:
@@ -238,7 +238,7 @@ stages:
       displayName: "Publish package to daily feed"
       condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
       pool:
-        name: azsdk-pool-mms-ubuntu-1804-general
+        name: azsdk-pool-mms-ubuntu-2004-general
         vmImage: MMSUbuntu20.04
       steps:
       - checkout: none
