@@ -26,9 +26,14 @@
 from typing import Any, TYPE_CHECKING, Union
 
 from .._common._constants import SerializationType
-from .._common._response_handlers import _parse_response_schema_id, _parse_response_schema
-from .._common._schema import SchemaProperties, Schema
+from .._common._schema import Schema, SchemaProperties
+from .._common._response_handlers import (
+    _parse_response_schema,
+    _parse_response_schema_properties,
+)
+
 from .._generated.aio._azure_schema_registry import AzureSchemaRegistry
+from .._generated.rest import schema as schema_rest
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -112,14 +117,19 @@ class SchemaRegistryClient(object):
         except AttributeError:
             pass
 
-        schema_properties = await self._generated_client.schema.register(
+        request = schema_rest.build_register_request(
             group_name=schema_group,
             schema_name=schema_name,
-            schema_content=schema_content,
-            x_schema_type=serialization_type,
-            cls=_parse_response_schema_id,
+            content=schema_content,
+            serialization_type=serialization_type,
+            content_type=kwargs.pop("content_type", "application/json"),
             **kwargs
         )
+
+        response = await self._generated_client.send_request(request)
+        response.raise_for_status()
+        schema_properties = _parse_response_schema_properties(response)
+
         schema_description = (
             schema_group,
             schema_name,
@@ -158,11 +168,10 @@ class SchemaRegistryClient(object):
         try:
             return self._id_to_schema[schema_id]
         except KeyError:
-            schema = await self._generated_client.schema.get_by_id(
-                schema_id=schema_id,
-                cls=_parse_response_schema,
-                **kwargs
-            )
+            request = schema_rest.build_get_by_id_request(schema_id=schema_id)
+            response = await self._generated_client.send_request(request, **kwargs)
+            response.raise_for_status()
+            schema = _parse_response_schema(response)
             self._id_to_schema[schema_id] = schema
             return schema
 
@@ -201,18 +210,24 @@ class SchemaRegistryClient(object):
             pass
 
         try:
-            return self._description_to_properties[
+            properties = self._description_to_properties[
                 (schema_group, schema_name, serialization_type, schema_content)
             ]
+            return properties
         except KeyError:
-            schema_properties = await self._generated_client.schema.query_id_by_content(
+            request = schema_rest.build_query_id_by_content_request(
                 group_name=schema_group,
                 schema_name=schema_name,
-                schema_content=schema_content,
-                x_schema_type=serialization_type,
-                cls=_parse_response_schema_id,
+                content=schema_content,
+                serialization_type=serialization_type,
+                content_type=kwargs.pop("content_type", "application/json"),
                 **kwargs
             )
+
+            response = await self._generated_client.send_request(request, **kwargs)
+            response.raise_for_status()
+            schema_properties = _parse_response_schema_properties(response)
+
             if not self._id_to_schema.get(schema_properties.schema_id):
                 self._id_to_schema[schema_properties.schema_id] = Schema(schema_content, schema_properties)
             else:
