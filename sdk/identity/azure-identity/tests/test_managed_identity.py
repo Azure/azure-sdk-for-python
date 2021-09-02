@@ -33,7 +33,7 @@ ALL_ENVIRONMENTS = (
     {  # token exchange
         EnvironmentVariables.AZURE_CLIENT_ID: "...",
         EnvironmentVariables.AZURE_TENANT_ID: "...",
-        EnvironmentVariables.TOKEN_FILE_PATH: __file__,
+        EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE: __file__,
     },
     {},  # IMDS
 )
@@ -85,7 +85,7 @@ ALL_ENVIRONMENTS = (
     {  # token exchange
         EnvironmentVariables.AZURE_CLIENT_ID: "...",
         EnvironmentVariables.AZURE_TENANT_ID: "...",
-        EnvironmentVariables.TOKEN_FILE_PATH: __file__,
+        EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE: __file__,
     },
     {},  # IMDS
 )
@@ -829,7 +829,7 @@ def test_token_exchange(tmpdir):
             EnvironmentVariables.AZURE_AUTHORITY_HOST: authority,
             EnvironmentVariables.AZURE_CLIENT_ID: client_id,
             EnvironmentVariables.AZURE_TENANT_ID: tenant,
-            EnvironmentVariables.TOKEN_FILE_PATH: token_file.strpath,
+            EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE: token_file.strpath,
         },
         clear=True,
     ):
