@@ -19,8 +19,8 @@ if TYPE_CHECKING:
 class SecretProperties(object):
     """A secret's id and attributes."""
 
-    def __init__(self, attributes=None, vault_id=None, **kwargs):
-        # type: (Optional[_models.SecretAttributes], Optional[str], **Any) -> None
+    def __init__(self, attributes, vault_id, **kwargs):
+        # type: (_models.SecretAttributes, str, **Any) -> None
         self._attributes = attributes
         self._id = vault_id
         self._vault_id = KeyVaultSecretIdentifier(vault_id) if vault_id else None
@@ -38,8 +38,8 @@ class SecretProperties(object):
         # type: (_models.SecretBundle) -> SecretProperties
         """Construct a SecretProperties from an autorest-generated SecretBundle"""
         return cls(
-            secret_bundle.attributes,
-            secret_bundle.id,
+            secret_bundle.attributes,  # type: ignore
+            secret_bundle.id,  # type: ignore
             content_type=secret_bundle.content_type,
             key_id=secret_bundle.kid,
             managed=secret_bundle.managed,
@@ -51,8 +51,8 @@ class SecretProperties(object):
         # type: (_models.SecretItem) -> SecretProperties
         """Construct a SecretProperties from an autorest-generated SecretItem"""
         return cls(
-            secret_item.attributes,
-            secret_item.id,
+            secret_item.attributes,  # type: ignore
+            secret_item.id,  # type: ignore
             content_type=secret_item.content_type,
             managed=secret_item.managed,
             tags=secret_item.tags,
