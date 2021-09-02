@@ -11,7 +11,7 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Any, Dict, Optional, Union
+    from typing import Any, Dict, Optional
     from datetime import datetime
     from ._generated.v7_1 import models as _models
 
@@ -87,46 +87,46 @@ class SecretProperties(object):
 
     @property
     def enabled(self):
-        # type: () -> Union[bool, None]
+        # type: () -> Optional[bool]
         """Whether the secret is enabled for use
 
-        :rtype: union[bool, None]
+        :rtype: optional[bool]
         """
         return self._attributes.enabled if self._attributes else None
 
     @property
     def not_before(self):
-        # type: () -> Union[datetime, None]
+        # type: () -> Optional[datetime]
         """The time before which the secret can not be used, in UTC
 
-        :rtype: union[~datetime.datetime, None]
+        :rtype: optional[~datetime.datetime]
         """
         return self._attributes.not_before if self._attributes else None
 
     @property
     def expires_on(self):
-        # type: () -> Union[datetime, None]
+        # type: () -> Optional[datetime]
         """When the secret expires, in UTC
 
-        :rtype: union[~datetime.datetime, None]
+        :rtype: optional[~datetime.datetime]
         """
         return self._attributes.expires if self._attributes else None
 
     @property
     def created_on(self):
-        # type: () -> Union[datetime, None]
+        # type: () -> Optional[datetime]
         """When the secret was created, in UTC
 
-        :rtype: union[~datetime.datetime, None]
+        :rtype: optional[~datetime.datetime]
         """
         return self._attributes.created if self._attributes else None
 
     @property
     def updated_on(self):
-        # type: () -> Union[datetime, None]
+        # type: () -> Optional[datetime]
         """When the secret was last updated, in UTC
 
-        :rtype: union[~datetime.datetime, None]
+        :rtype: optional[~datetime.datetime]
         """
         return self._attributes.updated if self._attributes else None
 
@@ -144,37 +144,37 @@ class SecretProperties(object):
 
     @property
     def recovery_level(self):
-        # type: () -> Union[str, None]
+        # type: () -> Optional[str]
         """The vault's deletion recovery level for secrets
 
-        :rtype: union[str, None]
+        :rtype: optional[str]
         """
         return self._attributes.recovery_level if self._attributes else None
 
     @property
     def vault_url(self):
-        # type: () -> Union[str, None]
+        # type: () -> Optional[str]
         """URL of the vault containing the secret
 
-        :rtype: union[str, None]
+        :rtype: optional[str]
         """
         return self._vault_id.vault_url if self._vault_id else None
 
     @property
     def name(self):
-        # type: () -> Union[str, None]
+        # type: () -> Optional[str]
         """The secret's name
 
-        :rtype: union[str, None]
+        :rtype: optional[str]
         """
         return self._vault_id.name if self._vault_id else None
 
     @property
     def version(self):
-        # type: () -> Union[str, None]
+        # type: () -> Optional[str]
         """The secret's version
 
-        :rtype: union[str, None]
+        :rtype: Optional[str]
         """
         return self._vault_id.version if self._vault_id else None
 
