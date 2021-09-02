@@ -3526,7 +3526,11 @@ class OSProfile(msrest.serialization.Model):
      <https://docs.microsoft.com/azure/virtual-machines/linux/endorsed-distros>`_.
     :type linux_configuration: ~azure.mgmt.compute.v2021_04_01.models.LinuxConfiguration
     :param secrets: Specifies set of certificates that should be installed onto the virtual
-     machine.
+     machine. To install certificates on a virtual machine it is recommended to use the `Azure Key
+     Vault virtual machine extension for Linux
+     <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-linux>`_ or the `Azure
+     Key Vault virtual machine extension for Windows
+     <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-windows>`_.
     :type secrets: list[~azure.mgmt.compute.v2021_04_01.models.VaultSecretGroup]
     :param allow_extension_operations: Specifies whether extension operations should be allowed on
      the virtual machine. :code:`<br>`:code:`<br>`This may only be set to False when no extensions
@@ -5902,7 +5906,11 @@ class VaultCertificate(msrest.serialization.Model):
      certificate needs to be It is the Base64 encoding of the following JSON Object which is encoded
      in UTF-8: :code:`<br>`:code:`<br>` {:code:`<br>`
      "data":":code:`<Base64-encoded-certificate>`",:code:`<br>`  "dataType":"pfx",:code:`<br>`
-     "password":":code:`<pfx-file-password>`":code:`<br>`}.
+     "password":":code:`<pfx-file-password>`":code:`<br>`} :code:`<br>` To install certificates on a
+     virtual machine it is recommended to use the `Azure Key Vault virtual machine extension for
+     Linux <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-linux>`_ or the
+     `Azure Key Vault virtual machine extension for Windows
+     <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-windows>`_.
     :type certificate_url: str
     :param certificate_store: For Windows VMs, specifies the certificate store on the Virtual
      Machine to which the certificate should be added. The specified certificate store is implicitly
@@ -7991,7 +7999,9 @@ class VirtualMachineScaleSet(Resource):
      false. However, if singlePlacementGroup is false, it may not be modified to true.
     :type single_placement_group: bool
     :param zone_balance: Whether to force strictly even Virtual Machine distribution cross x-zones
-     in case there is zone outage.
+     in case there is zone outage. zoneBalance property can only be set if the zones property of the
+     scale set contains more than one zone. If there are no zones or only one zone specified, then
+     zoneBalance property should not be set.
     :type zone_balance: bool
     :param platform_fault_domain_count: Fault Domain count for each placement group.
     :type platform_fault_domain_count: int
@@ -9127,7 +9137,11 @@ class VirtualMachineScaleSetOSProfile(msrest.serialization.Model):
      <https://docs.microsoft.com/azure/virtual-machines/linux/endorsed-distros>`_.
     :type linux_configuration: ~azure.mgmt.compute.v2021_04_01.models.LinuxConfiguration
     :param secrets: Specifies set of certificates that should be installed onto the virtual
-     machines in the scale set.
+     machines in the scale set. To install certificates on a virtual machine it is recommended to
+     use the `Azure Key Vault virtual machine extension for Linux
+     <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-linux>`_ or the `Azure
+     Key Vault virtual machine extension for Windows
+     <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-windows>`_.
     :type secrets: list[~azure.mgmt.compute.v2021_04_01.models.VaultSecretGroup]
     """
 
@@ -11229,7 +11243,11 @@ class WinRMListener(msrest.serialization.Model):
      certificate needs to be It is the Base64 encoding of the following JSON Object which is encoded
      in UTF-8: :code:`<br>`:code:`<br>` {:code:`<br>`
      "data":":code:`<Base64-encoded-certificate>`",:code:`<br>`  "dataType":"pfx",:code:`<br>`
-     "password":":code:`<pfx-file-password>`":code:`<br>`}.
+     "password":":code:`<pfx-file-password>`":code:`<br>`} :code:`<br>` To install certificates on a
+     virtual machine it is recommended to use the `Azure Key Vault virtual machine extension for
+     Linux <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-linux>`_ or the
+     `Azure Key Vault virtual machine extension for Windows
+     <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-windows>`_.
     :type certificate_url: str
     """
 
