@@ -113,13 +113,13 @@ class TableCheckpointStore(CheckpointStore):
         Create a dictionary with the `ownership` attributes.
         """
         ownership_entity = {
-            "PartitionKey": "{} {} {} Ownership".format(
+            "PartitionKey": u"{} {} {} Ownership".format(
                 ownership["fully_qualified_namespace"],
                 ownership["eventhub_name"],
                 ownership["consumer_group"],
             ),
-            "RowKey": ownership["partition_id"],
-            "ownerid": ownership["owner_id"],
+            "RowKey": u"{}".format(ownership["partition_id"]),
+            "ownerid": u"{}".format(ownership["owner_id"]),
         }
         return ownership_entity
 
@@ -129,26 +129,24 @@ class TableCheckpointStore(CheckpointStore):
         Create a dictionary with `checkpoint` attributes.
         """
         checkpoint_entity = {
-            "PartitionKey": "{} {} {} Checkpoint".format(
+            "PartitionKey": u"{} {} {} Checkpoint".format(
                 checkpoint["fully_qualified_namespace"],
                 checkpoint["eventhub_name"],
                 checkpoint["consumer_group"],
             ),
-            "RowKey": checkpoint["partition_id"],
-            "offset": checkpoint["offset"],
-            "sequencenumber": checkpoint["sequence_number"],
+            "RowKey": u"{}".format(checkpoint["partition_id"]),
+            "offset": u"{}".format(checkpoint["offset"]),
+            "sequencenumber": u"{}".format(checkpoint["sequence_number"]),
         }
         return checkpoint_entity
 
     def _update_ownership(self, ownership, **kwargs):
         """_update_ownership mutates the passed in ownership."""
+        ownership_entity = TableCheckpointStore._create_ownership_entity(ownership)
         try:
-            ownership_entity = TableCheckpointStore._create_ownership_entity(ownership)
             metadata = self._table_client.update_entity(
                 mode=UpdateMode.REPLACE,
                 entity=ownership_entity,
-                etag=ownership["etag"],
-                match_condition=MatchConditions.IfNotModified,
                 **kwargs
             )
             ownership["etag"] = metadata["etag"]
@@ -174,7 +172,7 @@ class TableCheckpointStore(CheckpointStore):
         try:
             self._update_ownership(new_ownership, **kwargs)
             return new_ownership
-        except (ResourceModifiedError, ResourceExistsError):
+        except ResourceExistsError:
             logger.info(
                 "EventProcessor instance %r of namespace %r eventhub %r consumer group %r "
                 "lost ownership to partition %r",
@@ -289,7 +287,7 @@ class TableCheckpointStore(CheckpointStore):
                 "eventhub_name": eventhub_name,
                 "consumer_group": consumer_group,
                 "partition_id": entity[u"RowKey"],
-                "sequence_number": entity[u"sequencenumber"],
+                "sequence_number": int(entity[u"sequencenumber"]),
                 "offset": str(entity[u"offset"]),
             }
             checkpoints_list.append(checkpoint)
@@ -349,8 +347,6 @@ class TableCheckpointStore(CheckpointStore):
                 - `partition_id` (str): The partition ID which the checkpoint is created for.
                 - `owner_id` (str): A UUID representing the owner attempting to claim this partition.
                 - `last_modified_time` (float): The last time this ownership was claimed.
-                - `etag` (str): The Etag value for the last time this ownership was modified. Optional depending
-                  on storage implementation.
         """
         gathered_results = []
         for x in ownership_list:
