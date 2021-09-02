@@ -417,7 +417,7 @@ class SecretClient(KeyVaultClientBase):
 
     @distributed_trace
     def begin_recover_deleted_secret(self, name, **kwargs):
-        # type: (str, **Any) -> KeyVaultOperationPoller
+        # type: (str, **Any) -> LROPoller
         """Recover a deleted secret to its latest version. Possible only in a vault with soft-delete enabled.
 
         If the vault does not have soft-delete enabled, :func:`begin_delete_secret` is permanent, and this method will
