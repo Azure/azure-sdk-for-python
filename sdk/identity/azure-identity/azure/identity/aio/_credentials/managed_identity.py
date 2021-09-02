@@ -69,7 +69,7 @@ class ManagedIdentityCredential(AsyncContextManager):
             self._credential = TokenExchangeCredential(
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
                 client_id=os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
-                token_file_path=os.environ[EnvironmentVariables.TOKEN_FILE_PATH],
+                token_file_path=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
                 **kwargs
             )
         else:
