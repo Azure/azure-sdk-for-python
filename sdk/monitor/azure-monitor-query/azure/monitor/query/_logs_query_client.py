@@ -12,8 +12,8 @@ from azure.core.tracing.decorator import distributed_trace
 from ._generated._monitor_query_client import MonitorQueryClient
 
 from ._generated.models import BatchRequest, QueryBody as LogsQueryBody
-from ._helpers import get_authentication_policy, process_error, construct_iso8601, order_results
-from ._models import LogsBatchQuery, LogsQueryResult
+from ._helpers import get_authentication_policy, process_error, construct_iso8601, order_results, process_error_raise
+from ._models import LogsBatchQuery, LogsQueryResult, LogsQueryError
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -76,6 +76,8 @@ class LogsQueryClient(object):
         :keyword additional_workspaces: A list of workspaces that are included in the query.
          These can be qualified workspace names, workspace Ids, or Azure resource Ids.
         :paramtype additional_workspaces: list[str]
+        :keyword allow_partial_failures: Defaults to False. If set to true, partial errors are not thrown.
+        :paramtype allow_partial_failures: bool
         :return: LogsQueryResult, or the result of cls(response)
         :rtype: ~azure.monitor.query.LogsQueryResult
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -89,6 +91,7 @@ class LogsQueryClient(object):
             :dedent: 0
             :caption: Get a response for a single Log Query
         """
+        allow_partial_failures = kwargs.pop('allow_partial_failures', False)
         if 'timespan' not in kwargs:
             raise TypeError("query() missing 1 required keyword-only argument: 'timespan'")
         timespan = construct_iso8601(kwargs.pop('timespan'))
@@ -117,14 +120,23 @@ class LogsQueryClient(object):
         )
 
         try:
-            return LogsQueryResult._from_generated(self._query_op.execute( # pylint: disable=protected-access
+            generated_response = self._query_op.execute( # pylint: disable=protected-access
                 workspace_id=workspace_id,
                 body=body,
                 prefer=prefer,
                 **kwargs
-            ))
-        except HttpResponseError as e:
-            process_error(e)
+            )
+            response = LogsQueryResult._from_generated(generated_response)
+            if not generated_response.error:
+                return response
+            if allow_partial_failures:
+                response.partial_error = process_error(generated_response.error)
+            else:
+                process_error_raise(generated_response.error, raise_with=LogsQueryError)
+                return
+            return response
+        except HttpResponseError as err:
+            process_error_raise(err)
 
     @distributed_trace
     def query_batch(self, queries, **kwargs):

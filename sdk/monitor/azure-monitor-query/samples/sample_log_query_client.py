@@ -16,21 +16,16 @@ client = LogsQueryClient(credential)
 # Response time trend 
 # request duration over the last 12 hours. 
 # [START send_logs_query]
-query = """AppRequests |
-summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
+query = """let Weight = 92233720368547758;
+range x from 1 to 3 step 1
+| summarize percentilesw(x, Weight * 100, 50)"""
 
 # returns LogsQueryResult 
 response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=timedelta(days=1))
 
-if not response.tables:
-    print("No results for the query")
-
 for table in response.tables:
-    try:
-        df = pd.DataFrame(table.rows, columns=table.columns)
-        print(df)
-    except TypeError:
-        print(response.error)
+    df = pd.DataFrame(table.rows, columns=table.columns)
+    print(df)
 # [END send_logs_query]
 """
     TimeGenerated                                        _ResourceId          avgRequestDuration

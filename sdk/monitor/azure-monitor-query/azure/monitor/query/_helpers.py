@@ -7,7 +7,7 @@
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
 from msrest import Serializer, Deserializer
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ODataV4Format
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 
 if TYPE_CHECKING:
@@ -90,3 +90,15 @@ def native_col_type(col_type, value):
 
 def process_row(col_types, row):
     return [native_col_type(col_types[ind], val) for ind, val in enumerate(row)]
+
+def process_error(error, raise_with=HttpResponseError):
+    if not error:
+        return None
+    formatted = ODataV4Format(error.serialize())
+    return raise_with(error=formatted)
+
+def process_error_raise(error, raise_with=HttpResponseError):
+    if not error:
+        return None
+    formatted = ODataV4Format(error.serialize())
+    raise raise_with(error=formatted)

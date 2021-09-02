@@ -9,7 +9,7 @@ from enum import Enum
 import uuid
 from typing import Any, Optional, List
 
-from ._helpers import construct_iso8601, process_row
+from ._helpers import construct_iso8601, process_row, process_error
 from ._generated.models import (
     BatchQueryRequest as InternalLogQueryRequest,
     BatchQueryResponse
@@ -173,7 +173,7 @@ class LogsQueryResult(object):
         **kwargs
     ):
         self.tables = kwargs.get('tables', None)
-        self.error = kwargs.get('error', None)
+        self.partial_error = None
         self.statistics = kwargs.get('statistics', None)
         self.visualization = kwargs.get('visualization', None)
 
@@ -194,8 +194,7 @@ class LogsQueryResult(object):
         return cls(
             tables=tables,
             statistics=generated.statistics,
-            visualization=generated.render,
-            error=generated.error
+            visualization=generated.render
         )
 
 
@@ -519,3 +518,57 @@ class MetricUnit(str, Enum):
     MILLI_CORES = "MilliCores"
     NANO_CORES = "NanoCores"
     BITS_PER_SECOND = "BitsPerSecond"
+
+
+class LogsQueryError(object):
+    """The code and message for an error.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar code: A machine readable error code.
+    :vartype code: str
+    :ivar message: A human readable error message.
+    :vartype message: str
+    :ivar details: error details.
+    :vartype details: list[~monitor_query_client.models.ErrorDetail]
+    :ivar innererror: Inner error details if they exist.
+    :vartype innererror: ~azure.monitor.query.LogsQueryError
+    :ivar additional_properties: Additional properties that can be provided on the error info
+     object.
+    :vartype additional_properties: object
+    """
+
+    _validation = {
+        'code': {'required': True},
+        'message': {'required': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ErrorDetail]'},
+        'innererror': {'key': 'innererror', 'type': 'ErrorInfo'},
+        'additional_properties': {'key': 'additionalProperties', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.details = kwargs.get('details', None)
+        self.innererror = kwargs.get('innererror', None)
+        self.additional_properties = kwargs.get('additional_properties', None)
+
+    @classmethod
+    def _from_genearated(cls, generated):
+        if not generated:
+            return None
+        return cls(
+            code=generated.code,
+            message=generated.message,
+            innererror=generated.innererror,
+            additional_properties=generated.additional_properties,
+            details=[d.serialize() for d in generated.details]
+        )
