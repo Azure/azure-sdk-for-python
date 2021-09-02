@@ -132,6 +132,7 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
             data.properties["request.name"] = data.name
             url = ""
             if "http.user_agent" in span.attributes:
+                # TODO: Not exposed in Swagger, need to update def
                 envelope.tags["ai.user.userAgent"] = span.attributes["http.user_agent"]
             if "http.client_ip" in span.attributes:
                 envelope.tags["ai.location.ip"] = span.attributes["http.client_ip"]
@@ -228,6 +229,9 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
         if span.kind is SpanKind.CLIENT:
             if "http.method" in span.attributes:  # HTTP
                 data.type = "HTTP"
+                if "http.user_agent" in span.attributes:
+                    # TODO: Not exposed in Swagger, need to update def
+                    envelope.tags["ai.user.userAgent"] = span.attributes["http.user_agent"]
                 scheme = span.attributes.get("http.scheme")
                 url = ""
                 # Target
@@ -290,11 +294,11 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
                     status_code = span.attributes["http.status_code"]
                     data.result_code = str(status_code)
             elif "db.system" in span.attributes:  # Database
-                db = span.attributes["db.system"]
-                if _is_relational_db(db):
+                db_system = span.attributes["db.system"]
+                if _is_relational_db(db_system):
                     data.type = "SQL"
                 else:
-                    data.type = db
+                    data.type = db_system
                 # data is the full statement
                 if "db.statement" in span.attributes:
                     data.data = span.attributes["db.statement"]
@@ -305,6 +309,8 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
                         target = db_name
                     else:
                         target = "{}/{}".format(target, db_name)
+                if target is None:
+                    target = db_system
             elif "rpc.system" in span.attributes:  # Rpc
                 data.type = "rpc.system"
                 # TODO: data.data for rpc

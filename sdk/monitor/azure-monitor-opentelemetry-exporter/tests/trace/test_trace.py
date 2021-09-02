@@ -230,6 +230,7 @@ class TestAzureTraceExporter(unittest.TestCase):
                 "http.url": "https://www.wikipedia.org/wiki/Rabbit",
                 "http.status_code": 200,
                 "peer.service": "service",
+                "http.user_agent": "agent",
             },
             kind=SpanKind.CLIENT,
         )
@@ -255,6 +256,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             "https://www.wikipedia.org/wiki/Rabbit",
         )
         self.assertEqual(envelope.data.base_data.result_code, "200")
+        self.assertEqual(envelope.tags["ai.user.userAgent"], "agent")
 
         # Target
         span._attributes = {
@@ -378,6 +380,12 @@ class TestAzureTraceExporter(unittest.TestCase):
         }
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.target, "testDb")
+
+        span._attributes = {
+            "db.system": "postgresql",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.target, "postgresql")
 
     def test_span_to_envelope_client_rpc(self):
         exporter = self._exporter
