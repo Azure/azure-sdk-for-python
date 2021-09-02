@@ -189,11 +189,6 @@ class EntityRecognitionSkill(SearchIndexerSkill):
     ):
         # pop skill_version from kwargs to avoid warning in msrest
         skill_version = kwargs.pop('skill_version', EntityRecognitionSkillVersion.V1)
-        # client-side validation
-        if skill_version == EntityRecognitionSkillVersion.V1:
-            validate(kwargs, '1', 'model_version')
-        if skill_version in [EntityRecognitionSkillVersion.V3, EntityRecognitionSkillVersion.LATEST]:
-            validate(kwargs, '3', 'include_typeless_entities')
 
         super(EntityRecognitionSkill, self).__init__(**kwargs)
         self.skill_version = skill_version
@@ -332,12 +327,8 @@ class SentimentSkill(SearchIndexerSkill):
         # pop skill_version from kwargs to avoid warning in msrest
         skill_version = kwargs.pop('skill_version', SentimentSkillVersion.V1)
 
-        # client-side validation
-        if skill_version == SentimentSkillVersion.V1:
-            validate(kwargs, '1', ['include_opinion_mining', 'model_version'])
-
         super(SentimentSkill, self).__init__(**kwargs)
-        self.skill_version = kwargs.get('skill_version', SentimentSkillVersion.V1)
+        self.skill_version = skill_version
         self.odata_type = self.skill_version  # type: str
         self.default_language_code = kwargs.get('default_language_code', None)
         self.include_opinion_mining = kwargs.get('include_opinion_mining', False)
@@ -371,12 +362,12 @@ class SentimentSkill(SearchIndexerSkill):
         if not skill:
             return None
         kwargs = skill.as_dict()
-        if isinstance(cls, _SentimentSkillV1):
+        if isinstance(skill, _SentimentSkillV1):
             return SentimentSkill(
                 skill_version=SentimentSkillVersion.V1,
                 **kwargs
             )
-        if isinstance(cls, _SentimentSkillV3):
+        if isinstance(skill, _SentimentSkillV3):
             return SentimentSkill(
                 skill_version=SentimentSkillVersion.V3,
                 **kwargs
@@ -959,13 +950,3 @@ def unpack_analyzer(analyzer):
             analyzer
         )
     return analyzer
-
-
-def validate(kwargs, version, unsupported):
-    unsupported = [unsupported] if isinstance(unsupported, str) else unsupported
-    errors = []
-    for param in unsupported:
-        if param in kwargs:
-            errors.append(param)
-    if errors:
-        raise ValueError("Unsupported parameters for skill version {}: {}".format(version, ', '.join(errors)))
