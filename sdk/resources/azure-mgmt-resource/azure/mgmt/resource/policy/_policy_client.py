@@ -55,7 +55,7 @@ class PolicyClient(MultiApiClientMixin, _SDKClient):
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION = '2020-09-01'
+    DEFAULT_API_VERSION = '2021-06-01'
     _PROFILE_TAG = "azure.mgmt.resource.policy.PolicyClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -100,6 +100,7 @@ class PolicyClient(MultiApiClientMixin, _SDKClient):
            * 2019-06-01: :mod:`v2019_06_01.models<azure.mgmt.resource.policy.v2019_06_01.models>`
            * 2019-09-01: :mod:`v2019_09_01.models<azure.mgmt.resource.policy.v2019_09_01.models>`
            * 2020-09-01: :mod:`v2020_09_01.models<azure.mgmt.resource.policy.v2020_09_01.models>`
+           * 2021-06-01: :mod:`v2021_06_01.models<azure.mgmt.resource.policy.v2021_06_01.models>`
         """
         if api_version == '2015-10-01-preview':
             from .v2015_10_01_preview import models
@@ -131,6 +132,9 @@ class PolicyClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-09-01':
             from .v2020_09_01 import models
             return models
+        elif api_version == '2021-06-01':
+            from .v2021_06_01 import models
+            return models
         raise ValueError("API version {} is not available".format(api_version))
 
     @property
@@ -138,10 +142,13 @@ class PolicyClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2020-09-01: :class:`DataPolicyManifestsOperations<azure.mgmt.resource.policy.v2020_09_01.operations.DataPolicyManifestsOperations>`
+           * 2021-06-01: :class:`DataPolicyManifestsOperations<azure.mgmt.resource.policy.v2021_06_01.operations.DataPolicyManifestsOperations>`
         """
         api_version = self._get_api_version('data_policy_manifests')
         if api_version == '2020-09-01':
             from .v2020_09_01.operations import DataPolicyManifestsOperations as OperationClass
+        elif api_version == '2021-06-01':
+            from .v2021_06_01.operations import DataPolicyManifestsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'data_policy_manifests'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -160,6 +167,7 @@ class PolicyClient(MultiApiClientMixin, _SDKClient):
            * 2019-06-01: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.policy.v2019_06_01.operations.PolicyAssignmentsOperations>`
            * 2019-09-01: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.policy.v2019_09_01.operations.PolicyAssignmentsOperations>`
            * 2020-09-01: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.policy.v2020_09_01.operations.PolicyAssignmentsOperations>`
+           * 2021-06-01: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.policy.v2021_06_01.operations.PolicyAssignmentsOperations>`
         """
         api_version = self._get_api_version('policy_assignments')
         if api_version == '2015-10-01-preview':
@@ -182,6 +190,8 @@ class PolicyClient(MultiApiClientMixin, _SDKClient):
             from .v2019_09_01.operations import PolicyAssignmentsOperations as OperationClass
         elif api_version == '2020-09-01':
             from .v2020_09_01.operations import PolicyAssignmentsOperations as OperationClass
+        elif api_version == '2021-06-01':
+            from .v2021_06_01.operations import PolicyAssignmentsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'policy_assignments'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -200,6 +210,7 @@ class PolicyClient(MultiApiClientMixin, _SDKClient):
            * 2019-06-01: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.policy.v2019_06_01.operations.PolicyDefinitionsOperations>`
            * 2019-09-01: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.policy.v2019_09_01.operations.PolicyDefinitionsOperations>`
            * 2020-09-01: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.policy.v2020_09_01.operations.PolicyDefinitionsOperations>`
+           * 2021-06-01: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.policy.v2021_06_01.operations.PolicyDefinitionsOperations>`
         """
         api_version = self._get_api_version('policy_definitions')
         if api_version == '2015-10-01-preview':
@@ -222,6 +233,8 @@ class PolicyClient(MultiApiClientMixin, _SDKClient):
             from .v2019_09_01.operations import PolicyDefinitionsOperations as OperationClass
         elif api_version == '2020-09-01':
             from .v2020_09_01.operations import PolicyDefinitionsOperations as OperationClass
+        elif api_version == '2021-06-01':
+            from .v2021_06_01.operations import PolicyDefinitionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'policy_definitions'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -231,10 +244,13 @@ class PolicyClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2020-09-01: :class:`PolicyExemptionsOperations<azure.mgmt.resource.policy.v2020_09_01.operations.PolicyExemptionsOperations>`
+           * 2021-06-01: :class:`PolicyExemptionsOperations<azure.mgmt.resource.policy.v2021_06_01.operations.PolicyExemptionsOperations>`
         """
         api_version = self._get_api_version('policy_exemptions')
         if api_version == '2020-09-01':
             from .v2020_09_01.operations import PolicyExemptionsOperations as OperationClass
+        elif api_version == '2021-06-01':
+            from .v2021_06_01.operations import PolicyExemptionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'policy_exemptions'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -250,6 +266,7 @@ class PolicyClient(MultiApiClientMixin, _SDKClient):
            * 2019-06-01: :class:`PolicySetDefinitionsOperations<azure.mgmt.resource.policy.v2019_06_01.operations.PolicySetDefinitionsOperations>`
            * 2019-09-01: :class:`PolicySetDefinitionsOperations<azure.mgmt.resource.policy.v2019_09_01.operations.PolicySetDefinitionsOperations>`
            * 2020-09-01: :class:`PolicySetDefinitionsOperations<azure.mgmt.resource.policy.v2020_09_01.operations.PolicySetDefinitionsOperations>`
+           * 2021-06-01: :class:`PolicySetDefinitionsOperations<azure.mgmt.resource.policy.v2021_06_01.operations.PolicySetDefinitionsOperations>`
         """
         api_version = self._get_api_version('policy_set_definitions')
         if api_version == '2017-06-01-preview':
@@ -266,6 +283,8 @@ class PolicyClient(MultiApiClientMixin, _SDKClient):
             from .v2019_09_01.operations import PolicySetDefinitionsOperations as OperationClass
         elif api_version == '2020-09-01':
             from .v2020_09_01.operations import PolicySetDefinitionsOperations as OperationClass
+        elif api_version == '2021-06-01':
+            from .v2021_06_01.operations import PolicySetDefinitionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'policy_set_definitions'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
