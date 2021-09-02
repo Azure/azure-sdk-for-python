@@ -4,33 +4,49 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, List
+from typing import TYPE_CHECKING, Any, List
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 
+from ._call_connection_async import CallConnection
 from .._communication_identifier_serializer import (deserialize_identifier,
-                                                    serialize_identifier)
+                                                   serialize_identifier)
 from .._generated.aio._azure_communication_calling_server_service import \
     AzureCommunicationCallingServerService
 from .._generated.models import CreateCallRequest, PhoneNumberIdentifierModel
 from .._models import CreateCallOptions, JoinCallOptions
-from .._shared.models import CommunicationIdentifier
-from .._shared.user_credential_async import CommunicationTokenCredential
-from .._shared.utils import (get_authentication_policy, get_current_utc_time,
-                             parse_connection_str)
-from .._version import SDK_MONIKER
-from ._call_connection_async import CallConnection
 from ._server_call_async import ServerCall
+from .._shared.models import CommunicationIdentifier
 
+if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
+
+from .._shared.utils import (get_authentication_policy, get_current_utc_time,
+                            parse_connection_str)
+from .._version import SDK_MONIKER
 
 class CallingServerClient(object):
+    """A client to interact with the AzureCommunicationService Calling Server.
+
+    This client provides calling operations.
+
+    :param str endpoint:
+        The endpoint url for Azure Communication Service resource.
+    :param AsyncTokenCredential credential:
+        The AsyncTokenCredential we use to authenticate against the service.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/identity_samples.py
+            :language: python
+            :dedent: 8
+    """
     def __init__(
-        self,
-        endpoint: str,
-        credential: CommunicationTokenCredential,
-        **kwargs: Any
-    ):
-        # type: (...) -> None
+            self,
+            endpoint, # type: str
+            credential, # type: AsyncTokenCredential
+            **kwargs # type: Any
+        ): # type: (...) -> None
         try:
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
@@ -39,14 +55,12 @@ class CallingServerClient(object):
 
         if not credential:
             raise ValueError(
-                "invalid credential from connection string.")
+                "You need to provide account shared key to authenticate.")
 
         self._endpoint = endpoint
-        self._authentication_policy = get_authentication_policy(endpoint, credential, decode_url=True, is_async=True)
-
         self._callingserver_service_client = AzureCommunicationCallingServerService(
             self._endpoint,
-            authentication_policy=self._authentication_policy,
+            authentication_policy=get_authentication_policy(endpoint, credential, decode_url=True, is_async=True),
             sdk_moniker=SDK_MONIKER,
             **kwargs)
 
@@ -55,32 +69,57 @@ class CallingServerClient(object):
 
     @classmethod
     def from_connection_string(
-        cls,
-        conn_str,  # type: str
+            cls,
+            conn_str,  # type: str
             **kwargs # type: Any
-    ):
-        # type: (...) -> CallingServerClient
+        ): # type: (...) -> CallingServerClient
+        """Create CallingServerClient from a Connection String.
+
+        :param str conn_str:
+            A connection string to an Azure Communication Service resource.
+        :returns: Instance of CallingServerClient.
+        :rtype: ~azure.communication.callingserver.CallingServerClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/callingserver_sample.py
+                :start-after: [START auth_from_connection_string]
+                :end-before: [END auth_from_connection_string]
+                :language: python
+                :dedent: 8
+                :caption: Creating the CallingServerClient from a connection string.
+        """
         endpoint, access_key = parse_connection_str(conn_str)
 
         return cls(endpoint, access_key, **kwargs)
 
     def get_call_connection(
-        self,
-        call_connection_id: str,
-    ):
-        # type: (...) -> CallConnection
+            self,
+            call_connection_id,  # type: str
+        ): # type: (...) -> CallConnection
+        """Initializes a new instance of CallConnection.
 
+        :param str call_connection_id:
+           The thread id for the ChatThreadClient instance.
+        :returns: Instance of CallConnection.
+        :rtype: ~azure.communication..callingserver.CallConnection
+        """
         if not call_connection_id:
             raise ValueError("call_connection_id can not be None")
 
         return CallConnection(call_connection_id, self._call_connection_client)
 
     def initialize_server_call(
-        self,
-        server_call_id: str,
-    ):
-        # type: (...) -> ServerCall
+            self,
+            server_call_id,  # type: str
+        ): # type: (...) -> ServerCall
+        """Initializes a server call.
 
+        :param str server_call_id:
+           The server call id.
+        :returns: Instance of ServerCall.
+        :rtype: ~azure.communication..callingserver.ServerCall
+        """
         if not server_call_id:
             raise ValueError("call_connection_id can not be None")
 
@@ -89,13 +128,22 @@ class CallingServerClient(object):
     @distributed_trace_async()
     async def create_call_connection(
         self,
-        source: CommunicationIdentifier,
-        targets: List[CommunicationIdentifier],
-        options: CreateCallOptions,
+        source,  # type: CommunicationIdentifier
+        targets,  # type: List[CommunicationIdentifier]
+        options,  # type: CreateCallOptions
         **kwargs: Any
-    ):
-        # type: (...) -> CallConnection
+    ): # type: (...) -> CallConnection
+        """Create an outgoing call from source to target identities.
 
+        :param CommunicationIdentifier source:
+           The source identity.
+        :param List[CommunicationIdentifier] targets:
+           The target identities.
+        :param CreateCallOptions options:
+           The call options.
+        :returns: CallConnection for a successful creating callConnection request.
+        :rtype: ~azure.communication.callingserver.CallConnection
+        """
         if not source:
             raise ValueError("source can not be None")
 
@@ -125,13 +173,22 @@ class CallingServerClient(object):
     @distributed_trace_async()
     async def join_call(
         self,
-        server_call_id: str,
-        source: CommunicationIdentifier,
-        options: JoinCallOptions,
+        server_call_id,  # type: str
+        source,  # type: CommunicationIdentifier
+        options,  # type: JoinCallOptions
         **kwargs  # type: Any
-    ):
-        # type: (...) -> CallConnection
+    ): # type: (...) -> CallConnection
+        """Join the call using server call id.
 
+        :param str server_call_id:
+           The server call id.
+        :param CommunicationIdentifier targets:
+           The source identity.
+        :param JoinCallOptions options:
+           The call Options.
+        :returns: CallConnection for a successful join request.
+        :rtype: ~azure.communication.callingserver.CallConnection
+        """
         if not server_call_id:
             raise ValueError("server_call_id can not be None")
 
@@ -150,13 +207,16 @@ class CallingServerClient(object):
 
         return CallConnection(join_call_response.call_connection_id, self._call_connection_client)
 
-    async def close(self) -> None:
+    async def close(self):
+        # type: () -> None
         await self._callingserver_service_client.close()
 
-    async def __aenter__(self) -> "CallingServerClient":
-        await self._callingserver_service_client.__aenter__()
+    async def __aenter__(self):
+        # type: () -> CallingServerClient
+        await self._callingserver_service_client.__aenter__()  # pylint:disable=no-member
         return self
 
     async def __aexit__(self, *args):
         # type: (*Any) -> None
-        await self._callingserver_service_client.__aexit__(*args)
+        await self._callingserver_service_client.__aexit__(*args)  # pylint:disable=no-member
+
