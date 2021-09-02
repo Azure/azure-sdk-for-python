@@ -296,6 +296,27 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         return await self.Read(path, "colls", collection_id, None, options, **kwargs)
 
+    async def ReadItem(self, document_link, options=None, **kwargs):
+        """Reads a document.
+
+        :param str document_link:
+            The link to the document.
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The read Document.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        path = base.GetPathFromLink(document_link)
+        document_id = base.GetResourceIdOrFullNameFromLink(document_link)
+        return await self.Read(path, "docs", document_id, None, options, **kwargs)
+
     async def Read(self, path, typ, id, initial_headers, options=None, **kwargs):  # pylint: disable=redefined-builtin
         """Reads a Azure Cosmos resource and returns it.
 
@@ -346,3 +367,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             request_data=None,
             **kwargs
         )
+
+    @staticmethod
+    def _return_undefined_or_empty_partition_key(is_system_key):
+        if is_system_key:
+            return _Empty
+        return _Undefined

@@ -1,10 +1,10 @@
 import sys
+from time import time
 sys.path.append(r"C:\Users\simonmoreno\Repos\azure-sdk-for-python\sdk\cosmos\azure-cosmos")
 
 
-from azure.cosmos import container
-from azure.core.tracing.decorator import distributed_trace
 import asyncio
+import time
 from azure.cosmos.aio.cosmos_client import CosmosClient as AsyncClient
 from azure.cosmos.cosmos_client import CosmosClient as SyncClient
 import azure.cosmos.exceptions as exceptions
@@ -101,6 +101,7 @@ def get_test_item():
 
 db_name = "AsyncDB"
 cont_name = "AsyncContainer"
+item_name = "Async_011deab0-bb11-47fd-8b66-b5b8d81d8c73"
 
 def create_test():
     client = SyncClient(endpoint, key)
@@ -138,6 +139,8 @@ async def with_read_test():
 		cont = db.get_container_client(cont_name)
 		if cont: print(cont)
 		x = await cont.read()
+		print(x)
+		x = await cont.read_item(item=item_name, partition_key=item_name)
 		print(x)
 
 async def main():

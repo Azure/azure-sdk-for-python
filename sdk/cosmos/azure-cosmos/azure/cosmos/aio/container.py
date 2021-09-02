@@ -71,6 +71,33 @@ class ContainerProxy(object):
         # type () -> str
         return "<ContainerProxy [{}]>".format(self.container_link)[:1024]
 
+    async def _get_properties(self):
+        # type: () -> Dict[str, Any]
+        if self._properties is None:
+            self._properties = await self.read()
+        return self._properties
+
+    @property
+    async def is_system_key(self):
+        # type: () -> bool
+        if self._is_system_key is None:
+            properties = await self._get_properties()
+            self._is_system_key = (
+                properties["partitionKey"]["systemKey"] if "systemKey" in properties["partitionKey"] else False
+            )
+        return cast('bool', self._is_system_key)
+
+    def _get_document_link(self, item_or_link):
+        # type: (Union[Dict[str, Any], str]) -> str
+        if isinstance(item_or_link, six.string_types):
+            return u"{}/docs/{}".format(self.container_link, item_or_link)
+        return item_or_link["_self"]
+
+    def _set_partition_key(self, partition_key):
+        if partition_key == NonePartitionKeyValue:
+            return CosmosClientConnection._return_undefined_or_empty_partition_key(self.is_system_key) #might have to await here
+        return partition_key
+
     @distributed_trace_async
     async def read(
         self,
@@ -112,3 +139,52 @@ class ContainerProxy(object):
             response_hook(self.client_connection.last_response_headers, self._properties)
 
         return cast('Dict[str, Any]', self._properties)
+
+    @distributed_trace_async
+    async def read_item(
+        self,
+        item,  # type: Union[str, Dict[str, Any]]
+        partition_key,  # type: Any
+        populate_query_metrics=None,  # type: Optional[bool]
+        post_trigger_include=None,  # type: Optional[str]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Dict[str, str]
+        """Get the item identified by `item`.
+
+        :param item: The ID (name) or dict representing item to retrieve.
+        :param partition_key: Partition key for the item to retrieve.
+        :param populate_query_metrics: Enable returning query metrics in response headers.
+        :param post_trigger_include: trigger id to be used as post operation trigger.
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: Dict representing the item to be retrieved.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item couldn't be retrieved.
+        :rtype: dict[str, Any]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/examples.py
+                :start-after: [START update_item]
+                :end-before: [END update_item]
+                :language: python
+                :dedent: 0
+                :caption: Get an item from the database and update one of its properties:
+                :name: update_item
+        """
+        doc_link = self._get_document_link(item)
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
+
+        if partition_key is not None:
+            request_options["partitionKey"] = self._set_partition_key(partition_key)
+        if populate_query_metrics is not None:
+            request_options["populateQueryMetrics"] = populate_query_metrics
+        if post_trigger_include is not None:
+            request_options["postTriggerInclude"] = post_trigger_include
+
+        result = await self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers, result)
+        return result
