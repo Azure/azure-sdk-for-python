@@ -120,6 +120,17 @@ class PublicAccess(str, Enum):
     """
 
 
+class BlobImmutabilityPolicyMode(str, Enum):
+    """
+    Specifies the immutability policy mode to set on the blob.
+    "Mutable" can only be returned by service, don't set to "Mutable".
+    """
+
+    Unlocked = "Unlocked"
+    Locked = "Locked"
+    Mutable = "Mutable"
+
+
 class BlobAnalyticsLogging(GeneratedLogging):
     """Azure Analytics Logging settings.
 
@@ -441,17 +452,17 @@ class ImmutabilityPolicy(DictMixin):
     .. versionadded:: 12.10.0
         This was introduced in API version '2020-10-02'.
 
-    :param ~datetime.datetime expiry_time:
+    :keyword ~datetime.datetime expiry_time:
         Specifies the date time when the blobs immutability policy is set to expire.
-    :param str or ~azure.storage.blob.BlobImmutabilityPolicyMode policy_mode:
+    :keyword str or ~azure.storage.blob.BlobImmutabilityPolicyMode policy_mode:
         Specifies the immutability policy mode to set on the blob.
         Possible values to set include: "Locked", "Unlocked".
         "Mutable" can only be returned by service, don't set to "Mutable".
     """
 
-    def __init__(self, expiry_time=None, policy_mode=None):
-        self.expiry_time = expiry_time
-        self.policy_mode = policy_mode
+    def __init__(self, **kwargs):
+        self.expiry_time = kwargs.pop('expiry_time', None)
+        self.policy_mode = kwargs.pop('policy_mode', None)
 
     @classmethod
     def _from_generated(cls, generated):
