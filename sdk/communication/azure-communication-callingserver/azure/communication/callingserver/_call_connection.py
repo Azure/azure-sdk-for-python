@@ -8,7 +8,7 @@ from typing import Any
 
 from azure.core.tracing.decorator import distributed_trace
 
-from ._generated.aio.operations import CallConnectionsOperations
+from ._generated.operations import CallConnectionsOperations
 
 from ._generated.models import CancelAllMediaOperationsRequest, PlayAudioRequest, AddParticipantRequest, PhoneNumberIdentifierModel, CommunicationIdentifierModel
 
