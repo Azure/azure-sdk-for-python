@@ -14,7 +14,7 @@ from azure.core.credentials import AccessToken
 from azure.identity.aio import DefaultAzureCredential, ClientSecretCredential
 from azure.identity import AzureAuthorityHosts
 
-from testcase import ContainerRegistryTestClass, get_authorization_scope, get_authority
+from testcase import ContainerRegistryTestClass, get_audience, get_authority
 
 logger = logging.getLogger()
 
@@ -51,11 +51,11 @@ class AsyncContainerRegistryTestClass(ContainerRegistryTestClass):
         authority = get_authority(endpoint)
         audience = kwargs.pop("audience", None)
         if not audience:
-            audience = get_authorization_scope(authority)
+            audience = get_audience(authority)
         credential = self.get_credential(authority=authority)
-        return ContainerRegistryClient(endpoint=endpoint, credential=credential, credential_scopes=audience, **kwargs)
+        return ContainerRegistryClient(endpoint=endpoint, credential=credential, audience=audience, **kwargs)
 
     def create_anon_client(self, endpoint, **kwargs):
         authority = get_authority(endpoint)
-        audience = get_authorization_scope(authority)
-        return ContainerRegistryClient(endpoint=endpoint, credential=None, credential_scopes=audience, **kwargs)
+        audience = get_audience(authority)
+        return ContainerRegistryClient(endpoint=endpoint, credential=None, audience=audience, **kwargs)
