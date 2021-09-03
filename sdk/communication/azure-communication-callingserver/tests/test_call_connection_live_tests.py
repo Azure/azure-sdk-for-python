@@ -7,8 +7,6 @@ import pytest
 import os
 import time
 from datetime import datetime
-from devtools_testutils import AzureTestCase
-from msrest.serialization import TZ_UTC
 from uuid import UUID, uuid4
 
 from azure.communication.identity import CommunicationIdentityClient
@@ -27,8 +25,6 @@ from azure.communication.callingserver._shared.models import (
     PhoneNumberIdentifier
 )
 
-from azure_devtools.scenario_tests import RecordingProcessor
-from helper import URIIdentityReplacer
 from _shared.testcase import (
     CommunicationTestCase,
     BodyReplacerProcessor
@@ -45,13 +41,13 @@ class CallConnectionLiveTest(CommunicationTestCase):
     def setUp(self):
         super(CallConnectionLiveTest, self).setUp()
 
-        self.identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str)
-
         # create user and issue token
-        self.user = self.identity_client.create_user()
-        # tokenresponse = self.identity_client.get_token(self.user, scopes=["chat"])
-        # self.token = tokenresponse.token
+        if self.is_live():
+            self.identity_client = CommunicationIdentityClient.from_connection_string(
+            self.connection_str)
+            self.user = self.identity_client.create_user()
+        else:
+            self.user = "8:acs:" + self.variables_map["AZURE_TENANT_ID"] + "_" + uuid4()
 
         # create CallingServerClient
         self.calling_server_client = CallingServerClient.from_connection_string(self.connection_str,
@@ -68,13 +64,15 @@ class CallConnectionLiveTest(CommunicationTestCase):
     # @pytest.mark.live_test_only
     def test_create_play_cancel_hangup_scenario(self):
         # Establish call
-        call_options = CreateCallOptions(callback_uri="", requested_media_types=MediaType.AUDIO,
+        call_options = CreateCallOptions(
+            callback_uri=self.variables_map["CALLBACK_URI"],
+            requested_media_types=MediaType.AUDIO,
             requested_call_events=EventSubscriptionType.PARTICIPANTS_UPDATED)
-        call_options.alternate_Caller_Id = PhoneNumberIdentifier("")
+        call_options.alternate_Caller_Id = PhoneNumberIdentifier(self.variables_map["FROM_PHONE_NUMBER"])
 
         call_connection = self.calling_server_client.create_call_connection(
-            CommunicationUserIdentifier(""),
-            [PhoneNumberIdentifier("")],
+            CommunicationUserIdentifier(self.user),
+            [PhoneNumberIdentifier(self.variables_map["FROM_PHONE_NUMBER"])],
             call_options
             )
         
@@ -85,8 +83,8 @@ class CallConnectionLiveTest(CommunicationTestCase):
         # Play Audio
         play_audio_operation_context = str(uuid4())
         play_audio_result = call_connection.play_audio(
-            audio_file_uri="",
-            audio_File_id="",
+            audio_file_uri=self.variables_map["AUDIO_FILE_URI"],
+            audio_File_id=str(uuid4()),
             callback_uri=None,
             operation_context=play_audio_operation_context,
             loop=False
