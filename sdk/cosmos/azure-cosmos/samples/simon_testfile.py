@@ -10,80 +10,8 @@ from azure.cosmos.cosmos_client import CosmosClient as SyncClient
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.partition_key import PartitionKey
 
-import config
-import heroes
-
-endpoint = ''
-key = ''
-
-def creation():
-
-	# <create_cosmos_client>
-	client = SyncClient(endpoint, key)
-	# </create_cosmos_client
-
-	# Create a database
-	# <create_database_if_not_exists>
-	database_name = 'MockHeroesDatabase'
-	database = client.create_database_if_not_exists(id=database_name)
-	# </create_database_if_not_exists>
-
-	container_name = 'mockHeroesContainer'
-	container = database.create_container_if_not_exists(
-		id=container_name, 
-		partition_key=PartitionKey(path="/lastName"),
-		offer_throughput=400
-	)
-
-	real_heroes = [heroes.get_superman(), heroes.get_batman(), heroes.get_flash(), heroes.get_spider(), heroes.get_iron()]
-	generics = [heroes.get_generic_hero(), heroes.get_generic_hero(), heroes.get_generic_hero()]
-
-	for hero in real_heroes:
-		container.create_item(body=hero)
-
-	for generic in generics:
-		container.create_item(body=generic)
-
-	for hero in real_heroes:
-		response = container.read_item(item=hero['id'], partition_key=hero['lastName'])
-		request_charge = container.client_connection.last_response_headers['x-ms-request-charge'] #!
-		if hero['id'] == 'Superman': print(container.client_connection.last_response_headers)
-		print('Read item with id {0}. Operation consumed {1} request units'.format(response['id'], (request_charge)))
-
-	query = "SELECT * FROM c WHERE c.lastName IN ('Kent', 'Parker')"
-
-	items = list(container.query_items(
-		query=query,
-		enable_cross_partition_query=True #!
-	))
-
-	request_charge = container.client_connection.last_response_headers['x-ms-request-charge'] #!
-	print('Query returned {0} items. Operation consumed {1} request units'.format(len(items), request_charge))
-
-def clean_heroes():
-	client = SyncClient(endpoint, key)
-	database_name = 'MockHeroesDatabase'
-	database = client.get_database_client(database_name)
-	container_name = 'mockHeroesContainer'
-	container = database.get_container_client(container_name)
-	real_heroes = [heroes.get_superman(), heroes.get_batman(), heroes.get_flash(), heroes.get_spider(), heroes.get_iron()]
-	for h in real_heroes:
-		response = container.delete_item(h['id'], partition_key=h['lastName'])
-		print(response)
-
-def destroy():
-	client = SyncClient(endpoint, key)
-	database_name = 'MockHeroesDatabase'
-	response = client.delete_database(database_name)
-	print(f"Database with name {database_name} has been deleted.")
-	print(response)
-
-	# for generic in generics:
-	# 	container.create_item_aio(body=generic)
-
-# asyncio.run(createaio())
-
-# creation()
+endpoint = 'https://simonmoreno-sql.documents.azure.com:443/'
+key = 'ix7V0n09yDyiUarBkQnDRAqBwkxXMM6iGq7FlDHmHRlHZPUDRnBu55Vx2gwzd2Mkh6Qyrc8VnJWR6djgnkl8cw=='
 
 import uuid
 
@@ -99,37 +27,31 @@ def get_test_item():
     }
     return async_item
 
-db_name = "AsyncDB"
-cont_name = "AsyncContainer"
-item_name = "Async_011deab0-bb11-47fd-8b66-b5b8d81d8c73"
-
-def create_test():
+def create_test(db_name, cont_name, num):
     client = SyncClient(endpoint, key)
     db = client.create_database(id=db_name)
     container = db.create_container(
         id=cont_name,
 		partition_key=PartitionKey(path="/id"))
     ids = []
-    for i in range(10):
+    for i in range(num):
         body = get_test_item()
-        print(body.get("id"))
         ids.append(body.get("id"))
         container.create_item(body=body)
+    print("Created {} items in {} DB successfully".format(num, db_name))
     return ids
 
-async def async_read_test():
-	# ids = create_test()
+async def async_read_test(db_name, cont_name, num):
+	ids = create_test(db_name, cont_name, num)
 	client = AsyncClient(endpoint, key)
 	if client: print(client)
 	db = client.get_database_client(db_name)
 	if db: print(db)
 	x = await db.read()
 	print(x)
-	await client.__aexit__()
-	# container = db.get_container_client(id="AsyncContainer")
-	# print(container.read())
+	await client.close()
 
-async def with_read_test():
+async def with_read_test(db_name, cont_name, item_name):
 	async with AsyncClient(endpoint, key) as client:
 		print(client)
 		db = client.get_database_client(db_name)
@@ -143,8 +65,35 @@ async def with_read_test():
 		x = await cont.read_item(item=item_name, partition_key=item_name)
 		print(x)
 
+def timed_sync(db2, cont2, num, ids):
+    client = SyncClient(endpoint, key)
+    db = client.get_database_client(db2)
+    cont = db.get_container_client(cont2)
+    start = time.time()
+    for id in ids:
+        x = cont.read_item(item=id, partition_key=id)
+        if not x:
+            print("Error retrieving item {}".format(id))
+    print("Sync client retrieved {} items in {} seconds".format(num, time.time() - start))
+
+async def timed_async(db1, cont1, num, ids):
+	async with AsyncClient(endpoint, key) as client:
+		db = client.get_database_client(db1)
+		cont = db.get_container_client(cont1)
+		start = time.time()
+		for id in ids:
+			x = await cont.read_item(item=id, partition_key=id)
+			if not x:
+				print("Error retrieving item {}".format(id))
+		print("Async client retrieved {} items in {} seconds".format(num, time.time() - start))
+
 async def main():
-    await with_read_test()
+    db = "db01"
+    cont = "c01"
+    num = 100000
+    ids = create_test(db, cont, num)
+    timed_sync(db,cont,num,ids)
+    await timed_async(db,cont,num,ids)
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()

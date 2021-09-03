@@ -25,8 +25,6 @@
 from typing import Any, Dict, List, Optional, Union, Iterable, cast  # pylint: disable=unused-import
 
 import six
-import asyncio
-import time
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
 from ._cosmos_client_connection import CosmosClientConnection
@@ -498,7 +496,6 @@ class ContainerProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
         :rtype: dict[str, Any]
         """
-        start = time.time()
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
 
@@ -517,61 +514,6 @@ class ContainerProxy(object):
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
-        print(f"Create item took {(time.time() - start) * 1000} ms")
-        return result
-
-    @distributed_trace
-    async def create_item_aio(
-        self,
-        body,  # type: Dict[str, Any]
-        populate_query_metrics=None,  # type: Optional[bool]
-        pre_trigger_include=None,  # type: Optional[str]
-        post_trigger_include=None,  # type: Optional[str]
-        indexing_directive=None,  # type: Optional[Any]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Dict[str, str]
-        """Create an item in the container.
-
-        To update or replace an existing item, use the
-        :func:`ContainerProxy.upsert_item` method.
-
-        :param body: A dict-like object representing the item to create.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
-        :param pre_trigger_include: trigger id to be used as pre operation trigger.
-        :param post_trigger_include: trigger id to be used as post operation trigger.
-        :param indexing_directive: Indicate whether the document should be omitted from indexing.
-        :keyword bool enable_automatic_id_generation: Enable automatic id generation if no id present.
-        :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
-            has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: A dict representing the new item.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
-        :rtype: dict[str, Any]
-        """
-        start = time.time()
-        request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
-
-        request_options["disableAutomaticIdGeneration"] = not kwargs.pop('enable_automatic_id_generation', False)
-        if populate_query_metrics:
-            request_options["populateQueryMetrics"] = populate_query_metrics
-        if pre_trigger_include is not None:
-            request_options["preTriggerInclude"] = pre_trigger_include
-        if post_trigger_include is not None:
-            request_options["postTriggerInclude"] = post_trigger_include
-        if indexing_directive is not None:
-            request_options["indexingDirective"] = indexing_directive
-
-        result = await self.client_connection.CreateItemAIO(
-            database_or_container_link=self.container_link, document=body, options=request_options, **kwargs
-        )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, result) #what is this doing? can't find function
-        print(f"Create item took {(time.time() - start) * 1000} ms")
         return result
 
     @distributed_trace
