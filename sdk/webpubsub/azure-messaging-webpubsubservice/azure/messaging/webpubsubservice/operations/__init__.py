@@ -6,14 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._webpubsub_service_client import WebpubsubServiceClient
-from ._version import VERSION
+from ._operations import HealthApiOperations
+from ._operations import WebPubSubOperations
 
-__version__ = VERSION
-__all__ = ['WebpubsubServiceClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
+__all__ = [
+    'HealthApiOperations',
+    'WebPubSubOperations',
+]
