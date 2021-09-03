@@ -61,25 +61,25 @@ class AdministratorContact(object):
     @property
     def email(self):
         # type: () -> Optional[str]
-        """:rtype: optional[str]"""
+        """:rtype: str or None"""
         return self._email
 
     @property
     def first_name(self):
         # type: () -> Optional[str]
-        """:rtype: optional[str]"""
+        """:rtype: str or None"""
         return self._first_name
 
     @property
     def last_name(self):
         # type: () -> Optional[str]
-        """:rtype: optional[str]"""
+        """:rtype: str or None"""
         return self._last_name
 
     @property
     def phone(self):
         # type: () -> Optional[str]
-        """:rtype: optional[str]"""
+        """:rtype: str or None"""
         return self._phone
 
 
@@ -282,7 +282,7 @@ class CertificateProperties(object):
         # type: () -> Optional[str]
         """The version of the certificate
 
-        :rtype: optional[str]
+        :rtype: str or None
         """
         return self._vault_id.version
 
@@ -339,7 +339,7 @@ class KeyVaultCertificate(object):
         # type: () -> Optional[str]
         """Certificate identifier.
 
-        :rtype: optional[str]
+        :rtype: str or None
         """
         return self._properties.id if self._properties else None
 
@@ -348,7 +348,7 @@ class KeyVaultCertificate(object):
         # type: () -> Optional[str]
         """The name of the certificate.
 
-        :rtype: optional[str]
+        :rtype: str or None
         """
         return self._properties.name if self._properties else None
 
@@ -357,7 +357,7 @@ class KeyVaultCertificate(object):
         # type: () -> Optional[CertificateProperties]
         """The certificate's properties
 
-        :rtype: optional[~azure.keyvault.certificates.CertificateProperties]
+        :rtype: ~azure.keyvault.certificates.CertificateProperties or None
         """
         return self._properties
 
@@ -370,7 +370,7 @@ class KeyVaultCertificate(object):
     @property
     def secret_id(self):
         # type: () -> Optional[Any]
-        """:rtype: optional[Any]"""
+        """:rtype: Any or None"""
         return self._secret_id
 
     @property
@@ -378,7 +378,7 @@ class KeyVaultCertificate(object):
         # type: () -> Optional[CertificatePolicy]
         """The management policy of the certificate.
 
-        :rtype: optional[~azure.keyvault.certificates.CertificatePolicy]
+        :rtype: ~azure.keyvault.certificates.CertificatePolicy or None
         """
         return self._policy
 
@@ -387,7 +387,7 @@ class KeyVaultCertificate(object):
         # type: () -> Optional[bytes]
         """The CER contents of the certificate.
 
-        :rtype: optional[bytes]
+        :rtype: bytes or None
         """
         return self._cer
 
@@ -514,13 +514,13 @@ class CertificateOperation(object):
     @property
     def id(self):
         # type: () -> Optional[str]
-        """:rtype: optional[str]"""
+        """:rtype: str or None"""
         return self._id
 
     @property
     def name(self):
         # type: () -> Optional[str]
-        """:rtype: optional[str]"""
+        """:rtype: str or None"""
         return self._vault_id.name if self._vault_id else None
 
     @property
@@ -528,7 +528,7 @@ class CertificateOperation(object):
         # type: () -> Optional[str]
         """URL of the vault containing the CertificateOperation
 
-        :rtype: optional[str]
+        :rtype: str or None
         """
         return self._vault_id.vault_url if self._vault_id else None
 
@@ -537,7 +537,7 @@ class CertificateOperation(object):
         # type: () -> Union[str, WellKnownIssuerNames, None]
         """The name of the issuer of the certificate.
 
-        :rtype: union[str, WellKnownIssuerNames, None]
+        :rtype: str or WellKnownIssuerNames or None
         """
         return self._issuer_name
 
@@ -546,7 +546,7 @@ class CertificateOperation(object):
         # type: () -> Optional[str]
         """Type of certificate to be requested from the issuer provider.
 
-        :rtype: optional[str]
+        :rtype: str or None
         """
         return self._certificate_type
 
@@ -556,7 +556,7 @@ class CertificateOperation(object):
         """Whether certificates generated under this policy should be published to certificate
         transparency logs.
 
-        :rtype: optional[bool]
+        :rtype: bool or None
         """
         return self._certificate_transparency
 
@@ -565,7 +565,7 @@ class CertificateOperation(object):
         # type: () -> Optional[bytes]
         """The certificate signing request that is being used in this certificate operation.
 
-        :rtype: optional[bytes]
+        :rtype: bytes or None
         """
         return self._csr
 
@@ -574,26 +574,26 @@ class CertificateOperation(object):
         # type: () -> Optional[bool]
         """Whether cancellation was requested on the certificate operation.
 
-        :rtype: optional[bool]
+        :rtype: bool or None
         """
         return self._cancellation_requested
 
     @property
     def status(self):
         # type: () -> Optional[str]
-        """:rtype: optional[str]"""
+        """:rtype: str or None"""
         return self._status
 
     @property
     def status_details(self):
         # type: () -> Optional[str]
-        """:rtype: optional[str]"""
+        """:rtype: str or None"""
         return self._status_details
 
     @property
     def error(self):
         # type: () -> Optional[CertificateOperationError]
-        """:rtype: optional[~azure.keyvault.certificates.CertificateOperationError]"""
+        """:rtype: ~azure.keyvault.certificates.CertificateOperationError or None"""
         return self._error
 
     @property
@@ -601,7 +601,7 @@ class CertificateOperation(object):
         # type: () -> Optional[str]
         """Location which contains the result of the certificate operation.
 
-        :rtype: optional[str]
+        :rtype: str or None
         """
         return self._target
 
@@ -610,7 +610,7 @@ class CertificateOperation(object):
         # type: () -> Optional[str]
         """Identifier for the certificate operation.
 
-        :rtype: optional[str]
+        :rtype: str or None
         """
         return self._request_id
 
@@ -948,7 +948,7 @@ class CertificatePolicy(object):
         # type: () -> Optional[Any]
         """The subject alternative email addresses.
 
-        :rtype: optional[Any]
+        :rtype: Any or None
         """
         return self._san_emails
 
@@ -957,7 +957,7 @@ class CertificatePolicy(object):
         # type: () -> Optional[Any]
         """The subject alternative domain names.
 
-        :rtype: optional[Any]
+        :rtype: Any or None
         """
         return self._san_dns_names
 
@@ -966,7 +966,7 @@ class CertificatePolicy(object):
         # type: () -> Optional[Any]
         """The subject alternative user principal names.
 
-        :rtype: optional[Any]
+        :rtype: Any or None
         """
         return self._san_user_principal_names
 
@@ -1077,19 +1077,19 @@ class CertificateContact(object):
     @property
     def email(self):
         # type: () -> Optional[str]
-        """:rtype: optional[str]"""
+        """:rtype: str or None"""
         return self._email
 
     @property
     def name(self):
         # type: () -> Optional[str]
-        """:rtype: optional[str]"""
+        """:rtype: str or None"""
         return self._name
 
     @property
     def phone(self):
         # type: () -> Optional[str]
-        """:rtype: optional[str]"""
+        """:rtype: str or None"""
         return self._phone
 
 
@@ -1125,13 +1125,13 @@ class IssuerProperties(object):
     def name(self):
         # type: () -> Optional[str]
         # Issuer name is listed under version under vault_id
-        """:rtype: optional[str]"""
+        """:rtype: str or None"""
         return self._vault_id.version
 
     @property
     def provider(self):
         # type: () -> Optional[str]
-        """:rtype: optional[str]"""
+        """:rtype: str or None"""
         return self._provider
 
 
@@ -1205,7 +1205,7 @@ class CertificateIssuer(object):
         # This is because the id we pass to parse_key_vault_id has an extra segment, so where most cases the version of
         # the general pattern is certificates/name/version, but here we have certificates/issuers/name/version.
         # Issuers are not versioned.
-        """:rtype: optional[str]"""
+        """:rtype: str or None"""
         return self._vault_id.version
 
     @property
@@ -1213,7 +1213,7 @@ class CertificateIssuer(object):
         # type: () -> Optional[str]
         """The issuer provider.
 
-        :rtype: optional[str]
+        :rtype: str or None
         """
         return self._provider
 
@@ -1222,7 +1222,7 @@ class CertificateIssuer(object):
         # type: () -> Optional[bool]
         """Whether the certificate is enabled or not.
 
-        :rtype: optional[bool]
+        :rtype: bool or None
         """
         return self._attributes.enabled if self._attributes else None
 
@@ -1231,7 +1231,7 @@ class CertificateIssuer(object):
         # type: () -> Optional[datetime]
         """The datetime when the certificate is created.
 
-        :rtype: optional[~datetime.datetime]
+        :rtype: ~datetime.datetime or None
         """
         return self._attributes.created if self._attributes else None
 
@@ -1240,7 +1240,7 @@ class CertificateIssuer(object):
         # type: () -> Optional[datetime]
         """The datetime when the certificate was last updated.
 
-        :rtype: optional[~datetime.datetime]
+        :rtype: ~datetime.datetime or None
         """
         return self._attributes.updated if self._attributes else None
 
@@ -1249,7 +1249,7 @@ class CertificateIssuer(object):
         # type: () -> Optional[str]
         """The username/ account name/ account id.
 
-        :rtype: optional[str]
+        :rtype: str or None
         """
         return self._account_id
 
@@ -1258,14 +1258,14 @@ class CertificateIssuer(object):
         # type: () -> Optional[str]
         """The password / secret / account key.
 
-        :rtype: optional[str]
+        :rtype: str or None
         """
         return self._password
 
     @property
     def organization_id(self):
         # type: () -> Optional[str]
-        """:rtype: optional[str]"""
+        """:rtype: str or None"""
         return self._organization_id
 
     @property
@@ -1273,7 +1273,7 @@ class CertificateIssuer(object):
         # type: () -> Optional[List[AdministratorContact]]
         """Contact details of the organization administrator of this issuer.
 
-        :rtype: optional[list[~azure.keyvault.certificates.AdministratorContact]]
+        :rtype: list[~azure.keyvault.certificates.AdministratorContact] or None
         """
         return self._admin_contacts
 
@@ -1308,7 +1308,7 @@ class LifetimeAction(object):
         # type: () -> Optional[int]
         """Percentage of lifetime at which to trigger.
 
-        :rtype: optional[int]
+        :rtype: int or None
         """
         return self._lifetime_percentage
 
@@ -1317,7 +1317,7 @@ class LifetimeAction(object):
         # type: () -> Optional[int]
         """Days before expiry to attempt renewal.
 
-        :rtype: optional[int]
+        :rtype: int or None
         """
         return self._days_before_expiry
 
@@ -1327,7 +1327,7 @@ class LifetimeAction(object):
         """The type of the action that will be executed.
         Valid values are "EmailContacts" and "AutoRenew"
 
-        :rtype: optional[~azure.keyvault.certificates.CertificatePolicyAction]
+        :rtype: ~azure.keyvault.certificates.CertificatePolicyAction or None
         """
         return self._action
 
