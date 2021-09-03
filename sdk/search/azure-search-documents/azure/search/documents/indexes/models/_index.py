@@ -152,11 +152,11 @@ class SearchField(msrest.serialization.Model):
      "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop",
      "whitespace".
     :type index_analyzer_name: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
-    :param normalizer: The name of the normalizer to use for the field. This option can be used
+    :param normalizer_name: The name of the normalizer to use for the field. This option can be used
      only with fields with filterable, sortable, or facetable enabled. Once the normalizer is
      chosen, it cannot be changed for the field. Must be null for complex fields. Possible values
      include: "asciifolding", "elision", "lowercase", "standard", "uppercase".
-    :type normalizer: str or ~azure.search.documents.indexes.models.LexicalNormalizerName
+    :type normalizer_name: str or ~azure.search.documents.indexes.models.LexicalNormalizerName
     :param synonym_map_names: A list of the names of synonym maps to associate with this field. This
      option can be used only with searchable fields. Currently only one synonym map per field is
      supported. Assigning a synonym map to a field ensures that query terms targeting that field are
@@ -185,7 +185,7 @@ class SearchField(msrest.serialization.Model):
         "analyzer_name": {"key": "analyzerName", "type": "str"},
         "search_analyzer_name": {"key": "searchAnalyzerName", "type": "str"},
         "index_analyzer_name": {"key": "indexAnalyzerName", "type": "str"},
-        "normalizer": {"key": "normalizer", "type": "str"},
+        "normalizer_name": {"key": "normalizerName", "type": "str"},
         "synonym_map_names": {"key": "synonymMapNames", "type": "[str]"},
         "fields": {"key": "fields", "type": "[SearchField]"},
     }
@@ -203,7 +203,7 @@ class SearchField(msrest.serialization.Model):
         self.analyzer_name = kwargs.get("analyzer_name", None)
         self.search_analyzer_name = kwargs.get("search_analyzer_name", None)
         self.index_analyzer_name = kwargs.get("index_analyzer_name", None)
-        self.normalizer = kwargs.get("normalizer", None)
+        self.normalizer_name = kwargs.get("normalizer_name", None)
         self.synonym_map_names = kwargs.get("synonym_map_names", None)
         self.fields = kwargs.get("fields", None)
 
@@ -222,7 +222,7 @@ class SearchField(msrest.serialization.Model):
             analyzer=self.analyzer_name,
             search_analyzer=self.search_analyzer_name,
             index_analyzer=self.index_analyzer_name,
-            normalizer=self.normalizer,
+            normalizer=self.normalizer_name,
             synonym_maps=self.synonym_map_names,
             fields=fields,
         )
@@ -243,7 +243,7 @@ class SearchField(msrest.serialization.Model):
             else None
         )
         try:
-            normalizer = search_field.normalizer
+            normalizer = search_field.normalizer_name
         except AttributeError:
             normalizer = None
         return cls(

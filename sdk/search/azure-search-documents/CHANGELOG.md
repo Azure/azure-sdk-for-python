@@ -8,6 +8,7 @@
   - `azure.search.documents.models.Captions`
   - `azure.search.documents.models.CaptionResult`
   - `azure.search.documents.indexes.models.CustomEntityLookupSkillLanguage`
+  - `azure.search.documents.indexes.models.EntityRecognitionSkillVersion`
   - `azure.search.documents.indexes.models.LexicalNormalizerName`
   - `azure.search.documents.indexes.models.PIIDetectionSkill`
   - `azure.search.documents.indexes.models.PIIDetectionSkillMaskingMode`
@@ -15,7 +16,22 @@
   - `azure.search.documents.indexes.models.SearchIndexerDataIdentity`
   - `azure.search.documents.indexes.models.SearchIndexerDataNoneIdentity`
   - `azure.search.documents.indexes.models.SearchIndexerDataUserAssignedIdentity`
+  - `azure.search.documents.indexes.models.SentimentSkillVersion`
 - Added `normalizer_name` property to `AnalyzeTextOptions` model.
+
+### Breaking Changes
+
+- Removed:
+  - `azure.search.documents.indexes.models.SentimentSkillV3`
+  - `azure.search.documents.indexes.models.EntityRecognitionSkillV3`
+- Renamed:
+  - `SearchField.normalizer` renamed to `SearchField.normalizer_name`.
+
+### Other Changes
+- `SentimentSkill` and `EntityRecognitionSkill` can now be created by specifying
+  the `skill_version` keyword argument with a `SentimentSkillVersion` or
+  `EntityRecognitionSkillVersion`, respectively. The default behavior if `skill_version`
+  is not specified is to create a version 1 skill.
 
 ## 11.3.0b2 (2021-08-10)
 
