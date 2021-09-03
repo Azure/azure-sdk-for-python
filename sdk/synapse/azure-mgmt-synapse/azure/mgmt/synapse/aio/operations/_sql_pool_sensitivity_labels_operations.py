@@ -47,7 +47,7 @@ class SqlPoolSensitivityLabelsOperations:
         workspace_name: str,
         sql_pool_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SensitivityLabelListResult"]:
         """Gets SQL pool sensitivity labels.
 
@@ -71,7 +71,7 @@ class SqlPoolSensitivityLabelsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -84,7 +84,7 @@ class SqlPoolSensitivityLabelsOperations:
                 url = self.list_current.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
                     'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
                 }
@@ -133,7 +133,7 @@ class SqlPoolSensitivityLabelsOperations:
         workspace_name: str,
         sql_pool_name: str,
         parameters: "_models.SensitivityLabelUpdateList",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Update sensitivity labels of a given SQL Pool using an operations batch.
 
@@ -155,14 +155,14 @@ class SqlPoolSensitivityLabelsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
         url = self.update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
         }
@@ -200,7 +200,7 @@ class SqlPoolSensitivityLabelsOperations:
         include_disabled_recommendations: Optional[bool] = None,
         skip_token: Optional[str] = None,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SensitivityLabelListResult"]:
         """Gets sensitivity labels of a given SQL pool.
 
@@ -230,7 +230,7 @@ class SqlPoolSensitivityLabelsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -243,7 +243,7 @@ class SqlPoolSensitivityLabelsOperations:
                 url = self.list_recommended.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
                     'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
                 }
@@ -298,7 +298,7 @@ class SqlPoolSensitivityLabelsOperations:
         table_name: str,
         column_name: str,
         parameters: "_models.SensitivityLabel",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SensitivityLabel":
         """Creates or updates the sensitivity label of a given column in a Sql pool.
 
@@ -326,7 +326,7 @@ class SqlPoolSensitivityLabelsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         sensitivity_label_source = "current"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -335,7 +335,7 @@ class SqlPoolSensitivityLabelsOperations:
         url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
             'schemaName': self._serialize.url("schema_name", schema_name, 'str'),
@@ -385,7 +385,7 @@ class SqlPoolSensitivityLabelsOperations:
         schema_name: str,
         table_name: str,
         column_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the sensitivity label of a given column in a Sql pool.
 
@@ -411,14 +411,14 @@ class SqlPoolSensitivityLabelsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         sensitivity_label_source = "current"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
             'schemaName': self._serialize.url("schema_name", schema_name, 'str'),
@@ -457,7 +457,7 @@ class SqlPoolSensitivityLabelsOperations:
         table_name: str,
         column_name: str,
         sensitivity_label_source: Union[str, "_models.SensitivityLabelSource"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SensitivityLabel":
         """Gets the sensitivity label of a given column.
 
@@ -485,14 +485,14 @@ class SqlPoolSensitivityLabelsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
             'schemaName': self._serialize.url("schema_name", schema_name, 'str'),
@@ -534,7 +534,7 @@ class SqlPoolSensitivityLabelsOperations:
         schema_name: str,
         table_name: str,
         column_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Enables sensitivity recommendations on a given column (recommendations are enabled by default
         on all columns).
@@ -561,14 +561,14 @@ class SqlPoolSensitivityLabelsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         sensitivity_label_source = "recommended"
 
         # Construct URL
         url = self.enable_recommendation.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
             'schemaName': self._serialize.url("schema_name", schema_name, 'str'),
@@ -606,7 +606,7 @@ class SqlPoolSensitivityLabelsOperations:
         schema_name: str,
         table_name: str,
         column_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Disables sensitivity recommendations on a given column.
 
@@ -632,14 +632,14 @@ class SqlPoolSensitivityLabelsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         sensitivity_label_source = "recommended"
 
         # Construct URL
         url = self.disable_recommendation.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
             'schemaName': self._serialize.url("schema_name", schema_name, 'str'),
