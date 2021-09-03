@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/library%2Falpine/_manifests
   response:
@@ -18,7 +18,7 @@ interactions:
       connection: keep-alive
       content-length: '217'
       content-type: application/json; charset=utf-8
-      date: Tue, 17 Aug 2021 18:06:57 GMT
+      date: Mon, 30 Aug 2021 20:27:57 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -38,7 +38,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/token
   response:
@@ -47,11 +47,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Tue, 17 Aug 2021 18:06:57 GMT
+      date: Mon, 30 Aug 2021 20:27:57 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.616667'
+      x-ms-ratelimit-remaining-calls-per-second: '166.65'
     status:
       code: 200
       message: OK
@@ -62,49 +62,49 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/library%2Falpine/_manifests
   response:
     body:
       string: '{"registry": "yalinlitestsanon.azurecr.io", "imageName": "library/alpine",
-        "manifests": [{"digest": "sha256:169b2750787ff8d4995ba535293bf549958b596067165ce678afa928225d97cc",
-        "imageSize": 528, "createdTime": "2021-08-17T18:06:24.1933064Z", "lastUpdateTime":
-        "2021-08-17T18:06:24.1933064Z", "architecture": "386", "os": "linux", "mediaType":
+        "manifests": [{"digest": "sha256:18c29393a090ba5cde8a5f00926e9e419f47cfcfd206cc3f7f590e91b19adfe9",
+        "imageSize": 528, "createdTime": "2021-08-30T10:55:40.7388588Z", "lastUpdateTime":
+        "2021-08-30T10:55:40.7388588Z", "architecture": "arm", "os": "linux", "mediaType":
         "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
         {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
-        true, "quarantineState": "Passed"}}, {"digest": "sha256:1d2cfbb29672ce268a77b3b9eca532a96356f4843044d22a9677231e1333e271",
-        "imageSize": 528, "createdTime": "2021-08-17T18:06:24.1100226Z", "lastUpdateTime":
-        "2021-08-17T18:06:24.1100226Z", "architecture": "arm", "os": "linux", "mediaType":
+        true, "quarantineState": "Passed"}}, {"digest": "sha256:69704ef328d05a9f806b6b8502915e6a0a4faa4d72018dc42343f511490daf8a",
+        "imageSize": 528, "createdTime": "2021-08-30T10:55:44.0975053Z", "lastUpdateTime":
+        "2021-08-30T10:55:44.0975053Z", "architecture": "amd64", "os": "linux", "mediaType":
         "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
         {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
-        true, "quarantineState": "Passed"}}, {"digest": "sha256:8621732cdb8c893dccfaacfa22741154123addd7c0e5465056bbe9b0cb4c7737",
-        "imageSize": 528, "createdTime": "2021-08-17T18:06:25.0984809Z", "lastUpdateTime":
-        "2021-08-17T18:06:25.0984809Z", "architecture": "s390x", "os": "linux", "mediaType":
-        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
-        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
-        true, "quarantineState": "Passed"}}, {"digest": "sha256:bd9137c3bb45dbc40cde0f0e19a8b9064c2bc485466221f5e95eb72b0d0cf82e",
-        "imageSize": 528, "createdTime": "2021-08-17T18:06:24.0276057Z", "lastUpdateTime":
-        "2021-08-17T18:06:24.0276057Z", "architecture": "arm64", "os": "linux", "mediaType":
-        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
-        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
-        true, "quarantineState": "Passed"}}, {"digest": "sha256:be9bdc0ef8e96dbc428dc189b31e2e3b05523d96d12ed627c37aa2936653258c",
-        "imageSize": 528, "createdTime": "2021-08-17T18:06:24.3964606Z", "lastUpdateTime":
-        "2021-08-17T18:06:24.3964606Z", "architecture": "amd64", "os": "linux", "mediaType":
-        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
-        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
-        true, "quarantineState": "Passed"}}, {"digest": "sha256:eb3e4e175ba6d212ba1d6e04fc0782916c08e1c9d7b45892e9796141b1d379ae",
-        "imageSize": 3696, "createdTime": "2021-08-17T18:06:23.1196409Z", "lastUpdateTime":
-        "2021-08-17T18:06:23.1196409Z", "mediaType": "application/vnd.docker.distribution.manifest.list.v2+json",
-        "tags": ["latest"], "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
-        true, "readEnabled": true, "listEnabled": true}}, {"digest": "sha256:f553db2d6ab7f3ba07024cd1181e16242d8fea0a2840dc2ccbd59e9b8c59b478",
-        "imageSize": 528, "createdTime": "2021-08-17T18:06:25.0264984Z", "lastUpdateTime":
-        "2021-08-17T18:06:25.0264984Z", "architecture": "ppc64le", "os": "linux",
+        true, "quarantineState": "Passed"}}, {"digest": "sha256:9bea59997a84beb47a8cc7ddb11abc957b141e8160852aa93b4cf60659016b53",
+        "imageSize": 528, "createdTime": "2021-08-30T10:55:44.3819234Z", "lastUpdateTime":
+        "2021-08-30T10:55:44.3819234Z", "architecture": "ppc64le", "os": "linux",
         "mediaType": "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
         {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
-        true, "quarantineState": "Passed"}}, {"digest": "sha256:fb9ac82b4cc94c5a6c416a1c656b3ee84df9290ab4106c260eb959997e759e5e",
-        "imageSize": 528, "createdTime": "2021-08-17T18:06:24.2418276Z", "lastUpdateTime":
-        "2021-08-17T18:06:24.2418276Z", "architecture": "arm", "os": "linux", "mediaType":
+        true, "quarantineState": "Passed"}}, {"digest": "sha256:a77adef9f69751add61080617e15e67aba9aa7a5fd5414b9fae84143210ee0ad",
+        "imageSize": 528, "createdTime": "2021-08-30T10:55:40.8404404Z", "lastUpdateTime":
+        "2021-08-30T10:55:40.8404404Z", "architecture": "386", "os": "linux", "mediaType":
+        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
+        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
+        true, "quarantineState": "Passed"}}, {"digest": "sha256:b06a5cf61b2956088722c4f1b9a6f71dfe95f0b1fe285d44195452b8a1627de7",
+        "imageSize": 528, "createdTime": "2021-08-30T10:55:40.6499159Z", "lastUpdateTime":
+        "2021-08-30T10:55:40.6499159Z", "architecture": "arm64", "os": "linux", "mediaType":
+        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
+        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
+        true, "quarantineState": "Passed"}}, {"digest": "sha256:e12ff876f0075740ed3d7bdf788107ae84c1b3dd6dc98b3baea41088aba5236f",
+        "imageSize": 528, "createdTime": "2021-08-30T10:55:40.6028958Z", "lastUpdateTime":
+        "2021-08-30T10:55:40.6028958Z", "architecture": "arm", "os": "linux", "mediaType":
+        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
+        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
+        true, "quarantineState": "Passed"}}, {"digest": "sha256:e1c082e3d3c45cccac829840a25941e679c25d438cc8412c2fa221cf1a824e6a",
+        "imageSize": 3696, "createdTime": "2021-08-30T10:55:43.8572619Z", "lastUpdateTime":
+        "2021-08-30T10:55:43.8572619Z", "mediaType": "application/vnd.docker.distribution.manifest.list.v2+json",
+        "tags": ["latest"], "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
+        true, "readEnabled": true, "listEnabled": true}}, {"digest": "sha256:e841d0f0881ea22080e84088337646ada15871abbc3ce19b3219e8fc2cb0cc22",
+        "imageSize": 528, "createdTime": "2021-08-30T10:55:41.4366882Z", "lastUpdateTime":
+        "2021-08-30T10:55:41.4366882Z", "architecture": "s390x", "os": "linux", "mediaType":
         "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
         {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
         true, "quarantineState": "Passed"}}]}'
@@ -112,7 +112,7 @@ interactions:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Tue, 17 Aug 2021 18:06:57 GMT
+      date: Mon, 30 Aug 2021 20:27:58 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
