@@ -644,7 +644,9 @@ class CertificateClient(AsyncKeyVaultClientBase):
             error_map=_error_map,
             **kwargs
         )
-        return [CertificateContact._from_certificate_contacts_item(contact_item=item) for item in new_contacts.contact_list]
+        return [
+            CertificateContact._from_certificate_contacts_item(contact_item=item) for item in new_contacts.contact_list
+        ]
 
     @distributed_trace_async
     async def get_contacts(self, **kwargs: "Any") -> List[CertificateContact]:
