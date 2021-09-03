@@ -21,9 +21,11 @@
 
 ### Breaking Changes
 
-- Removed models:
+- Removed:
   - `azure.search.documents.indexes.models.SentimentSkillV3`
   - `azure.search.documents.indexes.models.EntityRecognitionSkillV3`
+- Renamed:
+  - `SearchField.normalizer` renamed to `SearchField.normalizer_name`.
 
 ### Other Changes
 - `SentimentSkill` and `EntityRecognitionSkill` can now be created by specifying
