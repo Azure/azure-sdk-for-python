@@ -9,6 +9,7 @@ from .chained import ChainedTokenCredential
 from .default import DefaultAzureCredential
 from .environment import EnvironmentCredential
 from .managed_identity import ManagedIdentityCredential
+from .on_behalf_of import OnBehalfOfCredential
 from .certificate import CertificateCredential
 from .client_secret import ClientSecretCredential
 from .shared_cache import SharedTokenCacheCredential
@@ -27,6 +28,7 @@ __all__ = [
     "DefaultAzureCredential",
     "EnvironmentCredential",
     "ManagedIdentityCredential",
+    "OnBehalfOfCredential",
     "SharedTokenCacheCredential",
     "VisualStudioCodeCredential",
 ]

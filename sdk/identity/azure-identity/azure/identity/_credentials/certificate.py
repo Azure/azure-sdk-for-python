@@ -92,13 +92,16 @@ def load_pkcs12_certificate(certificate_data, password):
     # type: (bytes, Optional[bytes]) -> _Cert
     from cryptography.hazmat.primitives.serialization import Encoding, NoEncryption, pkcs12, PrivateFormat
 
-    private_key, cert, additional_certs = pkcs12.load_key_and_certificates(
-        certificate_data, password, backend=default_backend()
-    )
+    try:
+        private_key, cert, additional_certs = pkcs12.load_key_and_certificates(
+            certificate_data, password, backend=default_backend()
+        )
+    except ValueError as ex:
+        # mentioning PEM here because we raise this error when certificate_data is garbage
+        six.raise_from(ValueError("Failed to deserialize certificate in PEM or PKCS12 format"), ex)
     if not private_key:
         raise ValueError("The certificate must include its private key")
     if not cert:
-        # mentioning PEM here because we raise this error when certificate_data is garbage
         raise ValueError("Failed to deserialize certificate in PEM or PKCS12 format")
 
     # This serializes the private key without any encryption it may have had. Doing so doesn't violate security
@@ -137,7 +140,7 @@ def get_client_credential(certificate_path, password=None, certificate_data=None
         password = None  # load_pkcs12_certificate returns cert.pem_bytes decrypted
 
     if not isinstance(cert.private_key, RSAPrivateKey):
-        raise ValueError("CertificateCredential requires an RSA private key because it uses RS256 for signing")
+        raise ValueError("The certificate must have an RSA private key because RS256 is used for signing")
 
     client_credential = {"private_key": cert.pem_bytes, "thumbprint": hexlify(cert.fingerprint).decode("utf-8")}
     if password:

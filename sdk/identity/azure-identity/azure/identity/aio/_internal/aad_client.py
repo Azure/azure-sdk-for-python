@@ -80,6 +80,20 @@ class AadClient(AadClientBase):
         response = await self._pipeline.run(request, retry_on_methods=self._POST, **kwargs)
         return self._process_response(response, now)
 
+    async def obtain_token_on_behalf_of(
+        self,
+        scopes: "Iterable[str]",
+        client_credential: "Union[str, AadClientCertificate]",
+        user_assertion: str,
+        **kwargs: "Any"
+    ) -> "AccessToken":
+        request = self._get_on_behalf_of_request(
+            scopes=scopes, client_credential=client_credential, user_assertion=user_assertion, **kwargs
+        )
+        now = int(time.time())
+        response = await self._pipeline.run(request, retry_on_methods=self._POST, **kwargs)
+        return self._process_response(response, now)
+
     # pylint:disable=no-self-use
     def _build_pipeline(self, **kwargs: "Any") -> "AsyncPipeline":
         return build_async_pipeline(**kwargs)
