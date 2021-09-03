@@ -7,7 +7,6 @@
 # --------------------------------------------------------------------------
 
 from ._container_registry_client import ContainerRegistryClient
-from ._enums import ContainerRegistryAudience
 from ._models import (
     ArtifactArchitecture,
     ArtifactOperatingSystem,
@@ -30,5 +29,4 @@ __all__ = [
     "RepositoryProperties",
     "TagOrder",
     "ArtifactTagProperties",
-    "ContainerRegistryAudience",
 ]

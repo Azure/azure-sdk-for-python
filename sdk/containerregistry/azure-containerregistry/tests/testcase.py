@@ -11,20 +11,20 @@ import pytest
 import six
 import time
 
-from azure.containerregistry import ContainerRegistryAudience, ContainerRegistryClient
+from azure.containerregistry import ContainerRegistryClient
 from azure.containerregistry._helpers import _is_tag
 
 from azure.core.credentials import AccessToken
 from azure.mgmt.containerregistry import ContainerRegistryManagementClient
 from azure.mgmt.containerregistry.models import ImportImageParameters, ImportSource, ImportMode
-from azure.identity import DefaultAzureCredential, AzureAuthorityHosts
+from azure.identity import DefaultAzureCredential, AzureAuthorityHosts, ClientSecretCredential
 
 from devtools_testutils import AzureTestCase, is_live
 from azure_devtools.scenario_tests import (
     OAuthRequestResponsesFilter,
     RecordingProcessor,
 )
-from azure_devtools.scenario_tests import RecordingProcessor
+from msrestazure.azure_cloud import AZURE_CHINA_CLOUD, AZURE_US_GOV_CLOUD, AZURE_PUBLIC_CLOUD, AZURE_GERMAN_CLOUD
 
 
 REDACTED = "REDACTED"
@@ -227,16 +227,16 @@ def get_authority(endpoint):
 def get_audience(authority):
     if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
         logger.warning("Public auth scope")
-        return ContainerRegistryAudience.ARM_PUBLIC_CLOUD
+        return "https://management.azure.com"
     if authority == AzureAuthorityHosts.AZURE_CHINA:
         logger.warning("China scope")
-        return ContainerRegistryAudience.ARM_CHINA
+        return "https://management.chinacloudapi.cn"
     if authority == AzureAuthorityHosts.AZURE_GOVERNMENT:
         logger.warning("US Gov scope")
-        return ContainerRegistryAudience.ARM_GOVERNMENT
+        return "https://management.usgovcloudapi.net"
     if authority == AzureAuthorityHosts.AZURE_GERMANY:
         logger.warning("Germany scope")
-        return ContainerRegistryAudience.ARM_GERMANY
+        return "https://management.microsoftazure.de"
 
 def get_base_url(authority):
     if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
@@ -251,11 +251,6 @@ def get_base_url(authority):
     if authority == AzureAuthorityHosts.AZURE_GERMANY:
         logger.warning("Germany scope")
         return AZURE_GERMAN_CLOUD
-
-
-
-from azure.identity import ClientSecretCredential
-from msrestazure.azure_cloud import AZURE_CHINA_CLOUD, AZURE_US_GOV_CLOUD, AZURE_PUBLIC_CLOUD, AZURE_GERMAN_CLOUD
 
 # Moving this out of testcase so the fixture and individual tests can use it
 def import_image(authority, repository, tags):
