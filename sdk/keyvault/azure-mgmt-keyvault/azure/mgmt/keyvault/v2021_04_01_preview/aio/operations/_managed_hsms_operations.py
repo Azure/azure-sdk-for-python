@@ -48,7 +48,7 @@ class ManagedHsmsOperations:
         resource_group_name: str,
         name: str,
         parameters: "_models.ManagedHsm",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagedHsm":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedHsm"]
         error_map = {
@@ -106,7 +106,7 @@ class ManagedHsmsOperations:
         resource_group_name: str,
         name: str,
         parameters: "_models.ManagedHsm",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ManagedHsm"]:
         """Create or update a managed HSM Pool in the specified subscription.
 
@@ -118,8 +118,8 @@ class ManagedHsmsOperations:
         :type parameters: ~azure.mgmt.keyvault.v2021_04_01_preview.models.ManagedHsm
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ManagedHsm or the result of cls(response)
@@ -177,7 +177,7 @@ class ManagedHsmsOperations:
         resource_group_name: str,
         name: str,
         parameters: "_models.ManagedHsm",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagedHsm":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedHsm"]
         error_map = {
@@ -235,7 +235,7 @@ class ManagedHsmsOperations:
         resource_group_name: str,
         name: str,
         parameters: "_models.ManagedHsm",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ManagedHsm"]:
         """Update a managed HSM Pool in the specified subscription.
 
@@ -247,8 +247,8 @@ class ManagedHsmsOperations:
         :type parameters: ~azure.mgmt.keyvault.v2021_04_01_preview.models.ManagedHsm
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ManagedHsm or the result of cls(response)
@@ -305,7 +305,7 @@ class ManagedHsmsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -350,7 +350,7 @@ class ManagedHsmsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified managed HSM Pool.
 
@@ -360,8 +360,8 @@ class ManagedHsmsOperations:
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -414,7 +414,7 @@ class ManagedHsmsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ManagedHsm"]:
         """Gets the specified managed HSM Pool.
 
@@ -475,7 +475,7 @@ class ManagedHsmsOperations:
         self,
         resource_group_name: str,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ManagedHsmListResult"]:
         """The List operation gets information about the managed HSM Pools associated with the
         subscription and within the specified resource group.
@@ -551,7 +551,7 @@ class ManagedHsmsOperations:
     def list_by_subscription(
         self,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ManagedHsmListResult"]:
         """The List operation gets information about the managed HSM Pools associated with the
         subscription.
@@ -623,7 +623,7 @@ class ManagedHsmsOperations:
 
     def list_deleted(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DeletedManagedHsmListResult"]:
         """The List operation gets information about the deleted managed HSMs associated with the
         subscription.
@@ -693,7 +693,7 @@ class ManagedHsmsOperations:
         self,
         name: str,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeletedManagedHsm":
         """Gets the specified deleted managed HSM.
 
@@ -752,7 +752,7 @@ class ManagedHsmsOperations:
         self,
         name: str,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -797,7 +797,7 @@ class ManagedHsmsOperations:
         self,
         name: str,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Permanently deletes the specified managed HSM.
 
@@ -807,8 +807,8 @@ class ManagedHsmsOperations:
         :type location: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)

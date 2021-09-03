@@ -106,13 +106,13 @@ class DocumentTranslationTest(AzureTestCase):
             return "dummy_string"
 
         # for actual live tests
-        container_name = "src" + str(uuid.uuid4()) 
-        container_client = ContainerClient(self.storage_endpoint, container_name,
+        self.source_container_name = "src" + str(uuid.uuid4())
+        container_client = ContainerClient(self.storage_endpoint, self.source_container_name,
                                            self.storage_key)
         container_client.create_container()
 
         self.upload_documents(data, container_client)
-        return self.generate_sas_url(container_name, "rl")
+        return self.generate_sas_url(self.source_container_name, "rl")
 
     def create_target_container(self, data=None):
         # for offline tests
@@ -120,14 +120,14 @@ class DocumentTranslationTest(AzureTestCase):
             return "dummy_string"
 
         # for actual live tests
-        container_name = "target" + str(uuid.uuid4())
-        container_client = ContainerClient(self.storage_endpoint, container_name,
+        self.target_container_name = "target" + str(uuid.uuid4())
+        container_client = ContainerClient(self.storage_endpoint, self.target_container_name,
                                            self.storage_key)
         container_client.create_container()
         if data:
             self.upload_documents(data, container_client)
 
-        return self.generate_sas_url(container_name, "rw")
+        return self.generate_sas_url(self.target_container_name, "wl")
 
     def generate_sas_url(self, container_name, permission):
 
@@ -172,7 +172,7 @@ class DocumentTranslationTest(AzureTestCase):
         succeeded = kwargs.pop('succeeded', None)
         inprogress = kwargs.pop('inprogress', None)
         notstarted = kwargs.pop('notstarted', None)
-        cancelled = kwargs.pop('cancelled', None)
+        canceled = kwargs.pop('canceled', None)
         
         # status
         p = poller.status()
@@ -185,7 +185,7 @@ class DocumentTranslationTest(AzureTestCase):
             self.assertEqual(poller.details.documents_succeeded_count, succeeded) if succeeded else self.assertIsNotNone(poller.details.documents_succeeded_count)
             self.assertEqual(poller.details.documents_in_progress_count, inprogress) if inprogress else self.assertIsNotNone(poller.details.documents_in_progress_count)
             self.assertEqual(poller.details.documents_not_yet_started_count, notstarted) if notstarted else self.assertIsNotNone(poller.details.documents_not_yet_started_count)
-            self.assertEqual(poller.details.documents_cancelled_count, cancelled) if cancelled else self.assertIsNotNone(poller.details.documents_cancelled_count)
+            self.assertEqual(poller.details.documents_canceled_count, canceled) if canceled else self.assertIsNotNone(poller.details.documents_canceled_count)
             # generic assertions
             self.assertIsNotNone(poller.details.id)
             self.assertIsNotNone(poller.details.created_on)
@@ -199,7 +199,7 @@ class DocumentTranslationTest(AzureTestCase):
         succeeded = kwargs.pop('succeeded', None)
         inprogress = kwargs.pop('inprogress', None)
         notstarted = kwargs.pop('notstarted', None)
-        cancelled = kwargs.pop('cancelled', None)
+        canceled = kwargs.pop('canceled', None)
 
         # status
         self.assertEqual(job_details.status, status) if status else self.assertIsNotNone(job_details.status)
@@ -217,8 +217,8 @@ class DocumentTranslationTest(AzureTestCase):
         self.assertEqual(job_details.documents_not_yet_started_count,
                          notstarted) if notstarted else self.assertIsNotNone(
             job_details.documents_not_yet_started_count)
-        self.assertEqual(job_details.documents_cancelled_count,
-                         cancelled) if cancelled else self.assertIsNotNone(job_details.documents_cancelled_count)
+        self.assertEqual(job_details.documents_canceled_count,
+                         canceled) if canceled else self.assertIsNotNone(job_details.documents_canceled_count)
         # generic assertions
         self.assertIsNotNone(job_details.id)
         self.assertIsNotNone(job_details.created_on)
@@ -236,6 +236,7 @@ class DocumentTranslationTest(AzureTestCase):
         # submit job
         poller = client.begin_translation(translation_inputs)
         self.assertIsNotNone(poller.id)
+        self.assertIsNotNone(poller.details.id)
         # wait for result
         result = poller.result()
         # validate

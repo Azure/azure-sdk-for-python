@@ -54,7 +54,9 @@ PYLINT_ACCEPTABLE_FAILURES = [
     "azure-purview-nspkg",
     "azure-purview-scanning",
     "azure-purview-catalog",
+    "azure-purview-account",
     "azure-messaging-nspkg",
     "azure-agrifood-farming",
-    "azure-eventhub"
+    "azure-eventhub",
+    "azure-ai-language-questionanswering"
 ]

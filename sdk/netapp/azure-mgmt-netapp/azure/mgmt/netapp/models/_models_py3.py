@@ -393,12 +393,16 @@ class BackupPolicy(msrest.serialization.Model):
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
     :ivar type: Resource type.
     :vartype type: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :ivar name_properties_name: Name of backup policy.
     :vartype name_properties_name: str
+    :ivar backup_policy_id: Backup Policy Resource ID.
+    :vartype backup_policy_id: str
     :ivar provisioning_state: Azure lifecycle management.
     :vartype provisioning_state: str
     :param daily_backups_to_keep: Daily backups count to keep.
@@ -407,37 +411,40 @@ class BackupPolicy(msrest.serialization.Model):
     :type weekly_backups_to_keep: int
     :param monthly_backups_to_keep: Monthly backups count to keep.
     :type monthly_backups_to_keep: int
-    :param yearly_backups_to_keep: Yearly backups count to keep.
-    :type yearly_backups_to_keep: int
-    :param volumes_assigned: Volumes using current backup policy.
-    :type volumes_assigned: int
+    :ivar volumes_assigned: Volumes using current backup policy.
+    :vartype volumes_assigned: int
     :param enabled: The property to decide policy is enabled or not.
     :type enabled: bool
-    :param volume_backups: A list of volumes assigned to this policy.
-    :type volume_backups: list[~azure.mgmt.netapp.models.VolumeBackups]
+    :ivar volume_backups: A list of volumes assigned to this policy.
+    :vartype volume_backups: list[~azure.mgmt.netapp.models.VolumeBackups]
     """
 
     _validation = {
         'location': {'required': True},
         'id': {'readonly': True},
         'name': {'readonly': True},
+        'etag': {'readonly': True},
         'type': {'readonly': True},
         'name_properties_name': {'readonly': True},
+        'backup_policy_id': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'volumes_assigned': {'readonly': True},
+        'volume_backups': {'readonly': True},
     }
 
     _attribute_map = {
         'location': {'key': 'location', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'name_properties_name': {'key': 'properties.name', 'type': 'str'},
+        'backup_policy_id': {'key': 'properties.backupPolicyId', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'daily_backups_to_keep': {'key': 'properties.dailyBackupsToKeep', 'type': 'int'},
         'weekly_backups_to_keep': {'key': 'properties.weeklyBackupsToKeep', 'type': 'int'},
         'monthly_backups_to_keep': {'key': 'properties.monthlyBackupsToKeep', 'type': 'int'},
-        'yearly_backups_to_keep': {'key': 'properties.yearlyBackupsToKeep', 'type': 'int'},
         'volumes_assigned': {'key': 'properties.volumesAssigned', 'type': 'int'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'volume_backups': {'key': 'properties.volumeBackups', 'type': '[VolumeBackups]'},
@@ -451,27 +458,25 @@ class BackupPolicy(msrest.serialization.Model):
         daily_backups_to_keep: Optional[int] = None,
         weekly_backups_to_keep: Optional[int] = None,
         monthly_backups_to_keep: Optional[int] = None,
-        yearly_backups_to_keep: Optional[int] = None,
-        volumes_assigned: Optional[int] = None,
         enabled: Optional[bool] = None,
-        volume_backups: Optional[List["VolumeBackups"]] = None,
         **kwargs
     ):
         super(BackupPolicy, self).__init__(**kwargs)
         self.location = location
         self.id = None
         self.name = None
+        self.etag = None
         self.type = None
         self.tags = tags
         self.name_properties_name = None
+        self.backup_policy_id = None
         self.provisioning_state = None
         self.daily_backups_to_keep = daily_backups_to_keep
         self.weekly_backups_to_keep = weekly_backups_to_keep
         self.monthly_backups_to_keep = monthly_backups_to_keep
-        self.yearly_backups_to_keep = yearly_backups_to_keep
-        self.volumes_assigned = volumes_assigned
+        self.volumes_assigned = None
         self.enabled = enabled
-        self.volume_backups = volume_backups
+        self.volume_backups = None
 
 
 class BackupPolicyDetails(msrest.serialization.Model):
@@ -491,6 +496,8 @@ class BackupPolicyDetails(msrest.serialization.Model):
     :type tags: dict[str, str]
     :ivar name_properties_name: Name of backup policy.
     :vartype name_properties_name: str
+    :ivar backup_policy_id: Backup Policy Resource ID.
+    :vartype backup_policy_id: str
     :ivar provisioning_state: Azure lifecycle management.
     :vartype provisioning_state: str
     :param daily_backups_to_keep: Daily backups count to keep.
@@ -499,14 +506,12 @@ class BackupPolicyDetails(msrest.serialization.Model):
     :type weekly_backups_to_keep: int
     :param monthly_backups_to_keep: Monthly backups count to keep.
     :type monthly_backups_to_keep: int
-    :param yearly_backups_to_keep: Yearly backups count to keep.
-    :type yearly_backups_to_keep: int
-    :param volumes_assigned: Volumes using current backup policy.
-    :type volumes_assigned: int
+    :ivar volumes_assigned: Volumes using current backup policy.
+    :vartype volumes_assigned: int
     :param enabled: The property to decide policy is enabled or not.
     :type enabled: bool
-    :param volume_backups: A list of volumes assigned to this policy.
-    :type volume_backups: list[~azure.mgmt.netapp.models.VolumeBackups]
+    :ivar volume_backups: A list of volumes assigned to this policy.
+    :vartype volume_backups: list[~azure.mgmt.netapp.models.VolumeBackups]
     """
 
     _validation = {
@@ -514,7 +519,10 @@ class BackupPolicyDetails(msrest.serialization.Model):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'name_properties_name': {'readonly': True},
+        'backup_policy_id': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'volumes_assigned': {'readonly': True},
+        'volume_backups': {'readonly': True},
     }
 
     _attribute_map = {
@@ -524,11 +532,11 @@ class BackupPolicyDetails(msrest.serialization.Model):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'name_properties_name': {'key': 'properties.name', 'type': 'str'},
+        'backup_policy_id': {'key': 'properties.backupPolicyId', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'daily_backups_to_keep': {'key': 'properties.dailyBackupsToKeep', 'type': 'int'},
         'weekly_backups_to_keep': {'key': 'properties.weeklyBackupsToKeep', 'type': 'int'},
         'monthly_backups_to_keep': {'key': 'properties.monthlyBackupsToKeep', 'type': 'int'},
-        'yearly_backups_to_keep': {'key': 'properties.yearlyBackupsToKeep', 'type': 'int'},
         'volumes_assigned': {'key': 'properties.volumesAssigned', 'type': 'int'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'volume_backups': {'key': 'properties.volumeBackups', 'type': '[VolumeBackups]'},
@@ -542,10 +550,7 @@ class BackupPolicyDetails(msrest.serialization.Model):
         daily_backups_to_keep: Optional[int] = None,
         weekly_backups_to_keep: Optional[int] = None,
         monthly_backups_to_keep: Optional[int] = None,
-        yearly_backups_to_keep: Optional[int] = None,
-        volumes_assigned: Optional[int] = None,
         enabled: Optional[bool] = None,
-        volume_backups: Optional[List["VolumeBackups"]] = None,
         **kwargs
     ):
         super(BackupPolicyDetails, self).__init__(**kwargs)
@@ -555,14 +560,14 @@ class BackupPolicyDetails(msrest.serialization.Model):
         self.type = None
         self.tags = tags
         self.name_properties_name = None
+        self.backup_policy_id = None
         self.provisioning_state = None
         self.daily_backups_to_keep = daily_backups_to_keep
         self.weekly_backups_to_keep = weekly_backups_to_keep
         self.monthly_backups_to_keep = monthly_backups_to_keep
-        self.yearly_backups_to_keep = yearly_backups_to_keep
-        self.volumes_assigned = volumes_assigned
+        self.volumes_assigned = None
         self.enabled = enabled
-        self.volume_backups = volume_backups
+        self.volume_backups = None
 
 
 class BackupPolicyPatch(msrest.serialization.Model):
@@ -582,6 +587,8 @@ class BackupPolicyPatch(msrest.serialization.Model):
     :type tags: dict[str, str]
     :ivar name_properties_name: Name of backup policy.
     :vartype name_properties_name: str
+    :ivar backup_policy_id: Backup Policy Resource ID.
+    :vartype backup_policy_id: str
     :ivar provisioning_state: Azure lifecycle management.
     :vartype provisioning_state: str
     :param daily_backups_to_keep: Daily backups count to keep.
@@ -590,14 +597,12 @@ class BackupPolicyPatch(msrest.serialization.Model):
     :type weekly_backups_to_keep: int
     :param monthly_backups_to_keep: Monthly backups count to keep.
     :type monthly_backups_to_keep: int
-    :param yearly_backups_to_keep: Yearly backups count to keep.
-    :type yearly_backups_to_keep: int
-    :param volumes_assigned: Volumes using current backup policy.
-    :type volumes_assigned: int
+    :ivar volumes_assigned: Volumes using current backup policy.
+    :vartype volumes_assigned: int
     :param enabled: The property to decide policy is enabled or not.
     :type enabled: bool
-    :param volume_backups: A list of volumes assigned to this policy.
-    :type volume_backups: list[~azure.mgmt.netapp.models.VolumeBackups]
+    :ivar volume_backups: A list of volumes assigned to this policy.
+    :vartype volume_backups: list[~azure.mgmt.netapp.models.VolumeBackups]
     """
 
     _validation = {
@@ -605,7 +610,10 @@ class BackupPolicyPatch(msrest.serialization.Model):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'name_properties_name': {'readonly': True},
+        'backup_policy_id': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'volumes_assigned': {'readonly': True},
+        'volume_backups': {'readonly': True},
     }
 
     _attribute_map = {
@@ -615,11 +623,11 @@ class BackupPolicyPatch(msrest.serialization.Model):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'name_properties_name': {'key': 'properties.name', 'type': 'str'},
+        'backup_policy_id': {'key': 'properties.backupPolicyId', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'daily_backups_to_keep': {'key': 'properties.dailyBackupsToKeep', 'type': 'int'},
         'weekly_backups_to_keep': {'key': 'properties.weeklyBackupsToKeep', 'type': 'int'},
         'monthly_backups_to_keep': {'key': 'properties.monthlyBackupsToKeep', 'type': 'int'},
-        'yearly_backups_to_keep': {'key': 'properties.yearlyBackupsToKeep', 'type': 'int'},
         'volumes_assigned': {'key': 'properties.volumesAssigned', 'type': 'int'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'volume_backups': {'key': 'properties.volumeBackups', 'type': '[VolumeBackups]'},
@@ -633,10 +641,7 @@ class BackupPolicyPatch(msrest.serialization.Model):
         daily_backups_to_keep: Optional[int] = None,
         weekly_backups_to_keep: Optional[int] = None,
         monthly_backups_to_keep: Optional[int] = None,
-        yearly_backups_to_keep: Optional[int] = None,
-        volumes_assigned: Optional[int] = None,
         enabled: Optional[bool] = None,
-        volume_backups: Optional[List["VolumeBackups"]] = None,
         **kwargs
     ):
         super(BackupPolicyPatch, self).__init__(**kwargs)
@@ -646,14 +651,14 @@ class BackupPolicyPatch(msrest.serialization.Model):
         self.type = None
         self.tags = tags
         self.name_properties_name = None
+        self.backup_policy_id = None
         self.provisioning_state = None
         self.daily_backups_to_keep = daily_backups_to_keep
         self.weekly_backups_to_keep = weekly_backups_to_keep
         self.monthly_backups_to_keep = monthly_backups_to_keep
-        self.yearly_backups_to_keep = yearly_backups_to_keep
-        self.volumes_assigned = volumes_assigned
+        self.volumes_assigned = None
         self.enabled = enabled
-        self.volume_backups = volume_backups
+        self.volume_backups = None
 
 
 class BackupsList(msrest.serialization.Model):
@@ -774,6 +779,8 @@ class CapacityPool(msrest.serialization.Model):
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
     :ivar type: Resource type.
     :vartype type: str
     :param tags: A set of tags. Resource tags.
@@ -784,7 +791,7 @@ class CapacityPool(msrest.serialization.Model):
      chunks (value must be multiply of 4398046511104).
     :type size: long
     :param service_level: Required. The service level of the file system. Possible values include:
-     "Standard", "Premium", "Ultra".
+     "Standard", "Premium", "Ultra", "StandardZRS". Default value: "Premium".
     :type service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
     :ivar provisioning_state: Azure lifecycle management.
     :vartype provisioning_state: str
@@ -796,12 +803,17 @@ class CapacityPool(msrest.serialization.Model):
     :type qos_type: str or ~azure.mgmt.netapp.models.QosType
     :param cool_access: If enabled (true) the pool can contain cool Access enabled volumes.
     :type cool_access: bool
+    :param encryption_type: Encryption type of the capacity pool, set encryption type for data at
+     rest for this pool and all volumes in it. This value can only be set when creating new pool.
+     Possible values include: "Single", "Double". Default value: "Single".
+    :type encryption_type: str or ~azure.mgmt.netapp.models.EncryptionType
     """
 
     _validation = {
         'location': {'required': True},
         'id': {'readonly': True},
         'name': {'readonly': True},
+        'etag': {'readonly': True},
         'type': {'readonly': True},
         'pool_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
         'size': {'required': True, 'maximum': 549755813888000, 'minimum': 4398046511104},
@@ -815,6 +827,7 @@ class CapacityPool(msrest.serialization.Model):
         'location': {'key': 'location', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'pool_id': {'key': 'properties.poolId', 'type': 'str'},
@@ -825,6 +838,7 @@ class CapacityPool(msrest.serialization.Model):
         'utilized_throughput_mibps': {'key': 'properties.utilizedThroughputMibps', 'type': 'float'},
         'qos_type': {'key': 'properties.qosType', 'type': 'str'},
         'cool_access': {'key': 'properties.coolAccess', 'type': 'bool'},
+        'encryption_type': {'key': 'properties.encryptionType', 'type': 'str'},
     }
 
     def __init__(
@@ -832,16 +846,18 @@ class CapacityPool(msrest.serialization.Model):
         *,
         location: str,
         size: int,
-        service_level: Union[str, "ServiceLevel"],
+        service_level: Union[str, "ServiceLevel"] = "Premium",
         tags: Optional[Dict[str, str]] = None,
         qos_type: Optional[Union[str, "QosType"]] = None,
         cool_access: Optional[bool] = False,
+        encryption_type: Optional[Union[str, "EncryptionType"]] = "Single",
         **kwargs
     ):
         super(CapacityPool, self).__init__(**kwargs)
         self.location = location
         self.id = None
         self.name = None
+        self.etag = None
         self.type = None
         self.tags = tags
         self.pool_id = None
@@ -852,6 +868,7 @@ class CapacityPool(msrest.serialization.Model):
         self.utilized_throughput_mibps = None
         self.qos_type = qos_type
         self.cool_access = cool_access
+        self.encryption_type = encryption_type
 
 
 class CapacityPoolList(msrest.serialization.Model):
@@ -1243,6 +1260,16 @@ class MetricSpecification(msrest.serialization.Model):
     :type display_description: str
     :param unit: Unit could be Bytes or Count.
     :type unit: str
+    :param supported_aggregation_types: Support metric aggregation type.
+    :type supported_aggregation_types: list[str or ~azure.mgmt.netapp.models.MetricAggregationType]
+    :param supported_time_grain_types: The supported time grain types for the metrics.
+    :type supported_time_grain_types: list[str]
+    :param internal_metric_name: The internal metric name.
+    :type internal_metric_name: str
+    :param source_mdm_account: The source MDM account.
+    :type source_mdm_account: str
+    :param source_mdm_namespace: The source MDM namespace.
+    :type source_mdm_namespace: str
     :param dimensions: Dimensions of blobs, including blob type and access tier.
     :type dimensions: list[~azure.mgmt.netapp.models.Dimension]
     :param aggregation_type: Aggregation type could be Average.
@@ -1260,6 +1287,11 @@ class MetricSpecification(msrest.serialization.Model):
         'display_name': {'key': 'displayName', 'type': 'str'},
         'display_description': {'key': 'displayDescription', 'type': 'str'},
         'unit': {'key': 'unit', 'type': 'str'},
+        'supported_aggregation_types': {'key': 'supportedAggregationTypes', 'type': '[str]'},
+        'supported_time_grain_types': {'key': 'supportedTimeGrainTypes', 'type': '[str]'},
+        'internal_metric_name': {'key': 'internalMetricName', 'type': 'str'},
+        'source_mdm_account': {'key': 'sourceMdmAccount', 'type': 'str'},
+        'source_mdm_namespace': {'key': 'sourceMdmNamespace', 'type': 'str'},
         'dimensions': {'key': 'dimensions', 'type': '[Dimension]'},
         'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
         'fill_gap_with_zero': {'key': 'fillGapWithZero', 'type': 'bool'},
@@ -1274,6 +1306,11 @@ class MetricSpecification(msrest.serialization.Model):
         display_name: Optional[str] = None,
         display_description: Optional[str] = None,
         unit: Optional[str] = None,
+        supported_aggregation_types: Optional[List[Union[str, "MetricAggregationType"]]] = None,
+        supported_time_grain_types: Optional[List[str]] = None,
+        internal_metric_name: Optional[str] = None,
+        source_mdm_account: Optional[str] = None,
+        source_mdm_namespace: Optional[str] = None,
         dimensions: Optional[List["Dimension"]] = None,
         aggregation_type: Optional[str] = None,
         fill_gap_with_zero: Optional[bool] = None,
@@ -1286,6 +1323,11 @@ class MetricSpecification(msrest.serialization.Model):
         self.display_name = display_name
         self.display_description = display_description
         self.unit = unit
+        self.supported_aggregation_types = supported_aggregation_types
+        self.supported_time_grain_types = supported_time_grain_types
+        self.internal_metric_name = internal_metric_name
+        self.source_mdm_account = source_mdm_account
+        self.source_mdm_namespace = source_mdm_namespace
         self.dimensions = dimensions
         self.aggregation_type = aggregation_type
         self.fill_gap_with_zero = fill_gap_with_zero
@@ -1462,6 +1504,8 @@ class NetAppAccount(msrest.serialization.Model):
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
     :ivar type: Resource type.
     :vartype type: str
     :param tags: A set of tags. Resource tags.
@@ -1480,6 +1524,7 @@ class NetAppAccount(msrest.serialization.Model):
         'location': {'required': True},
         'id': {'readonly': True},
         'name': {'readonly': True},
+        'etag': {'readonly': True},
         'type': {'readonly': True},
         'system_data': {'readonly': True},
         'provisioning_state': {'readonly': True},
@@ -1489,6 +1534,7 @@ class NetAppAccount(msrest.serialization.Model):
         'location': {'key': 'location', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
@@ -1510,6 +1556,7 @@ class NetAppAccount(msrest.serialization.Model):
         self.location = location
         self.id = None
         self.name = None
+        self.etag = None
         self.type = None
         self.tags = tags
         self.system_data = None
@@ -2104,6 +2151,8 @@ class SnapshotPolicy(msrest.serialization.Model):
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
     :ivar type: Resource type.
     :vartype type: str
     :param tags: A set of tags. Resource tags.
@@ -2126,6 +2175,7 @@ class SnapshotPolicy(msrest.serialization.Model):
         'location': {'required': True},
         'id': {'readonly': True},
         'name': {'readonly': True},
+        'etag': {'readonly': True},
         'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
@@ -2134,6 +2184,7 @@ class SnapshotPolicy(msrest.serialization.Model):
         'location': {'key': 'location', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'hourly_schedule': {'key': 'properties.hourlySchedule', 'type': 'HourlySchedule'},
@@ -2160,6 +2211,7 @@ class SnapshotPolicy(msrest.serialization.Model):
         self.location = location
         self.id = None
         self.name = None
+        self.etag = None
         self.type = None
         self.tags = tags
         self.hourly_schedule = hourly_schedule
@@ -2495,6 +2547,8 @@ class Volume(msrest.serialization.Model):
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
     :ivar type: Resource type.
     :vartype type: str
     :param tags: A set of tags. Resource tags.
@@ -2505,7 +2559,7 @@ class Volume(msrest.serialization.Model):
      targets.
     :type creation_token: str
     :param service_level: The service level of the file system. Possible values include:
-     "Standard", "Premium", "Ultra".
+     "Standard", "Premium", "Ultra", "StandardZRS". Default value: "Premium".
     :type service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
     :param usage_threshold: Required. Maximum storage quota allowed for a file system in bytes.
      This is a soft quota used for alerting only. Minimum size is 100 GiB. Upper limit is 100TiB.
@@ -2568,12 +2622,29 @@ class Volume(msrest.serialization.Model):
      group. 0755 - gives read/write/execute permissions to owner and read/execute to group and other
      users.
     :type unix_permissions: str
+    :ivar clone_progress: When a volume is being restored from another volume's snapshot, will show
+     the percentage completion of this cloning process. When this value is empty/null there is no
+     cloning process currently happening on this volume. This value will update every 5 minutes
+     during cloning.
+    :vartype clone_progress: int
+    :param avs_data_store: Specifies whether the volume is enabled for Azure VMware Solution (AVS)
+     datastore purpose. Possible values include: "Enabled", "Disabled". Default value: "Disabled".
+    :type avs_data_store: str or ~azure.mgmt.netapp.models.AvsDataStore
+    :param is_default_quota_enabled: Specifies if default quota is enabled for the volume.
+    :type is_default_quota_enabled: bool
+    :param default_user_quota_in_ki_bs: Default user quota for volume in KiBs. If
+     isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies .
+    :type default_user_quota_in_ki_bs: long
+    :param default_group_quota_in_ki_bs: Default group quota for volume in KiBs. If
+     isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies.
+    :type default_group_quota_in_ki_bs: long
     """
 
     _validation = {
         'location': {'required': True},
         'id': {'readonly': True},
         'name': {'readonly': True},
+        'etag': {'readonly': True},
         'type': {'readonly': True},
         'file_system_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
         'creation_token': {'required': True, 'max_length': 80, 'min_length': 1, 'pattern': r'^[a-zA-Z][a-zA-Z0-9\-]{0,79}$'},
@@ -2587,12 +2658,14 @@ class Volume(msrest.serialization.Model):
         'throughput_mibps': {'maximum': 4500, 'minimum': 0},
         'coolness_period': {'maximum': 63, 'minimum': 7},
         'unix_permissions': {'max_length': 4, 'min_length': 4},
+        'clone_progress': {'readonly': True},
     }
 
     _attribute_map = {
         'location': {'key': 'location', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'file_system_id': {'key': 'properties.fileSystemId', 'type': 'str'},
@@ -2621,6 +2694,11 @@ class Volume(msrest.serialization.Model):
         'cool_access': {'key': 'properties.coolAccess', 'type': 'bool'},
         'coolness_period': {'key': 'properties.coolnessPeriod', 'type': 'int'},
         'unix_permissions': {'key': 'properties.unixPermissions', 'type': 'str'},
+        'clone_progress': {'key': 'properties.cloneProgress', 'type': 'int'},
+        'avs_data_store': {'key': 'properties.avsDataStore', 'type': 'str'},
+        'is_default_quota_enabled': {'key': 'properties.isDefaultQuotaEnabled', 'type': 'bool'},
+        'default_user_quota_in_ki_bs': {'key': 'properties.defaultUserQuotaInKiBs', 'type': 'long'},
+        'default_group_quota_in_ki_bs': {'key': 'properties.defaultGroupQuotaInKiBs', 'type': 'long'},
     }
 
     def __init__(
@@ -2631,7 +2709,7 @@ class Volume(msrest.serialization.Model):
         usage_threshold: int = 107374182400,
         subnet_id: str,
         tags: Optional[Dict[str, str]] = None,
-        service_level: Optional[Union[str, "ServiceLevel"]] = None,
+        service_level: Optional[Union[str, "ServiceLevel"]] = "Premium",
         export_policy: Optional["VolumePropertiesExportPolicy"] = None,
         protocol_types: Optional[List[str]] = None,
         snapshot_id: Optional[str] = None,
@@ -2649,13 +2727,18 @@ class Volume(msrest.serialization.Model):
         ldap_enabled: Optional[bool] = False,
         cool_access: Optional[bool] = False,
         coolness_period: Optional[int] = None,
-        unix_permissions: Optional[str] = None,
+        unix_permissions: Optional[str] = "0770",
+        avs_data_store: Optional[Union[str, "AvsDataStore"]] = "Disabled",
+        is_default_quota_enabled: Optional[bool] = False,
+        default_user_quota_in_ki_bs: Optional[int] = 0,
+        default_group_quota_in_ki_bs: Optional[int] = 0,
         **kwargs
     ):
         super(Volume, self).__init__(**kwargs)
         self.location = location
         self.id = None
         self.name = None
+        self.etag = None
         self.type = None
         self.tags = tags
         self.file_system_id = None
@@ -2684,6 +2767,11 @@ class Volume(msrest.serialization.Model):
         self.cool_access = cool_access
         self.coolness_period = coolness_period
         self.unix_permissions = unix_permissions
+        self.clone_progress = None
+        self.avs_data_store = avs_data_store
+        self.is_default_quota_enabled = is_default_quota_enabled
+        self.default_user_quota_in_ki_bs = default_user_quota_in_ki_bs
+        self.default_group_quota_in_ki_bs = default_group_quota_in_ki_bs
 
 
 class VolumeBackupProperties(msrest.serialization.Model):
@@ -2795,7 +2883,7 @@ class VolumePatch(msrest.serialization.Model):
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :param service_level: The service level of the file system. Possible values include:
-     "Standard", "Premium", "Ultra".
+     "Standard", "Premium", "Ultra", "StandardZRS". Default value: "Premium".
     :type service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
     :param usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a
      soft quota used for alerting only. Minimum size is 100 GiB. Upper limit is 100TiB. Specified in
@@ -2808,6 +2896,14 @@ class VolumePatch(msrest.serialization.Model):
     :param data_protection: DataProtection type volumes include an object containing details of the
      replication.
     :type data_protection: ~azure.mgmt.netapp.models.VolumePatchPropertiesDataProtection
+    :param is_default_quota_enabled: Specifies if default quota is enabled for the volume.
+    :type is_default_quota_enabled: bool
+    :param default_user_quota_in_ki_bs: Default user quota for volume in KiBs. If
+     isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies .
+    :type default_user_quota_in_ki_bs: long
+    :param default_group_quota_in_ki_bs: Default group quota for volume in KiBs. If
+     isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies.
+    :type default_group_quota_in_ki_bs: long
     """
 
     _validation = {
@@ -2829,6 +2925,9 @@ class VolumePatch(msrest.serialization.Model):
         'export_policy': {'key': 'properties.exportPolicy', 'type': 'VolumePatchPropertiesExportPolicy'},
         'throughput_mibps': {'key': 'properties.throughputMibps', 'type': 'float'},
         'data_protection': {'key': 'properties.dataProtection', 'type': 'VolumePatchPropertiesDataProtection'},
+        'is_default_quota_enabled': {'key': 'properties.isDefaultQuotaEnabled', 'type': 'bool'},
+        'default_user_quota_in_ki_bs': {'key': 'properties.defaultUserQuotaInKiBs', 'type': 'long'},
+        'default_group_quota_in_ki_bs': {'key': 'properties.defaultGroupQuotaInKiBs', 'type': 'long'},
     }
 
     def __init__(
@@ -2836,11 +2935,14 @@ class VolumePatch(msrest.serialization.Model):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        service_level: Optional[Union[str, "ServiceLevel"]] = None,
+        service_level: Optional[Union[str, "ServiceLevel"]] = "Premium",
         usage_threshold: Optional[int] = 107374182400,
         export_policy: Optional["VolumePatchPropertiesExportPolicy"] = None,
         throughput_mibps: Optional[float] = None,
         data_protection: Optional["VolumePatchPropertiesDataProtection"] = None,
+        is_default_quota_enabled: Optional[bool] = False,
+        default_user_quota_in_ki_bs: Optional[int] = 0,
+        default_group_quota_in_ki_bs: Optional[int] = 0,
         **kwargs
     ):
         super(VolumePatch, self).__init__(**kwargs)
@@ -2854,6 +2956,9 @@ class VolumePatch(msrest.serialization.Model):
         self.export_policy = export_policy
         self.throughput_mibps = throughput_mibps
         self.data_protection = data_protection
+        self.is_default_quota_enabled = is_default_quota_enabled
+        self.default_user_quota_in_ki_bs = default_user_quota_in_ki_bs
+        self.default_group_quota_in_ki_bs = default_group_quota_in_ki_bs
 
 
 class VolumePatchPropertiesDataProtection(msrest.serialization.Model):

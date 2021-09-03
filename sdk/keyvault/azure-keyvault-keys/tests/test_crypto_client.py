@@ -15,7 +15,7 @@ except ImportError:
 
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.keyvault.keys import JsonWebKey, KeyCurveName, KeyOperation, KeyVaultKey
+from azure.keyvault.keys import ApiVersion, JsonWebKey, KeyCurveName, KeyOperation, KeyVaultKey
 from azure.keyvault.keys.crypto import CryptographyClient, EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
 from azure.keyvault.keys.crypto._key_validity import _UTC
 from azure.keyvault.keys.crypto._providers import NoLocalCryptography, get_local_cryptography_provider
@@ -31,7 +31,7 @@ from _test_case import client_setup, get_decorator, KeysTestCase
 NO_GET = Permissions(keys=[p.value for p in KeyPermissions if p.value != "get"])
 
 all_api_versions = get_decorator()
-hsm_only = get_decorator(hsm_only=True)
+only_hsm = get_decorator(only_hsm=True)
 no_get = get_decorator(permissions=NO_GET)
 
 
@@ -227,7 +227,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         result = crypto_client.unwrap_key(result.algorithm, result.encrypted_key)
         self.assertEqual(key_bytes, result.key)
 
-    @hsm_only()
+    @only_hsm()
     @client_setup
     def test_symmetric_encrypt_and_decrypt(self, key_client, **kwargs):
         """Encrypt and decrypt with the service"""
@@ -273,7 +273,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
                 else:
                     assert decrypt_result.plaintext == self.plaintext
 
-    @hsm_only()
+    @only_hsm()
     @client_setup
     def test_symmetric_wrap_and_unwrap(self, key_client, **kwargs):
         key_name = self.get_resource_name("symmetric-kw")
@@ -321,7 +321,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
             result = crypto_client.decrypt(result.algorithm, result.ciphertext)
             self.assertEqual(result.plaintext, self.plaintext)
     
-    @hsm_only()
+    @only_hsm()
     @client_setup
     def test_symmetric_encrypt_local(self, key_client, **kwargs):
         """Encrypt locally, decrypt with the service"""
@@ -350,7 +350,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         assert decrypt_result.algorithm == algorithm
         assert decrypt_result.plaintext == self.plaintext
     
-    @hsm_only()
+    @only_hsm()
     @client_setup
     def test_symmetric_decrypt_local(self, key_client, **kwargs):
         """Encrypt with the service, decrypt locally"""

@@ -48,6 +48,10 @@ class AzureApplicationCredential(ChainedTokenCredential):
     <https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview>`_ for an overview of
     managed identities.
 
+    :keyword bool allow_multitenant_authentication: when True, enables the credential to acquire tokens from any tenant
+        the application or user is registered in. When False, which is the default, the credential will acquire tokens
+        only from the tenant specified by **AZURE_TENANT_ID**. This argument doesn't apply to managed identity
+        authentication.
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud, which is the default when no value is given for this keyword argument or
         environment variable AZURE_AUTHORITY_HOST. :class:`~azure.identity.AzureAuthorityHosts` defines authorities for
@@ -60,14 +64,12 @@ class AzureApplicationCredential(ChainedTokenCredential):
         # type: (**Any) -> None
         authority = kwargs.pop("authority", None)
         authority = normalize_authority(authority) if authority else get_default_authority()
+        managed_identity_client_id = kwargs.pop(
+            "managed_identity_client_id", os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
+        )
         super(AzureApplicationCredential, self).__init__(
             EnvironmentCredential(authority=authority, **kwargs),
-            ManagedIdentityCredential(
-                client_id=kwargs.pop(
-                    "managed_identity_client_id", os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
-                ),
-                **kwargs
-            ),
+            ManagedIdentityCredential(client_id=managed_identity_client_id, **kwargs),
         )
 
     def get_token(self, *scopes, **kwargs):

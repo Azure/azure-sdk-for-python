@@ -63,6 +63,12 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
         self.set_cache(use_cache, parameter_name, name_prefix)
         self.delete_after_tag_timedelta = delete_after_tag_timedelta
 
+    def _prefix_name(self, name):
+        name = u"rgpy-" + name
+        if len(name) > 90:
+            name = name[:90]
+        return name
+
     def create_resource(self, name, **kwargs):
         if self.is_live and self._need_creation:
             self.client = self.create_mgmt_client(ResourceManagementClient)
@@ -75,13 +81,11 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
             parameters["tags"]["BuildNumber"] = os.environ.get("BUILD_BUILDNUMBER", "local")
             parameters["tags"]["BuildReason"] = os.environ.get("BUILD_REASON", "local")
             try:
+                # Prefixing all RGs created here with 'rgpy-' for tracing purposes
+                name = self._prefix_name(name)
                 logging.info(
                     "Attempting to create a Resource Group with name {} and parameters {}".format(name, parameters)
                 )
-                # Prefixing all RGs created here with 'rgpy-' for tracing purposes
-                name = u"rgpy-" + name
-                if len(name) > 90:
-                    name = name[:90]
                 self.resource = self.client.resource_groups.create_or_update(name, parameters)
             except Exception as ex:
                 if "ReservedResourceName" in str(ex):
@@ -101,6 +105,7 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
 
     def remove_resource(self, name, **kwargs):
         if self.is_live and self._need_creation:
+            name = self._prefix_name(name)
             try:
                 if "wait_timeout" in kwargs:
                     azure_poller = self.client.resource_groups.begin_delete(name)
@@ -109,7 +114,7 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
                         return
                     raise AzureTestError("Timed out waiting for resource group to be deleted.")
                 else:
-                    self.client.resource_groups.begin_delete(name, polling=False)
+                    self.client.resource_groups.begin_delete(name, polling=False).result()
             except Exception as err:  # NOTE: some track 1 libraries do not have azure-core installed. Cannot use HttpResponseError here
                 logging.info("Failed to delete resource group with name {}".format(name))
                 logging.info("{}".format(err))

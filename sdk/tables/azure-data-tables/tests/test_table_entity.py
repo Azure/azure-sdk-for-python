@@ -1221,7 +1221,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
-            resp = self.table.upsert_entity(mode=UpdateMode.MERGE, entity=sent_entity)
+            resp = self.table.upsert_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # Assert
             self._assert_valid_metadata(resp)
@@ -1231,7 +1231,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             # Act
             sent_entity['newField'] = u'newFieldValue'
-            resp = self.table.update_entity(mode=UpdateMode.MERGE, entity=sent_entity)
+            resp = self.table.update_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # Assert
             self._assert_valid_metadata(resp)
@@ -2021,5 +2021,59 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             assert result['content']['PartitionKey'] == partition
             assert result['content']['Value'] == u'foobar'
             assert result['content']['Answer'] == 42
+        finally:
+            self._tear_down()
+
+    @tables_decorator
+    def test_keys_with_specialchar(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            table2_name = self._get_table_reference('table2')
+            table2 = self.ts.get_table_client(table2_name)
+            table2.create_table()
+
+            # Act
+            entity1 = {
+                'PartitionKey': u"A'aaa\"_bbbb2",
+                'RowKey': u'"A\'aaa"_bbbb2',
+                'test': u'"A\'aaa"_bbbb2'
+            }
+
+            self.table.create_entity(entity1.copy())
+            get_entity = self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
+            self.table.upsert_entity(entity1.copy(), mode='merge')
+            get_entity = self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
+            self.table.upsert_entity(entity1.copy(), mode='replace')
+            get_entity = self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
+            self.table.update_entity(entity1.copy(), mode='merge')
+            get_entity = self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
+            self.table.update_entity(entity1.copy(), mode='replace')
+            get_entity = self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
+
+            entity_results = list(self.table.list_entities())
+            assert entity_results[0] == entity1
+            for entity in entity_results:
+                get_entity = self.table.get_entity(
+                    partition_key=entity['PartitionKey'],
+                    row_key=entity['RowKey'])
+                assert get_entity == entity1
+
+            self.table.delete_entity(entity1.copy())
         finally:
             self._tear_down()

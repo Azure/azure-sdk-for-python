@@ -67,37 +67,36 @@ class AnalyzeRequest(msrest.serialization.Model):
 
     :param text: Required. The text to break into tokens.
     :type text: str
-    :param analyzer: The name of the analyzer to use to break the given text. If this parameter is
-     not specified, you must specify a tokenizer instead. The tokenizer and analyzer parameters are
-     mutually exclusive. Possible values include: "ar.microsoft", "ar.lucene", "hy.lucene",
-     "bn.microsoft", "eu.lucene", "bg.microsoft", "bg.lucene", "ca.microsoft", "ca.lucene",
-     "zh-Hans.microsoft", "zh-Hans.lucene", "zh-Hant.microsoft", "zh-Hant.lucene", "hr.microsoft",
-     "cs.microsoft", "cs.lucene", "da.microsoft", "da.lucene", "nl.microsoft", "nl.lucene",
-     "en.microsoft", "en.lucene", "et.microsoft", "fi.microsoft", "fi.lucene", "fr.microsoft",
-     "fr.lucene", "gl.lucene", "de.microsoft", "de.lucene", "el.microsoft", "el.lucene",
-     "gu.microsoft", "he.microsoft", "hi.microsoft", "hi.lucene", "hu.microsoft", "hu.lucene",
-     "is.microsoft", "id.microsoft", "id.lucene", "ga.lucene", "it.microsoft", "it.lucene",
-     "ja.microsoft", "ja.lucene", "kn.microsoft", "ko.microsoft", "ko.lucene", "lv.microsoft",
-     "lv.lucene", "lt.microsoft", "ml.microsoft", "ms.microsoft", "mr.microsoft", "nb.microsoft",
-     "no.lucene", "fa.lucene", "pl.microsoft", "pl.lucene", "pt-BR.microsoft", "pt-BR.lucene",
-     "pt-PT.microsoft", "pt-PT.lucene", "pa.microsoft", "ro.microsoft", "ro.lucene", "ru.microsoft",
-     "ru.lucene", "sr-cyrillic.microsoft", "sr-latin.microsoft", "sk.microsoft", "sl.microsoft",
-     "es.microsoft", "es.lucene", "sv.microsoft", "sv.lucene", "ta.microsoft", "te.microsoft",
-     "th.microsoft", "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft",
-     "vi.microsoft", "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern",
-     "simple", "stop", "whitespace".
+    :param analyzer: The name of the analyzer to use to break the given text. Possible values
+     include: "ar.microsoft", "ar.lucene", "hy.lucene", "bn.microsoft", "eu.lucene", "bg.microsoft",
+     "bg.lucene", "ca.microsoft", "ca.lucene", "zh-Hans.microsoft", "zh-Hans.lucene",
+     "zh-Hant.microsoft", "zh-Hant.lucene", "hr.microsoft", "cs.microsoft", "cs.lucene",
+     "da.microsoft", "da.lucene", "nl.microsoft", "nl.lucene", "en.microsoft", "en.lucene",
+     "et.microsoft", "fi.microsoft", "fi.lucene", "fr.microsoft", "fr.lucene", "gl.lucene",
+     "de.microsoft", "de.lucene", "el.microsoft", "el.lucene", "gu.microsoft", "he.microsoft",
+     "hi.microsoft", "hi.lucene", "hu.microsoft", "hu.lucene", "is.microsoft", "id.microsoft",
+     "id.lucene", "ga.lucene", "it.microsoft", "it.lucene", "ja.microsoft", "ja.lucene",
+     "kn.microsoft", "ko.microsoft", "ko.lucene", "lv.microsoft", "lv.lucene", "lt.microsoft",
+     "ml.microsoft", "ms.microsoft", "mr.microsoft", "nb.microsoft", "no.lucene", "fa.lucene",
+     "pl.microsoft", "pl.lucene", "pt-BR.microsoft", "pt-BR.lucene", "pt-PT.microsoft",
+     "pt-PT.lucene", "pa.microsoft", "ro.microsoft", "ro.lucene", "ru.microsoft", "ru.lucene",
+     "sr-cyrillic.microsoft", "sr-latin.microsoft", "sk.microsoft", "sl.microsoft", "es.microsoft",
+     "es.lucene", "sv.microsoft", "sv.lucene", "ta.microsoft", "te.microsoft", "th.microsoft",
+     "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft", "vi.microsoft",
+     "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop",
+     "whitespace".
     :type analyzer: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
-    :param tokenizer: The name of the tokenizer to use to break the given text. If this parameter
-     is not specified, you must specify an analyzer instead. The tokenizer and analyzer parameters
-     are mutually exclusive. Possible values include: "classic", "edgeNGram", "keyword_v2",
-     "letter", "lowercase", "microsoft_language_tokenizer", "microsoft_language_stemming_tokenizer",
-     "nGram", "path_hierarchy_v2", "pattern", "standard_v2", "uax_url_email", "whitespace".
+    :param tokenizer: The name of the tokenizer to use to break the given text. Possible values
+     include: "classic", "edgeNGram", "keyword_v2", "letter", "lowercase",
+     "microsoft_language_tokenizer", "microsoft_language_stemming_tokenizer", "nGram",
+     "path_hierarchy_v2", "pattern", "standard_v2", "uax_url_email", "whitespace".
     :type tokenizer: str or ~azure.search.documents.indexes.models.LexicalTokenizerName
+    :param normalizer: The name of the normalizer to use to normalize the given text. Possible
+     values include: "asciifolding", "elision", "lowercase", "standard", "uppercase".
+    :type normalizer: str or ~azure.search.documents.indexes.models.LexicalNormalizerName
     :param token_filters: An optional list of token filters to use when breaking the given text.
-     This parameter can only be set when using the tokenizer parameter.
     :type token_filters: list[str or ~azure.search.documents.indexes.models.TokenFilterName]
     :param char_filters: An optional list of character filters to use when breaking the given text.
-     This parameter can only be set when using the tokenizer parameter.
     :type char_filters: list[str or ~azure.search.documents.indexes.models.CharFilterName]
     """
 
@@ -109,6 +108,7 @@ class AnalyzeRequest(msrest.serialization.Model):
         'text': {'key': 'text', 'type': 'str'},
         'analyzer': {'key': 'analyzer', 'type': 'str'},
         'tokenizer': {'key': 'tokenizer', 'type': 'str'},
+        'normalizer': {'key': 'normalizer', 'type': 'str'},
         'token_filters': {'key': 'tokenFilters', 'type': '[str]'},
         'char_filters': {'key': 'charFilters', 'type': '[str]'},
     }
@@ -119,6 +119,7 @@ class AnalyzeRequest(msrest.serialization.Model):
         text: str,
         analyzer: Optional[Union[str, "LexicalAnalyzerName"]] = None,
         tokenizer: Optional[Union[str, "LexicalTokenizerName"]] = None,
+        normalizer: Optional[Union[str, "LexicalNormalizerName"]] = None,
         token_filters: Optional[List[Union[str, "TokenFilterName"]]] = None,
         char_filters: Optional[List[Union[str, "CharFilterName"]]] = None,
         **kwargs
@@ -127,6 +128,7 @@ class AnalyzeRequest(msrest.serialization.Model):
         self.text = text
         self.analyzer = analyzer
         self.tokenizer = tokenizer
+        self.normalizer = normalizer
         self.token_filters = token_filters
         self.char_filters = char_filters
 
@@ -1256,7 +1258,7 @@ class DataChangeDetectionPolicy(msrest.serialization.Model):
     """Base type for data change detection policies.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: HighWaterMarkChangeDetectionPolicy, SearchIndexerDataNoneIdentity, SearchIndexerDataUserAssignedIdentity, SqlIntegratedChangeTrackingPolicy.
+    sub-classes are: HighWaterMarkChangeDetectionPolicy, SqlIntegratedChangeTrackingPolicy.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1274,7 +1276,7 @@ class DataChangeDetectionPolicy(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'odata_type': {'#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy': 'HighWaterMarkChangeDetectionPolicy', '#Microsoft.Azure.Search.SearchIndexerDataNoneIdentity': 'SearchIndexerDataNoneIdentity', '#Microsoft.Azure.Search.SearchIndexerDataUserAssignedIdentity': 'SearchIndexerDataUserAssignedIdentity', '#Microsoft.Azure.Search.SqlIntegratedChangeTrackingPolicy': 'SqlIntegratedChangeTrackingPolicy'}
+        'odata_type': {'#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy': 'HighWaterMarkChangeDetectionPolicy', '#Microsoft.Azure.Search.SqlIntegratedChangeTrackingPolicy': 'SqlIntegratedChangeTrackingPolicy'}
     }
 
     def __init__(
@@ -4866,6 +4868,9 @@ class SearchIndexer(msrest.serialization.Model):
      unaffected. Encryption with customer-managed keys is not available for free search services,
      and is only available for paid services created on or after January 1, 2019.
     :type encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
+    :param cache: Adds caching to an enrichment pipeline to allow for incremental modification
+     steps without having to rebuild the index every time.
+    :type cache: ~azure.search.documents.indexes.models.SearchIndexerCache
     """
 
     _validation = {
@@ -4887,6 +4892,7 @@ class SearchIndexer(msrest.serialization.Model):
         'is_disabled': {'key': 'disabled', 'type': 'bool'},
         'e_tag': {'key': '@odata\\.etag', 'type': 'str'},
         'encryption_key': {'key': 'encryptionKey', 'type': 'SearchResourceEncryptionKey'},
+        'cache': {'key': 'cache', 'type': 'SearchIndexerCache'},
     }
 
     def __init__(
@@ -4904,6 +4910,7 @@ class SearchIndexer(msrest.serialization.Model):
         is_disabled: Optional[bool] = False,
         e_tag: Optional[str] = None,
         encryption_key: Optional["SearchResourceEncryptionKey"] = None,
+        cache: Optional["SearchIndexerCache"] = None,
         **kwargs
     ):
         super(SearchIndexer, self).__init__(**kwargs)
@@ -4919,6 +4926,34 @@ class SearchIndexer(msrest.serialization.Model):
         self.is_disabled = is_disabled
         self.e_tag = e_tag
         self.encryption_key = encryption_key
+        self.cache = cache
+
+
+class SearchIndexerCache(msrest.serialization.Model):
+    """SearchIndexerCache.
+
+    :param storage_connection_string: The connection string to the storage account where the cache
+     data will be persisted.
+    :type storage_connection_string: str
+    :param enable_reprocessing: Specifies whether incremental reprocessing is enabled.
+    :type enable_reprocessing: bool
+    """
+
+    _attribute_map = {
+        'storage_connection_string': {'key': 'storageConnectionString', 'type': 'str'},
+        'enable_reprocessing': {'key': 'enableReprocessing', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        storage_connection_string: Optional[str] = None,
+        enable_reprocessing: Optional[bool] = None,
+        **kwargs
+    ):
+        super(SearchIndexerCache, self).__init__(**kwargs)
+        self.storage_connection_string = storage_connection_string
+        self.enable_reprocessing = enable_reprocessing
 
 
 class SearchIndexerDataContainer(msrest.serialization.Model):
@@ -4956,10 +4991,10 @@ class SearchIndexerDataContainer(msrest.serialization.Model):
 
 
 class SearchIndexerDataIdentity(msrest.serialization.Model):
-    """Base type for data identities.
+    """Abstract base type for data identities.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: .
+    sub-classes are: SearchIndexerDataNoneIdentity, SearchIndexerDataUserAssignedIdentity.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -4977,7 +5012,7 @@ class SearchIndexerDataIdentity(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'odata_type': {}
+        'odata_type': {'#Microsoft.Azure.Search.SearchIndexerDataNoneIdentity': 'SearchIndexerDataNoneIdentity', '#Microsoft.Azure.Search.SearchIndexerDataUserAssignedIdentity': 'SearchIndexerDataUserAssignedIdentity'}
     }
 
     def __init__(
@@ -4988,13 +5023,13 @@ class SearchIndexerDataIdentity(msrest.serialization.Model):
         self.odata_type = None  # type: Optional[str]
 
 
-class SearchIndexerDataNoneIdentity(DataChangeDetectionPolicy):
+class SearchIndexerDataNoneIdentity(SearchIndexerDataIdentity):
     """Clears the identity property of a datasource.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the data change detection
-     policy.Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the identity.Constant filled by
+     server.
     :type odata_type: str
     """
 
@@ -5103,13 +5138,13 @@ class SearchIndexerDataSource(msrest.serialization.Model):
         self.encryption_key = encryption_key
 
 
-class SearchIndexerDataUserAssignedIdentity(DataChangeDetectionPolicy):
+class SearchIndexerDataUserAssignedIdentity(SearchIndexerDataIdentity):
     """Specifies the identity for a datasource to use.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the data change detection
-     policy.Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the identity.Constant filled by
+     server.
     :type odata_type: str
     :param user_assigned_identity: Required. The fully qualified Azure resource Id of a user
      assigned managed identity typically in the form

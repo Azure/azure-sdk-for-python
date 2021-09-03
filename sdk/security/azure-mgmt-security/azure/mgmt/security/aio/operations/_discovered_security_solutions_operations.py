@@ -43,7 +43,7 @@ class DiscoveredSecuritySolutionsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DiscoveredSecuritySolutionList"]:
         """Gets a list of discovered Security Solutions for the subscription.
 
@@ -109,7 +109,7 @@ class DiscoveredSecuritySolutionsOperations:
 
     def list_by_home_region(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DiscoveredSecuritySolutionList"]:
         """Gets a list of discovered Security Solutions for the subscription and location.
 
@@ -178,7 +178,7 @@ class DiscoveredSecuritySolutionsOperations:
         self,
         resource_group_name: str,
         discovered_security_solution_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DiscoveredSecuritySolution":
         """Gets a specific discovered Security Solution.
 

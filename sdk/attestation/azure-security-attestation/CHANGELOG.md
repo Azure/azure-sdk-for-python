@@ -1,5 +1,15 @@
 # Release History
 
+## 1.0.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.0.0 (2021-07-06)
 
 ### Features Added
@@ -76,10 +86,6 @@ policy = response[0]
   * The `not_before_time` property on `AttestationToken` was renamed to `not_before`.
 * The `StoredAttestationPolicy` model type has been removed. To validate the attestation policy hash, use the `AttestationPolicyToken` model object instead.
 * The `get_openidmetadata` API has been renamed `get_open_id_metadata`.
-
-### Key Bugs Fixed
-
-### Fixed
 
 ## 1.0.0b4 (2021-06-08)
 

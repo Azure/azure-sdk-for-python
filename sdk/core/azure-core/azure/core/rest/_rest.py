@@ -30,10 +30,9 @@ from typing import TYPE_CHECKING, cast
 
 from azure.core.exceptions import HttpResponseError
 
-from .._utils import _case_insensitive_dict
+from ..utils._utils import _case_insensitive_dict
 from ._helpers import (
     FilesType,
-    parse_lines_from_text,
     set_content_body,
     set_json_body,
     set_multipart_body,
@@ -42,6 +41,7 @@ from ._helpers import (
     to_pipeline_transport_request_helper,
     from_pipeline_transport_request_helper,
     get_charset_encoding,
+    decode_to_text,
 )
 from ..exceptions import ResponseNotReadError
 if TYPE_CHECKING:
@@ -205,6 +205,7 @@ class _HttpResponseBase(object):  # pylint: disable=too-many-instance-attributes
         self._json = None  # this is filled in ContentDecodePolicy, when we deserialize
         self._connection_data_block_size = None  # type: Optional[int]
         self._content = None  # type: Optional[bytes]
+        self._text = None  # type: Optional[str]
 
     @property
     def url(self):
@@ -215,28 +216,38 @@ class _HttpResponseBase(object):  # pylint: disable=too-many-instance-attributes
     @property
     def encoding(self):
         # type: (...) -> Optional[str]
-        """Returns the response encoding. By default, is specified
-        by the response Content-Type header.
+        """Returns the response encoding.
+
+        :return: The response encoding. We either return the encoding set by the user,
+         or try extracting the encoding from the response's content type. If all fails,
+         we return `None`.
+        :rtype: optional[str]
         """
         try:
             return self._encoding
         except AttributeError:
-            return get_charset_encoding(self)
+            self._encoding = get_charset_encoding(self)  # type: Optional[str]
+            return self._encoding
 
     @encoding.setter
     def encoding(self, value):
         # type: (str) -> None
         """Sets the response encoding"""
         self._encoding = value
+        self._text = None  # clear text cache
 
-    @property
-    def text(self):
-        # type: (...) -> str
-        """Returns the response body as a string"""
-        encoding = self.encoding
-        if encoding == "utf-8" or encoding is None:
-            encoding = "utf-8-sig"
-        return self.content.decode(encoding)
+    def text(self, encoding=None):
+        # type: (Optional[str]) -> str
+        """Returns the response body as a string
+
+        :param optional[str] encoding: The encoding you want to decode the text with. Can
+         also be set independently through our encoding property
+        :return: The response's content decoded as a string.
+        """
+        if self._text is None or encoding:
+            encoding_to_pass = encoding or self.encoding
+            self._text = decode_to_text(encoding_to_pass, self.content)
+        return self._text
 
     def json(self):
         # type: (...) -> Any
@@ -249,7 +260,7 @@ class _HttpResponseBase(object):  # pylint: disable=too-many-instance-attributes
         # this will trigger errors if response is not read in
         self.content  # pylint: disable=pointless-statement
         if not self._json:
-            self._json = loads(self.text)
+            self._json = loads(self.text())
         return self._json
 
     def raise_for_status(self):
@@ -295,7 +306,9 @@ class HttpResponse(_HttpResponseBase):  # pylint: disable=too-many-instance-attr
     :keyword request: The request that resulted in this response.
     :paramtype request: ~azure.core.rest.HttpRequest
     :ivar int status_code: The status code of this response
-    :ivar mapping headers: The response headers
+    :ivar mapping headers: The case-insensitive response headers.
+     While looking up headers is case-insensitive, when looking up
+     keys in `header.keys()`, we recommend using lowercase.
     :ivar str reason: The reason phrase for this response
     :ivar bytes content: The response content in bytes.
     :ivar str url: The URL that resulted in this response
@@ -304,7 +317,6 @@ class HttpResponse(_HttpResponseBase):  # pylint: disable=too-many-instance-attr
     :ivar str text: The response body as a string.
     :ivar request: The request that resulted in this response.
     :vartype request: ~azure.core.rest.HttpRequest
-    :ivar internal_response: The object returned from the HTTP library.
     :ivar str content_type: The content type of the response
     :ivar bool is_closed: Whether the network connection has been closed yet
     :ivar bool is_stream_consumed: When getting a stream response, checks
@@ -345,21 +357,6 @@ class HttpResponse(_HttpResponseBase):  # pylint: disable=too-many-instance-attr
         """Iterate over the response bytes
         """
         raise NotImplementedError()
-
-    def iter_text(self):
-        # type: () -> Iterator[str]
-        """Iterate over the response text
-        """
-        for byte in self.iter_bytes():
-            text = byte.decode(self.encoding or "utf-8")
-            yield text
-
-    def iter_lines(self):
-        # type: () -> Iterator[str]
-        for text in self.iter_text():
-            lines = parse_lines_from_text(text)
-            for line in lines:
-                yield line
 
     def _close_stream(self):
         # type: (...) -> None

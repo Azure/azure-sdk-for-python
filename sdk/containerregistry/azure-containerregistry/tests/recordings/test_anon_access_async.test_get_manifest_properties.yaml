@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/library%2Falpine/_tags/latest
   response:
@@ -18,7 +18,7 @@ interactions:
       connection: keep-alive
       content-length: '217'
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:25 GMT
+      date: Tue, 17 Aug 2021 18:06:56 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -27,18 +27,18 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://seankaneanon.azurecr.io/acr/v1/library%2Falpine/_tags/latest
+    url: https://yalinlitestsanon.azurecr.io/acr/v1/library%2Falpine/_tags/latest
 - request:
     body:
       grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
       - password
       scope: repository:library/alpine:metadata_read
-      service: seankaneanon.azurecr.io
+      service: yalinlitestsanon.azurecr.io
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/token
   response:
@@ -47,37 +47,37 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:25 GMT
+      date: Tue, 17 Aug 2021 18:06:56 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.316667'
+      x-ms-ratelimit-remaining-calls-per-second: '166.5'
     status:
       code: 200
       message: OK
-    url: https://seankaneanon.azurecr.io/oauth2/token
+    url: https://yalinlitestsanon.azurecr.io/oauth2/token
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/library%2Falpine/_tags/latest
   response:
     body:
-      string: '{"registry": "fake_url.azurecr.io", "imageName": "library/alpine",
-        "tag": {"name": "latest", "digest": "sha256:69e70a79f2d41ab5d637de98c1e0b055206ba40a8145e7bddb55ccc04e13cf8f",
-        "createdTime": "2021-05-11T21:18:10.1680148Z", "lastUpdateTime": "2021-05-11T21:18:10.1680148Z",
+      string: '{"registry": "yalinlitestsanon.azurecr.io", "imageName": "library/alpine",
+        "tag": {"name": "latest", "digest": "sha256:eb3e4e175ba6d212ba1d6e04fc0782916c08e1c9d7b45892e9796141b1d379ae",
+        "createdTime": "2021-08-17T18:06:23.0267255Z", "lastUpdateTime": "2021-08-17T18:06:23.0267255Z",
         "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
         true, "readEnabled": true, "listEnabled": true}}}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '387'
+      content-length: '391'
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:25 GMT
+      date: Tue, 17 Aug 2021 18:06:56 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -85,16 +85,16 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://seankaneanon.azurecr.io/acr/v1/library%2Falpine/_tags/latest
+    url: https://yalinlitestsanon.azurecr.io/acr/v1/library%2Falpine/_tags/latest
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/library%2Falpine/_manifests/sha256:69e70a79f2d41ab5d637de98c1e0b055206ba40a8145e7bddb55ccc04e13cf8f
+    uri: https://fake_url.azurecr.io/acr/v1/library%2Falpine/_manifests/sha256:eb3e4e175ba6d212ba1d6e04fc0782916c08e1c9d7b45892e9796141b1d379ae
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
@@ -105,7 +105,7 @@ interactions:
       connection: keep-alive
       content-length: '217'
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:25 GMT
+      date: Tue, 17 Aug 2021 18:06:56 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -114,18 +114,18 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://seankaneanon.azurecr.io/acr/v1/library%2Falpine/_manifests/sha256:69e70a79f2d41ab5d637de98c1e0b055206ba40a8145e7bddb55ccc04e13cf8f
+    url: https://yalinlitestsanon.azurecr.io/acr/v1/library%2Falpine/_manifests/sha256:eb3e4e175ba6d212ba1d6e04fc0782916c08e1c9d7b45892e9796141b1d379ae
 - request:
     body:
       grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
       - password
       scope: repository:library/alpine:metadata_read
-      service: seankaneanon.azurecr.io
+      service: yalinlitestsanon.azurecr.io
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/token
   response:
@@ -134,46 +134,46 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:26 GMT
+      date: Tue, 17 Aug 2021 18:06:56 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.3'
+      x-ms-ratelimit-remaining-calls-per-second: '166.483333'
     status:
       code: 200
       message: OK
-    url: https://seankaneanon.azurecr.io/oauth2/token
+    url: https://yalinlitestsanon.azurecr.io/oauth2/token
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/library%2Falpine/_manifests/sha256:69e70a79f2d41ab5d637de98c1e0b055206ba40a8145e7bddb55ccc04e13cf8f
+    uri: https://fake_url.azurecr.io/acr/v1/library%2Falpine/_manifests/sha256:eb3e4e175ba6d212ba1d6e04fc0782916c08e1c9d7b45892e9796141b1d379ae
   response:
     body:
-      string: '{"registry": "fake_url.azurecr.io", "imageName": "library/alpine",
-        "manifest": {"digest": "sha256:69e70a79f2d41ab5d637de98c1e0b055206ba40a8145e7bddb55ccc04e13cf8f",
-        "imageSize": 3696, "createdTime": "2021-05-11T21:18:10.4807811Z", "lastUpdateTime":
-        "2021-05-11T21:18:10.4807811Z", "mediaType": "application/vnd.docker.distribution.manifest.list.v2+json",
+      string: '{"registry": "yalinlitestsanon.azurecr.io", "imageName": "library/alpine",
+        "manifest": {"digest": "sha256:eb3e4e175ba6d212ba1d6e04fc0782916c08e1c9d7b45892e9796141b1d379ae",
+        "imageSize": 3696, "createdTime": "2021-08-17T18:06:23.1196409Z", "lastUpdateTime":
+        "2021-08-17T18:06:23.1196409Z", "mediaType": "application/vnd.docker.distribution.manifest.list.v2+json",
         "tags": ["latest"], "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
         true, "readEnabled": true, "listEnabled": true}, "references": [{"digest":
-        "sha256:def822f9851ca422481ec6fee59a9966f12b351c62ccb9aca841526ffaa9f748",
-        "architecture": "amd64", "os": "linux"}, {"digest": "sha256:ea73ecf48cd45e250f65eb731dd35808175ae37d70cca5d41f9ef57210737f04",
-        "architecture": "arm", "os": "linux"}, {"digest": "sha256:9663906b1c3bf891618ebcac857961531357525b25493ef717bca0f86f581ad6",
-        "architecture": "arm", "os": "linux"}, {"digest": "sha256:8f18fae117ec6e5777cc62ba78cbb3be10a8a38639ccfb949521abd95c8301a4",
-        "architecture": "arm64", "os": "linux"}, {"digest": "sha256:5de788243acadd50526e70868b86d12ad79f3793619719ae22e0d09e8c873a66",
-        "architecture": "386", "os": "linux"}, {"digest": "sha256:827525365ff718681b0688621e09912af49a17611701ee4d421ba50d57c13f7e",
-        "architecture": "ppc64le", "os": "linux"}, {"digest": "sha256:a090d7c93c8e9ab88946367500756c5f50cd660e09deb4c57494989c1f23fa5a",
+        "sha256:be9bdc0ef8e96dbc428dc189b31e2e3b05523d96d12ed627c37aa2936653258c",
+        "architecture": "amd64", "os": "linux"}, {"digest": "sha256:1d2cfbb29672ce268a77b3b9eca532a96356f4843044d22a9677231e1333e271",
+        "architecture": "arm", "os": "linux"}, {"digest": "sha256:fb9ac82b4cc94c5a6c416a1c656b3ee84df9290ab4106c260eb959997e759e5e",
+        "architecture": "arm", "os": "linux"}, {"digest": "sha256:bd9137c3bb45dbc40cde0f0e19a8b9064c2bc485466221f5e95eb72b0d0cf82e",
+        "architecture": "arm64", "os": "linux"}, {"digest": "sha256:169b2750787ff8d4995ba535293bf549958b596067165ce678afa928225d97cc",
+        "architecture": "386", "os": "linux"}, {"digest": "sha256:f553db2d6ab7f3ba07024cd1181e16242d8fea0a2840dc2ccbd59e9b8c59b478",
+        "architecture": "ppc64le", "os": "linux"}, {"digest": "sha256:8621732cdb8c893dccfaacfa22741154123addd7c0e5465056bbe9b0cb4c7737",
         "architecture": "s390x", "os": "linux"}]}}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '1326'
+      content-length: '1330'
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:26 GMT
+      date: Tue, 17 Aug 2021 18:06:57 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -181,5 +181,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://seankaneanon.azurecr.io/acr/v1/library%2Falpine/_manifests/sha256:69e70a79f2d41ab5d637de98c1e0b055206ba40a8145e7bddb55ccc04e13cf8f
+    url: https://yalinlitestsanon.azurecr.io/acr/v1/library%2Falpine/_manifests/sha256:eb3e4e175ba6d212ba1d6e04fc0782916c08e1c9d7b45892e9796141b1d379ae
 version: 1

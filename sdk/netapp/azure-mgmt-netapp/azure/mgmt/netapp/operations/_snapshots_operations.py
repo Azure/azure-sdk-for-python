@@ -78,7 +78,7 @@ class SnapshotsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -154,7 +154,7 @@ class SnapshotsOperations(object):
         :type pool_name: str
         :param volume_name: The name of the volume.
         :type volume_name: str
-        :param snapshot_name: The name of the mount target.
+        :param snapshot_name: The name of the snapshot.
         :type snapshot_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Snapshot, or the result of cls(response)
@@ -166,7 +166,7 @@ class SnapshotsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -221,7 +221,7 @@ class SnapshotsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -290,7 +290,7 @@ class SnapshotsOperations(object):
         :type pool_name: str
         :param volume_name: The name of the volume.
         :type volume_name: str
-        :param snapshot_name: The name of the mount target.
+        :param snapshot_name: The name of the snapshot.
         :type snapshot_name: str
         :param body: Snapshot object supplied in the body of the operation.
         :type body: ~azure.mgmt.netapp.models.Snapshot
@@ -372,7 +372,7 @@ class SnapshotsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -441,7 +441,7 @@ class SnapshotsOperations(object):
         :type pool_name: str
         :param volume_name: The name of the volume.
         :type volume_name: str
-        :param snapshot_name: The name of the mount target.
+        :param snapshot_name: The name of the snapshot.
         :type snapshot_name: str
         :param body: Snapshot object supplied in the body of the operation.
         :type body: any
@@ -522,7 +522,7 @@ class SnapshotsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01"
+        api_version = "2021-06-01"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -578,7 +578,7 @@ class SnapshotsOperations(object):
         :type pool_name: str
         :param volume_name: The name of the volume.
         :type volume_name: str
-        :param snapshot_name: The name of the mount target.
+        :param snapshot_name: The name of the snapshot.
         :type snapshot_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.

@@ -1,4 +1,4 @@
-pip==20.2
+pip==20.3
 
 # requirements leveraged by ci for testing
 pytest==4.6.9; python_version == '2.7'
@@ -18,7 +18,6 @@ pyOpenSSL==19.1.0
 json-delta==2.0
 ConfigArgParse==1.2.3
 six==1.14.0
-vcrpy==3.0.0
 pyyaml==5.3.1
 packaging==20.4
 wheel==0.34.2

@@ -1,5 +1,19 @@
 # Release History
 
+## 12.1.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Resolved bug where strings couldn't be used instead of enum value for entity Update Mode (#20247).
+
+### Other Changes
+
+- Bumped dependency on `msrest` to `>=0.6.21`
+
 ## 12.1.0 (2021-07-06)
 
 ### Features Added

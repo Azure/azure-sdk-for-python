@@ -4,44 +4,44 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 
-from ._log_query_client import LogsQueryClient
+from ._logs_query_client import LogsQueryClient
 from ._metrics_query_client import MetricsQueryClient
 
 from ._models import (
-    LogsQueryResults,
-    LogsQueryResultTable,
-    LogsQueryResultColumn,
+    MetricAggregationType,
+    LogsQueryResult,
+    LogsTable,
     MetricsResult,
-    LogsBatchResultError,
-    LogsQueryRequest,
-    LogsBatchResults,
+    LogsBatchQuery,
     MetricNamespace,
+    MetricNamespaceClassification,
     MetricDefinition,
-    MetricsMetadataValue,
+    MetricUnit,
     TimeSeriesElement,
     Metric,
     MetricValue,
+    MetricClass,
     MetricAvailability
 )
 
 from ._version import VERSION
 
 __all__ = [
+    "MetricAggregationType",
     "LogsQueryClient",
-    "LogsBatchResults",
-    "LogsBatchResultError",
-    "LogsQueryResults",
-    "LogsQueryResultColumn",
-    "LogsQueryResultTable",
-    "LogsQueryRequest",
+    "LogsQueryResult",
+    "LogsTable",
+    "LogsBatchQuery",
     "MetricsQueryClient",
     "MetricNamespace",
+    "MetricNamespaceClassification",
     "MetricDefinition",
+    "MetricUnit",
     "MetricsResult",
-    "MetricsMetadataValue",
     "TimeSeriesElement",
     "Metric",
     "MetricValue",
+    "MetricClass",
     "MetricAvailability"
 ]
 

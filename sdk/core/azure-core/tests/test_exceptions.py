@@ -24,11 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import json
-import logging
-import os
-
 import requests
-import pytest
 try:
     from unittest.mock import Mock
 except ImportError:
@@ -159,8 +155,8 @@ class TestExceptions(object):
         assert isinstance(error.model, FakeErrorTwo)
         assert isinstance(error.error, ODataV4Format)
 
-    def test_httpresponse_error_with_response(self):
-        response = requests.get("https://bing.com")
+    def test_httpresponse_error_with_response(self, port):
+        response = requests.get("http://localhost:{}/basic/string".format(port))
         http_response = RequestsTransportResponse(None, response)
 
         error = HttpResponseError(response=http_response)
@@ -250,3 +246,16 @@ class TestExceptions(object):
         }
         exp = HttpResponseError(response=_build_response(json.dumps(message).encode("utf-8")))
         assert exp.error.code == "Conflict"
+
+    def test_null_odata_details(self):
+        message = {
+            "error": {
+                "code": "501",
+                "message": "message",
+                "target": None,
+                "details": None,
+                "innererror": None,
+            }
+        }
+        exp = HttpResponseError(response=_build_response(json.dumps(message).encode("utf-8")))
+        assert exp.error.code == "501"
