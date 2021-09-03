@@ -20,9 +20,12 @@ from ._configuration import KustoManagementClientConfiguration
 from .operations import ClustersOperations
 from .operations import ClusterPrincipalAssignmentsOperations
 from .operations import DatabasesOperations
+from .operations import AttachedDatabaseConfigurationsOperations
+from .operations import ManagedPrivateEndpointsOperations
 from .operations import DatabasePrincipalAssignmentsOperations
 from .operations import ScriptsOperations
-from .operations import AttachedDatabaseConfigurationsOperations
+from .operations import PrivateEndpointConnectionsOperations
+from .operations import PrivateLinkResourcesOperations
 from .operations import DataConnectionsOperations
 from .operations import Operations
 from .operations import OperationsResultsOperations
@@ -33,23 +36,29 @@ class KustoManagementClient(object):
     """The Azure Kusto management API provides a RESTful set of web services that interact with Azure Kusto services to manage your clusters and databases. The API enables you to create, update, and delete clusters and databases.
 
     :ivar clusters: ClustersOperations operations
-    :vartype clusters: azure.mgmt.kusto.aio.operations.ClustersOperations
+    :vartype clusters: kusto_management_client.aio.operations.ClustersOperations
     :ivar cluster_principal_assignments: ClusterPrincipalAssignmentsOperations operations
-    :vartype cluster_principal_assignments: azure.mgmt.kusto.aio.operations.ClusterPrincipalAssignmentsOperations
+    :vartype cluster_principal_assignments: kusto_management_client.aio.operations.ClusterPrincipalAssignmentsOperations
     :ivar databases: DatabasesOperations operations
-    :vartype databases: azure.mgmt.kusto.aio.operations.DatabasesOperations
-    :ivar database_principal_assignments: DatabasePrincipalAssignmentsOperations operations
-    :vartype database_principal_assignments: azure.mgmt.kusto.aio.operations.DatabasePrincipalAssignmentsOperations
-    :ivar scripts: ScriptsOperations operations
-    :vartype scripts: azure.mgmt.kusto.aio.operations.ScriptsOperations
+    :vartype databases: kusto_management_client.aio.operations.DatabasesOperations
     :ivar attached_database_configurations: AttachedDatabaseConfigurationsOperations operations
-    :vartype attached_database_configurations: azure.mgmt.kusto.aio.operations.AttachedDatabaseConfigurationsOperations
+    :vartype attached_database_configurations: kusto_management_client.aio.operations.AttachedDatabaseConfigurationsOperations
+    :ivar managed_private_endpoints: ManagedPrivateEndpointsOperations operations
+    :vartype managed_private_endpoints: kusto_management_client.aio.operations.ManagedPrivateEndpointsOperations
+    :ivar database_principal_assignments: DatabasePrincipalAssignmentsOperations operations
+    :vartype database_principal_assignments: kusto_management_client.aio.operations.DatabasePrincipalAssignmentsOperations
+    :ivar scripts: ScriptsOperations operations
+    :vartype scripts: kusto_management_client.aio.operations.ScriptsOperations
+    :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
+    :vartype private_endpoint_connections: kusto_management_client.aio.operations.PrivateEndpointConnectionsOperations
+    :ivar private_link_resources: PrivateLinkResourcesOperations operations
+    :vartype private_link_resources: kusto_management_client.aio.operations.PrivateLinkResourcesOperations
     :ivar data_connections: DataConnectionsOperations operations
-    :vartype data_connections: azure.mgmt.kusto.aio.operations.DataConnectionsOperations
+    :vartype data_connections: kusto_management_client.aio.operations.DataConnectionsOperations
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.kusto.aio.operations.Operations
+    :vartype operations: kusto_management_client.aio.operations.Operations
     :ivar operations_results: OperationsResultsOperations operations
-    :vartype operations_results: azure.mgmt.kusto.aio.operations.OperationsResultsOperations
+    :vartype operations_results: kusto_management_client.aio.operations.OperationsResultsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: Gets subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
@@ -81,11 +90,17 @@ class KustoManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.databases = DatabasesOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.attached_database_configurations = AttachedDatabaseConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.managed_private_endpoints = ManagedPrivateEndpointsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.database_principal_assignments = DatabasePrincipalAssignmentsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.scripts = ScriptsOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.attached_database_configurations = AttachedDatabaseConfigurationsOperations(
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.data_connections = DataConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize)
