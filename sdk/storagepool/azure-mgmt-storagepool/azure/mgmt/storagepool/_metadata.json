@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2021-04-01-preview",
-    "total_api_version_list": ["2021-04-01-preview"],
+    "chosen_version": "2021-08-01",
+    "total_api_version_list": ["2021-08-01"],
     "client": {
         "name": "StoragePoolManagement",
         "filename": "_storage_pool_management",
@@ -101,6 +101,7 @@
         "operations": "Operations",
         "disk_pools": "DiskPoolsOperations",
         "disk_pool_zones": "DiskPoolZonesOperations",
+        "resource_skus": "ResourceSkusOperations",
         "iscsi_targets": "IscsiTargetsOperations"
     }
 }
