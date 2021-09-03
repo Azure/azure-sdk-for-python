@@ -72,7 +72,7 @@ class SecretProperties(object):
         # type: () -> Optional[str]
         """The secret's id
 
-        :rtype: optional[str]
+        :rtype: str or None
         """
         return self._id
 
@@ -90,7 +90,7 @@ class SecretProperties(object):
         # type: () -> Optional[bool]
         """Whether the secret is enabled for use
 
-        :rtype: optional[bool]
+        :rtype: bool or None
         """
         return self._attributes.enabled if self._attributes else None
 
@@ -99,7 +99,7 @@ class SecretProperties(object):
         # type: () -> Optional[datetime]
         """The time before which the secret can not be used, in UTC
 
-        :rtype: optional[~datetime.datetime]
+        :rtype: ~datetime.datetime or None
         """
         return self._attributes.not_before if self._attributes else None
 
@@ -108,7 +108,7 @@ class SecretProperties(object):
         # type: () -> Optional[datetime]
         """When the secret expires, in UTC
 
-        :rtype: optional[~datetime.datetime]
+        :rtype: ~datetime.datetime or None
         """
         return self._attributes.expires if self._attributes else None
 
@@ -117,7 +117,7 @@ class SecretProperties(object):
         # type: () -> Optional[datetime]
         """When the secret was created, in UTC
 
-        :rtype: optional[~datetime.datetime]
+        :rtype: ~datetime.datetime or None
         """
         return self._attributes.created if self._attributes else None
 
@@ -126,7 +126,7 @@ class SecretProperties(object):
         # type: () -> Optional[datetime]
         """When the secret was last updated, in UTC
 
-        :rtype: optional[~datetime.datetime]
+        :rtype: ~datetime.datetime or None
         """
         return self._attributes.updated if self._attributes else None
 
@@ -135,7 +135,7 @@ class SecretProperties(object):
         # type: () -> Optional[int]
         """The number of days the key is retained before being deleted from a soft-delete enabled Key Vault.
 
-        :rtype: optional[int]
+        :rtype: int or None
         """
         # recoverable_days was added in 7.1-preview
         if self._attributes and hasattr(self._attributes, "recoverable_days"):
@@ -147,7 +147,7 @@ class SecretProperties(object):
         # type: () -> Optional[str]
         """The vault's deletion recovery level for secrets
 
-        :rtype: optional[str]
+        :rtype: str or None
         """
         return self._attributes.recovery_level if self._attributes else None
 
@@ -156,7 +156,7 @@ class SecretProperties(object):
         # type: () -> Optional[str]
         """URL of the vault containing the secret
 
-        :rtype: optional[str]
+        :rtype: str or None
         """
         return self._vault_id.vault_url if self._vault_id else None
 
@@ -165,7 +165,7 @@ class SecretProperties(object):
         # type: () -> Optional[str]
         """The secret's name
 
-        :rtype: optional[str]
+        :rtype: str or None
         """
         return self._vault_id.name if self._vault_id else None
 
@@ -174,7 +174,7 @@ class SecretProperties(object):
         # type: () -> Optional[str]
         """The secret's version
 
-        :rtype: Optional[str]
+        :rtype: str or None
         """
         return self._vault_id.version if self._vault_id else None
 
@@ -213,7 +213,7 @@ class KeyVaultSecret(object):
         # type: () -> Optional[str]
         """The secret's name
 
-        :rtype: optional[str]
+        :rtype: str or None
         """
         return self._properties.name
 
@@ -222,7 +222,7 @@ class KeyVaultSecret(object):
         # type: () -> Optional[str]
         """The secret's id
 
-        :rtype: optional[str]
+        :rtype: str or None
         """
         return self._properties.id
 
@@ -240,7 +240,7 @@ class KeyVaultSecret(object):
         # type: () -> Optional[str]
         """The secret's value
 
-        :rtype: optional[str]
+        :rtype: str or None
         """
         return self._value
 
@@ -332,7 +332,7 @@ class DeletedSecret(object):
         # type: () -> Optional[str]
         """The secret's name
 
-        :rtype: optional[str]
+        :rtype: str or None
         """
         return self._properties.name
 
@@ -341,7 +341,7 @@ class DeletedSecret(object):
         # type: () -> Optional[str]
         """The secret's id
 
-        :rtype: optional[str]
+        :rtype: str or None
         """
         return self._properties.id
 
@@ -359,7 +359,7 @@ class DeletedSecret(object):
         # type: () -> Optional[datetime]
         """When the secret was deleted, in UTC
 
-        :rtype: optional[~datetime.datetime]
+        :rtype: ~datetime.datetime or None
         """
         return self._deleted_date
 
@@ -368,7 +368,7 @@ class DeletedSecret(object):
         # type: () -> Optional[str]
         """An identifier used to recover the deleted secret. Returns ``None`` if soft-delete is disabled.
 
-        :rtype: optional[str]
+        :rtype: str or None
         """
         return self._recovery_id
 
@@ -377,6 +377,6 @@ class DeletedSecret(object):
         # type: () -> Optional[datetime]
         """When the secret is scheduled to be purged, in UTC. Returns ``None`` if soft-delete is disabled.
 
-        :rtype: optional[~datetime.datetime]
+        :rtype: ~datetime.datetime or None
         """
         return self._scheduled_purge_date
