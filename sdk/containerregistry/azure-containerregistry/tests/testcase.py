@@ -13,6 +13,7 @@ import time
 
 from azure.containerregistry import ContainerRegistryClient
 from azure.containerregistry._helpers import _is_tag
+from azure.containerregistry._generated.models._container_registry_enums import ContainerRegistryAudience
 
 from azure.core.credentials import AccessToken
 from azure.mgmt.containerregistry import ContainerRegistryManagementClient
