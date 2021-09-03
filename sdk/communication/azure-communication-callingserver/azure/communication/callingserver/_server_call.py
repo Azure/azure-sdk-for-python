@@ -9,7 +9,9 @@ from typing import Any
 from azure.core.tracing.decorator import distributed_trace
 
 from ._generated.aio.operations import ServerCallsOperations
-from ._generated.models import PlayAudioRequest, StartCallRecordingRequest, StartCallRecordingResult, CallRecordingProperties
+from ._generated.models import PlayAudioRequest, StartCallRecordingRequest, \
+    StartCallRecordingResult, CallRecordingProperties, AddParticipantRequest, \
+    PhoneNumberIdentifierModel, CommunicationIdentifierModel, JoinCallRequest
 from ._models import PlayAudioResult
 from azure.core.pipeline.transport import AsyncHttpResponse
 
@@ -161,7 +163,7 @@ class ServerCall(object):
         return stop_recording_result
 
     @distributed_trace()
-    def get_recording_status(
+    def get_recording_properities(
             self,
             server_call_id: str,
             recording_id: str,
@@ -181,6 +183,50 @@ class ServerCall(object):
         )
         return CallRecordingProperties._from_generated(recording_status_result)
 
+    @distributed_trace()
+    def join_call(self,
+            source, 
+            subject, 
+            callback_uri, 
+            requested_media_types,
+            requested_call_events,
+            **kwargs: Any
+    ):
+        request = JoinCallRequest(
+        source = source,
+        subject = subject,
+        callback_uri = callback_uri,
+        requested_media_types = requested_media_types,
+        requested_call_events = requested_call_events,
+        **kwargs)
+        return self.server_call_client.join_call(server_call_id=self.server_call_id,
+        call_request=request)
+
+    @distributed_trace()
+    def add_participant(self,
+    participant: CommunicationIdentifierModel,
+    alternate_call_id: PhoneNumberIdentifierModel,
+    operation_context: str,
+    **kwargs: Any
+    ):
+        request = AddParticipantRequest(alternate_caller_id=alternate_call_id,
+        participant=participant,
+        operation_context=operation_context,
+        callback_uri=None, 
+        **kwargs)
+        return self.server_call_client.add_participant(server_call_id=self.server_call_id, 
+        add_participant_request=request)
+
+    @distributed_trace()
+    def remove_participant(self,
+    participant_id: str,
+    **kwargs: Any
+    ):
+        if not participant_id:
+            raise ValueError("participant_id can not be None")
+        return self.server_call_client.remove_participant(server_call_id=self.server_call_id,
+        participant_id=participant_id,
+        **kwargs)
 
     def close(self):
         # type: () -> None
