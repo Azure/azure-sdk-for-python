@@ -121,13 +121,14 @@ class SchemaRegistryAvroSerializer(object):
             return schema_str
 
     def serialize(self, value, schema, **kwargs):
-        # type: (Any, Union[str, bytes], Any) -> bytes
+        # type: (Dict[str, Any], Union[str, bytes], Any) -> bytes
         """
         Encode data with the given schema. The returns bytes are consisted of: The first 4 bytes
         denoting record format identifier. The following 32 bytes denoting schema id returned by schema registry
         service. The remaining bytes are the real data payload.
 
         :param value: The data to be encoded.
+        :type value: Dict[str, Any]
         :param schema: The schema used to encode the data.
         :type schema: Union[str, bytes]
         :rtype: bytes
@@ -156,12 +157,12 @@ class SchemaRegistryAvroSerializer(object):
         return payload
 
     def deserialize(self, value, **kwargs):
-        # type: (bytes, Any) -> Any
+        # type: (bytes, Any) -> Dict[str, Any]
         """
         Decode bytes data.
 
         :param bytes value: The bytes data needs to be decoded.
-        :rtype: Any
+        :rtype: Dict[str, Any]
         """
         # record_format_identifier = data[0:4]  # The first 4 bytes are retained for future record format identifier.
         schema_id = value[
