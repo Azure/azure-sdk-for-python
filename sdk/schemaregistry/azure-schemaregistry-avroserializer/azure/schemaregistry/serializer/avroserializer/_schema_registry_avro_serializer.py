@@ -95,7 +95,7 @@ class SchemaRegistryAvroSerializer(object):
             return self._schema_to_id[schema_str]
         except KeyError:
             schema_id = self._auto_register_schema_func(
-                self._schema_group, schema_name, schema_str, "Avro", **kwargs
+                self._schema_group, schema_name, "Avro", schema_str, **kwargs
             ).schema_id
             self._schema_to_id[schema_str] = schema_id
             self._id_to_schema[schema_id] = schema_str

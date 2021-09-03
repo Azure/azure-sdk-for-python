@@ -86,7 +86,7 @@ class SchemaRegistryClient(object):
     def register_schema(
         self, group_name, name, content, serialization_type, **kwargs
     ):
-        # type: (str, str, Union[str, SerializationType], str, Any) -> SchemaProperties
+        # type: (str, str, str, Union[str, SerializationType], Any) -> SchemaProperties
         """
         Register new schema. If schema of specified name does not exist in specified group,
         schema is created at version 1. If schema of specified name exists already in specified group,
@@ -118,9 +118,9 @@ class SchemaRegistryClient(object):
             pass
 
         request = schema_rest.build_register_request(
-            schema_group=group_name,
+            group_name=group_name,
             schema_name=name,
-            schema_content=content,
+            content=content,
             serialization_type=serialization_type,
             content_type=kwargs.pop("content_type", "application/json"),
             **kwargs
@@ -133,8 +133,8 @@ class SchemaRegistryClient(object):
         schema_description = (
             group_name,
             name,
-            serialization_type,
             content,
+            serialization_type,
         )
         self._id_to_schema[schema_properties.id] = Schema(
             content, schema_properties
@@ -175,7 +175,7 @@ class SchemaRegistryClient(object):
     def get_schema_properties(
         self, group_name, name, content, serialization_type, **kwargs
     ):
-        # type: (str, str, Union[str, SerializationType], str, Any) -> SchemaProperties
+        # type: (str, str, str, Union[str, SerializationType], Any) -> SchemaProperties
         """
         Gets the ID referencing an existing schema within the specified schema group,
         as matched by schema content comparison.
@@ -206,13 +206,13 @@ class SchemaRegistryClient(object):
 
         try:
             properties = self._description_to_properties[
-                (group_name, name, serialization_type, content)
+                (group_name, name, content, serialization_type)
             ]
             return properties
         except KeyError:
             request = schema_rest.build_query_id_by_content_request(
                 group_name=group_name,
-                name=name,
+                schema_name=name,
                 content=content,
                 serialization_type=serialization_type,
                 content_type=kwargs.pop("content_type", "application/json"),
@@ -228,6 +228,6 @@ class SchemaRegistryClient(object):
             else:
                 schema_properties = self._id_to_schema[schema_properties.id].properties
             self._description_to_properties[
-                (group_name, name, serialization_type, content)
+                (group_name, name, content, serialization_type)
             ] = schema_properties
             return schema_properties
