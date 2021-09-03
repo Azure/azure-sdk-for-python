@@ -10,9 +10,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._generated.aio.operations import ServerCallsOperations
 from ._generated.models import PlayAudioRequest, StartCallRecordingRequest, StartCallRecordingResult
-from ._generated.models._models import PauseCallRecordingResult, ResumeCallRecordingResult, StopCallRecordingResult, \
-        DownloadContentResult, CallRecordingStatusResult
-from ._generated.operations._content_downloader import ContentDownloader
+from ._generated.models._models import PauseCallRecordingResult, ResumeCallRecordingResult, StopCallRecordingResult, CallRecordingStatusResult
 from ._models import PlayAudioResult
 
 
@@ -22,13 +20,11 @@ class ServerCall(object):
         self,
         server_call_id: str,  # type: str
         server_call_client: ServerCallsOperations,  # type: AsyncTokenCredential,
-        content_downloader_client: ContentDownloader,
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         self.server_call_id = server_call_id
         self.server_call_client = server_call_client
-        self.content_downloader_client = content_downloader_client
 
     @distributed_trace()
     def play_audio(
@@ -186,23 +182,6 @@ class ServerCall(object):
         )
         return CallRecordingStatusResult._from_generated(recording_status_result)
 
-    @distributed_trace()
-    def download_content(
-            self,
-            content_url: str,
-            **kwargs: Any
-    ):
-        # type: (...) -> DownloadContentResult
-
-        if not content_url:
-            raise ValueError("content_url cannot be None")
-
-
-        content_url_result = self.content_downloader_client.download_content(
-            content_url=content_url,
-        )
-
-        return DownloadContentResult._from_generated(content_url_result)
 
     def close(self):
         # type: () -> None

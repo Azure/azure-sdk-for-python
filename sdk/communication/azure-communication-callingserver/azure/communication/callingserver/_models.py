@@ -6,6 +6,8 @@
 
 from ._generated.models import EventSubscriptionType, MediaType
 from ._shared.models import PhoneNumberIdentifier
+from enum import Enum, EnumMeta
+from six import with_metaclass
 
 try:
     from urllib.parse import urlparse
@@ -14,6 +16,21 @@ except ImportError:
 
 from typing import Any
 
+class _CaseInsensitiveEnumMeta(EnumMeta):
+    def __getitem__(self, name):
+        return super().__getitem__(name.upper())
+
+    def __getattr__(cls, name):
+        """Return the enum member matching `name`
+        We use __getattr__ instead of descriptors or inserting into the enum
+        class' __dict__ in order to support `name` and `value` being both
+        properties for enum members (which live in the class' __dict__) and
+        enum members themselves.
+        """
+        try:
+            return cls._member_map_[name.upper()]
+        except KeyError:
+            raise AttributeError(name)
 
 class CreateCallOptions(object):
 
@@ -139,3 +156,14 @@ class ResultInfo(object):
             subcode=result_info.subcode,
             message=result_info.message,
         )
+
+class CallingServerEventType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The calling server event type values.
+    """
+
+    CALL_CONNECTION_STATE_CHANGED_EVENT = "Microsoft.Communication.CallConnectionStateChanged"
+    ADD_PARTICIPANT_RESULT_EVENT = "Microsoft.Communication.AddParticipantResult"
+    CALL_RECORDING_STATE_CHANGED_EVENT = "Microsoft.Communication.CallRecordingStateChanged"
+    PLAY_AUDIO_RESULT_EVENT = "Microsoft.Communication.PlayAudioResult"
+    PARTICIPANTS_UPDATED_EVENT = "Microsoft.Communication.ParticipantsUpdated"
+    TONE_RECEIVED_EVENT = "Microsoft.Communication.DtmfReceived"

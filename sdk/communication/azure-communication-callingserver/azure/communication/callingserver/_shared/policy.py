@@ -60,22 +60,19 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
         content_hash = base64.b64encode(content_digest).decode("utf-8")
 
         uri_to_sign_with = request.http_request.headers.get("UriToSignWith")
-        print(uri_to_sign_with)
         if uri_to_sign_with:
             host = urlparse(uri_to_sign_with).hostname
-            request.http_request.headers["host"] = host
             query_url = urlparse(request.http_request.url).path
+
+            request.http_request.headers["host"] = host
+            
             del request.http_request.headers["UriToSignWith"]
         else:
             host = self._host
 
-        print(query_url)
         if self._decode_url:
             query_url = urllib.parse.unquote(query_url)
 
-        print(query_url)
-        print(host)
-        print(verb)
         string_to_sign = (
             verb
             + "\n"

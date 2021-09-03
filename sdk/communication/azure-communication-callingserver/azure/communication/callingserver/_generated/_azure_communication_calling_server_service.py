@@ -11,8 +11,6 @@ from typing import TYPE_CHECKING
 from azure.core import PipelineClient
 from msrest import Deserializer, Serializer
 
-from .operations._content_downloader import ContentDownloader
-
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any
@@ -54,8 +52,6 @@ class AzureCommunicationCallingServerService(object):
         self.call_connections = CallConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.server_calls = ServerCallsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.content_downloader = ContentDownloader(
             self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, http_request, **kwargs):
