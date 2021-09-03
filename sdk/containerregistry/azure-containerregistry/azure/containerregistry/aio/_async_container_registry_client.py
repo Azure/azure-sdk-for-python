@@ -35,8 +35,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param credential: The credential with which to authenticate
         :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
         :keyword audience: URL to use for credential authentication with AAD. Its value could be
-        :"https://management.azure.com", "https://management.chinacloudapi.cn", "https://management.microsoftazure.de" or
-        :"https://management.usgovcloudapi.net"
+        "https://management.azure.com", "https://management.chinacloudapi.cn", "https://management.microsoftazure.de" or
+        "https://management.usgovcloudapi.net"
         :paramtype audience: ~azure.containerregistry.ContainerRegistryAudience or str
         :returns: None
         :raises: None
