@@ -3,22 +3,376 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from enum import Enum
 import msrest.serialization
 from .._generated.models import (
     LexicalAnalyzer,
     LexicalTokenizer,
     AnalyzeRequest,
     CustomAnalyzer as _CustomAnalyzer,
+    EntityRecognitionSkill as _EntityRecognitionSkillV1,
+    EntityRecognitionSkillV3 as _EntityRecognitionSkillV3,
     PatternAnalyzer as _PatternAnalyzer,
     PatternTokenizer as _PatternTokenizer,
     SearchResourceEncryptionKey as _SearchResourceEncryptionKey,
     SearchIndexerDataSource as _SearchIndexerDataSource,
+    SearchIndexerSkill,
+    SearchIndexerSkillset as _SearchIndexerSkillset,
+    SentimentSkill as _SentimentSkillV1,
+    SentimentSkillV3 as _SentimentSkillV3,
     SynonymMap as _SynonymMap,
     DataSourceCredentials,
     AzureActiveDirectoryApplicationCredentials,
 )
 
+
 DELIMITER = "|"
+
+
+class SearchIndexerSkillset(_SearchIndexerSkillset):
+    """A list of skills.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the skillset.
+    :type name: str
+    :param description: The description of the skillset.
+    :type description: str
+    :param skills: Required. A list of skills in the skillset.
+    :type skills: list[~azure.search.documents.indexes.models.SearchIndexerSkill]
+    :param cognitive_services_account: Details about cognitive services to be used when running
+     skills.
+    :type cognitive_services_account:
+     ~azure.search.documents.indexes.models.CognitiveServicesAccount
+    :param knowledge_store: Definition of additional projections to azure blob, table, or files, of
+     enriched data.
+    :type knowledge_store: ~azure.search.documents.indexes.models.SearchIndexerKnowledgeStore
+    :param e_tag: The ETag of the skillset.
+    :type e_tag: str
+    :param encryption_key: A description of an encryption key that you create in Azure Key Vault.
+     This key is used to provide an additional level of encryption-at-rest for your skillset
+     definition when you want full assurance that no one, not even Microsoft, can decrypt your
+     skillset definition in Azure Cognitive Search. Once you have encrypted your skillset
+     definition, it will always remain encrypted. Azure Cognitive Search will ignore attempts to set
+     this property to null. You can change this property as needed if you want to rotate your
+     encryption key; Your skillset definition will be unaffected. Encryption with customer-managed
+     keys is not available for free search services, and is only available for paid services created
+     on or after January 1, 2019.
+    :type encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SearchIndexerSkillset, self).__init__(**kwargs)
+
+    def _to_generated(self):
+        generated_skills = []
+        for skill in self.skills:
+            if hasattr(skill, '_to_generated'):
+                generated_skills.append(skill._to_generated()) # pylint:disable=protected-access
+            else:
+                generated_skills.append(skill)
+        assert len(generated_skills) == len(self.skills)
+        return _SearchIndexerSkillset(
+            name=getattr(self, 'name', None),
+            description=getattr(self, 'description', None),
+            skills=generated_skills,
+            cognitive_services_account=getattr(self, 'cognitive_services_account', None),
+            knowledge_store=getattr(self, 'knowledge_store', None),
+            e_tag=getattr(self, 'e_tag', None),
+            encryption_key=getattr(self, 'encryption_key', None)
+        )
+
+    @classmethod
+    def _from_generated(cls, skillset):
+        custom_skills = []
+        for skill in skillset.skills:
+            skill_cls = type(skill)
+            if skill_cls in [_EntityRecognitionSkillV1, _EntityRecognitionSkillV3]:
+                custom_skills.append(EntityRecognitionSkill._from_generated(skill)) # pylint:disable=protected-access
+            elif skill_cls in [_SentimentSkillV1, _SentimentSkillV3]:
+                custom_skills.append(SentimentSkill._from_generated(skill)) # pylint:disable=protected-access
+            else:
+                custom_skills.append(skill)
+        assert len(skillset.skills) == len(custom_skills)
+        kwargs = skillset.as_dict()
+        kwargs['skills'] = custom_skills
+        return cls(**kwargs)
+
+
+class EntityRecognitionSkillVersion(str, Enum):
+    """Specifies the Entity Recognition skill version to use."""
+
+    #: Use Entity Recognition skill V1.
+    V1 = "#Microsoft.Skills.Text.EntityRecognitionSkill"
+    #: Use Entity Recognition skill V3.
+    V3 = "#Microsoft.Skills.Text.V3.EntityRecognitionSkill"
+    #: Use latest version of Entity Recognition skill.
+    LATEST = "#Microsoft.Skills.Text.V3.EntityRecognitionSkill"
+
+
+class EntityRecognitionSkill(SearchIndexerSkill):
+    """Using the Text Analytics API, extracts entities of different types from text.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+     server.
+    :type odata_type: str
+    :param name: The name of the skill which uniquely identifies it within the skillset. A skill
+     with no name defined will be given a default name of its 1-based index in the skills array,
+     prefixed with the character '#'.
+    :type name: str
+    :param description: The description of the skill which describes the inputs, outputs, and usage
+     of the skill.
+    :type description: str
+    :param context: Represents the level at which operations take place, such as the document root
+     or document content (for example, /document or /document/content). The default is /document.
+    :type context: str
+    :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
+     output of an upstream skill.
+    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :param outputs: Required. The output of a skill is either a field in a search index, or a value
+     that can be consumed as an input by another skill.
+    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :param categories: A list of entity categories that should be extracted.
+    :type categories: list[str or ~azure.search.documents.indexes.models.EntityCategory]
+    :param default_language_code: A value indicating which language code to use. Default is en.
+     Possible values include: "ar", "cs", "zh-Hans", "zh-Hant", "da", "nl", "en", "fi", "fr", "de",
+     "el", "hu", "it", "ja", "ko", "no", "pl", "pt-PT", "pt-BR", "ru", "es", "sv", "tr".
+    :type default_language_code: str or
+     ~azure.search.documents.indexes.models.EntityRecognitionSkillLanguage
+    :param include_typeless_entities: Determines whether or not to include entities which are well
+     known but don't conform to a pre-defined type. If this configuration is not set (default), set
+     to null or set to false, entities which don't conform to one of the pre-defined types will not
+     be surfaced. Only valid for skill version 1.
+    :type include_typeless_entities: bool
+    :param minimum_precision: A value between 0 and 1 that be used to only include entities whose
+     confidence score is greater than the value specified. If not set (default), or if explicitly
+     set to null, all entities will be included.
+    :type minimum_precision: float
+    :param model_version: The version of the model to use when calling the Text Analytics service.
+     It will default to the latest available when not specified. We recommend you do not specify
+     this value unless absolutely necessary. Only valid from skill version 3.
+    :type model_version: str
+    :param skill_version: The version of the skill to use when calling the Text Analytics service.
+     It will default to V1 when not specified.
+    :type skill_version: ~azure.search.documents.indexes.models.EntityRecognitionSkillVersion
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+        'inputs': {'required': True},
+        'outputs': {'required': True},
+        'minimum_precision': {'maximum': 1, 'minimum': 0},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'context': {'key': 'context', 'type': 'str'},
+        'inputs': {'key': 'inputs', 'type': '[InputFieldMappingEntry]'},
+        'outputs': {'key': 'outputs', 'type': '[OutputFieldMappingEntry]'},
+        'categories': {'key': 'categories', 'type': '[str]'},
+        'default_language_code': {'key': 'defaultLanguageCode', 'type': 'str'},
+        'include_typeless_entities': {'key': 'includeTypelessEntities', 'type': 'bool'},
+        'minimum_precision': {'key': 'minimumPrecision', 'type': 'float'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        # pop skill_version from kwargs to avoid warning in msrest
+        skill_version = kwargs.pop('skill_version', EntityRecognitionSkillVersion.V1)
+
+        super(EntityRecognitionSkill, self).__init__(**kwargs)
+        self.skill_version = skill_version
+        self.odata_type = self.skill_version  # type: str
+        self.categories = kwargs.get('categories', None)
+        self.default_language_code = kwargs.get('default_language_code', None)
+        self.minimum_precision = kwargs.get('minimum_precision', None)
+        self.include_typeless_entities = kwargs.get('include_typeless_entities', None)
+        self.model_version = kwargs.get('model_version', None)
+
+
+    def _to_generated(self):
+        if self.skill_version == EntityRecognitionSkillVersion.V1:
+            return _EntityRecognitionSkillV1(
+                inputs=self.inputs,
+                outputs=self.outputs,
+                name=self.name,
+                odata_type=self.odata_type,
+                categories=self.categories,
+                default_language_code=self.default_language_code,
+                include_typeless_entities=self.include_typeless_entities,
+                minimum_precision=self.minimum_precision,
+                model_version=self.model_version
+            )
+        if self.skill_version in [EntityRecognitionSkillVersion.V3, EntityRecognitionSkillVersion.LATEST]:
+            return _EntityRecognitionSkillV3(
+                inputs=self.inputs,
+                outputs=self.outputs,
+                name=self.name,
+                odata_type=self.odata_type,
+                categories=self.categories,
+                default_language_code=self.default_language_code,
+                include_typeless_entities=self.include_typeless_entities,
+                minimum_precision=self.minimum_precision,
+                model_version=self.model_version
+            )
+        return None
+
+    @classmethod
+    def _from_generated(cls, skill):
+        if not skill:
+            return None
+        kwargs = skill.as_dict()
+        if isinstance(skill, _EntityRecognitionSkillV1):
+            return EntityRecognitionSkill(
+                skill_version=EntityRecognitionSkillVersion.V1,
+                **kwargs
+            )
+        if isinstance(skill, _EntityRecognitionSkillV3):
+            return EntityRecognitionSkill(
+                skill_version=EntityRecognitionSkillVersion.V3,
+                **kwargs
+            )
+        return None
+
+
+class SentimentSkillVersion(str, Enum):
+    """ Specifies the Sentiment Skill version to use."""
+
+    #: Use Sentiment skill V1.
+    V1 = "#Microsoft.Skills.Text.SentimentSkill"
+    #: Use Sentiment skill V3.
+    V3 = "#Microsoft.Skills.Text.V3.SentimentSkill"
+    #: Use latest version of Sentiment skill.
+    LATEST = "#Microsoft.Skills.Text.V3.SentimentSkill"
+
+
+class SentimentSkill(SearchIndexerSkill):
+    """V1: Text analytics positive-negative sentiment analysis, scored as a floating point value in a range of zero
+    to 1.
+    V3: Using the Text Analytics API, evaluates unstructured text and for each record, provides sentiment labels
+    (such as "negative", "neutral" and "positive") based on the highest confidence score found by the service at
+    a sentence and document-level.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+     server.
+    :type odata_type: str
+    :param name: The name of the skill which uniquely identifies it within the skillset. A skill
+     with no name defined will be given a default name of its 1-based index in the skills array,
+     prefixed with the character '#'.
+    :type name: str
+    :param description: The description of the skill which describes the inputs, outputs, and usage
+     of the skill.
+    :type description: str
+    :param context: Represents the level at which operations take place, such as the document root
+     or document content (for example, /document or /document/content). The default is /document.
+    :type context: str
+    :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
+     output of an upstream skill.
+    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :param outputs: Required. The output of a skill is either a field in a search index, or a value
+     that can be consumed as an input by another skill.
+    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :param default_language_code: A value indicating which language code to use. Default is en.
+     Possible values include: "da", "nl", "en", "fi", "fr", "de", "el", "it", "no", "pl", "pt-PT",
+     "ru", "es", "sv", "tr".
+    :type default_language_code: str or
+     ~azure.search.documents.indexes.models.SentimentSkillLanguage
+    :param include_opinion_mining: If set to true, the skill output will include information from
+     Text Analytics for opinion mining, namely targets (nouns or verbs) and their associated
+     assessment (adjective) in the text. Default is false.
+    :type include_opinion_mining: bool
+    :param model_version: The version of the model to use when calling the Text Analytics service.
+     It will default to the latest available when not specified. We recommend you do not specify
+     this value unless absolutely necessary.
+    :type model_version: str
+    :param skill_version: The version of the skill to use when calling the Text Analytics service.
+     It will default to V1 when not specified.
+    :type skill_version: ~azure.search.documents.indexes.models.SentimentSkillVersion
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+        'inputs': {'required': True},
+        'outputs': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'context': {'key': 'context', 'type': 'str'},
+        'inputs': {'key': 'inputs', 'type': '[InputFieldMappingEntry]'},
+        'outputs': {'key': 'outputs', 'type': '[OutputFieldMappingEntry]'},
+        'default_language_code': {'key': 'defaultLanguageCode', 'type': 'str'},
+        'include_opinion_mining': {'key': 'includeOpinionMining', 'type': 'bool'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        # pop skill_version from kwargs to avoid warning in msrest
+        skill_version = kwargs.pop('skill_version', SentimentSkillVersion.V1)
+
+        super(SentimentSkill, self).__init__(**kwargs)
+        self.skill_version = skill_version
+        self.odata_type = self.skill_version  # type: str
+        self.default_language_code = kwargs.get('default_language_code', None)
+        self.include_opinion_mining = kwargs.get('include_opinion_mining', False)
+        self.model_version = kwargs.get('model_version', None)
+
+    def _to_generated(self):
+        if self.skill_version == SentimentSkillVersion.V1:
+            return _SentimentSkillV1(
+                inputs=self.inputs,
+                outputs=self.outputs,
+                name=self.name,
+                odata_type=self.odata_type,
+                default_language_code=self.default_language_code,
+                include_opinion_mining=self.include_opinion_mining,
+                model_version=self.model_version
+            )
+        if self.skill_version in [SentimentSkillVersion.V3, SentimentSkillVersion.LATEST]:
+            return _SentimentSkillV3(
+                inputs=self.inputs,
+                outputs=self.outputs,
+                name=self.name,
+                odata_type=self.odata_type,
+                default_language_code=self.default_language_code,
+                include_opinion_mining=self.include_opinion_mining,
+                model_version=self.model_version
+            )
+        return None
+
+    @classmethod
+    def _from_generated(cls, skill):
+        if not skill:
+            return None
+        kwargs = skill.as_dict()
+        if isinstance(skill, _SentimentSkillV1):
+            return SentimentSkill(
+                skill_version=SentimentSkillVersion.V1,
+                **kwargs
+            )
+        if isinstance(skill, _SentimentSkillV3):
+            return SentimentSkill(
+                skill_version=SentimentSkillVersion.V3,
+                **kwargs
+            )
+        return None
 
 
 class AnalyzeTextOptions(msrest.serialization.Model):

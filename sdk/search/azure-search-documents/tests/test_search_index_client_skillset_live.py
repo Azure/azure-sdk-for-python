@@ -16,10 +16,14 @@ from azure.core import MatchConditions
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
 from azure.search.documents.indexes.models import(
+    EntityLinkingSkill,
     EntityRecognitionSkill,
+    EntityRecognitionSkillVersion,
     InputFieldMappingEntry,
     OutputFieldMappingEntry,
     SearchIndexerSkillset,
+    SentimentSkill,
+    SentimentSkillVersion
 )
 from azure.search.documents.indexes import SearchIndexerClient
 
@@ -30,7 +34,6 @@ try:
 except UnicodeDecodeError:
     BATCH = json.load(open(join(CWD, "hotel_small.json"), encoding='utf-8'))
 TIME_TO_SLEEP = 5
-CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=storagename;AccountKey=NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==;EndpointSuffix=core.windows.net'
 
 class SearchSkillsetClientTest(AzureMgmtTestCase):
     FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['api-key']
@@ -39,19 +42,60 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_skillset(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
+        name = "test-ss"
 
-        s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
-                                   outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
+        s1 = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
+                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizationsS1")],
+                                    description="Skill Version 1",
+                                    model_version="1",
+                                    include_typeless_entities=True)
 
-        skillset = SearchIndexerSkillset(name='test-ss', skills=list([s]), description="desc")
+        s2 = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
+                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizationsS2")],
+                                    skill_version=EntityRecognitionSkillVersion.LATEST,
+                                    description="Skill Version 3",
+                                    model_version="3",
+                                    include_typeless_entities=True)
+        s3 = SentimentSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
+                            outputs=[OutputFieldMappingEntry(name="score", target_name="scoreS3")],
+                            skill_version=SentimentSkillVersion.V1,
+                            description="Sentiment V1",
+                            include_opinion_mining=True)
+
+        s4 = SentimentSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
+                            outputs=[OutputFieldMappingEntry(name="confidenceScores", target_name="scoreS4")],
+                            skill_version=SentimentSkillVersion.V3,
+                            description="Sentiment V3",
+                            include_opinion_mining=True)
+
+        s5 = EntityLinkingSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
+                                outputs=[OutputFieldMappingEntry(name="entities", target_name="entitiesS5")],
+                                minimum_precision=0.5)
+
+        skillset = SearchIndexerSkillset(name=name, skills=list([s1, s2, s3, s4, s5]), description="desc")
+
+        client.delete_skillset(name) 
+
+        dict_skills = [skill.as_dict() for skill in skillset.skills]
+        skillset.skills = dict_skills
 
         result = client.create_skillset(skillset)
+
         assert isinstance(result, SearchIndexerSkillset)
         assert result.name == "test-ss"
         assert result.description == "desc"
         assert result.e_tag
-        assert len(result.skills) == 1
+        assert len(result.skills) == 5
         assert isinstance(result.skills[0], EntityRecognitionSkill)
+        assert result.skills[0].skill_version == EntityRecognitionSkillVersion.V1
+        assert isinstance(result.skills[1], EntityRecognitionSkill)
+        assert result.skills[1].skill_version == EntityRecognitionSkillVersion.V3
+        assert isinstance(result.skills[2], SentimentSkill)
+        assert result.skills[2].skill_version == SentimentSkillVersion.V1
+        assert isinstance(result.skills[3], SentimentSkill)
+        assert result.skills[3].skill_version == SentimentSkillVersion.V3
+        assert isinstance(result.skills[4], EntityLinkingSkill)
+        assert result.skills[4].minimum_precision == 0.5
 
         assert len(client.get_skillsets()) == 1
 
