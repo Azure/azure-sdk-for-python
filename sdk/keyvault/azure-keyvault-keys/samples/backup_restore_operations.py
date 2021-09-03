@@ -38,37 +38,34 @@ from azure.core.exceptions import HttpResponseError
 VAULT_URL = os.environ["VAULT_URL"]
 credential = DefaultAzureCredential()
 client = KeyClient(vault_url=VAULT_URL, credential=credential)
-try:
-    # Let's create a Key of type RSA.
-    # if the key already exists in the Key Vault, then a new version of the key is created.
-    print("\n.. Create Key")
-    key = client.create_key("keyName", "RSA")
-    print("Key with name '{0}' created with key type '{1}'".format(key.name, key.key_type))
 
-    # Backups are good to have, if in case keys gets deleted accidentally.
-    # For long term storage, it is ideal to write the backup to a file.
-    print("\n.. Create a backup for an existing Key")
-    key_backup = client.backup_key(key.name)
-    print("Backup created for key with name '{0}'.".format(key.name))
+# Let's create a Key of type RSA.
+# if the key already exists in the Key Vault, then a new version of the key is created.
+print("\n.. Create Key")
+key = client.create_key("keyName", "RSA")
+print("Key with name '{0}' created with key type '{1}'".format(key.name, key.key_type))
 
-    # The rsa key is no longer in use, so you delete it.
-    print("\n.. Delete the key")
-    delete_operation = client.begin_delete_key(key.name)
-    deleted_key = delete_operation.result()
-    print("Deleted key with name '{0}'".format(deleted_key.name))
+# Backups are good to have, if in case keys gets deleted accidentally.
+# For long term storage, it is ideal to write the backup to a file.
+print("\n.. Create a backup for an existing Key")
+key_backup = client.backup_key(key.name)
+print("Backup created for key with name '{0}'.".format(key.name))
 
-    # Wait for the deletion to complete before purging the key.
-    # The purge will take some time, so wait before restoring the backup to avoid a conflict.
-    delete_operation.wait()
-    print("\n.. Purge the key")
-    client.purge_deleted_key(key.name)
-    time.sleep(60)
-    print("Purged key with name '{0}'".format(deleted_key.name))
+# The rsa key is no longer in use, so you delete it.
+print("\n.. Delete the key")
+delete_operation = client.begin_delete_key(key.name)
+deleted_key = delete_operation.result()
+print("Deleted key with name '{0}'".format(deleted_key.name))
 
-    # In the future, if the key is required again, we can use the backup value to restore it in the Key Vault.
-    print("\n.. Restore the key using the backed up key bytes")
-    key = client.restore_key_backup(key_backup)
-    print("Restored key with name '{0}'".format(key.name))
+# Wait for the deletion to complete before purging the key.
+# The purge will take some time, so wait before restoring the backup to avoid a conflict.
+delete_operation.wait()
+print("\n.. Purge the key")
+client.purge_deleted_key(key.name)
+time.sleep(60)
+print("Purged key with name '{0}'".format(deleted_key.name))
 
-except HttpResponseError as e:
-    print("\nThis sample has caught an error. {0}".format(e.message))
+# In the future, if the key is required again, we can use the backup value to restore it in the Key Vault.
+print("\n.. Restore the key using the backed up key bytes")
+key = client.restore_key_backup(key_backup)
+print("Restored key with name '{0}'".format(key.name))
