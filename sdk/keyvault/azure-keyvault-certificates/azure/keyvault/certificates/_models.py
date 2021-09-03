@@ -369,7 +369,7 @@ class KeyVaultCertificate(object):
 
     @property
     def secret_id(self):
-        # type: () -> Optional[Any]
+        # type: () -> Optional[str]
         """:rtype: Any or None"""
         return self._secret_id
 
@@ -537,7 +537,7 @@ class CertificateOperation(object):
         # type: () -> Union[str, WellKnownIssuerNames, None]
         """The name of the issuer of the certificate.
 
-        :rtype: str or WellKnownIssuerNames or None
+        :rtype: str or ~azure.keyvault.certificates.WellKnownIssuerNames or None
         """
         return self._issuer_name
 
@@ -776,7 +776,8 @@ class CertificatePolicy(object):
 
         if self.content_type:
             secret_properties = models.SecretProperties(
-                content_type=self.content_type)  # type: Optional[models.SecretProperties]
+                content_type=self.content_type
+                )  # type: Optional[models.SecretProperties]
         else:
             secret_properties = None
 
