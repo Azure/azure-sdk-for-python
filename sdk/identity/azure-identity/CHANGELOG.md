@@ -5,6 +5,9 @@
 ### Features Added
 - `CertificateCredential` accepts certificates in PKCS12 format
   ([#13540](https://github.com/Azure/azure-sdk-for-python/issues/13540))
+- `OnBehalfOfCredential` supports the on-behalf-of authentication flow for
+  accessing resources on behalf of users
+  ([#19308](https://github.com/Azure/azure-sdk-for-python/issues/19308))
 
 ### Breaking Changes
 
@@ -15,7 +18,6 @@
   `azure.identity` namespace. At the end of a `with` block, or when `close()`
   is called, these credentials close their underlying transport sessions.
   ([#18798](https://github.com/Azure/azure-sdk-for-python/issues/18798))
-
 
 
 ## 1.6.1 (2021-08-19)
