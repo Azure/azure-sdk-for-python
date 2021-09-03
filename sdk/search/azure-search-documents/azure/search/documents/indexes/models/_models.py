@@ -34,22 +34,22 @@ class SearchIndexerSkillset(_SearchIndexerSkillset):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the skillset.
+    :param name: Required. The name of the skillset.
     :type name: str
-    :ivar description: The description of the skillset.
+    :param description: The description of the skillset.
     :type description: str
-    :ivar skills: Required. A list of skills in the skillset.
+    :param skills: Required. A list of skills in the skillset.
     :type skills: list[~azure.search.documents.indexes.models.SearchIndexerSkill]
-    :ivar cognitive_services_account: Details about cognitive services to be used when running
+    :param cognitive_services_account: Details about cognitive services to be used when running
      skills.
     :type cognitive_services_account:
      ~azure.search.documents.indexes.models.CognitiveServicesAccount
-    :ivar knowledge_store: Definition of additional projections to azure blob, table, or files, of
+    :param knowledge_store: Definition of additional projections to azure blob, table, or files, of
      enriched data.
     :type knowledge_store: ~azure.search.documents.indexes.models.SearchIndexerKnowledgeStore
-    :ivar e_tag: The ETag of the skillset.
+    :param e_tag: The ETag of the skillset.
     :type e_tag: str
-    :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
+    :param encryption_key: A description of an encryption key that you create in Azure Key Vault.
      This key is used to provide an additional level of encryption-at-rest for your skillset
      definition when you want full assurance that no one, not even Microsoft, can decrypt your
      skillset definition in Azure Cognitive Search. Once you have encrypted your skillset
@@ -118,46 +118,46 @@ class EntityRecognitionSkill(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
      server.
     :type odata_type: str
-    :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
+    :param name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
      prefixed with the character '#'.
     :type name: str
-    :ivar description: The description of the skill which describes the inputs, outputs, and usage
+    :param description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
     :type description: str
-    :ivar context: Represents the level at which operations take place, such as the document root
+    :param context: Represents the level at which operations take place, such as the document root
      or document content (for example, /document or /document/content). The default is /document.
     :type context: str
-    :ivar inputs: Required. Inputs of the skills could be a column in the source data set, or the
+    :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
      output of an upstream skill.
     :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :ivar outputs: Required. The output of a skill is either a field in a search index, or a value
+    :param outputs: Required. The output of a skill is either a field in a search index, or a value
      that can be consumed as an input by another skill.
     :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
-    :ivar categories: A list of entity categories that should be extracted.
+    :param categories: A list of entity categories that should be extracted.
     :type categories: list[str or ~azure.search.documents.indexes.models.EntityCategory]
-    :ivar default_language_code: A value indicating which language code to use. Default is en.
+    :param default_language_code: A value indicating which language code to use. Default is en.
      Possible values include: "ar", "cs", "zh-Hans", "zh-Hant", "da", "nl", "en", "fi", "fr", "de",
      "el", "hu", "it", "ja", "ko", "no", "pl", "pt-PT", "pt-BR", "ru", "es", "sv", "tr".
     :type default_language_code: str or
      ~azure.search.documents.indexes.models.EntityRecognitionSkillLanguage
-    :ivar include_typeless_entities: Determines whether or not to include entities which are well
+    :param include_typeless_entities: Determines whether or not to include entities which are well
      known but don't conform to a pre-defined type. If this configuration is not set (default), set
      to null or set to false, entities which don't conform to one of the pre-defined types will not
      be surfaced. Only valid for skill version 1.
     :type include_typeless_entities: bool
-    :ivar minimum_precision: A value between 0 and 1 that be used to only include entities whose
+    :param minimum_precision: A value between 0 and 1 that be used to only include entities whose
      confidence score is greater than the value specified. If not set (default), or if explicitly
      set to null, all entities will be included.
     :type minimum_precision: float
-    :ivar model_version: The version of the model to use when calling the Text Analytics service.
+    :param model_version: The version of the model to use when calling the Text Analytics service.
      It will default to the latest available when not specified. We recommend you do not specify
      this value unless absolutely necessary. Only valid from skill version 3.
     :type model_version: str
-    :ivar skill_version: The version of the skill to use when calling the Text Analytics service.
+    :param skill_version: The version of the skill to use when calling the Text Analytics service.
      It will default to V1 when not specified.
     :type skill_version: ~azure.search.documents.indexes.models.EntityRecognitionSkillVersion
     """
@@ -265,39 +265,39 @@ class SentimentSkill(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
      server.
     :type odata_type: str
-    :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
+    :param name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
      prefixed with the character '#'.
     :type name: str
-    :ivar description: The description of the skill which describes the inputs, outputs, and usage
+    :param description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
     :type description: str
-    :ivar context: Represents the level at which operations take place, such as the document root
+    :param context: Represents the level at which operations take place, such as the document root
      or document content (for example, /document or /document/content). The default is /document.
     :type context: str
-    :ivar inputs: Required. Inputs of the skills could be a column in the source data set, or the
+    :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
      output of an upstream skill.
     :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :ivar outputs: Required. The output of a skill is either a field in a search index, or a value
+    :param outputs: Required. The output of a skill is either a field in a search index, or a value
      that can be consumed as an input by another skill.
     :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
-    :ivar default_language_code: A value indicating which language code to use. Default is en.
+    :param default_language_code: A value indicating which language code to use. Default is en.
      Possible values include: "da", "nl", "en", "fi", "fr", "de", "el", "it", "no", "pl", "pt-PT",
      "ru", "es", "sv", "tr".
     :type default_language_code: str or
      ~azure.search.documents.indexes.models.SentimentSkillLanguage
-    :ivar include_opinion_mining: If set to true, the skill output will include information from
+    :param include_opinion_mining: If set to true, the skill output will include information from
      Text Analytics for opinion mining, namely targets (nouns or verbs) and their associated
      assessment (adjective) in the text. Default is false.
     :type include_opinion_mining: bool
-    :ivar model_version: The version of the model to use when calling the Text Analytics service.
+    :param model_version: The version of the model to use when calling the Text Analytics service.
      It will default to the latest available when not specified. We recommend you do not specify
      this value unless absolutely necessary.
     :type model_version: str
-    :ivar skill_version: The version of the skill to use when calling the Text Analytics service.
+    :param skill_version: The version of the skill to use when calling the Text Analytics service.
      It will default to V1 when not specified.
     :type skill_version: ~azure.search.documents.indexes.models.SentimentSkillVersion
     """
@@ -380,9 +380,9 @@ class AnalyzeTextOptions(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar text: Required. The text to break into tokens.
+    :param text: Required. The text to break into tokens.
     :type text: str
-    :ivar analyzer_name: The name of the analyzer to use to break the given text. If this parameter is
+    :param analyzer_name: The name of the analyzer to use to break the given text. If this parameter is
      not specified, you must specify a tokenizer instead. The tokenizer and analyzer parameters are
      mutually exclusive. Possible values include: "ar.microsoft", "ar.lucene", "hy.lucene",
      "bn.microsoft", "eu.lucene", "bg.microsoft", "bg.lucene", "ca.microsoft", "ca.lucene", "zh-
@@ -402,19 +402,19 @@ class AnalyzeTextOptions(msrest.serialization.Model):
      "vi.microsoft", "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern",
      "simple", "stop", "whitespace".
     :type analyzer_name: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
-    :ivar tokenizer_name: The name of the tokenizer to use to break the given text. If this parameter
+    :param tokenizer_name: The name of the tokenizer to use to break the given text. If this parameter
      is not specified, you must specify an analyzer instead. The tokenizer and analyzer parameters
      are mutually exclusive. Possible values include: "classic", "edgeNGram", "keyword_v2",
      "letter", "lowercase", "microsoft_language_tokenizer", "microsoft_language_stemming_tokenizer",
      "nGram", "path_hierarchy_v2", "pattern", "standard_v2", "uax_url_email", "whitespace".
     :type tokenizer_name: str or ~azure.search.documents.indexes.models.LexicalTokenizerName
-    :ivar normalizer_name: The name of the normalizer to use to normalize the given text. Possible
+    :param normalizer_name: The name of the normalizer to use to normalize the given text. Possible
      values include: "asciifolding", "elision", "lowercase", "standard", "uppercase".
     :type normalizer_name: str or ~azure.search.documents.indexes.models.LexicalNormalizerName
-    :ivar token_filters: An optional list of token filters to use when breaking the given text.
+    :param token_filters: An optional list of token filters to use when breaking the given text.
      This parameter can only be set when using the tokenizer parameter.
     :type token_filters: list[str or ~azure.search.documents.indexes.models.TokenFilterName]
-    :ivar char_filters: An optional list of character filters to use when breaking the given text.
+    :param char_filters: An optional list of character filters to use when breaking the given text.
      This parameter can only be set when using the tokenizer parameter.
     :type char_filters: list[str]
     """
@@ -460,24 +460,24 @@ class CustomAnalyzer(LexicalAnalyzer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. Identifies the concrete type of the analyzer.Constant filled by
+    :param odata_type: Required. Identifies the concrete type of the analyzer.Constant filled by
      server.
     :type odata_type: str
-    :ivar name: Required. The name of the analyzer. It must only contain letters, digits, spaces,
+    :param name: Required. The name of the analyzer. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and is limited to
      128 characters.
     :type name: str
-    :ivar tokenizer_name: Required. The name of the tokenizer to use to divide continuous text into a
+    :param tokenizer_name: Required. The name of the tokenizer to use to divide continuous text into a
      sequence of tokens, such as breaking a sentence into words. Possible values include: "classic",
      "edgeNGram", "keyword_v2", "letter", "lowercase", "microsoft_language_tokenizer",
      "microsoft_language_stemming_tokenizer", "nGram", "path_hierarchy_v2", "pattern",
      "standard_v2", "uax_url_email", "whitespace".
     :type tokenizer_name: str or ~azure.search.documents.indexes.models.LexicalTokenizerName
-    :ivar token_filters: A list of token filters used to filter out or modify the tokens generated
+    :param token_filters: A list of token filters used to filter out or modify the tokens generated
      by a tokenizer. For example, you can specify a lowercase filter that converts all characters to
      lowercase. The filters are run in the order in which they are listed.
     :type token_filters: list[str or ~azure.search.documents.indexes.models.TokenFilterName]
-    :ivar char_filters: A list of character filters used to prepare input text before it is
+    :param char_filters: A list of character filters used to prepare input text before it is
      processed by the tokenizer. For instance, they can replace certain characters or symbols. The
      filters are run in the order in which they are listed.
     :type char_filters: list[str]
@@ -532,20 +532,20 @@ class PatternAnalyzer(LexicalAnalyzer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the analyzer. It must only contain letters, digits, spaces,
+    :param name: Required. The name of the analyzer. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and is limited to
      128 characters.
     :type name: str
-    :ivar lower_case_terms: A value indicating whether terms should be lower-cased. Default is
+    :param lower_case_terms: A value indicating whether terms should be lower-cased. Default is
      true.
     :type lower_case_terms: bool
-    :ivar pattern: A regular expression to match token separators. Default is an
+    :param pattern: A regular expression to match token separators. Default is an
      expression that matches one or more white space characters.
     :type pattern: str
-    :ivar flags: List of regular expression flags. Possible values of each flag include: 'CANON_EQ',
+    :param flags: List of regular expression flags. Possible values of each flag include: 'CANON_EQ',
      'CASE_INSENSITIVE', 'COMMENTS', 'DOTALL', 'LITERAL', 'MULTILINE', 'UNICODE_CASE', 'UNIX_LINES'.
     :type flags: list[str] or list[~search_service_client.models.RegexFlags]
-    :ivar stopwords: A list of stopwords.
+    :param stopwords: A list of stopwords.
     :type stopwords: list[str]
     """
 
@@ -604,17 +604,17 @@ class PatternTokenizer(LexicalTokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
+    :param name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and is limited to
      128 characters.
     :type name: str
-    :ivar pattern: A regular expression to match token separators. Default is an
+    :param pattern: A regular expression to match token separators. Default is an
      expression that matches one or more white space characters.
     :type pattern: str
-    :ivar flags: List of regular expression flags. Possible values of each flag include: 'CANON_EQ',
+    :param flags: List of regular expression flags. Possible values of each flag include: 'CANON_EQ',
      'CASE_INSENSITIVE', 'COMMENTS', 'DOTALL', 'LITERAL', 'MULTILINE', 'UNICODE_CASE', 'UNIX_LINES'.
     :type flags: list[str] or list[~search_service_client.models.RegexFlags]
-    :ivar group: The zero-based ordinal of the matching group in the regular expression to
+    :param group: The zero-based ordinal of the matching group in the regular expression to
      extract into tokens. Use -1 if you want to use the entire pattern to split the input into
      tokens, irrespective of matching groups. Default is -1.
     :type group: int
@@ -671,21 +671,21 @@ class SearchResourceEncryptionKey(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar key_name: Required. The name of your Azure Key Vault key to be used to encrypt your data
+    :param key_name: Required. The name of your Azure Key Vault key to be used to encrypt your data
      at rest.
     :type key_name: str
-    :ivar key_version: Required. The version of your Azure Key Vault key to be used to encrypt
+    :param key_version: Required. The version of your Azure Key Vault key to be used to encrypt
      your data at rest.
     :type key_version: str
-    :ivar vault_uri: Required. The URI of your Azure Key Vault, also referred to as DNS name, that
+    :param vault_uri: Required. The URI of your Azure Key Vault, also referred to as DNS name, that
      contains the key to be used to encrypt your data at rest. An example URI might be https://my-
      keyvault-name.vault.azure.net.
     :type vault_uri: str
-    :ivar application_id: Required. An AAD Application ID that was granted the required access
+    :param application_id: Required. An AAD Application ID that was granted the required access
      permissions to the Azure Key Vault that is to be used when encrypting your data at rest. The
      Application ID should not be confused with the Object ID for your AAD Application.
     :type application_id: str
-    :ivar application_secret: The authentication key of the specified AAD application.
+    :param application_secret: The authentication key of the specified AAD application.
     :type application_secret: str
     """
 
@@ -756,15 +756,15 @@ class SynonymMap(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the synonym map.
+    :param name: Required. The name of the synonym map.
     :type name: str
     :ivar format: Required. The format of the synonym map. Only the 'solr' format is currently
      supported. Default value: "solr".
     :vartype format: str
-    :ivar synonyms: Required. A series of synonym rules in the specified synonym map format. The
+    :param synonyms: Required. A series of synonym rules in the specified synonym map format. The
      rules must be separated by newlines.
     :type synonyms: list[str]
-    :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
+    :param encryption_key: A description of an encryption key that you create in Azure Key Vault.
      This key is used to provide an additional level of encryption-at-rest for your data when you
      want full assurance that no one, not even Microsoft, can decrypt your data in Azure Cognitive
      Search. Once you have encrypted your data, it will always remain encrypted. Azure Cognitive
@@ -773,7 +773,7 @@ class SynonymMap(msrest.serialization.Model):
      customer-managed keys is not available for free search services, and is only available for paid
      services created on or after January 1, 2019.
     :type encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
-    :ivar e_tag: The ETag of the synonym map.
+    :param e_tag: The ETag of the synonym map.
     :type e_tag: str
     """
 
@@ -833,23 +833,23 @@ class SearchIndexerDataSourceConnection(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the datasource connection.
+    :param name: Required. The name of the datasource connection.
     :type name: str
-    :ivar description: The description of the datasource connection.
+    :param description: The description of the datasource connection.
     :type description: str
-    :ivar type: Required. The type of the datasource connection. Possible values include: "azuresql",
+    :param type: Required. The type of the datasource connection. Possible values include: "azuresql",
      "cosmosdb", "azureblob", "azuretable", "mysql", "adlsgen2".
     :type type: str or ~azure.search.documents.indexes.models.SearchIndexerDataSourceType
-    :ivar connection_string: The connection string for the datasource connection.
+    :param connection_string: The connection string for the datasource connection.
     :type connection_string: str
-    :ivar container: Required. The data container for the datasource connection.
+    :param container: Required. The data container for the datasource connection.
     :type container: ~azure.search.documents.indexes.models.SearchIndexerDataContainer
-    :ivar data_change_detection_policy: The data change detection policy for the datasource connection.
+    :param data_change_detection_policy: The data change detection policy for the datasource connection.
     :type data_change_detection_policy: ~azure.search.documents.models.DataChangeDetectionPolicy
-    :ivar data_deletion_detection_policy: The data deletion detection policy for the datasource connection.
+    :param data_deletion_detection_policy: The data deletion detection policy for the datasource connection.
     :type data_deletion_detection_policy:
      ~azure.search.documents.models.DataDeletionDetectionPolicy
-    :ivar e_tag: The ETag of the data source.
+    :param e_tag: The ETag of the data source.
     :type e_tag: str
     """
 
