@@ -15,6 +15,7 @@ These code snippets highlight this SDK's common use cases.
 * [hello_world.py][hello_world_sample] and [hello_world_async.py][hello_world_async_sample] - create/get/update/delete certificates
 * [backup_restore_operations.py][backup_operations_sample] and [backup_restore_operations_async.py][backup_operations_async_sample] - backup and
 recover certificates
+* [import_certificate.py][import_sample] and [import_certificate_async.py][import_async_sample] - import PKCS#12 (PFX) and PEM-formatted certificates into Key Vault
 * [list_operations.py][list_operations_sample] and [list_operations_async.py][list_operations_async_sample] - list certificates
 * [recover_purge_operations.py][recover_purge_operations_sample] and [recover_purge_operations_async.py][recover_purge_operations_async_sample] - recover and purge certificates
 * [issuers.py][issuers_sample] and [issuers_async.py][issuers_async_sample] - manage certificate issuers
@@ -25,6 +26,8 @@ recover certificates
 [backup_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-certificates/samples/backup_restore_operations_async.py
 [hello_world_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-certificates/samples/hello_world.py
 [hello_world_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-certificates/samples/hello_world_async.py
+[import_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-certificates/samples/import_certificate.py
+[import_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-certificates/samples/import_certificate_async.py
 [keyvault_docs]: https://docs.microsoft.com/azure/key-vault/
 [list_operations_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-certificates/samples/list_operations.py
 [list_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-certificates/samples/list_operations_async.py
