@@ -95,6 +95,13 @@ def _claim_ownership_exception_test(storage_connection_str, table_name):
     )
     assert result_ownership[0] in list_ownership
 
+    single_ownership_list = [result_ownership_list[0].copy()]
+    single_ownership_list[0]["etag"] = "W/\"datetime'2021-08-02T00%3A46%3A51.7645424Z'\""
+
+    # `etag` does not match last updated `etag`, so original ownership will be returned
+    returned_ownership_list = checkpoint_store.claim_ownership(single_ownership_list)
+    assert returned_ownership_list == single_ownership_list
+
 
 def _claim_and_list_ownership(storage_connection_str, table_name):
     fully_qualified_namespace = "test_namespace"
