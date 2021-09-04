@@ -208,16 +208,3 @@ class CallingServerClient(object):
         )
 
         return CallConnection(join_call_response.call_connection_id, self._call_connection_client)
-
-    def close(self):
-        # type: () -> None
-        self._callingserver_service_client.close()
-
-    def __enter__(self):
-        # type: () -> CallingServerClient
-        self._callingserver_service_client.__enter__()  # pylint:disable=no-member
-        return self
-
-    def __exit__(self, *args):
-        # type: (*Any) -> None
-        self._callingserver_service_client.__exit__(*args)  # pylint:disable=no-member
