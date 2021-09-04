@@ -136,7 +136,7 @@ class SchemaRegistryAvroSerializer(object):
         raw_input_schema = schema
         try:
             cached_schema = self._user_input_schema_cache[raw_input_schema]
-        except (KeyError, TypeError):
+        except KeyError:
             parsed_schema = avro.schema.parse(raw_input_schema)
             self._user_input_schema_cache[raw_input_schema] = parsed_schema
             cached_schema = parsed_schema
