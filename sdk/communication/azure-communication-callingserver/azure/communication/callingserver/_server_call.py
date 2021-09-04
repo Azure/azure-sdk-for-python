@@ -9,9 +9,10 @@ from typing import Any
 from azure.core.tracing.decorator import distributed_trace
 
 from ._generated.aio.operations import ServerCallsOperations
-from ._generated.models import PlayAudioRequest
-from ._models import PlayAudioResult
-
+from ._generated.models import PlayAudioRequest, PhoneNumberIdentifierModel
+from ._models import PlayAudioResult, AddParticipantResult
+from ._communication_identifier_serializer import (deserialize_identifier,
+                                                   serialize_identifier)
 
 class ServerCall(object):
 
@@ -28,20 +29,21 @@ class ServerCall(object):
     @distributed_trace()
     def play_audio(
         self,
-        audio_file_uri: str,
-        audio_File_id: str,
-        callback_uri: str,
-        operation_context: str,
-        **kwargs: Any
-    ):
-        # type: (...) -> PlayAudioResult
+            audio_file_uri, # type: str
+            loop, # type: bool
+            audio_file_id, # type: str
+            callback_uri, # type: str
+            operation_context = None, # type: Optional[str]
+            **kwargs, # type: str: Any
+        ): # type: (...) -> PlayAudioResult
+
         try:
             if not audio_file_uri.lower().startswith('http'):
                 audio_file_uri = "https://" + audio_file_uri
         except AttributeError:
             raise ValueError("URL must be a string.")
 
-        if not audio_File_id:
+        if not audio_file_id:
             raise ValueError("audio_File_id can not be None")
 
         try:
@@ -55,29 +57,53 @@ class ServerCall(object):
 
         request = PlayAudioRequest(
             audio_file_uri=audio_file_uri,
-            loop = kwargs.get('loop', False),
+            loop = False,
             operation_context=operation_context,
-            audio_file_id=audio_File_id,
+            audio_file_id=audio_file_id,
             callback_uri=callback_uri
-            **kwargs
         )
 
         play_audio_result = self.server_call_client.play_audio(
             server_call_id=self.server_call_id,
             request=request,
+            **kwargs
         )
 
         return PlayAudioResult._from_generated(play_audio_result)
 
-    def close(self):
-        # type: () -> None
-        self.server_call_client.close()
+    @distributed_trace()
+    def add_participant(
+            self,
+            participant,  # type: CommunicationIdentifier
+            callback_uri,  # type: str
+            alternate_caller_id, # type: Optional[str]
+            operation_context, # type: Optional[str]
+            **kwargs # type: Any
+        ): # type: (...) -> AddParticipantResult
 
-    def __enter__(self):
-        # type: () -> ServerCall
-        self.server_call_client.__enter__()  # pylint:disable=no-member
-        return self
+        if not participant:
+            raise ValueError("participant can not be None")
 
-    def __exit__(self, *args):
-        # type: (*Any) -> None
-        self.server_call_client.__exit__(*args)  # pylint:disable=no-member
+        add_participant_result = self.server_call_client.add_participant(
+            server_call_id=self.server_call_id,
+            participant=serialize_identifier(participant),
+            alternate_caller_id=None if alternate_caller_id == None else PhoneNumberIdentifierModel(value=alternate_caller_id.properties['value']),
+            callback_uri=callback_uri,
+            operation_context=operation_context,
+            **kwargs
+        )
+
+        return AddParticipantResult._from_generated(add_participant_result)
+
+    @distributed_trace()
+    def remove_participant(
+            self,
+            participant_id,  # type: str
+            **kwargs # type: Any
+        ): # type: (...) -> None
+
+        return self.server_call_client.remove_participant(
+            server_call_id=self.server_call_id,
+            participant_id=participant_id,
+            **kwargs
+        )

@@ -23,6 +23,8 @@ if TYPE_CHECKING:
 
 from .._shared.utils import (get_authentication_policy, get_current_utc_time,
                             parse_connection_str)
+from .._converters import JoinCallRequestConverter
+
 from .._version import SDK_MONIKER
 
 class CallingServerClient(object):
@@ -175,16 +177,16 @@ class CallingServerClient(object):
         self,
         server_call_id,  # type: str
         source,  # type: CommunicationIdentifier
-        options,  # type: JoinCallOptions
+        call_options,  # type: JoinCallOptions
         **kwargs  # type: Any
     ): # type: (...) -> CallConnection
         """Join the call using server call id.
 
         :param str server_call_id:
            The server call id.
-        :param CommunicationIdentifier targets:
+        :param CommunicationIdentifier source:
            The source identity.
-        :param JoinCallOptions options:
+        :param JoinCallOptions call_options:
            The call Options.
         :returns: CallConnection for a successful join request.
         :rtype: ~azure.communication.callingserver.CallConnection
@@ -195,28 +197,29 @@ class CallingServerClient(object):
         if not source:
             raise ValueError("source can not be None")
 
-        if not options:
-            raise ValueError("options can not be None")
+        if not call_options:
+            raise ValueError("call_options can not be None")
+
+        join_call_request = JoinCallRequestConverter.convert(source, call_options)
 
         join_call_response = await self._server_call_client.join_call(
             server_call_id=server_call_id,
             source=source,
-            call_options=options,
+            call_request=join_call_request,
             **kwargs
         )
 
         return CallConnection(join_call_response.call_connection_id, self._call_connection_client)
 
-    async def close(self):
-        # type: () -> None
+    async def close(self) -> None:
+        """Close the :class:
+        `~azure.communication.callingserver.aio.CallingServerClient` session.
+        """
         await self._callingserver_service_client.close()
 
-    async def __aenter__(self):
-        # type: () -> CallingServerClient
-        await self._callingserver_service_client.__aenter__()  # pylint:disable=no-member
+    async def __aenter__(self) -> "CallingServerClient":
+        await self._callingserver_service_client.__aenter__()
         return self
 
-    async def __aexit__(self, *args):
-        # type: (*Any) -> None
-        await self._callingserver_service_client.__aexit__(*args)  # pylint:disable=no-member
-
+    async def __aexit__(self, *args: "Any") -> None:
+        await self._callingserver_service_client.__aexit__(*args)
