@@ -795,7 +795,10 @@ class CertificatePolicy(object):
     def _from_certificate_policy_bundle(cls, certificate_policy_bundle):
         # type: (Optional[models.CertificatePolicy]) -> CertificatePolicy
         """Construct a CertificatePolicy from an autorest-generated CertificatePolicy"""
-        if certificate_policy_bundle and certificate_policy_bundle.lifetime_actions:
+        if certificate_policy_bundle is None:
+            return cls()
+
+        if certificate_policy_bundle.lifetime_actions:
             lifetime_actions = [
                 LifetimeAction(
                     action=CertificatePolicyAction(item.action.action_type) if item.action else None,
@@ -806,21 +809,19 @@ class CertificatePolicy(object):
             ]  # type: Optional[List[LifetimeAction]]
         else:
             lifetime_actions = None
-        x509_certificate_properties = (
-            certificate_policy_bundle.x509_certificate_properties if certificate_policy_bundle else None
-        )
+        x509_certificate_properties = certificate_policy_bundle.x509_certificate_properties
         if x509_certificate_properties and x509_certificate_properties.key_usage:
             key_usage = [
                 KeyUsageType(k) for k in x509_certificate_properties.key_usage
             ]  # type: Optional[List[KeyUsageType]]
         else:
             key_usage = None
-        key_properties = certificate_policy_bundle.key_properties if certificate_policy_bundle else None
+        key_properties = certificate_policy_bundle.key_properties
         curve_name = getattr(key_properties, "curve", None)  # missing from 2016-10-01 KeyProperties
         if curve_name:
             curve_name = KeyCurveName(curve_name)
 
-        issuer_parameters = certificate_policy_bundle.issuer_parameters if certificate_policy_bundle else None
+        issuer_parameters = certificate_policy_bundle.issuer_parameters
         return cls(
             issuer_name=issuer_parameters.name if issuer_parameters else None,
             subject=(x509_certificate_properties.subject if x509_certificate_properties else None),
@@ -837,12 +838,11 @@ class CertificatePolicy(object):
             key_usage=key_usage,
             content_type=(
                 CertificateContentType(certificate_policy_bundle.secret_properties.content_type)
-                if certificate_policy_bundle and
-                certificate_policy_bundle.secret_properties and
+                if certificate_policy_bundle.secret_properties and
                 certificate_policy_bundle.secret_properties.content_type
                 else None
             ),
-            attributes=certificate_policy_bundle.attributes  if certificate_policy_bundle else None,
+            attributes=certificate_policy_bundle.attributes,
             san_emails=(
                 x509_certificate_properties.subject_alternative_names.emails
                 if x509_certificate_properties and x509_certificate_properties.subject_alternative_names
