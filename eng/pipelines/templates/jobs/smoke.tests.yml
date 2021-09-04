@@ -167,7 +167,7 @@ jobs:
                 return @{ "name" = $matches[1]; "version" = $matches[2] }
               }
             }
-            if (($artifacts.count -eq 0) -Or ($artifacts.name -match "${{parameters.Artifact.name}}")) {
+            if (($artifacts.count -eq 0) -Or !($artifacts.name -contains "${{parameters.Artifact.name}}")) {
               Write-Host "Can't find package ${{parameters.Artifact.name}}"
               exit 1
             }
