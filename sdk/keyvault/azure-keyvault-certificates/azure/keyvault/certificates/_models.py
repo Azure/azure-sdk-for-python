@@ -777,7 +777,7 @@ class CertificatePolicy(object):
         if self.content_type:
             secret_properties = models.SecretProperties(
                 content_type=self.content_type
-                )  # type: Optional[models.SecretProperties]
+            )  # type: Optional[models.SecretProperties]
         else:
             secret_properties = None
 
