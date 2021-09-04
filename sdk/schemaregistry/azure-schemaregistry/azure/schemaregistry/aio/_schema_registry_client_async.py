@@ -145,7 +145,7 @@ class SchemaRegistryClient(object):
 
     async def get_schema(
         self,
-        id: str,
+        id: str,    # pylint:disable=redefined-builtin
         **kwargs: Any
     ) -> Schema:
         """

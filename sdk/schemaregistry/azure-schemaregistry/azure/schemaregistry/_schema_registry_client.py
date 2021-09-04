@@ -143,7 +143,7 @@ class SchemaRegistryClient(object):
 
         return schema_properties
 
-    def get_schema(self, id, **kwargs):
+    def get_schema(self, id, **kwargs):  # pylint:disable=redefined-builtin
         # type: (str, Any) -> Schema
         """
         Gets a registered schema by its unique ID.

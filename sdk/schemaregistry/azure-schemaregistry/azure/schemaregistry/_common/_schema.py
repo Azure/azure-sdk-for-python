@@ -52,7 +52,7 @@ class SchemaProperties(object):
 
     def __init__(
         self,
-        id=None,
+        id=None,    # pylint:disable=redefined-builtin
         **kwargs
     ):
         # type: (Optional[str], Any) -> None
