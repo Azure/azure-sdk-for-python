@@ -46,6 +46,7 @@ def get_pkname_and_readme_link(rest_repo, link):
         commit_sha = link.split('commit/')[-1]
         commit = rest_repo.get_commit(commit_sha)
         link = commit.files[0].blob_url
+        link = re.sub('blob/(.*?)/specification', 'blob/main/specification', link)
 
     # if link is a pr, it can get both pakeage name and readme link.
     if 'pull' in link:
