@@ -2,7 +2,7 @@ import requests
 import json
 import os
 
-url = "https://dev.azure.com/azure-sdk/590cfd2a-581c-4dcb-a12e-6568ce786175/_apis/pipelines/2500/runs"
+url = os.getenv('URL')
 
 headers = {
     'x-vss-reauthenticationaction': 'Suppress',
