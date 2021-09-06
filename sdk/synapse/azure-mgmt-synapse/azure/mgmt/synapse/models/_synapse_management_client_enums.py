@@ -26,6 +26,10 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
+class AzureADOnlyAuthenticationName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    DEFAULT = "default"
+
 class BlobAuditingPolicyName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     DEFAULT = "default"
@@ -76,6 +80,13 @@ class ColumnDataType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NCHAR = "nchar"
     XML = "xml"
     SYSNAME = "sysname"
+
+class ConfigurationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of the spark config properties file.
+    """
+
+    FILE = "File"
+    ARTIFACT = "Artifact"
 
 class ConnectionPolicyName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -287,6 +298,8 @@ class NodeSizeFamily(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     NONE = "None"
     MEMORY_OPTIMIZED = "MemoryOptimized"
+    HARDWARE_ACCELERATED_FPGA = "HardwareAcceleratedFPGA"
+    HARDWARE_ACCELERATED_GPU = "HardwareAcceleratedGPU"
 
 class OperationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Operation status
@@ -374,6 +387,7 @@ class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     NONE = "None"
     SYSTEM_ASSIGNED = "SystemAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
 
 class RestorePointType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of restore point
@@ -445,6 +459,14 @@ class SsisObjectMetadataType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     PACKAGE = "Package"
     ENVIRONMENT = "Environment"
 
+class StateValue(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """property configuration state
+    """
+
+    CONSISTENT = "Consistent"
+    IN_CONSISTENT = "InConsistent"
+    UPDATING = "Updating"
+
 class StorageAccountType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The storage account type used to store backups for this sql pool.
     """
@@ -490,7 +512,7 @@ class VulnerabilityAssessmentScanTriggerType(with_metaclass(_CaseInsensitiveEnum
     RECURRING = "Recurring"
 
 class WorkspacePublicNetworkAccess(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Enable or Disable pubic network access to workspace
+    """Enable or Disable public network access to workspace
     """
 
     ENABLED = "Enabled"

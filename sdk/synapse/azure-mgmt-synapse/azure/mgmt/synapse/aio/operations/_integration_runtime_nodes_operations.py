@@ -46,7 +46,7 @@ class IntegrationRuntimeNodesOperations:
         workspace_name: str,
         integration_runtime_name: str,
         node_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SelfHostedIntegrationRuntimeNode":
         """Get integration runtime node.
 
@@ -70,14 +70,14 @@ class IntegrationRuntimeNodesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str'),
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
@@ -116,7 +116,7 @@ class IntegrationRuntimeNodesOperations:
         integration_runtime_name: str,
         node_name: str,
         update_integration_runtime_node_request: "_models.UpdateIntegrationRuntimeNodeRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SelfHostedIntegrationRuntimeNode":
         """Create integration runtime node.
 
@@ -143,7 +143,7 @@ class IntegrationRuntimeNodesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -151,7 +151,7 @@ class IntegrationRuntimeNodesOperations:
         url = self.update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str'),
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
@@ -193,7 +193,7 @@ class IntegrationRuntimeNodesOperations:
         workspace_name: str,
         integration_runtime_name: str,
         node_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete integration runtime node.
 
@@ -217,14 +217,14 @@ class IntegrationRuntimeNodesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str'),
             'nodeName': self._serialize.url("node_name", node_name, 'str'),

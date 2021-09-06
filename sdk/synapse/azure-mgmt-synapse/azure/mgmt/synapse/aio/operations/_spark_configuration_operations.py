@@ -18,8 +18,8 @@ from ... import models as _models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class IntegrationRuntimeNodeIpAddressOperations:
-    """IntegrationRuntimeNodeIpAddressOperations async operations.
+class SparkConfigurationOperations:
+    """SparkConfigurationOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -43,29 +43,26 @@ class IntegrationRuntimeNodeIpAddressOperations:
     async def get(
         self,
         resource_group_name: str,
+        spark_configuration_name: str,
         workspace_name: str,
-        integration_runtime_name: str,
-        node_name: str,
         **kwargs: Any
-    ) -> "_models.IntegrationRuntimeNodeIpAddress":
-        """Get integration runtime node IP address.
+    ) -> "_models.SparkConfigurationResource":
+        """Get SparkConfiguration by name.
 
-        Get the IP address of an integration runtime node.
+        Get SparkConfiguration by name in a workspace.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
+        :param spark_configuration_name: SparkConfiguration name.
+        :type spark_configuration_name: str
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
-        :param integration_runtime_name: Integration runtime name.
-        :type integration_runtime_name: str
-        :param node_name: Integration runtime node name.
-        :type node_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: IntegrationRuntimeNodeIpAddress, or the result of cls(response)
-        :rtype: ~azure.mgmt.synapse.models.IntegrationRuntimeNodeIpAddress
+        :return: SparkConfigurationResource, or the result of cls(response)
+        :rtype: ~azure.mgmt.synapse.models.SparkConfigurationResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationRuntimeNodeIpAddress"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SparkConfigurationResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -78,9 +75,8 @@ class IntegrationRuntimeNodeIpAddressOperations:
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'sparkConfigurationName': self._serialize.url("spark_configuration_name", spark_configuration_name, 'str'),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str'),
-            'nodeName': self._serialize.url("node_name", node_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -92,7 +88,7 @@ class IntegrationRuntimeNodeIpAddressOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        request = self._client.post(url, query_parameters, header_parameters)
+        request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -101,10 +97,10 @@ class IntegrationRuntimeNodeIpAddressOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('IntegrationRuntimeNodeIpAddress', pipeline_response)
+        deserialized = self._deserialize('SparkConfigurationResource', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/integrationRuntimes/{integrationRuntimeName}/nodes/{nodeName}/ipAddress'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sparkconfigurations/{sparkConfigurationName}'}  # type: ignore
