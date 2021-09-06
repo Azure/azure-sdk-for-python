@@ -48,7 +48,7 @@ provide an instance of the desired credential type obtained from the
 [azure-identity][azure_identity_credentials] library.
 
 To authenticate with AAD, you must first [pip][pip] install [`azure-identity`][azure_identity_pip] and
-[enable AAD authentication on your Purview resource][enable_aad]
+[enable AAD authentication on your Webpubsub resource][enable_aad]
 
 After setup, you can choose which type of [credential][azure_identity_credentials] from azure.identity to use.
 As an example, [DefaultAzureCredential][default_azure_credential]
@@ -174,3 +174,9 @@ additional questions or comments.
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [coc_contact]: mailto:opencode@microsoft.com
+[authenticate_with_token]: https://docs.microsoft.com/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-an-authentication-token
+[azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
+[azure_identity_pip]: https://pypi.org/project/azure-identity/
+[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
+[pip]: https://pypi.org/project/pip/
+[enable_aad]: https://docs.microsoft.com/en-us/azure/azure-web-pubsub/howto-develop-create-instance
