@@ -28,8 +28,9 @@ license-header: MICROSOFT_MIT_NO_VERSION
 clear-output-folder: true
 no-namespace-folders: true
 python: true
-title: WebpubsubServiceClient
+title: WebPubSubServiceClient
 version-tolerant: true
 package-version: 1.0.0b1
 add-credential: true
+credential-scopes: https://webpubsub.azure.com/.default
 ```

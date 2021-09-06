@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._webpubsub_service_client import WebpubsubServiceClient
-__all__ = ['WebpubsubServiceClient']
+from ._web_pub_sub_service_client import WebPubSubServiceClient
+__all__ = ['WebPubSubServiceClient']

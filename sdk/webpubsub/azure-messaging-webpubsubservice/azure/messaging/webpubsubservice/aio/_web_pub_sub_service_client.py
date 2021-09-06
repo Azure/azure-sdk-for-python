@@ -7,44 +7,43 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import TYPE_CHECKING
+from typing import Any, Awaitable, Optional, TYPE_CHECKING
 
-from azure.core import PipelineClient
+from azure.core import AsyncPipelineClient
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from msrest import Deserializer, Serializer
 
-from ._configuration import WebpubsubServiceClientConfiguration
+from ._configuration import WebPubSubServiceClientConfiguration
 from .operations import HealthApiOperations, WebPubSubOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Dict, Optional
+    from typing import Dict
 
-    from azure.core.credentials import TokenCredential
-    from azure.core.rest import HttpRequest, HttpResponse
+    from azure.core.credentials_async import AsyncTokenCredential
 
-class WebpubsubServiceClient(object):
-    """WebpubsubServiceClient.
+class WebPubSubServiceClient:
+    """WebPubSubServiceClient.
 
     :ivar health_api: HealthApiOperations operations
-    :vartype health_api: azure.messaging.webpubsubservice.operations.HealthApiOperations
+    :vartype health_api: azure.messaging.webpubsubservice.aio.operations.HealthApiOperations
     :ivar web_pub_sub: WebPubSubOperations operations
-    :vartype web_pub_sub: azure.messaging.webpubsubservice.operations.WebPubSubOperations
+    :vartype web_pub_sub: azure.messaging.webpubsubservice.aio.operations.WebPubSubOperations
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword endpoint: Service URL. Default value is ''.
     :paramtype endpoint: str
     """
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        endpoint = kwargs.pop('endpoint', "")  # type: str
-
-        self._config = WebpubsubServiceClientConfiguration(credential, **kwargs)
-        self._client = PipelineClient(base_url=endpoint, config=self._config, **kwargs)
+        credential: "AsyncTokenCredential",
+        *,
+        endpoint: str = "",
+        **kwargs: Any
+    ) -> None:
+        self._config = WebPubSubServiceClientConfiguration(credential, **kwargs)
+        self._client = AsyncPipelineClient(base_url=endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
@@ -55,17 +54,16 @@ class WebpubsubServiceClient(object):
 
     def send_request(
         self,
-        request,  # type: HttpRequest
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> HttpResponse
+        request: HttpRequest,
+        **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
         <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = client.send_request(request)
-        <HttpResponse: 200 OK>
+        >>> response = await client.send_request(request)
+        <AsyncHttpResponse: 200 OK>
 
         For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
 
@@ -73,22 +71,19 @@ class WebpubsubServiceClient(object):
         :type request: ~azure.core.rest.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.rest.HttpResponse
+        :rtype: ~azure.core.rest.AsyncHttpResponse
         """
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
-        self._client.close()
+    async def close(self) -> None:
+        await self._client.close()
 
-    def __enter__(self):
-        # type: () -> WebpubsubServiceClient
-        self._client.__enter__()
+    async def __aenter__(self) -> "WebPubSubServiceClient":
+        await self._client.__aenter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
-        self._client.__exit__(*exc_details)
+    async def __aexit__(self, *exc_details) -> None:
+        await self._client.__aexit__(*exc_details)

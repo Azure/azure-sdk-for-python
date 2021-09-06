@@ -43,14 +43,26 @@ python -m pip install azure-messaging-webpubsubservice
 
 ### Authenticating the client
 
-In order to interact with the Azure WebPubSub service, you'll need to create an instance of the [WebPubSubServiceClient][webpubsubservice_client_class] class. In order to authenticate against the service, you need to pass in an AzureKeyCredential instance with endpoint and api key. The endpoint and api key can be found on the azure portal.
+To use an [Azure Active Directory (AAD) token credential][authenticate_with_token],
+provide an instance of the desired credential type obtained from the
+[azure-identity][azure_identity_credentials] library.
+
+To authenticate with AAD, you must first [pip][pip] install [`azure-identity`][azure_identity_pip] and
+[enable AAD authentication on your Purview resource][enable_aad]
+
+After setup, you can choose which type of [credential][azure_identity_credentials] from azure.identity to use.
+As an example, [DefaultAzureCredential][default_azure_credential]
+can be used to authenticate the client:
+
+Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
+AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
+
+Use the returned token credential to authenticate the client:
 
 ```python
 >>> from azure.messaging.webpubsubservice import WebPubSubServiceClient
->>> from azure.core.credentials import AzureKeyCredential
->>> client = WebPubSubServiceClient(endpoint='<endpoint>', credential=AzureKeyCredential('somesecret'))
->>> client
-<WebPubSubServiceClient endpoint:'<endpoint>'>
+>>> from azure.identity import DefaultAzureCredential
+>>> client = WebPubSubServiceClient(endpoint='https://myname.webpubsub.azure.com', credential=DefaultAzureCredential())
 ```
 
 ## Examples
@@ -59,22 +71,16 @@ In order to interact with the Azure WebPubSub service, you'll need to create an 
 
 ```python
 >>> from azure.messaging.webpubsubservice import WebPubSubServiceClient
->>> from azure.core.credentials import AzureKeyCredential
->>> from azure.messaging.webpubsubservice.rest import build_send_to_all_request
->>> client = WebPubSubServiceClient(endpoint='<endpoint>', credential=AzureKeyCredential('somesecret'))
->>> request = build_send_to_all_request('default', json={ 'Hello':  'webpubsub!' })
->>> request
-<HttpRequest [POST], url: '/api/hubs/default/:send?api-version=2020-10-01'>
->>> response = client.send_request(request)
->>> response
-<RequestsTransportResponse: 202 Accepted>
->>> response.status_code
-202
+>>> from azure.identity import DefaultAzureCredential
+>>> from azure.core.exceptions import HttpResponseError
+
+>>> client = WebPubSubServiceClient(endpoint='https://myname.webpubsub.azure.com', credential=DefaultAzureCredential())
 >>> with open('file.json', 'r') as f:
->>>    request = build_send_to_all_request('ahub', content=f, content_type='application/json')
->>>    response = client.send_request(request)
->>> print(response)
-<RequestsTransportResponse: 202 Accepted>
+    try:
+        client.web_pub_sub.send_to_all('ahub', content=f, content_type='application/json')
+    except HttpResponseError as e:
+        print('service responds error')
+
 ```
 
 ## Key concepts
@@ -107,10 +113,32 @@ This SDK uses Python standard logging library.
 You can configure logging print out debugging information to the stdout or anywhere you want.
 
 ```python
+import sys
 import logging
+from azure.identity import DefaultAzureCredential
+>>> from azure.messaging.webpubsubservice import WebPubSubServiceClient
 
-logging.basicConfig(level=logging.DEBUG)
-````
+# Create a logger for the 'azure' SDK
+logger = logging.getLogger('azure')
+logger.setLevel(logging.DEBUG)
+
+# Configure a console output
+handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(handler)
+
+endpoint = "https://myname.webpubsub.azure.com"
+credential = DefaultAzureCredential()
+
+# This client will log detailed information about its HTTP sessions, at DEBUG level
+client = WebPubSubServiceClient(endpoint=endpoint, credential=credential, logging_enable=True)
+```
+
+Similarly, `logging_enable` can enable detailed logging for a single call,
+even when it isn't enabled for the client:
+
+```python
+result = client.web_pub_sub.send_to_all(logging_enable=True)
+```
 
 Http request and response details are printed to stdout with this logging config.
 

@@ -20,8 +20,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class WebpubsubServiceClientConfiguration(Configuration):
-    """Configuration for WebpubsubServiceClient.
+class WebPubSubServiceClientConfiguration(Configuration):
+    """Configuration for WebPubSubServiceClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -38,10 +38,10 @@ class WebpubsubServiceClientConfiguration(Configuration):
         # type: (...) -> None
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
-        super(WebpubsubServiceClientConfiguration, self).__init__(**kwargs)
+        super(WebPubSubServiceClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
-        self.credential_scopes = kwargs.pop('credential_scopes', [])
+        self.credential_scopes = kwargs.pop('credential_scopes', ['https://webpubsub.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'messaging-webpubsubservice/{}'.format(VERSION))
         self._configure(**kwargs)
 
@@ -59,7 +59,5 @@ class WebpubsubServiceClientConfiguration(Configuration):
         self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
         self.redirect_policy = kwargs.get('redirect_policy') or policies.RedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get('authentication_policy')
-        if not self.credential_scopes and not self.authentication_policy:
-            raise ValueError("You must provide either credential_scopes or authentication_policy as kwargs")
         if self.credential and not self.authentication_policy:
             self.authentication_policy = policies.BearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)

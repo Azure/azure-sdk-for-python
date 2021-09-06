@@ -6,11 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._webpubsub_service_client import WebpubsubServiceClient
+from ._web_pub_sub_service_client import WebPubSubServiceClient
 from ._version import VERSION
 
 __version__ = VERSION
-__all__ = ['WebpubsubServiceClient']
+__all__ = ['WebPubSubServiceClient']
 
 try:
     from ._patch import patch_sdk  # type: ignore
