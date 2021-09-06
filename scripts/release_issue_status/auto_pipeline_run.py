@@ -5,7 +5,6 @@ import os
 url = "https://dev.azure.com/azure-sdk/590cfd2a-581c-4dcb-a12e-6568ce786175/_apis/pipelines/2500/runs"
 
 headers = {
-    'x-tfs-session': 'd22c0db8-c9b3-4f83-b337-3e5f9c5d2abb',
     'x-vss-reauthenticationaction': 'Suppress',
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36 Edg/92.0.902.73',
     'accept': 'application/json;api-version=5.1-preview.1;excludeUrls=true;enumsAsNumbers=true;msDateFormat=true;noArrayWrap=true',
