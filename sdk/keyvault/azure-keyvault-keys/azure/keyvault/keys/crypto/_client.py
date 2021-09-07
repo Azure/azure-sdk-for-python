@@ -120,7 +120,7 @@ class CryptographyClient(KeyVaultClientBase):
         elif isinstance(key, six.string_types):
             self._key = None
             self._key_id = parse_key_vault_id(key)
-            self._keys_get_forbidden = None  # type: Optional[bool]
+            self._keys_get_forbidden = False
         elif self._jwk:
             self._key = key
         else:
@@ -208,7 +208,7 @@ class CryptographyClient(KeyVaultClientBase):
             self._initialized = True
         else:
             # try to get the key again next time unless we know we're forbidden to do so
-            self._initialized = not self._keys_get_forbidden
+            self._initialized = self._keys_get_forbidden
 
     @distributed_trace
     def encrypt(self, algorithm, plaintext, **kwargs):

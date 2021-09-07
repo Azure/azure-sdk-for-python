@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from typing import Any, Dict, Optional, List
     from datetime import datetime
     from ._generated.v7_0 import models as _models
-    from ._enums import KeyOperation
+    from ._enums import KeyOperation, KeyType
 
 KeyOperationResult = namedtuple("KeyOperationResult", ["id", "value"])
 
@@ -376,7 +376,7 @@ class KeyVaultKey(object):
 
     @property
     def key_type(self):
-        # type: () -> str
+        # type: () -> KeyType
         """The key's type. See :class:`~azure.keyvault.keys.KeyType` for possible values.
 
         :rtype: ~azure.keyvault.keys.KeyType or str

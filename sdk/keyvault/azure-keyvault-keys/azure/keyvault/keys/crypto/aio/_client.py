@@ -69,7 +69,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         elif isinstance(key, str):
             self._key = None
             self._key_id = parse_key_vault_id(key)
-            self._keys_get_forbidden = None  # type: Optional[bool]
+            self._keys_get_forbidden = False
         elif self._jwk:
             self._key = key
         else:
