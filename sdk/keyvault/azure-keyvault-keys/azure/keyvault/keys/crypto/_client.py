@@ -208,7 +208,7 @@ class CryptographyClient(KeyVaultClientBase):
             self._initialized = True
         else:
             # try to get the key again next time unless we know we're forbidden to do so
-            self._initialized = False if self._keys_get_forbidden else True
+            self._initialized = not self._keys_get_forbidden
 
     @distributed_trace
     def encrypt(self, algorithm, plaintext, **kwargs):
