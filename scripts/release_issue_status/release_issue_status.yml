@@ -37,7 +37,7 @@ jobs:
         export FILE=$(ENV_FILE)
         export TOKEN=$(USR_TOKEN)
         export HEADERS=$(PIPELINE_HEADERS)
-        export URL=$(URL)
+        export URL=$(PIPELINE_URL)
 
         # create virtual env
         python -m venv venv-sdk
