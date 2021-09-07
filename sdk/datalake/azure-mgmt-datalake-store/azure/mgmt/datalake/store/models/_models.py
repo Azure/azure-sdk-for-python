@@ -64,9 +64,8 @@ class CheckNameAvailabilityParameters(msrest.serialization.Model):
 
     :param name: Required. The Data Lake Store name to check availability for.
     :type name: str
-    :ivar type: Required. The resource type. Note: This should not be set by the user, as the
-     constant value is Microsoft.DataLakeStore/accounts. Default value:
-     "Microsoft.DataLakeStore/accounts".
+    :ivar type: The resource type. Note: This should not be set by the user, as the constant value
+     is Microsoft.DataLakeStore/accounts. Has constant value: "Microsoft.DataLakeStore/accounts".
     :vartype type: str
     """
 
@@ -878,8 +877,8 @@ class EncryptionIdentity(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The type of encryption being used. Currently the only supported type is
-     'SystemAssigned'. Default value: "SystemAssigned".
+    :ivar type: The type of encryption being used. Currently the only supported type is
+     'SystemAssigned'. Has constant value: "SystemAssigned".
     :vartype type: str
     :ivar principal_id: The principal identifier associated with the encryption.
     :vartype principal_id: str

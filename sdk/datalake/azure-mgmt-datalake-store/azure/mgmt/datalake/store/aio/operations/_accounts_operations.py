@@ -51,7 +51,7 @@ class AccountsOperations:
         select: Optional[str] = None,
         orderby: Optional[str] = None,
         count: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DataLakeStoreAccountListResult"]:
         """Lists the Data Lake Store accounts within the subscription. The response includes a link to the
         next page of results, if any.
@@ -153,7 +153,7 @@ class AccountsOperations:
         select: Optional[str] = None,
         orderby: Optional[str] = None,
         count: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DataLakeStoreAccountListResult"]:
         """Lists the Data Lake Store accounts within a specific resource group. The response includes a
         link to the next page of results, if any.
@@ -254,7 +254,7 @@ class AccountsOperations:
         resource_group_name: str,
         account_name: str,
         parameters: "_models.CreateDataLakeStoreAccountParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DataLakeStoreAccount":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataLakeStoreAccount"]
         error_map = {
@@ -311,7 +311,7 @@ class AccountsOperations:
         resource_group_name: str,
         account_name: str,
         parameters: "_models.CreateDataLakeStoreAccountParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DataLakeStoreAccount"]:
         """Creates the specified Data Lake Store account.
 
@@ -323,8 +323,8 @@ class AccountsOperations:
         :type parameters: ~azure.mgmt.datalake.store.models.CreateDataLakeStoreAccountParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DataLakeStoreAccount or the result of cls(response)
@@ -381,7 +381,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DataLakeStoreAccount":
         """Gets the specified Data Lake Store account.
 
@@ -440,7 +440,7 @@ class AccountsOperations:
         resource_group_name: str,
         account_name: str,
         parameters: "_models.UpdateDataLakeStoreAccountParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DataLakeStoreAccount":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataLakeStoreAccount"]
         error_map = {
@@ -500,7 +500,7 @@ class AccountsOperations:
         resource_group_name: str,
         account_name: str,
         parameters: "_models.UpdateDataLakeStoreAccountParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DataLakeStoreAccount"]:
         """Updates the specified Data Lake Store account information.
 
@@ -512,8 +512,8 @@ class AccountsOperations:
         :type parameters: ~azure.mgmt.datalake.store.models.UpdateDataLakeStoreAccountParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DataLakeStoreAccount or the result of cls(response)
@@ -570,7 +570,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -612,7 +612,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified Data Lake Store account.
 
@@ -622,8 +622,8 @@ class AccountsOperations:
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -676,7 +676,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Attempts to enable a user managed Key Vault for encryption of the specified Data Lake Store
         account.
@@ -730,7 +730,7 @@ class AccountsOperations:
         self,
         location: str,
         parameters: "_models.CheckNameAvailabilityParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NameAvailabilityInformation":
         """Checks whether the specified account name is available or taken.
 

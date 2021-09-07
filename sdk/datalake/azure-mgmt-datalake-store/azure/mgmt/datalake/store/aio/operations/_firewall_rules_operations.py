@@ -45,7 +45,7 @@ class FirewallRulesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.FirewallRuleListResult"]:
         """Lists the Data Lake Store firewall rules within the specified Data Lake Store account.
 
@@ -121,7 +121,7 @@ class FirewallRulesOperations:
         account_name: str,
         firewall_rule_name: str,
         parameters: "_models.CreateOrUpdateFirewallRuleParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FirewallRule":
         """Creates or updates the specified firewall rule. During update, the firewall rule with the
         specified name will be replaced with this new firewall rule.
@@ -191,7 +191,7 @@ class FirewallRulesOperations:
         resource_group_name: str,
         account_name: str,
         firewall_rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FirewallRule":
         """Gets the specified Data Lake Store firewall rule.
 
@@ -254,7 +254,7 @@ class FirewallRulesOperations:
         account_name: str,
         firewall_rule_name: str,
         parameters: Optional["_models.UpdateFirewallRuleParameters"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FirewallRule":
         """Updates the specified firewall rule.
 
@@ -326,7 +326,7 @@ class FirewallRulesOperations:
         resource_group_name: str,
         account_name: str,
         firewall_rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the specified firewall rule from the specified Data Lake Store account.
 

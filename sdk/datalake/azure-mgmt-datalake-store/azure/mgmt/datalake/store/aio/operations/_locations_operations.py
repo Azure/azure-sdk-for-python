@@ -44,7 +44,7 @@ class LocationsOperations:
     async def get_capability(
         self,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.CapabilityInformation"]:
         """Gets subscription-level properties and limits for Data Lake Store specified by resource
         location.
@@ -101,7 +101,7 @@ class LocationsOperations:
     def get_usage(
         self,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.UsageListResult"]:
         """Gets the current usage count and the limit for the resources of the location under the
         subscription.

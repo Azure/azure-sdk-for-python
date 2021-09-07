@@ -45,7 +45,7 @@ class VirtualNetworkRulesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.VirtualNetworkRuleListResult"]:
         """Lists the Data Lake Store virtual network rules within the specified Data Lake Store account.
 
@@ -121,7 +121,7 @@ class VirtualNetworkRulesOperations:
         account_name: str,
         virtual_network_rule_name: str,
         parameters: "_models.CreateOrUpdateVirtualNetworkRuleParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualNetworkRule":
         """Creates or updates the specified virtual network rule. During update, the virtual network rule
         with the specified name will be replaced with this new virtual network rule.
@@ -191,7 +191,7 @@ class VirtualNetworkRulesOperations:
         resource_group_name: str,
         account_name: str,
         virtual_network_rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualNetworkRule":
         """Gets the specified Data Lake Store virtual network rule.
 
@@ -254,7 +254,7 @@ class VirtualNetworkRulesOperations:
         account_name: str,
         virtual_network_rule_name: str,
         parameters: Optional["_models.UpdateVirtualNetworkRuleParameters"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualNetworkRule":
         """Updates the specified virtual network rule.
 
@@ -326,7 +326,7 @@ class VirtualNetworkRulesOperations:
         resource_group_name: str,
         account_name: str,
         virtual_network_rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the specified virtual network rule from the specified Data Lake Store account.
 

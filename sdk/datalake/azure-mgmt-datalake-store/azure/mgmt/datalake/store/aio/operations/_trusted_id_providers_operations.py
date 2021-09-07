@@ -45,7 +45,7 @@ class TrustedIdProvidersOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TrustedIdProviderListResult"]:
         """Lists the Data Lake Store trusted identity providers within the specified Data Lake Store
         account.
@@ -122,7 +122,7 @@ class TrustedIdProvidersOperations:
         account_name: str,
         trusted_id_provider_name: str,
         parameters: "_models.CreateOrUpdateTrustedIdProviderParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TrustedIdProvider":
         """Creates or updates the specified trusted identity provider. During update, the trusted identity
         provider with the specified name will be replaced with this new provider.
@@ -193,7 +193,7 @@ class TrustedIdProvidersOperations:
         resource_group_name: str,
         account_name: str,
         trusted_id_provider_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TrustedIdProvider":
         """Gets the specified Data Lake Store trusted identity provider.
 
@@ -256,7 +256,7 @@ class TrustedIdProvidersOperations:
         account_name: str,
         trusted_id_provider_name: str,
         parameters: Optional["_models.UpdateTrustedIdProviderParameters"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TrustedIdProvider":
         """Updates the specified trusted identity provider.
 
@@ -329,7 +329,7 @@ class TrustedIdProvidersOperations:
         resource_group_name: str,
         account_name: str,
         trusted_id_provider_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the specified trusted identity provider from the specified Data Lake Store account.
 
