@@ -24,7 +24,7 @@ async def logs_query():
 
     # returns LogsQueryResult
     async with client:
-        response = await client.query(os.environ['LOG_WORKSPACE_ID'], query)
+        response = await client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None)
 
     if not response.tables:
         print("No results for the query")
@@ -42,7 +42,7 @@ async def logs_query():
 
     # if you dont want to use pandas - here's how you can process it.
 
-    #response.tables is a LogsQueryResultTable
+    #response.tables is a LogsTable
     for table in response.tables:
         for col in table.columns: #LogsQueryResultColumn
             print(col.name + "/"+  col.type + " | ", end="")

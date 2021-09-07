@@ -48,7 +48,7 @@ class VaultsOperations:
         resource_group_name: str,
         vault_name: str,
         parameters: "_models.VaultCreateOrUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Vault":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Vault"]
         error_map = {
@@ -105,7 +105,7 @@ class VaultsOperations:
         resource_group_name: str,
         vault_name: str,
         parameters: "_models.VaultCreateOrUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Vault"]:
         """Create or update a key vault in the specified subscription.
 
@@ -117,8 +117,8 @@ class VaultsOperations:
         :type parameters: ~azure.mgmt.keyvault.v2021_04_01_preview.models.VaultCreateOrUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Vault or the result of cls(response)
@@ -176,7 +176,7 @@ class VaultsOperations:
         resource_group_name: str,
         vault_name: str,
         parameters: "_models.VaultPatchParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Vault":
         """Update a key vault in the specified subscription.
 
@@ -245,7 +245,7 @@ class VaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the specified Azure key vault.
 
@@ -300,7 +300,7 @@ class VaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Vault":
         """Gets the specified Azure key vault.
 
@@ -360,7 +360,7 @@ class VaultsOperations:
         vault_name: str,
         operation_kind: Union[str, "_models.AccessPolicyUpdateKind"],
         parameters: "_models.VaultAccessPolicyParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VaultAccessPolicyParameters":
         """Update access policies in a key vault in the specified subscription.
 
@@ -432,7 +432,7 @@ class VaultsOperations:
         self,
         resource_group_name: str,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.VaultListResult"]:
         """The List operation gets information about the vaults associated with the subscription and
         within the specified resource group.
@@ -507,7 +507,7 @@ class VaultsOperations:
     def list_by_subscription(
         self,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.VaultListResult"]:
         """The List operation gets information about the vaults associated with the subscription.
 
@@ -577,7 +577,7 @@ class VaultsOperations:
 
     def list_deleted(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DeletedVaultListResult"]:
         """Gets information about the deleted vaults in a subscription.
 
@@ -645,7 +645,7 @@ class VaultsOperations:
         self,
         vault_name: str,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeletedVault":
         """Gets the deleted Azure key vault.
 
@@ -703,7 +703,7 @@ class VaultsOperations:
         self,
         vault_name: str,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -747,7 +747,7 @@ class VaultsOperations:
         self,
         vault_name: str,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Permanently deletes the specified vault. aka Purges the deleted Azure key vault.
 
@@ -757,8 +757,8 @@ class VaultsOperations:
         :type location: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -810,7 +810,7 @@ class VaultsOperations:
     def list(
         self,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ResourceListResult"]:
         """The List operation gets information about the vaults associated with the subscription.
 
@@ -883,7 +883,7 @@ class VaultsOperations:
     async def check_name_availability(
         self,
         vault_name: "_models.VaultCheckNameAvailabilityParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CheckNameAvailabilityResult":
         """Checks that the vault name is valid and is not already in use.
 

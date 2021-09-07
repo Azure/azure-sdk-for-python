@@ -13,8 +13,6 @@ if TYPE_CHECKING:
     try:
         # pylint:disable=unused-import
         from typing import Any
-        from azure.core.configuration import Configuration
-        from azure.core.pipeline.transport import AsyncHttpTransport
         from azure.core.credentials_async import AsyncTokenCredential
     except ImportError:
         # AsyncTokenCredential is a typing_extensions.Protocol; we don't depend on that package

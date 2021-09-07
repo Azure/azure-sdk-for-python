@@ -1,15 +1,18 @@
 # Release History
 
-## 7.3.2 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 7.3.3 (2021-09-08)
 
 ### Bugs Fixed
-- Fixed a bug that `azure.servicebus.aio.AutoLockRenewer` crashes on disposal if no messages have been registered (#19642).
 
-### Other Changes
+- Improved memory usage of `ServiceBusClient` to automatically discard spawned `ServiceBusSender` or `ServiceBusReceiver` from its handler set when no strong reference to the sender or receiver exists anymore.
+- Reduced CPU load of `azure.servicebus.AutoLockRenewer` during lock renewal.
+
+## 7.3.2 (2021-08-10)
+
+### Bugs Fixed
+
+- Fixed a bug that `azure.servicebus.aio.AutoLockRenewer` crashes on disposal if no messages have been registered (#19642).
+- Fixed a bug that `azure.servicebus.AutoLockRenewer` only supports auto lock renewal for `max_workers` amount of messages/sessions at a time (#19362).
 
 ## 7.3.1 (2021-07-07)
 

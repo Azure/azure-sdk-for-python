@@ -65,7 +65,7 @@ class ArtifactsClient(MultiApiClientMixin, _SDKClient):
         self,
         credential: "AsyncTokenCredential",
         endpoint: str,
-        api_version: Optional[str] = None,
+        api_version: Optional[str] = DEFAULT_API_VERSION,
         profile: KnownProfiles = KnownProfiles.default,
         **kwargs  # type: Any
     ) -> None:

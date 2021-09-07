@@ -18,7 +18,7 @@ _SERIALIZER = Serializer()
 
 # fmt: off
 
-def build_query_knowledgebase_request(
+def build_query_knowledge_base_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest

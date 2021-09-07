@@ -1517,7 +1517,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
             await copyblob.delete_immutability_policy()
             await copyblob.set_legal_hold(False)
             await copyblob.delete_blob()
-            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
+            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, container_name)
 
     # @GlobalStorageAccountPreparer()
     # @AsyncStorageTestCase.await_prepared_test
@@ -2617,7 +2617,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
             await blob.delete_immutability_policy()
             await blob.set_legal_hold(False)
             await blob.delete_blob()
-            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
+            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, container_name)
 
     @GlobalResourceGroupPreparer()
     @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", random_name_enabled=True)
@@ -2656,7 +2656,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
             await blob.delete_immutability_policy()
             await blob.set_legal_hold(False)
             await blob.delete_blob()
-            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
+            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, container_name)
 
     @GlobalResourceGroupPreparer()
     @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", random_name_enabled=True)
@@ -2700,7 +2700,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
             await blob.delete_immutability_policy()
             await blob.set_legal_hold(False)
             await blob.delete_blob()
-            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
+            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, container_name)
 
     @GlobalResourceGroupPreparer()
     @BlobAccountPreparer(name_prefix='storagename', is_versioning_enabled=True, location="canadacentral", random_name_enabled=True)
@@ -2740,6 +2740,6 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
             await blob.delete_immutability_policy()
             await blob.set_legal_hold(False)
             await blob.delete_blob()
-            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
+            await mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, container_name)
 
 # ------------------------------------------------------------------------------

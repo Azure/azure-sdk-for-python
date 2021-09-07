@@ -27,8 +27,13 @@ from typing import Any, TYPE_CHECKING, Union
 
 from ._common._constants import SerializationType
 from ._common._schema import Schema, SchemaProperties
-from ._common._response_handlers import _parse_response_schema, _parse_response_schema_id
+from ._common._response_handlers import (
+    _parse_response_schema,
+    _parse_response_schema_properties,
+)
 from ._generated._azure_schema_registry import AzureSchemaRegistry
+from ._generated.rest import schema as schema_rest
+
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -53,14 +58,14 @@ class SchemaRegistryClient(object):
             :caption: Create a new instance of the SchemaRegistryClient.
 
     """
-    def __init__(
-        self,
-        endpoint,
-        credential,
-        **kwargs
-    ):
+
+    def __init__(self, endpoint, credential, **kwargs):
         # type: (str, TokenCredential, Any) -> None
-        self._generated_client = AzureSchemaRegistry(credential=credential, endpoint=endpoint, **kwargs)
+        self._generated_client = AzureSchemaRegistry(
+            credential=credential, endpoint=endpoint, **kwargs
+        )
+        self._description_to_properties = {}
+        self._id_to_schema = {}
 
     def __enter__(self):
         # type: () -> SchemaRegistryClient
@@ -73,12 +78,14 @@ class SchemaRegistryClient(object):
 
     def close(self):
         # type: () -> None
-        """ This method is to close the sockets opened by the client.
+        """This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
         """
         self._generated_client.close()
 
-    def register_schema(self, schema_group, schema_name, serialization_type, schema_content, **kwargs):
+    def register_schema(
+        self, schema_group, schema_name, serialization_type, schema_content, **kwargs
+    ):
         # type: (str, str, Union[str, SerializationType], str, Any) -> SchemaProperties
         """
         Register new schema. If schema of specified name does not exist in specified group,
@@ -91,6 +98,8 @@ class SchemaRegistryClient(object):
          For now Avro is the only supported serialization type by the service.
         :type serialization_type: Union[str, SerializationType]
         :param str schema_content: String representation of the schema being registered.
+        :keyword content_type: The content type of the request. Default value is 'application/json'.
+        :paramtype content_type: str
         :rtype: SchemaProperties
 
         .. admonition:: Example:
@@ -108,14 +117,31 @@ class SchemaRegistryClient(object):
         except AttributeError:
             pass
 
-        return self._generated_client.schema.register(
+        request = schema_rest.build_register_request(
             group_name=schema_group,
             schema_name=schema_name,
-            schema_content=schema_content,
-            x_schema_type=serialization_type,
-            cls=_parse_response_schema_id,
+            content=schema_content,
+            serialization_type=serialization_type,
+            content_type=kwargs.pop("content_type", "application/json"),
             **kwargs
         )
+
+        response = self._generated_client.send_request(request)
+        response.raise_for_status()
+        schema_properties = _parse_response_schema_properties(response)
+
+        schema_description = (
+            schema_group,
+            schema_name,
+            serialization_type,
+            schema_content,
+        )
+        self._id_to_schema[schema_properties.schema_id] = Schema(
+            schema_content, schema_properties
+        )
+        self._description_to_properties[schema_description] = schema_properties
+
+        return schema_properties
 
     def get_schema(self, schema_id, **kwargs):
         # type: (str, Any) -> Schema
@@ -136,13 +162,19 @@ class SchemaRegistryClient(object):
                 :caption: Get schema by id.
 
         """
-        return self._generated_client.schema.get_by_id(
-            schema_id,
-            cls=_parse_response_schema,
-            **kwargs
-        )
+        try:
+            return self._id_to_schema[schema_id]
+        except KeyError:
+            request = schema_rest.build_get_by_id_request(schema_id=schema_id)
+            response = self._generated_client.send_request(request, **kwargs)
+            response.raise_for_status()
+            schema = _parse_response_schema(response)
+            self._id_to_schema[schema_id] = schema
+            return schema
 
-    def get_schema_id(self, schema_group, schema_name, serialization_type, schema_content, **kwargs):
+    def get_schema_id(
+        self, schema_group, schema_name, serialization_type, schema_content, **kwargs
+    ):
         # type: (str, str, Union[str, SerializationType], str, Any) -> SchemaProperties
         """
         Gets the ID referencing an existing schema within the specified schema group,
@@ -151,9 +183,10 @@ class SchemaRegistryClient(object):
         :param str schema_group: Schema group under which schema should be registered.
         :param str schema_name: Name of schema being registered.
         :param serialization_type: Serialization type for the schema being registered.
-         The
         :type serialization_type: Union[str, SerializationType]
         :param str schema_content: String representation of the schema being registered.
+        :keyword content_type: The content type of the request. Default value is 'application/json'.
+        :paramtype content_type: str
         :rtype: SchemaProperties
 
         .. admonition:: Example:
@@ -171,11 +204,30 @@ class SchemaRegistryClient(object):
         except AttributeError:
             pass
 
-        return self._generated_client.schema.query_id_by_content(
-            group_name=schema_group,
-            schema_name=schema_name,
-            schema_content=schema_content,
-            x_schema_type=serialization_type,
-            cls=_parse_response_schema_id,
-            **kwargs
-        )
+        try:
+            properties = self._description_to_properties[
+                (schema_group, schema_name, serialization_type, schema_content)
+            ]
+            return properties
+        except KeyError:
+            request = schema_rest.build_query_id_by_content_request(
+                group_name=schema_group,
+                schema_name=schema_name,
+                content=schema_content,
+                serialization_type=serialization_type,
+                content_type=kwargs.pop("content_type", "application/json"),
+                **kwargs
+            )
+
+            response = self._generated_client.send_request(request, **kwargs)
+            response.raise_for_status()
+            schema_properties = _parse_response_schema_properties(response)
+
+            if not self._id_to_schema.get(schema_properties.schema_id):
+                self._id_to_schema[schema_properties.schema_id] = Schema(schema_content, schema_properties)
+            else:
+                schema_properties = self._id_to_schema[schema_properties.schema_id].schema_properties
+            self._description_to_properties[
+                (schema_group, schema_name, serialization_type, schema_content)
+            ] = schema_properties
+            return schema_properties
