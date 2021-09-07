@@ -23,9 +23,39 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+try:
+    import collections.abc as collections
+except ImportError:
+    import collections  # type: ignore
+
+from typing import TYPE_CHECKING, cast
+from requests.structures import CaseInsensitiveDict
 
 from ._http_response_impl import _HttpResponseBaseImpl, HttpResponseImpl
 from ..pipeline.transport._requests_basic import StreamDownloadGenerator
+
+class _ItemsView(collections.ItemsView):
+
+    def __contains__(self, item):
+        if not (isinstance(item, (list, tuple)) and len(item) == 2):
+            return False  # requests raises here, we just return False
+        for k, v in self.__iter__():
+            if item[0].lower() == k.lower() and item[1] == v:
+                return True
+        return False
+
+    def __repr__(self):
+        return 'ItemsView({})'.format(dict(self.__iter__()))
+
+class _CaseInsensitiveDict(CaseInsensitiveDict):
+    """Overriding default requests dict so we can unify
+    to not raise if users pass in incorrect items to contains.
+    Instead, we return False
+    """
+
+    def items(self):
+        """Return a new view of the dictionary's items."""
+        return _ItemsView(self)
 
 class _RestRequestsTransportResponseBase(_HttpResponseBaseImpl):
     def __init__(self, **kwargs):
@@ -36,7 +66,7 @@ class _RestRequestsTransportResponseBase(_HttpResponseBaseImpl):
         super(_RestRequestsTransportResponseBase, self).__init__(
             internal_response=internal_response,
             status_code=internal_response.status_code,
-            headers=internal_response.headers,
+            headers=_CaseInsensitiveDict(internal_response.headers),
             reason=internal_response.reason,
             content_type=internal_response.headers.get('content-type'),
             content=content,

@@ -31,23 +31,26 @@ class AnswerResult(msrest.serialization.Model):
     """
 
     _validation = {
-        "score": {"readonly": True},
-        "key": {"readonly": True},
-        "text": {"readonly": True},
-        "highlights": {"readonly": True},
+        'score': {'readonly': True},
+        'key': {'readonly': True},
+        'text': {'readonly': True},
+        'highlights': {'readonly': True},
     }
 
     _attribute_map = {
-        "additional_properties": {"key": "", "type": "{object}"},
-        "score": {"key": "score", "type": "float"},
-        "key": {"key": "key", "type": "str"},
-        "text": {"key": "text", "type": "str"},
-        "highlights": {"key": "highlights", "type": "str"},
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'score': {'key': 'score', 'type': 'float'},
+        'key': {'key': 'key', 'type': 'str'},
+        'text': {'key': 'text', 'type': 'str'},
+        'highlights': {'key': 'highlights', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         super(AnswerResult, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get("additional_properties", None)
+        self.additional_properties = kwargs.get('additional_properties', None)
         self.score = None
         self.key = None
         self.text = None
@@ -68,16 +71,19 @@ class AutocompleteItem(msrest.serialization.Model):
     """
 
     _validation = {
-        "text": {"required": True, "readonly": True},
-        "query_plus_text": {"required": True, "readonly": True},
+        'text': {'required': True, 'readonly': True},
+        'query_plus_text': {'required': True, 'readonly': True},
     }
 
     _attribute_map = {
-        "text": {"key": "text", "type": "str"},
-        "query_plus_text": {"key": "queryPlusText", "type": "str"},
+        'text': {'key': 'text', 'type': 'str'},
+        'query_plus_text': {'key': 'queryPlusText', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         super(AutocompleteItem, self).__init__(**kwargs)
         self.text = None
         self.query_plus_text = None
@@ -119,26 +125,29 @@ class AutocompleteOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "autocomplete_mode": {"key": "autocompleteMode", "type": "str"},
-        "filter": {"key": "$filter", "type": "str"},
-        "use_fuzzy_matching": {"key": "UseFuzzyMatching", "type": "bool"},
-        "highlight_post_tag": {"key": "highlightPostTag", "type": "str"},
-        "highlight_pre_tag": {"key": "highlightPreTag", "type": "str"},
-        "minimum_coverage": {"key": "minimumCoverage", "type": "float"},
-        "search_fields": {"key": "searchFields", "type": "[str]"},
-        "top": {"key": "$top", "type": "int"},
+        'autocomplete_mode': {'key': 'autocompleteMode', 'type': 'str'},
+        'filter': {'key': '$filter', 'type': 'str'},
+        'use_fuzzy_matching': {'key': 'UseFuzzyMatching', 'type': 'bool'},
+        'highlight_post_tag': {'key': 'highlightPostTag', 'type': 'str'},
+        'highlight_pre_tag': {'key': 'highlightPreTag', 'type': 'str'},
+        'minimum_coverage': {'key': 'minimumCoverage', 'type': 'float'},
+        'search_fields': {'key': 'searchFields', 'type': '[str]'},
+        'top': {'key': '$top', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         super(AutocompleteOptions, self).__init__(**kwargs)
-        self.autocomplete_mode = kwargs.get("autocomplete_mode", None)
-        self.filter = kwargs.get("filter", None)
-        self.use_fuzzy_matching = kwargs.get("use_fuzzy_matching", None)
-        self.highlight_post_tag = kwargs.get("highlight_post_tag", None)
-        self.highlight_pre_tag = kwargs.get("highlight_pre_tag", None)
-        self.minimum_coverage = kwargs.get("minimum_coverage", None)
-        self.search_fields = kwargs.get("search_fields", None)
-        self.top = kwargs.get("top", None)
+        self.autocomplete_mode = kwargs.get('autocomplete_mode', None)
+        self.filter = kwargs.get('filter', None)
+        self.use_fuzzy_matching = kwargs.get('use_fuzzy_matching', None)
+        self.highlight_post_tag = kwargs.get('highlight_post_tag', None)
+        self.highlight_pre_tag = kwargs.get('highlight_pre_tag', None)
+        self.minimum_coverage = kwargs.get('minimum_coverage', None)
+        self.search_fields = kwargs.get('search_fields', None)
+        self.top = kwargs.get('top', None)
 
 
 class AutocompleteRequest(msrest.serialization.Model):
@@ -184,35 +193,38 @@ class AutocompleteRequest(msrest.serialization.Model):
     """
 
     _validation = {
-        "search_text": {"required": True},
-        "suggester_name": {"required": True},
+        'search_text': {'required': True},
+        'suggester_name': {'required': True},
     }
 
     _attribute_map = {
-        "search_text": {"key": "search", "type": "str"},
-        "autocomplete_mode": {"key": "autocompleteMode", "type": "str"},
-        "filter": {"key": "filter", "type": "str"},
-        "use_fuzzy_matching": {"key": "fuzzy", "type": "bool"},
-        "highlight_post_tag": {"key": "highlightPostTag", "type": "str"},
-        "highlight_pre_tag": {"key": "highlightPreTag", "type": "str"},
-        "minimum_coverage": {"key": "minimumCoverage", "type": "float"},
-        "search_fields": {"key": "searchFields", "type": "str"},
-        "suggester_name": {"key": "suggesterName", "type": "str"},
-        "top": {"key": "top", "type": "int"},
+        'search_text': {'key': 'search', 'type': 'str'},
+        'autocomplete_mode': {'key': 'autocompleteMode', 'type': 'str'},
+        'filter': {'key': 'filter', 'type': 'str'},
+        'use_fuzzy_matching': {'key': 'fuzzy', 'type': 'bool'},
+        'highlight_post_tag': {'key': 'highlightPostTag', 'type': 'str'},
+        'highlight_pre_tag': {'key': 'highlightPreTag', 'type': 'str'},
+        'minimum_coverage': {'key': 'minimumCoverage', 'type': 'float'},
+        'search_fields': {'key': 'searchFields', 'type': 'str'},
+        'suggester_name': {'key': 'suggesterName', 'type': 'str'},
+        'top': {'key': 'top', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         super(AutocompleteRequest, self).__init__(**kwargs)
-        self.search_text = kwargs["search_text"]
-        self.autocomplete_mode = kwargs.get("autocomplete_mode", None)
-        self.filter = kwargs.get("filter", None)
-        self.use_fuzzy_matching = kwargs.get("use_fuzzy_matching", None)
-        self.highlight_post_tag = kwargs.get("highlight_post_tag", None)
-        self.highlight_pre_tag = kwargs.get("highlight_pre_tag", None)
-        self.minimum_coverage = kwargs.get("minimum_coverage", None)
-        self.search_fields = kwargs.get("search_fields", None)
-        self.suggester_name = kwargs["suggester_name"]
-        self.top = kwargs.get("top", None)
+        self.search_text = kwargs['search_text']
+        self.autocomplete_mode = kwargs.get('autocomplete_mode', None)
+        self.filter = kwargs.get('filter', None)
+        self.use_fuzzy_matching = kwargs.get('use_fuzzy_matching', None)
+        self.highlight_post_tag = kwargs.get('highlight_post_tag', None)
+        self.highlight_pre_tag = kwargs.get('highlight_pre_tag', None)
+        self.minimum_coverage = kwargs.get('minimum_coverage', None)
+        self.search_fields = kwargs.get('search_fields', None)
+        self.suggester_name = kwargs['suggester_name']
+        self.top = kwargs.get('top', None)
 
 
 class AutocompleteResult(msrest.serialization.Model):
@@ -230,16 +242,19 @@ class AutocompleteResult(msrest.serialization.Model):
     """
 
     _validation = {
-        "coverage": {"readonly": True},
-        "results": {"required": True, "readonly": True},
+        'coverage': {'readonly': True},
+        'results': {'required': True, 'readonly': True},
     }
 
     _attribute_map = {
-        "coverage": {"key": "@search\\.coverage", "type": "float"},
-        "results": {"key": "value", "type": "[AutocompleteItem]"},
+        'coverage': {'key': '@search\\.coverage', 'type': 'float'},
+        'results': {'key': 'value', 'type': '[AutocompleteItem]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         super(AutocompleteResult, self).__init__(**kwargs)
         self.coverage = None
         self.results = None
@@ -262,19 +277,22 @@ class CaptionResult(msrest.serialization.Model):
     """
 
     _validation = {
-        "text": {"readonly": True},
-        "highlights": {"readonly": True},
+        'text': {'readonly': True},
+        'highlights': {'readonly': True},
     }
 
     _attribute_map = {
-        "additional_properties": {"key": "", "type": "{object}"},
-        "text": {"key": "text", "type": "str"},
-        "highlights": {"key": "highlights", "type": "str"},
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'text': {'key': 'text', 'type': 'str'},
+        'highlights': {'key': 'highlights', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         super(CaptionResult, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get("additional_properties", None)
+        self.additional_properties = kwargs.get('additional_properties', None)
         self.text = None
         self.highlights = None
 
@@ -293,17 +311,20 @@ class FacetResult(msrest.serialization.Model):
     """
 
     _validation = {
-        "count": {"readonly": True},
+        'count': {'readonly': True},
     }
 
     _attribute_map = {
-        "additional_properties": {"key": "", "type": "{object}"},
-        "count": {"key": "count", "type": "long"},
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'count': {'key': 'count', 'type': 'long'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         super(FacetResult, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get("additional_properties", None)
+        self.additional_properties = kwargs.get('additional_properties', None)
         self.count = None
 
 
@@ -319,14 +340,17 @@ class IndexAction(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "additional_properties": {"key": "", "type": "{object}"},
-        "action_type": {"key": "@search\\.action", "type": "str"},
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'action_type': {'key': '@search\\.action', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         super(IndexAction, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get("additional_properties", None)
-        self.action_type = kwargs.get("action_type", None)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.action_type = kwargs.get('action_type', None)
 
 
 class IndexBatch(msrest.serialization.Model):
@@ -339,16 +363,19 @@ class IndexBatch(msrest.serialization.Model):
     """
 
     _validation = {
-        "actions": {"required": True},
+        'actions': {'required': True},
     }
 
     _attribute_map = {
-        "actions": {"key": "value", "type": "[IndexAction]"},
+        'actions': {'key': 'value', 'type': '[IndexAction]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         super(IndexBatch, self).__init__(**kwargs)
-        self.actions = kwargs["actions"]
+        self.actions = kwargs['actions']
 
 
 class IndexDocumentsResult(msrest.serialization.Model):
@@ -364,14 +391,17 @@ class IndexDocumentsResult(msrest.serialization.Model):
     """
 
     _validation = {
-        "results": {"required": True, "readonly": True},
+        'results': {'required': True, 'readonly': True},
     }
 
     _attribute_map = {
-        "results": {"key": "value", "type": "[IndexingResult]"},
+        'results': {'key': 'value', 'type': '[IndexingResult]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         super(IndexDocumentsResult, self).__init__(**kwargs)
         self.results = None
 
@@ -399,20 +429,23 @@ class IndexingResult(msrest.serialization.Model):
     """
 
     _validation = {
-        "key": {"required": True, "readonly": True},
-        "error_message": {"readonly": True},
-        "succeeded": {"required": True, "readonly": True},
-        "status_code": {"required": True, "readonly": True},
+        'key': {'required': True, 'readonly': True},
+        'error_message': {'readonly': True},
+        'succeeded': {'required': True, 'readonly': True},
+        'status_code': {'required': True, 'readonly': True},
     }
 
     _attribute_map = {
-        "key": {"key": "key", "type": "str"},
-        "error_message": {"key": "errorMessage", "type": "str"},
-        "succeeded": {"key": "status", "type": "bool"},
-        "status_code": {"key": "statusCode", "type": "int"},
+        'key': {'key': 'key', 'type': 'str'},
+        'error_message': {'key': 'errorMessage', 'type': 'str'},
+        'succeeded': {'key': 'status', 'type': 'bool'},
+        'status_code': {'key': 'statusCode', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         super(IndexingResult, self).__init__(**kwargs)
         self.key = None
         self.error_message = None
@@ -428,12 +461,15 @@ class RequestOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "x_ms_client_request_id": {"key": "x-ms-client-request-id", "type": "str"},
+        'x_ms_client_request_id': {'key': 'x-ms-client-request-id', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         super(RequestOptions, self).__init__(**kwargs)
-        self.x_ms_client_request_id = kwargs.get("x_ms_client_request_id", None)
+        self.x_ms_client_request_id = kwargs.get('x_ms_client_request_id', None)
 
 
 class SearchDocumentsResult(msrest.serialization.Model):
@@ -472,29 +508,29 @@ class SearchDocumentsResult(msrest.serialization.Model):
     """
 
     _validation = {
-        "count": {"readonly": True},
-        "coverage": {"readonly": True},
-        "facets": {"readonly": True},
-        "answers": {"readonly": True},
-        "next_page_parameters": {"readonly": True},
-        "results": {"required": True, "readonly": True},
-        "next_link": {"readonly": True},
+        'count': {'readonly': True},
+        'coverage': {'readonly': True},
+        'facets': {'readonly': True},
+        'answers': {'readonly': True},
+        'next_page_parameters': {'readonly': True},
+        'results': {'required': True, 'readonly': True},
+        'next_link': {'readonly': True},
     }
 
     _attribute_map = {
-        "count": {"key": "@odata\\.count", "type": "long"},
-        "coverage": {"key": "@search\\.coverage", "type": "float"},
-        "facets": {"key": "@search\\.facets", "type": "{[FacetResult]}"},
-        "answers": {"key": "@search\\.answers", "type": "[AnswerResult]"},
-        "next_page_parameters": {
-            "key": "@search\\.nextPageParameters",
-            "type": "SearchRequest",
-        },
-        "results": {"key": "value", "type": "[SearchResult]"},
-        "next_link": {"key": "@odata\\.nextLink", "type": "str"},
+        'count': {'key': '@odata\\.count', 'type': 'long'},
+        'coverage': {'key': '@search\\.coverage', 'type': 'float'},
+        'facets': {'key': '@search\\.facets', 'type': '{[FacetResult]}'},
+        'answers': {'key': '@search\\.answers', 'type': '[AnswerResult]'},
+        'next_page_parameters': {'key': '@search\\.nextPageParameters', 'type': 'SearchRequest'},
+        'results': {'key': 'value', 'type': '[SearchResult]'},
+        'next_link': {'key': '@odata\\.nextLink', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         super(SearchDocumentsResult, self).__init__(**kwargs)
         self.count = None
         self.coverage = None
@@ -521,18 +557,21 @@ class SearchError(msrest.serialization.Model):
     """
 
     _validation = {
-        "code": {"readonly": True},
-        "message": {"required": True, "readonly": True},
-        "details": {"readonly": True},
+        'code': {'readonly': True},
+        'message': {'required': True, 'readonly': True},
+        'details': {'readonly': True},
     }
 
     _attribute_map = {
-        "code": {"key": "code", "type": "str"},
-        "message": {"key": "message", "type": "str"},
-        "details": {"key": "details", "type": "[SearchError]"},
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[SearchError]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         super(SearchError, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -637,59 +676,59 @@ class SearchOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "include_total_result_count": {
-            "key": "IncludeTotalResultCount",
-            "type": "bool",
-        },
-        "facets": {"key": "Facets", "type": "[str]"},
-        "filter": {"key": "$filter", "type": "str"},
-        "highlight_fields": {"key": "HighlightFields", "type": "[str]"},
-        "highlight_post_tag": {"key": "highlightPostTag", "type": "str"},
-        "highlight_pre_tag": {"key": "highlightPreTag", "type": "str"},
-        "minimum_coverage": {"key": "minimumCoverage", "type": "float"},
-        "order_by": {"key": "OrderBy", "type": "[str]"},
-        "query_type": {"key": "queryType", "type": "str"},
-        "scoring_parameters": {"key": "ScoringParameters", "type": "[str]"},
-        "scoring_profile": {"key": "scoringProfile", "type": "str"},
-        "search_fields": {"key": "searchFields", "type": "[str]"},
-        "query_language": {"key": "queryLanguage", "type": "str"},
-        "speller": {"key": "speller", "type": "str"},
-        "answers": {"key": "answers", "type": "str"},
-        "search_mode": {"key": "searchMode", "type": "str"},
-        "scoring_statistics": {"key": "scoringStatistics", "type": "str"},
-        "session_id": {"key": "sessionId", "type": "str"},
-        "select": {"key": "$select", "type": "[str]"},
-        "skip": {"key": "$skip", "type": "int"},
-        "top": {"key": "$top", "type": "int"},
-        "captions": {"key": "captions", "type": "str"},
-        "semantic_fields": {"key": "semanticFields", "type": "[str]"},
+        'include_total_result_count': {'key': 'IncludeTotalResultCount', 'type': 'bool'},
+        'facets': {'key': 'Facets', 'type': '[str]'},
+        'filter': {'key': '$filter', 'type': 'str'},
+        'highlight_fields': {'key': 'HighlightFields', 'type': '[str]'},
+        'highlight_post_tag': {'key': 'highlightPostTag', 'type': 'str'},
+        'highlight_pre_tag': {'key': 'highlightPreTag', 'type': 'str'},
+        'minimum_coverage': {'key': 'minimumCoverage', 'type': 'float'},
+        'order_by': {'key': 'OrderBy', 'type': '[str]'},
+        'query_type': {'key': 'queryType', 'type': 'str'},
+        'scoring_parameters': {'key': 'ScoringParameters', 'type': '[str]'},
+        'scoring_profile': {'key': 'scoringProfile', 'type': 'str'},
+        'search_fields': {'key': 'searchFields', 'type': '[str]'},
+        'query_language': {'key': 'queryLanguage', 'type': 'str'},
+        'speller': {'key': 'speller', 'type': 'str'},
+        'answers': {'key': 'answers', 'type': 'str'},
+        'search_mode': {'key': 'searchMode', 'type': 'str'},
+        'scoring_statistics': {'key': 'scoringStatistics', 'type': 'str'},
+        'session_id': {'key': 'sessionId', 'type': 'str'},
+        'select': {'key': '$select', 'type': '[str]'},
+        'skip': {'key': '$skip', 'type': 'int'},
+        'top': {'key': '$top', 'type': 'int'},
+        'captions': {'key': 'captions', 'type': 'str'},
+        'semantic_fields': {'key': 'semanticFields', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         super(SearchOptions, self).__init__(**kwargs)
-        self.include_total_result_count = kwargs.get("include_total_result_count", None)
-        self.facets = kwargs.get("facets", None)
-        self.filter = kwargs.get("filter", None)
-        self.highlight_fields = kwargs.get("highlight_fields", None)
-        self.highlight_post_tag = kwargs.get("highlight_post_tag", None)
-        self.highlight_pre_tag = kwargs.get("highlight_pre_tag", None)
-        self.minimum_coverage = kwargs.get("minimum_coverage", None)
-        self.order_by = kwargs.get("order_by", None)
-        self.query_type = kwargs.get("query_type", None)
-        self.scoring_parameters = kwargs.get("scoring_parameters", None)
-        self.scoring_profile = kwargs.get("scoring_profile", None)
-        self.search_fields = kwargs.get("search_fields", None)
-        self.query_language = kwargs.get("query_language", None)
-        self.speller = kwargs.get("speller", None)
-        self.answers = kwargs.get("answers", None)
-        self.search_mode = kwargs.get("search_mode", None)
-        self.scoring_statistics = kwargs.get("scoring_statistics", None)
-        self.session_id = kwargs.get("session_id", None)
-        self.select = kwargs.get("select", None)
-        self.skip = kwargs.get("skip", None)
-        self.top = kwargs.get("top", None)
-        self.captions = kwargs.get("captions", None)
-        self.semantic_fields = kwargs.get("semantic_fields", None)
+        self.include_total_result_count = kwargs.get('include_total_result_count', None)
+        self.facets = kwargs.get('facets', None)
+        self.filter = kwargs.get('filter', None)
+        self.highlight_fields = kwargs.get('highlight_fields', None)
+        self.highlight_post_tag = kwargs.get('highlight_post_tag', None)
+        self.highlight_pre_tag = kwargs.get('highlight_pre_tag', None)
+        self.minimum_coverage = kwargs.get('minimum_coverage', None)
+        self.order_by = kwargs.get('order_by', None)
+        self.query_type = kwargs.get('query_type', None)
+        self.scoring_parameters = kwargs.get('scoring_parameters', None)
+        self.scoring_profile = kwargs.get('scoring_profile', None)
+        self.search_fields = kwargs.get('search_fields', None)
+        self.query_language = kwargs.get('query_language', None)
+        self.speller = kwargs.get('speller', None)
+        self.answers = kwargs.get('answers', None)
+        self.search_mode = kwargs.get('search_mode', None)
+        self.scoring_statistics = kwargs.get('scoring_statistics', None)
+        self.session_id = kwargs.get('session_id', None)
+        self.select = kwargs.get('select', None)
+        self.skip = kwargs.get('skip', None)
+        self.top = kwargs.get('top', None)
+        self.captions = kwargs.get('captions', None)
+        self.semantic_fields = kwargs.get('semantic_fields', None)
 
 
 class SearchRequest(msrest.serialization.Model):
@@ -791,58 +830,61 @@ class SearchRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "include_total_result_count": {"key": "count", "type": "bool"},
-        "facets": {"key": "facets", "type": "[str]"},
-        "filter": {"key": "filter", "type": "str"},
-        "highlight_fields": {"key": "highlight", "type": "str"},
-        "highlight_post_tag": {"key": "highlightPostTag", "type": "str"},
-        "highlight_pre_tag": {"key": "highlightPreTag", "type": "str"},
-        "minimum_coverage": {"key": "minimumCoverage", "type": "float"},
-        "order_by": {"key": "orderby", "type": "str"},
-        "query_type": {"key": "queryType", "type": "str"},
-        "scoring_statistics": {"key": "scoringStatistics", "type": "str"},
-        "session_id": {"key": "sessionId", "type": "str"},
-        "scoring_parameters": {"key": "scoringParameters", "type": "[str]"},
-        "scoring_profile": {"key": "scoringProfile", "type": "str"},
-        "search_text": {"key": "search", "type": "str"},
-        "search_fields": {"key": "searchFields", "type": "str"},
-        "search_mode": {"key": "searchMode", "type": "str"},
-        "query_language": {"key": "queryLanguage", "type": "str"},
-        "speller": {"key": "speller", "type": "str"},
-        "answers": {"key": "answers", "type": "str"},
-        "select": {"key": "select", "type": "str"},
-        "skip": {"key": "skip", "type": "int"},
-        "top": {"key": "top", "type": "int"},
-        "captions": {"key": "captions", "type": "str"},
-        "semantic_fields": {"key": "semanticFields", "type": "str"},
+        'include_total_result_count': {'key': 'count', 'type': 'bool'},
+        'facets': {'key': 'facets', 'type': '[str]'},
+        'filter': {'key': 'filter', 'type': 'str'},
+        'highlight_fields': {'key': 'highlight', 'type': 'str'},
+        'highlight_post_tag': {'key': 'highlightPostTag', 'type': 'str'},
+        'highlight_pre_tag': {'key': 'highlightPreTag', 'type': 'str'},
+        'minimum_coverage': {'key': 'minimumCoverage', 'type': 'float'},
+        'order_by': {'key': 'orderby', 'type': 'str'},
+        'query_type': {'key': 'queryType', 'type': 'str'},
+        'scoring_statistics': {'key': 'scoringStatistics', 'type': 'str'},
+        'session_id': {'key': 'sessionId', 'type': 'str'},
+        'scoring_parameters': {'key': 'scoringParameters', 'type': '[str]'},
+        'scoring_profile': {'key': 'scoringProfile', 'type': 'str'},
+        'search_text': {'key': 'search', 'type': 'str'},
+        'search_fields': {'key': 'searchFields', 'type': 'str'},
+        'search_mode': {'key': 'searchMode', 'type': 'str'},
+        'query_language': {'key': 'queryLanguage', 'type': 'str'},
+        'speller': {'key': 'speller', 'type': 'str'},
+        'answers': {'key': 'answers', 'type': 'str'},
+        'select': {'key': 'select', 'type': 'str'},
+        'skip': {'key': 'skip', 'type': 'int'},
+        'top': {'key': 'top', 'type': 'int'},
+        'captions': {'key': 'captions', 'type': 'str'},
+        'semantic_fields': {'key': 'semanticFields', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         super(SearchRequest, self).__init__(**kwargs)
-        self.include_total_result_count = kwargs.get("include_total_result_count", None)
-        self.facets = kwargs.get("facets", None)
-        self.filter = kwargs.get("filter", None)
-        self.highlight_fields = kwargs.get("highlight_fields", None)
-        self.highlight_post_tag = kwargs.get("highlight_post_tag", None)
-        self.highlight_pre_tag = kwargs.get("highlight_pre_tag", None)
-        self.minimum_coverage = kwargs.get("minimum_coverage", None)
-        self.order_by = kwargs.get("order_by", None)
-        self.query_type = kwargs.get("query_type", None)
-        self.scoring_statistics = kwargs.get("scoring_statistics", None)
-        self.session_id = kwargs.get("session_id", None)
-        self.scoring_parameters = kwargs.get("scoring_parameters", None)
-        self.scoring_profile = kwargs.get("scoring_profile", None)
-        self.search_text = kwargs.get("search_text", None)
-        self.search_fields = kwargs.get("search_fields", None)
-        self.search_mode = kwargs.get("search_mode", None)
-        self.query_language = kwargs.get("query_language", None)
-        self.speller = kwargs.get("speller", None)
-        self.answers = kwargs.get("answers", None)
-        self.select = kwargs.get("select", None)
-        self.skip = kwargs.get("skip", None)
-        self.top = kwargs.get("top", None)
-        self.captions = kwargs.get("captions", None)
-        self.semantic_fields = kwargs.get("semantic_fields", None)
+        self.include_total_result_count = kwargs.get('include_total_result_count', None)
+        self.facets = kwargs.get('facets', None)
+        self.filter = kwargs.get('filter', None)
+        self.highlight_fields = kwargs.get('highlight_fields', None)
+        self.highlight_post_tag = kwargs.get('highlight_post_tag', None)
+        self.highlight_pre_tag = kwargs.get('highlight_pre_tag', None)
+        self.minimum_coverage = kwargs.get('minimum_coverage', None)
+        self.order_by = kwargs.get('order_by', None)
+        self.query_type = kwargs.get('query_type', None)
+        self.scoring_statistics = kwargs.get('scoring_statistics', None)
+        self.session_id = kwargs.get('session_id', None)
+        self.scoring_parameters = kwargs.get('scoring_parameters', None)
+        self.scoring_profile = kwargs.get('scoring_profile', None)
+        self.search_text = kwargs.get('search_text', None)
+        self.search_fields = kwargs.get('search_fields', None)
+        self.search_mode = kwargs.get('search_mode', None)
+        self.query_language = kwargs.get('query_language', None)
+        self.speller = kwargs.get('speller', None)
+        self.answers = kwargs.get('answers', None)
+        self.select = kwargs.get('select', None)
+        self.skip = kwargs.get('skip', None)
+        self.top = kwargs.get('top', None)
+        self.captions = kwargs.get('captions', None)
+        self.semantic_fields = kwargs.get('semantic_fields', None)
 
 
 class SearchResult(msrest.serialization.Model):
@@ -872,23 +914,26 @@ class SearchResult(msrest.serialization.Model):
     """
 
     _validation = {
-        "score": {"required": True, "readonly": True},
-        "reranker_score": {"readonly": True},
-        "highlights": {"readonly": True},
-        "captions": {"readonly": True},
+        'score': {'required': True, 'readonly': True},
+        'reranker_score': {'readonly': True},
+        'highlights': {'readonly': True},
+        'captions': {'readonly': True},
     }
 
     _attribute_map = {
-        "additional_properties": {"key": "", "type": "{object}"},
-        "score": {"key": "@search\\.score", "type": "float"},
-        "reranker_score": {"key": "@search\\.rerankerScore", "type": "float"},
-        "highlights": {"key": "@search\\.highlights", "type": "{[str]}"},
-        "captions": {"key": "@search\\.captions", "type": "[CaptionResult]"},
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'score': {'key': '@search\\.score', 'type': 'float'},
+        'reranker_score': {'key': '@search\\.rerankerScore', 'type': 'float'},
+        'highlights': {'key': '@search\\.highlights', 'type': '{[str]}'},
+        'captions': {'key': '@search\\.captions', 'type': '[CaptionResult]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         super(SearchResult, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get("additional_properties", None)
+        self.additional_properties = kwargs.get('additional_properties', None)
         self.score = None
         self.reranker_score = None
         self.highlights = None
@@ -910,16 +955,19 @@ class SuggestDocumentsResult(msrest.serialization.Model):
     """
 
     _validation = {
-        "results": {"required": True, "readonly": True},
-        "coverage": {"readonly": True},
+        'results': {'required': True, 'readonly': True},
+        'coverage': {'readonly': True},
     }
 
     _attribute_map = {
-        "results": {"key": "value", "type": "[SuggestResult]"},
-        "coverage": {"key": "@search\\.coverage", "type": "float"},
+        'results': {'key': 'value', 'type': '[SuggestResult]'},
+        'coverage': {'key': '@search\\.coverage', 'type': 'float'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         super(SuggestDocumentsResult, self).__init__(**kwargs)
         self.results = None
         self.coverage = None
@@ -966,28 +1014,31 @@ class SuggestOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        "filter": {"key": "$filter", "type": "str"},
-        "use_fuzzy_matching": {"key": "UseFuzzyMatching", "type": "bool"},
-        "highlight_post_tag": {"key": "highlightPostTag", "type": "str"},
-        "highlight_pre_tag": {"key": "highlightPreTag", "type": "str"},
-        "minimum_coverage": {"key": "minimumCoverage", "type": "float"},
-        "order_by": {"key": "OrderBy", "type": "[str]"},
-        "search_fields": {"key": "searchFields", "type": "[str]"},
-        "select": {"key": "$select", "type": "[str]"},
-        "top": {"key": "$top", "type": "int"},
+        'filter': {'key': '$filter', 'type': 'str'},
+        'use_fuzzy_matching': {'key': 'UseFuzzyMatching', 'type': 'bool'},
+        'highlight_post_tag': {'key': 'highlightPostTag', 'type': 'str'},
+        'highlight_pre_tag': {'key': 'highlightPreTag', 'type': 'str'},
+        'minimum_coverage': {'key': 'minimumCoverage', 'type': 'float'},
+        'order_by': {'key': 'OrderBy', 'type': '[str]'},
+        'search_fields': {'key': 'searchFields', 'type': '[str]'},
+        'select': {'key': '$select', 'type': '[str]'},
+        'top': {'key': '$top', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         super(SuggestOptions, self).__init__(**kwargs)
-        self.filter = kwargs.get("filter", None)
-        self.use_fuzzy_matching = kwargs.get("use_fuzzy_matching", None)
-        self.highlight_post_tag = kwargs.get("highlight_post_tag", None)
-        self.highlight_pre_tag = kwargs.get("highlight_pre_tag", None)
-        self.minimum_coverage = kwargs.get("minimum_coverage", None)
-        self.order_by = kwargs.get("order_by", None)
-        self.search_fields = kwargs.get("search_fields", None)
-        self.select = kwargs.get("select", None)
-        self.top = kwargs.get("top", None)
+        self.filter = kwargs.get('filter', None)
+        self.use_fuzzy_matching = kwargs.get('use_fuzzy_matching', None)
+        self.highlight_post_tag = kwargs.get('highlight_post_tag', None)
+        self.highlight_pre_tag = kwargs.get('highlight_pre_tag', None)
+        self.minimum_coverage = kwargs.get('minimum_coverage', None)
+        self.order_by = kwargs.get('order_by', None)
+        self.search_fields = kwargs.get('search_fields', None)
+        self.select = kwargs.get('select', None)
+        self.top = kwargs.get('top', None)
 
 
 class SuggestRequest(msrest.serialization.Model):
@@ -1039,37 +1090,40 @@ class SuggestRequest(msrest.serialization.Model):
     """
 
     _validation = {
-        "search_text": {"required": True},
-        "suggester_name": {"required": True},
+        'search_text': {'required': True},
+        'suggester_name': {'required': True},
     }
 
     _attribute_map = {
-        "filter": {"key": "filter", "type": "str"},
-        "use_fuzzy_matching": {"key": "fuzzy", "type": "bool"},
-        "highlight_post_tag": {"key": "highlightPostTag", "type": "str"},
-        "highlight_pre_tag": {"key": "highlightPreTag", "type": "str"},
-        "minimum_coverage": {"key": "minimumCoverage", "type": "float"},
-        "order_by": {"key": "orderby", "type": "str"},
-        "search_text": {"key": "search", "type": "str"},
-        "search_fields": {"key": "searchFields", "type": "str"},
-        "select": {"key": "select", "type": "str"},
-        "suggester_name": {"key": "suggesterName", "type": "str"},
-        "top": {"key": "top", "type": "int"},
+        'filter': {'key': 'filter', 'type': 'str'},
+        'use_fuzzy_matching': {'key': 'fuzzy', 'type': 'bool'},
+        'highlight_post_tag': {'key': 'highlightPostTag', 'type': 'str'},
+        'highlight_pre_tag': {'key': 'highlightPreTag', 'type': 'str'},
+        'minimum_coverage': {'key': 'minimumCoverage', 'type': 'float'},
+        'order_by': {'key': 'orderby', 'type': 'str'},
+        'search_text': {'key': 'search', 'type': 'str'},
+        'search_fields': {'key': 'searchFields', 'type': 'str'},
+        'select': {'key': 'select', 'type': 'str'},
+        'suggester_name': {'key': 'suggesterName', 'type': 'str'},
+        'top': {'key': 'top', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         super(SuggestRequest, self).__init__(**kwargs)
-        self.filter = kwargs.get("filter", None)
-        self.use_fuzzy_matching = kwargs.get("use_fuzzy_matching", None)
-        self.highlight_post_tag = kwargs.get("highlight_post_tag", None)
-        self.highlight_pre_tag = kwargs.get("highlight_pre_tag", None)
-        self.minimum_coverage = kwargs.get("minimum_coverage", None)
-        self.order_by = kwargs.get("order_by", None)
-        self.search_text = kwargs["search_text"]
-        self.search_fields = kwargs.get("search_fields", None)
-        self.select = kwargs.get("select", None)
-        self.suggester_name = kwargs["suggester_name"]
-        self.top = kwargs.get("top", None)
+        self.filter = kwargs.get('filter', None)
+        self.use_fuzzy_matching = kwargs.get('use_fuzzy_matching', None)
+        self.highlight_post_tag = kwargs.get('highlight_post_tag', None)
+        self.highlight_pre_tag = kwargs.get('highlight_pre_tag', None)
+        self.minimum_coverage = kwargs.get('minimum_coverage', None)
+        self.order_by = kwargs.get('order_by', None)
+        self.search_text = kwargs['search_text']
+        self.search_fields = kwargs.get('search_fields', None)
+        self.select = kwargs.get('select', None)
+        self.suggester_name = kwargs['suggester_name']
+        self.top = kwargs.get('top', None)
 
 
 class SuggestResult(msrest.serialization.Model):
@@ -1087,15 +1141,18 @@ class SuggestResult(msrest.serialization.Model):
     """
 
     _validation = {
-        "text": {"required": True, "readonly": True},
+        'text': {'required': True, 'readonly': True},
     }
 
     _attribute_map = {
-        "additional_properties": {"key": "", "type": "{object}"},
-        "text": {"key": "@search\\.text", "type": "str"},
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'text': {'key': '@search\\.text', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         super(SuggestResult, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get("additional_properties", None)
+        self.additional_properties = kwargs.get('additional_properties', None)
         self.text = None

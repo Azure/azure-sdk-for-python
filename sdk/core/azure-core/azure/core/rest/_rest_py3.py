@@ -210,7 +210,7 @@ class _HttpResponseBase(abc.ABC):
     @property
     @abc.abstractmethod
     def headers(self) -> MutableMapping[str, str]:
-        """The response headers.
+        """The response headers. Must be case-insensitive.
 
         :rtype: MutableMapping[str, str]
         """

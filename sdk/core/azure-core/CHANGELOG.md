@@ -1,9 +1,20 @@
 # Release History
 
-## 1.18.0 (Unreleased)
+## 1.18.1 (Unreleased)
 
 ### Features Added
 
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.18.0 (2021-09-02)
+
+### Features Added
+
+- `azure.core.serialization.AzureJSONEncoder` (introduced in 1.17.0) serializes `datetime.datetime` objects in ISO 8601 format, conforming to RFC 3339's specification.    #20190
 - We now use `azure.core.serialization.AzureJSONEncoder` to serialize `json` input to `azure.core.rest.HttpRequest`.
 
 ### Breaking Changes in the Provisional `azure.core.rest` package
@@ -16,7 +27,7 @@ your transport responses should inherit from them and implement them.
 
 ### Bugs Fixed
 
-### Other Changes
+- The behaviour of the headers returned in `azure.core.rest` responses now aligns across sync and async. Items can now be checked case-insensitively and without raising an error for format.
 
 ## 1.17.0 (2021-08-05)
 
