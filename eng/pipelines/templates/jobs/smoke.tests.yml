@@ -167,6 +167,10 @@ jobs:
                 return @{ "name" = $matches[1]; "version" = $matches[2] }
               }
             }
+            if ($artifacts.name -notcontains "${{parameters.Artifact.name}}") {
+              Write-Host "Can't find package ${{parameters.Artifact.name}}"
+              exit 1
+            }
             $dependencies = Get-Content $(requirements) | ForEach-Object {
               $line = $_
               if ($line -match "([a-zA-Z\-]+)(\W+)(.*)") {
