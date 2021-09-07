@@ -9,12 +9,10 @@ try:
 except ImportError:
     from mock import Mock, patch  # type: ignore
 
-from azure_devtools.scenario_tests import RecordingProcessor
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
 from azure.identity import OnBehalfOfCredential, UsernamePasswordCredential
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
-from azure.mgmt.resource import SubscriptionClient
 import pytest
 import six
 from six.moves.urllib_parse import urlparse
@@ -22,13 +20,6 @@ from six.moves.urllib_parse import urlparse
 from helpers import build_aad_response, FAKE_CLIENT_ID, get_discovery_response, mock_response
 from recorded_test_case import RecordedTestCase
 from test_certificate_credential import PEM_CERT_PATH
-
-
-class SubscriptionListRemover(RecordingProcessor):
-    def process_response(self, response):
-        if "/subscriptions/" in response["body"]["string"]:
-            response["body"]["string"] = '{"value":[]}'
-        return response
 
 
 class OboRecordedTestCase(RecordedTestCase):
@@ -62,7 +53,6 @@ class OboRecordedTestCase(RecordedTestCase):
                 "username": os.environ["OBO_USERNAME"],
             }
 
-            self.recording_processors.append(SubscriptionListRemover())
             self.scrubber.register_name_pair(self.obo_settings["tenant_id"], "tenant")
             self.scrubber.register_name_pair(self.obo_settings["username"], "username")
 
@@ -88,8 +78,7 @@ class RecordedTests(OboRecordedTestCase):
         )
         assertion = user_credential.get_token(self.obo_settings["scope"]).token
         credential = OnBehalfOfCredential(tenant_id, client_id, self.obo_settings["client_secret"], assertion)
-        client = SubscriptionClient(credential)
-        list(client.subscriptions.list())
+        credential.get_token(self.obo_settings["scope"])
 
     def test_obo_cert(self):
         client_id = self.obo_settings["client_id"]
@@ -100,8 +89,7 @@ class RecordedTests(OboRecordedTestCase):
         )
         assertion = user_credential.get_token(self.obo_settings["scope"]).token
         credential = OnBehalfOfCredential(tenant_id, client_id, self.obo_settings["cert_bytes"], assertion)
-        client = SubscriptionClient(credential)
-        list(client.subscriptions.list())
+        credential.get_token(self.obo_settings["scope"])
 
 
 def test_allow_multitenant_authentication():
