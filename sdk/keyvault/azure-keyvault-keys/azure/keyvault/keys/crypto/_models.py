@@ -18,7 +18,7 @@ class DecryptResult:
     :param bytes plaintext: The decrypted bytes
     """
 
-    def __init__(self, algorithm, plaintext, key_id = None):
+    def __init__(self, algorithm, plaintext, key_id=None):
         # type: (EncryptionAlgorithm, bytes, Optional[str]) -> None
         self.algorithm = algorithm
         self.plaintext = plaintext
@@ -58,7 +58,7 @@ class SignResult:
     :param bytes signature:
     """
 
-    def __init__(self, algorithm, signature, key_id = None):
+    def __init__(self, algorithm, signature, key_id=None):
         # type: (SignatureAlgorithm, bytes, Optional[str]) -> None
         self.algorithm = algorithm
         self.signature = signature
@@ -74,7 +74,7 @@ class VerifyResult:
     :type algorithm: ~azure.keyvault.keys.crypto.SignatureAlgorithm
     """
 
-    def __init__(self, is_valid, algorithm, key_id = None):
+    def __init__(self, is_valid, algorithm, key_id=None):
         # type: (bool, SignatureAlgorithm, Optional[str]) -> None
         self.is_valid = is_valid
         self.algorithm = algorithm
@@ -90,7 +90,7 @@ class UnwrapResult:
     :param bytes key: The unwrapped key
     """
 
-    def __init__(self, algorithm, key, key_id = None):
+    def __init__(self, algorithm, key, key_id=None):
         # type: (KeyWrapAlgorithm, bytes, Optional[str]) -> None
         self.algorithm = algorithm
         self.key = key
@@ -106,7 +106,7 @@ class WrapResult:
     :param bytes encrypted_key: The encrypted key bytes
     """
 
-    def __init__(self, algorithm, encrypted_key, key_id = None):
+    def __init__(self, algorithm, encrypted_key, key_id=None):
         # type: (KeyWrapAlgorithm, bytes, Optional[str]) -> None
         self.algorithm = algorithm
         self.encrypted_key = encrypted_key

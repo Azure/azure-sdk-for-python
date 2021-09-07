@@ -102,7 +102,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         """
         if not self._jwk:
             return self._key_id.source_id if self._key_id else None
-        return cast(JsonWebKey,self._key).kid  # type: ignore[attr-defined]
+        return cast(JsonWebKey, self._key).kid  # type: ignore[attr-defined]
 
     @property
     def vault_url(self) -> "Optional[str]":  # type: ignore
