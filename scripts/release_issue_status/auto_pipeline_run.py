@@ -3,6 +3,7 @@ import json
 import os
 
 url = os.getenv('URL')
+print('+++++++++++++++URL',type(url),url)
 
 headers = {
     'x-vss-reauthenticationaction': 'Suppress',
