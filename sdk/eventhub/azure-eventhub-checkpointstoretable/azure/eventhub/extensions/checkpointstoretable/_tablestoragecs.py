@@ -7,7 +7,6 @@ import datetime
 import time
 import logging
 import calendar
-import dateutil.parser
 from azure.core import MatchConditions
 from azure.eventhub import CheckpointStore  # type: ignore  # pylint: disable=no-name-in-module
 from azure.eventhub.exceptions import OwnershipLostError  # type: ignore
@@ -17,6 +16,8 @@ from azure.core.exceptions import (
 )
 from ._vendor.data.tables import TableClient, UpdateMode
 from ._vendor.data.tables._base_client import parse_connection_str
+from ._vendor.data.tables._deserialize import clean_up_dotnet_timestamps
+from ._vendor.data.tables._common_conversion import TZ_UTC
 
 logger = logging.getLogger(__name__)
 
@@ -37,6 +38,19 @@ def _to_timestamp(date):
         timestamp = time.mktime(_utc_to_local(date).timetuple())
         timestamp += date.microsecond / 1e6
     return timestamp
+
+def _to_datetime(value):
+    # Cosmos returns this with a decimal point that throws an error on deserialization
+    cleaned_value = clean_up_dotnet_timestamps(value)
+    try:
+        dt_obj = datetime.datetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%S.%fZ").replace(
+            tzinfo=TZ_UTC
+        )
+    except ValueError:
+        dt_obj = datetime.datetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%SZ").replace(
+            tzinfo=TZ_UTC
+        )
+    return dt_obj
 
 
 class TableCheckpointStore(CheckpointStore):
@@ -164,8 +178,10 @@ class TableCheckpointStore(CheckpointStore):
                 entity=ownership_entity, headers={"Prefer": "return-content"}, **kwargs
             )
             ownership["etag"] = metadata["etag"]
+            print('swathi')
+            print(metadata["content"]["Timestamp"])
             ownership["last_modified_time"] = _to_timestamp(
-                dateutil.parser.isoparse(metadata["content"]["Timestamp"])
+                _to_datetime(metadata["content"]["Timestamp"])
             )
 
     def _claim_one_partition(self, ownership, **kwargs):
