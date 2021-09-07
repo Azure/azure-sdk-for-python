@@ -124,11 +124,12 @@ def _latest_comment_time(comments, delay_from_create_date):
 
 def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue):
     print("==========new issue number: {}".format(item.issue_object.number))
+    output_folder = ''
     if 'auto-link' not in item.labels:
         item.labels.append('auto-link')
         item.issue_object.set_labels(*item.labels)
         try:
-            package_name, readme_link = update_issue_body(request_repo, rest_repo, item.issue_object.number)
+            package_name, readme_link, output_folder = update_issue_body(request_repo, rest_repo, item.issue_object.number)
             print("pkname, readme", package_name, readme_link)
             item.package = package_name
             key = ('Python', item.package)
@@ -149,7 +150,8 @@ def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue):
             item.issue_object.set_labels(*item.labels)
             raise
     try:
-        reply = rg.begin_reply_generate(item=item, rest_repo=rest_repo, readme_link=readme_link,sdk_repo=sdk_repo)
+        rg.begin_reply_generate(item=item, rest_repo=rest_repo, readme_link=readme_link,
+                                sdk_repo=sdk_repo,output_folder=output_folder)
     except Exception as e:
         item.bot_advice = 'auto reply failed, Please intervene manually !!'
         print('Error from auto reply ========================')

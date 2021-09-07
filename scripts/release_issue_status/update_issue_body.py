@@ -20,7 +20,7 @@ def update_issue_body(sdk_repo, rest_repo, issue_number):
         link = link.split(']')[0]
         link = link.replace('[', "").replace(']', "").replace('(', "").replace(')', "")
 
-    package_name, readme_link = get_pkname_and_readme_link(rest_repo, link)
+    package_name, readme_link, output_folder = get_pkname_and_readme_link(rest_repo, link)
     
     # Check readme tag format
     if 'package' not in readme_tag:
@@ -36,7 +36,7 @@ def update_issue_body(sdk_repo, rest_repo, issue_number):
         issue_body_up += raw + '\n'
 
     issue_info.edit(body=issue_body_up)
-    return package_name, readme_link
+    return package_name, readme_link, output_folder
         
 
 def get_pkname_and_readme_link(rest_repo, link):
@@ -80,9 +80,10 @@ def get_pkname_and_readme_link(rest_repo, link):
     readme_link_part = '/specification' + readme_link.split('/specification')[-1]
     readme_contents = str(rest_repo.get_contents(readme_link_part).decoded_content)
     pk_name = re.findall(r'package-name: (.*?)\\n', readme_contents)[0]
+    out_folder = re.findall(r'\$\(python-sdks-folder\)/(.*?)/azure-', readme_contents)[0]
     readme_link = readme_link.replace('python.', '')
 
-    return pk_name, readme_link
+    return pk_name, readme_link, out_folder
 
 
 def find_readme_link(sdk_repo, issue_number):

@@ -1,6 +1,8 @@
-import requests
 import json
 import os
+import re
+
+import requests
 
 _headers = {
     'x-vss-reauthenticationaction': 'Suppress',
@@ -10,10 +12,7 @@ _headers = {
     'Cookie': ''
 }
 
-print('++++++++++cookie',os.getenv('COOKIE'))
-print('++++++++++url',os.getenv('URL'))
-
-def run_pipeline(issue_link, sdk_issue_object):
+def run_pipeline(issue_link, sdk_issue_object, pipeline_url):
     payload = json.dumps({
         "stagesToSkip": [],
         "resources": {
@@ -31,6 +30,10 @@ def run_pipeline(issue_link, sdk_issue_object):
             "ISSUE_LINK": {
                 "value": f"{issue_link}",
                 "isSecret": False
+            },
+            "PIPELINE_LINK": {
+                "value": f"{pipeline_url}",
+                "isSecret": False
             }
         }
     })
@@ -41,3 +44,10 @@ def run_pipeline(issue_link, sdk_issue_object):
     else:
         print(response.status_code)
         return False
+
+
+def get_pipeline_url(search_url):
+    res = requests.get(search_url, headers=_headers)
+    definitionId = re.findall('"pipelines":\[{"id":(.*?),"name":"python', res.text)[0]
+    pipeline_url = 'https://dev.azure.com/azure-sdk/internal/_build?definitionId={}'.format(definitionId)
+    return pipeline_url
