@@ -10,7 +10,6 @@ from azure.identity import UsernamePasswordCredential
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio import OnBehalfOfCredential
-from azure.mgmt.resource.subscriptions.aio import SubscriptionClient
 import pytest
 
 from helpers import build_aad_response, get_discovery_response, mock_response
@@ -31,9 +30,7 @@ class RecordedTests(OboRecordedTestCase):
         )
         assertion = user_credential.get_token(self.obo_settings["scope"]).token
         credential = OnBehalfOfCredential(tenant_id, client_id, client_secret, assertion)
-        client = SubscriptionClient(credential)
-        async for _ in client.subscriptions.list():
-            pass
+        await credential.get_token(self.obo_settings["scope"])
 
     @RecordedTestCase.await_prepared_test
     async def test_obo_cert(self):
@@ -45,9 +42,7 @@ class RecordedTests(OboRecordedTestCase):
         )
         assertion = user_credential.get_token(self.obo_settings["scope"]).token
         credential = OnBehalfOfCredential(tenant_id, client_id, self.obo_settings["cert_bytes"], assertion)
-        client = SubscriptionClient(credential)
-        async for _ in client.subscriptions.list():
-            pass
+        await credential.get_token(self.obo_settings["scope"])
 
 
 @pytest.mark.asyncio

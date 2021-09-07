@@ -44,13 +44,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 31 Aug 2021 16:25:23 GMT
+      - Tue, 07 Sep 2021 15:34:39 GMT
       p3p:
       - CP="DSP CUR OTPi IND OTRi ONL FIN"
       set-cookie:
-      - fpc=An9LD1p-9hxKvTPdtSdShxg; expires=Thu, 30-Sep-2021 16:25:23 GMT; path=/;
+      - fpc=AkVp-nifqNhNrK-o5WlRLus; expires=Thu, 07-Oct-2021 15:34:40 GMT; path=/;
         secure; HttpOnly; SameSite=None
-      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrzgjxTgvtVEmRB8rlvEBNYDaJhozZAYjvymTUgItB_EnEG02mnlrc-OBmFolSgBoJCsHV0ceHe8FD6fs9o9qfpbwEDP6wEPwL2gntGGUglE-MTaMEsvB7w5bJtHMfvSloOAczVkVm_67lQIRELy4sXV3ZB1Yd0YhPew_P-bXGjzkgAA;
+      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrAoM9_0t_0GJ15W1lpZ-D0uWhfGg_MkH339D-uSEYPiMZ7nLLAZJfleEkxDaybudbGq-xJ7h17Bct8xancmp9U53Pr3wxGhju1L2JkgwCWxc0A-ChUboI_J2MPZN796kkqIAlYUOFkS_2prH_Xx6ddQr_IGI1EXcgVAPzFrgEnp8gAA;
         domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None
       - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
       - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
@@ -59,7 +59,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ests-server:
-      - 2.1.11961.11 - SCUS ProdSlices
+      - 2.1.12011.8 - SCUS ProdSlices
     status:
       code: 200
       message: OK
@@ -73,8 +73,8 @@ interactions:
       Connection:
       - keep-alive
       Cookie:
-      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrzgjxTgvtVEmRB8rlvEBNYDaJhozZAYjvymTUgItB_EnEG02mnlrc-OBmFolSgBoJCsHV0ceHe8FD6fs9o9qfpbwEDP6wEPwL2gntGGUglE-MTaMEsvB7w5bJtHMfvSloOAczVkVm_67lQIRELy4sXV3ZB1Yd0YhPew_P-bXGjzkgAA;
-        fpc=An9LD1p-9hxKvTPdtSdShxg; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
+      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrAoM9_0t_0GJ15W1lpZ-D0uWhfGg_MkH339D-uSEYPiMZ7nLLAZJfleEkxDaybudbGq-xJ7h17Bct8xancmp9U53Pr3wxGhju1L2JkgwCWxc0A-ChUboI_J2MPZN796kkqIAlYUOFkS_2prH_Xx6ddQr_IGI1EXcgVAPzFrgEnp8gAA;
+        fpc=AkVp-nifqNhNrK-o5WlRLus; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
       User-Agent:
       - azsdk-python-identity/1.7.0b4 Python/3.8.10 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
@@ -93,7 +93,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 31 Aug 2021 16:25:23 GMT
+      - Tue, 07 Sep 2021 15:34:39 GMT
       expires:
       - '-1'
       p3p:
@@ -101,7 +101,7 @@ interactions:
       pragma:
       - no-cache
       set-cookie:
-      - fpc=An9LD1p-9hxKvTPdtSdShxg; expires=Thu, 30-Sep-2021 16:25:24 GMT; path=/;
+      - fpc=AkVp-nifqNhNrK-o5WlRLus; expires=Thu, 07-Oct-2021 15:34:40 GMT; path=/;
         secure; HttpOnly; SameSite=None
       - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
       - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
@@ -110,7 +110,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ests-server:
-      - 2.1.11961.11 - EUS ProdSlices
+      - 2.1.12011.8 - NCUS ProdSlices
     status:
       code: 200
       message: OK
@@ -128,8 +128,8 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       Cookie:
-      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrzgjxTgvtVEmRB8rlvEBNYDaJhozZAYjvymTUgItB_EnEG02mnlrc-OBmFolSgBoJCsHV0ceHe8FD6fs9o9qfpbwEDP6wEPwL2gntGGUglE-MTaMEsvB7w5bJtHMfvSloOAczVkVm_67lQIRELy4sXV3ZB1Yd0YhPew_P-bXGjzkgAA;
-        fpc=An9LD1p-9hxKvTPdtSdShxg; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
+      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrAoM9_0t_0GJ15W1lpZ-D0uWhfGg_MkH339D-uSEYPiMZ7nLLAZJfleEkxDaybudbGq-xJ7h17Bct8xancmp9U53Pr3wxGhju1L2JkgwCWxc0A-ChUboI_J2MPZN796kkqIAlYUOFkS_2prH_Xx6ddQr_IGI1EXcgVAPzFrgEnp8gAA;
+        fpc=AkVp-nifqNhNrK-o5WlRLus; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
       User-Agent:
       - azsdk-python-identity/1.7.0b4 Python/3.8.10 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
       x-client-cpu:
@@ -152,17 +152,17 @@ interactions:
     body:
       string: '{"token_type": "Bearer", "scope": "api://foo/Foo", "expires_in": 3599,
         "ext_expires_in": 3599, "access_token": "redacted", "refresh_token": "redacted",
-        "id_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyJ9.eyJhdWQiOiAiZDcwZmM1YWUtNTJlNC00ODk1LWJmMWItODk0MTAzZDdlZjE0IiwgImlzcyI6ICJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vM2M2MzFiYjctYTlmNy00MzQzLWE1YmEtYTYxNTkxMzVmMWZjL3YyLjAiLCAiaWF0IjogMTYzMDQyNjgyNCwgIm5iZiI6IDE2MzA0MjY4MjQsICJleHAiOiAxNjMwNDMwNzI0LCAibmFtZSI6ICJyZWRhY3RlZCIsICJvaWQiOiAiY2RkNmVlMjYtZTRiYS00MjRlLTgyZTUtZTdmYTc3ODNiNTgwIiwgInByZWZlcnJlZF91c2VybmFtZSI6ICJyZWRhY3RlZCIsICJyaCI6ICIwLkFSY0F0eHRqUFBlcFEwT2x1cVlWa1RYeF9LN0ZEOWZrVXBWSXZ4dUpRUVBYN3hRWEFQcy4iLCAic3ViIjogIkRFZVg1akRlVTl0NTRaQmlWdUp2S2dwVFE3Ry1hazYtamJ0Zm5oenVEWVUiLCAidGlkIjogIjNjNjMxYmI3LWE5ZjctNDM0My1hNWJhLWE2MTU5MTM1ZjFmYyIsICJ1dGkiOiAiZlBlejItNTY1RXlHTE82aW1kbXFBQSIsICJ2ZXIiOiAiMi4wIn0=.kmTL0QldU04sl7NKDsGxj9xd_DyLPZdEuFSqsqH9Ej5sd-sEyRAKNUyRT96vLn4yOsGScz1tJE6839TXuevD7kwInjakcmT_nh3xcrB1ZjntGDnDiMD_DDV7MwZz7b9O0s7-NKCXT6cmt6TUO1KADsqA1V9o5yzGtcQnaCXuRDONFFP3yv16HVeGVQ5CX6V51S2uyTEPahHGM9BAg9PqvqIOSyJ1f4QIgf5w32AY1-sHfGGapUXMYAQX9GZEbor53WJoBwvRkJBoXWekx-noM3YuHCASTffBR07ztQAWzUFDnlN9-WyBf9mpkjvfeqGV82CkwXhnRgfDnbYuxopJew",
+        "id_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyJ9.eyJhdWQiOiAiZDcwZmM1YWUtNTJlNC00ODk1LWJmMWItODk0MTAzZDdlZjE0IiwgImlzcyI6ICJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vM2M2MzFiYjctYTlmNy00MzQzLWE1YmEtYTYxNTkxMzVmMWZjL3YyLjAiLCAiaWF0IjogMTYzMTAyODU4MCwgIm5iZiI6IDE2MzEwMjg1ODAsICJleHAiOiAxNjMxMDMyNDgwLCAibmFtZSI6ICJyZWRhY3RlZCIsICJvaWQiOiAiY2RkNmVlMjYtZTRiYS00MjRlLTgyZTUtZTdmYTc3ODNiNTgwIiwgInByZWZlcnJlZF91c2VybmFtZSI6ICJyZWRhY3RlZCIsICJyaCI6ICIwLkFSY0F0eHRqUFBlcFEwT2x1cVlWa1RYeF9LN0ZEOWZrVXBWSXZ4dUpRUVBYN3hRWEFQcy4iLCAic3ViIjogIkRFZVg1akRlVTl0NTRaQmlWdUp2S2dwVFE3Ry1hazYtamJ0Zm5oenVEWVUiLCAidGlkIjogIjNjNjMxYmI3LWE5ZjctNDM0My1hNWJhLWE2MTU5MTM1ZjFmYyIsICJ1dGkiOiAiR2xWcGpBeXM0MGFLVG9rU3RUQ0ZBQSIsICJ2ZXIiOiAiMi4wIn0=.Ogm8BBsmdpspPksOJ0RLHd3QjQSQzEW76vyRAG_lolJzFZYAWhoTXtm_IhnPvG0W9cL1WjyVKNZuiWBVUJHDDljwz8Pt2By-l8WxiiLY_WhkZJviniNQwPkd2uSeD33XCvy1Ip4KnCHuUkLpp0VSr0jTH0HArd8Otsg2F9NK3MOCFUc3cEfJLa8I4s42iEDQ6eu4G7f-Kt__-pHC4BddTQraUjJAY-7b1K0nSG89-3fyIwLRacDhpHw03yukf6SGjbMPEB-LsSUbMoPU9dZbe8u4lRiWe6il0WeoG8rMiyHqgD8LwuTWNqE-wRXJNtPzis6B6WTjZV7dT3Tj7NTXYw",
         "client_info": "eyJ1aWQiOiJjZGQ2ZWUyNi1lNGJhLTQyNGUtODJlNS1lN2ZhNzc4M2I1ODAiLCJ1dGlkIjoiM2M2MzFiYjctYTlmNy00MzQzLWE1YmEtYTYxNTkxMzVmMWZjIn0"}'
     headers:
       cache-control:
       - no-store, no-cache
       content-length:
-      - '3765'
+      - '3808'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 31 Aug 2021 16:25:23 GMT
+      - Tue, 07 Sep 2021 15:34:40 GMT
       expires:
       - '-1'
       p3p:
@@ -170,8 +170,8 @@ interactions:
       pragma:
       - no-cache
       set-cookie:
-      - fpc=An9LD1p-9hxKvTPdtSdShxjArTo4AQAAAPNOwNgOAAAA; expires=Thu, 30-Sep-2021
-        16:25:24 GMT; path=/; secure; HttpOnly; SameSite=None
+      - fpc=AkVp-nifqNhNrK-o5WlRLuvArTo4AQAAAI99ydgOAAAA; expires=Thu, 07-Oct-2021
+        15:34:40 GMT; path=/; secure; HttpOnly; SameSite=None
       - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
       - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
       strict-transport-security:
@@ -181,7 +181,7 @@ interactions:
       x-ms-clitelem:
       - 1,0,0,,
       x-ms-ests-server:
-      - 2.1.11961.11 - NCUS ProdSlices
+      - 2.1.12011.8 - NCUS ProdSlices
     status:
       code: 200
       message: OK
@@ -196,49 +196,22 @@ interactions:
     uri: https://login.microsoftonline.com/tenant/oauth2/v2.0/token
   response:
     body:
-      string: '{"token_type": "Bearer", "scope": "https://management.azure.com/user_impersonation
-        https://management.azure.com/.default", "expires_in": 3598, "ext_expires_in":
-        3598, "access_token": "redacted", "refresh_token": "redacted"}'
+      string: '{"token_type": "Bearer", "scope": "api://foo/Foo", "expires_in": 3597,
+        "ext_expires_in": 3597, "access_token": "redacted", "refresh_token": "redacted"}'
     headers:
       cache-control: no-store, no-cache
-      content-length: '2906'
+      content-length: '2548'
       content-type: application/json; charset=utf-8
-      date: Tue, 31 Aug 2021 16:25:24 GMT
+      date: Tue, 07 Sep 2021 15:34:41 GMT
       expires: '-1'
       p3p: CP="DSP CUR OTPi IND OTRi ONL FIN"
       pragma: no-cache
       set-cookie: stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
-      x-ms-ests-server: 2.1.11961.11 - EUS ProdSlices
+      x-ms-ests-server: 2.1.12011.8 - NCUS ProdSlices
     status:
       code: 200
       message: OK
     url: https://login.microsoftonline.com/3c631bb7-a9f7-4343-a5ba-a6159135f1fc/oauth2/v2.0/token
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-mgmt-resource/18.1.0 Python/3.8.10 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
-    method: GET
-    uri: https://management.azure.com/subscriptions?api-version=2019-11-01
-  response:
-    body:
-      string: '{"value":[]}'
-    headers:
-      cache-control: no-cache
-      content-length: '416'
-      content-type: application/json; charset=utf-8
-      date: Tue, 31 Aug 2021 16:25:24 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000; includeSubDomains
-      vary: Accept-Encoding
-      x-content-type-options: nosniff
-    status:
-      code: 200
-      message: OK
-    url: https://management.azure.com/subscriptions?api-version=2019-11-01
 version: 1
