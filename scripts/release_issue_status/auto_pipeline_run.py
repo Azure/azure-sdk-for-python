@@ -10,6 +10,8 @@ _headers = {
     'Cookie': ''
 }
 
+print('++++++++++cookie',os.getenv('COOKIE'))
+print('++++++++++url',os.getenv('URL'))
 
 def run_pipeline(issue_link, sdk_issue_object):
     payload = json.dumps({
