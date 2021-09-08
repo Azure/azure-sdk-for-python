@@ -24,9 +24,32 @@ from helpers import mock_response, Request, validating_transport
 from test_shared_cache_credential import build_aad_response, get_account_event, populated_cache
 
 try:
-    from unittest.mock import Mock, patch
+    from unittest.mock import MagicMock, Mock, patch
 except ImportError:  # python < 3.3
-    from mock import Mock, patch  # type: ignore
+    from mock import MagicMock, Mock, patch  # type: ignore
+
+
+def test_close():
+    transport = MagicMock()
+    credential = DefaultAzureCredential(transport=transport)
+    assert not transport.__enter__.called
+    assert not transport.__exit__.called
+
+    credential.close()
+    assert not transport.__enter__.called
+    assert transport.__exit__.called  # call count depends on the chain's composition
+
+
+def test_context_manager():
+    transport = MagicMock()
+    credential = DefaultAzureCredential(transport=transport)
+
+    with credential:
+        assert transport.__enter__.called  # call count depends on the chain's composition
+        assert not transport.__exit__.called
+
+    assert transport.__enter__.called
+    assert transport.__exit__.called
 
 
 def test_iterates_only_once():

@@ -64,6 +64,17 @@ class CreateMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     RECOVER = "recover"
     DEFAULT = "default"
 
+class DeletionRecoveryLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The deletion recovery level currently in effect for the object. If it contains 'Purgeable',
+    then the object can be permanently deleted by a privileged user; otherwise, only the system can
+    purge the object at the end of the retention interval.
+    """
+
+    PURGEABLE = "Purgeable"
+    RECOVERABLE_PURGEABLE = "Recoverable+Purgeable"
+    RECOVERABLE = "Recoverable"
+    RECOVERABLE_PROTECTED_SUBSCRIPTION = "Recoverable+ProtectedSubscription"
+
 class IdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of identity.
     """
@@ -72,6 +83,37 @@ class IdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
+
+class JsonWebKeyCurveName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The elliptic curve name. For valid values, see JsonWebKeyCurveName.
+    """
+
+    P256 = "P-256"
+    P384 = "P-384"
+    P521 = "P-521"
+    P256_K = "P-256K"
+
+class JsonWebKeyOperation(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The permitted JSON web key operations of the key. For more information, see
+    JsonWebKeyOperation.
+    """
+
+    ENCRYPT = "encrypt"
+    DECRYPT = "decrypt"
+    SIGN = "sign"
+    VERIFY = "verify"
+    WRAP_KEY = "wrapKey"
+    UNWRAP_KEY = "unwrapKey"
+    IMPORT_ENUM = "import"
+
+class JsonWebKeyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of the key. For valid values, see JsonWebKeyType.
+    """
+
+    EC = "EC"
+    EC_HSM = "EC-HSM"
+    RSA = "RSA"
+    RSA_HSM = "RSA-HSM"
 
 class KeyPermissions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 

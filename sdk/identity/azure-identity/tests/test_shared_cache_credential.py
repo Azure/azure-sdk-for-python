@@ -25,9 +25,9 @@ import pytest
 from six.moves.urllib_parse import urlparse
 
 try:
-    from unittest.mock import Mock, patch
+    from unittest.mock import MagicMock, Mock, patch
 except ImportError:  # python < 3.3
-    from mock import Mock, patch  # type: ignore
+    from mock import MagicMock, Mock, patch  # type: ignore
 
 from helpers import (
     build_aad_response,
@@ -39,6 +39,37 @@ from helpers import (
     Request,
     validating_transport,
 )
+
+
+def test_close():
+    transport = MagicMock()
+    credential = SharedTokenCacheCredential(transport=transport, _cache=TokenCache())
+    with pytest.raises(CredentialUnavailableError):
+        credential.get_token('scope')
+
+    assert not transport.__enter__.called
+    assert not transport.__exit__.called
+
+    credential.close()
+    assert not transport.__enter__.called
+    assert transport.__exit__.call_count == 1
+
+
+def test_context_manager():
+    transport = MagicMock()
+    credential = SharedTokenCacheCredential(transport=transport, _cache=TokenCache())
+    with pytest.raises(CredentialUnavailableError):
+        credential.get_token('scope')
+
+    assert not transport.__enter__.called
+    assert not transport.__exit__.called
+
+    with credential:
+        assert transport.__enter__.call_count == 1
+        assert not transport.__exit__.called
+
+    assert transport.__enter__.call_count == 1
+    assert transport.__exit__.call_count == 1
 
 
 def test_tenant_id_validation():

@@ -70,9 +70,9 @@ class PremiumPageBlobTier(str, Enum):
 class QuickQueryDialect(str, Enum):
     """Specifies the quick query input/output dialect."""
 
-    DelimitedTextDialect = 'DelimitedTextDialect'
-    DelimitedJsonDialect = 'DelimitedJsonDialect'
-    ParquetDialect = 'ParquetDialect'
+    DelimitedText = 'DelimitedTextDialect'
+    DelimitedJson = 'DelimitedJsonDialect'
+    Parquet = 'ParquetDialect'
 
 
 class SequenceNumberAction(str, Enum):
@@ -321,7 +321,7 @@ class ContainerProperties(DictMixin):
         Represents whether the container has an immutability policy.
     :ivar bool has_legal_hold:
         Represents whether the container has a legal hold.
-    :ivar bool is_immutable_storage_with_versioning_enabled:
+    :ivar bool immutable_storage_with_versioning_enabled:
         Represents whether immutable storage with versioning enabled on the container.
 
         .. versionadded:: 12.10.0
@@ -349,7 +349,7 @@ class ContainerProperties(DictMixin):
         self.has_legal_hold = kwargs.get('x-ms-has-legal-hold')
         self.metadata = kwargs.get('metadata')
         self.encryption_scope = None
-        self.is_immutable_storage_with_versioning_enabled = kwargs.get('x-ms-immutable-storage-with-versioning-enabled')
+        self.immutable_storage_with_versioning_enabled = kwargs.get('x-ms-immutable-storage-with-versioning-enabled')
         default_encryption_scope = kwargs.get('x-ms-default-encryption-scope')
         if default_encryption_scope:
             self.encryption_scope = ContainerEncryptionScope(
@@ -366,7 +366,7 @@ class ContainerProperties(DictMixin):
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         props.public_access = generated.properties.public_access
         props.has_immutability_policy = generated.properties.has_immutability_policy
-        props.is_immutable_storage_with_versioning_enabled = \
+        props.immutable_storage_with_versioning_enabled = \
             generated.properties.is_immutable_storage_with_versioning_enabled
         props.deleted = generated.deleted
         props.version = generated.version

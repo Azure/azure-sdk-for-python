@@ -62,7 +62,6 @@ class HighAvailabilityMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """High availability mode for a server.
     """
 
-    ENABLED = "Enabled"
     DISABLED = "Disabled"
     ZONE_REDUNDANT = "ZoneRedundant"
     SAME_ZONE = "SameZone"

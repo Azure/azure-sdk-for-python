@@ -29,6 +29,7 @@ from azure.storage.blob import (
     ResourceTypes,
     AccountSasPermissions, generate_container_sas, ContainerClient, CustomerProvidedEncryptionKey,
 )
+from fake_credentials import CPK_KEY_HASH, CPK_KEY_VALUE
 from _shared.testcase import GlobalStorageAccountPreparer
 from devtools_testutils.storage import StorageTestCase
 
@@ -862,8 +863,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             connection_data_block_size=4 * 1024)
         cc.create_container()
         self._setup()
-        test_cpk = CustomerProvidedEncryptionKey(key_value="MDEyMzQ1NjcwMTIzNDU2NzAxMjM0NTY3MDEyMzQ1Njc=",
-                                                 key_hash="3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=")
+        test_cpk = CustomerProvidedEncryptionKey(key_value=CPK_KEY_VALUE, key_hash=CPK_KEY_HASH)
         blob_client = cc.get_blob_client("test_blob")
         blob_client.upload_blob(b"hello world", cpk=test_cpk)
         # Act

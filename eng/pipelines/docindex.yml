@@ -2,3 +2,55 @@ trigger: none
 
 jobs:
   - template: /eng/common/pipelines/templates/jobs/docindex.yml
+
+  - job: UpdateDocsMsBuildConfig
+    pool:
+      vmImage: ubuntu-20.04
+    variables:
+      DocRepoLocation: $(Pipeline.Workspace)/docs
+      DocRepoOwner: MicrosoftDocs
+      DocRepoName: azure-docs-sdk-python
+    steps:
+      # Docs CI uses Python 3.6.8 but that is not available on this image
+      - task: UsePythonVersion@0
+        displayName: 'Use Python 3.6'
+        inputs:
+          versionSpec: '3.6'
+
+      # Docs CI upgrades pip, wheel, and setuptools
+      - pwsh: pip install --upgrade pip wheel setuptools
+        displayName: Update python tools for package verification
+
+      # Sync docs repo onboarding files/folders
+      - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+        parameters:
+          SkipDefaultCheckout: true
+          Paths:
+            - ci-configs/packages-latest.json
+            - ci-configs/packages-preview.json
+            - metadata/
+          Repositories:
+            - Name: $(DocRepoOwner)/$(DocRepoName)
+              WorkingDirectory: $(DocRepoLocation)
+
+      # Call update docs ci script to onboard packages
+      - task: Powershell@2
+        inputs:
+          pwsh: true
+          filePath: eng/common/scripts/Update-DocsMsPackages.ps1
+          arguments: -DocRepoLocation $(DocRepoLocation)
+        displayName: Update Docs Onboarding
+
+      # Push changes to docs repo
+      - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
+        parameters:
+          WorkingDirectory: $(DocRepoLocation)
+
+      - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
+        parameters:
+          BaseRepoBranch: $(DefaultBranch)
+          BaseRepoOwner: $(DocRepoOwner)
+          CommitMsg: "Update docs CI configuration"
+          TargetRepoName: $(DocRepoName)
+          TargetRepoOwner: $(DocRepoOwner)
+          WorkingDirectory: $(DocRepoLocation)
