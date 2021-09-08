@@ -118,3 +118,16 @@ async def test_delete_operation_location(lro_poller):
 async def test_request_id(lro_poller):
     result = await (await lro_poller(HttpRequest("POST", "/polling/request-id"), request_id="123456789")).result()
     assert result['status'] == "Succeeded"
+
+@pytest.mark.asyncio
+async def test_continuation_token(client, lro_poller, deserialization_callback):
+    poller = await lro_poller(HttpRequest("POST", "/polling/post/location-and-operation-location"))
+    token = poller.continuation_token()
+    new_poller = AsyncLROPoller.from_continuation_token(
+        continuation_token=token,
+        polling_method=AsyncLROBasePolling(0),
+        client=client._client,
+        deserialization_callback=deserialization_callback,
+    )
+    result = await new_poller.result()
+    assert result == {'location_result': True}
