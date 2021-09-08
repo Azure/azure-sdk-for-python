@@ -277,11 +277,11 @@ class SearchClient(HeadersMixin):
 
         query_answer = kwargs.pop("query_answer", None)
         query_answer_count = kwargs.pop("query_answer_count", None)
-        answers = '{}|count-{}'.format(query_answer, query_answer_count)
+        answers = query_answer if not query_answer_count else '{}|count-{}'.format(query_answer, query_answer_count)
 
         query_caption = kwargs.pop("query_caption", None)
         query_caption_highlight = kwargs.pop("query_caption_highlight", None)
-        captions = '{}|highlight-{}'.format(query_caption, query_caption_highlight)
+        captions = query_caption if not query_caption_highlight else '{}|highlight-{}'.format(query_caption, query_caption_highlight)
 
         semantic_fields = kwargs.pop("semantic_fields", None)
 
