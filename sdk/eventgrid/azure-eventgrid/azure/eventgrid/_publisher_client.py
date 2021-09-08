@@ -197,7 +197,7 @@ class EventGridPublisherClient(object):
         elif isinstance(events[0], EventGridEvent) or _is_eventgrid_event(events[0]):
             for event in events:
                 _eventgrid_data_typecheck(event)
-        self._client._send_request(  # pylint: disable=protected-access
+        self._client.send_request(  # pylint: disable=protected-access
             _build_request(self._endpoint, content_type, events), **kwargs
         )
 

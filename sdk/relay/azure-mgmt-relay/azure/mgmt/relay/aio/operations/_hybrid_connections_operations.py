@@ -45,7 +45,7 @@ class HybridConnectionsOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.HybridConnectionListResult"]:
         """Lists the hybrid connection within the namespace.
 
@@ -105,7 +105,7 @@ class HybridConnectionsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -122,7 +122,7 @@ class HybridConnectionsOperations:
         namespace_name: str,
         hybrid_connection_name: str,
         parameters: "_models.HybridConnection",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HybridConnection":
         """Creates or updates a service hybrid connection. This operation is idempotent.
 
@@ -176,7 +176,7 @@ class HybridConnectionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridConnection', pipeline_response)
@@ -192,7 +192,7 @@ class HybridConnectionsOperations:
         resource_group_name: str,
         namespace_name: str,
         hybrid_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a hybrid connection.
 
@@ -239,7 +239,7 @@ class HybridConnectionsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -252,7 +252,7 @@ class HybridConnectionsOperations:
         resource_group_name: str,
         namespace_name: str,
         hybrid_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HybridConnection":
         """Returns the description for the specified hybrid connection.
 
@@ -299,7 +299,7 @@ class HybridConnectionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridConnection', pipeline_response)
@@ -315,7 +315,7 @@ class HybridConnectionsOperations:
         resource_group_name: str,
         namespace_name: str,
         hybrid_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AuthorizationRuleListResult"]:
         """Authorization rules for a hybrid connection.
 
@@ -378,7 +378,7 @@ class HybridConnectionsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -396,7 +396,7 @@ class HybridConnectionsOperations:
         hybrid_connection_name: str,
         authorization_rule_name: str,
         parameters: "_models.AuthorizationRule",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AuthorizationRule":
         """Creates or updates an authorization rule for a hybrid connection.
 
@@ -453,7 +453,7 @@ class HybridConnectionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AuthorizationRule', pipeline_response)
@@ -470,7 +470,7 @@ class HybridConnectionsOperations:
         namespace_name: str,
         hybrid_connection_name: str,
         authorization_rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a hybrid connection authorization rule.
 
@@ -520,7 +520,7 @@ class HybridConnectionsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -534,7 +534,7 @@ class HybridConnectionsOperations:
         namespace_name: str,
         hybrid_connection_name: str,
         authorization_rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AuthorizationRule":
         """Hybrid connection authorization rule for a hybrid connection by name.
 
@@ -584,7 +584,7 @@ class HybridConnectionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AuthorizationRule', pipeline_response)
@@ -601,7 +601,7 @@ class HybridConnectionsOperations:
         namespace_name: str,
         hybrid_connection_name: str,
         authorization_rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AccessKeys":
         """Primary and secondary connection strings to the hybrid connection.
 
@@ -651,7 +651,7 @@ class HybridConnectionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AccessKeys', pipeline_response)
@@ -669,7 +669,7 @@ class HybridConnectionsOperations:
         hybrid_connection_name: str,
         authorization_rule_name: str,
         parameters: "_models.RegenerateAccessKeyParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AccessKeys":
         """Regenerates the primary or secondary connection strings to the hybrid connection.
 
@@ -726,7 +726,7 @@ class HybridConnectionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AccessKeys', pipeline_response)
