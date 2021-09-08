@@ -395,7 +395,7 @@ def test_interactive_browser_client_id():
     def validate_client_id(credential):
         assert len(credential.call_args_list) == 1, "InteractiveBrowserCredential should be instantiated once"
         _, kwargs = credential.call_args
-        assert kwargs == {"client_id": client_id, "tenant_id": "72f988bf-86f1-41af-91ab-2d7cd011db47"}
+        assert kwargs["client_id"] == client_id
 
     with patch(DefaultAzureCredential.__module__ + ".InteractiveBrowserCredential") as mock_credential:
         DefaultAzureCredential(exclude_interactive_browser_credential=False, interactive_browser_client_id=client_id)
