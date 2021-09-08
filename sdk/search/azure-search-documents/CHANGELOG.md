@@ -4,7 +4,13 @@
 
 ### Features Added
 
+- Added properties to `SearchClient`: `query_answer`, `query_answer_count`,
+  `query_caption`, `query_caption_highlight` and `semantic_fields`.
+
 ### Breaking Changes
+
+- Renamed `SearchClient.speller` to `SearchClient.query_speller`.
+- Removed keyword arguments from `SearchClient`: `answers` and `captions`.
 
 ### Bugs Fixed
 

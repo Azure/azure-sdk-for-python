@@ -177,12 +177,23 @@ class SearchClient(HeadersMixin):
         :keyword query_language: A value that specifies the language of the search query. Possible values
          include: "none", "en-us".
         :paramtype query_language: str or ~azure.search.documents.models.QueryLanguage
-        :keyword speller: A value that specified the type of the speller to use to spell-correct
+        :keyword query_speller: A value that specified the type of the speller to use to spell-correct
          individual search query terms. Possible values include: "none", "lexicon".
-        :paramtype speller: str or ~azure.search.documents.models.Speller
-        :keyword answers: A value that specifies whether answers should be returned as part of the search
-         response. Possible values include: "none", "extractive".
-        :paramtype answers: str or ~azure.search.documents.models.Answers
+        :paramtype query_speller: str or ~azure.search.documents.models.Speller
+        :keyword query_answer: This parameter is only valid if the query type is 'semantic'. If set,
+         the query returns answers extracted from key passages in the highest ranked documents.
+         Possible values include: "none", "extractive".
+        :paramtype query_answer: str or ~azure.search.documents.models.Answers
+        :keyword int query_answer_count: This parameter is only valid if the query type is 'semantic'.
+         Configures the number of answers returned. Default count is 1.
+        :keyword query_caption: This parameter is only valid if the query type is 'semantic'. If set, the
+         query returns captions extracted from key passages in the highest ranked documents.
+         Defaults to 'None'. Possible values include: "none", "extractive".
+        :paramtype query_caption: str or ~azure.search.documents.models.Captions
+        :keyword bool query_caption_highlight: This parameter is only valid if the query type is 'semantic' when
+         query_caption is set to 'extractive'. Determines whether highlighting is enabled.
+         Defaults to 'true'.
+        :keyword list[str] semantic_fields: The list of field names used for semantic search.
         :keyword list[str] select: The list of fields to retrieve. If unspecified, all fields marked as retrievable
          in the schema are included.
         :keyword int skip: The number of search results to skip. This value cannot be greater than 100,000.
@@ -236,11 +247,21 @@ class SearchClient(HeadersMixin):
         search_fields_str = ",".join(search_fields) if search_fields else None
         search_mode = kwargs.pop("search_mode", None)
         query_language = kwargs.pop("query_language", None)
-        speller = kwargs.pop("speller", None)
-        answers = kwargs.pop("answers", None)
+        query_speller = kwargs.pop("query_speller", None)
         select = kwargs.pop("select", None)
         skip = kwargs.pop("skip", None)
         top = kwargs.pop("top", None)
+
+        query_answer = kwargs.pop("query_answer", None)
+        query_answer_count = kwargs.pop("query_answer_count", None)
+        answers = '{}|count-{}'.format(query_answer, query_answer_count)
+
+        query_caption = kwargs.pop("query_caption", None)
+        query_caption_highlight = kwargs.pop("query_caption_highlight", None)
+        captions = '{}|highlight-{}'.format(query_caption, query_caption_highlight)
+
+        semantic_fields = kwargs.pop("semantic_fields", None)
+
         query = SearchQuery(
             search_text=search_text,
             include_total_result_count=include_total_result_count,
@@ -257,8 +278,10 @@ class SearchClient(HeadersMixin):
             search_fields=search_fields_str,
             search_mode=search_mode,
             query_language=query_language,
-            speller=speller,
+            speller=query_speller,
             answers=answers,
+            captions=captions,
+            semantic_fields=",".join(semantic_fields) if semantic_fields else None,
             select=select if isinstance(select, six.string_types) else None,
             skip=skip,
             top=top,
