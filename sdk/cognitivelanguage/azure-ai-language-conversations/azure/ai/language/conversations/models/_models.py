@@ -326,7 +326,7 @@ class DeepstackPrediction(BasePrediction):
     _attribute_map = {
         'project_type': {'key': 'projectType', 'type': 'str'},
         'top_intent': {'key': 'topIntent', 'type': 'str'},
-        'classifications': {'key': 'classifications', 'type': '[DeepstackClassification]'},
+        'classifications': {'key': 'intents', 'type': '[DeepstackClassification]'},
         'entities': {'key': 'entities', 'type': '[DeepstackEntity]'},
     }
 
