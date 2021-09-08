@@ -1,6 +1,16 @@
 # Release History
 
-## 1.18.0 (Unreleased)
+## 1.18.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.18.0 (2021-09-02)
 
 ### Features Added
 
@@ -16,8 +26,6 @@ an `encoding` parameter.
 ### Bugs Fixed
 
 - The behaviour of the headers returned in `azure.core.rest` responses now aligns across sync and async. Items can now be checked case-insensitively and without raising an error for format.
-
-### Other Changes
 
 ## 1.17.0 (2021-08-05)
 

@@ -6,23 +6,21 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from copy import deepcopy
 from typing import TYPE_CHECKING
 
 from azure.core import PipelineClient
 from msrest import Deserializer, Serializer
 
+from ._configuration import EventGridPublisherClientConfiguration
+
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
+    from typing import Any, Dict
 
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
+    from azure.core.rest import HttpRequest, HttpResponse
 
-from ._configuration import EventGridPublisherClientConfiguration
-from .operations import EventGridPublisherClientOperationsMixin
-from . import models
-
-
-class EventGridPublisherClient(EventGridPublisherClientOperationsMixin):
+class EventGridPublisherClient(object):
     """EventGrid Python Publisher Client.
 
     """
@@ -36,26 +34,44 @@ class EventGridPublisherClient(EventGridPublisherClientOperationsMixin):
         self._config = EventGridPublisherClientConfiguration(**kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {}  # type: Dict[str, Any]
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
+        self._serialize.client_side_validation = False
 
 
-    def _send_request(self, http_request, **kwargs):
-        # type: (HttpRequest, Any) -> HttpResponse
+    def send_request(
+        self,
+        request,  # type: HttpRequest
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> HttpResponse
         """Runs the network request through the client's chained policies.
 
-        :param http_request: The network request you want to make. Required.
-        :type http_request: ~azure.core.pipeline.transport.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        We have helper methods to create requests specific to this service in `event_grid_publisher_client.rest`.
+        Use these helper methods to create the request you pass to this method.
+
+        >>> from event_grid_publisher_client.rest import build_publish_events_request
+        >>> request = build_publish_events_request(json=json, content=content, **kwargs)
+        <HttpRequest [POST], url: '/api/events'>
+        >>> response = client.send_request(request)
+        <HttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+
+        For advanced cases, you can also create your own :class:`~azure.core.rest.HttpRequest`
+        and pass it in.
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        :rtype: ~azure.core.rest.HttpResponse
         """
-        http_request.url = self._client.format_url(http_request.url)
-        stream = kwargs.pop("stream", True)
-        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
-        return pipeline_response.http_response
+
+        request_copy = deepcopy(request)
+        request_copy.url = self._client.format_url(request_copy.url)
+        return self._client.send_request(request_copy, **kwargs)
 
     def close(self):
         # type: () -> None

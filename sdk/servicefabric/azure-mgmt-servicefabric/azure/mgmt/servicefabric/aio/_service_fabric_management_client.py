@@ -20,16 +20,10 @@ from ._configuration import ServiceFabricManagementClientConfiguration
 from .operations import ClustersOperations
 from .operations import ClusterVersionsOperations
 from .operations import Operations
-from .operations import ApplicationOperations
 from .operations import ApplicationTypesOperations
 from .operations import ApplicationTypeVersionsOperations
 from .operations import ApplicationsOperations
 from .operations import ServicesOperations
-from .operations import ManagedClustersOperations
-from .operations import ManagedclusterOperations
-from .operations import ManagedClusterVersionsOperations
-from .operations import NodetypeOperations
-from .operations import NodeTypesOperations
 from .. import models
 
 
@@ -42,8 +36,6 @@ class ServiceFabricManagementClient(object):
     :vartype cluster_versions: azure.mgmt.servicefabric.aio.operations.ClusterVersionsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.servicefabric.aio.operations.Operations
-    :ivar application: ApplicationOperations operations
-    :vartype application: azure.mgmt.servicefabric.aio.operations.ApplicationOperations
     :ivar application_types: ApplicationTypesOperations operations
     :vartype application_types: azure.mgmt.servicefabric.aio.operations.ApplicationTypesOperations
     :ivar application_type_versions: ApplicationTypeVersionsOperations operations
@@ -52,16 +44,6 @@ class ServiceFabricManagementClient(object):
     :vartype applications: azure.mgmt.servicefabric.aio.operations.ApplicationsOperations
     :ivar services: ServicesOperations operations
     :vartype services: azure.mgmt.servicefabric.aio.operations.ServicesOperations
-    :ivar managed_clusters: ManagedClustersOperations operations
-    :vartype managed_clusters: azure.mgmt.servicefabric.aio.operations.ManagedClustersOperations
-    :ivar managedcluster: ManagedclusterOperations operations
-    :vartype managedcluster: azure.mgmt.servicefabric.aio.operations.ManagedclusterOperations
-    :ivar managed_cluster_versions: ManagedClusterVersionsOperations operations
-    :vartype managed_cluster_versions: azure.mgmt.servicefabric.aio.operations.ManagedClusterVersionsOperations
-    :ivar nodetype: NodetypeOperations operations
-    :vartype nodetype: azure.mgmt.servicefabric.aio.operations.NodetypeOperations
-    :ivar node_types: NodeTypesOperations operations
-    :vartype node_types: azure.mgmt.servicefabric.aio.operations.NodeTypesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The customer subscription identifier.
@@ -93,8 +75,6 @@ class ServiceFabricManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.application = ApplicationOperations(
-            self._client, self._config, self._serialize, self._deserialize)
         self.application_types = ApplicationTypesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.application_type_versions = ApplicationTypeVersionsOperations(
@@ -102,16 +82,6 @@ class ServiceFabricManagementClient(object):
         self.applications = ApplicationsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.services = ServicesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.managed_clusters = ManagedClustersOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.managedcluster = ManagedclusterOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.managed_cluster_versions = ManagedClusterVersionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.nodetype = NodetypeOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.node_types = NodeTypesOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
