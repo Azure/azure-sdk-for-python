@@ -4,7 +4,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from ._generated.models import EventSubscriptionType, MediaType
+from ._generated.models import EventSubscriptionType, MediaType, CallConnectionStateChangedEvent,\
+        ToneReceivedEvent, PlayAudioResultEvent, AddParticipantResultEvent, CallConnectionStateChangedEvent,\
+        ToneReceivedEvent, ToneInfo, PlayAudioResultEvent, PhoneNumberIdentifierModel,\
+        CommunicationIdentifierModel, CommunicationUserIdentifierModel, AddParticipantResultEvent,\
+        MediaType, EventSubscriptionType, CallConnectionState, OperationStatus, ToneValue,\
+        CancelAllMediaOperationsResult, PlayAudioResult, AddParticipantResult
 from ._shared.models import PhoneNumberIdentifier
 from enum import Enum, EnumMeta
 from six import with_metaclass
@@ -32,7 +37,6 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             return cls._member_map_[name.upper()]
         except KeyError:
             raise AttributeError(name)
-
 
 class CreateCallOptions(object):
 
@@ -243,3 +247,114 @@ class ResultInfo(object):
             subcode=result_info.subcode,
             message=result_info.message,
         )
+
+class CreateCallResult(msrest.serialization.Model):
+    """The response payload of the create call operation.
+
+    :param call_connection_id: The call connection id.
+    :type call_connection_id: str
+    """
+
+    def __init__(
+        self,
+        **kwargs # type: Any
+    ): # type: (...) -> None
+        self.call_connection_id = kwargs['call_connection_id']
+    
+    @classmethod
+    def _from_generated(cls, create_call_result):
+        if create_call_result is None:
+            return None
+
+        return cls(
+            call_connection_id = create_call_result.call_connection_id
+        )
+
+class JoinCallResult(msrest.serialization.Model):
+    """The response payload of the join call operation.
+
+    :param call_connection_id: The call connection id.
+    :type call_connection_id: str
+    """
+
+    def __init__(
+        self,
+        **kwargs # type: Any
+    ):
+        self.call_connection_id = kwargs['call_connection_id']
+
+    @classmethod
+    def _from_generated(cls, join_call_result):
+        if join_call_result is None:
+            return None
+
+        return cls(
+            call_connection_id = join_call_result.call_connection_id
+        )
+
+class StartCallRecordingResult(msrest.serialization.Model):
+    """The response payload of start call recording operation.
+
+    :param recording_id: The recording id of the started recording.
+    :type recording_id: str
+    """
+
+    def __init__(
+        self,
+        **kwargs # type: Any
+    ):
+        self.recording_id = kwargs['recording_id']
+
+    @classmethod
+    def _from_generated(cls, start_call_recording_result):
+        if start_call_recording_result is None:
+            return None
+
+        return cls(
+            recording_id = start_call_recording_result.recording_id
+        )
+
+class CallRecordingProperties(msrest.serialization.Model):
+    """The response payload of get call recording properties operation.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param recording_state: Required. The state of the recording. Possible values include:
+     "active", "inactive".
+    :type recording_state: str or ~azure.communication.callingserver.models.CallRecordingState
+    """
+
+    _validation = {
+        'recording_state': {'required': True},
+    }
+
+    _attribute_map = {
+        'recording_state': {'key': 'recordingState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs # type: Any
+    ):
+        super(CallRecordingProperties, self).__init__(**kwargs)
+        self.recording_state = kwargs['recording_state']
+
+    @classmethod
+    def _from_generated(cls, call_recording_state_result):
+        if call_recording_state_result is None:
+            return None
+
+        return cls(
+            recording_state = call_recording_state_result.recording_state
+        )
+
+class CallingServerEventType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The calling server event type values.
+    """
+
+    CALL_CONNECTION_STATE_CHANGED_EVENT = "Microsoft.Communication.CallConnectionStateChanged"
+    ADD_PARTICIPANT_RESULT_EVENT = "Microsoft.Communication.AddParticipantResult"
+    CALL_RECORDING_STATE_CHANGED_EVENT = "Microsoft.Communication.CallRecordingStateChanged"
+    PLAY_AUDIO_RESULT_EVENT = "Microsoft.Communication.PlayAudioResult"
+    PARTICIPANTS_UPDATED_EVENT = "Microsoft.Communication.ParticipantsUpdated"
+    TONE_RECEIVED_EVENT = "Microsoft.Communication.DtmfReceived"

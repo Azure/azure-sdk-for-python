@@ -4,13 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, overload, List
+from typing import Any, Optional, overload, List
 from azure.core.tracing.decorator import distributed_trace
 from ._generated.operations import CallConnectionsOperations
 from ._generated.models import CancelAllMediaOperationsRequest, PlayAudioRequest, \
     AddParticipantRequest, PhoneNumberIdentifierModel, CommunicationIdentifierModel, \
     CreateCallRequest
-from ._models import PlayAudioOptions, PlayAudioResult, CancelAllMediaOperationsResult, AddParticipantResult, \
+from ._models import PlayAudioResult, CancelAllMediaOperationsResult, AddParticipantResult, \
     CreateCallResult, MediaType, EventSubscriptionType
 from ._communication_identifier_serializer import (deserialize_identifier,
                                                    serialize_identifier)
@@ -137,19 +137,14 @@ class CallConnection(object):
         if not participant:
             raise ValueError("participant can not be None")
 
-        alternate_caller_id = None if alternate_caller_id == None else PhoneNumberIdentifierModel(value=alternate_caller_id)
+        request = AddParticipantRequest(participant=serialize_identifier(participant),
+        alternate_caller_id=None if alternate_caller_id == None else PhoneNumberIdentifierModel(value=alternate_caller_id.properties['value']),
+        operation_context=operation_context,
+        callback_uri=None,
+        **kwargs)
 
-        add_participant_request = AddParticipantRequestConverter.convert(
-            serialize_identifier(participant),
-            alternate_caller_id,
-            operation_context
-            )
-
-        add_participant_result = self.call_connection_client.add_participant(
-            call_connection_id=self.call_connection_id,
-            add_participant_request=add_participant_request,
-            **kwargs
-        )
+        add_participant_result = self.call_connection_client.add_participant(call_connection_id=self.call_connection_id, 
+        add_participant_request=request)
 
         return AddParticipantResult._from_generated(add_participant_result)
 
