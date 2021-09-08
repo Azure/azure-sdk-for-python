@@ -4,7 +4,6 @@
 # ------------------------------------
 import requests
 from azure.core.pipeline.transport import (
-    HttpRequest,
     HttpResponse,
     HttpTransport,
     RequestsTransport,
@@ -17,8 +16,10 @@ try:
 except ImportError:
     import mock
 import pytest
+from utils import HTTP_REQUESTS
 
-def test_connection_error_response():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_connection_error_response(http_request):
     class MockTransport(HttpTransport):
         def __init__(self):
             self._count = 0
@@ -31,7 +32,7 @@ def test_connection_error_response():
             pass
 
         def send(self, request, **kwargs):
-            request = HttpRequest('GET', 'http://localhost/')
+            request = http_request('GET', 'http://localhost/')
             response = HttpResponse(request, None)
             response.status_code = 200
             return response
@@ -43,7 +44,7 @@ def test_connection_error_response():
             if self._count == 0:
                 self._count += 1
                 raise requests.exceptions.ConnectionError
-        
+
         def stream(self, chunk_size, decode_content=False):
             if self._count == 0:
                 self._count += 1
@@ -58,7 +59,7 @@ def test_connection_error_response():
         def close(self):
             pass
 
-    http_request = HttpRequest('GET', 'http://localhost/')
+    http_request = http_request('GET', 'http://localhost/')
     pipeline = Pipeline(MockTransport())
     http_response = HttpResponse(http_request, None)
     http_response.internal_response = MockInternalResponse()

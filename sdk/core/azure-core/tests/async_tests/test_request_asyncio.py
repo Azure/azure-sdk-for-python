@@ -5,13 +5,14 @@
 # -------------------------------------------------------------------------
 import json
 
-from azure.core.pipeline.transport import AsyncioRequestsTransport, HttpRequest
-
+from azure.core.pipeline.transport import AsyncioRequestsTransport
+from utils import HTTP_REQUESTS
 import pytest
 
 
 @pytest.mark.asyncio
-async def test_async_gen_data(port):
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_async_gen_data(port, http_request):
     class AsyncGen:
         def __init__(self):
             self._range = iter([b"azerty"])
@@ -26,13 +27,14 @@ async def test_async_gen_data(port):
                 raise StopAsyncIteration
 
     async with AsyncioRequestsTransport() as transport:
-        req = HttpRequest('GET', 'http://localhost:{}/basic/anything'.format(port), data=AsyncGen())
+        req = http_request('GET', 'http://localhost:{}/basic/anything'.format(port), data=AsyncGen())
         response = await transport.send(req)
         assert json.loads(response.text())['data'] == "azerty"
 
 @pytest.mark.asyncio
-async def test_send_data(port):
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_send_data(port, http_request):
     async with AsyncioRequestsTransport() as transport:
-        req = HttpRequest('PUT', 'http://localhost:{}/basic/anything'.format(port), data=b"azerty")
+        req = http_request('PUT', 'http://localhost:{}/basic/anything'.format(port), data=b"azerty")
         response = await transport.send(req)
         assert json.loads(response.text())['data'] == "azerty"
