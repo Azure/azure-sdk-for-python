@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional, TYPE_CHECKING
+from typing import Any, Awaitable, Optional, TYPE_CHECKING, Union
 
 from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
@@ -32,23 +32,16 @@ class WebPubSubServiceClient:
     :ivar web_pub_sub: WebPubSubOperations operations
     :vartype web_pub_sub: azure.messaging.webpubsubservice.aio.operations.WebPubSubOperations
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :type credential: Union[~azure.core.credentials_async.AsyncTokenCredential, ~azure.core.credentials.AzureKeyCredential]
     :keyword endpoint: Service URL. Default value is ''.
     :paramtype endpoint: str
     """
 
     def __init__(
         self,
-        connection_string: str = None,
-        credential: "AsyncTokenCredential" = None,
+        credential: Union["AsyncTokenCredential", "AzureKeyCredential"],
         **kwargs: Any
     ) -> None:
-        if connection_string:
-            kwargs = _parse_connection_string(connection_string, **kwargs)
-            credential = AzureKeyCredential(kwargs.get("accesskey"))
-        elif credential is None:
-            raise ValueError("Parameter 'credential' and 'connection_string' must not be None at the same time.")
-
         endpoint = kwargs.pop('endpoint', "")  # type: str
         self._config = WebPubSubServiceClientConfiguration(credential, **kwargs)
         self._client = AsyncPipelineClient(base_url=endpoint, config=self._config, **kwargs)
@@ -95,3 +88,17 @@ class WebPubSubServiceClient:
 
     async def __aexit__(self, *exc_details) -> None:
         await self._client.__aexit__(*exc_details)
+
+    @classmethod
+    def from_connection_string(cls, connection_string, **kwargs):
+        # type: (Type[ClientType], str, Any) -> ClientType
+        """Create a new WebPubSubServiceClient from a connection string.
+
+        :param connection_string: Connection string
+        :type connection_string: ~str
+        :rtype: WebPubSubServiceClient
+        """
+        kwargs = _parse_connection_string(connection_string, **kwargs)
+
+        credential = AzureKeyCredential(kwargs.pop("accesskey"))
+        return cls(credential=credential, **kwargs)

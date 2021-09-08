@@ -15,7 +15,7 @@ except KeyError:
 
 # Build a client from the connection string. And for this example, we have enabled debug
 # tracing. For production code, this should be turned off. 
-client = WebPubSubServiceClient(connection_string, logging_enable=True)
+client = WebPubSubServiceClient.from_connection_string(connection_string, logging_enable=True)
 
 try:
     # Raise an exception if the service rejected the call
