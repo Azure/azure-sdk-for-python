@@ -81,3 +81,28 @@ class JwtCredentialPolicy(SansIOHTTPPolicy):
             algorithm="HS256",
         )
         return six.ensure_str(encoded)
+
+
+class ApiManagementProxy(SansIOHTTPPolicy):
+
+    def __init__(self, endpoint, proxy_endpoint):
+        # type: (str, str) -> None
+        """Create a new instance of the policy.
+
+        :param endpoint: endpoint to be replaced
+        :type endpoint: str
+        :param proxy_endpoint: proxy endpoint
+        :type proxy_endpoint: str
+        """
+        self._endpoint = endpoint
+        self._proxy_endpoint = proxy_endpoint
+
+    def on_request(self, request):
+        # type: (PipelineRequest) -> typing.Union[None, typing.Awaitable[None]]
+        """Is executed before sending the request from next policy.
+
+        :param request: Request to be modified before sent from next policy.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        """
+        request.http_request.url = request.http_request.url.replace(self._endpoint, self._proxy_endpoint)
+        return super(ApiManagementProxy, self).on_request(request)
