@@ -49,6 +49,10 @@ def run_pipeline(issue_link, sdk_issue_object, pipeline_url):
 def get_pipeline_url(search_url):
     _headers['Cookie'] = os.getenv('COOKIE')
     res = requests.get(search_url, headers=_headers)
-    definitionId = re.findall('"pipelines":\[{"id":(.*?),"name":"python', res.text)[0]
-    pipeline_url = 'https://dev.azure.com/azure-sdk/internal/_build?definitionId={}'.format(definitionId)
+    try:
+        definitionId = re.findall('"pipelines":\[{"id":(.*?),"name":"python', res.text)[0]
+        pipeline_url = 'https://dev.azure.com/azure-sdk/internal/_build?definitionId={}'.format(definitionId)
+    except Exception as e:
+        print('Cannot find definitionId, Do not display pipeline_url')
+        pipeline_url = ''
     return pipeline_url
