@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 import warnings
-
+import pdb
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
@@ -544,6 +544,7 @@ class ServerCallsOperations:
         body_content = self._serialize.body(call_request, 'JoinCallRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pdb.set_trace()
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 

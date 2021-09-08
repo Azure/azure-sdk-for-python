@@ -4,11 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from urllib.parse import urlparse
 from typing import Any, List, Optional
 
 from azure.core.tracing.decorator import distributed_trace
 
-from ._generated.aio.operations import ServerCallsOperations
+from ._generated.operations import ServerCallsOperations
 from ._generated.models import PlayAudioRequest, StartCallRecordingRequest, \
     AddParticipantRequest, PhoneNumberIdentifierModel, \
     CommunicationIdentifierModel, JoinCallRequest
@@ -54,8 +55,8 @@ class ServerCall(object):
         try:
             if not callback_uri.lower().startswith('http'):
                 callback_uri = "https://" + callback_uri
-        except AttributeError:
-            raise ValueError("URL must be a string.")
+        except AttributeError as ex:
+            raise ValueError("URL must be a string.") from ex
 
         if not operation_context:
             raise ValueError("operation_context can not be None")
@@ -79,13 +80,15 @@ class ServerCall(object):
     @distributed_trace()
     def start_recording(
             self,
-            server_call_id, # type: str
             recording_state_callback_uri, # type: str
             **kwargs, # type: Any
     ): # type: (...) -> StartCallRecordingResult
 
-        if not server_call_id:
-            raise ValueError("server_call_id cannot be None")
+        if not recording_state_callback_uri:
+            raise ValueError("recording_state_callback_uri cannot be None")
+
+        if not bool(urlparse(recording_state_callback_uri).netloc):
+            raise ValueError("recording_state_callback_uri has to be an absolute URL")
 
         start_call_recording_request = StartCallRecordingRequest(
             recording_state_callback_uri=recording_state_callback_uri,
@@ -103,13 +106,9 @@ class ServerCall(object):
     @distributed_trace()
     def pause_recording(
             self,
-            server_call_id, # type: str
             recording_id, # type: str
             **kwargs, # type: Any
     ): # type: (...) -> AsyncHttpResponse
-
-        if not server_call_id:
-            raise ValueError("server_call_id cannot be None")
 
         if not recording_id:
             raise ValueError("recording_id cannot be None")
@@ -124,13 +123,9 @@ class ServerCall(object):
     @distributed_trace()
     def resume_recording(
             self,
-            server_call_id, # type: str
             recording_id, # type: str
             **kwargs, # type: Any
     ): # type: (...) -> AsyncHttpResponse
-
-        if not server_call_id:
-            raise ValueError("server_call_id cannot be None")
 
         if not recording_id:
             raise ValueError("recording_id cannot be None")
@@ -146,13 +141,9 @@ class ServerCall(object):
     @distributed_trace()
     def stop_recording(
             self,
-            server_call_id, # type: str
             recording_id, # type: str
             **kwargs, # type: Any
     ): # type: (...) -> AsyncHttpResponse
-
-        if not server_call_id:
-            raise ValueError("server_call_id cannot be None")
 
         if not recording_id:
             raise ValueError("recording_id cannot be None")
@@ -168,13 +159,9 @@ class ServerCall(object):
     @distributed_trace()
     def get_recording_properities(
             self,
-            server_call_id, # type: str
             recording_id, # type: str
             **kwargs, # type: Any
     ): # type: (...) -> CallRecordingProperties
-
-        if not server_call_id:
-            raise ValueError("server_call_id cannot be None")
 
         if not recording_id:
             raise ValueError("recording_id cannot be None")

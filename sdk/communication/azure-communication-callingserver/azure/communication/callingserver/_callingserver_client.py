@@ -26,6 +26,7 @@ from ._shared.utils import (get_authentication_policy, get_current_utc_time,
 from ._converters import JoinCallRequestConverter
 
 from ._version import SDK_MONIKER
+from ._converters import JoinCallRequestConverter
 from ._content_downloader import ContentDownloader
 from ._generated import models as _models
 from msrest import Deserializer, Serializer
@@ -210,8 +211,8 @@ class CallingServerClient(object):
         join_call_request = JoinCallRequestConverter.convert(serialize_identifier(source), call_options)
 
         join_call_response = self._server_call_client.join_call(
-            server_call_id=server_call_id,
-            call_request=join_call_request,
+            server_call_id,
+            join_call_request,
             **kwargs
         )
 

@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 
 from .._shared.utils import (get_authentication_policy, get_current_utc_time,
                             parse_connection_str)
-from .._converters import JoinCallRequestConverter
+from .._converters._converter import JoinCallRequestConverter
 
 from .._version import SDK_MONIKER
 

@@ -4,15 +4,18 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from .._models import JoinCallOptions, PlayAudioOptions
-from .._shared.models import CommunicationIdentifier, PhoneNumberIdentifier
+from .._models import (JoinCallOptions, PlayAudioOptions, CommunicationUserIdentifierModel,
+    CommunicationIdentifierModel, PhoneNumberIdentifierModel)
+from .._shared.models import CommunicationIdentifier, CommunicationUserIdentifier, MicrosoftTeamsUserIdentifier, PhoneNumberIdentifier, UnknownIdentifier
 from .._generated.models import (
     JoinCallRequest,
     PlayAudioRequest,
     CommunicationIdentifierModel,
     AddParticipantRequest,
-    PhoneNumberIdentifierModel
+    PhoneNumberIdentifierModel,
+    MicrosoftTeamsUserIdentifierModel
     )
+from .._generated.models._azure_communication_calling_server_service_enums import CommunicationCloudEnvironmentModel
 
 class JoinCallRequestConverter(object):
     @classmethod
@@ -28,7 +31,7 @@ class JoinCallRequestConverter(object):
             raise ValueError("join_call_options can not be None")
 
         return JoinCallRequest(
-            source=source,
+            source=CommunicationIdentifierConverter.convert(source),
             callback_uri=join_call_options.callback_uri,
             requested_media_types=join_call_options.requested_media_types,
             requested_call_events=join_call_options.requested_call_events,
@@ -75,3 +78,38 @@ class AddParticipantRequestConverter(object):
             operation_context=operation_context,
             callback_uri=None
             )
+
+class CommunicationIdentifierConverter():
+    @classmethod
+    def convert(cls, identifier: CommunicationIdentifier):
+        if not identifier:
+            raise ValueError("idenfier can not be None")
+        
+        if isinstance(identifier, CommunicationUserIdentifier):
+            return CommunicationIdentifierModel(
+                communication_user= CommunicationUserIdentifierModel(
+                    id=identifier.raw_id if identifier.raw_id is not None else identifier.properties["id"]
+                )
+            )
+            
+
+        if isinstance(identifier, PhoneNumberIdentifier):
+            return CommunicationIdentifierModel(
+                raw_id=identifier.raw_id,
+                phone_number=PhoneNumberIdentifierModel(value=identifier.properties["value"])
+            )
+        
+        if isinstance(identifier, MicrosoftTeamsUserIdentifier):
+            return CommunicationIdentifierModel(
+                raw_id=identifier.raw_id,
+                microsoft_teams_user=MicrosoftTeamsUserIdentifierModel(
+                    is_anonymous=identifier.properties["is_anonymous"],
+                    user_id=identifier.properties["user_id"],
+                    cloud=CommunicationCloudEnvironmentModel(identifier.properties["cloud"][0])
+                )
+            )
+
+        if isinstance(identifier, UnknownIdentifier):
+            return CommunicationIdentifierModel(raw_id=identifier.raw_id)
+        
+        raise ValueError(f"Unknown identifier class #{identifier.__class__}")

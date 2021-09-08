@@ -4,15 +4,20 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from urllib.parse import urlparse
 from typing import Any
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._generated.aio.operations import ServerCallsOperations
-from .._generated.models import PlayAudioRequest, PhoneNumberIdentifierModel
-from .._models import PlayAudioOptions, PlayAudioResult, AddParticipantResult
+from .._generated.models import PlayAudioRequest, StartCallRecordingRequest, \
+    AddParticipantRequest, PhoneNumberIdentifierModel, \
+    CommunicationIdentifierModel, JoinCallRequest
+from .._models import PlayAudioResult, JoinCallResult, AddParticipantResult, \
+    StartCallRecordingResult, MediaType, EventSubscriptionType, CallRecordingProperties
 from .._communication_identifier_serializer import (deserialize_identifier,
                                                    serialize_identifier)
+from azure.core.pipeline.transport import AsyncHttpResponse
 
 class ServerCall(object):
 
@@ -108,6 +113,100 @@ class ServerCall(object):
             **kwargs
         )
 
+    @distributed_trace_async()
+    async def start_recording(
+            self,
+            recording_state_callback_uri, # type: str
+            **kwargs, # type: Any
+    ): # type: (...) -> StartCallRecordingResult
+
+        if not recording_state_callback_uri:
+            raise ValueError("recording_state_callback_uri cannot be None")
+
+        if not bool(urlparse(recording_state_callback_uri).netloc):
+            raise ValueError("recording_state_callback_uri has to be an absolute URL")
+
+        start_call_recording_request = StartCallRecordingRequest(
+            recording_state_callback_uri=recording_state_callback_uri,
+            **kwargs
+        )
+
+        start_recording_result = await self.server_call_client.start_recording(
+            server_call_id=self.server_call_id,
+            request=start_call_recording_request
+        )
+
+        return StartCallRecordingResult._from_generated(start_recording_result)
+
+    @distributed_trace_async()
+    async def pause_recording(
+            self,
+            recording_id, # type: str
+            **kwargs, # type: Any
+    ): # type: (...) -> AsyncHttpResponse
+
+        if not recording_id:
+            raise ValueError("recording_id cannot be None")
+
+        pause_recording_result = await self.server_call_client.pause_recording(
+            server_call_id=self.server_call_id,
+            recording_id=recording_id,
+        )
+
+        return pause_recording_result
+
+    @distributed_trace_async()
+    async def resume_recording(
+            self,
+            recording_id, # type: str
+            **kwargs, # type: Any
+    ): # type: (...) -> AsyncHttpResponse
+
+        if not recording_id:
+            raise ValueError("recording_id cannot be None")
+
+        resume_recording_result = await self.server_call_client.resume_recording(
+            server_call_id=self.server_call_id,
+            recording_id=recording_id,
+        )
+
+        return resume_recording_result
+
+
+    @distributed_trace_async()
+    async def stop_recording(
+            self,
+            recording_id, # type: str
+            **kwargs, # type: Any
+    ): # type: (...) -> AsyncHttpResponse
+
+        if not recording_id:
+            raise ValueError("recording_id cannot be None")
+
+        stop_recording_result = await self.server_call_client.stop_recording(
+            server_call_id=self.server_call_id,
+            recording_id=recording_id,
+        )
+
+        return stop_recording_result
+
+
+    @distributed_trace_async()
+    async def get_recording_properities(
+            self,
+            recording_id, # type: str
+            **kwargs, # type: Any
+    ): # type: (...) -> CallRecordingProperties
+
+        if not recording_id:
+            raise ValueError("recording_id cannot be None")
+
+        recording_status_result = await self.server_call_client.get_recording_properties(
+            server_call_id=self.server_call_id,
+            recording_id=recording_id,
+        )
+
+        return CallRecordingProperties._from_generated(recording_status_result)
 
     async def close(self) -> None:
         """Close the :class:
