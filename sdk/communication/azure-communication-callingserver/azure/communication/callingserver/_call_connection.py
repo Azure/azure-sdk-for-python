@@ -4,17 +4,17 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, overload
-
+from typing import Any, overload, List
 from azure.core.tracing.decorator import distributed_trace
-
 from ._generated.operations import CallConnectionsOperations
-from ._generated.models import CancelAllMediaOperationsRequest, PlayAudioRequest, PhoneNumberIdentifierModel
-from ._converters import PlayAudioRequestConverter, AddParticipantRequestConverter
-from ._models import PlayAudioOptions, PlayAudioResult, CancelAllMediaOperationsResult, AddParticipantResult
+from ._generated.models import CancelAllMediaOperationsRequest, PlayAudioRequest, \
+    AddParticipantRequest, PhoneNumberIdentifierModel, CommunicationIdentifierModel, \
+    CreateCallRequest
+from ._models import PlayAudioOptions, PlayAudioResult, CancelAllMediaOperationsResult, AddParticipantResult, \
+    CreateCallResult, MediaType, EventSubscriptionType
 from ._communication_identifier_serializer import (deserialize_identifier,
                                                    serialize_identifier)
-
+from ._shared.models import CommunicationIdentifier
 class CallConnection(object):
     def __init__(
             self,
@@ -25,6 +25,33 @@ class CallConnection(object):
 
         self.call_connection_id = call_connection_id
         self.call_connection_client = call_connection_client
+
+    @distributed_trace()
+    def create_call(self,
+            source: CommunicationIdentifierModel, 
+            targets: List[CommunicationIdentifierModel],
+            alternate_caller_id: PhoneNumberIdentifierModel,
+            subject: str, 
+            callback_uri: str, 
+            requested_media_types: List[MediaType],
+            requested_call_events: List[EventSubscriptionType],
+            **kwargs: Any
+    ):
+        # type: (...) -> CreateCallResult
+
+        request = CreateCallRequest(
+            alternate_caller_id = alternate_caller_id,
+            targets = targets,
+            source = source,
+            subject = subject,
+            callback_uri = callback_uri,
+            requested_media_types = requested_media_types,
+            requested_call_events = requested_call_events,
+            **kwargs)
+
+        create_call_result = self.call_connection_client.create_call(call_request=request)
+        
+        return CreateCallResult._from_generated(create_call_result)
 
     @distributed_trace()
     def hang_up(
@@ -60,17 +87,35 @@ class CallConnection(object):
     def play_audio(
             self,
             audio_file_uri, # type: str
-            play_audio_options, # type: PlayAudioOptions
-            **kwargs, # type: str: Any
+            loop, # type: bool
+            audio_file_id, # type: str
+            callback_uri, # type: str
+            operation_context = None, # type: Optional[str]
+            **kwargs, # type: Any
         ): # type: (...) -> PlayAudioResult
 
-        if not audio_file_uri:
-            raise ValueError("audio_file_uri can not be None")
+        try:
+            if not audio_file_uri.lower().startswith('http'):
+                audio_file_uri = "https://" + audio_file_uri
+        except AttributeError:
+            raise ValueError("URL must be a string.")
 
-        if not play_audio_options:
-            raise ValueError("options can not be None")
+        if not audio_file_id:
+            raise ValueError("audio_file_id can not be None")
 
-        play_audio_request = PlayAudioRequestConverter.convert(audio_file_uri, play_audio_options)
+        try:
+            if not callback_uri.lower().startswith('http'):
+                callback_uri = "https://" + callback_uri
+        except AttributeError:
+            raise ValueError("URL must be a string.")
+
+        play_audio_request = PlayAudioRequest(
+            audio_file_uri=audio_file_uri,
+            loop = loop,
+            audio_file_id=audio_file_id,
+            callback_uri=callback_uri,
+            operation_context=operation_context,
+        )
 
         play_audio_result = self.call_connection_client.play_audio(
             call_connection_id=self.call_connection_id,

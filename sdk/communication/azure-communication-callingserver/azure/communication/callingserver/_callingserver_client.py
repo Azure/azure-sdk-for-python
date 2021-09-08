@@ -26,7 +26,12 @@ from ._shared.utils import (get_authentication_policy, get_current_utc_time,
 from ._converters import JoinCallRequestConverter
 
 from ._version import SDK_MONIKER
-
+from ._content_downloader import ContentDownloader
+from ._generated import models as _models
+from msrest import Deserializer, Serializer
+from azure.core import PipelineClient
+from azure.core.pipeline.transport import HttpResponse
+from ._generated._configuration import AzureCommunicationCallingServerServiceConfiguration
 
 class CallingServerClient(object):
     """A client to interact with the AzureCommunicationService Calling Server.
@@ -211,3 +216,34 @@ class CallingServerClient(object):
         )
 
         return CallConnection(join_call_response.call_connection_id, self._call_connection_client)
+
+    @distributed_trace()
+    def start_download(
+        self,
+        content_url,  # type: str
+        **kwargs  # type: Any
+    ): # type: (...) -> HttpResponse
+        """Start download using content url.
+
+        :param str content_url:
+            The content url.
+        :returns: HttpResponse for a successful download request.
+        :rtype: ~HttpResponse
+        """
+        if not content_url:
+            raise ValueError("content_url can not be None")
+        client_models = {k: v for k, v in  _models.__dict__.items() if isinstance(v, type)}
+
+        self._serialize = Serializer(client_models)
+        self._serialize.client_side_validation = False
+        self._deserialize = Deserializer(client_models)
+        self._config = AzureCommunicationCallingServerServiceConfiguration(self._endpoint, authentication_policy=self._authentication_policy)
+        
+        base_url = '{endpoint}'
+        self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
+        downloader = ContentDownloader(self._client, self._serialize, self._deserialize,self._config)
+        content_url_result = downloader.start_download(
+            content_url=content_url,
+        )
+
+        return content_url_result
