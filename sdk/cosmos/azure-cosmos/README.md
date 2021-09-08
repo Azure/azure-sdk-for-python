@@ -82,7 +82,7 @@ Once you've initialized a [CosmosClient][ref_cosmosclient], you can interact wit
 For more information about these resources, see [Working with Azure Cosmos databases, containers and items][cosmos_resources].
 
 
-## How to use enable_cross_partition_query
+## How to use `enable_cross_partition_query`
 
 The keyword-argument `enable_cross_partition_query` accepts 2 options: `None` (default) or `True`.
 
