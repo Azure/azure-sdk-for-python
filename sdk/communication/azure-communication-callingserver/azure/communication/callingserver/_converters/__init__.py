@@ -1,7 +1,6 @@
-from ._converter import JoinCallRequestConverter, PlayAudioRequestConverter, PlayAudioResultConverter
+from ._converter import JoinCallRequestConverter, PlayAudioRequestConverter
 
 __all__ = [
     'JoinCallRequestConverter',
-    'PlayAudioRequestConverter',
-    'PlayAudioResultConverter'
+    'PlayAudioRequestConverter'
 ]

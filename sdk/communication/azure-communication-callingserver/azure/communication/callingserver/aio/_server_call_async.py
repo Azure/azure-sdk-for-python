@@ -103,7 +103,7 @@ class ServerCall(object):
         ): # type: (...) -> None
 
         return await self.server_call_client.remove_participant(
-            call_connection_id=self.server_call_id,
+            server_call_id=self.server_call_id,
             participant_id=participant_id,
             **kwargs
         )
