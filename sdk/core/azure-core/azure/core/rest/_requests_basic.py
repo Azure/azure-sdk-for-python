@@ -28,7 +28,6 @@ try:
 except ImportError:
     import collections  # type: ignore
 
-from typing import TYPE_CHECKING, cast
 from requests.structures import CaseInsensitiveDict
 
 from ._http_response_impl import _HttpResponseBaseImpl, HttpResponseImpl
