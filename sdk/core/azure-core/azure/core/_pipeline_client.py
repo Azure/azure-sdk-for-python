@@ -65,17 +65,6 @@ if TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
-def _prepare_request(request):
-    # returns the request ready to run through pipelines
-    # and a bool telling whether we ended up converting it
-    rest_request = False
-    try:
-        request_to_run = request._to_pipeline_transport_request()  # pylint: disable=protected-access
-        rest_request = True
-    except AttributeError:
-        request_to_run = request
-    return rest_request, request_to_run
-
 class PipelineClient(PipelineClientBase):
     """Service client core methods.
 
@@ -204,9 +193,9 @@ class PipelineClient(PipelineClientBase):
         :return: The response of your network call. Does not do error handling on your response.
         :rtype: ~azure.core.rest.HttpResponse
         # """
-        rest_request, request_to_run = _prepare_request(request)
+        rest_request = hasattr(request, "content")
         return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
-        pipeline_response = self._pipeline.run(request_to_run, **kwargs)  # pylint: disable=protected-access
+        pipeline_response = self._pipeline.run(request, **kwargs)  # pylint: disable=protected-access
         response = pipeline_response.http_response
         if rest_request:
             response = _to_rest_response(response)

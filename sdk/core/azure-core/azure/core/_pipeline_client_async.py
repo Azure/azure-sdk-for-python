@@ -37,7 +37,6 @@ from .pipeline.policies import (
     RequestIdPolicy,
     AsyncRetryPolicy,
 )
-from ._pipeline_client import _prepare_request
 from .pipeline._tools_async import to_rest_response as _to_rest_response
 
 try:
@@ -175,10 +174,10 @@ class AsyncPipelineClient(PipelineClientBase):
         return AsyncPipeline(transport, policies)
 
     async def _make_pipeline_call(self, request, **kwargs):
-        rest_request, request_to_run = _prepare_request(request)
+        rest_request = hasattr(request, "content")
         return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
         pipeline_response = await self._pipeline.run(
-            request_to_run, **kwargs  # pylint: disable=protected-access
+            request, **kwargs  # pylint: disable=protected-access
         )
         response = pipeline_response.http_response
         if rest_request:
