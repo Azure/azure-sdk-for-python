@@ -20,7 +20,7 @@ spec:
   mode: one
   selector:
     labelSelectors:
-      testInstance: 'deploy-python-eh-stress-instance'
+    testInstance: "eventhub-{{ .Release.Name }}-{{ .Release.Revision }}"
       chaos: 'true'
     namespaces:
       - {{ $.Release.Namespace }}
