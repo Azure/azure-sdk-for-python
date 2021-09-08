@@ -1,9 +1,20 @@
 # Release History
 
+## 0.5.0 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 0.4.0 (2021-08-10)
 
 - Updated API version to "2020-12-01" which is the default API version
 - Added API version "2021-06-01-preview" support
+- `ManagedPrivateEndpointsClient` is renamed to `VnetClient`
 
 ## 0.3.0 (2021-03-09)
 

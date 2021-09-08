@@ -853,9 +853,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         # type: (str, **Any) -> Dict[str, Any]
         delimiter = '\n'
         input_format = kwargs.pop('blob_format', None)
-        if input_format == QuickQueryDialect.DelimitedJsonDialect:
+        if input_format == QuickQueryDialect.DelimitedJson:
             input_format = DelimitedJsonDialect()
-        if input_format == QuickQueryDialect.DelimitedTextDialect:
+        if input_format == QuickQueryDialect.DelimitedText:
             input_format = DelimitedTextDialect()
         input_parquet_format = input_format == "ParquetDialect"
         if input_format and not input_parquet_format:
@@ -868,9 +868,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                     raise ValueError("The Type of blob_format can only be DelimitedTextDialect or "
                                      "DelimitedJsonDialect or ParquetDialect")
         output_format = kwargs.pop('output_format', None)
-        if output_format == QuickQueryDialect.DelimitedJsonDialect:
+        if output_format == QuickQueryDialect.DelimitedJson:
             output_format = DelimitedJsonDialect()
-        if output_format == QuickQueryDialect.DelimitedTextDialect:
+        if output_format == QuickQueryDialect.DelimitedText:
             output_format = DelimitedTextDialect()
         if output_format:
             if output_format == "ParquetDialect":
@@ -1446,7 +1446,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     @distributed_trace
     def set_legal_hold(self, legal_hold, **kwargs):
-        # type: (**Any) -> Dict[str, Union[str, datetime, bool]]
+        # type: (bool, **Any) -> Dict[str, Union[str, datetime, bool]]
         """The Set Legal Hold operation sets a legal hold on the blob.
 
         .. versionadded:: 12.10.0
@@ -1457,7 +1457,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Key value pairs of blob tags.
-        :rtype: Dict[str, str]
+        :rtype: Dict[str, Union[str, datetime, bool]]
         """
 
         return self._client.blob.set_legal_hold(legal_hold, cls=return_response_headers, **kwargs)

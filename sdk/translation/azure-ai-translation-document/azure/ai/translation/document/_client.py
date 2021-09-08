@@ -14,7 +14,8 @@ from ._models import (
     TranslationStatus,
     DocumentStatus,
     DocumentTranslationInput,
-    FileFormat,
+    DocumentTranslationFileFormat,
+    convert_status
 )
 from ._user_agent import USER_AGENT
 from ._polling import TranslationPolling, DocumentTranslationLROPollingMethod
@@ -99,13 +100,13 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         """Close the :class:`~azure.ai.translation.document.DocumentTranslationClient` session."""
         return self._client.close()
 
-    @overload
-    def begin_translation(self, source_url, target_url, target_language_code, **kwargs):
+    @overload  # type: ignore
+    def begin_translation(self, source_url, target_url, target_language_code, **kwargs):  # type: ignore
         # type: (str, str, str, **Any) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]
         pass
 
-    @overload
-    def begin_translation(self, inputs, **kwargs):
+    @overload  # type: ignore
+    def begin_translation(self, inputs, **kwargs):  # type: ignore
         # type: (List[DocumentTranslationInput], **Any) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]
         pass
 
@@ -113,10 +114,13 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         self, *args, **kwargs
     ):  # pylint: disable=client-method-missing-type-annotations
         """Begin translating the document(s) in your source container to your target container
-        in the given language. To perform a single translation from source to target, pass the `source_url`,
-        `target_url`, and `target_language_code` parameters including any optional keyword arguments.
-        To pass multiple inputs for translation, pass the `inputs` parameter as a list of
-        :class:`~azure.ai.translation.document.DocumentTranslationInput`.
+        in the given language. There are two ways to call this method:
+
+        1) To perform translation on documents from a single source container to a single target container, pass the
+        `source_url`, `target_url`, and `target_language_code` parameters including any optional keyword arguments.
+
+        2) To pass multiple inputs for translation (multiple sources or targets), pass the `inputs` parameter
+        as a list of :class:`~azure.ai.translation.document.DocumentTranslationInput`.
 
         For supported languages and document formats, see the service documentation:
         https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
@@ -171,7 +175,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
             raw_response, _, headers
         ):  # pylint: disable=unused-argument
             translation_status = json.loads(raw_response.http_response.text())
-            return self.list_all_document_statuses(translation_status["id"])
+            return self.list_document_statuses(translation_status["id"])
 
         polling_interval = kwargs.pop(
             "polling_interval",
@@ -225,9 +229,9 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         # type: (str, **Any) -> None
         """Cancel a currently processing or queued translation operation.
 
-        A translation will not be cancelled if it is already completed, failed, or cancelling.
-        All documents that have completed translation will not be cancelled and will be charged.
-        If possible, all pending documents will be cancelled.
+        A translation will not be canceled if it is already completed, failed, or canceling.
+        All documents that have completed translation will not be canceled and will be charged.
+        If possible, all pending documents will be canceled.
 
         :param str translation_id: The translation operation ID.
         :return: None
@@ -238,7 +242,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         self._client.document_translation.cancel_translation(translation_id, **kwargs)
 
     @distributed_trace
-    def list_all_translation_statuses(self, **kwargs):
+    def list_translation_statuses(self, **kwargs):
         # type: (**Any) -> ItemPaged[TranslationStatus]
         """List all the submitted translation operations under the Document Translation resource.
 
@@ -248,7 +252,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         :keyword int results_per_page: is the number of operations returned per page.
         :keyword list[str] translation_ids: translation operations ids to filter by.
         :keyword list[str] statuses: translation operation statuses to filter by. Options include
-            'NotStarted', 'Running', 'Succeeded', 'Failed', 'Cancelled', 'Cancelling',
+            'NotStarted', 'Running', 'Succeeded', 'Failed', 'Canceled', 'Canceling',
             and 'ValidationFailed'.
         :keyword created_after: get operations created after certain datetime.
         :paramtype created_after: Union[str, datetime.datetime]
@@ -264,14 +268,17 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_list_all_translations.py
-                :start-after: [START list_all_translations]
-                :end-before: [END list_all_translations]
+            .. literalinclude:: ../samples/sample_list_translations.py
+                :start-after: [START list_translations]
+                :end-before: [END list_translations]
                 :language: python
                 :dedent: 4
                 :caption: List all submitted translations under the resource.
         """
 
+        statuses = kwargs.pop("statuses", None)
+        if statuses:
+            statuses = [convert_status(status, ll=True) for status in statuses]
         order_by = convert_order_by(kwargs.pop("order_by", None))
         created_after = kwargs.pop("created_after", None)
         created_before = kwargs.pop("created_before", None)
@@ -294,18 +301,19 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
             ],
         )
 
-        return self._client.document_translation.get_translations_status(
+        return self._client.document_translation.get_translations_status(  # type: ignore
             cls=model_conversion_function,
             maxpagesize=results_per_page,
             created_date_time_utc_start=created_after,
             created_date_time_utc_end=created_before,
             ids=translation_ids,
             order_by=order_by,
+            statuses=statuses,
             **kwargs
         )
 
     @distributed_trace
-    def list_all_document_statuses(self, translation_id, **kwargs):
+    def list_document_statuses(self, translation_id, **kwargs):
         # type: (str, **Any) -> ItemPaged[DocumentStatus]
         """List all the document statuses for a given translation operation.
 
@@ -316,7 +324,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         :keyword int results_per_page: is the number of documents returned per page.
         :keyword list[str] document_ids: document IDs to filter by.
         :keyword list[str] statuses: document statuses to filter by. Options include
-            'NotStarted', 'Running', 'Succeeded', 'Failed', 'Cancelled', 'Cancelling',
+            'NotStarted', 'Running', 'Succeeded', 'Failed', 'Canceled', 'Canceling',
             and 'ValidationFailed'.
         :keyword created_after: get document created after certain datetime.
         :paramtype created_after: Union[str, datetime.datetime]
@@ -333,13 +341,16 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_check_document_statuses.py
-                :start-after: [START list_all_document_statuses]
-                :end-before: [END list_all_document_statuses]
+                :start-after: [START list_document_statuses]
+                :end-before: [END list_document_statuses]
                 :language: python
                 :dedent: 4
                 :caption: List all the document statuses as they are being translated.
         """
 
+        statuses = kwargs.pop("statuses", None)
+        if statuses:
+            statuses = [convert_status(status, ll=True) for status in statuses]
         order_by = convert_order_by(kwargs.pop("order_by", None))
         created_after = kwargs.pop("created_after", None)
         created_before = kwargs.pop("created_before", None)
@@ -364,7 +375,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
             ],
         )
 
-        return self._client.document_translation.get_documents_status(
+        return self._client.document_translation.get_documents_status(  # type: ignore
             id=translation_id,
             cls=model_conversion_function,
             maxpagesize=results_per_page,
@@ -372,6 +383,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
             created_date_time_utc_end=created_before,
             ids=document_ids,
             order_by=order_by,
+            statuses=statuses,
             **kwargs
         )
 
@@ -396,34 +408,34 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
 
     @distributed_trace
     def get_supported_glossary_formats(self, **kwargs):
-        # type: (**Any) -> List[FileFormat]
+        # type: (**Any) -> List[DocumentTranslationFileFormat]
         """Get the list of the glossary formats supported by the Document Translation service.
 
         :return: A list of supported glossary formats.
-        :rtype: List[FileFormat]
+        :rtype: List[DocumentTranslationFileFormat]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         glossary_formats = (
             self._client.document_translation.get_supported_glossary_formats(**kwargs)
         )
-        return FileFormat._from_generated_list(  # pylint: disable=protected-access
+        return DocumentTranslationFileFormat._from_generated_list(  # pylint: disable=protected-access
             glossary_formats.value
         )
 
     @distributed_trace
     def get_supported_document_formats(self, **kwargs):
-        # type: (**Any) -> List[FileFormat]
+        # type: (**Any) -> List[DocumentTranslationFileFormat]
         """Get the list of the document formats supported by the Document Translation service.
 
         :return: A list of supported document formats for translation.
-        :rtype: List[FileFormat]
+        :rtype: List[DocumentTranslationFileFormat]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         document_formats = (
             self._client.document_translation.get_supported_document_formats(**kwargs)
         )
-        return FileFormat._from_generated_list(  # pylint: disable=protected-access
+        return DocumentTranslationFileFormat._from_generated_list(  # pylint: disable=protected-access
             document_formats.value
         )

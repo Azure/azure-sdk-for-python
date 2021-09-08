@@ -47,7 +47,7 @@ class ServicesOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ServicesDescription":
         """Get the metadata of a service instance.
 
@@ -65,7 +65,7 @@ class ServicesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-11"
+        api_version = "2021-06-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -107,14 +107,14 @@ class ServicesOperations:
         resource_group_name: str,
         resource_name: str,
         service_description: "_models.ServicesDescription",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ServicesDescription":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServicesDescription"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-11"
+        api_version = "2021-06-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -165,7 +165,7 @@ class ServicesOperations:
         resource_group_name: str,
         resource_name: str,
         service_description: "_models.ServicesDescription",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ServicesDescription"]:
         """Create or update the metadata of a service instance.
 
@@ -177,8 +177,8 @@ class ServicesOperations:
         :type service_description: ~azure.mgmt.healthcareapis.models.ServicesDescription
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ServicesDescription or the result of cls(response)
@@ -236,14 +236,14 @@ class ServicesOperations:
         resource_group_name: str,
         resource_name: str,
         service_patch_description: "_models.ServicesPatchDescription",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ServicesDescription":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServicesDescription"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-11"
+        api_version = "2021-06-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -290,7 +290,7 @@ class ServicesOperations:
         resource_group_name: str,
         resource_name: str,
         service_patch_description: "_models.ServicesPatchDescription",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ServicesDescription"]:
         """Update the metadata of a service instance.
 
@@ -302,8 +302,8 @@ class ServicesOperations:
         :type service_patch_description: ~azure.mgmt.healthcareapis.models.ServicesPatchDescription
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ServicesDescription or the result of cls(response)
@@ -360,14 +360,14 @@ class ServicesOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-11"
+        api_version = "2021-06-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -405,7 +405,7 @@ class ServicesOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete a service instance.
 
@@ -415,8 +415,8 @@ class ServicesOperations:
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -467,7 +467,7 @@ class ServicesOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ServicesDescriptionListResult"]:
         """Get all the service instances in a subscription.
 
@@ -481,7 +481,7 @@ class ServicesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-11"
+        api_version = "2021-06-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -535,7 +535,7 @@ class ServicesOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ServicesDescriptionListResult"]:
         """Get all the service instances in a resource group.
 
@@ -551,7 +551,7 @@ class ServicesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-11"
+        api_version = "2021-06-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -606,7 +606,7 @@ class ServicesOperations:
     async def check_name_availability(
         self,
         check_name_availability_inputs: "_models.CheckNameAvailabilityParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ServicesNameAvailabilityInfo":
         """Check if a service instance name is available.
 
@@ -623,7 +623,7 @@ class ServicesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-11"
+        api_version = "2021-06-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

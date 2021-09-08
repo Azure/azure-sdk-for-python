@@ -88,11 +88,10 @@ async def test_sans_io_exception():
     with pytest.raises(NotImplementedError):
         await pipeline.run(req)
 
-
 @pytest.mark.asyncio
-async def test_basic_aiohttp():
+async def test_basic_aiohttp(port):
 
-    request = HttpRequest("GET", "https://bing.com")
+    request = HttpRequest("GET", "http://localhost:{}/basic/string".format(port))
     policies = [
         UserAgentPolicy("myusergant"),
         AsyncRedirectPolicy()
@@ -105,10 +104,10 @@ async def test_basic_aiohttp():
     assert isinstance(response.http_response.status_code, int)
 
 @pytest.mark.asyncio
-async def test_basic_aiohttp_separate_session():
+async def test_basic_aiohttp_separate_session(port):
 
     session = aiohttp.ClientSession()
-    request = HttpRequest("GET", "https://bing.com")
+    request = HttpRequest("GET", "http://localhost:{}/basic/string".format(port))
     policies = [
         UserAgentPolicy("myusergant"),
         AsyncRedirectPolicy()
@@ -124,9 +123,9 @@ async def test_basic_aiohttp_separate_session():
     await transport.session.close()
 
 @pytest.mark.asyncio
-async def test_basic_async_requests():
+async def test_basic_async_requests(port):
 
-    request = HttpRequest("GET", "https://bing.com")
+    request = HttpRequest("GET", "http://localhost:{}/basic/string".format(port))
     policies = [
         UserAgentPolicy("myusergant"),
         AsyncRedirectPolicy()
@@ -186,9 +185,9 @@ def test_pass_in_http_logging_policy():
     assert http_logging_policy.allowed_header_names == HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST.union({"x-ms-added-header"})
 
 @pytest.mark.asyncio
-async def test_conf_async_requests():
+async def test_conf_async_requests(port):
 
-    request = HttpRequest("GET", "https://bing.com/")
+    request = HttpRequest("GET", "http://localhost:{}/basic/string".format(port))
     policies = [
         UserAgentPolicy("myusergant"),
         AsyncRedirectPolicy()
@@ -198,10 +197,10 @@ async def test_conf_async_requests():
 
     assert isinstance(response.http_response.status_code, int)
 
-def test_conf_async_trio_requests():
+def test_conf_async_trio_requests(port):
 
     async def do():
-        request = HttpRequest("GET", "https://bing.com/")
+        request = HttpRequest("GET", "http://localhost:{}/basic/string".format(port))
         policies = [
             UserAgentPolicy("myusergant"),
             AsyncRedirectPolicy()

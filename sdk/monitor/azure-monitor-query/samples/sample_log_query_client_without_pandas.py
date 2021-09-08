@@ -16,15 +16,13 @@ client = LogsQueryClient(credential)
 query = """AppRequests |
 summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
 
-end_time = datetime.now(UTC())
-
 # returns LogsQueryResult 
-response = client.query(os.environ['LOG_WORKSPACE_ID'], query, duration=timedelta(hours=1), end_time=end_time)
+response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=timedelta(hours=1))
 
 if not response.tables:
     print("No results for the query")
 
-#response.tables is a LogsQueryResultTable
+#response.tables is a LogsTable
 for table in response.tables:
     for col in table.columns: #LogsQueryResultColumn
         print(col.name + "/"+  col.type + " | ", end="")

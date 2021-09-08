@@ -23,11 +23,41 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+try:
+    import collections.abc as collections
+except ImportError:
+    import collections  # type: ignore
+
 from typing import TYPE_CHECKING, cast
+from requests.structures import CaseInsensitiveDict
 
 from ..exceptions import ResponseNotReadError, StreamConsumedError, StreamClosedError
 from ._rest import _HttpResponseBase, HttpResponse
 from ..pipeline.transport._requests_basic import StreamDownloadGenerator
+
+class _ItemsView(collections.ItemsView):
+
+    def __contains__(self, item):
+        if not (isinstance(item, (list, tuple)) and len(item) == 2):
+            return False  # requests raises here, we just return False
+        for k, v in self.__iter__():
+            if item[0].lower() == k.lower() and item[1] == v:
+                return True
+        return False
+
+    def __repr__(self):
+        return 'ItemsView({})'.format(dict(self.__iter__()))
+
+class _CaseInsensitiveDict(CaseInsensitiveDict):
+    """Overriding default requests dict so we can unify
+    to not raise if users pass in incorrect items to contains.
+    Instead, we return False
+    """
+
+    def items(self):
+        """Return a new view of the dictionary's items."""
+        return _ItemsView(self)
+
 
 if TYPE_CHECKING:
     from typing import Iterator, Optional
@@ -43,7 +73,7 @@ class _RestRequestsTransportResponseBase(_HttpResponseBase):
     def __init__(self, **kwargs):
         super(_RestRequestsTransportResponseBase, self).__init__(**kwargs)
         self.status_code = self._internal_response.status_code
-        self.headers = self._internal_response.headers
+        self.headers = _CaseInsensitiveDict(self._internal_response.headers)
         self.reason = self._internal_response.reason
         self.content_type = self._internal_response.headers.get('content-type')
 
@@ -60,36 +90,6 @@ class _RestRequestsTransportResponseBase(_HttpResponseBase):
         except RuntimeError:
             # requests throws a RuntimeError if the content for a response is already consumed
             raise ResponseNotReadError(self)
-
-    @property
-    def encoding(self):
-        # type: () -> Optional[str]
-        retval = super(_RestRequestsTransportResponseBase, self).encoding
-        if not retval:
-            # There is a few situation where "requests" magic doesn't fit us:
-            # - https://github.com/psf/requests/issues/654
-            # - https://github.com/psf/requests/issues/1737
-            # - https://github.com/psf/requests/issues/2086
-            from codecs import BOM_UTF8
-            if self._internal_response.content[:3] == BOM_UTF8:
-                retval = "utf-8-sig"
-        if retval:
-            if retval == "utf-8":
-                retval = "utf-8-sig"
-        return retval
-
-    @encoding.setter  # type: ignore
-    def encoding(self, value):
-        # type: (str) -> None
-        # ignoring setter bc of known mypy issue https://github.com/python/mypy/issues/1465
-        self._encoding = value
-        self._internal_response.encoding = value
-
-    @property
-    def text(self):
-        # this will trigger errors if response is not read in
-        self.content  # pylint: disable=pointless-statement
-        return self._internal_response.text
 
 def _stream_download_helper(decompress, response):
     if response.is_stream_consumed:

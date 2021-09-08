@@ -1,6 +1,6 @@
 # Azure Text Analytics client library for Python
 
-Text Analytics is a cloud-based service that provides advanced natural language processing over raw text, and includes the following main functions:
+Text Analytics is a cloud-based service that provides advanced natural language processing over raw text, and includes the following main features:
 
 - Sentiment Analysis
 - Named Entity Recognition
@@ -10,6 +10,7 @@ Text Analytics is a cloud-based service that provides advanced natural language 
 - Key Phrase Extraction
 - Multiple Analysis
 - Healthcare Entities Analysis
+- Extractive Text Summarization
 
 [Source code][source_code] | [Package (PyPI)][ta_pypi] | [API reference documentation][ta_ref_docs] | [Product documentation][ta_product_documentation] | [Samples][ta_samples]
 
@@ -504,7 +505,7 @@ Note: The Healthcare Entities Analysis service is available in API version v3.1 
 - Linked Entity Recognition
 - Key Phrase Extraction
 - Sentiment Analysis
-- Extractive Summarization
+- Extractive Summarization (see sample [here][extract_summary_sample])
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -639,6 +640,7 @@ Common scenarios
 - Detect language: [sample_detect_language.py][detect_language_sample] ([async version][detect_language_sample_async])
 - Healthcare Entities Analysis: [sample_analyze_healthcare_entities.py][analyze_healthcare_entities_sample] ([async version][analyze_healthcare_entities_sample_async])
 - Multiple Analysis: [sample_analyze_actions.py][analyze_sample] ([async version][analyze_sample_async])
+- Extractive text summarization: [sample_extract_summary.py][extract_summary_sample] ([async version][extract_summary_sample_async])
 
 Advanced scenarios
 
@@ -734,6 +736,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [analyze_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_actions_async.py
 [opinion_mining_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_sentiment_with_opinion_mining.py
 [opinion_mining_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_sentiment_with_opinion_mining_async.py
+[extract_summary_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_extract_summary.py
+[extract_summary_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_extract_summary_async.py
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/

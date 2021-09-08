@@ -47,11 +47,14 @@ The second parameter, `payload`, sends the entire serialization of the media gra
 
 ### Creating a graph topology
 To create a graph topology you need to define parameters, sources, and sinks.
-```
+```python
+from azure.media.analyticsedge import *
+
 #Parameters
 user_name_param = MediaGraphParameterDeclaration(name="rtspUserName",type="String",default="dummyusername")
 password_param = MediaGraphParameterDeclaration(name="rtspPassword",type="String",default="dummypassword")
 url_param = MediaGraphParameterDeclaration(name="rtspUrl",type="String",default="rtsp://rtspsim:554/media/camera-300s.mkv")
+graph_topology_name = "graphTopology1"
 
 #Source and Sink
 source = MediaGraphRtspSource(name="rtspSource", endpoint=MediaGraphUnsecuredEndpoint(url="${rtspUrl}",credentials=MediaGraphUsernamePasswordCredentials(username="${rtspUserName}",password="${rtspPassword}")))
@@ -66,7 +69,14 @@ graph_topology = MediaGraphTopology(name=graph_topology_name,properties=graph_pr
 
 ### Creating a graph instance
 To create a graph instance, you need to have an existing graph topology.
-```
+```python
+from azure.media.analyticsedge import *
+
+#Parameters
+graph_instance_name = "graphInstance1"
+graph_topology_name = "graphTopology1"
+graph_url = "rtsp://sample-url-from-camera"
+
 url_param = MediaGraphParameterDefinition(name="rtspUrl", value=graph_url)
 graph_instance_properties = MediaGraphInstanceProperties(description="Sample graph description", topology_name=graph_topology_name, parameters=[url_param])
 
@@ -76,7 +86,13 @@ graph_instance = MediaGraphInstance(name=graph_instance_name, properties=graph_i
 
 ### Invoking a graph method request
 To invoke a graph method on your device you need to first define the request using the lva sdk. Then send that method request using the iot sdk's `CloudToDeviceMethod`
-```
+```python
+from azure.media.analyticsedge import *
+from azure.iot.hub import IoTHubRegistryManager
+from azure.iot.hub.models import CloudToDeviceMethod
+
+module_d = "mediaedge"
+connection_string = "test"
 set_method_request = MediaGraphTopologySetRequest(graph=graph_topology)
 direct_method = CloudToDeviceMethod(method_name=set_method_request.method_name, payload=set_method_request.serialize())
 registry_manager = IoTHubRegistryManager(connection_string)
@@ -125,7 +141,7 @@ additional questions or comments.
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [coc_contact]: mailto:opencode@microsoft.com
 
-[package]: TODO://link-to-published-package
+[package]: https://pypi.org/project/azure-media-analytics-edge/
 [source]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/media
 [samples]: https://github.com/Azure-Samples/live-video-analytics-iot-edge-python
 
