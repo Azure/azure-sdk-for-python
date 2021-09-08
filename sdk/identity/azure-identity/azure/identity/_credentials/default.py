@@ -4,6 +4,7 @@
 # ------------------------------------
 import logging
 import os
+import six
 
 from .._constants import EnvironmentVariables
 from .._internal import get_default_authority, normalize_authority
@@ -105,6 +106,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
             "managed_identity_client_id", os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
         )
         interactive_browser_client_id = kwargs.pop("interactive_browser_client_id", None)
+        if not isinstance(interactive_browser_client_id, six.string_types):
+            raise ValueError('"interactive_browser_client_id" must be a string')
 
         shared_cache_username = kwargs.pop("shared_cache_username", os.environ.get(EnvironmentVariables.AZURE_USERNAME))
         shared_cache_tenant_id = kwargs.pop(
