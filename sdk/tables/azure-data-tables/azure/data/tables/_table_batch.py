@@ -10,7 +10,8 @@ from typing import (
     Dict,
     Mapping,
     Optional,
-    List
+    List,
+    Callable
 )
 
 from azure.core import MatchConditions
@@ -50,6 +51,7 @@ class TableBatchOperations(object):
         config,  # type: AzureTableConfiguration
         table_name,  # type: str
         is_cosmos_endpoint=False,  # type: bool
+        prepare_key=None,  # type: Callable[[str], str]
         **kwargs  # type: Dict[str, Any]
     ):
         """Create TableClient from a Credential.
@@ -74,6 +76,7 @@ class TableBatchOperations(object):
         self._deserialize = deserializer
         self._config = config
         self._is_cosmos_endpoint = is_cosmos_endpoint
+        self.prepare_key = prepare_key or _prepare_key
         self.table_name = table_name
 
         self._partition_key = kwargs.pop("partition_key", None)
@@ -258,8 +261,8 @@ class TableBatchOperations(object):
             match_condition=match_condition or MatchConditions.Unconditionally,
         )
 
-        partition_key = _prepare_key(temp["PartitionKey"])
-        row_key = _prepare_key(temp["RowKey"])
+        partition_key = self.prepare_key(temp["PartitionKey"])
+        row_key = self.prepare_key(temp["RowKey"])
         temp = _add_entity_properties(temp)
 
         if mode == UpdateMode.REPLACE:
@@ -526,8 +529,8 @@ class TableBatchOperations(object):
         """
         self._verify_partition_key(entity)
         temp = entity.copy()  # type: ignore
-        partition_key = _prepare_key(temp["PartitionKey"])
-        row_key = _prepare_key(temp["RowKey"])
+        partition_key = self.prepare_key(temp["PartitionKey"])
+        row_key = self.prepare_key(temp["RowKey"])
 
         match_condition = kwargs.pop("match_condition", None)
         etag = kwargs.pop("etag", None)
@@ -667,8 +670,8 @@ class TableBatchOperations(object):
         self._verify_partition_key(entity)
         temp = entity.copy()  # type: ignore
 
-        partition_key = _prepare_key(temp["PartitionKey"])
-        row_key = _prepare_key(temp["RowKey"])
+        partition_key = self.prepare_key(temp["PartitionKey"])
+        row_key = self.prepare_key(temp["RowKey"])
         temp = _add_entity_properties(temp)
 
         if mode == UpdateMode.MERGE:

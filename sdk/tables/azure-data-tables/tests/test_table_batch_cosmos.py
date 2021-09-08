@@ -15,7 +15,7 @@ from devtools_testutils import AzureTestCase
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureSasCredential
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.data.tables import (
     EdmType,
     TableEntity,
@@ -608,6 +608,47 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
                 assert get_entity == entity1
 
             self.table.submit_transaction([("delete", entity1)])
+
+        finally:
+            self._tear_down()
+
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
+    @cosmos_decorator
+    def test_batch_with_specialchar_partitionkey_optout(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # Arrange
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        try:
+            self.table.prepare_key = lambda k: k
+
+            # Act
+            entity1 = {
+                'PartitionKey': "A'aaa\"_bbbb2",
+                'RowKey': '"A\'aaa"_bbbb2',
+                'test': '"A\'aaa"_bbbb2'
+            }
+
+            self.table.submit_transaction([("create", entity1)])
+
+            with pytest.raises(HttpResponseError):
+                self.table.get_entity(
+                    partition_key=entity1['PartitionKey'],
+                    row_key=entity1['RowKey'])
+
+            with pytest.raises(HttpResponseError):
+                self.table.submit_transaction([("upsert", entity1, {'mode': 'merge'})])
+
+            with pytest.raises(HttpResponseError):
+                self.table.submit_transaction([("update", entity1, {'mode': 'replace'})])
+
+            entity_results = list(self.table.list_entities())
+            for entity in entity_results:
+                get_entity = self.table.get_entity(
+                    partition_key=entity['PartitionKey'].replace("'", "''"),
+                    row_key=entity['RowKey'].replace("'", "''"))
+                assert get_entity == entity == entity1
+
+            with pytest.raises(HttpResponseError):
+                self.table.submit_transaction([("delete", entity1)])
 
         finally:
             self._tear_down()

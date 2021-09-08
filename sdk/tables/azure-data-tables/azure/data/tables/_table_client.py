@@ -84,6 +84,7 @@ class TableClient(TablesBaseClient):
             raise ValueError("Please specify a table name.")
         _validate_table_name(table_name)
         self.table_name = table_name
+        self.prepare_key = _prepare_key
         super(TableClient, self).__init__(endpoint, **kwargs)
 
     def _format_url(self, hostname):
@@ -364,8 +365,8 @@ class TableClient(TablesBaseClient):
         try:
             self._client.table.delete_entity(
                 table=self.table_name,
-                partition_key=_prepare_key(partition_key),
-                row_key=_prepare_key(row_key),
+                partition_key=self.prepare_key(partition_key),
+                row_key=self.prepare_key(row_key),
                 if_match=if_match,
                 **kwargs
             )
@@ -468,8 +469,8 @@ class TableClient(TablesBaseClient):
             if mode == UpdateMode.REPLACE:
                 metadata, content = self._client.table.update_entity(  # type: ignore
                     table=self.table_name,
-                    partition_key=_prepare_key(partition_key),
-                    row_key=_prepare_key(row_key),
+                    partition_key=self.prepare_key(partition_key),
+                    row_key=self.prepare_key(row_key),
                     table_entity_properties=entity,  # type: ignore
                     if_match=if_match,
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
@@ -478,8 +479,8 @@ class TableClient(TablesBaseClient):
             elif mode == UpdateMode.MERGE:
                 metadata, content = self._client.table.merge_entity(  # type: ignore
                     table=self.table_name,
-                    partition_key=_prepare_key(partition_key),
-                    row_key=_prepare_key(row_key),
+                    partition_key=self.prepare_key(partition_key),
+                    row_key=self.prepare_key(row_key),
                     if_match=if_match,
                     table_entity_properties=entity,  # type: ignore
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
@@ -610,8 +611,8 @@ class TableClient(TablesBaseClient):
         try:
             entity = self._client.table.query_entity_with_partition_and_row_key(
                 table=self.table_name,
-                partition_key=_prepare_key(partition_key),
-                row_key=_prepare_key(row_key),
+                partition_key=self.prepare_key(partition_key),
+                row_key=self.prepare_key(row_key),
                 query_options=QueryOptions(select=user_select),
                 **kwargs
             )
@@ -655,8 +656,8 @@ class TableClient(TablesBaseClient):
             if mode == UpdateMode.MERGE:
                 metadata, content = self._client.table.merge_entity(  # type: ignore
                     table=self.table_name,
-                    partition_key=_prepare_key(partition_key),
-                    row_key=_prepare_key(row_key),
+                    partition_key=self.prepare_key(partition_key),
+                    row_key=self.prepare_key(row_key),
                     table_entity_properties=entity,  # type: ignore
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs
@@ -664,8 +665,8 @@ class TableClient(TablesBaseClient):
             elif mode == UpdateMode.REPLACE:
                 metadata, content = self._client.table.update_entity(  # type: ignore
                     table=self.table_name,
-                    partition_key=_prepare_key(partition_key),
-                    row_key=_prepare_key(row_key),
+                    partition_key=self.prepare_key(partition_key),
+                    row_key=self.prepare_key(row_key),
                     table_entity_properties=entity,  # type: ignore
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs
@@ -715,6 +716,7 @@ class TableClient(TablesBaseClient):
             self._client._config,  # pylint: disable=protected-access
             self.table_name,
             is_cosmos_endpoint=self._cosmos_endpoint,
+            prepare_key=self.prepare_key,
             **kwargs
         )
         for operation in operations:

@@ -1,11 +1,13 @@
 # Release History
 
-## 12.1.1 (2021-09-08)
+## 12.2.0 (2021-09-09)
+
+**Warning** This release involves a bug fix that may change the behaviour for some users. Partition and Row keys that contain a single quote character (`'`) will now be automatically escaped for upsert, update and delete entity operations. Partition and Row keys that were already escaped, or contained duplicate single quote char (`''`) will now be treated as unescaped values.
 
 ### Bugs Fixed
 
-- Resolved bug where strings couldn't be used instead of enum value for entity Update Mode (#20247).
 - Resolved bug where single quote characters in Partition and Row keys were not escaped correctly (#20301).
+- Resolved bug where strings couldn't be used instead of enum value for entity Update Mode (#20247).
 
 ### Other Changes
 

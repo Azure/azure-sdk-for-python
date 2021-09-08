@@ -1,0 +1,347 @@
+interactions:
+- request:
+    body: '{"TableName": "uttable60011aa0"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '32'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 08 Sep 2021 22:52:18 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.1.1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 08 Sep 2021 22:52:18 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"TableName":"uttable60011aa0","odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Wed, 08 Sep 2021 22:52:18 GMT
+      etag: W/"datetime'2021-09-08T22%3A52%3A18.9582343Z'"
+      location: https://fake_cosmos_account.table.cosmos.azure.com/Tables('uttable60011aa0')
+      transfer-encoding: chunked
+    status:
+      code: 201
+      message: Ok
+    url: https://pytables3.table.cosmos.azure.com/Tables
+- request:
+    body: '{"PartitionKey": "A''aaa\"_bbbb2", "PartitionKey@odata.type": "Edm.String",
+      "RowKey": "\"A''aaa\"_bbbb2", "RowKey@odata.type": "Edm.String", "test": "\"A''aaa\"_bbbb2",
+      "test@odata.type": "Edm.String"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '198'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 08 Sep 2021 22:52:19 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.1.1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 08 Sep 2021 22:52:19 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/uttable60011aa0
+  response:
+    body:
+      string: '{"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/uttable60011aa0/$metadata#uttable60011aa0/@Element","odata.etag":"W/\"datetime''2021-09-08T22%3A52%3A19.4516999Z''\"","PartitionKey":"A''aaa\"_bbbb2","RowKey":"\"A''aaa\"_bbbb2","test":"\"A''aaa\"_bbbb2","Timestamp":"2021-09-08T22:52:19.4516999Z"}'
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Wed, 08 Sep 2021 22:52:18 GMT
+      etag: W/"datetime'2021-09-08T22%3A52%3A19.4516999Z'"
+      location: https://fake_cosmos_account.table.cosmos.azure.com/uttable60011aa0(PartitionKey='A''aaa%22_bbbb2',RowKey='%22A''aaa%22_bbbb2')
+      transfer-encoding: chunked
+    status:
+      code: 201
+      message: Created
+    url: https://pytables3.table.cosmos.azure.com/uttable60011aa0
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 08 Sep 2021 22:52:19 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.1.1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 08 Sep 2021 22:52:19 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/uttable60011aa0(PartitionKey='A'aaa%22_bbbb2',RowKey='%22A'aaa%22_bbbb2')
+  response:
+    body:
+      string: "{\"odata.error\":{\"code\":\"InvalidInput\",\"message\":{\"lang\":\"en-us\",\"value\":\"Request
+        url is invalid.\\r\\nActivityId: 081a98f2-c1da-4336-9fe8-861ebb306193, documentdb-dotnet-sdk/2.14.0
+        Host/64-bit MicrosoftWindowsNT/6.2.9200.0\\nRequestID:081a98f2-c1da-4336-9fe8-861ebb306193\\n\"}}}\r\n"
+    headers:
+      content-type: application/json;odata=fullmetadata
+      date: Wed, 08 Sep 2021 22:52:18 GMT
+      transfer-encoding: chunked
+    status:
+      code: 400
+      message: Bad Request
+    url: https://pytables3.table.cosmos.azure.com/uttable60011aa0(PartitionKey='A'aaa%22_bbbb2',RowKey='%22A'aaa%22_bbbb2')
+- request:
+    body: '{"PartitionKey": "A''aaa\"_bbbb2", "PartitionKey@odata.type": "Edm.String",
+      "RowKey": "\"A''aaa\"_bbbb2", "RowKey@odata.type": "Edm.String", "test": "\"A''aaa\"_bbbb2",
+      "test@odata.type": "Edm.String"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '198'
+      Content-Type:
+      - application/json
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 08 Sep 2021 22:52:19 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.1.1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      X-HTTP-Method:
+      - MERGE
+      x-ms-date:
+      - Wed, 08 Sep 2021 22:52:19 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/uttable60011aa0(PartitionKey='A'aaa%22_bbbb2',RowKey='%22A'aaa%22_bbbb2')
+  response:
+    body:
+      string: "{\"odata.error\":{\"code\":\"InvalidInput\",\"message\":{\"lang\":\"en-us\",\"value\":\"Request
+        url is invalid.\\r\\nActivityId: 2acb1681-52cc-4db2-835b-96148695ac37, documentdb-dotnet-sdk/2.14.0
+        Host/64-bit MicrosoftWindowsNT/6.2.9200.0\\nRequestID:2acb1681-52cc-4db2-835b-96148695ac37\\n\"}}}\r\n"
+    headers:
+      content-type: application/json;odata=fullmetadata
+      date: Wed, 08 Sep 2021 22:52:18 GMT
+      transfer-encoding: chunked
+    status:
+      code: 400
+      message: Bad Request
+    url: https://pytables3.table.cosmos.azure.com/uttable60011aa0(PartitionKey='A'aaa%22_bbbb2',RowKey='%22A'aaa%22_bbbb2')
+- request:
+    body: '{"PartitionKey": "A''aaa\"_bbbb2", "PartitionKey@odata.type": "Edm.String",
+      "RowKey": "\"A''aaa\"_bbbb2", "RowKey@odata.type": "Edm.String", "test": "\"A''aaa\"_bbbb2",
+      "test@odata.type": "Edm.String"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '198'
+      Content-Type:
+      - application/json
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 08 Sep 2021 22:52:19 GMT
+      If-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-data-tables/12.1.1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 08 Sep 2021 22:52:19 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/uttable60011aa0(PartitionKey='A'aaa%22_bbbb2',RowKey='%22A'aaa%22_bbbb2')
+  response:
+    body:
+      string: "{\"odata.error\":{\"code\":\"InvalidInput\",\"message\":{\"lang\":\"en-us\",\"value\":\"Request
+        url is invalid.\\r\\nActivityId: 85815c9b-1b52-4326-a4b8-3304f8e366b8, documentdb-dotnet-sdk/2.14.0
+        Host/64-bit MicrosoftWindowsNT/6.2.9200.0\\nRequestID:85815c9b-1b52-4326-a4b8-3304f8e366b8\\n\"}}}\r\n"
+    headers:
+      content-type: application/json;odata=fullmetadata
+      date: Wed, 08 Sep 2021 22:52:18 GMT
+      transfer-encoding: chunked
+    status:
+      code: 400
+      message: Bad Request
+    url: https://pytables3.table.cosmos.azure.com/uttable60011aa0(PartitionKey='A'aaa%22_bbbb2',RowKey='%22A'aaa%22_bbbb2')
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 08 Sep 2021 22:52:19 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.1.1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 08 Sep 2021 22:52:19 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/uttable60011aa0()
+  response:
+    body:
+      string: '{"value":[{"odata.etag":"W/\"datetime''2021-09-08T22%3A52%3A19.4516999Z''\"","PartitionKey":"A''aaa\"_bbbb2","RowKey":"\"A''aaa\"_bbbb2","test":"\"A''aaa\"_bbbb2","Timestamp":"2021-09-08T22:52:19.4516999Z"}],"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#uttable60011aa0"}'
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Wed, 08 Sep 2021 22:52:18 GMT
+      transfer-encoding: chunked
+    status:
+      code: 200
+      message: Ok
+    url: https://pytables3.table.cosmos.azure.com/uttable60011aa0()
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 08 Sep 2021 22:52:19 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.1.1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 08 Sep 2021 22:52:19 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/uttable60011aa0(PartitionKey='A''aaa%22_bbbb2',RowKey='%22A''aaa%22_bbbb2')
+  response:
+    body:
+      string: '{"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/uttable60011aa0/$metadata#uttable60011aa0/@Element","odata.etag":"W/\"datetime''2021-09-08T22%3A52%3A19.4516999Z''\"","PartitionKey":"A''aaa\"_bbbb2","RowKey":"\"A''aaa\"_bbbb2","test":"\"A''aaa\"_bbbb2","Timestamp":"2021-09-08T22:52:19.4516999Z"}'
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Wed, 08 Sep 2021 22:52:18 GMT
+      etag: W/"datetime'2021-09-08T22%3A52%3A19.4516999Z'"
+      transfer-encoding: chunked
+    status:
+      code: 200
+      message: Ok
+    url: https://pytables3.table.cosmos.azure.com/uttable60011aa0(PartitionKey='A''aaa%22_bbbb2',RowKey='%22A''aaa%22_bbbb2')
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 08 Sep 2021 22:52:19 GMT
+      If-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-data-tables/12.1.1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 08 Sep 2021 22:52:19 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/uttable60011aa0(PartitionKey='A'aaa%22_bbbb2',RowKey='%22A'aaa%22_bbbb2')
+  response:
+    body:
+      string: "{\"odata.error\":{\"code\":\"InvalidInput\",\"message\":{\"lang\":\"en-us\",\"value\":\"Request
+        url is invalid.\\r\\nActivityId: af8b229c-117b-4101-b63c-b4ec59ba194b, documentdb-dotnet-sdk/2.14.0
+        Host/64-bit MicrosoftWindowsNT/6.2.9200.0\\nRequestID:af8b229c-117b-4101-b63c-b4ec59ba194b\\n\"}}}\r\n"
+    headers:
+      content-type: application/json;odata=fullmetadata
+      date: Wed, 08 Sep 2021 22:52:18 GMT
+      transfer-encoding: chunked
+    status:
+      code: 400
+      message: Bad Request
+    url: https://pytables3.table.cosmos.azure.com/uttable60011aa0(PartitionKey='A'aaa%22_bbbb2',RowKey='%22A'aaa%22_bbbb2')
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 08 Sep 2021 22:52:19 GMT
+      If-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-data-tables/12.1.1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 08 Sep 2021 22:52:19 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/uttable60011aa0(PartitionKey='A''aaa%22_bbbb2',RowKey='%22A''aaa%22_bbbb2')
+  response:
+    body:
+      string: ''
+    headers:
+      date: Wed, 08 Sep 2021 22:52:18 GMT
+    status:
+      code: 204
+      message: No Content
+    url: https://pytables3.table.cosmos.azure.com/uttable60011aa0(PartitionKey='A''aaa%22_bbbb2',RowKey='%22A''aaa%22_bbbb2')
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 08 Sep 2021 22:52:19 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.1.1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 08 Sep 2021 22:52:19 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"value":[{"TableName":"uttable60011aa0"}],"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables"}'
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Wed, 08 Sep 2021 22:52:18 GMT
+      transfer-encoding: chunked
+    status:
+      code: 200
+      message: Ok
+    url: https://pytables3.table.cosmos.azure.com/Tables
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Date:
+      - Wed, 08 Sep 2021 22:52:19 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.1.1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 08 Sep 2021 22:52:19 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables('uttable60011aa0')
+  response:
+    body:
+      string: ''
+    headers:
+      date: Wed, 08 Sep 2021 22:52:19 GMT
+    status:
+      code: 204
+      message: No Content
+    url: https://pytables3.table.cosmos.azure.com/Tables('uttable60011aa0')
+version: 1

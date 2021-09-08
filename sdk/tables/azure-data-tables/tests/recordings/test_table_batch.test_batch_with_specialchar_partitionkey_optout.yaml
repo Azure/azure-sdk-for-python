@@ -1,0 +1,505 @@
+interactions:
+- request:
+    body: '{"TableName": "uttable4dd71a5d"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '32'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 08 Sep 2021 23:03:52 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.2.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 08 Sep 2021 23:03:52 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_table_account.table.core.windows.net/Tables
+  response:
+    body:
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttable4dd71a5d"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-type:
+      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date:
+      - Wed, 08 Sep 2021 23:03:53 GMT
+      location:
+      - https://fake_table_account.table.core.windows.net/Tables('uttable4dd71a5d')
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: "--batch_7328a0c9-5f06-4ccb-8641-1fffc4c72a58\r\nContent-Type: multipart/mixed;
+      boundary=changeset_5ec6f990-507d-434a-8665-9c4e282664eb\r\n\r\n--changeset_5ec6f990-507d-434a-8665-9c4e282664eb\r\nContent-Type:
+      application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 0\r\n\r\nPOST
+      https://pytestremote.table.core.windows.net/uttable4dd71a5d HTTP/1.1\r\nx-ms-version:
+      2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer: return-no-content\r\nContent-Type:
+      application/json;odata=nometadata\r\nAccept: application/json;odata=minimalmetadata\r\nContent-Length:
+      198\r\nx-ms-date: Wed, 08 Sep 2021 23:03:53 GMT\r\nDate: Wed, 08 Sep 2021 23:03:53
+      GMT\r\n\r\n{\"PartitionKey\": \"A'aaa\\\"_bbbb2\", \"PartitionKey@odata.type\":
+      \"Edm.String\", \"RowKey\": \"\\\"A'aaa\\\"_bbbb2\", \"RowKey@odata.type\":
+      \"Edm.String\", \"test\": \"\\\"A'aaa\\\"_bbbb2\", \"test@odata.type\": \"Edm.String\"}\r\n--changeset_5ec6f990-507d-434a-8665-9c4e282664eb--\r\n\r\n--batch_7328a0c9-5f06-4ccb-8641-1fffc4c72a58--\r\n"
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '924'
+      Content-Type:
+      - multipart/mixed; boundary=batch_7328a0c9-5f06-4ccb-8641-1fffc4c72a58
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 08 Sep 2021 23:03:53 GMT
+      MaxDataServiceVersion:
+      - 3.0;NetFx
+      User-Agent:
+      - azsdk-python-data-tables/12.2.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 08 Sep 2021 23:03:53 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_table_account.table.core.windows.net/$batch
+  response:
+    body:
+      string: "--batchresponse_804ea757-408a-4adc-a49d-e7aa6e95188b\r\nContent-Type:
+        multipart/mixed; boundary=changesetresponse_6ef36348-c598-45e4-b1f6-f3d81c5916cc\r\n\r\n--changesetresponse_6ef36348-c598-45e4-b1f6-f3d81c5916cc\r\nContent-Type:
+        application/http\r\nContent-Transfer-Encoding: binary\r\n\r\nHTTP/1.1 204
+        No Content\r\nX-Content-Type-Options: nosniff\r\nCache-Control: no-cache\r\nPreference-Applied:
+        return-no-content\r\nDataServiceVersion: 3.0;\r\nLocation: https://pytestremote.table.core.windows.net/uttable4dd71a5d(PartitionKey='A''aaa%22_bbbb2',RowKey='%22A''aaa%22_bbbb2')\r\nDataServiceId:
+        https://pytestremote.table.core.windows.net/uttable4dd71a5d(PartitionKey='A''aaa%22_bbbb2',RowKey='%22A''aaa%22_bbbb2')\r\nETag:
+        W/\"datetime'2021-09-08T23%3A03%3A53.1920519Z'\"\r\n\r\n\r\n--changesetresponse_6ef36348-c598-45e4-b1f6-f3d81c5916cc--\r\n--batchresponse_804ea757-408a-4adc-a49d-e7aa6e95188b--\r\n"
+    headers:
+      cache-control:
+      - no-cache
+      content-type:
+      - multipart/mixed; boundary=batchresponse_804ea757-408a-4adc-a49d-e7aa6e95188b
+      date:
+      - Wed, 08 Sep 2021 23:03:53 GMT
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 08 Sep 2021 23:03:53 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.2.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 08 Sep 2021 23:03:53 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://fake_table_account.table.core.windows.net/uttable4dd71a5d(PartitionKey='A%27aaa%22_bbbb2',RowKey='%22A%27aaa%22_bbbb2')
+  response:
+    body:
+      string: '{"odata.error":{"code":"InvalidInput","message":{"lang":"en-US","value":"Syntax
+        error: character ''\"'' is not valid at position 19 in ''PartitionKey=''A''aaa\"_bbbb2'',RowKey=''\"A''aaa\"_bbbb2''''.\nRequestId:24ef2283-6002-005a-4a05-a537e2000000\nTime:2021-09-08T23:03:53.3331523Z"}}}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date:
+      - Wed, 08 Sep 2021 23:03:53 GMT
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 400
+      message: Bad Request
+- request:
+    body: "--batch_0c175bcf-ff82-4fb4-9bec-79c975ad171f\r\nContent-Type: multipart/mixed;
+      boundary=changeset_f32900ca-8528-4866-bcd6-06b85d84e97a\r\n\r\n--changeset_f32900ca-8528-4866-bcd6-06b85d84e97a\r\nContent-Type:
+      application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 0\r\n\r\nPATCH
+      https://pytestremote.table.core.windows.net/uttable4dd71a5d(PartitionKey='A%27aaa%22_bbbb2',RowKey='%22A%27aaa%22_bbbb2')
+      HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nContent-Type:
+      application/json\r\nAccept: application/json\r\nContent-Length: 198\r\nx-ms-date:
+      Wed, 08 Sep 2021 23:03:53 GMT\r\nDate: Wed, 08 Sep 2021 23:03:53 GMT\r\n\r\n{\"PartitionKey\":
+      \"A'aaa\\\"_bbbb2\", \"PartitionKey@odata.type\": \"Edm.String\", \"RowKey\":
+      \"\\\"A'aaa\\\"_bbbb2\", \"RowKey@odata.type\": \"Edm.String\", \"test\": \"\\\"A'aaa\\\"_bbbb2\",
+      \"test@odata.type\": \"Edm.String\"}\r\n--changeset_f32900ca-8528-4866-bcd6-06b85d84e97a--\r\n\r\n--batch_0c175bcf-ff82-4fb4-9bec-79c975ad171f--\r\n"
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '921'
+      Content-Type:
+      - multipart/mixed; boundary=batch_0c175bcf-ff82-4fb4-9bec-79c975ad171f
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 08 Sep 2021 23:03:53 GMT
+      MaxDataServiceVersion:
+      - 3.0;NetFx
+      User-Agent:
+      - azsdk-python-data-tables/12.2.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 08 Sep 2021 23:03:53 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_table_account.table.core.windows.net/$batch
+  response:
+    body:
+      string: "--batchresponse_cbdb8bd1-1437-4b05-9a0c-1a6e199630aa\r\nContent-Type:
+        multipart/mixed; boundary=changesetresponse_c3b50c40-52ce-4ec8-b338-bde6135540d9\r\n\r\n--changesetresponse_c3b50c40-52ce-4ec8-b338-bde6135540d9\r\nContent-Type:
+        application/http\r\nContent-Transfer-Encoding: binary\r\n\r\nHTTP/1.1 400
+        Bad Request\r\nX-Content-Type-Options: nosniff\r\nDataServiceVersion: 3.0;\r\nContent-Type:
+        application/json;odata=minimalmetadata;streaming=true;charset=utf-8\r\n\r\n{\"odata.error\":{\"code\":\"InvalidInput\",\"message\":{\"lang\":\"en-US\",\"value\":\"0:Syntax
+        error: character '\\\"' is not valid at position 19 in 'PartitionKey='A'aaa\\\"_bbbb2',RowKey='\\\"A'aaa\\\"_bbbb2''.\\nRequestId:24ef22ac-6002-005a-7005-a537e2000000\\nTime:2021-09-08T23:03:53.3811868Z\"}}}\r\n--changesetresponse_c3b50c40-52ce-4ec8-b338-bde6135540d9--\r\n--batchresponse_cbdb8bd1-1437-4b05-9a0c-1a6e199630aa--\r\n"
+    headers:
+      cache-control:
+      - no-cache
+      content-type:
+      - multipart/mixed; boundary=batchresponse_cbdb8bd1-1437-4b05-9a0c-1a6e199630aa
+      date:
+      - Wed, 08 Sep 2021 23:03:53 GMT
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: "--batch_760e5957-d52a-489b-8744-369f0fd8c0e6\r\nContent-Type: multipart/mixed;
+      boundary=changeset_182a5610-34d1-41da-b272-a215f6421b40\r\n\r\n--changeset_182a5610-34d1-41da-b272-a215f6421b40\r\nContent-Type:
+      application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 0\r\n\r\nPUT
+      https://pytestremote.table.core.windows.net/uttable4dd71a5d(PartitionKey='A%27aaa%22_bbbb2',RowKey='%22A%27aaa%22_bbbb2')
+      HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nIf-Match:
+      *\r\nContent-Type: application/json\r\nAccept: application/json\r\nContent-Length:
+      198\r\nx-ms-date: Wed, 08 Sep 2021 23:03:53 GMT\r\nDate: Wed, 08 Sep 2021 23:03:53
+      GMT\r\n\r\n{\"PartitionKey\": \"A'aaa\\\"_bbbb2\", \"PartitionKey@odata.type\":
+      \"Edm.String\", \"RowKey\": \"\\\"A'aaa\\\"_bbbb2\", \"RowKey@odata.type\":
+      \"Edm.String\", \"test\": \"\\\"A'aaa\\\"_bbbb2\", \"test@odata.type\": \"Edm.String\"}\r\n--changeset_182a5610-34d1-41da-b272-a215f6421b40--\r\n\r\n--batch_760e5957-d52a-489b-8744-369f0fd8c0e6--\r\n"
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '932'
+      Content-Type:
+      - multipart/mixed; boundary=batch_760e5957-d52a-489b-8744-369f0fd8c0e6
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 08 Sep 2021 23:03:53 GMT
+      MaxDataServiceVersion:
+      - 3.0;NetFx
+      User-Agent:
+      - azsdk-python-data-tables/12.2.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 08 Sep 2021 23:03:53 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_table_account.table.core.windows.net/$batch
+  response:
+    body:
+      string: "--batchresponse_147facd4-e99a-4919-8405-0a5e77c24177\r\nContent-Type:
+        multipart/mixed; boundary=changesetresponse_8a7b677a-e1dd-43d0-a0cb-a93a78ea99ff\r\n\r\n--changesetresponse_8a7b677a-e1dd-43d0-a0cb-a93a78ea99ff\r\nContent-Type:
+        application/http\r\nContent-Transfer-Encoding: binary\r\n\r\nHTTP/1.1 400
+        Bad Request\r\nX-Content-Type-Options: nosniff\r\nDataServiceVersion: 3.0;\r\nContent-Type:
+        application/json;odata=minimalmetadata;streaming=true;charset=utf-8\r\n\r\n{\"odata.error\":{\"code\":\"InvalidInput\",\"message\":{\"lang\":\"en-US\",\"value\":\"0:Syntax
+        error: character '\\\"' is not valid at position 19 in 'PartitionKey='A'aaa\\\"_bbbb2',RowKey='\\\"A'aaa\\\"_bbbb2''.\\nRequestId:24ef22bc-6002-005a-8005-a537e2000000\\nTime:2021-09-08T23:03:53.4382278Z\"}}}\r\n--changesetresponse_8a7b677a-e1dd-43d0-a0cb-a93a78ea99ff--\r\n--batchresponse_147facd4-e99a-4919-8405-0a5e77c24177--\r\n"
+    headers:
+      cache-control:
+      - no-cache
+      content-type:
+      - multipart/mixed; boundary=batchresponse_147facd4-e99a-4919-8405-0a5e77c24177
+      date:
+      - Wed, 08 Sep 2021 23:03:53 GMT
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 08 Sep 2021 23:03:53 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.2.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 08 Sep 2021 23:03:53 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://fake_table_account.table.core.windows.net/uttable4dd71a5d()
+  response:
+    body:
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttable4dd71a5d","value":[{"odata.etag":"W/\"datetime''2021-09-08T23%3A03%3A53.1920519Z''\"","PartitionKey":"A''aaa\"_bbbb2","RowKey":"\"A''aaa\"_bbbb2","Timestamp":"2021-09-08T23:03:53.1920519Z","test":"\"A''aaa\"_bbbb2"}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-type:
+      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date:
+      - Wed, 08 Sep 2021 23:03:53 GMT
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 08 Sep 2021 23:03:53 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.2.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 08 Sep 2021 23:03:53 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://fake_table_account.table.core.windows.net/uttable4dd71a5d(PartitionKey='A%27%27aaa%22_bbbb2',RowKey='%22A%27%27aaa%22_bbbb2')
+  response:
+    body:
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttable4dd71a5d/@Element","odata.etag":"W/\"datetime''2021-09-08T23%3A03%3A53.1920519Z''\"","PartitionKey":"A''aaa\"_bbbb2","RowKey":"\"A''aaa\"_bbbb2","Timestamp":"2021-09-08T23:03:53.1920519Z","test":"\"A''aaa\"_bbbb2"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-type:
+      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date:
+      - Wed, 08 Sep 2021 23:03:53 GMT
+      etag:
+      - W/"datetime'2021-09-08T23%3A03%3A53.1920519Z'"
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: "--batch_717dcb96-e0f4-4abd-8fe3-423906241d02\r\nContent-Type: multipart/mixed;
+      boundary=changeset_00640778-a6eb-42a4-8906-2193fd101dc5\r\n\r\n--changeset_00640778-a6eb-42a4-8906-2193fd101dc5\r\nContent-Type:
+      application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 0\r\n\r\nDELETE
+      https://pytestremote.table.core.windows.net/uttable4dd71a5d(PartitionKey='A%27aaa%22_bbbb2',RowKey='%22A%27aaa%22_bbbb2')
+      HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nIf-Match:
+      *\r\nAccept: application/json;odata=minimalmetadata\r\nx-ms-date: Wed, 08 Sep
+      2021 23:03:53 GMT\r\nDate: Wed, 08 Sep 2021 23:03:53 GMT\r\n\r\n\r\n--changeset_00640778-a6eb-42a4-8906-2193fd101dc5--\r\n\r\n--batch_717dcb96-e0f4-4abd-8fe3-423906241d02--\r\n"
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '706'
+      Content-Type:
+      - multipart/mixed; boundary=batch_717dcb96-e0f4-4abd-8fe3-423906241d02
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 08 Sep 2021 23:03:53 GMT
+      MaxDataServiceVersion:
+      - 3.0;NetFx
+      User-Agent:
+      - azsdk-python-data-tables/12.2.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 08 Sep 2021 23:03:53 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_table_account.table.core.windows.net/$batch
+  response:
+    body:
+      string: "--batchresponse_95b8fa22-4dee-4f0a-9d20-c6ee82b33498\r\nContent-Type:
+        multipart/mixed; boundary=changesetresponse_aa17b702-3b55-4267-92b1-e970c9100b7b\r\n\r\n--changesetresponse_aa17b702-3b55-4267-92b1-e970c9100b7b\r\nContent-Type:
+        application/http\r\nContent-Transfer-Encoding: binary\r\n\r\nHTTP/1.1 400
+        Bad Request\r\nX-Content-Type-Options: nosniff\r\nDataServiceVersion: 3.0;\r\nContent-Type:
+        application/json;odata=minimalmetadata;streaming=true;charset=utf-8\r\n\r\n{\"odata.error\":{\"code\":\"InvalidInput\",\"message\":{\"lang\":\"en-US\",\"value\":\"0:Syntax
+        error: character '\\\"' is not valid at position 19 in 'PartitionKey='A'aaa\\\"_bbbb2',RowKey='\\\"A'aaa\\\"_bbbb2''.\\nRequestId:24ef2319-6002-005a-5605-a537e2000000\\nTime:2021-09-08T23:03:53.6814024Z\"}}}\r\n--changesetresponse_aa17b702-3b55-4267-92b1-e970c9100b7b--\r\n--batchresponse_95b8fa22-4dee-4f0a-9d20-c6ee82b33498--\r\n"
+    headers:
+      cache-control:
+      - no-cache
+      content-type:
+      - multipart/mixed; boundary=batchresponse_95b8fa22-4dee-4f0a-9d20-c6ee82b33498
+      date:
+      - Wed, 08 Sep 2021 23:03:53 GMT
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 08 Sep 2021 23:03:53 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.2.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 08 Sep 2021 23:03:53 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://fake_table_account.table.core.windows.net/Tables
+  response:
+    body:
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables","value":[{"TableName":"uttable4dd71a5d"}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-type:
+      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date:
+      - Wed, 08 Sep 2021 23:03:53 GMT
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Wed, 08 Sep 2021 23:03:53 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.2.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 08 Sep 2021 23:03:53 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://fake_table_account.table.core.windows.net/Tables('uttable4dd71a5d')
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Wed, 08 Sep 2021 23:03:53 GMT
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 204
+      message: No Content
+version: 1

@@ -1,0 +1,382 @@
+interactions:
+- request:
+    body: '{"TableName": "uttableac8417ad"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '32'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 08 Sep 2021 22:51:49 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.1.1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 08 Sep 2021 22:51:49 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_table_account.table.core.windows.net/Tables
+  response:
+    body:
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttableac8417ad"}'
+    headers:
+      cache-control: no-cache
+      content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date: Wed, 08 Sep 2021 22:51:48 GMT
+      location: https://fake_table_account.table.core.windows.net/Tables('uttableac8417ad')
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: https://pytestremote.table.core.windows.net/Tables
+- request:
+    body: '{"PartitionKey": "A''aaa\"_bbbb2", "PartitionKey@odata.type": "Edm.String",
+      "RowKey": "\"A''aaa\"_bbbb2", "RowKey@odata.type": "Edm.String", "test": "\"A''aaa\"_bbbb2",
+      "test@odata.type": "Edm.String"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '198'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 08 Sep 2021 22:51:49 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.1.1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 08 Sep 2021 22:51:49 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_table_account.table.core.windows.net/uttableac8417ad
+  response:
+    body:
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttableac8417ad/@Element","odata.etag":"W/\"datetime''2021-09-08T22%3A51%3A49.3534354Z''\"","PartitionKey":"A''aaa\"_bbbb2","RowKey":"\"A''aaa\"_bbbb2","Timestamp":"2021-09-08T22:51:49.3534354Z","test":"\"A''aaa\"_bbbb2"}'
+    headers:
+      cache-control: no-cache
+      content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date: Wed, 08 Sep 2021 22:51:48 GMT
+      etag: W/"datetime'2021-09-08T22%3A51%3A49.3534354Z'"
+      location: https://fake_table_account.table.core.windows.net/uttableac8417ad(PartitionKey='A''aaa%22_bbbb2',RowKey='%22A''aaa%22_bbbb2')
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: https://pytestremote.table.core.windows.net/uttableac8417ad
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 08 Sep 2021 22:51:49 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.1.1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 08 Sep 2021 22:51:49 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://fake_table_account.table.core.windows.net/uttableac8417ad(PartitionKey='A'aaa%22_bbbb2',RowKey='%22A'aaa%22_bbbb2')
+  response:
+    body:
+      string: '{"odata.error":{"code":"InvalidInput","message":{"lang":"en-US","value":"Syntax
+        error: character ''\"'' is not valid at position 19 in ''PartitionKey=''A''aaa\"_bbbb2'',RowKey=''\"A''aaa\"_bbbb2''''.\nRequestId:03a0cad8-4002-00e7-4704-a5216e000000\nTime:2021-09-08T22:51:49.5545784Z"}}}'
+    headers:
+      content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date: Wed, 08 Sep 2021 22:51:48 GMT
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-ms-version: '2019-02-02'
+    status:
+      code: 400
+      message: Bad Request
+    url: https://pytestremote.table.core.windows.net/uttableac8417ad(PartitionKey='A'aaa%22_bbbb2',RowKey='%22A'aaa%22_bbbb2')
+- request:
+    body: '{"PartitionKey": "A''aaa\"_bbbb2", "PartitionKey@odata.type": "Edm.String",
+      "RowKey": "\"A''aaa\"_bbbb2", "RowKey@odata.type": "Edm.String", "test": "\"A''aaa\"_bbbb2",
+      "test@odata.type": "Edm.String"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '198'
+      Content-Type:
+      - application/json
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 08 Sep 2021 22:51:49 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.1.1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 08 Sep 2021 22:51:49 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PATCH
+    uri: https://fake_table_account.table.core.windows.net/uttableac8417ad(PartitionKey='A'aaa%22_bbbb2',RowKey='%22A'aaa%22_bbbb2')
+  response:
+    body:
+      string: '{"odata.error":{"code":"InvalidInput","message":{"lang":"en-US","value":"Syntax
+        error: character ''\"'' is not valid at position 19 in ''PartitionKey=''A''aaa\"_bbbb2'',RowKey=''\"A''aaa\"_bbbb2''''.\nRequestId:03a0cb27-4002-00e7-1304-a5216e000000\nTime:2021-09-08T22:51:49.5916047Z"}}}'
+    headers:
+      content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date: Wed, 08 Sep 2021 22:51:48 GMT
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-ms-version: '2019-02-02'
+    status:
+      code: 400
+      message: Bad Request
+    url: https://pytestremote.table.core.windows.net/uttableac8417ad(PartitionKey='A'aaa%22_bbbb2',RowKey='%22A'aaa%22_bbbb2')
+- request:
+    body: '{"PartitionKey": "A''aaa\"_bbbb2", "PartitionKey@odata.type": "Edm.String",
+      "RowKey": "\"A''aaa\"_bbbb2", "RowKey@odata.type": "Edm.String", "test": "\"A''aaa\"_bbbb2",
+      "test@odata.type": "Edm.String"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '198'
+      Content-Type:
+      - application/json
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 08 Sep 2021 22:51:49 GMT
+      If-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-data-tables/12.1.1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 08 Sep 2021 22:51:49 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://fake_table_account.table.core.windows.net/uttableac8417ad(PartitionKey='A'aaa%22_bbbb2',RowKey='%22A'aaa%22_bbbb2')
+  response:
+    body:
+      string: '{"odata.error":{"code":"InvalidInput","message":{"lang":"en-US","value":"Syntax
+        error: character ''\"'' is not valid at position 19 in ''PartitionKey=''A''aaa\"_bbbb2'',RowKey=''\"A''aaa\"_bbbb2''''.\nRequestId:03a0cb33-4002-00e7-1f04-a5216e000000\nTime:2021-09-08T22:51:49.6266292Z"}}}'
+    headers:
+      content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date: Wed, 08 Sep 2021 22:51:48 GMT
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-ms-version: '2019-02-02'
+    status:
+      code: 400
+      message: Bad Request
+    url: https://pytestremote.table.core.windows.net/uttableac8417ad(PartitionKey='A'aaa%22_bbbb2',RowKey='%22A'aaa%22_bbbb2')
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 08 Sep 2021 22:51:49 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.1.1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 08 Sep 2021 22:51:49 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://fake_table_account.table.core.windows.net/uttableac8417ad()
+  response:
+    body:
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttableac8417ad","value":[{"odata.etag":"W/\"datetime''2021-09-08T22%3A51%3A49.3534354Z''\"","PartitionKey":"A''aaa\"_bbbb2","RowKey":"\"A''aaa\"_bbbb2","Timestamp":"2021-09-08T22:51:49.3534354Z","test":"\"A''aaa\"_bbbb2"}]}'
+    headers:
+      cache-control: no-cache
+      content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date: Wed, 08 Sep 2021 22:51:48 GMT
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-ms-version: '2019-02-02'
+    status:
+      code: 200
+      message: OK
+    url: https://pytestremote.table.core.windows.net/uttableac8417ad()
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 08 Sep 2021 22:51:49 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.1.1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 08 Sep 2021 22:51:49 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://fake_table_account.table.core.windows.net/uttableac8417ad(PartitionKey='A''aaa%22_bbbb2',RowKey='%22A''aaa%22_bbbb2')
+  response:
+    body:
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttableac8417ad/@Element","odata.etag":"W/\"datetime''2021-09-08T22%3A51%3A49.3534354Z''\"","PartitionKey":"A''aaa\"_bbbb2","RowKey":"\"A''aaa\"_bbbb2","Timestamp":"2021-09-08T22:51:49.3534354Z","test":"\"A''aaa\"_bbbb2"}'
+    headers:
+      cache-control: no-cache
+      content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date: Wed, 08 Sep 2021 22:51:48 GMT
+      etag: W/"datetime'2021-09-08T22%3A51%3A49.3534354Z'"
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-ms-version: '2019-02-02'
+    status:
+      code: 200
+      message: OK
+    url: https://pytestremote.table.core.windows.net/uttableac8417ad(PartitionKey='A''aaa%22_bbbb2',RowKey='%22A''aaa%22_bbbb2')
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 08 Sep 2021 22:51:49 GMT
+      If-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-data-tables/12.1.1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 08 Sep 2021 22:51:49 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://fake_table_account.table.core.windows.net/uttableac8417ad(PartitionKey='A'aaa%22_bbbb2',RowKey='%22A'aaa%22_bbbb2')
+  response:
+    body:
+      string: '{"odata.error":{"code":"InvalidInput","message":{"lang":"en-US","value":"Syntax
+        error: character ''\"'' is not valid at position 19 in ''PartitionKey=''A''aaa\"_bbbb2'',RowKey=''\"A''aaa\"_bbbb2''''.\nRequestId:03a0cb69-4002-00e7-5104-a5216e000000\nTime:2021-09-08T22:51:49.7256997Z"}}}'
+    headers:
+      content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date: Wed, 08 Sep 2021 22:51:48 GMT
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-ms-version: '2019-02-02'
+    status:
+      code: 400
+      message: Bad Request
+    url: https://pytestremote.table.core.windows.net/uttableac8417ad(PartitionKey='A'aaa%22_bbbb2',RowKey='%22A'aaa%22_bbbb2')
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 08 Sep 2021 22:51:49 GMT
+      If-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-data-tables/12.1.1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 08 Sep 2021 22:51:49 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://fake_table_account.table.core.windows.net/uttableac8417ad(PartitionKey='A''aaa%22_bbbb2',RowKey='%22A''aaa%22_bbbb2')
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control: no-cache
+      content-length: '0'
+      date: Wed, 08 Sep 2021 22:51:48 GMT
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      x-content-type-options: nosniff
+      x-ms-version: '2019-02-02'
+    status:
+      code: 204
+      message: No Content
+    url: https://pytestremote.table.core.windows.net/uttableac8417ad(PartitionKey='A''aaa%22_bbbb2',RowKey='%22A''aaa%22_bbbb2')
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 08 Sep 2021 22:51:49 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.1.1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 08 Sep 2021 22:51:49 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://fake_table_account.table.core.windows.net/Tables
+  response:
+    body:
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables","value":[{"TableName":"uttableac8417ad"}]}'
+    headers:
+      cache-control: no-cache
+      content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date: Wed, 08 Sep 2021 22:51:48 GMT
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-ms-version: '2019-02-02'
+    status:
+      code: 200
+      message: OK
+    url: https://pytestremote.table.core.windows.net/Tables
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Date:
+      - Wed, 08 Sep 2021 22:51:49 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.1.1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 08 Sep 2021 22:51:49 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://fake_table_account.table.core.windows.net/Tables('uttableac8417ad')
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control: no-cache
+      content-length: '0'
+      date: Wed, 08 Sep 2021 22:51:48 GMT
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      x-content-type-options: nosniff
+      x-ms-version: '2019-02-02'
+    status:
+      code: 204
+      message: No Content
+    url: https://pytestremote.table.core.windows.net/Tables('uttableac8417ad')
+version: 1

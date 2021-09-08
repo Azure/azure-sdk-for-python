@@ -2077,3 +2077,47 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self.table.delete_entity(entity1.copy())
         finally:
             self._tear_down()
+
+    @tables_decorator
+    def test_keys_with_specialchar_optout(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            self.table.prepare_key = lambda k: k
+
+            # Act
+            entity1 = {
+                'PartitionKey': u"A'aaa\"_bbbb2",
+                'RowKey': u'"A\'aaa"_bbbb2',
+                'test': u'"A\'aaa"_bbbb2'
+            }
+            entity2 = entity1.copy()
+            entity2['PartitionKey'] = entity1['PartitionKey'].replace("'", "''")
+            entity2['RowKey'] = entity1['RowKey'].replace("'", "''")
+
+            self.table.create_entity(entity1)
+            
+            with pytest.raises(HttpResponseError):
+                self.table.get_entity(
+                    partition_key=entity1['PartitionKey'],
+                    row_key=entity1['RowKey'])
+
+            with pytest.raises(HttpResponseError):
+                self.table.upsert_entity(entity1, mode='merge')
+ 
+            with pytest.raises(HttpResponseError):
+                self.table.update_entity(entity1, mode='replace')
+
+            entity_results = list(self.table.list_entities())
+            assert entity_results[0] == entity1
+            for entity in entity_results:
+                get_entity = self.table.get_entity(
+                    partition_key=entity2['PartitionKey'],
+                    row_key=entity2['RowKey'])
+                assert get_entity == entity1
+
+            with pytest.raises(HttpResponseError):
+                self.table.delete_entity(entity1)
+            self.table.delete_entity(entity2)
+        finally:
+            self._tear_down()

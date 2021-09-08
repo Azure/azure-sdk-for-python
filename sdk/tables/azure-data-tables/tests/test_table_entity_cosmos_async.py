@@ -1908,3 +1908,45 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
         finally:
             await self._tear_down()
+
+    @cosmos_decorator_async
+    async def test_keys_with_specialchar_optout(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        try:
+            self.table.prepare_key = lambda k: k
+
+            # Act
+            entity1 = {
+                'PartitionKey': u"A'aaa\"_bbbb2",
+                'RowKey': u'"A\'aaa"_bbbb2',
+                'test': u'"A\'aaa"_bbbb2'
+            }
+            entity2 = entity1.copy()
+            entity2['PartitionKey'] = entity1['PartitionKey'].replace("'", "''")
+            entity2['RowKey'] = entity1['RowKey'].replace("'", "''")
+
+            await self.table.create_entity(entity1)
+            
+            with pytest.raises(HttpResponseError):
+                await self.table.get_entity(
+                    partition_key=entity1['PartitionKey'],
+                    row_key=entity1['RowKey'])
+
+            with pytest.raises(HttpResponseError):
+                await self.table.upsert_entity(entity1, mode='merge')
+ 
+            with pytest.raises(HttpResponseError):
+                await self.table.update_entity(entity1, mode='replace')
+
+            entity_results = self.table.list_entities()
+            async for entity in entity_results:
+                get_entity = await self.table.get_entity(
+                    partition_key=entity2['PartitionKey'],
+                    row_key=entity2['RowKey'])
+                assert get_entity == entity
+
+            with pytest.raises(HttpResponseError):
+                await self.table.delete_entity(entity1)
+            await self.table.delete_entity(entity2)
+        finally:
+            await self._tear_down()
