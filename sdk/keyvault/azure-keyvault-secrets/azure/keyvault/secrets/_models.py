@@ -23,7 +23,7 @@ class SecretProperties(object):
         # type: (_models.SecretAttributes, str, **Any) -> None
         self._attributes = attributes
         self._id = vault_id
-        self._vault_id = KeyVaultSecretIdentifier(vault_id) if vault_id else None
+        self._vault_id = KeyVaultSecretIdentifier(vault_id)
         self._content_type = kwargs.get("content_type", None)
         self._key_id = kwargs.get("key_id", None)
         self._managed = kwargs.get("managed", None)
@@ -69,10 +69,10 @@ class SecretProperties(object):
 
     @property
     def id(self):
-        # type: () -> Optional[str]
+        # type: () -> str
         """The secret's id
 
-        :rtype: str or None
+        :rtype: str
         """
         return self._id
 
@@ -92,7 +92,7 @@ class SecretProperties(object):
 
         :rtype: bool or None
         """
-        return self._attributes.enabled if self._attributes else None
+        return self._attributes.enabled
 
     @property
     def not_before(self):
@@ -101,7 +101,7 @@ class SecretProperties(object):
 
         :rtype: ~datetime.datetime or None
         """
-        return self._attributes.not_before if self._attributes else None
+        return self._attributes.not_before
 
     @property
     def expires_on(self):
@@ -110,7 +110,7 @@ class SecretProperties(object):
 
         :rtype: ~datetime.datetime or None
         """
-        return self._attributes.expires if self._attributes else None
+        return self._attributes.expires
 
     @property
     def created_on(self):
@@ -119,7 +119,7 @@ class SecretProperties(object):
 
         :rtype: ~datetime.datetime or None
         """
-        return self._attributes.created if self._attributes else None
+        return self._attributes.created
 
     @property
     def updated_on(self):
@@ -128,7 +128,7 @@ class SecretProperties(object):
 
         :rtype: ~datetime.datetime or None
         """
-        return self._attributes.updated if self._attributes else None
+        return self._attributes.updated
 
     @property
     def recoverable_days(self):
@@ -138,7 +138,7 @@ class SecretProperties(object):
         :rtype: int or None
         """
         # recoverable_days was added in 7.1-preview
-        if self._attributes and hasattr(self._attributes, "recoverable_days"):
+        if hasattr(self._attributes, "recoverable_days"):
             return self._attributes.recoverable_days
         return None
 
@@ -149,7 +149,7 @@ class SecretProperties(object):
 
         :rtype: str or None
         """
-        return self._attributes.recovery_level if self._attributes else None
+        return self._attributes.recovery_level
 
     @property
     def vault_url(self):
@@ -158,7 +158,7 @@ class SecretProperties(object):
 
         :rtype: str or None
         """
-        return self._vault_id.vault_url if self._vault_id else None
+        return self._vault_id.vault_url
 
     @property
     def name(self):
@@ -167,7 +167,7 @@ class SecretProperties(object):
 
         :rtype: str or None
         """
-        return self._vault_id.name if self._vault_id else None
+        return self._vault_id.name
 
     @property
     def version(self):
@@ -176,7 +176,7 @@ class SecretProperties(object):
 
         :rtype: str or None
         """
-        return self._vault_id.version if self._vault_id else None
+        return self._vault_id.version
 
     @property
     def tags(self):
