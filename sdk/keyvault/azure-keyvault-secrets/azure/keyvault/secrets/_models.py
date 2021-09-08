@@ -20,10 +20,10 @@ class SecretProperties(object):
     """A secret's id and attributes."""
 
     def __init__(self, attributes, vault_id, **kwargs):
-        # type: (_models.SecretAttributes, str, **Any) -> None
+        # type: (Optional[_models.SecretAttributes], Optional[str], **Any) -> None
         self._attributes = attributes
         self._id = vault_id
-        self._vault_id = KeyVaultSecretIdentifier(vault_id)
+        self._vault_id = KeyVaultSecretIdentifier(vault_id) if vault_id else None
         self._content_type = kwargs.get("content_type", None)
         self._key_id = kwargs.get("key_id", None)
         self._managed = kwargs.get("managed", None)
@@ -38,8 +38,8 @@ class SecretProperties(object):
         # type: (_models.SecretBundle) -> SecretProperties
         """Construct a SecretProperties from an autorest-generated SecretBundle"""
         return cls(
-            secret_bundle.attributes,  # type: ignore
-            secret_bundle.id,  # type: ignore
+            secret_bundle.attributes,
+            secret_bundle.id,
             content_type=secret_bundle.content_type,
             key_id=secret_bundle.kid,
             managed=secret_bundle.managed,
@@ -51,8 +51,8 @@ class SecretProperties(object):
         # type: (_models.SecretItem) -> SecretProperties
         """Construct a SecretProperties from an autorest-generated SecretItem"""
         return cls(
-            secret_item.attributes,  # type: ignore
-            secret_item.id,  # type: ignore
+            secret_item.attributes,
+            secret_item.id,
             content_type=secret_item.content_type,
             managed=secret_item.managed,
             tags=secret_item.tags,
@@ -60,28 +60,28 @@ class SecretProperties(object):
 
     @property
     def content_type(self):
-        # type: () -> str
+        # type: () -> Optional[str]
         """An arbitrary string indicating the type of the secret
 
-        :rtype: str
+        :rtype: str or None
         """
         return self._content_type
 
     @property
     def id(self):
-        # type: () -> str
+        # type: () -> Optional[str]
         """The secret's id
 
-        :rtype: str
+        :rtype: str or None
         """
         return self._id
 
     @property
     def key_id(self):
-        # type: () -> str
+        # type: () -> Optional[str]
         """If this secret backs a certificate, this property is the identifier of the corresponding key.
 
-        :rtype: str
+        :rtype: str or None
         """
         return self._key_id
 
@@ -92,7 +92,7 @@ class SecretProperties(object):
 
         :rtype: bool or None
         """
-        return self._attributes.enabled
+        return self._attributes.enabled if self._attributes else None
 
     @property
     def not_before(self):
@@ -101,7 +101,7 @@ class SecretProperties(object):
 
         :rtype: ~datetime.datetime or None
         """
-        return self._attributes.not_before
+        return self._attributes.not_before if self._attributes else None
 
     @property
     def expires_on(self):
@@ -110,7 +110,7 @@ class SecretProperties(object):
 
         :rtype: ~datetime.datetime or None
         """
-        return self._attributes.expires
+        return self._attributes.expires if self._attributes else None
 
     @property
     def created_on(self):
@@ -119,7 +119,7 @@ class SecretProperties(object):
 
         :rtype: ~datetime.datetime or None
         """
-        return self._attributes.created
+        return self._attributes.created if self._attributes else None
 
     @property
     def updated_on(self):
@@ -128,7 +128,7 @@ class SecretProperties(object):
 
         :rtype: ~datetime.datetime or None
         """
-        return self._attributes.updated
+        return self._attributes.updated if self._attributes else None
 
     @property
     def recoverable_days(self):
@@ -138,7 +138,7 @@ class SecretProperties(object):
         :rtype: int or None
         """
         # recoverable_days was added in 7.1-preview
-        if hasattr(self._attributes, "recoverable_days"):
+        if self._attributes and hasattr(self._attributes, "recoverable_days"):
             return self._attributes.recoverable_days
         return None
 
@@ -149,7 +149,7 @@ class SecretProperties(object):
 
         :rtype: str or None
         """
-        return self._attributes.recovery_level
+        return self._attributes.recovery_level if self._attributes else None
 
     @property
     def vault_url(self):
@@ -158,7 +158,7 @@ class SecretProperties(object):
 
         :rtype: str or None
         """
-        return self._vault_id.vault_url
+        return self._vault_id.vault_url if self._vault_id else None
 
     @property
     def name(self):
@@ -167,7 +167,7 @@ class SecretProperties(object):
 
         :rtype: str or None
         """
-        return self._vault_id.name
+        return self._vault_id.name if self._vault_id else None
 
     @property
     def version(self):
@@ -176,14 +176,15 @@ class SecretProperties(object):
 
         :rtype: str or None
         """
-        return self._vault_id.version
+        return self._vault_id.version if self._vault_id else None
 
     @property
     def tags(self):
-        # type: () -> Dict[str, str]
+        # type: () -> Optional[Dict[str, str]]
         """Application specific metadata in the form of key-value pairs
 
-        :rtype: dict"""
+        :rtype: dict or None
+        """
         return self._tags
 
 
