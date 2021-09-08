@@ -20,27 +20,30 @@ requests = [
         workspace_id= os.environ['LOG_WORKSPACE_ID']
     ),
     LogsBatchQuery(
-        query= """AppRequests | take 10  |
-            summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId""",
-        timespan=(datetime(2021, 6, 2), timedelta(hours=1)),
+        query= """AppRequestsss | take 10""",
+        timespan=(datetime(2021, 6, 2), timedelta(days=1)),
         workspace_id= os.environ['LOG_WORKSPACE_ID']
     ),
     LogsBatchQuery(
-        query= "AppRequests | take 5",
+        query= """let Weight = 92233720368547758;
+        range x from 1 to 3 step 1
+        | summarize percentilesw(x, Weight * 100, 50)""",
         workspace_id= os.environ['LOG_WORKSPACE_ID'],
         timespan=(datetime(2021, 6, 2), datetime(2021, 6, 3)),
         include_statistics=True
     ),
 ]
-responses = client.query_batch(requests)
+responses = client.query_batch(requests, allow_partial_errors=True)
 
 for response in responses:
-    try:
+    if not response.is_error:
         table = response.tables[0]
         df = pd.DataFrame(table.rows, columns=table.columns)
         print(df)
         print("\n\n-------------------------\n\n")
-    except TypeError:
-        print(response.error.innererror)
+    else:
+        error = response
+        print(error.innererror.message)
+
 
 # [END send_query_batch]

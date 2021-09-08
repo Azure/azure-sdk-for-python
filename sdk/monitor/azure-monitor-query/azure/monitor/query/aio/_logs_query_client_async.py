@@ -14,7 +14,7 @@ from .._generated.aio._monitor_query_client import MonitorQueryClient
 
 from .._generated.models import BatchRequest, QueryBody as LogsQueryBody
 from .._helpers import process_error, construct_iso8601, order_results
-from .._models import LogsQueryResult, LogsBatchQuery
+from .._models import LogsQueryResult, LogsBatchQuery, LogsQueryError
 from ._helpers_asyc import get_authentication_policy
 
 if TYPE_CHECKING:
@@ -123,10 +123,14 @@ class LogsQueryClient(object):
 
         :param queries: The list of Kusto queries to execute.
         :type queries: list[dict] or list[~azure.monitor.query.LogsBatchQuery]
+        :keyword bool allow_partial_errors: If set to True, a `LogsQueryResult` object is returned
+         when a partial error occurs. The error can be accessed using the `partial_error`
+         attribute in the object.
         :return: list of LogsQueryResult objects, or the result of cls(response)
         :rtype: list[~azure.monitor.query.LogsQueryResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        allow_partial_errors = kwargs.pop('allow_partial_errors', False)
         try:
             queries = [LogsBatchQuery(**q) for q in queries]
         except (KeyError, TypeError):
@@ -139,7 +143,12 @@ class LogsQueryClient(object):
         batch = BatchRequest(requests=queries)
         generated = await self._query_op.batch(batch, **kwargs)
         mapping = {item.id: item for item in generated.responses}
-        return order_results(request_order, mapping, LogsQueryResult)
+        return order_results(
+            request_order,
+            mapping,
+            LogsQueryResult,
+            LogsQueryError,
+            allow_partial_errors)
 
     async def __aenter__(self) -> "LogsQueryClient":
         await self._client.__aenter__()

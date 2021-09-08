@@ -45,9 +45,21 @@ def process_error(exception):
     raise_error = HttpResponseError
     raise raise_error(message=exception.message, response=exception.response)
 
-def order_results(request_order, mapping, obj):
+def order_results(request_order, mapping, obj, err, allow_partial_errors=False):
     ordered = [mapping[id] for id in request_order]
-    return [obj._from_generated(rsp) for rsp in ordered] # pylint: disable=protected-access
+    results = []
+    for item in ordered:
+        if not item.body.error:
+            results.append(obj._from_generated(item.body)) # pylint: disable=protected-access
+        else:
+            error = item.body.error
+            if allow_partial_errors and error.code == 'PartialError':
+                res = obj._from_generated(item.body) # pylint: disable=protected-access
+                res.partial_error = err._from_generated(error) # pylint: disable=protected-access
+                results.append(res)
+            else:
+                results.append(err._from_generated(error)) # pylint: disable=protected-access
+    return results
 
 def construct_iso8601(timespan=None):
     if not timespan:

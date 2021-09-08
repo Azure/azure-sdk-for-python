@@ -165,8 +165,11 @@ class LogsQueryResult(object):
     :ivar visualization: This will include a visualization property in the response that specifies the type of
      visualization selected by the query and any properties for that visualization.
     :vartype visualization: object
-    :ivar error: Any error info.
-    :vartype error: ~azure.core.exceptions.HttpResponseError
+    :ivar partial_error: Any error info. This is none except in the case where `allow_partial_errors`
+     is explicitly set to True.
+    :vartype partial_error: ~azure.core.exceptions.HttpResponseError
+    :ivar bool is_error: Boolean check for error item when iterating over list of
+        results. Always False for an instance of a LogsQueryResult.
     """
     def __init__(
         self,
@@ -176,6 +179,7 @@ class LogsQueryResult(object):
         self.partial_error = None
         self.statistics = kwargs.get('statistics', None)
         self.visualization = kwargs.get('visualization', None)
+        self.is_error = False
 
     @classmethod
     def _from_generated(cls, generated):
@@ -194,7 +198,8 @@ class LogsQueryResult(object):
         return cls(
             tables=tables,
             statistics=generated.statistics,
-            visualization=generated.render
+            visualization=generated.render,
+            is_error=False
         )
 
 
@@ -536,21 +541,9 @@ class LogsQueryError(object):
     :ivar additional_properties: Additional properties that can be provided on the error info
      object.
     :vartype additional_properties: object
+    :ivar bool is_error: Boolean check for error item when iterating over list of
+        results. Always True for an instance of a LogsQueryError.
     """
-
-    _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
-    }
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
-        'innererror': {'key': 'innererror', 'type': 'ErrorInfo'},
-        'additional_properties': {'key': 'additionalProperties', 'type': 'object'},
-    }
-
     def __init__(
         self,
         **kwargs
@@ -560,15 +553,20 @@ class LogsQueryError(object):
         self.details = kwargs.get('details', None)
         self.innererror = kwargs.get('innererror', None)
         self.additional_properties = kwargs.get('additional_properties', None)
+        self.is_error = True
 
     @classmethod
-    def _from_genearated(cls, generated):
+    def _from_generated(cls, generated):
         if not generated:
             return None
+        details = None
+        if generated.details is not None:
+            details=[d.serialize() for d in generated.details]
         return cls(
             code=generated.code,
             message=generated.message,
-            innererror=generated.innererror,
+            innererror=cls._from_generated(generated.innererror),
             additional_properties=generated.additional_properties,
-            details=[d.serialize() for d in generated.details]
+            details=details,
+            is_error=True
         )
