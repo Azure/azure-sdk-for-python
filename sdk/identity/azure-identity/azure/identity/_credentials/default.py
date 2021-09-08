@@ -4,7 +4,6 @@
 # ------------------------------------
 import logging
 import os
-import six
 
 from .._constants import EnvironmentVariables
 from .._internal import get_default_authority, normalize_authority
