@@ -31,6 +31,7 @@ ALL_ENVIRONMENTS = (
     },
     {EnvironmentVariables.IDENTITY_ENDPOINT: "...", EnvironmentVariables.IMDS_ENDPOINT: "..."},  # Arc
     {  # token exchange
+        EnvironmentVariables.AZURE_AUTHORITY_HOST: "https://localhost",
         EnvironmentVariables.AZURE_CLIENT_ID: "...",
         EnvironmentVariables.AZURE_TENANT_ID: "...",
         EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE: __file__,
@@ -71,24 +72,6 @@ def test_close_incomplete_configuration():
 def test_context_manager_incomplete_configuration():
     with ManagedIdentityCredential():
         pass
-
-
-ALL_ENVIRONMENTS = (
-    {EnvironmentVariables.MSI_ENDPOINT: "...", EnvironmentVariables.MSI_SECRET: "..."},  # App Service
-    {EnvironmentVariables.MSI_ENDPOINT: "..."},  # Cloud Shell
-    {  # Service Fabric
-        EnvironmentVariables.IDENTITY_ENDPOINT: "...",
-        EnvironmentVariables.IDENTITY_HEADER: "...",
-        EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT: "...",
-    },
-    {EnvironmentVariables.IDENTITY_ENDPOINT: "...", EnvironmentVariables.IMDS_ENDPOINT: "..."},  # Arc
-    {  # token exchange
-        EnvironmentVariables.AZURE_CLIENT_ID: "...",
-        EnvironmentVariables.AZURE_TENANT_ID: "...",
-        EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE: __file__,
-    },
-    {},  # IMDS
-)
 
 
 @pytest.mark.parametrize("environ", ALL_ENVIRONMENTS)
@@ -854,6 +837,40 @@ def test_token_exchange(tmpdir):
     )
 
     with mock.patch.dict("os.environ", mock_environ, clear=True):
+        credential = ManagedIdentityCredential(client_id=nondefault_client_id, transport=transport)
+        token = credential.get_token(scope)
+    assert token.token == access_token
+
+    # AZURE_CLIENT_ID may not have a value, in which case client_id is required
+    transport = validating_transport(
+        requests=[
+            Request(
+                base_url=authority,
+                method="POST",
+                required_data={
+                    "client_assertion": exchange_token,
+                    "client_assertion_type": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+                    "client_id": nondefault_client_id,
+                    "grant_type": "client_credentials",
+                    "scope": scope,
+                },
+            )
+        ],
+        responses=[success_response],
+    )
+
+    with mock.patch.dict(
+        "os.environ",
+        {
+            EnvironmentVariables.AZURE_AUTHORITY_HOST: authority,
+            EnvironmentVariables.AZURE_TENANT_ID: tenant,
+            EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE: token_file.strpath,
+        },
+        clear=True,
+    ):
+        with pytest.raises(ValueError):
+            ManagedIdentityCredential()
+
         credential = ManagedIdentityCredential(client_id=nondefault_client_id, transport=transport)
         token = credential.get_token(scope)
     assert token.token == access_token

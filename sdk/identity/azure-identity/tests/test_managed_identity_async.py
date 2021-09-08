@@ -798,3 +798,37 @@ async def test_token_exchange(tmpdir):
         credential = ManagedIdentityCredential(client_id=nondefault_client_id, transport=transport)
         token = await credential.get_token(scope)
     assert token.token == access_token
+
+    # AZURE_CLIENT_ID may not have a value, in which case client_id is required
+    transport = async_validating_transport(
+        requests=[
+            Request(
+                base_url=authority,
+                method="POST",
+                required_data={
+                    "client_assertion": exchange_token,
+                    "client_assertion_type": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+                    "client_id": nondefault_client_id,
+                    "grant_type": "client_credentials",
+                    "scope": scope,
+                },
+            )
+        ],
+        responses=[success_response],
+    )
+
+    with mock.patch.dict(
+        "os.environ",
+        {
+            EnvironmentVariables.AZURE_AUTHORITY_HOST: authority,
+            EnvironmentVariables.AZURE_TENANT_ID: tenant,
+            EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE: token_file.strpath,
+        },
+        clear=True,
+    ):
+        with pytest.raises(ValueError):
+            ManagedIdentityCredential()
+
+        credential = ManagedIdentityCredential(client_id=nondefault_client_id, transport=transport)
+        token = await credential.get_token(scope)
+    assert token.token == access_token
