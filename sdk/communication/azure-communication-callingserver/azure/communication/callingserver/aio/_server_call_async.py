@@ -34,7 +34,7 @@ class ServerCall(object):
             audio_file_id, # type: str
             callback_uri, # type: str
             operation_context = None, # type: Optional[str]
-            **kwargs, # type: str: Any
+            **kwargs, # type: Any
         ): # type: (...) -> PlayAudioResult
 
         try:
