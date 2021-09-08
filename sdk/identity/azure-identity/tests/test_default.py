@@ -387,6 +387,21 @@ def test_interactive_browser_tenant_id():
     validate_tenant_id(mock_credential)
 
 
+def test_interactive_browser_client_id():
+    """the credential should allow configuring a client ID for InteractiveBrowserCredential by kwarg"""
+
+    client_id = "client-id"
+
+    def validate_client_id(credential):
+        assert len(credential.call_args_list) == 1, "InteractiveBrowserCredential should be instantiated once"
+        _, kwargs = credential.call_args
+        assert kwargs["client_id"] == client_id
+
+    with patch(DefaultAzureCredential.__module__ + ".InteractiveBrowserCredential") as mock_credential:
+        DefaultAzureCredential(exclude_interactive_browser_credential=False, interactive_browser_client_id=client_id)
+    validate_client_id(mock_credential)
+
+
 @pytest.mark.parametrize("expected_value", (True, False))
 def test_allow_multitenant_authentication(expected_value):
     """the credential should pass "allow_multitenant_authentication" to the inner credentials which support it"""

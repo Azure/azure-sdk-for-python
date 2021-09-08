@@ -8,6 +8,8 @@
 - `OnBehalfOfCredential` supports the on-behalf-of authentication flow for
   accessing resources on behalf of users
   ([#19308](https://github.com/Azure/azure-sdk-for-python/issues/19308))
+- `DefaultAzureCredential` allows specifying the client ID of interactive browser via keyword argument `interactive_browser_client_id`
+  ([#20487](https://github.com/Azure/azure-sdk-for-python/issues/20487))
 
 ### Breaking Changes
 
