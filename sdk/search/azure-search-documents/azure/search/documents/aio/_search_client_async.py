@@ -128,8 +128,9 @@ class SearchClient(HeadersMixin):
         )
         return cast(dict, result)
 
+
     @distributed_trace_async
-    async def search(self, search_text, **kwargs):
+    async def search(self, search_text, **kwargs): # pylint:disable=too-many-locals
         # type: (str, **Any) -> AsyncSearchItemPaged[dict]
         """Search the Azure search index for documents.
 
@@ -184,14 +185,15 @@ class SearchClient(HeadersMixin):
          the query returns answers extracted from key passages in the highest ranked documents.
          Possible values include: "none", "extractive".
         :paramtype query_answer: str or ~azure.search.documents.models.Answers
-        :keyword int query_answer_count: This parameter is only valid if the query type is 'semantic'.
+        :keyword int query_answer_count: This parameter is only valid if the query type is 'semantic' and
+         query answer is 'extractive'.
          Configures the number of answers returned. Default count is 1.
         :keyword query_caption: This parameter is only valid if the query type is 'semantic'. If set, the
          query returns captions extracted from key passages in the highest ranked documents.
          Defaults to 'None'. Possible values include: "none", "extractive".
         :paramtype query_caption: str or ~azure.search.documents.models.Captions
         :keyword bool query_caption_highlight: This parameter is only valid if the query type is 'semantic' when
-         query_caption is set to 'extractive'. Determines whether highlighting is enabled.
+         query caption is set to 'extractive'. Determines whether highlighting is enabled.
          Defaults to 'true'.
         :keyword list[str] semantic_fields: The list of field names used for semantic search.
         :keyword list[str] select: The list of fields to retrieve. If unspecified, all fields marked as retrievable
@@ -254,11 +256,15 @@ class SearchClient(HeadersMixin):
 
         query_answer = kwargs.pop("query_answer", None)
         query_answer_count = kwargs.pop("query_answer_count", None)
-        answers = query_answer if not query_answer_count else '{}|count-{}'.format(query_answer, query_answer_count)
+        answers = query_answer if not query_answer_count else '{}|count-{}'.format(
+            query_answer, query_answer_count
+        )
 
         query_caption = kwargs.pop("query_caption", None)
         query_caption_highlight = kwargs.pop("query_caption_highlight", None)
-        captions = query_caption if not query_caption_highlight else '{}|highlight-{}'.format(query_caption, query_caption_highlight)
+        captions = query_caption if not query_caption_highlight else '{}|highlight-{}'.format(
+            query_caption, query_caption_highlight
+        )
 
         semantic_fields = kwargs.pop("semantic_fields", None)
 
