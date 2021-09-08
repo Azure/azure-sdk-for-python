@@ -11,7 +11,6 @@ MYPY_HARD_FAILURE_OPTED = [
   "azure-identity",
   "azure-keyvault-administration",
   "azure-keyvault-certificates",
-  "azure-keyvault-keys",
   "azure-servicebus",
   "azure-ai-textanalytics",
   "azure-ai-formrecognizer",
