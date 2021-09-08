@@ -1,5 +1,198 @@
 # Release History
 
+## 2.0.0 (2021-07-27)
+
+**Features**
+
+  - Model QuickBooksSource has a new parameter disable_metrics_collection
+  - Model AzureFileStorageWriteSettings has a new parameter disable_metrics_collection
+  - Model AzureBlobStorageWriteSettings has a new parameter disable_metrics_collection
+  - Model AzureKeyVaultLinkedService has a new parameter credential
+  - Model CosmosDbSqlApiSource has a new parameter disable_metrics_collection
+  - Model OracleCloudStorageReadSettings has a new parameter disable_metrics_collection
+  - Model TeradataSource has a new parameter disable_metrics_collection
+  - Model ODataSource has a new parameter disable_metrics_collection
+  - Model SqlSink has a new parameter disable_metrics_collection
+  - Model AzureFunctionLinkedService has a new parameter resource_id
+  - Model AzureFunctionLinkedService has a new parameter credential
+  - Model AzureFunctionLinkedService has a new parameter authentication
+  - Model AzureBlobFSSink has a new parameter metadata
+  - Model AzureBlobFSSink has a new parameter disable_metrics_collection
+  - Model RestSource has a new parameter disable_metrics_collection
+  - Model MagentoSource has a new parameter disable_metrics_collection
+  - Model CosmosDbMongoDbApiSink has a new parameter disable_metrics_collection
+  - Model TabularSource has a new parameter disable_metrics_collection
+  - Model PhoenixSource has a new parameter disable_metrics_collection
+  - Model DrillSource has a new parameter disable_metrics_collection
+  - Model SapBwSource has a new parameter disable_metrics_collection
+  - Model AzureMySqlSink has a new parameter disable_metrics_collection
+  - Model NetezzaSource has a new parameter disable_metrics_collection
+  - Model MicrosoftAccessSource has a new parameter disable_metrics_collection
+  - Model SqlDWSource has a new parameter disable_metrics_collection
+  - Model SparkSource has a new parameter disable_metrics_collection
+  - Model AzureDataExplorerLinkedService has a new parameter credential
+  - Model Office365Source has a new parameter disable_metrics_collection
+  - Model AzureDataExplorerSink has a new parameter disable_metrics_collection
+  - Model InformixSource has a new parameter disable_metrics_collection
+  - Model SapTableSource has a new parameter disable_metrics_collection
+  - Model AzureDataExplorerSource has a new parameter disable_metrics_collection
+  - Model SharePointOnlineListSource has a new parameter disable_metrics_collection
+  - Model SqlDWSink has a new parameter disable_metrics_collection
+  - Model ShopifySource has a new parameter disable_metrics_collection
+  - Model GitHubAccessTokenRequest has a new parameter git_hub_client_secret
+  - Model ParquetSink has a new parameter disable_metrics_collection
+  - Model SapHanaSource has a new parameter disable_metrics_collection
+  - Model RelationalSource has a new parameter disable_metrics_collection
+  - Model AzureFileStorageReadSettings has a new parameter disable_metrics_collection
+  - Model SqlMISink has a new parameter disable_metrics_collection
+  - Model FileServerReadSettings has a new parameter disable_metrics_collection
+  - Model OracleServiceCloudSource has a new parameter disable_metrics_collection
+  - Model CassandraSource has a new parameter disable_metrics_collection
+  - Model JsonSink has a new parameter disable_metrics_collection
+  - Model AzureDatabricksDeltaLakeSink has a new parameter disable_metrics_collection
+  - Model PostgreSqlSource has a new parameter disable_metrics_collection
+  - Model AzureDatabricksLinkedService has a new parameter credential
+  - Model SybaseSource has a new parameter disable_metrics_collection
+  - Model OdbcSource has a new parameter disable_metrics_collection
+  - Model XmlSource has a new parameter disable_metrics_collection
+  - Model FileSystemSource has a new parameter disable_metrics_collection
+  - Model JiraSource has a new parameter disable_metrics_collection
+  - Model HdfsSource has a new parameter disable_metrics_collection
+  - Model CosmosDbSqlApiSink has a new parameter disable_metrics_collection
+  - Model ImpalaSource has a new parameter disable_metrics_collection
+  - Model HdfsReadSettings has a new parameter disable_metrics_collection
+  - Model AzureSearchIndexSink has a new parameter disable_metrics_collection
+  - Model EloquaSource has a new parameter disable_metrics_collection
+  - Model PipelineRunInvokedBy has a new parameter pipeline_name
+  - Model PipelineRunInvokedBy has a new parameter pipeline_run_id
+  - Model SqlSource has a new parameter disable_metrics_collection
+  - Model DynamicsSource has a new parameter disable_metrics_collection
+  - Model AzureTableSink has a new parameter disable_metrics_collection
+  - Model AzureDataLakeStoreSink has a new parameter disable_metrics_collection
+  - Model RestSink has a new parameter disable_metrics_collection
+  - Model VerticaSource has a new parameter disable_metrics_collection
+  - Model HttpReadSettings has a new parameter disable_metrics_collection
+  - Model HBaseSource has a new parameter disable_metrics_collection
+  - Model AzureBlobFSReadSettings has a new parameter disable_metrics_collection
+  - Model JsonSource has a new parameter disable_metrics_collection
+  - Model DynamicsCrmSource has a new parameter disable_metrics_collection
+  - Model SalesforceSink has a new parameter disable_metrics_collection
+  - Model AzureDataLakeStoreLinkedService has a new parameter credential
+  - Model OrcSink has a new parameter disable_metrics_collection
+  - Model AvroSource has a new parameter disable_metrics_collection
+  - Model MicrosoftAccessSink has a new parameter disable_metrics_collection
+  - Model FileSystemSink has a new parameter disable_metrics_collection
+  - Model OdbcSink has a new parameter disable_metrics_collection
+  - Model AzureDataLakeStoreSource has a new parameter disable_metrics_collection
+  - Model SftpWriteSettings has a new parameter disable_metrics_collection
+  - Model CouchbaseSource has a new parameter disable_metrics_collection
+  - Model AmazonS3CompatibleReadSettings has a new parameter disable_metrics_collection
+  - Model SquareSource has a new parameter disable_metrics_collection
+  - Model SapCloudForCustomerSink has a new parameter disable_metrics_collection
+  - Model SalesforceMarketingCloudSource has a new parameter disable_metrics_collection
+  - Model HiveSource has a new parameter disable_metrics_collection
+  - Model AzureBlobStorageLinkedService has a new parameter credential
+  - Model SapCloudForCustomerSource has a new parameter disable_metrics_collection
+  - Model HDInsightOnDemandLinkedService has a new parameter credential
+  - Model AzureSqlDWLinkedService has a new parameter credential
+  - Model MariaDBSource has a new parameter disable_metrics_collection
+  - Model AmazonRedshiftSource has a new parameter disable_metrics_collection
+  - Model OracleSink has a new parameter disable_metrics_collection
+  - Model StoreReadSettings has a new parameter disable_metrics_collection
+  - Model AzureMLLinkedService has a new parameter authentication
+  - Model SapEccSource has a new parameter disable_metrics_collection
+  - Model SqlServerSource has a new parameter disable_metrics_collection
+  - Model BlobSink has a new parameter metadata
+  - Model BlobSink has a new parameter disable_metrics_collection
+  - Model PaypalSource has a new parameter disable_metrics_collection
+  - Model AzureMySqlSource has a new parameter disable_metrics_collection
+  - Model WebSource has a new parameter disable_metrics_collection
+  - Model AmazonMWSSource has a new parameter disable_metrics_collection
+  - Model OracleSource has a new parameter disable_metrics_collection
+  - Model IntegrationRuntimeSsisProperties has a new parameter credential
+  - Model MySqlSource has a new parameter disable_metrics_collection
+  - Model AzureQueueSink has a new parameter disable_metrics_collection
+  - Model BinarySource has a new parameter disable_metrics_collection
+  - Model MongoDbV2Source has a new parameter disable_metrics_collection
+  - Model CopySource has a new parameter disable_metrics_collection
+  - Model ConcurSource has a new parameter disable_metrics_collection
+  - Model SalesforceSource has a new parameter disable_metrics_collection
+  - Model DynamicsCrmSink has a new parameter disable_metrics_collection
+  - Model DynamicsSink has a new parameter disable_metrics_collection
+  - Model AzureBatchLinkedService has a new parameter credential
+  - Model PrestoSource has a new parameter disable_metrics_collection
+  - Model AvroSink has a new parameter disable_metrics_collection
+  - Model ExcelDataset has a new parameter sheet_index
+  - Model MongoDbSource has a new parameter disable_metrics_collection
+  - Model AzureBlobStorageReadSettings has a new parameter disable_metrics_collection
+  - Model AzureSqlSink has a new parameter disable_metrics_collection
+  - Model SftpReadSettings has a new parameter disable_metrics_collection
+  - Model HttpSource has a new parameter disable_metrics_collection
+  - Model AzureDataLakeStoreWriteSettings has a new parameter disable_metrics_collection
+  - Model AzureSqlMILinkedService has a new parameter credential
+  - Model AzureSqlMILinkedService has a new parameter always_encrypted_settings
+  - Model DocumentDbCollectionSink has a new parameter disable_metrics_collection
+  - Model AzureBlobFSLinkedService has a new parameter credential
+  - Model AzureMariaDBSource has a new parameter disable_metrics_collection
+  - Model AzureBlobFSWriteSettings has a new parameter disable_metrics_collection
+  - Model Db2Source has a new parameter disable_metrics_collection
+  - Model AzureDatabricksDeltaLakeSource has a new parameter disable_metrics_collection
+  - Model FileServerWriteSettings has a new parameter disable_metrics_collection
+  - Model CommonDataServiceForAppsSource has a new parameter disable_metrics_collection
+  - Model InformixSink has a new parameter disable_metrics_collection
+  - Model SqlMISource has a new parameter disable_metrics_collection
+  - Model FtpReadSettings has a new parameter disable_metrics_collection
+  - Model ServiceNowSource has a new parameter disable_metrics_collection
+  - Model AzurePostgreSqlSink has a new parameter disable_metrics_collection
+  - Model StoreWriteSettings has a new parameter disable_metrics_collection
+  - Model CopySink has a new parameter disable_metrics_collection
+  - Model DelimitedTextSink has a new parameter disable_metrics_collection
+  - Model MongoDbAtlasSource has a new parameter disable_metrics_collection
+  - Model SalesforceServiceCloudSource has a new parameter disable_metrics_collection
+  - Model AzureSqlDatabaseLinkedService has a new parameter credential
+  - Model AzureSqlDatabaseLinkedService has a new parameter always_encrypted_settings
+  - Model XeroSource has a new parameter disable_metrics_collection
+  - Model SqlServerSink has a new parameter disable_metrics_collection
+  - Model OrcSource has a new parameter disable_metrics_collection
+  - Model DynamicsAXSource has a new parameter disable_metrics_collection
+  - Model AzureSqlSource has a new parameter disable_metrics_collection
+  - Model GreenplumSource has a new parameter disable_metrics_collection
+  - Model GoogleBigQuerySource has a new parameter disable_metrics_collection
+  - Model BlobSource has a new parameter disable_metrics_collection
+  - Model HubspotSource has a new parameter disable_metrics_collection
+  - Model CommonDataServiceForAppsSink has a new parameter disable_metrics_collection
+  - Model CosmosDbMongoDbApiSource has a new parameter disable_metrics_collection
+  - Model DelimitedTextSource has a new parameter disable_metrics_collection
+  - Model MarketoSource has a new parameter disable_metrics_collection
+  - Model GoogleAdWordsSource has a new parameter disable_metrics_collection
+  - Model ResponsysSource has a new parameter disable_metrics_collection
+  - Model RestServiceLinkedService has a new parameter credential
+  - Model AzurePostgreSqlSource has a new parameter disable_metrics_collection
+  - Model DocumentDbCollectionSource has a new parameter disable_metrics_collection
+  - Model SalesforceServiceCloudSink has a new parameter disable_metrics_collection
+  - Model AzureBlobFSSource has a new parameter disable_metrics_collection
+  - Model BinarySink has a new parameter disable_metrics_collection
+  - Model AzureDataLakeStoreReadSettings has a new parameter disable_metrics_collection
+  - Model SnowflakeSource has a new parameter disable_metrics_collection
+  - Model AzureTableSource has a new parameter disable_metrics_collection
+  - Model SapOpenHubSource has a new parameter disable_metrics_collection
+  - Model ParquetSource has a new parameter disable_metrics_collection
+  - Model ZohoSource has a new parameter disable_metrics_collection
+  - Model AmazonS3ReadSettings has a new parameter disable_metrics_collection
+  - Model ExcelSource has a new parameter disable_metrics_collection
+  - Model WebActivityAuthentication has a new parameter credential
+  - Model SnowflakeSink has a new parameter disable_metrics_collection
+  - Model SqlServerLinkedService has a new parameter always_encrypted_settings
+  - Model GoogleCloudStorageReadSettings has a new parameter disable_metrics_collection
+  - Added operation group PrivateEndpointConnectionOperations
+  - Added operation group PrivateLinkResourcesOperations
+  - Added operation group PrivateEndPointConnectionsOperations
+
+**Breaking changes**
+
+  - Parameter type of model DataFlow is now required
+  - Parameter type of model MappingDataFlow is now required
+
 ## 1.1.0 (2021-03-12)
 
 **Features**
@@ -50,7 +243,7 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
@@ -58,13 +251,13 @@ This version uses a next-generation code generator that introduces important bre
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
   - For a complete set of
-  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 ## 0.14.0 (2020-10-23)
 
@@ -82,7 +275,7 @@ This version uses a next-generation code generator that introduces important bre
 
   - Model RestSink no longer has parameter wrap_request_json_in_an_object
   - Model RestSink no longer has parameter compression_type
-  
+
 
 ## 0.13.0 (2020-08-25)
 

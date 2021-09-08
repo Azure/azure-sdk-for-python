@@ -4,17 +4,13 @@
 import os
 from datetime import datetime, timedelta
 import urllib3
-from azure.monitor.query import MetricsQueryClient
-from azure.identity import ClientSecretCredential
+from azure.monitor.query import MetricsQueryClient, AggregationType
+from azure.identity import DefaultAzureCredential
 
 urllib3.disable_warnings()
 
 # [START metrics_client_auth_with_token_cred]
-credential  = ClientSecretCredential(
-        client_id = os.environ['AZURE_CLIENT_ID'],
-        client_secret = os.environ['AZURE_CLIENT_SECRET'],
-        tenant_id = os.environ['AZURE_TENANT_ID']
-    )
+credential  = DefaultAzureCredential()
 
 client = MetricsQueryClient(credential)
 # [END metrics_client_auth_with_token_cred]
@@ -25,8 +21,8 @@ response = client.query(
     metrics_uri,
     metric_names=["MatchedEventCount"],
     start_time=datetime(2021, 6, 21),
-    duration='P1D',
-    aggregation=['Count']
+    duration=timedelta(days=1),
+    aggregations=[AggregationType.COUNT]
     )
 
 for metric in response.metrics:

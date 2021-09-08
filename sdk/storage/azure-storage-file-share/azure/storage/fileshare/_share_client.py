@@ -49,7 +49,7 @@ class ShareClient(StorageAccountHostsMixin):
     those entities can also be retrieved using the :func:`get_directory_client` and :func:`get_file_client` functions.
 
     For more optional configuration, please click
-    `here <https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share
+    `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
     #optional-configuration>`_.
 
     :param str account_url:
@@ -778,6 +778,19 @@ class ShareClient(StorageAccountHostsMixin):
             An opaque continuation token. This value can be retrieved from the
             next_marker field of a previous generator object. If specified,
             this generator will begin returning results from this point.
+        :keyword list[str] include:
+            Include this parameter to specify one or more datasets to include in the response.
+            Possible str values are "timestamps", "Etag", "Attributes", "PermissionKey".
+
+            .. versionadded:: 12.6.0
+            This keyword argument was introduced in API version '2020-10-02'.
+
+        :keyword bool include_extended_info:
+            If this is set to true, file id will be returned in listed results.
+
+            .. versionadded:: 12.6.0
+            This keyword argument was introduced in API version '2020-10-02'.
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties

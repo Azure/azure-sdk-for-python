@@ -52,7 +52,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
     can be retrieved using the :func:`~get_queue_client` function.
 
     For more optional configuration, please click
-    `here <https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue
+    `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
     #optional-configuration>`_.
 
     :param str account_url:

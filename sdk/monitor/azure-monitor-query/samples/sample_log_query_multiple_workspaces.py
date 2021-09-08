@@ -6,13 +6,9 @@ import pandas as pd
 from datetime import datetime
 from msrest.serialization import UTC
 from azure.monitor.query import LogsQueryClient
-from azure.identity import ClientSecretCredential
+from azure.identity import DefaultAzureCredential
 
-credential  = ClientSecretCredential(
-        client_id = os.environ['AZURE_CLIENT_ID'],
-        client_secret = os.environ['AZURE_CLIENT_SECRET'],
-        tenant_id = os.environ['AZURE_TENANT_ID']
-    )
+credential  = DefaultAzureCredential()
 
 client = LogsQueryClient(credential)
 
@@ -22,17 +18,18 @@ query = "union * | where TimeGenerated > ago(100d) | project TenantId | summariz
 
 end_time = datetime.now(UTC())
 
-# returns LogsQueryResults 
+# returns LogsQueryResult 
 response = client.query(
     os.environ['LOG_WORKSPACE_ID'],
     query,
     additional_workspaces=[os.environ["SECONDARY_WORKSPACE_ID"]],
     )
 
-if not response.tables:
-    print("No results for the query")
-
-for table in response.tables:
+try:
+    table = response.tables[0]
     df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
     print(df)
+except TypeError:
+    print(response.error)
+
 

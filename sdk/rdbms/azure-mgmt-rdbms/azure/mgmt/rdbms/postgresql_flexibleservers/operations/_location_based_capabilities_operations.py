@@ -65,7 +65,7 @@ class LocationBasedCapabilitiesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-14-preview"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -114,4 +114,4 @@ class LocationBasedCapabilitiesOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    execute.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBForPostgreSql/locations/{locationName}/capabilities'}  # type: ignore
+    execute.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBforPostgreSQL/locations/{locationName}/capabilities'}  # type: ignore

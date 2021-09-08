@@ -10,7 +10,7 @@ import warnings
 from io import BytesIO
 from typing import Iterator
 
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceModifiedError
 from azure.core.tracing.common import with_current_context
 from ._shared.encryption import decrypt_blob
 from ._shared.request_handlers import validate_and_format_range_headers
@@ -76,10 +76,11 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
         parallel=None,
         validate_content=None,
         encryption_options=None,
+        etag=None,
         **kwargs
     ):
         self.client = client
-
+        self.etag = etag
         # Information on the download range/chunk size
         self.chunk_size = chunk_size
         self.total_size = total_size
@@ -162,6 +163,9 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
                 download_stream_current=self.progress_total,
                 **self.request_options
             )
+            if response.properties.etag != self.etag:
+                raise ResourceModifiedError(message="The file has been modified while downloading.")
+
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -275,6 +279,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         self._current_content = None
         self._file_size = None
         self._response = None
+        self._etag = None
 
         # The service only provides transactional MD5s for chunks under 4MB.
         # If validate_content is on, get only self.MAX_CHUNK_GET_SIZE for the first
@@ -386,6 +391,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         # If file size is large, download the rest of the file in chunks.
         if response.properties.size == self.size:
             self._download_complete = True
+        self._etag = response.properties.etag
         return response
 
     def chunks(self):
@@ -413,6 +419,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                 validate_content=self._validate_content,
                 encryption_options=self._encryption_options,
                 use_location=self._location_mode,
+                etag=self._etag,
                 **self._request_options
             )
         return _ChunkIterator(
@@ -513,6 +520,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             validate_content=self._validate_content,
             encryption_options=self._encryption_options,
             use_location=self._location_mode,
+            etag=self._etag,
             **self._request_options
         )
         if parallel:

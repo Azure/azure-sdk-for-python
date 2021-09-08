@@ -8,24 +8,16 @@ from typing import TYPE_CHECKING
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.transport import HttpRequest
-from azure.core.pipeline.policies import (
-    DistributedTracingPolicy,
-    HttpLoggingPolicy,
-    HTTPPolicy,
-    UserAgentPolicy,
-    NetworkTraceLoggingPolicy,
-)
+from azure.core.pipeline.policies import HTTPPolicy
 
 from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
-from .._internal.managed_identity_client import ManagedIdentityClient, _get_configuration
+from .._internal.managed_identity_client import ManagedIdentityClient
 from .._internal.get_token_mixin import GetTokenMixin
-from .._internal.user_agent import USER_AGENT
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, List, Optional, Union
-    from azure.core.configuration import Configuration
+    from typing import Any, Optional, Union
     from azure.core.credentials import AccessToken
     from azure.core.pipeline import PipelineRequest, PipelineResponse
     from azure.core.pipeline.policies import SansIOHTTPPolicy
@@ -42,10 +34,8 @@ class AzureArcCredential(GetTokenMixin):
         imds = os.environ.get(EnvironmentVariables.IMDS_ENDPOINT)
         self._available = url and imds
         if self._available:
-            config = _get_configuration()
-
             self._client = ManagedIdentityClient(
-                policies=_get_policies(config),
+                _per_retry_policies=[ArcChallengeAuthPolicy()],
                 request_factory=functools.partial(_get_request, url),
                 **kwargs
             )
@@ -58,26 +48,13 @@ class AzureArcCredential(GetTokenMixin):
             )
         return super(AzureArcCredential, self).get_token(*scopes, **kwargs)
 
-    def _acquire_token_silently(self, *scopes):
-        # type: (*str) -> Optional[AccessToken]
+    def _acquire_token_silently(self, *scopes, **kwargs):
+        # type: (*str, **Any) -> Optional[AccessToken]
         return self._client.get_cached_token(*scopes)
 
     def _request_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         return self._client.request_token(*scopes, **kwargs)
-
-
-def _get_policies(config, **kwargs):
-    # type: (Configuration, **Any) -> List[PolicyType]
-    return [
-        UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs),
-        config.proxy_policy,
-        config.retry_policy,
-        ArcChallengeAuthPolicy(),
-        NetworkTraceLoggingPolicy(**kwargs),
-        DistributedTracingPolicy(**kwargs),
-        HttpLoggingPolicy(**kwargs),
-    ]
 
 
 def _get_request(url, scope, identity_config):

@@ -47,7 +47,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
     entities can also be retrieved using the :func:`get_subdirectory_client` and :func:`get_file_client` functions.
 
     For more optional configuration, please click
-    `here <https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share
+    `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
     #optional-configuration>`_.
 
     :param str account_url:
@@ -335,6 +335,19 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         :param str name_starts_with:
             Filters the results to return only entities whose names
             begin with the specified prefix.
+        :keyword list[str] include:
+            Include this parameter to specify one or more datasets to include in the response.
+            Possible str values are "timestamps", "Etag", "Attributes", "PermissionKey".
+
+            .. versionadded:: 12.6.0
+            This keyword argument was introduced in API version '2020-10-02'.
+
+        :keyword bool include_extended_info:
+            If this is set to true, file id will be returned in listed results.
+
+            .. versionadded:: 12.6.0
+            This keyword argument was introduced in API version '2020-10-02'.
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties

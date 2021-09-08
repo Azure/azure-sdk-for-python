@@ -28,7 +28,7 @@ parameters:
     default: 'azure-*'
   - name: TestTimeoutInMinutes
     type: number
-    default: 0
+    default: 60
   - name: ToxEnvParallel
     type: string
     default: '--tenvparallel'
@@ -52,6 +52,12 @@ parameters:
   - name: VerifyAutorest
     type: boolean
     default: false
+  - name: ValidateFormatting
+    type: boolean
+    default: false
+  - name: UnsupportedToxEnvironments
+    type: string
+    default: ''
 
 jobs:
   - job: 'Build'
@@ -112,6 +118,7 @@ jobs:
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
         VerifyAutorest: ${{ parameters.VerifyAutorest }}
+        ValidateFormatting: ${{ parameters.ValidateFormatting }}
 
   - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
     parameters:
@@ -133,6 +140,7 @@ jobs:
         TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: ${{ parameters.InjectedPackages }}
+        UnsupportedToxEnvironments: ${{ parameters.UnsupportedToxEnvironments }}
 
   - ${{ if gt(length(parameters.CondaArtifacts), 0) }}:
     - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
@@ -160,7 +168,7 @@ jobs:
   - job: 'RunRegression'
     condition: and(succeededOrFailed(), or(eq(variables['Run.Regression'], 'true'), and(eq(variables['Build.Reason'], 'Schedule'), eq(variables['System.TeamProject'],'internal'))))
     displayName: 'Run Regression'
-    timeoutInMinutes: 120
+    timeoutInMinutes: 180
     variables:
     - template: ../variables/globals.yml
 

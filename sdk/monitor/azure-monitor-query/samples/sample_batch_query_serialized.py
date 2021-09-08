@@ -4,14 +4,10 @@
 import os
 import pandas as pd
 from azure.monitor.query import LogsQueryClient
-from azure.identity import ClientSecretCredential
+from azure.identity import DefaultAzureCredential
 
 
-credential  = ClientSecretCredential(
-        client_id = os.environ['AZURE_CLIENT_ID'],
-        client_secret = os.environ['AZURE_CLIENT_SECRET'],
-        tenant_id = os.environ['AZURE_TENANT_ID']
-    )
+credential  = DefaultAzureCredential()
 
 client = LogsQueryClient(credential)
 
@@ -43,13 +39,12 @@ requests = [
         "workspace": os.environ['LOG_WORKSPACE_ID']
     }
 ]
-response = client.batch_query(requests)
+responses = client.batch_query(requests)
 
-for response in response.responses:
-    body = response.body
-    if not body.tables:
-        print("Something is wrong")
-    else:
-        for table in body.tables:
-            df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
-            print(df)
+for response in responses:
+    try:
+        table = response.tables[0]
+        df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
+        print(df)
+    except TypeError:
+        print(response.error)

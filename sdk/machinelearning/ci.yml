@@ -3,7 +3,6 @@
 trigger:
   branches:
     include:
-    - master
     - main
     - hotfix/*
     - release/*
@@ -15,7 +14,6 @@ trigger:
 pr:
   branches:
     include:
-    - master
     - main
     - feature/*
     - hotfix/*
@@ -34,3 +32,5 @@ extends:
       safeName: azuremgmtmachinelearningservices
     - name: azure-mgmt-machinelearningcompute
       safeName: azuremgmtmachinelearningcompute
+    - name: azure-mgmt-guestconfig
+      safeName: azuremgmtguestconfig

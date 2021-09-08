@@ -17,7 +17,7 @@ class AnswerResult(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :ivar score: The score value represents how relevant the answer is to the the query relative to
      other answers returned for the query.
     :vartype score: float
@@ -267,7 +267,7 @@ class CaptionResult(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :ivar text: A representative text passage extracted from the document most relevant to the
      search query.
     :vartype text: str
@@ -304,7 +304,7 @@ class FacetResult(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :ivar count: The approximate count of documents falling within the bucket described by this
      facet.
     :vartype count: long
@@ -333,7 +333,7 @@ class IndexAction(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param action_type: The operation to perform on a document in an indexing batch. Possible
      values include: "upload", "merge", "mergeOrUpload", "delete".
     :type action_type: str or ~azure.search.documents.models.IndexActionType
@@ -665,6 +665,14 @@ class SearchOptions(msrest.serialization.Model):
      server-side paging, the response will include a continuation token that can be used to issue
      another Search request for the next page of results.
     :type top: int
+    :param captions: This parameter is only valid if the query type is 'semantic'. If set, the
+     query returns captions extracted from key passages in the highest ranked documents. When
+     Captions is set to 'extractive', highlighting is enabled by default, and can be configured by
+     appending the pipe character '|' followed by the 'highlight-<true/false>' option, such as
+     'extractive|highlight-true'. Defaults to 'None'. Possible values include: "none", "extractive".
+    :type captions: str or ~azure.search.documents.models.Captions
+    :param semantic_fields: The list of field names used for semantic search.
+    :type semantic_fields: list[str]
     """
 
     _attribute_map = {
@@ -689,6 +697,8 @@ class SearchOptions(msrest.serialization.Model):
         'select': {'key': '$select', 'type': '[str]'},
         'skip': {'key': '$skip', 'type': 'int'},
         'top': {'key': '$top', 'type': 'int'},
+        'captions': {'key': 'captions', 'type': 'str'},
+        'semantic_fields': {'key': 'semanticFields', 'type': '[str]'},
     }
 
     def __init__(
@@ -717,6 +727,8 @@ class SearchOptions(msrest.serialization.Model):
         self.select = kwargs.get('select', None)
         self.skip = kwargs.get('skip', None)
         self.top = kwargs.get('top', None)
+        self.captions = kwargs.get('captions', None)
+        self.semantic_fields = kwargs.get('semantic_fields', None)
 
 
 class SearchRequest(msrest.serialization.Model):
@@ -810,6 +822,11 @@ class SearchRequest(msrest.serialization.Model):
      server-side paging, the response will include a continuation token that can be used to issue
      another Search request for the next page of results.
     :type top: int
+    :param captions: A value that specifies whether captions should be returned as part of the
+     search response. Possible values include: "none", "extractive".
+    :type captions: str or ~azure.search.documents.models.Captions
+    :param semantic_fields: The comma-separated list of field names used for semantic search.
+    :type semantic_fields: str
     """
 
     _attribute_map = {
@@ -835,6 +852,8 @@ class SearchRequest(msrest.serialization.Model):
         'select': {'key': 'select', 'type': 'str'},
         'skip': {'key': 'skip', 'type': 'int'},
         'top': {'key': 'top', 'type': 'int'},
+        'captions': {'key': 'captions', 'type': 'str'},
+        'semantic_fields': {'key': 'semanticFields', 'type': 'str'},
     }
 
     def __init__(
@@ -864,6 +883,8 @@ class SearchRequest(msrest.serialization.Model):
         self.select = kwargs.get('select', None)
         self.skip = kwargs.get('skip', None)
         self.top = kwargs.get('top', None)
+        self.captions = kwargs.get('captions', None)
+        self.semantic_fields = kwargs.get('semantic_fields', None)
 
 
 class SearchResult(msrest.serialization.Model):
@@ -875,7 +896,7 @@ class SearchResult(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :ivar score: Required. The relevance score of the document compared to other documents returned
      by the query.
     :vartype score: float
@@ -1114,7 +1135,7 @@ class SuggestResult(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :ivar text: Required. The text of the suggestion result.
     :vartype text: str
     """

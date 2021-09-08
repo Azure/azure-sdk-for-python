@@ -721,6 +721,14 @@ class ArrowDialect(BlobArrowDialect):
     """
 
 
+class QuickQueryDialect(str, Enum):
+    """Specifies the quick query input/output dialect."""
+
+    DelimitedTextDialect = 'DelimitedTextDialect'
+    DelimitedJsonDialect = 'DelimitedJsonDialect'
+    ParquetDialect = 'ParquetDialect'
+
+
 class ArrowType(str, Enum):
 
     INT64 = "int64"

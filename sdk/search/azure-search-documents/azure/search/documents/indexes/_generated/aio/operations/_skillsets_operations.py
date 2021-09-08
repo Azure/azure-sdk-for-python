@@ -45,8 +45,10 @@ class SkillsetsOperations:
         skillset: "_models.SearchIndexerSkillset",
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
+        disable_cache_reprocessing_change_detection: Optional[bool] = None,
+        ignore_reset_requirements: Optional[bool] = None,
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SearchIndexerSkillset":
         """Creates a new skillset in a search service or updates the skillset if it already exists.
 
@@ -61,6 +63,11 @@ class SkillsetsOperations:
         :param if_none_match: Defines the If-None-Match condition. The operation will be performed only
          if the ETag on the server does not match this value.
         :type if_none_match: str
+        :param disable_cache_reprocessing_change_detection: Disables cache reprocessing change
+         detection.
+        :type disable_cache_reprocessing_change_detection: bool
+        :param ignore_reset_requirements: Ignores cache reset requirements.
+        :type ignore_reset_requirements: bool
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -78,7 +85,7 @@ class SkillsetsOperations:
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         prefer = "return=representation"
-        api_version = "2020-06-30-Preview"
+        api_version = "2021-04-30-Preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -93,6 +100,10 @@ class SkillsetsOperations:
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if disable_cache_reprocessing_change_detection is not None:
+            query_parameters['disableCacheReprocessingChangeDetection'] = self._serialize.query("disable_cache_reprocessing_change_detection", disable_cache_reprocessing_change_detection, 'bool')
+        if ignore_reset_requirements is not None:
+            query_parameters['ignoreResetRequirements'] = self._serialize.query("ignore_reset_requirements", ignore_reset_requirements, 'bool')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -136,7 +147,7 @@ class SkillsetsOperations:
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a skillset in a search service.
 
@@ -164,7 +175,7 @@ class SkillsetsOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30-Preview"
+        api_version = "2021-04-30-Preview"
         accept = "application/json"
 
         # Construct URL
@@ -207,7 +218,7 @@ class SkillsetsOperations:
         self,
         skillset_name: str,
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SearchIndexerSkillset":
         """Retrieves a skillset in a search service.
 
@@ -229,7 +240,7 @@ class SkillsetsOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30-Preview"
+        api_version = "2021-04-30-Preview"
         accept = "application/json"
 
         # Construct URL
@@ -271,7 +282,7 @@ class SkillsetsOperations:
         self,
         select: Optional[str] = None,
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ListSkillsetsResult":
         """List all skillsets in a search service.
 
@@ -295,7 +306,7 @@ class SkillsetsOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30-Preview"
+        api_version = "2021-04-30-Preview"
         accept = "application/json"
 
         # Construct URL
@@ -338,7 +349,7 @@ class SkillsetsOperations:
         self,
         skillset: "_models.SearchIndexerSkillset",
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SearchIndexerSkillset":
         """Creates a new skillset in a search service.
 
@@ -360,7 +371,7 @@ class SkillsetsOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30-Preview"
+        api_version = "2021-04-30-Preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

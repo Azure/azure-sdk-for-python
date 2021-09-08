@@ -5,8 +5,9 @@
 import json
 import os
 
+from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
-from azure.identity import CertificateCredential, TokenCachePersistenceOptions
+from azure.identity import CertificateCredential, RegionalAuthority, TokenCachePersistenceOptions
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 from cryptography import x509
@@ -25,7 +26,6 @@ from helpers import (
     mock_response,
     msal_validating_transport,
     Request,
-    validating_transport,
 )
 
 try:
@@ -78,7 +78,7 @@ def test_policies_configurable():
     policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())
 
     transport = msal_validating_transport(
-        requests=[Request()], responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
+        requests=[Request()], responses=[mock_response(json_payload=build_aad_response(access_token="**"))]
     )
 
     credential = CertificateCredential(
@@ -133,6 +133,38 @@ def test_authority(authority):
     assert mock_ctor.call_count == 1
     _, kwargs = mock_ctor.call_args
     assert kwargs["authority"] == expected_authority
+
+
+def test_regional_authority():
+    """the credential should configure MSAL with a regional authority specified via kwarg or environment variable"""
+
+    mock_confidential_client = Mock(
+        return_value=Mock(acquire_token_silent_with_error=lambda *_, **__: {"access_token": "**", "expires_in": 3600}),
+    )
+
+    for region in RegionalAuthority:
+        mock_confidential_client.reset_mock()
+
+        with patch.dict("os.environ", {}, clear=True):
+            credential = CertificateCredential("tenant", "client-id", CERT_PATH, regional_authority=region)
+        with patch("msal.ConfidentialClientApplication", mock_confidential_client):
+            # must call get_token because the credential constructs the MSAL application lazily
+            credential.get_token("scope")
+
+        assert mock_confidential_client.call_count == 1
+        _, kwargs = mock_confidential_client.call_args
+        assert kwargs["azure_region"] == region
+        mock_confidential_client.reset_mock()
+
+        # region can be configured via environment variable
+        with patch.dict("os.environ", {EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: region}, clear=True):
+            credential = CertificateCredential("tenant", "client-id", CERT_PATH)
+        with patch("msal.ConfidentialClientApplication", mock_confidential_client):
+            credential.get_token("scope")
+
+        assert mock_confidential_client.call_count == 1
+        _, kwargs = mock_confidential_client.call_args
+        assert kwargs["azure_region"] == region
 
 
 def test_requires_certificate():
@@ -240,9 +272,9 @@ def validate_jwt(request, client_id, pem_bytes, expect_x5c=False):
 def test_token_cache(cert_path, cert_password):
     """the credential should optionally use a persistent cache, and default to an in memory cache"""
 
-    with patch("azure.identity._persistent_cache.msal_extensions") as mock_msal_extensions:
+    with patch("azure.identity._internal.msal_credentials._load_persistent_cache") as load_persistent_cache:
         credential = CertificateCredential("tenant", "client-id", cert_path, password=cert_password)
-        assert not mock_msal_extensions.PersistedTokenCache.called
+        assert not load_persistent_cache.called
         assert isinstance(credential._cache, TokenCache)
 
         CertificateCredential(
@@ -252,7 +284,7 @@ def test_token_cache(cert_path, cert_password):
             password=cert_password,
             cache_persistence_options=TokenCachePersistenceOptions(),
         )
-        assert mock_msal_extensions.PersistedTokenCache.call_count == 1
+        assert load_persistent_cache.call_count == 1
 
 
 @pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
@@ -312,3 +344,83 @@ def test_certificate_arguments():
         CertificateCredential("tenant-id", "client-id", certificate_path="...", certificate_data="...")
     message = str(ex.value)
     assert "certificate_data" in message and "certificate_path" in message
+
+
+@pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
+def test_allow_multitenant_authentication(cert_path, cert_password):
+    """When allow_multitenant_authentication is True, the credential should respect get_token(tenant_id=...)"""
+
+    first_tenant = "first-tenant"
+    first_token = "***"
+    second_tenant = "second-tenant"
+    second_token = first_token * 2
+
+    def send(request, **_):
+        parsed = urlparse(request.url)
+        tenant = parsed.path.split("/")[1]
+        assert tenant in (first_tenant, second_tenant, "common"), 'unexpected tenant "{}"'.format(tenant)
+        if "/oauth2/v2.0/token" not in parsed.path:
+            return get_discovery_response("https://{}/{}".format(parsed.netloc, tenant))
+
+        token = first_token if tenant == first_tenant else second_token
+        return mock_response(json_payload=build_aad_response(access_token=token))
+
+    credential = CertificateCredential(
+        first_tenant,
+        "client-id",
+        cert_path,
+        password=cert_password,
+        allow_multitenant_authentication=True,
+        transport=Mock(send=send),
+    )
+    token = credential.get_token("scope")
+    assert token.token == first_token
+
+    token = credential.get_token("scope", tenant_id=first_tenant)
+    assert token.token == first_token
+
+    token = credential.get_token("scope", tenant_id=second_tenant)
+    assert token.token == second_token
+
+    # should still default to the first tenant
+    token = credential.get_token("scope")
+    assert token.token == first_token
+
+
+@pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
+def test_multitenant_authentication_backcompat(cert_path, cert_password):
+    """When allow_multitenant_authentication is True, the credential should respect get_token(tenant_id=...)"""
+
+    expected_tenant = "expected-tenant"
+    expected_token = "***"
+
+    def send(request, **_):
+        parsed = urlparse(request.url)
+        if "/oauth2/v2.0/token" not in parsed.path:
+            return get_discovery_response("https://{}/{}".format(parsed.netloc, expected_tenant))
+
+        tenant = parsed.path.split("/")[1]
+        token = expected_token if tenant == expected_tenant else expected_token * 2
+        return mock_response(json_payload=build_aad_response(access_token=token))
+
+    credential = CertificateCredential(
+        expected_tenant, "client-id", cert_path, password=cert_password, transport=Mock(send=send)
+    )
+
+    token = credential.get_token("scope")
+    assert token.token == expected_token
+
+    # explicitly specifying the configured tenant is okay
+    token = credential.get_token("scope", tenant_id=expected_tenant)
+    assert token.token == expected_token
+
+    # but any other tenant should get an error
+    with pytest.raises(ClientAuthenticationError, match="allow_multitenant_authentication"):
+        credential.get_token("scope", tenant_id="un" + expected_tenant)
+
+    # ...unless the compat switch is enabled
+    with patch.dict(
+        os.environ, {EnvironmentVariables.AZURE_IDENTITY_ENABLE_LEGACY_TENANT_SELECTION: "true"}, clear=True
+    ):
+        token = credential.get_token("scope", tenant_id="un" + expected_tenant)
+    assert token.token == expected_token, "credential should ignore tenant_id kwarg when the compat switch is enabled"

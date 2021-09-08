@@ -1,6 +1,6 @@
 # Azure Document Translation client library for Python
 
-Azure Cognitive Services Document Translation is a cloud service that translates documents to and from 90 languages 
+Azure Cognitive Services Document Translation is a cloud service that translates documents to and from 90 languages
 and dialects while preserving document structure and data format. Use the client library for Document Translation to:
 
 * Translate numerous, large files from an Azure Blob Storage container to a target container in your language of choice.
@@ -14,7 +14,7 @@ and dialects while preserving document structure and data format. Use the client
 ### Prerequisites
 * Python 2.7, or 3.6 or later is required to use this package.
 * You must have an [Azure subscription][azure_subscription] and a
-[Document Translation resource][DT_resource] to use this package.
+[Translator resource][DT_resource] to use this package.
 
 ### Install the package
 Install the Azure Document Translation client library for Python with [pip][pip]:
@@ -25,8 +25,8 @@ pip install azure-ai-translation-document --pre
 
 > Note: This version of the client library defaults to the v1.0 version of the service
 
-#### Create a Document Translation resource
-Document Translation supports [single-service access][single_service] only.
+#### Create a Translator resource
+The Document Translation feature supports [single-service access][single_service] only.
 To access the service, create a Translator resource.
 
 You can create the resource using
@@ -34,10 +34,10 @@ You can create the resource using
 **Option 1:** [Azure Portal][azure_portal_create_DT_resource]
 
 **Option 2:** [Azure CLI][azure_cli_create_DT_resource].
-Below is an example of how you can create a Document Translation resource using the CLI:
+Below is an example of how you can create a Translator resource using the CLI:
 
 ```bash
-# Create a new resource group to hold the document translation resource -
+# Create a new resource group to hold the Translator resource -
 # if using an existing resource group, skip this step
 az group create --name my-resource-group --location westus2
 ```
@@ -55,12 +55,12 @@ az cognitiveservices account create \
 ```
 
 ### Authenticate the client
-In order to interact with the Document Translation service, you will need to create an instance of a client.
+In order to interact with the Document Translation feature service, you will need to create an instance of a client.
 An **endpoint** and **credential** are necessary to instantiate the client object.
 
 
 #### Looking up the endpoint
-You can find the endpoint for your Document Translation resource using the
+You can find the endpoint for your Translator resource using the
 [Azure Portal][azure_portal_get_endpoint].
 
 > Note that the service requires a custom domain endpoint. Follow the instructions in the above link to format your endpoint:
@@ -320,7 +320,7 @@ for operation in operations:
 ```
 
 To see how to use the Document Translation client library with Azure Storage Blob to upload documents, create SAS tokens
-for your containers, and download the finished translated documents, see this [sample][sample_translation_with_azure_blob]. 
+for your containers, and download the finished translated documents, see this [sample][sample_translation_with_azure_blob].
 Note that you will need to install the [azure-storage-blob][azure_storage_blob] library to run this sample.
 
 ## Troubleshooting
@@ -388,11 +388,11 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 <!-- LINKS -->
 
-[python-dt-src]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/translation/azure-ai-translation-document/azure/ai/translation/document
+[python-dt-src]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/azure/ai/translation/document
 [python-dt-pypi]: https://aka.ms/azsdk/python/texttranslation/pypi
 [python-dt-product-docs]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
 [python-dt-ref-docs]: https://aka.ms/azsdk/python/documenttranslation/docs
-[python-dt-samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/translation/azure-ai-translation-document/samples
+[python-dt-samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples
 
 [azure_subscription]: https://azure.microsoft.com/free/
 [DT_resource]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/get-started-with-document-translation?tabs=python
@@ -406,7 +406,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [custom_model]: https://docs.microsoft.com/azure/cognitive-services/translator/custom-translator/quickstart-build-deploy-custom-model
 [glossary]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview#supported-glossary-formats
 [sas_token]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/create-sas-tokens?tabs=Containers#create-your-sas-tokens-with-azure-storage-explorer
-[sas_token_permissions]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/get-started-with-document-translation?tabs=csharp#create-sas-access-tokens-for-document-translation
+[sas_token_permissions]: https://aka.ms/azsdk/documenttranslation/sas-permissions
 [azure_storage_blob]: https://pypi.org/project/azure-storage-blob/
 
 [azure_core_ref_docs]: https://aka.ms/azsdk/python/core/docs
@@ -417,25 +417,25 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [cognitive_authentication_api_key]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/get-started-with-document-translation?tabs=csharp#get-your-subscription-key
 [register_aad_app]: https://docs.microsoft.com/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory
 [custom_subdomain]: https://docs.microsoft.com/azure/cognitive-services/authentication#create-a-resource-with-a-custom-subdomain
-[azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
-[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#defaultazurecredential
+[azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
+[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 
 [sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
 
-[sample_authentication]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/translation/azure-ai-translation-document/samples/sample_authentication.py
-[sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_authentication_async.py
-[sample_begin_translation]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/translation/azure-ai-translation-document/samples/sample_begin_translation.py
-[sample_begin_translation_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_begin_translation_async.py
-[sample_translate_multiple_inputs]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/translation/azure-ai-translation-document/samples/sample_translate_multiple_inputs.py
-[sample_translate_multiple_inputs_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_translate_multiple_inputs_async.py
-[sample_check_document_statuses]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/translation/azure-ai-translation-document/samples/sample_check_document_statuses.py
-[sample_check_document_statuses_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_check_document_statuses_async.py
-[sample_list_all_translations]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/translation/azure-ai-translation-document/samples/sample_list_all_translations.py
-[sample_list_all_translations_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_list_all_translations_async.py
-[sample_translation_with_glossaries]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/translation/azure-ai-translation-document/samples/sample_translation_with_glossaries.py
-[sample_translation_with_glossaries_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_translation_with_glossaries_async.py
-[sample_translation_with_azure_blob]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/translation/azure-ai-translation-document/samples/sample_translation_with_azure_blob.py
-[sample_translation_with_azure_blob_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_translation_with_azure_blob_async.py
+[sample_authentication]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/sample_authentication.py
+[sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_authentication_async.py
+[sample_begin_translation]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/sample_begin_translation.py
+[sample_begin_translation_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_begin_translation_async.py
+[sample_translate_multiple_inputs]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/sample_translate_multiple_inputs.py
+[sample_translate_multiple_inputs_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_translate_multiple_inputs_async.py
+[sample_check_document_statuses]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/sample_check_document_statuses.py
+[sample_check_document_statuses_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_check_document_statuses_async.py
+[sample_list_all_translations]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/sample_list_all_translations.py
+[sample_list_all_translations_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_list_all_translations_async.py
+[sample_translation_with_glossaries]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/sample_translation_with_glossaries.py
+[sample_translation_with_glossaries_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_translation_with_glossaries_async.py
+[sample_translation_with_azure_blob]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/sample_translation_with_azure_blob.py
+[sample_translation_with_azure_blob_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_translation_with_azure_blob_async.py
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/

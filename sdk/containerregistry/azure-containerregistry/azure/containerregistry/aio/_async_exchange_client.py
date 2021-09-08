@@ -40,13 +40,12 @@ class ACRExchangeClient(object):
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
-        self._credential_scope = kwargs.get("authentication_scope", "https://management.core.windows.net/.default")
+        self.credential_scopes = kwargs.get("credential_scopes", ["https://management.core.windows.net/.default"])
         self._client = ContainerRegistry(
             credential=credential,
             url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=ExchangeClientAuthenticationPolicy(),
-            credential_scopes=self._credential_scope,
             **kwargs
         )
         self._credential = credential
@@ -67,7 +66,7 @@ class ACRExchangeClient(object):
         return self._refresh_token
 
     async def exchange_aad_token_for_refresh_token(self, service: str = None, **kwargs: Dict[str, Any]) -> str:
-        token = await self._credential.get_token(self._credential_scope)
+        token = await self._credential.get_token(*self.credential_scopes)
         refresh_token = await self._client.authentication.exchange_aad_access_token_for_acr_refresh_token(
             service, token.token, **kwargs
         )
@@ -82,11 +81,11 @@ class ACRExchangeClient(object):
         return access_token.access_token
 
     async def __aenter__(self):
-        self._client.__aenter__()
+        await self._client.__aenter__()
         return self
 
     async def __aexit__(self, *args):
-        self._client.__aexit__(*args)
+        await self._client.__aexit__(*args)
 
     async def close(self) -> None:
         """Close sockets opened by the client.

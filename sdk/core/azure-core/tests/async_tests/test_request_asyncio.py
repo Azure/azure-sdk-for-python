@@ -26,8 +26,9 @@ async def test_async_gen_data():
                 raise StopAsyncIteration
 
     async with AsyncioRequestsTransport() as transport:
-        req = HttpRequest('GET', 'http://httpbin.org/post', data=AsyncGen())
-        await transport.send(req)
+        req = HttpRequest('GET', 'http://httpbin.org/anything', data=AsyncGen())
+        response = await transport.send(req)
+        assert json.loads(response.text())['data'] == "azerty"
 
 @pytest.mark.asyncio
 async def test_send_data():

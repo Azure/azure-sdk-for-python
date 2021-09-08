@@ -314,8 +314,8 @@ class ExampleSqlServerTestCase(AzureMgmtTestCase):
 [azure_devtools]: https://pypi.org/project/azure-devtools/
 [azure_portal]: https://portal.azure.com/
 [decorators]: https://www.python.org/dev/peps/pep-0318/
-[dev_setup]: https://github.com/Azure/azure-sdk-for-python/blob/master/doc/dev/dev_setup.md
-[devtools_testutils]: https://github.com/Azure/azure-sdk-for-python/tree/master/tools/azure-sdk-tools/devtools_testutils
-[mgmt_settings_fake]: https://github.com/Azure/azure-sdk-for-python/blob/master/tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py
+[dev_setup]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/dev_setup.md
+[devtools_testutils]: https://github.com/Azure/azure-sdk-for-python/tree/main/tools/azure-sdk-tools/devtools_testutils
+[mgmt_settings_fake]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py
 [pytest]: https://docs.pytest.org/en/latest/
 [vcrpy]: https://pypi.python.org/pypi/vcrpy

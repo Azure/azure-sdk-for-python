@@ -19,7 +19,8 @@ from azure.storage.blob import (
 )
 from azure.storage.blob._shared.base_client import _format_shared_key_credential
 
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
+from _shared.testcase import GlobalStorageAccountPreparer
+from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------
 from azure.storage.blob._shared.uploads import SubStream

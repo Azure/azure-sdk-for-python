@@ -8,7 +8,7 @@ from typing import Any, Union, TYPE_CHECKING
 from azure.core.pipeline.policies import HttpLoggingPolicy
 from ._generated._form_recognizer_client import FormRecognizerClient as FormRecognizer
 from ._api_versions import FormRecognizerApiVersion, validate_api_version
-from ._helpers import _get_deserialize, get_authentication_policy, POLLING_INTERVAL
+from ._helpers import _get_deserialize, get_authentication_policy, POLLING_INTERVAL, QuotaExceededPolicy
 from ._user_agent import USER_AGENT
 
 if TYPE_CHECKING:
@@ -58,8 +58,9 @@ class FormRecognizerClientBase(object):
             credential=credential,  # type: ignore
             api_version=self._api_version,
             sdk_moniker=USER_AGENT,
-            authentication_policy=authentication_policy,
-            http_logging_policy=http_logging_policy,
+            authentication_policy=kwargs.get("authentication_policy", authentication_policy),
+            http_logging_policy=kwargs.get("http_logging_policy", http_logging_policy),
+            per_retry_policies=kwargs.get("per_retry_policies", QuotaExceededPolicy()),
             polling_interval=polling_interval,
             **kwargs
         )

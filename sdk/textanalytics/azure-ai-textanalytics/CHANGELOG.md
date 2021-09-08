@@ -1,6 +1,22 @@
 # Release History
 
-## 5.1.0 (Unreleased)
+## 5.2.0b1 (Unreleased)
+
+This version of the SDK defaults to the latest supported API version, which currently is `v3.2-preview.1`.
+
+### Features Added
+- Added support for Extractive Summarization actions through the `ExtractSummaryAction` type.
+
+### Breaking Changes
+
+### Bugs Fixed
+- `RecognizePiiEntitiesAction` option `disable_service_logs` now correctly defaults to `True`.
+
+### Other Changes
+
+- Python 3.5 is no longer supported.
+
+## 5.1.0 (2021-07-07)
 
 This version of the SDK defaults to the latest supported API version, which currently is `v3.1`.
 Includes all changes from `5.1.0b1` to `5.1.0b7`.
@@ -11,13 +27,19 @@ Note: this version will be the last to officially support Python 3.5, future ver
 
 - Added `catagories_filter` to `RecognizePiiEntitiesAction`
 - Added `HealthcareEntityCategory`
+- Added AAD support for the `begin_analyze_healthcare_entities` methods.
 
 ### Breaking Changes
 
 - Changed: the response structure of `being_analyze_actions`. Now, we return a list of results, where each result is a list of the action results for the document, in the order the documents and actions were passed.
+- Changed: `begin_analyze_actions` now accepts a single action per type. A `ValueError` is raised if duplicate actions are passed.
 - Removed: `AnalyzeActionsType`
 - Removed: `AnalyzeActionsResult`
 - Removed: `AnalyzeActionsError`
+- Removed: `HealthcareEntityRelationRoleType`
+- Changed: renamed `HealthcareEntityRelationType` to `HealthcareEntityRelation`
+- Changed: renamed `PiiEntityCategoryType` to `PiiEntityCategory`
+- Changed: renamed `PiiEntityDomainType` to `PiiEntityDomain`
 
 ## 5.1.0b7 (2021-05-18)
 
@@ -265,7 +287,7 @@ https://azure.github.io/azure-sdk/releases/latest/python.html.
 - Client and pipeline configuration is now available via keyword arguments at both the client level, and per-operation. See README for a full list of optional configuration arguments.
 - Authentication using `azure-identity` credentials
   - see the
-  [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md)
+  [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md)
   for more information
 - New error hierarchy:
     - All service errors will now use the base type: `azure.core.exceptions.HttpResponseError`

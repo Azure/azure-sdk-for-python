@@ -3,17 +3,13 @@
 
 import os
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 from msrest.serialization import UTC
 from azure.monitor.query import LogsQueryClient
-from azure.identity import ClientSecretCredential
+from azure.identity import DefaultAzureCredential
 
 # [START client_auth_with_token_cred]
-credential  = ClientSecretCredential(
-        client_id = os.environ['AZURE_CLIENT_ID'],
-        client_secret = os.environ['AZURE_CLIENT_SECRET'],
-        tenant_id = os.environ['AZURE_TENANT_ID']
-    )
+credential  = DefaultAzureCredential()
 
 client = LogsQueryClient(credential)
 # [END client_auth_with_token_cred]
@@ -26,15 +22,18 @@ summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _Resour
 
 end_time = datetime.now(UTC())
 
-# returns LogsQueryResults 
-response = client.query(os.environ['LOG_WORKSPACE_ID'], query, duration='PT1H', end_time=end_time)
+# returns LogsQueryResult 
+response = client.query(os.environ['LOG_WORKSPACE_ID'], query, duration=timedelta(days=1), end_time=end_time)
 
 if not response.tables:
     print("No results for the query")
 
-for table in response.tables:
+try:
+    table = response.tables[0]
     df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
     print(df)
+except TypeError:
+    print(response.error)
 # [END send_logs_query]
 """
     TimeGenerated                                        _ResourceId          avgRequestDuration

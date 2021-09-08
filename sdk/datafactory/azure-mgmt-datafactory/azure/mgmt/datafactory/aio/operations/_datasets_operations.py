@@ -45,7 +45,7 @@ class DatasetsOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DatasetListResponse"]:
         """Lists datasets.
 
@@ -122,7 +122,7 @@ class DatasetsOperations:
         dataset_name: str,
         dataset: "_models.DatasetResource",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DatasetResource":
         """Creates or updates a dataset.
 
@@ -197,7 +197,7 @@ class DatasetsOperations:
         factory_name: str,
         dataset_name: str,
         if_none_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.DatasetResource"]:
         """Gets a dataset.
 
@@ -266,7 +266,7 @@ class DatasetsOperations:
         resource_group_name: str,
         factory_name: str,
         dataset_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a dataset.
 

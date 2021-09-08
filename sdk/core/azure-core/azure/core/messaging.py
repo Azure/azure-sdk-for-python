@@ -7,8 +7,9 @@
 import uuid
 from base64 import b64decode
 from datetime import datetime
-from azure.core._utils import _convert_to_isoformat, TZ_UTC
-from azure.core.serialization import NULL
+from .utils._utils import _convert_to_isoformat, TZ_UTC
+from .utils._messaging_shared import _get_json_content
+from .serialization import NULL
 
 try:
     from typing import TYPE_CHECKING, cast, Union
@@ -158,11 +159,40 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
         if extensions:
             kwargs["extensions"] = extensions
 
-        return cls(
-            id=event.get("id"),
-            source=event["source"],
-            type=event["type"],
-            specversion=event.get("specversion"),
-            time=_convert_to_isoformat(event.get("time")),
-            **kwargs
-        )
+        try:
+            event_obj = cls(
+                id=event.get("id"),
+                source=event["source"],
+                type=event["type"],
+                specversion=event.get("specversion"),
+                time=_convert_to_isoformat(event.get("time")),
+                **kwargs
+            )
+        except KeyError:
+            # https://github.com/cloudevents/spec Cloud event spec requires source, type,
+            # specversion. We autopopulate everything other than source, type.
+            if not all([_ in event for _ in ("source", "type")]):
+                if all([_ in event for _ in ("subject", "eventType", "data", "dataVersion", "id", "eventTime")]):
+                    raise ValueError(
+                        "The event you are trying to parse follows the Eventgrid Schema. You can parse" +
+                        " EventGrid events using EventGridEvent.from_dict method in the azure-eventgrid library."
+                    )
+                raise ValueError(
+                    "The event does not conform to the cloud event spec https://github.com/cloudevents/spec." +
+                    " The `source` and `type` params are required."
+                    )
+        return event_obj
+
+    @classmethod
+    def from_json(cls, event):
+        # type: (Any) -> CloudEvent
+        """
+        Returns the deserialized CloudEvent object when a json payload is provided.
+        :param event: The json string that should be converted into a CloudEvent. This can also be
+         a storage QueueMessage, eventhub's EventData or ServiceBusMessage
+        :type event: object
+        :rtype: CloudEvent
+        :raises ValueError: If the provided JSON is invalid.
+        """
+        dict_event = _get_json_content(event)
+        return CloudEvent.from_dict(dict_event)

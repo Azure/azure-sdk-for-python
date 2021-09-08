@@ -9,8 +9,8 @@ import pytest
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
-from _shared.asynctestcase import AsyncStorageTestCase
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
+from devtools_testutils.storage.aio import AsyncStorageTestCase
+from _shared.testcase import GlobalStorageAccountPreparer
 from azure.storage.blob import BlobProperties
 from azure.storage.blob.aio import BlobServiceClient
 
@@ -28,7 +28,7 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
-class StorageObjectReplicationTest(StorageTestCase):
+class StorageObjectReplicationTest(AsyncStorageTestCase):
     SRC_CONTAINER = "test1"
     DST_CONTAINER = "test2"
     BLOB_NAME = "bla.txt"

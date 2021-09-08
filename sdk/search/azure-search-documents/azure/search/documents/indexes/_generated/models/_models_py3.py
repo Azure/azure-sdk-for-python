@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -676,7 +676,7 @@ class SearchIndexerSkill(msrest.serialization.Model):
     """Base type for skills.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: WebApiSkill, CustomEntityLookupSkill, EntityRecognitionSkill, KeyPhraseExtractionSkill, LanguageDetectionSkill, MergeSkill, SentimentSkill, SplitSkill, TextTranslationSkill, ConditionalSkill, DocumentExtractionSkill, ShaperSkill, ImageAnalysisSkill, OcrSkill.
+    sub-classes are: WebApiSkill, CustomEntityLookupSkill, EntityRecognitionSkill, KeyPhraseExtractionSkill, LanguageDetectionSkill, MergeSkill, PIIDetectionSkill, SentimentSkill, SplitSkill, TextTranslationSkill, EntityLinkingSkill, EntityRecognitionSkillV3, SentimentSkillV3, ConditionalSkill, DocumentExtractionSkill, ShaperSkill, ImageAnalysisSkill, OcrSkill.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -717,7 +717,7 @@ class SearchIndexerSkill(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'odata_type': {'#Microsoft.Skills.Custom.WebApiSkill': 'WebApiSkill', '#Microsoft.Skills.Text.CustomEntityLookupSkill': 'CustomEntityLookupSkill', '#Microsoft.Skills.Text.EntityRecognitionSkill': 'EntityRecognitionSkill', '#Microsoft.Skills.Text.KeyPhraseExtractionSkill': 'KeyPhraseExtractionSkill', '#Microsoft.Skills.Text.LanguageDetectionSkill': 'LanguageDetectionSkill', '#Microsoft.Skills.Text.MergeSkill': 'MergeSkill', '#Microsoft.Skills.Text.SentimentSkill': 'SentimentSkill', '#Microsoft.Skills.Text.SplitSkill': 'SplitSkill', '#Microsoft.Skills.Text.TranslationSkill': 'TextTranslationSkill', '#Microsoft.Skills.Util.ConditionalSkill': 'ConditionalSkill', '#Microsoft.Skills.Util.DocumentExtractionSkill': 'DocumentExtractionSkill', '#Microsoft.Skills.Util.ShaperSkill': 'ShaperSkill', '#Microsoft.Skills.Vision.ImageAnalysisSkill': 'ImageAnalysisSkill', '#Microsoft.Skills.Vision.OcrSkill': 'OcrSkill'}
+        'odata_type': {'#Microsoft.Skills.Custom.WebApiSkill': 'WebApiSkill', '#Microsoft.Skills.Text.CustomEntityLookupSkill': 'CustomEntityLookupSkill', '#Microsoft.Skills.Text.EntityRecognitionSkill': 'EntityRecognitionSkill', '#Microsoft.Skills.Text.KeyPhraseExtractionSkill': 'KeyPhraseExtractionSkill', '#Microsoft.Skills.Text.LanguageDetectionSkill': 'LanguageDetectionSkill', '#Microsoft.Skills.Text.MergeSkill': 'MergeSkill', '#Microsoft.Skills.Text.PIIDetectionSkill': 'PIIDetectionSkill', '#Microsoft.Skills.Text.SentimentSkill': 'SentimentSkill', '#Microsoft.Skills.Text.SplitSkill': 'SplitSkill', '#Microsoft.Skills.Text.TranslationSkill': 'TextTranslationSkill', '#Microsoft.Skills.Text.V3.EntityLinkingSkill': 'EntityLinkingSkill', '#Microsoft.Skills.Text.V3.EntityRecognitionSkill': 'EntityRecognitionSkillV3', '#Microsoft.Skills.Text.V3.SentimentSkill': 'SentimentSkillV3', '#Microsoft.Skills.Util.ConditionalSkill': 'ConditionalSkill', '#Microsoft.Skills.Util.DocumentExtractionSkill': 'DocumentExtractionSkill', '#Microsoft.Skills.Util.ShaperSkill': 'ShaperSkill', '#Microsoft.Skills.Vision.ImageAnalysisSkill': 'ImageAnalysisSkill', '#Microsoft.Skills.Vision.OcrSkill': 'OcrSkill'}
     }
 
     def __init__(
@@ -1607,7 +1607,7 @@ class DocumentExtractionSkill(SearchIndexerSkill):
      'contentAndMetadata' if not defined.
     :type data_to_extract: str
     :param configuration: A dictionary of configurations for the skill.
-    :type configuration: dict[str, object]
+    :type configuration: dict[str, any]
     """
 
     _validation = {
@@ -1638,7 +1638,7 @@ class DocumentExtractionSkill(SearchIndexerSkill):
         context: Optional[str] = None,
         parsing_mode: Optional[str] = None,
         data_to_extract: Optional[str] = None,
-        configuration: Optional[Dict[str, object]] = None,
+        configuration: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(DocumentExtractionSkill, self).__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
@@ -1843,6 +1843,81 @@ class ElisionTokenFilter(TokenFilter):
         self.articles = articles
 
 
+class EntityLinkingSkill(SearchIndexerSkill):
+    """Using the Text Analytics API, extracts linked entities from text.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+     server.
+    :type odata_type: str
+    :param name: The name of the skill which uniquely identifies it within the skillset. A skill
+     with no name defined will be given a default name of its 1-based index in the skills array,
+     prefixed with the character '#'.
+    :type name: str
+    :param description: The description of the skill which describes the inputs, outputs, and usage
+     of the skill.
+    :type description: str
+    :param context: Represents the level at which operations take place, such as the document root
+     or document content (for example, /document or /document/content). The default is /document.
+    :type context: str
+    :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
+     output of an upstream skill.
+    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :param outputs: Required. The output of a skill is either a field in a search index, or a value
+     that can be consumed as an input by another skill.
+    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :param default_language_code: A value indicating which language code to use. Default is en.
+    :type default_language_code: str
+    :param minimum_precision: A value between 0 and 1 that be used to only include entities whose
+     confidence score is greater than the value specified. If not set (default), or if explicitly
+     set to null, all entities will be included.
+    :type minimum_precision: float
+    :param model_version: The version of the model to use when calling the Text Analytics service.
+     It will default to the latest available when not specified. We recommend you do not specify
+     this value unless absolutely necessary.
+    :type model_version: str
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+        'inputs': {'required': True},
+        'outputs': {'required': True},
+        'minimum_precision': {'maximum': 1, 'minimum': 0},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'context': {'key': 'context', 'type': 'str'},
+        'inputs': {'key': 'inputs', 'type': '[InputFieldMappingEntry]'},
+        'outputs': {'key': 'outputs', 'type': '[OutputFieldMappingEntry]'},
+        'default_language_code': {'key': 'defaultLanguageCode', 'type': 'str'},
+        'minimum_precision': {'key': 'minimumPrecision', 'type': 'float'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        inputs: List["InputFieldMappingEntry"],
+        outputs: List["OutputFieldMappingEntry"],
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        context: Optional[str] = None,
+        default_language_code: Optional[str] = None,
+        minimum_precision: Optional[float] = None,
+        model_version: Optional[str] = None,
+        **kwargs
+    ):
+        super(EntityLinkingSkill, self).__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
+        self.odata_type = '#Microsoft.Skills.Text.V3.EntityLinkingSkill'  # type: str
+        self.default_language_code = default_language_code
+        self.minimum_precision = minimum_precision
+        self.model_version = model_version
+
+
 class EntityRecognitionSkill(SearchIndexerSkill):
     """Text analytics entity recognition.
 
@@ -1926,6 +2001,86 @@ class EntityRecognitionSkill(SearchIndexerSkill):
         self.minimum_precision = minimum_precision
 
 
+class EntityRecognitionSkillV3(SearchIndexerSkill):
+    """Using the Text Analytics API, extracts entities of different types from text.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+     server.
+    :type odata_type: str
+    :param name: The name of the skill which uniquely identifies it within the skillset. A skill
+     with no name defined will be given a default name of its 1-based index in the skills array,
+     prefixed with the character '#'.
+    :type name: str
+    :param description: The description of the skill which describes the inputs, outputs, and usage
+     of the skill.
+    :type description: str
+    :param context: Represents the level at which operations take place, such as the document root
+     or document content (for example, /document or /document/content). The default is /document.
+    :type context: str
+    :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
+     output of an upstream skill.
+    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :param outputs: Required. The output of a skill is either a field in a search index, or a value
+     that can be consumed as an input by another skill.
+    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :param categories: A list of entity categories that should be extracted.
+    :type categories: list[str]
+    :param default_language_code: A value indicating which language code to use. Default is en.
+    :type default_language_code: str
+    :param minimum_precision: A value between 0 and 1 that be used to only include entities whose
+     confidence score is greater than the value specified. If not set (default), or if explicitly
+     set to null, all entities will be included.
+    :type minimum_precision: float
+    :param model_version: The version of the model to use when calling the Text Analytics service.
+     It will default to the latest available when not specified. We recommend you do not specify
+     this value unless absolutely necessary.
+    :type model_version: str
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+        'inputs': {'required': True},
+        'outputs': {'required': True},
+        'minimum_precision': {'maximum': 1, 'minimum': 0},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'context': {'key': 'context', 'type': 'str'},
+        'inputs': {'key': 'inputs', 'type': '[InputFieldMappingEntry]'},
+        'outputs': {'key': 'outputs', 'type': '[OutputFieldMappingEntry]'},
+        'categories': {'key': 'categories', 'type': '[str]'},
+        'default_language_code': {'key': 'defaultLanguageCode', 'type': 'str'},
+        'minimum_precision': {'key': 'minimumPrecision', 'type': 'float'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        inputs: List["InputFieldMappingEntry"],
+        outputs: List["OutputFieldMappingEntry"],
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        context: Optional[str] = None,
+        categories: Optional[List[str]] = None,
+        default_language_code: Optional[str] = None,
+        minimum_precision: Optional[float] = None,
+        model_version: Optional[str] = None,
+        **kwargs
+    ):
+        super(EntityRecognitionSkillV3, self).__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
+        self.odata_type = '#Microsoft.Skills.Text.V3.EntityRecognitionSkill'  # type: str
+        self.categories = categories
+        self.default_language_code = default_language_code
+        self.minimum_precision = minimum_precision
+        self.model_version = model_version
+
+
 class FieldMapping(msrest.serialization.Model):
     """Defines a mapping between a field in a data source and a target field in an index.
 
@@ -1973,7 +2128,7 @@ class FieldMappingFunction(msrest.serialization.Model):
     :type name: str
     :param parameters: A dictionary of parameter name/value pairs to pass to the function. Each
      value must be of a primitive type.
-    :type parameters: dict[str, object]
+    :type parameters: dict[str, any]
     """
 
     _validation = {
@@ -1989,7 +2144,7 @@ class FieldMappingFunction(msrest.serialization.Model):
         self,
         *,
         name: str,
-        parameters: Optional[Dict[str, object]] = None,
+        parameters: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(FieldMappingFunction, self).__init__(**kwargs)
@@ -2333,7 +2488,7 @@ class IndexingParametersConfiguration(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param parsing_mode: Represents the parsing mode for indexing from an Azure blob data source.
      Possible values include: "default", "text", "delimitedText", "json", "jsonArray", "jsonLines".
      Default value: "default".
@@ -2422,7 +2577,7 @@ class IndexingParametersConfiguration(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, object]] = None,
+        additional_properties: Optional[Dict[str, Any]] = None,
         parsing_mode: Optional[Union[str, "BlobIndexerParsingMode"]] = "default",
         excluded_file_name_extensions: Optional[str] = "",
         indexed_file_name_extensions: Optional[str] = "",
@@ -3699,6 +3854,10 @@ class OcrSkill(SearchIndexerSkill):
     :param should_detect_orientation: A value indicating to turn orientation detection on or not.
      Default is false.
     :type should_detect_orientation: bool
+    :param line_ending: Defines the sequence of characters to use between the lines of text
+     recognized by the OCR skill. The default value is "space". Possible values include: "space",
+     "carriageReturn", "lineFeed", "carriageReturnLineFeed".
+    :type line_ending: str or ~azure.search.documents.indexes.models.LineEnding
     """
 
     _validation = {
@@ -3716,6 +3875,7 @@ class OcrSkill(SearchIndexerSkill):
         'outputs': {'key': 'outputs', 'type': '[OutputFieldMappingEntry]'},
         'default_language_code': {'key': 'defaultLanguageCode', 'type': 'str'},
         'should_detect_orientation': {'key': 'detectOrientation', 'type': 'bool'},
+        'line_ending': {'key': 'lineEnding', 'type': 'str'},
     }
 
     def __init__(
@@ -3728,12 +3888,14 @@ class OcrSkill(SearchIndexerSkill):
         context: Optional[str] = None,
         default_language_code: Optional[Union[str, "OcrSkillLanguage"]] = None,
         should_detect_orientation: Optional[bool] = False,
+        line_ending: Optional[Union[str, "LineEnding"]] = None,
         **kwargs
     ):
         super(OcrSkill, self).__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
         self.odata_type = '#Microsoft.Skills.Vision.OcrSkill'  # type: str
         self.default_language_code = default_language_code
         self.should_detect_orientation = should_detect_orientation
+        self.line_ending = line_ending
 
 
 class OutputFieldMappingEntry(msrest.serialization.Model):
@@ -4122,6 +4284,105 @@ class PhoneticTokenFilter(TokenFilter):
         self.odata_type = '#Microsoft.Azure.Search.PhoneticTokenFilter'  # type: str
         self.encoder = encoder
         self.replace_original_tokens = replace_original_tokens
+
+
+class PIIDetectionSkill(SearchIndexerSkill):
+    """Using the Text Analytics API, extracts personal information from an input text and gives you the option of masking it.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+     server.
+    :type odata_type: str
+    :param name: The name of the skill which uniquely identifies it within the skillset. A skill
+     with no name defined will be given a default name of its 1-based index in the skills array,
+     prefixed with the character '#'.
+    :type name: str
+    :param description: The description of the skill which describes the inputs, outputs, and usage
+     of the skill.
+    :type description: str
+    :param context: Represents the level at which operations take place, such as the document root
+     or document content (for example, /document or /document/content). The default is /document.
+    :type context: str
+    :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
+     output of an upstream skill.
+    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :param outputs: Required. The output of a skill is either a field in a search index, or a value
+     that can be consumed as an input by another skill.
+    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :param default_language_code: A value indicating which language code to use. Default is en.
+    :type default_language_code: str
+    :param minimum_precision: A value between 0 and 1 that be used to only include entities whose
+     confidence score is greater than the value specified. If not set (default), or if explicitly
+     set to null, all entities will be included.
+    :type minimum_precision: float
+    :param masking_mode: A parameter that provides various ways to mask the personal information
+     detected in the input text. Default is 'none'. Possible values include: "none", "replace".
+    :type masking_mode: str or ~azure.search.documents.indexes.models.PIIDetectionSkillMaskingMode
+    :param masking_character: The character used to mask the text if the maskingMode parameter is
+     set to replace. Default is '*'.
+    :type masking_character: str
+    :param model_version: The version of the model to use when calling the Text Analytics service.
+     It will default to the latest available when not specified. We recommend you do not specify
+     this value unless absolutely necessary.
+    :type model_version: str
+    :param pii_categories: A list of PII entity categories that should be extracted and masked.
+    :type pii_categories: list[str]
+    :param domain: If specified, will set the PII domain to include only a subset of the entity
+     categories. Possible values include: 'phi', 'none'. Default is 'none'.
+    :type domain: str
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+        'inputs': {'required': True},
+        'outputs': {'required': True},
+        'minimum_precision': {'maximum': 1, 'minimum': 0},
+        'masking_character': {'max_length': 1, 'min_length': 0},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'context': {'key': 'context', 'type': 'str'},
+        'inputs': {'key': 'inputs', 'type': '[InputFieldMappingEntry]'},
+        'outputs': {'key': 'outputs', 'type': '[OutputFieldMappingEntry]'},
+        'default_language_code': {'key': 'defaultLanguageCode', 'type': 'str'},
+        'minimum_precision': {'key': 'minimumPrecision', 'type': 'float'},
+        'masking_mode': {'key': 'maskingMode', 'type': 'str'},
+        'masking_character': {'key': 'maskingCharacter', 'type': 'str'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
+        'pii_categories': {'key': 'piiCategories', 'type': '[str]'},
+        'domain': {'key': 'domain', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        inputs: List["InputFieldMappingEntry"],
+        outputs: List["OutputFieldMappingEntry"],
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        context: Optional[str] = None,
+        default_language_code: Optional[str] = None,
+        minimum_precision: Optional[float] = None,
+        masking_mode: Optional[Union[str, "PIIDetectionSkillMaskingMode"]] = None,
+        masking_character: Optional[str] = None,
+        model_version: Optional[str] = None,
+        pii_categories: Optional[List[str]] = None,
+        domain: Optional[str] = None,
+        **kwargs
+    ):
+        super(PIIDetectionSkill, self).__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
+        self.odata_type = '#Microsoft.Skills.Text.PIIDetectionSkill'  # type: str
+        self.default_language_code = default_language_code
+        self.minimum_precision = minimum_precision
+        self.masking_mode = masking_mode
+        self.masking_character = masking_character
+        self.model_version = model_version
+        self.pii_categories = pii_categories
+        self.domain = domain
 
 
 class RequestOptions(msrest.serialization.Model):
@@ -4605,6 +4866,9 @@ class SearchIndexer(msrest.serialization.Model):
      unaffected. Encryption with customer-managed keys is not available for free search services,
      and is only available for paid services created on or after January 1, 2019.
     :type encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
+    :param cache: Adds caching to an enrichment pipeline to allow for incremental modification
+     steps without having to rebuild the index every time.
+    :type cache: ~azure.search.documents.indexes.models.SearchIndexerCache
     """
 
     _validation = {
@@ -4626,6 +4890,7 @@ class SearchIndexer(msrest.serialization.Model):
         'is_disabled': {'key': 'disabled', 'type': 'bool'},
         'e_tag': {'key': '@odata\\.etag', 'type': 'str'},
         'encryption_key': {'key': 'encryptionKey', 'type': 'SearchResourceEncryptionKey'},
+        'cache': {'key': 'cache', 'type': 'SearchIndexerCache'},
     }
 
     def __init__(
@@ -4643,6 +4908,7 @@ class SearchIndexer(msrest.serialization.Model):
         is_disabled: Optional[bool] = False,
         e_tag: Optional[str] = None,
         encryption_key: Optional["SearchResourceEncryptionKey"] = None,
+        cache: Optional["SearchIndexerCache"] = None,
         **kwargs
     ):
         super(SearchIndexer, self).__init__(**kwargs)
@@ -4658,6 +4924,34 @@ class SearchIndexer(msrest.serialization.Model):
         self.is_disabled = is_disabled
         self.e_tag = e_tag
         self.encryption_key = encryption_key
+        self.cache = cache
+
+
+class SearchIndexerCache(msrest.serialization.Model):
+    """SearchIndexerCache.
+
+    :param storage_connection_string: The connection string to the storage account where the cache
+     data will be persisted.
+    :type storage_connection_string: str
+    :param enable_reprocessing: Specifies whether incremental reprocessing is enabled.
+    :type enable_reprocessing: bool
+    """
+
+    _attribute_map = {
+        'storage_connection_string': {'key': 'storageConnectionString', 'type': 'str'},
+        'enable_reprocessing': {'key': 'enableReprocessing', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        storage_connection_string: Optional[str] = None,
+        enable_reprocessing: Optional[bool] = None,
+        **kwargs
+    ):
+        super(SearchIndexerCache, self).__init__(**kwargs)
+        self.storage_connection_string = storage_connection_string
+        self.enable_reprocessing = enable_reprocessing
 
 
 class SearchIndexerDataContainer(msrest.serialization.Model):
@@ -4694,6 +4988,65 @@ class SearchIndexerDataContainer(msrest.serialization.Model):
         self.query = query
 
 
+class SearchIndexerDataIdentity(msrest.serialization.Model):
+    """Abstract base type for data identities.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: SearchIndexerDataNoneIdentity, SearchIndexerDataUserAssignedIdentity.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. Identifies the concrete type of the identity.Constant filled by
+     server.
+    :type odata_type: str
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'odata_type': {'#Microsoft.Azure.Search.SearchIndexerDataNoneIdentity': 'SearchIndexerDataNoneIdentity', '#Microsoft.Azure.Search.SearchIndexerDataUserAssignedIdentity': 'SearchIndexerDataUserAssignedIdentity'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SearchIndexerDataIdentity, self).__init__(**kwargs)
+        self.odata_type = None  # type: Optional[str]
+
+
+class SearchIndexerDataNoneIdentity(SearchIndexerDataIdentity):
+    """Clears the identity property of a datasource.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. Identifies the concrete type of the identity.Constant filled by
+     server.
+    :type odata_type: str
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SearchIndexerDataNoneIdentity, self).__init__(**kwargs)
+        self.odata_type = '#Microsoft.Azure.Search.SearchIndexerDataNoneIdentity'  # type: str
+
+
 class SearchIndexerDataSource(msrest.serialization.Model):
     """Represents a datasource definition, which can be used to configure an indexer.
 
@@ -4710,6 +5063,11 @@ class SearchIndexerDataSource(msrest.serialization.Model):
     :type credentials: ~azure.search.documents.indexes.models.DataSourceCredentials
     :param container: Required. The data container for the datasource.
     :type container: ~azure.search.documents.indexes.models.SearchIndexerDataContainer
+    :param identity: An explicit managed identity to use for this datasource. If not specified and
+     the connection string is a managed identity, the system-assigned managed identity is used. If
+     not specified, the value remains unchanged. If "none" is specified, the value of this property
+     is cleared.
+    :type identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
     :param data_change_detection_policy: The data change detection policy for the datasource.
     :type data_change_detection_policy:
      ~azure.search.documents.indexes.models.DataChangeDetectionPolicy
@@ -4743,6 +5101,7 @@ class SearchIndexerDataSource(msrest.serialization.Model):
         'type': {'key': 'type', 'type': 'str'},
         'credentials': {'key': 'credentials', 'type': 'DataSourceCredentials'},
         'container': {'key': 'container', 'type': 'SearchIndexerDataContainer'},
+        'identity': {'key': 'identity', 'type': 'SearchIndexerDataIdentity'},
         'data_change_detection_policy': {'key': 'dataChangeDetectionPolicy', 'type': 'DataChangeDetectionPolicy'},
         'data_deletion_detection_policy': {'key': 'dataDeletionDetectionPolicy', 'type': 'DataDeletionDetectionPolicy'},
         'e_tag': {'key': '@odata\\.etag', 'type': 'str'},
@@ -4757,6 +5116,7 @@ class SearchIndexerDataSource(msrest.serialization.Model):
         credentials: "DataSourceCredentials",
         container: "SearchIndexerDataContainer",
         description: Optional[str] = None,
+        identity: Optional["SearchIndexerDataIdentity"] = None,
         data_change_detection_policy: Optional["DataChangeDetectionPolicy"] = None,
         data_deletion_detection_policy: Optional["DataDeletionDetectionPolicy"] = None,
         e_tag: Optional[str] = None,
@@ -4769,10 +5129,47 @@ class SearchIndexerDataSource(msrest.serialization.Model):
         self.type = type
         self.credentials = credentials
         self.container = container
+        self.identity = identity
         self.data_change_detection_policy = data_change_detection_policy
         self.data_deletion_detection_policy = data_deletion_detection_policy
         self.e_tag = e_tag
         self.encryption_key = encryption_key
+
+
+class SearchIndexerDataUserAssignedIdentity(SearchIndexerDataIdentity):
+    """Specifies the identity for a datasource to use.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. Identifies the concrete type of the identity.Constant filled by
+     server.
+    :type odata_type: str
+    :param user_assigned_identity: Required. The fully qualified Azure resource Id of a user
+     assigned managed identity typically in the form
+     "/subscriptions/12345678-1234-1234-1234-1234567890ab/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId"
+     that should have been assigned to the search service.
+    :type user_assigned_identity: str
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+        'user_assigned_identity': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'user_assigned_identity': {'key': 'userAssignedIdentity', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        user_assigned_identity: str,
+        **kwargs
+    ):
+        super(SearchIndexerDataUserAssignedIdentity, self).__init__(**kwargs)
+        self.odata_type = '#Microsoft.Azure.Search.SearchIndexerDataUserAssignedIdentity'  # type: str
+        self.user_assigned_identity = user_assigned_identity
 
 
 class SearchIndexerError(msrest.serialization.Model):
@@ -5351,6 +5748,11 @@ class SearchResourceEncryptionKey(msrest.serialization.Model):
      Azure Key Vault. Not required if using managed identity instead.
     :type access_credentials:
      ~azure.search.documents.indexes.models.AzureActiveDirectoryApplicationCredentials
+    :param identity: An explicit managed identity to use for this encryption key. If not specified
+     and the access credentials property is null, the system-assigned managed identity is used. On
+     update to the resource, if the explicit identity is unspecified, it remains unchanged. If
+     "none" is specified, the value of this property is cleared.
+    :type identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
     """
 
     _validation = {
@@ -5364,6 +5766,7 @@ class SearchResourceEncryptionKey(msrest.serialization.Model):
         'key_version': {'key': 'keyVaultKeyVersion', 'type': 'str'},
         'vault_uri': {'key': 'keyVaultUri', 'type': 'str'},
         'access_credentials': {'key': 'accessCredentials', 'type': 'AzureActiveDirectoryApplicationCredentials'},
+        'identity': {'key': 'identity', 'type': 'SearchIndexerDataIdentity'},
     }
 
     def __init__(
@@ -5373,6 +5776,7 @@ class SearchResourceEncryptionKey(msrest.serialization.Model):
         key_version: str,
         vault_uri: str,
         access_credentials: Optional["AzureActiveDirectoryApplicationCredentials"] = None,
+        identity: Optional["SearchIndexerDataIdentity"] = None,
         **kwargs
     ):
         super(SearchResourceEncryptionKey, self).__init__(**kwargs)
@@ -5380,6 +5784,7 @@ class SearchResourceEncryptionKey(msrest.serialization.Model):
         self.key_version = key_version
         self.vault_uri = vault_uri
         self.access_credentials = access_credentials
+        self.identity = identity
 
 
 class SentimentSkill(SearchIndexerSkill):
@@ -5443,6 +5848,80 @@ class SentimentSkill(SearchIndexerSkill):
         super(SentimentSkill, self).__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
         self.odata_type = '#Microsoft.Skills.Text.SentimentSkill'  # type: str
         self.default_language_code = default_language_code
+
+
+class SentimentSkillV3(SearchIndexerSkill):
+    """Using the Text Analytics API, evaluates unstructured text and for each record, provides sentiment labels (such as "negative", "neutral" and "positive") based on the highest confidence score found by the service at a sentence and document-level.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+     server.
+    :type odata_type: str
+    :param name: The name of the skill which uniquely identifies it within the skillset. A skill
+     with no name defined will be given a default name of its 1-based index in the skills array,
+     prefixed with the character '#'.
+    :type name: str
+    :param description: The description of the skill which describes the inputs, outputs, and usage
+     of the skill.
+    :type description: str
+    :param context: Represents the level at which operations take place, such as the document root
+     or document content (for example, /document or /document/content). The default is /document.
+    :type context: str
+    :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
+     output of an upstream skill.
+    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :param outputs: Required. The output of a skill is either a field in a search index, or a value
+     that can be consumed as an input by another skill.
+    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :param default_language_code: A value indicating which language code to use. Default is en.
+    :type default_language_code: str
+    :param include_opinion_mining: If set to true, the skill output will include information from
+     Text Analytics for opinion mining, namely targets (nouns or verbs) and their associated
+     assessment (adjective) in the text. Default is false.
+    :type include_opinion_mining: bool
+    :param model_version: The version of the model to use when calling the Text Analytics service.
+     It will default to the latest available when not specified. We recommend you do not specify
+     this value unless absolutely necessary.
+    :type model_version: str
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+        'inputs': {'required': True},
+        'outputs': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'context': {'key': 'context', 'type': 'str'},
+        'inputs': {'key': 'inputs', 'type': '[InputFieldMappingEntry]'},
+        'outputs': {'key': 'outputs', 'type': '[OutputFieldMappingEntry]'},
+        'default_language_code': {'key': 'defaultLanguageCode', 'type': 'str'},
+        'include_opinion_mining': {'key': 'includeOpinionMining', 'type': 'bool'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        inputs: List["InputFieldMappingEntry"],
+        outputs: List["OutputFieldMappingEntry"],
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        context: Optional[str] = None,
+        default_language_code: Optional[str] = None,
+        include_opinion_mining: Optional[bool] = False,
+        model_version: Optional[str] = None,
+        **kwargs
+    ):
+        super(SentimentSkillV3, self).__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
+        self.odata_type = '#Microsoft.Skills.Text.V3.SentimentSkill'  # type: str
+        self.default_language_code = default_language_code
+        self.include_opinion_mining = include_opinion_mining
+        self.model_version = model_version
 
 
 class ServiceCounters(msrest.serialization.Model):
@@ -6083,8 +6562,8 @@ class Suggester(msrest.serialization.Model):
 
     :param name: Required. The name of the suggester.
     :type name: str
-    :ivar search_mode: Required. A value indicating the capabilities of the suggester. Default
-     value: "analyzingInfixMatching".
+    :ivar search_mode: A value indicating the capabilities of the suggester. Has constant value:
+     "analyzingInfixMatching".
     :vartype search_mode: str
     :param source_fields: Required. The list of field names to which the suggester applies. Each
      field must be searchable.
@@ -6126,8 +6605,8 @@ class SynonymMap(msrest.serialization.Model):
 
     :param name: Required. The name of the synonym map.
     :type name: str
-    :ivar format: Required. The format of the synonym map. Only the 'solr' format is currently
-     supported. Default value: "solr".
+    :ivar format: The format of the synonym map. Only the 'solr' format is currently supported. Has
+     constant value: "solr".
     :vartype format: str
     :param synonyms: Required. A series of synonym rules in the specified synonym map format. The
      rules must be separated by newlines.
@@ -6344,18 +6823,18 @@ class TextTranslationSkill(SearchIndexerSkill):
      documents that don't specify the to language explicitly. Possible values include: "af", "ar",
      "bn", "bs", "bg", "yue", "ca", "zh-Hans", "zh-Hant", "hr", "cs", "da", "nl", "en", "et", "fj",
      "fil", "fi", "fr", "de", "el", "ht", "he", "hi", "mww", "hu", "is", "id", "it", "ja", "sw",
-     "tlh", "ko", "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl", "pt", "otq", "ro", "ru", "sm",
-     "sr-Cyrl", "sr-Latn", "sk", "sl", "es", "sv", "ty", "ta", "te", "th", "to", "tr", "uk", "ur",
-     "vi", "cy", "yua".
+     "tlh", "tlh-Latn", "tlh-Piqd", "ko", "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl", "pt",
+     "pt-br", "pt-PT", "otq", "ro", "ru", "sm", "sr-Cyrl", "sr-Latn", "sk", "sl", "es", "sv", "ty",
+     "ta", "te", "th", "to", "tr", "uk", "ur", "vi", "cy", "yua", "ga", "kn", "mi", "ml", "pa".
     :type default_to_language_code: str or
      ~azure.search.documents.indexes.models.TextTranslationSkillLanguage
     :param default_from_language_code: The language code to translate documents from for documents
      that don't specify the from language explicitly. Possible values include: "af", "ar", "bn",
      "bs", "bg", "yue", "ca", "zh-Hans", "zh-Hant", "hr", "cs", "da", "nl", "en", "et", "fj", "fil",
      "fi", "fr", "de", "el", "ht", "he", "hi", "mww", "hu", "is", "id", "it", "ja", "sw", "tlh",
-     "ko", "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl", "pt", "otq", "ro", "ru", "sm", "sr-Cyrl",
-     "sr-Latn", "sk", "sl", "es", "sv", "ty", "ta", "te", "th", "to", "tr", "uk", "ur", "vi", "cy",
-     "yua".
+     "tlh-Latn", "tlh-Piqd", "ko", "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl", "pt", "pt-br",
+     "pt-PT", "otq", "ro", "ru", "sm", "sr-Cyrl", "sr-Latn", "sk", "sl", "es", "sv", "ty", "ta",
+     "te", "th", "to", "tr", "uk", "ur", "vi", "cy", "yua", "ga", "kn", "mi", "ml", "pa".
     :type default_from_language_code: str or
      ~azure.search.documents.indexes.models.TextTranslationSkillLanguage
     :param suggested_from: The language code to translate documents from when neither the
@@ -6363,9 +6842,10 @@ class TextTranslationSkill(SearchIndexerSkill):
      automatic language detection is unsuccessful. Default is en. Possible values include: "af",
      "ar", "bn", "bs", "bg", "yue", "ca", "zh-Hans", "zh-Hant", "hr", "cs", "da", "nl", "en", "et",
      "fj", "fil", "fi", "fr", "de", "el", "ht", "he", "hi", "mww", "hu", "is", "id", "it", "ja",
-     "sw", "tlh", "ko", "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl", "pt", "otq", "ro", "ru",
-     "sm", "sr-Cyrl", "sr-Latn", "sk", "sl", "es", "sv", "ty", "ta", "te", "th", "to", "tr", "uk",
-     "ur", "vi", "cy", "yua".
+     "sw", "tlh", "tlh-Latn", "tlh-Piqd", "ko", "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl",
+     "pt", "pt-br", "pt-PT", "otq", "ro", "ru", "sm", "sr-Cyrl", "sr-Latn", "sk", "sl", "es", "sv",
+     "ty", "ta", "te", "th", "to", "tr", "uk", "ur", "vi", "cy", "yua", "ga", "kn", "mi", "ml",
+     "pa".
     :type suggested_from: str or
      ~azure.search.documents.indexes.models.TextTranslationSkillLanguage
     """

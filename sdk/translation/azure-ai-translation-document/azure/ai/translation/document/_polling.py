@@ -94,7 +94,7 @@ class DocumentTranslationLROPollingMethod(LROBasePolling):
 
     def _get_id_from_headers(self):
         # type: () -> str
-        return self._pipeline_response.http_response.headers[
+        return self._initial_response.http_response.headers[
             "Operation-Location"
         ].split("/batches/")[1]
 

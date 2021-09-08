@@ -21,8 +21,8 @@ from azure.storage.blob import (
     StaticWebsite,
 )
 
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
-
+from _shared.testcase import GlobalStorageAccountPreparer
+from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------
 

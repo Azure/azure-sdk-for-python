@@ -47,7 +47,7 @@ class TriggersOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TriggerListResponse"]:
         """Lists triggers.
 
@@ -122,7 +122,7 @@ class TriggersOperations:
         resource_group_name: str,
         factory_name: str,
         filter_parameters: "_models.TriggerFilterParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TriggerQueryResponse":
         """Query triggers.
 
@@ -190,7 +190,7 @@ class TriggersOperations:
         trigger_name: str,
         trigger: "_models.TriggerResource",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TriggerResource":
         """Creates or updates a trigger.
 
@@ -265,7 +265,7 @@ class TriggersOperations:
         factory_name: str,
         trigger_name: str,
         if_none_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.TriggerResource"]:
         """Gets a trigger.
 
@@ -334,7 +334,7 @@ class TriggersOperations:
         resource_group_name: str,
         factory_name: str,
         trigger_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a trigger.
 
@@ -393,7 +393,7 @@ class TriggersOperations:
         resource_group_name: str,
         factory_name: str,
         trigger_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.TriggerSubscriptionOperationStatus"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.TriggerSubscriptionOperationStatus"]]
         error_map = {
@@ -444,7 +444,7 @@ class TriggersOperations:
         resource_group_name: str,
         factory_name: str,
         trigger_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.TriggerSubscriptionOperationStatus"]:
         """Subscribe event trigger to events.
 
@@ -456,8 +456,8 @@ class TriggersOperations:
         :type trigger_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either TriggerSubscriptionOperationStatus or the result of cls(response)
@@ -516,7 +516,7 @@ class TriggersOperations:
         resource_group_name: str,
         factory_name: str,
         trigger_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TriggerSubscriptionOperationStatus":
         """Get a trigger's event subscription status.
 
@@ -578,7 +578,7 @@ class TriggersOperations:
         resource_group_name: str,
         factory_name: str,
         trigger_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.TriggerSubscriptionOperationStatus"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.TriggerSubscriptionOperationStatus"]]
         error_map = {
@@ -629,7 +629,7 @@ class TriggersOperations:
         resource_group_name: str,
         factory_name: str,
         trigger_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.TriggerSubscriptionOperationStatus"]:
         """Unsubscribe event trigger from events.
 
@@ -641,8 +641,8 @@ class TriggersOperations:
         :type trigger_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either TriggerSubscriptionOperationStatus or the result of cls(response)
@@ -701,7 +701,7 @@ class TriggersOperations:
         resource_group_name: str,
         factory_name: str,
         trigger_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -747,7 +747,7 @@ class TriggersOperations:
         resource_group_name: str,
         factory_name: str,
         trigger_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Starts a trigger.
 
@@ -759,8 +759,8 @@ class TriggersOperations:
         :type trigger_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -816,7 +816,7 @@ class TriggersOperations:
         resource_group_name: str,
         factory_name: str,
         trigger_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -862,7 +862,7 @@ class TriggersOperations:
         resource_group_name: str,
         factory_name: str,
         trigger_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Stops a trigger.
 
@@ -874,8 +874,8 @@ class TriggersOperations:
         :type trigger_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)

@@ -41,7 +41,7 @@ setup(
     license="MIT License",
     author="Microsoft Corporation",
     author_email="azure-digitaltwins-core@microsoft.com",
-    url="https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/digitaltwins/azure-digitaltwins-core",
+    url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/digitaltwins/azure-digitaltwins-core",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python",
@@ -66,7 +66,7 @@ setup(
         ]
     ),
     install_requires=[
-        "azure-core<2.0.0,>=1.2.2", 
+        "azure-core<2.0.0,>=1.2.2",
         "msrest>=0.5.0"
     ],
     extras_require={

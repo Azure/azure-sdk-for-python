@@ -43,7 +43,7 @@ class SkuOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ResourceSkuCollection"]:
         """list.
 

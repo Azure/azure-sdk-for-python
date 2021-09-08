@@ -316,6 +316,18 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
 
     @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test
+    async def test_send_typing_notification_with_sender_display_name(self):
+        async with self.chat_client:
+            await self._create_thread()
+
+            async with self.chat_thread_client:
+                await self.chat_thread_client.send_typing_notification(sender_display_name="John")
+
+            if not self.is_playback():
+                await self.chat_client.delete_chat_thread(self.thread_id)
+
+    @pytest.mark.live_test_only
+    @AsyncCommunicationTestCase.await_prepared_test
     async def test_send_read_receipt(self):
         async with self.chat_client:
             await self._create_thread()

@@ -4,14 +4,10 @@
 import os
 import pandas as pd
 from azure.monitor.query import LogsQueryClient
-from azure.identity import ClientSecretCredential
+from azure.identity import DefaultAzureCredential
 
 
-credential  = ClientSecretCredential(
-        client_id = os.environ['AZURE_CLIENT_ID'],
-        client_secret = os.environ['AZURE_CLIENT_SECRET'],
-        tenant_id = os.environ['AZURE_TENANT_ID']
-    )
+credential  = DefaultAzureCredential()
 
 client = LogsQueryClient(credential)
 
@@ -21,6 +17,9 @@ response = client.query(
     server_timeout=1,
     )
 
-for table in response.tables:
+try:
+    table = response.tables[0]
     df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
     print(df)
+except TypeError:
+    print(response.error)

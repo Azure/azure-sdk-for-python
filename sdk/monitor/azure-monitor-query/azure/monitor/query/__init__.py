@@ -4,17 +4,18 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 
-from ._log_query_client import LogsQueryClient
+from ._logs_query_client import LogsQueryClient
 from ._metrics_query_client import MetricsQueryClient
 
 from ._models import (
-    LogsQueryResults,
+    AggregationType,
+    LogsBatchQueryResult,
+    LogsQueryResult,
     LogsQueryResultTable,
     LogsQueryResultColumn,
     MetricsResult,
     LogsBatchResultError,
-    LogsQueryRequest,
-    LogsBatchResults,
+    LogsBatchQueryRequest,
     MetricNamespace,
     MetricDefinition,
     MetricsMetadataValue,
@@ -27,13 +28,14 @@ from ._models import (
 from ._version import VERSION
 
 __all__ = [
+    "AggregationType",
     "LogsQueryClient",
-    "LogsBatchResults",
+    "LogsBatchQueryResult",
     "LogsBatchResultError",
-    "LogsQueryResults",
+    "LogsQueryResult",
     "LogsQueryResultColumn",
     "LogsQueryResultTable",
-    "LogsQueryRequest",
+    "LogsBatchQueryRequest",
     "MetricsQueryClient",
     "MetricNamespace",
     "MetricDefinition",

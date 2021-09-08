@@ -5,10 +5,10 @@ import asyncio
 import os
 import pandas as pd
 from azure.monitor.query.aio import LogsQueryClient
-from azure.identity.aio import ClientSecretCredential
+from azure.identity.aio import DefaultAzureCredential
 
 async def logs_query():
-    credential  = ClientSecretCredential(
+    credential  = DefaultAzureCredential(
             client_id = os.environ['AZURE_CLIENT_ID'],
             client_secret = os.environ['AZURE_CLIENT_SECRET'],
             tenant_id = os.environ['AZURE_TENANT_ID']
@@ -22,7 +22,7 @@ async def logs_query():
     where TimeGenerated > ago(12h) | 
     summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
 
-    # returns LogsQueryResults
+    # returns LogsQueryResult
     async with client:
         response = await client.query(os.environ['LOG_WORKSPACE_ID'], query)
 

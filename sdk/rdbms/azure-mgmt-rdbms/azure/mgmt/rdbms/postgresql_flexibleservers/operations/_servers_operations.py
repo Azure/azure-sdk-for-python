@@ -60,7 +60,7 @@ class ServersOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-14-preview"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -68,7 +68,7 @@ class ServersOperations(object):
         url = self._create_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -104,7 +104,7 @@ class ServersOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _create_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}'}  # type: ignore
+    _create_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}'}  # type: ignore
 
     def begin_create(
         self,
@@ -124,8 +124,8 @@ class ServersOperations(object):
         :type parameters: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.Server
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either Server or the result of cls(response)
@@ -160,7 +160,7 @@ class ServersOperations(object):
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
         }
 
@@ -176,7 +176,7 @@ class ServersOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}'}  # type: ignore
+    begin_create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}'}  # type: ignore
 
     def _update_initial(
         self,
@@ -191,7 +191,7 @@ class ServersOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-14-preview"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -199,7 +199,7 @@ class ServersOperations(object):
         url = self._update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -232,7 +232,7 @@ class ServersOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}'}  # type: ignore
+    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}'}  # type: ignore
 
     def begin_update(
         self,
@@ -253,8 +253,8 @@ class ServersOperations(object):
         :type parameters: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.ServerForUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either Server or the result of cls(response)
@@ -289,7 +289,7 @@ class ServersOperations(object):
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
         }
 
@@ -305,7 +305,7 @@ class ServersOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}'}  # type: ignore
+    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}'}  # type: ignore
 
     def _delete_initial(
         self,
@@ -319,14 +319,14 @@ class ServersOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-14-preview"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -350,7 +350,7 @@ class ServersOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}'}  # type: ignore
+    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}'}  # type: ignore
 
     def begin_delete(
         self,
@@ -367,8 +367,8 @@ class ServersOperations(object):
         :type server_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -399,7 +399,7 @@ class ServersOperations(object):
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
         }
 
@@ -415,7 +415,7 @@ class ServersOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}'}  # type: ignore
+    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}'}  # type: ignore
 
     def get(
         self,
@@ -440,14 +440,14 @@ class ServersOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-14-preview"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -474,7 +474,7 @@ class ServersOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}'}  # type: ignore
 
     def list_by_resource_group(
         self,
@@ -496,7 +496,7 @@ class ServersOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-14-preview"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -509,7 +509,7 @@ class ServersOperations(object):
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -545,7 +545,7 @@ class ServersOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers'}  # type: ignore
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers'}  # type: ignore
 
     def list(
         self,
@@ -564,7 +564,7 @@ class ServersOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-14-preview"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -612,12 +612,13 @@ class ServersOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBForPostgreSql/flexibleServers'}  # type: ignore
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBforPostgreSQL/flexibleServers'}  # type: ignore
 
     def _restart_initial(
         self,
         resource_group_name,  # type: str
         server_name,  # type: str
+        parameters=None,  # type: Optional["_models.RestartParameter"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -626,14 +627,15 @@ class ServersOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-14-preview"
+        api_version = "2021-06-01"
+        content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
         url = self._restart_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -644,9 +646,16 @@ class ServersOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        request = self._client.post(url, query_parameters, header_parameters)
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        if parameters is not None:
+            body_content = self._serialize.body(parameters, 'RestartParameter')
+        else:
+            body_content = None
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -657,12 +666,13 @@ class ServersOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    _restart_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}/restart'}  # type: ignore
+    _restart_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/restart'}  # type: ignore
 
     def begin_restart(
         self,
         resource_group_name,  # type: str
         server_name,  # type: str
+        parameters=None,  # type: Optional["_models.RestartParameter"]
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -672,10 +682,12 @@ class ServersOperations(object):
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
+        :param parameters: The parameters for restarting a server.
+        :type parameters: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.RestartParameter
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -693,6 +705,7 @@ class ServersOperations(object):
             raw_result = self._restart_initial(
                 resource_group_name=resource_group_name,
                 server_name=server_name,
+                parameters=parameters,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -706,7 +719,7 @@ class ServersOperations(object):
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
         }
 
@@ -722,7 +735,7 @@ class ServersOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_restart.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}/restart'}  # type: ignore
+    begin_restart.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/restart'}  # type: ignore
 
     def _start_initial(
         self,
@@ -736,14 +749,14 @@ class ServersOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-14-preview"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
         url = self._start_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -767,7 +780,7 @@ class ServersOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    _start_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}/start'}  # type: ignore
+    _start_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/start'}  # type: ignore
 
     def begin_start(
         self,
@@ -784,8 +797,8 @@ class ServersOperations(object):
         :type server_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -816,7 +829,7 @@ class ServersOperations(object):
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
         }
 
@@ -832,7 +845,7 @@ class ServersOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_start.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}/start'}  # type: ignore
+    begin_start.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/start'}  # type: ignore
 
     def _stop_initial(
         self,
@@ -846,14 +859,14 @@ class ServersOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-14-preview"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
         url = self._stop_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -877,7 +890,7 @@ class ServersOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    _stop_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}/stop'}  # type: ignore
+    _stop_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/stop'}  # type: ignore
 
     def begin_stop(
         self,
@@ -894,8 +907,8 @@ class ServersOperations(object):
         :type server_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -926,7 +939,7 @@ class ServersOperations(object):
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
         }
 
@@ -942,4 +955,4 @@ class ServersOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_stop.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}/stop'}  # type: ignore
+    begin_stop.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/stop'}  # type: ignore

@@ -1,5 +1,15 @@
 # Release History
 
+## 16.1.0 (2021-08-06)
+
+**Features**
+
+  - Model ManagedClusterAgentPoolProfile has a new parameter scale_down_mode
+  - Model ContainerServiceNetworkProfile has a new parameter nat_gateway_profile
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter scale_down_mode
+  - Model ManagedCluster has a new parameter security_profile
+  - Model AgentPool has a new parameter scale_down_mode
+
 ## 16.0.0 (2021-06-17)
 
 **Features**
@@ -105,20 +115,20 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
 - Most of the operation kwarg have changed. Some of the most noticeable:
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
-  - For a complete set of supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  - For a complete set of supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 
 ## 9.4.0 (2020-09-11)
@@ -154,7 +164,7 @@ This version uses a next-generation code generator that introduces important bre
 ## 9.2.0 (2020-06-24)
 
 **Features**
- 
+
   - Model ManagedClusterIdentity has a new parameter user_assigned_identities
   - Model ManagedClusterAADProfile has a new parameter enable_azure_rbac
   - Model ManagedClusterAgentPoolProfile has a new parameter proximity_placement_group_id
@@ -177,8 +187,8 @@ This version uses a next-generation code generator that introduces important bre
 ## 9.0.1 (2020-04-09)
 
 **Bugfixes**
-  
-  - Switch field type to string to avoid unmarshal errors 
+
+  - Switch field type to string to avoid unmarshal errors
 
 ## 9.0.0 (2020-03-24)
 
