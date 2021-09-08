@@ -60,9 +60,9 @@ class AnalyzeRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param text: Required. The text to break into tokens.
-    :type text: str
-    :param analyzer: The name of the analyzer to use to break the given text. Possible values
+    :keyword text: Required. The text to break into tokens.
+    :paramtype text: str
+    :keyword analyzer: The name of the analyzer to use to break the given text. Possible values
      include: "ar.microsoft", "ar.lucene", "hy.lucene", "bn.microsoft", "eu.lucene", "bg.microsoft",
      "bg.lucene", "ca.microsoft", "ca.lucene", "zh-Hans.microsoft", "zh-Hans.lucene",
      "zh-Hant.microsoft", "zh-Hant.lucene", "hr.microsoft", "cs.microsoft", "cs.lucene",
@@ -80,19 +80,20 @@ class AnalyzeRequest(msrest.serialization.Model):
      "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft", "vi.microsoft",
      "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop",
      "whitespace".
-    :type analyzer: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
-    :param tokenizer: The name of the tokenizer to use to break the given text. Possible values
+    :paramtype analyzer: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
+    :keyword tokenizer: The name of the tokenizer to use to break the given text. Possible values
      include: "classic", "edgeNGram", "keyword_v2", "letter", "lowercase",
      "microsoft_language_tokenizer", "microsoft_language_stemming_tokenizer", "nGram",
      "path_hierarchy_v2", "pattern", "standard_v2", "uax_url_email", "whitespace".
-    :type tokenizer: str or ~azure.search.documents.indexes.models.LexicalTokenizerName
-    :param normalizer: The name of the normalizer to use to normalize the given text. Possible
+    :paramtype tokenizer: str or ~azure.search.documents.indexes.models.LexicalTokenizerName
+    :keyword normalizer: The name of the normalizer to use to normalize the given text. Possible
      values include: "asciifolding", "elision", "lowercase", "standard", "uppercase".
-    :type normalizer: str or ~azure.search.documents.indexes.models.LexicalNormalizerName
-    :param token_filters: An optional list of token filters to use when breaking the given text.
-    :type token_filters: list[str or ~azure.search.documents.indexes.models.TokenFilterName]
-    :param char_filters: An optional list of character filters to use when breaking the given text.
-    :type char_filters: list[str or ~azure.search.documents.indexes.models.CharFilterName]
+    :paramtype normalizer: str or ~azure.search.documents.indexes.models.LexicalNormalizerName
+    :keyword token_filters: An optional list of token filters to use when breaking the given text.
+    :paramtype token_filters: list[str or ~azure.search.documents.indexes.models.TokenFilterName]
+    :keyword char_filters: An optional list of character filters to use when breaking the given
+     text.
+    :paramtype char_filters: list[str or ~azure.search.documents.indexes.models.CharFilterName]
     """
 
     _validation = {
@@ -126,8 +127,9 @@ class AnalyzeResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param tokens: Required. The list of tokens returned by the analyzer specified in the request.
-    :type tokens: list[~azure.search.documents.indexes.models.AnalyzedTokenInfo]
+    :keyword tokens: Required. The list of tokens returned by the analyzer specified in the
+     request.
+    :paramtype tokens: list[~azure.search.documents.indexes.models.AnalyzedTokenInfo]
     """
 
     _validation = {
@@ -154,13 +156,13 @@ class TokenFilter(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+    :keyword odata_type: Required. Identifies the concrete type of the token filter.Constant filled
      by server.
-    :type odata_type: str
-    :param name: Required. The name of the token filter. It must only contain letters, digits,
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters.
-    :type name: str
+    :paramtype name: str
     """
 
     _validation = {
@@ -191,16 +193,16 @@ class AsciiFoldingTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+    :keyword odata_type: Required. Identifies the concrete type of the token filter.Constant filled
      by server.
-    :type odata_type: str
-    :param name: Required. The name of the token filter. It must only contain letters, digits,
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters.
-    :type name: str
-    :param preserve_original: A value indicating whether the original token will be kept. Default
+    :paramtype name: str
+    :keyword preserve_original: A value indicating whether the original token will be kept. Default
      is false.
-    :type preserve_original: bool
+    :paramtype preserve_original: bool
     """
 
     _validation = {
@@ -228,12 +230,12 @@ class AzureActiveDirectoryApplicationCredentials(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param application_id: Required. An AAD Application ID that was granted the required access
+    :keyword application_id: Required. An AAD Application ID that was granted the required access
      permissions to the Azure Key Vault that is to be used when encrypting your data at rest. The
      Application ID should not be confused with the Object ID for your AAD Application.
-    :type application_id: str
-    :param application_secret: The authentication key of the specified AAD application.
-    :type application_secret: str
+    :paramtype application_id: str
+    :keyword application_secret: The authentication key of the specified AAD application.
+    :paramtype application_secret: str
     """
 
     _validation = {
@@ -262,8 +264,8 @@ class Similarity(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
-    :type odata_type: str
+    :keyword odata_type: Required. Constant filled by server.
+    :paramtype odata_type: str
     """
 
     _validation = {
@@ -291,16 +293,16 @@ class BM25Similarity(Similarity):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
-    :type odata_type: str
-    :param k1: This property controls the scaling function between the term frequency of each
+    :keyword odata_type: Required. Constant filled by server.
+    :paramtype odata_type: str
+    :keyword k1: This property controls the scaling function between the term frequency of each
      matching terms and the final relevance score of a document-query pair. By default, a value of
      1.2 is used. A value of 0.0 means the score does not scale with an increase in term frequency.
-    :type k1: float
-    :param b: This property controls how the length of a document affects the relevance score. By
+    :paramtype k1: float
+    :keyword b: This property controls how the length of a document affects the relevance score. By
      default, a value of 0.75 is used. A value of 0.0 means no length normalization is applied,
      while a value of 1.0 means the score is fully normalized by the length of the document.
-    :type b: float
+    :paramtype b: float
     """
 
     _validation = {
@@ -331,13 +333,13 @@ class CharFilter(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the char filter.Constant filled by
-     server.
-    :type odata_type: str
-    :param name: Required. The name of the char filter. It must only contain letters, digits,
+    :keyword odata_type: Required. Identifies the concrete type of the char filter.Constant filled
+     by server.
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the char filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters.
-    :type name: str
+    :paramtype name: str
     """
 
     _validation = {
@@ -368,19 +370,19 @@ class CjkBigramTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+    :keyword odata_type: Required. Identifies the concrete type of the token filter.Constant filled
      by server.
-    :type odata_type: str
-    :param name: Required. The name of the token filter. It must only contain letters, digits,
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters.
-    :type name: str
-    :param ignore_scripts: The scripts to ignore.
-    :type ignore_scripts: list[str or
+    :paramtype name: str
+    :keyword ignore_scripts: The scripts to ignore.
+    :paramtype ignore_scripts: list[str or
      ~azure.search.documents.indexes.models.CjkBigramTokenFilterScripts]
-    :param output_unigrams: A value indicating whether to output both unigrams and bigrams (if
+    :keyword output_unigrams: A value indicating whether to output both unigrams and bigrams (if
      true), or just bigrams (if false). Default is false.
-    :type output_unigrams: bool
+    :paramtype output_unigrams: bool
     """
 
     _validation = {
@@ -410,8 +412,8 @@ class ClassicSimilarity(Similarity):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
-    :type odata_type: str
+    :keyword odata_type: Required. Constant filled by server.
+    :paramtype odata_type: str
     """
 
     _validation = {
@@ -438,13 +440,13 @@ class LexicalTokenizer(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
      server.
-    :type odata_type: str
-    :param name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
-     dashes or underscores, can only start and end with alphanumeric characters, and is limited to
-     128 characters.
-    :type name: str
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the tokenizer. It must only contain letters, digits,
+     spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
+     limited to 128 characters.
+    :paramtype name: str
     """
 
     _validation = {
@@ -475,16 +477,16 @@ class ClassicTokenizer(LexicalTokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
      server.
-    :type odata_type: str
-    :param name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
-     dashes or underscores, can only start and end with alphanumeric characters, and is limited to
-     128 characters.
-    :type name: str
-    :param max_token_length: The maximum token length. Default is 255. Tokens longer than the
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the tokenizer. It must only contain letters, digits,
+     spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
+     limited to 128 characters.
+    :paramtype name: str
+    :keyword max_token_length: The maximum token length. Default is 255. Tokens longer than the
      maximum length are split. The maximum token length that can be used is 300 characters.
-    :type max_token_length: int
+    :paramtype max_token_length: int
     """
 
     _validation = {
@@ -516,11 +518,11 @@ class CognitiveServicesAccount(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the cognitive service resource
+    :keyword odata_type: Required. Identifies the concrete type of the cognitive service resource
      attached to a skillset.Constant filled by server.
-    :type odata_type: str
-    :param description: Description of the cognitive service resource attached to a skillset.
-    :type description: str
+    :paramtype odata_type: str
+    :keyword description: Description of the cognitive service resource attached to a skillset.
+    :paramtype description: str
     """
 
     _validation = {
@@ -550,14 +552,14 @@ class CognitiveServicesAccountKey(CognitiveServicesAccount):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the cognitive service resource
+    :keyword odata_type: Required. Identifies the concrete type of the cognitive service resource
      attached to a skillset.Constant filled by server.
-    :type odata_type: str
-    :param description: Description of the cognitive service resource attached to a skillset.
-    :type description: str
-    :param key: Required. The key used to provision the cognitive service resource attached to a
+    :paramtype odata_type: str
+    :keyword description: Description of the cognitive service resource attached to a skillset.
+    :paramtype description: str
+    :keyword key: Required. The key used to provision the cognitive service resource attached to a
      skillset.
-    :type key: str
+    :paramtype key: str
     """
 
     _validation = {
@@ -585,22 +587,22 @@ class CommonGramTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+    :keyword odata_type: Required. Identifies the concrete type of the token filter.Constant filled
      by server.
-    :type odata_type: str
-    :param name: Required. The name of the token filter. It must only contain letters, digits,
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters.
-    :type name: str
-    :param common_words: Required. The set of common words.
-    :type common_words: list[str]
-    :param ignore_case: A value indicating whether common words matching will be case insensitive.
-     Default is false.
-    :type ignore_case: bool
-    :param use_query_mode: A value that indicates whether the token filter is in query mode. When
+    :paramtype name: str
+    :keyword common_words: Required. The set of common words.
+    :paramtype common_words: list[str]
+    :keyword ignore_case: A value indicating whether common words matching will be case
+     insensitive. Default is false.
+    :paramtype ignore_case: bool
+    :keyword use_query_mode: A value that indicates whether the token filter is in query mode. When
      in query mode, the token filter generates bigrams and then removes common words and single
      terms followed by a common word. Default is false.
-    :type use_query_mode: bool
+    :paramtype use_query_mode: bool
     """
 
     _validation = {
@@ -636,25 +638,26 @@ class SearchIndexerSkill(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the skill.Constant filled by
      server.
-    :type odata_type: str
-    :param name: The name of the skill which uniquely identifies it within the skillset. A skill
+    :paramtype odata_type: str
+    :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
      prefixed with the character '#'.
-    :type name: str
-    :param description: The description of the skill which describes the inputs, outputs, and usage
-     of the skill.
-    :type description: str
-    :param context: Represents the level at which operations take place, such as the document root
-     or document content (for example, /document or /document/content). The default is /document.
-    :type context: str
-    :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
-     output of an upstream skill.
-    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :param outputs: Required. The output of a skill is either a field in a search index, or a value
-     that can be consumed as an input by another skill.
-    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :paramtype name: str
+    :keyword description: The description of the skill which describes the inputs, outputs, and
+     usage of the skill.
+    :paramtype description: str
+    :keyword context: Represents the level at which operations take place, such as the document
+     root or document content (for example, /document or /document/content). The default is
+     /document.
+    :paramtype context: str
+    :keyword inputs: Required. Inputs of the skills could be a column in the source data set, or
+     the output of an upstream skill.
+    :paramtype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :keyword outputs: Required. The output of a skill is either a field in a search index, or a
+     value that can be consumed as an input by another skill.
+    :paramtype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
     """
 
     _validation = {
@@ -694,25 +697,26 @@ class ConditionalSkill(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the skill.Constant filled by
      server.
-    :type odata_type: str
-    :param name: The name of the skill which uniquely identifies it within the skillset. A skill
+    :paramtype odata_type: str
+    :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
      prefixed with the character '#'.
-    :type name: str
-    :param description: The description of the skill which describes the inputs, outputs, and usage
-     of the skill.
-    :type description: str
-    :param context: Represents the level at which operations take place, such as the document root
-     or document content (for example, /document or /document/content). The default is /document.
-    :type context: str
-    :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
-     output of an upstream skill.
-    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :param outputs: Required. The output of a skill is either a field in a search index, or a value
-     that can be consumed as an input by another skill.
-    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :paramtype name: str
+    :keyword description: The description of the skill which describes the inputs, outputs, and
+     usage of the skill.
+    :paramtype description: str
+    :keyword context: Represents the level at which operations take place, such as the document
+     root or document content (for example, /document or /document/content). The default is
+     /document.
+    :paramtype context: str
+    :keyword inputs: Required. Inputs of the skills could be a column in the source data set, or
+     the output of an upstream skill.
+    :paramtype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :keyword outputs: Required. The output of a skill is either a field in a search index, or a
+     value that can be consumed as an input by another skill.
+    :paramtype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
     """
 
     _validation = {
@@ -743,14 +747,14 @@ class CorsOptions(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param allowed_origins: Required. The list of origins from which JavaScript code will be
+    :keyword allowed_origins: Required. The list of origins from which JavaScript code will be
      granted access to your index. Can contain a list of hosts of the form
      {protocol}://{fully-qualified-domain-name}[:{port#}], or a single '*' to allow all origins (not
      recommended).
-    :type allowed_origins: list[str]
-    :param max_age_in_seconds: The duration for which browsers should cache CORS preflight
+    :paramtype allowed_origins: list[str]
+    :keyword max_age_in_seconds: The duration for which browsers should cache CORS preflight
      responses. Defaults to 5 minutes.
-    :type max_age_in_seconds: long
+    :paramtype max_age_in_seconds: long
     """
 
     _validation = {
@@ -779,13 +783,13 @@ class LexicalAnalyzer(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the analyzer.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the analyzer.Constant filled by
      server.
-    :type odata_type: str
-    :param name: Required. The name of the analyzer. It must only contain letters, digits, spaces,
-     dashes or underscores, can only start and end with alphanumeric characters, and is limited to
-     128 characters.
-    :type name: str
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the analyzer. It must only contain letters, digits,
+     spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
+     limited to 128 characters.
+    :paramtype name: str
     """
 
     _validation = {
@@ -816,27 +820,27 @@ class CustomAnalyzer(LexicalAnalyzer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the analyzer.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the analyzer.Constant filled by
      server.
-    :type odata_type: str
-    :param name: Required. The name of the analyzer. It must only contain letters, digits, spaces,
-     dashes or underscores, can only start and end with alphanumeric characters, and is limited to
-     128 characters.
-    :type name: str
-    :param tokenizer: Required. The name of the tokenizer to use to divide continuous text into a
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the analyzer. It must only contain letters, digits,
+     spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
+     limited to 128 characters.
+    :paramtype name: str
+    :keyword tokenizer: Required. The name of the tokenizer to use to divide continuous text into a
      sequence of tokens, such as breaking a sentence into words. Possible values include: "classic",
      "edgeNGram", "keyword_v2", "letter", "lowercase", "microsoft_language_tokenizer",
      "microsoft_language_stemming_tokenizer", "nGram", "path_hierarchy_v2", "pattern",
      "standard_v2", "uax_url_email", "whitespace".
-    :type tokenizer: str or ~azure.search.documents.indexes.models.LexicalTokenizerName
-    :param token_filters: A list of token filters used to filter out or modify the tokens generated
-     by a tokenizer. For example, you can specify a lowercase filter that converts all characters to
-     lowercase. The filters are run in the order in which they are listed.
-    :type token_filters: list[str or ~azure.search.documents.indexes.models.TokenFilterName]
-    :param char_filters: A list of character filters used to prepare input text before it is
+    :paramtype tokenizer: str or ~azure.search.documents.indexes.models.LexicalTokenizerName
+    :keyword token_filters: A list of token filters used to filter out or modify the tokens
+     generated by a tokenizer. For example, you can specify a lowercase filter that converts all
+     characters to lowercase. The filters are run in the order in which they are listed.
+    :paramtype token_filters: list[str or ~azure.search.documents.indexes.models.TokenFilterName]
+    :keyword char_filters: A list of character filters used to prepare input text before it is
      processed by the tokenizer. For instance, they can replace certain characters or symbols. The
      filters are run in the order in which they are listed.
-    :type char_filters: list[str or ~azure.search.documents.indexes.models.CharFilterName]
+    :paramtype char_filters: list[str or ~azure.search.documents.indexes.models.CharFilterName]
     """
 
     _validation = {
@@ -869,51 +873,51 @@ class CustomEntity(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The top-level entity descriptor. Matches in the skill output will be
+    :keyword name: Required. The top-level entity descriptor. Matches in the skill output will be
      grouped by this name, and it should represent the "normalized" form of the text being found.
-    :type name: str
-    :param description: This field can be used as a passthrough for custom metadata about the
+    :paramtype name: str
+    :keyword description: This field can be used as a passthrough for custom metadata about the
      matched text(s). The value of this field will appear with every match of its entity in the
      skill output.
-    :type description: str
-    :param type: This field can be used as a passthrough for custom metadata about the matched
+    :paramtype description: str
+    :keyword type: This field can be used as a passthrough for custom metadata about the matched
      text(s). The value of this field will appear with every match of its entity in the skill
      output.
-    :type type: str
-    :param subtype: This field can be used as a passthrough for custom metadata about the matched
+    :paramtype type: str
+    :keyword subtype: This field can be used as a passthrough for custom metadata about the matched
      text(s). The value of this field will appear with every match of its entity in the skill
      output.
-    :type subtype: str
-    :param id: This field can be used as a passthrough for custom metadata about the matched
+    :paramtype subtype: str
+    :keyword id: This field can be used as a passthrough for custom metadata about the matched
      text(s). The value of this field will appear with every match of its entity in the skill
      output.
-    :type id: str
-    :param case_sensitive: Defaults to false. Boolean value denoting whether comparisons with the
+    :paramtype id: str
+    :keyword case_sensitive: Defaults to false. Boolean value denoting whether comparisons with the
      entity name should be sensitive to character casing. Sample case insensitive matches of
      "Microsoft" could be: microsoft, microSoft, MICROSOFT.
-    :type case_sensitive: bool
-    :param accent_sensitive: Defaults to false. Boolean value denoting whether comparisons with the
-     entity name should be sensitive to accent.
-    :type accent_sensitive: bool
-    :param fuzzy_edit_distance: Defaults to 0. Maximum value of 5. Denotes the acceptable number of
-     divergent characters that would still constitute a match with the entity name. The smallest
+    :paramtype case_sensitive: bool
+    :keyword accent_sensitive: Defaults to false. Boolean value denoting whether comparisons with
+     the entity name should be sensitive to accent.
+    :paramtype accent_sensitive: bool
+    :keyword fuzzy_edit_distance: Defaults to 0. Maximum value of 5. Denotes the acceptable number
+     of divergent characters that would still constitute a match with the entity name. The smallest
      possible fuzziness for any given match is returned. For instance, if the edit distance is set
      to 3, "Windows10" would still match "Windows", "Windows10" and "Windows 7". When case
      sensitivity is set to false, case differences do NOT count towards fuzziness tolerance, but
      otherwise do.
-    :type fuzzy_edit_distance: int
-    :param default_case_sensitive: Changes the default case sensitivity value for this entity. It
+    :paramtype fuzzy_edit_distance: int
+    :keyword default_case_sensitive: Changes the default case sensitivity value for this entity. It
      be used to change the default value of all aliases caseSensitive values.
-    :type default_case_sensitive: bool
-    :param default_accent_sensitive: Changes the default accent sensitivity value for this entity.
-     It be used to change the default value of all aliases accentSensitive values.
-    :type default_accent_sensitive: bool
-    :param default_fuzzy_edit_distance: Changes the default fuzzy edit distance value for this
+    :paramtype default_case_sensitive: bool
+    :keyword default_accent_sensitive: Changes the default accent sensitivity value for this
+     entity. It be used to change the default value of all aliases accentSensitive values.
+    :paramtype default_accent_sensitive: bool
+    :keyword default_fuzzy_edit_distance: Changes the default fuzzy edit distance value for this
      entity. It can be used to change the default value of all aliases fuzzyEditDistance values.
-    :type default_fuzzy_edit_distance: int
-    :param aliases: An array of complex objects that can be used to specify alternative spellings
+    :paramtype default_fuzzy_edit_distance: int
+    :keyword aliases: An array of complex objects that can be used to specify alternative spellings
      or synonyms to the root entity name.
-    :type aliases: list[~azure.search.documents.indexes.models.CustomEntityAlias]
+    :paramtype aliases: list[~azure.search.documents.indexes.models.CustomEntityAlias]
     """
 
     _validation = {
@@ -959,14 +963,14 @@ class CustomEntityAlias(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param text: Required. The text of the alias.
-    :type text: str
-    :param case_sensitive: Determine if the alias is case sensitive.
-    :type case_sensitive: bool
-    :param accent_sensitive: Determine if the alias is accent sensitive.
-    :type accent_sensitive: bool
-    :param fuzzy_edit_distance: Determine the fuzzy edit distance of the alias.
-    :type fuzzy_edit_distance: int
+    :keyword text: Required. The text of the alias.
+    :paramtype text: str
+    :keyword case_sensitive: Determine if the alias is case sensitive.
+    :paramtype case_sensitive: bool
+    :keyword accent_sensitive: Determine if the alias is accent sensitive.
+    :paramtype accent_sensitive: bool
+    :keyword fuzzy_edit_distance: Determine the fuzzy edit distance of the alias.
+    :paramtype fuzzy_edit_distance: int
     """
 
     _validation = {
@@ -996,45 +1000,47 @@ class CustomEntityLookupSkill(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the skill.Constant filled by
      server.
-    :type odata_type: str
-    :param name: The name of the skill which uniquely identifies it within the skillset. A skill
+    :paramtype odata_type: str
+    :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
      prefixed with the character '#'.
-    :type name: str
-    :param description: The description of the skill which describes the inputs, outputs, and usage
-     of the skill.
-    :type description: str
-    :param context: Represents the level at which operations take place, such as the document root
-     or document content (for example, /document or /document/content). The default is /document.
-    :type context: str
-    :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
-     output of an upstream skill.
-    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :param outputs: Required. The output of a skill is either a field in a search index, or a value
-     that can be consumed as an input by another skill.
-    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
-    :param default_language_code: A value indicating which language code to use. Default is en.
+    :paramtype name: str
+    :keyword description: The description of the skill which describes the inputs, outputs, and
+     usage of the skill.
+    :paramtype description: str
+    :keyword context: Represents the level at which operations take place, such as the document
+     root or document content (for example, /document or /document/content). The default is
+     /document.
+    :paramtype context: str
+    :keyword inputs: Required. Inputs of the skills could be a column in the source data set, or
+     the output of an upstream skill.
+    :paramtype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :keyword outputs: Required. The output of a skill is either a field in a search index, or a
+     value that can be consumed as an input by another skill.
+    :paramtype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :keyword default_language_code: A value indicating which language code to use. Default is en.
      Possible values include: "da", "de", "en", "es", "fi", "fr", "it", "ko", "pt".
-    :type default_language_code: str or
+    :paramtype default_language_code: str or
      ~azure.search.documents.indexes.models.CustomEntityLookupSkillLanguage
-    :param entities_definition_uri: Path to a JSON or CSV file containing all the target text to
+    :keyword entities_definition_uri: Path to a JSON or CSV file containing all the target text to
      match against. This entity definition is read at the beginning of an indexer run. Any updates
      to this file during an indexer run will not take effect until subsequent runs. This config must
      be accessible over HTTPS.
-    :type entities_definition_uri: str
-    :param inline_entities_definition: The inline CustomEntity definition.
-    :type inline_entities_definition: list[~azure.search.documents.indexes.models.CustomEntity]
-    :param global_default_case_sensitive: A global flag for CaseSensitive. If CaseSensitive is not
-     set in CustomEntity, this value will be the default value.
-    :type global_default_case_sensitive: bool
-    :param global_default_accent_sensitive: A global flag for AccentSensitive. If AccentSensitive
+    :paramtype entities_definition_uri: str
+    :keyword inline_entities_definition: The inline CustomEntity definition.
+    :paramtype inline_entities_definition:
+     list[~azure.search.documents.indexes.models.CustomEntity]
+    :keyword global_default_case_sensitive: A global flag for CaseSensitive. If CaseSensitive is
+     not set in CustomEntity, this value will be the default value.
+    :paramtype global_default_case_sensitive: bool
+    :keyword global_default_accent_sensitive: A global flag for AccentSensitive. If AccentSensitive
      is not set in CustomEntity, this value will be the default value.
-    :type global_default_accent_sensitive: bool
-    :param global_default_fuzzy_edit_distance: A global flag for FuzzyEditDistance. If
+    :paramtype global_default_accent_sensitive: bool
+    :keyword global_default_fuzzy_edit_distance: A global flag for FuzzyEditDistance. If
      FuzzyEditDistance is not set in CustomEntity, this value will be the default value.
-    :type global_default_fuzzy_edit_distance: int
+    :paramtype global_default_fuzzy_edit_distance: int
     """
 
     _validation = {
@@ -1077,13 +1083,13 @@ class LexicalNormalizer(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the normalizer.
-    :type odata_type: str
-    :param name: Required. The name of the normalizer. It must only contain letters, digits,
+    :keyword odata_type: Required. Identifies the concrete type of the normalizer.
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the normalizer. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters. It cannot end in '.microsoft' nor '.lucene', nor be named
      'asciifolding', 'standard', 'lowercase', 'uppercase', or 'elision'.
-    :type name: str
+    :paramtype name: str
     """
 
     _validation = {
@@ -1110,21 +1116,21 @@ class CustomNormalizer(LexicalNormalizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the normalizer.
-    :type odata_type: str
-    :param name: Required. The name of the normalizer. It must only contain letters, digits,
+    :keyword odata_type: Required. Identifies the concrete type of the normalizer.
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the normalizer. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters. It cannot end in '.microsoft' nor '.lucene', nor be named
      'asciifolding', 'standard', 'lowercase', 'uppercase', or 'elision'.
-    :type name: str
-    :param token_filters: A list of token filters used to filter out or modify the input token. For
-     example, you can specify a lowercase filter that converts all characters to lowercase. The
+    :paramtype name: str
+    :keyword token_filters: A list of token filters used to filter out or modify the input token.
+     For example, you can specify a lowercase filter that converts all characters to lowercase. The
      filters are run in the order in which they are listed.
-    :type token_filters: list[str or ~azure.search.documents.indexes.models.TokenFilterName]
-    :param char_filters: A list of character filters used to prepare input text before it is
+    :paramtype token_filters: list[str or ~azure.search.documents.indexes.models.TokenFilterName]
+    :keyword char_filters: A list of character filters used to prepare input text before it is
      processed. For instance, they can replace certain characters or symbols. The filters are run in
      the order in which they are listed.
-    :type char_filters: list[str or ~azure.search.documents.indexes.models.CharFilterName]
+    :paramtype char_filters: list[str or ~azure.search.documents.indexes.models.CharFilterName]
     """
 
     _validation = {
@@ -1156,9 +1162,9 @@ class DataChangeDetectionPolicy(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the data change detection
+    :keyword odata_type: Required. Identifies the concrete type of the data change detection
      policy.Constant filled by server.
-    :type odata_type: str
+    :paramtype odata_type: str
     """
 
     _validation = {
@@ -1189,9 +1195,9 @@ class DataDeletionDetectionPolicy(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the data deletion detection
+    :keyword odata_type: Required. Identifies the concrete type of the data deletion detection
      policy.Constant filled by server.
-    :type odata_type: str
+    :paramtype odata_type: str
     """
 
     _validation = {
@@ -1217,9 +1223,9 @@ class DataDeletionDetectionPolicy(msrest.serialization.Model):
 class DataSourceCredentials(msrest.serialization.Model):
     """Represents credentials that can be used to connect to a datasource.
 
-    :param connection_string: The connection string for the datasource. Set to
+    :keyword connection_string: The connection string for the datasource. Set to
      ':code:`<unchanged>`' if you do not want the connection string updated.
-    :type connection_string: str
+    :paramtype connection_string: str
     """
 
     _attribute_map = {
@@ -1239,11 +1245,11 @@ class DefaultCognitiveServicesAccount(CognitiveServicesAccount):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the cognitive service resource
+    :keyword odata_type: Required. Identifies the concrete type of the cognitive service resource
      attached to a skillset.Constant filled by server.
-    :type odata_type: str
-    :param description: Description of the cognitive service resource attached to a skillset.
-    :type description: str
+    :paramtype odata_type: str
+    :keyword description: Description of the cognitive service resource attached to a skillset.
+    :paramtype description: str
     """
 
     _validation = {
@@ -1268,27 +1274,27 @@ class DictionaryDecompounderTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+    :keyword odata_type: Required. Identifies the concrete type of the token filter.Constant filled
      by server.
-    :type odata_type: str
-    :param name: Required. The name of the token filter. It must only contain letters, digits,
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters.
-    :type name: str
-    :param word_list: Required. The list of words to match against.
-    :type word_list: list[str]
-    :param min_word_size: The minimum word size. Only words longer than this get processed. Default
-     is 5. Maximum is 300.
-    :type min_word_size: int
-    :param min_subword_size: The minimum subword size. Only subwords longer than this are
+    :paramtype name: str
+    :keyword word_list: Required. The list of words to match against.
+    :paramtype word_list: list[str]
+    :keyword min_word_size: The minimum word size. Only words longer than this get processed.
+     Default is 5. Maximum is 300.
+    :paramtype min_word_size: int
+    :keyword min_subword_size: The minimum subword size. Only subwords longer than this are
      outputted. Default is 2. Maximum is 300.
-    :type min_subword_size: int
-    :param max_subword_size: The maximum subword size. Only subwords shorter than this are
+    :paramtype min_subword_size: int
+    :keyword max_subword_size: The maximum subword size. Only subwords shorter than this are
      outputted. Default is 15. Maximum is 300.
-    :type max_subword_size: int
-    :param only_longest_match: A value indicating whether to add only the longest matching subword
-     to the output. Default is false.
-    :type only_longest_match: bool
+    :paramtype max_subword_size: int
+    :keyword only_longest_match: A value indicating whether to add only the longest matching
+     subword to the output. Default is false.
+    :paramtype only_longest_match: bool
     """
 
     _validation = {
@@ -1331,18 +1337,19 @@ class ScoringFunction(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the type of function to use. Valid values include magnitude,
+    :keyword type: Required. Indicates the type of function to use. Valid values include magnitude,
      freshness, distance, and tag. The function type must be lower case.Constant filled by server.
-    :type type: str
-    :param field_name: Required. The name of the field used as input to the scoring function.
-    :type field_name: str
-    :param boost: Required. A multiplier for the raw score. Must be a positive number not equal to
-     1.0.
-    :type boost: float
-    :param interpolation: A value indicating how boosting will be interpolated across document
+    :paramtype type: str
+    :keyword field_name: Required. The name of the field used as input to the scoring function.
+    :paramtype field_name: str
+    :keyword boost: Required. A multiplier for the raw score. Must be a positive number not equal
+     to 1.0.
+    :paramtype boost: float
+    :keyword interpolation: A value indicating how boosting will be interpolated across document
      scores; defaults to "Linear". Possible values include: "linear", "constant", "quadratic",
      "logarithmic".
-    :type interpolation: str or ~azure.search.documents.indexes.models.ScoringFunctionInterpolation
+    :paramtype interpolation: str or
+     ~azure.search.documents.indexes.models.ScoringFunctionInterpolation
     """
 
     _validation = {
@@ -1378,20 +1385,21 @@ class DistanceScoringFunction(ScoringFunction):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the type of function to use. Valid values include magnitude,
+    :keyword type: Required. Indicates the type of function to use. Valid values include magnitude,
      freshness, distance, and tag. The function type must be lower case.Constant filled by server.
-    :type type: str
-    :param field_name: Required. The name of the field used as input to the scoring function.
-    :type field_name: str
-    :param boost: Required. A multiplier for the raw score. Must be a positive number not equal to
-     1.0.
-    :type boost: float
-    :param interpolation: A value indicating how boosting will be interpolated across document
+    :paramtype type: str
+    :keyword field_name: Required. The name of the field used as input to the scoring function.
+    :paramtype field_name: str
+    :keyword boost: Required. A multiplier for the raw score. Must be a positive number not equal
+     to 1.0.
+    :paramtype boost: float
+    :keyword interpolation: A value indicating how boosting will be interpolated across document
      scores; defaults to "Linear". Possible values include: "linear", "constant", "quadratic",
      "logarithmic".
-    :type interpolation: str or ~azure.search.documents.indexes.models.ScoringFunctionInterpolation
-    :param parameters: Required. Parameter values for the distance scoring function.
-    :type parameters: ~azure.search.documents.indexes.models.DistanceScoringParameters
+    :paramtype interpolation: str or
+     ~azure.search.documents.indexes.models.ScoringFunctionInterpolation
+    :keyword parameters: Required. Parameter values for the distance scoring function.
+    :paramtype parameters: ~azure.search.documents.indexes.models.DistanceScoringParameters
     """
 
     _validation = {
@@ -1423,12 +1431,12 @@ class DistanceScoringParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param reference_point_parameter: Required. The name of the parameter passed in search queries
-     to specify the reference location.
-    :type reference_point_parameter: str
-    :param boosting_distance: Required. The distance in kilometers from the reference location
+    :keyword reference_point_parameter: Required. The name of the parameter passed in search
+     queries to specify the reference location.
+    :paramtype reference_point_parameter: str
+    :keyword boosting_distance: Required. The distance in kilometers from the reference location
      where the boosting range ends.
-    :type boosting_distance: float
+    :paramtype boosting_distance: float
     """
 
     _validation = {
@@ -1455,32 +1463,33 @@ class DocumentExtractionSkill(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the skill.Constant filled by
      server.
-    :type odata_type: str
-    :param name: The name of the skill which uniquely identifies it within the skillset. A skill
+    :paramtype odata_type: str
+    :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
      prefixed with the character '#'.
-    :type name: str
-    :param description: The description of the skill which describes the inputs, outputs, and usage
-     of the skill.
-    :type description: str
-    :param context: Represents the level at which operations take place, such as the document root
-     or document content (for example, /document or /document/content). The default is /document.
-    :type context: str
-    :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
-     output of an upstream skill.
-    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :param outputs: Required. The output of a skill is either a field in a search index, or a value
-     that can be consumed as an input by another skill.
-    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
-    :param parsing_mode: The parsingMode for the skill. Will be set to 'default' if not defined.
-    :type parsing_mode: str
-    :param data_to_extract: The type of data to be extracted for the skill. Will be set to
+    :paramtype name: str
+    :keyword description: The description of the skill which describes the inputs, outputs, and
+     usage of the skill.
+    :paramtype description: str
+    :keyword context: Represents the level at which operations take place, such as the document
+     root or document content (for example, /document or /document/content). The default is
+     /document.
+    :paramtype context: str
+    :keyword inputs: Required. Inputs of the skills could be a column in the source data set, or
+     the output of an upstream skill.
+    :paramtype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :keyword outputs: Required. The output of a skill is either a field in a search index, or a
+     value that can be consumed as an input by another skill.
+    :paramtype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :keyword parsing_mode: The parsingMode for the skill. Will be set to 'default' if not defined.
+    :paramtype parsing_mode: str
+    :keyword data_to_extract: The type of data to be extracted for the skill. Will be set to
      'contentAndMetadata' if not defined.
-    :type data_to_extract: str
-    :param configuration: A dictionary of configurations for the skill.
-    :type configuration: dict[str, any]
+    :paramtype data_to_extract: str
+    :keyword configuration: A dictionary of configurations for the skill.
+    :paramtype configuration: dict[str, any]
     """
 
     _validation = {
@@ -1517,21 +1526,21 @@ class EdgeNGramTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+    :keyword odata_type: Required. Identifies the concrete type of the token filter.Constant filled
      by server.
-    :type odata_type: str
-    :param name: Required. The name of the token filter. It must only contain letters, digits,
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters.
-    :type name: str
-    :param min_gram: The minimum n-gram length. Default is 1. Must be less than the value of
+    :paramtype name: str
+    :keyword min_gram: The minimum n-gram length. Default is 1. Must be less than the value of
      maxGram.
-    :type min_gram: int
-    :param max_gram: The maximum n-gram length. Default is 2.
-    :type max_gram: int
-    :param side: Specifies which side of the input the n-gram should be generated from. Default is
-     "front". Possible values include: "front", "back".
-    :type side: str or ~azure.search.documents.indexes.models.EdgeNGramTokenFilterSide
+    :paramtype min_gram: int
+    :keyword max_gram: The maximum n-gram length. Default is 2.
+    :paramtype max_gram: int
+    :keyword side: Specifies which side of the input the n-gram should be generated from. Default
+     is "front". Possible values include: "front", "back".
+    :paramtype side: str or ~azure.search.documents.indexes.models.EdgeNGramTokenFilterSide
     """
 
     _validation = {
@@ -1563,21 +1572,21 @@ class EdgeNGramTokenFilterV2(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+    :keyword odata_type: Required. Identifies the concrete type of the token filter.Constant filled
      by server.
-    :type odata_type: str
-    :param name: Required. The name of the token filter. It must only contain letters, digits,
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters.
-    :type name: str
-    :param min_gram: The minimum n-gram length. Default is 1. Maximum is 300. Must be less than the
-     value of maxGram.
-    :type min_gram: int
-    :param max_gram: The maximum n-gram length. Default is 2. Maximum is 300.
-    :type max_gram: int
-    :param side: Specifies which side of the input the n-gram should be generated from. Default is
-     "front". Possible values include: "front", "back".
-    :type side: str or ~azure.search.documents.indexes.models.EdgeNGramTokenFilterSide
+    :paramtype name: str
+    :keyword min_gram: The minimum n-gram length. Default is 1. Maximum is 300. Must be less than
+     the value of maxGram.
+    :paramtype min_gram: int
+    :keyword max_gram: The maximum n-gram length. Default is 2. Maximum is 300.
+    :paramtype max_gram: int
+    :keyword side: Specifies which side of the input the n-gram should be generated from. Default
+     is "front". Possible values include: "front", "back".
+    :paramtype side: str or ~azure.search.documents.indexes.models.EdgeNGramTokenFilterSide
     """
 
     _validation = {
@@ -1611,20 +1620,20 @@ class EdgeNGramTokenizer(LexicalTokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
      server.
-    :type odata_type: str
-    :param name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
-     dashes or underscores, can only start and end with alphanumeric characters, and is limited to
-     128 characters.
-    :type name: str
-    :param min_gram: The minimum n-gram length. Default is 1. Maximum is 300. Must be less than the
-     value of maxGram.
-    :type min_gram: int
-    :param max_gram: The maximum n-gram length. Default is 2. Maximum is 300.
-    :type max_gram: int
-    :param token_chars: Character classes to keep in the tokens.
-    :type token_chars: list[str or ~azure.search.documents.indexes.models.TokenCharacterKind]
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the tokenizer. It must only contain letters, digits,
+     spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
+     limited to 128 characters.
+    :paramtype name: str
+    :keyword min_gram: The minimum n-gram length. Default is 1. Maximum is 300. Must be less than
+     the value of maxGram.
+    :paramtype min_gram: int
+    :keyword max_gram: The maximum n-gram length. Default is 2. Maximum is 300.
+    :paramtype max_gram: int
+    :keyword token_chars: Character classes to keep in the tokens.
+    :paramtype token_chars: list[str or ~azure.search.documents.indexes.models.TokenCharacterKind]
     """
 
     _validation = {
@@ -1658,15 +1667,15 @@ class ElisionTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+    :keyword odata_type: Required. Identifies the concrete type of the token filter.Constant filled
      by server.
-    :type odata_type: str
-    :param name: Required. The name of the token filter. It must only contain letters, digits,
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters.
-    :type name: str
-    :param articles: The set of articles to remove.
-    :type articles: list[str]
+    :paramtype name: str
+    :keyword articles: The set of articles to remove.
+    :paramtype articles: list[str]
     """
 
     _validation = {
@@ -1694,35 +1703,36 @@ class EntityLinkingSkill(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the skill.Constant filled by
      server.
-    :type odata_type: str
-    :param name: The name of the skill which uniquely identifies it within the skillset. A skill
+    :paramtype odata_type: str
+    :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
      prefixed with the character '#'.
-    :type name: str
-    :param description: The description of the skill which describes the inputs, outputs, and usage
-     of the skill.
-    :type description: str
-    :param context: Represents the level at which operations take place, such as the document root
-     or document content (for example, /document or /document/content). The default is /document.
-    :type context: str
-    :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
-     output of an upstream skill.
-    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :param outputs: Required. The output of a skill is either a field in a search index, or a value
-     that can be consumed as an input by another skill.
-    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
-    :param default_language_code: A value indicating which language code to use. Default is en.
-    :type default_language_code: str
-    :param minimum_precision: A value between 0 and 1 that be used to only include entities whose
+    :paramtype name: str
+    :keyword description: The description of the skill which describes the inputs, outputs, and
+     usage of the skill.
+    :paramtype description: str
+    :keyword context: Represents the level at which operations take place, such as the document
+     root or document content (for example, /document or /document/content). The default is
+     /document.
+    :paramtype context: str
+    :keyword inputs: Required. Inputs of the skills could be a column in the source data set, or
+     the output of an upstream skill.
+    :paramtype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :keyword outputs: Required. The output of a skill is either a field in a search index, or a
+     value that can be consumed as an input by another skill.
+    :paramtype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :keyword default_language_code: A value indicating which language code to use. Default is en.
+    :paramtype default_language_code: str
+    :keyword minimum_precision: A value between 0 and 1 that be used to only include entities whose
      confidence score is greater than the value specified. If not set (default), or if explicitly
      set to null, all entities will be included.
-    :type minimum_precision: float
-    :param model_version: The version of the model to use when calling the Text Analytics service.
-     It will default to the latest available when not specified. We recommend you do not specify
-     this value unless absolutely necessary.
-    :type model_version: str
+    :paramtype minimum_precision: float
+    :keyword model_version: The version of the model to use when calling the Text Analytics
+     service. It will default to the latest available when not specified. We recommend you do not
+     specify this value unless absolutely necessary.
+    :paramtype model_version: str
     """
 
     _validation = {
@@ -1760,41 +1770,42 @@ class EntityRecognitionSkill(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the skill.Constant filled by
      server.
-    :type odata_type: str
-    :param name: The name of the skill which uniquely identifies it within the skillset. A skill
+    :paramtype odata_type: str
+    :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
      prefixed with the character '#'.
-    :type name: str
-    :param description: The description of the skill which describes the inputs, outputs, and usage
-     of the skill.
-    :type description: str
-    :param context: Represents the level at which operations take place, such as the document root
-     or document content (for example, /document or /document/content). The default is /document.
-    :type context: str
-    :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
-     output of an upstream skill.
-    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :param outputs: Required. The output of a skill is either a field in a search index, or a value
-     that can be consumed as an input by another skill.
-    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
-    :param categories: A list of entity categories that should be extracted.
-    :type categories: list[str or ~azure.search.documents.indexes.models.EntityCategory]
-    :param default_language_code: A value indicating which language code to use. Default is en.
+    :paramtype name: str
+    :keyword description: The description of the skill which describes the inputs, outputs, and
+     usage of the skill.
+    :paramtype description: str
+    :keyword context: Represents the level at which operations take place, such as the document
+     root or document content (for example, /document or /document/content). The default is
+     /document.
+    :paramtype context: str
+    :keyword inputs: Required. Inputs of the skills could be a column in the source data set, or
+     the output of an upstream skill.
+    :paramtype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :keyword outputs: Required. The output of a skill is either a field in a search index, or a
+     value that can be consumed as an input by another skill.
+    :paramtype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :keyword categories: A list of entity categories that should be extracted.
+    :paramtype categories: list[str or ~azure.search.documents.indexes.models.EntityCategory]
+    :keyword default_language_code: A value indicating which language code to use. Default is en.
      Possible values include: "ar", "cs", "zh-Hans", "zh-Hant", "da", "nl", "en", "fi", "fr", "de",
      "el", "hu", "it", "ja", "ko", "no", "pl", "pt-PT", "pt-BR", "ru", "es", "sv", "tr".
-    :type default_language_code: str or
+    :paramtype default_language_code: str or
      ~azure.search.documents.indexes.models.EntityRecognitionSkillLanguage
-    :param include_typeless_entities: Determines whether or not to include entities which are well
-     known but don't conform to a pre-defined type. If this configuration is not set (default), set
-     to null or set to false, entities which don't conform to one of the pre-defined types will not
-     be surfaced.
-    :type include_typeless_entities: bool
-    :param minimum_precision: A value between 0 and 1 that be used to only include entities whose
+    :keyword include_typeless_entities: Determines whether or not to include entities which are
+     well known but don't conform to a pre-defined type. If this configuration is not set (default),
+     set to null or set to false, entities which don't conform to one of the pre-defined types will
+     not be surfaced.
+    :paramtype include_typeless_entities: bool
+    :keyword minimum_precision: A value between 0 and 1 that be used to only include entities whose
      confidence score is greater than the value specified. If not set (default), or if explicitly
      set to null, all entities will be included.
-    :type minimum_precision: float
+    :paramtype minimum_precision: float
     """
 
     _validation = {
@@ -1833,37 +1844,38 @@ class EntityRecognitionSkillV3(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the skill.Constant filled by
      server.
-    :type odata_type: str
-    :param name: The name of the skill which uniquely identifies it within the skillset. A skill
+    :paramtype odata_type: str
+    :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
      prefixed with the character '#'.
-    :type name: str
-    :param description: The description of the skill which describes the inputs, outputs, and usage
-     of the skill.
-    :type description: str
-    :param context: Represents the level at which operations take place, such as the document root
-     or document content (for example, /document or /document/content). The default is /document.
-    :type context: str
-    :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
-     output of an upstream skill.
-    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :param outputs: Required. The output of a skill is either a field in a search index, or a value
-     that can be consumed as an input by another skill.
-    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
-    :param categories: A list of entity categories that should be extracted.
-    :type categories: list[str]
-    :param default_language_code: A value indicating which language code to use. Default is en.
-    :type default_language_code: str
-    :param minimum_precision: A value between 0 and 1 that be used to only include entities whose
+    :paramtype name: str
+    :keyword description: The description of the skill which describes the inputs, outputs, and
+     usage of the skill.
+    :paramtype description: str
+    :keyword context: Represents the level at which operations take place, such as the document
+     root or document content (for example, /document or /document/content). The default is
+     /document.
+    :paramtype context: str
+    :keyword inputs: Required. Inputs of the skills could be a column in the source data set, or
+     the output of an upstream skill.
+    :paramtype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :keyword outputs: Required. The output of a skill is either a field in a search index, or a
+     value that can be consumed as an input by another skill.
+    :paramtype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :keyword categories: A list of entity categories that should be extracted.
+    :paramtype categories: list[str]
+    :keyword default_language_code: A value indicating which language code to use. Default is en.
+    :paramtype default_language_code: str
+    :keyword minimum_precision: A value between 0 and 1 that be used to only include entities whose
      confidence score is greater than the value specified. If not set (default), or if explicitly
      set to null, all entities will be included.
-    :type minimum_precision: float
-    :param model_version: The version of the model to use when calling the Text Analytics service.
-     It will default to the latest available when not specified. We recommend you do not specify
-     this value unless absolutely necessary.
-    :type model_version: str
+    :paramtype minimum_precision: float
+    :keyword model_version: The version of the model to use when calling the Text Analytics
+     service. It will default to the latest available when not specified. We recommend you do not
+     specify this value unless absolutely necessary.
+    :paramtype model_version: str
     """
 
     _validation = {
@@ -1903,13 +1915,13 @@ class FieldMapping(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param source_field_name: Required. The name of the field in the data source.
-    :type source_field_name: str
-    :param target_field_name: The name of the target field in the index. Same as the source field
+    :keyword source_field_name: Required. The name of the field in the data source.
+    :paramtype source_field_name: str
+    :keyword target_field_name: The name of the target field in the index. Same as the source field
      name by default.
-    :type target_field_name: str
-    :param mapping_function: A function to apply to each source field value before indexing.
-    :type mapping_function: ~azure.search.documents.indexes.models.FieldMappingFunction
+    :paramtype target_field_name: str
+    :keyword mapping_function: A function to apply to each source field value before indexing.
+    :paramtype mapping_function: ~azure.search.documents.indexes.models.FieldMappingFunction
     """
 
     _validation = {
@@ -1937,11 +1949,11 @@ class FieldMappingFunction(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the field mapping function.
-    :type name: str
-    :param parameters: A dictionary of parameter name/value pairs to pass to the function. Each
+    :keyword name: Required. The name of the field mapping function.
+    :paramtype name: str
+    :keyword parameters: A dictionary of parameter name/value pairs to pass to the function. Each
      value must be of a primitive type.
-    :type parameters: dict[str, any]
+    :paramtype parameters: dict[str, any]
     """
 
     _validation = {
@@ -1967,20 +1979,21 @@ class FreshnessScoringFunction(ScoringFunction):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the type of function to use. Valid values include magnitude,
+    :keyword type: Required. Indicates the type of function to use. Valid values include magnitude,
      freshness, distance, and tag. The function type must be lower case.Constant filled by server.
-    :type type: str
-    :param field_name: Required. The name of the field used as input to the scoring function.
-    :type field_name: str
-    :param boost: Required. A multiplier for the raw score. Must be a positive number not equal to
-     1.0.
-    :type boost: float
-    :param interpolation: A value indicating how boosting will be interpolated across document
+    :paramtype type: str
+    :keyword field_name: Required. The name of the field used as input to the scoring function.
+    :paramtype field_name: str
+    :keyword boost: Required. A multiplier for the raw score. Must be a positive number not equal
+     to 1.0.
+    :paramtype boost: float
+    :keyword interpolation: A value indicating how boosting will be interpolated across document
      scores; defaults to "Linear". Possible values include: "linear", "constant", "quadratic",
      "logarithmic".
-    :type interpolation: str or ~azure.search.documents.indexes.models.ScoringFunctionInterpolation
-    :param parameters: Required. Parameter values for the freshness scoring function.
-    :type parameters: ~azure.search.documents.indexes.models.FreshnessScoringParameters
+    :paramtype interpolation: str or
+     ~azure.search.documents.indexes.models.ScoringFunctionInterpolation
+    :keyword parameters: Required. Parameter values for the freshness scoring function.
+    :paramtype parameters: ~azure.search.documents.indexes.models.FreshnessScoringParameters
     """
 
     _validation = {
@@ -2012,9 +2025,9 @@ class FreshnessScoringParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param boosting_duration: Required. The expiration period after which boosting will stop for a
-     particular document.
-    :type boosting_duration: ~datetime.timedelta
+    :keyword boosting_duration: Required. The expiration period after which boosting will stop for
+     a particular document.
+    :paramtype boosting_duration: ~datetime.timedelta
     """
 
     _validation = {
@@ -2070,11 +2083,11 @@ class HighWaterMarkChangeDetectionPolicy(DataChangeDetectionPolicy):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the data change detection
+    :keyword odata_type: Required. Identifies the concrete type of the data change detection
      policy.Constant filled by server.
-    :type odata_type: str
-    :param high_water_mark_column_name: Required. The name of the high water mark column.
-    :type high_water_mark_column_name: str
+    :paramtype odata_type: str
+    :keyword high_water_mark_column_name: Required. The name of the high water mark column.
+    :paramtype high_water_mark_column_name: str
     """
 
     _validation = {
@@ -2101,33 +2114,34 @@ class ImageAnalysisSkill(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the skill.Constant filled by
      server.
-    :type odata_type: str
-    :param name: The name of the skill which uniquely identifies it within the skillset. A skill
+    :paramtype odata_type: str
+    :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
      prefixed with the character '#'.
-    :type name: str
-    :param description: The description of the skill which describes the inputs, outputs, and usage
-     of the skill.
-    :type description: str
-    :param context: Represents the level at which operations take place, such as the document root
-     or document content (for example, /document or /document/content). The default is /document.
-    :type context: str
-    :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
-     output of an upstream skill.
-    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :param outputs: Required. The output of a skill is either a field in a search index, or a value
-     that can be consumed as an input by another skill.
-    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
-    :param default_language_code: A value indicating which language code to use. Default is en.
+    :paramtype name: str
+    :keyword description: The description of the skill which describes the inputs, outputs, and
+     usage of the skill.
+    :paramtype description: str
+    :keyword context: Represents the level at which operations take place, such as the document
+     root or document content (for example, /document or /document/content). The default is
+     /document.
+    :paramtype context: str
+    :keyword inputs: Required. Inputs of the skills could be a column in the source data set, or
+     the output of an upstream skill.
+    :paramtype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :keyword outputs: Required. The output of a skill is either a field in a search index, or a
+     value that can be consumed as an input by another skill.
+    :paramtype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :keyword default_language_code: A value indicating which language code to use. Default is en.
      Possible values include: "en", "es", "ja", "pt", "zh".
-    :type default_language_code: str or
+    :paramtype default_language_code: str or
      ~azure.search.documents.indexes.models.ImageAnalysisSkillLanguage
-    :param visual_features: A list of visual features.
-    :type visual_features: list[str or ~azure.search.documents.indexes.models.VisualFeature]
-    :param details: A string indicating which domain-specific details to return.
-    :type details: list[str or ~azure.search.documents.indexes.models.ImageDetail]
+    :keyword visual_features: A list of visual features.
+    :paramtype visual_features: list[str or ~azure.search.documents.indexes.models.VisualFeature]
+    :keyword details: A string indicating which domain-specific details to return.
+    :paramtype details: list[str or ~azure.search.documents.indexes.models.ImageDetail]
     """
 
     _validation = {
@@ -2159,6 +2173,70 @@ class ImageAnalysisSkill(SearchIndexerSkill):
         self.details = kwargs.get('details', None)
 
 
+class IndexerCurrentState(msrest.serialization.Model):
+    """Represents all of the state that defines and dictates the indexer's current execution.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar mode: The mode the indexer is running in. Possible values include: "indexingAllDocs",
+     "indexingResetDocs".
+    :vartype mode: str or ~azure.search.documents.indexes.models.IndexingMode
+    :ivar all_docs_initial_change_tracking_state: Change tracking state used when indexing starts
+     on all documents in the datasource.
+    :vartype all_docs_initial_change_tracking_state: str
+    :ivar all_docs_final_change_tracking_state: Change tracking state value when indexing finishes
+     on all documents in the datasource.
+    :vartype all_docs_final_change_tracking_state: str
+    :ivar reset_docs_initial_change_tracking_state: Change tracking state used when indexing starts
+     on select, reset documents in the datasource.
+    :vartype reset_docs_initial_change_tracking_state: str
+    :ivar reset_docs_final_change_tracking_state: Change tracking state value when indexing
+     finishes on select, reset documents in the datasource.
+    :vartype reset_docs_final_change_tracking_state: str
+    :ivar reset_document_keys: The list of document keys that have been reset. The document key is
+     the document's unique identifier for the data in the search index. The indexer will prioritize
+     selectively re-ingesting these keys.
+    :vartype reset_document_keys: list[str]
+    :ivar reset_datasource_document_ids: The list of datasource document ids that have been reset.
+     The datasource document id is the unique identifier for the data in the datasource. The indexer
+     will prioritize selectively re-ingesting these ids.
+    :vartype reset_datasource_document_ids: list[str]
+    """
+
+    _validation = {
+        'mode': {'readonly': True},
+        'all_docs_initial_change_tracking_state': {'readonly': True},
+        'all_docs_final_change_tracking_state': {'readonly': True},
+        'reset_docs_initial_change_tracking_state': {'readonly': True},
+        'reset_docs_final_change_tracking_state': {'readonly': True},
+        'reset_document_keys': {'readonly': True},
+        'reset_datasource_document_ids': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'mode': {'key': 'mode', 'type': 'str'},
+        'all_docs_initial_change_tracking_state': {'key': 'allDocsInitialChangeTrackingState', 'type': 'str'},
+        'all_docs_final_change_tracking_state': {'key': 'allDocsFinalChangeTrackingState', 'type': 'str'},
+        'reset_docs_initial_change_tracking_state': {'key': 'resetDocsInitialChangeTrackingState', 'type': 'str'},
+        'reset_docs_final_change_tracking_state': {'key': 'resetDocsFinalChangeTrackingState', 'type': 'str'},
+        'reset_document_keys': {'key': 'resetDocumentKeys', 'type': '[str]'},
+        'reset_datasource_document_ids': {'key': 'resetDatasourceDocumentIds', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(IndexerCurrentState, self).__init__(**kwargs)
+        self.mode = None
+        self.all_docs_initial_change_tracking_state = None
+        self.all_docs_final_change_tracking_state = None
+        self.reset_docs_initial_change_tracking_state = None
+        self.reset_docs_final_change_tracking_state = None
+        self.reset_document_keys = None
+        self.reset_datasource_document_ids = None
+
+
 class IndexerExecutionResult(msrest.serialization.Model):
     """Represents the result of an individual indexer execution.
 
@@ -2169,6 +2247,13 @@ class IndexerExecutionResult(msrest.serialization.Model):
     :ivar status: Required. The outcome of this indexer execution. Possible values include:
      "transientFailure", "success", "inProgress", "reset".
     :vartype status: str or ~azure.search.documents.indexes.models.IndexerExecutionStatus
+    :ivar status_detail: The outcome of this indexer execution. Possible values include:
+     "resetDocs".
+    :vartype status_detail: str or
+     ~azure.search.documents.indexes.models.IndexerExecutionStatusDetail
+    :ivar current_state: All of the state that defines and dictates the indexer's current
+     execution.
+    :vartype current_state: ~azure.search.documents.indexes.models.IndexerCurrentState
     :ivar error_message: The error message indicating the top-level error, if any.
     :vartype error_message: str
     :ivar start_time: The start time of this indexer execution.
@@ -2194,6 +2279,8 @@ class IndexerExecutionResult(msrest.serialization.Model):
 
     _validation = {
         'status': {'required': True, 'readonly': True},
+        'status_detail': {'readonly': True},
+        'current_state': {'readonly': True},
         'error_message': {'readonly': True},
         'start_time': {'readonly': True},
         'end_time': {'readonly': True},
@@ -2207,6 +2294,8 @@ class IndexerExecutionResult(msrest.serialization.Model):
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'str'},
+        'status_detail': {'key': 'statusDetail', 'type': 'str'},
+        'current_state': {'key': 'currentState', 'type': 'IndexerCurrentState'},
         'error_message': {'key': 'errorMessage', 'type': 'str'},
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
         'end_time': {'key': 'endTime', 'type': 'iso-8601'},
@@ -2224,6 +2313,8 @@ class IndexerExecutionResult(msrest.serialization.Model):
     ):
         super(IndexerExecutionResult, self).__init__(**kwargs)
         self.status = None
+        self.status_detail = None
+        self.current_state = None
         self.error_message = None
         self.start_time = None
         self.end_time = None
@@ -2238,18 +2329,19 @@ class IndexerExecutionResult(msrest.serialization.Model):
 class IndexingParameters(msrest.serialization.Model):
     """Represents parameters for indexer execution.
 
-    :param batch_size: The number of items that are read from the data source and indexed as a
+    :keyword batch_size: The number of items that are read from the data source and indexed as a
      single batch in order to improve performance. The default depends on the data source type.
-    :type batch_size: int
-    :param max_failed_items: The maximum number of items that can fail indexing for indexer
+    :paramtype batch_size: int
+    :keyword max_failed_items: The maximum number of items that can fail indexing for indexer
      execution to still be considered successful. -1 means no limit. Default is 0.
-    :type max_failed_items: int
-    :param max_failed_items_per_batch: The maximum number of items in a single batch that can fail
-     indexing for the batch to still be considered successful. -1 means no limit. Default is 0.
-    :type max_failed_items_per_batch: int
-    :param configuration: A dictionary of indexer-specific configuration properties. Each name is
+    :paramtype max_failed_items: int
+    :keyword max_failed_items_per_batch: The maximum number of items in a single batch that can
+     fail indexing for the batch to still be considered successful. -1 means no limit. Default is 0.
+    :paramtype max_failed_items_per_batch: int
+    :keyword configuration: A dictionary of indexer-specific configuration properties. Each name is
      the name of a specific property. Each value must be of a primitive type.
-    :type configuration: ~azure.search.documents.indexes.models.IndexingParametersConfiguration
+    :paramtype configuration:
+     ~azure.search.documents.indexes.models.IndexingParametersConfiguration
     """
 
     _attribute_map = {
@@ -2273,72 +2365,73 @@ class IndexingParameters(msrest.serialization.Model):
 class IndexingParametersConfiguration(msrest.serialization.Model):
     """A dictionary of indexer-specific configuration properties. Each name is the name of a specific property. Each value must be of a primitive type.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :keyword additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
-    :param parsing_mode: Represents the parsing mode for indexing from an Azure blob data source.
+    :paramtype additional_properties: dict[str, any]
+    :keyword parsing_mode: Represents the parsing mode for indexing from an Azure blob data source.
      Possible values include: "default", "text", "delimitedText", "json", "jsonArray", "jsonLines".
      Default value: "default".
-    :type parsing_mode: str or ~azure.search.documents.indexes.models.BlobIndexerParsingMode
-    :param excluded_file_name_extensions: Comma-delimited list of filename extensions to ignore
+    :paramtype parsing_mode: str or ~azure.search.documents.indexes.models.BlobIndexerParsingMode
+    :keyword excluded_file_name_extensions: Comma-delimited list of filename extensions to ignore
      when processing from Azure blob storage.  For example, you could exclude ".png, .mp4" to skip
      over those files during indexing.
-    :type excluded_file_name_extensions: str
-    :param indexed_file_name_extensions: Comma-delimited list of filename extensions to select when
-     processing from Azure blob storage.  For example, you could focus indexing on specific
+    :paramtype excluded_file_name_extensions: str
+    :keyword indexed_file_name_extensions: Comma-delimited list of filename extensions to select
+     when processing from Azure blob storage.  For example, you could focus indexing on specific
      application files ".docx, .pptx, .msg" to specifically include those file types.
-    :type indexed_file_name_extensions: str
-    :param fail_on_unsupported_content_type: For Azure blobs, set to false if you want to continue
-     indexing when an unsupported content type is encountered, and you don't know all the content
-     types (file extensions) in advance.
-    :type fail_on_unsupported_content_type: bool
-    :param fail_on_unprocessable_document: For Azure blobs, set to false if you want to continue
+    :paramtype indexed_file_name_extensions: str
+    :keyword fail_on_unsupported_content_type: For Azure blobs, set to false if you want to
+     continue indexing when an unsupported content type is encountered, and you don't know all the
+     content types (file extensions) in advance.
+    :paramtype fail_on_unsupported_content_type: bool
+    :keyword fail_on_unprocessable_document: For Azure blobs, set to false if you want to continue
      indexing if a document fails indexing.
-    :type fail_on_unprocessable_document: bool
-    :param index_storage_metadata_only_for_oversized_documents: For Azure blobs, set this property
-     to true to still index storage metadata for blob content that is too large to process.
+    :paramtype fail_on_unprocessable_document: bool
+    :keyword index_storage_metadata_only_for_oversized_documents: For Azure blobs, set this
+     property to true to still index storage metadata for blob content that is too large to process.
      Oversized blobs are treated as errors by default. For limits on blob size, see
      https://docs.microsoft.com/azure/search/search-limits-quotas-capacity.
-    :type index_storage_metadata_only_for_oversized_documents: bool
-    :param delimited_text_headers: For CSV blobs, specifies a comma-delimited list of column
+    :paramtype index_storage_metadata_only_for_oversized_documents: bool
+    :keyword delimited_text_headers: For CSV blobs, specifies a comma-delimited list of column
      headers, useful for mapping source fields to destination fields in an index.
-    :type delimited_text_headers: str
-    :param delimited_text_delimiter: For CSV blobs, specifies the end-of-line single-character
+    :paramtype delimited_text_headers: str
+    :keyword delimited_text_delimiter: For CSV blobs, specifies the end-of-line single-character
      delimiter for CSV files where each line starts a new document (for example, "|").
-    :type delimited_text_delimiter: str
-    :param first_line_contains_headers: For CSV blobs, indicates that the first (non-blank) line of
-     each blob contains headers.
-    :type first_line_contains_headers: bool
-    :param document_root: For JSON arrays, given a structured or semi-structured document, you can
-     specify a path to the array using this property.
-    :type document_root: str
-    :param data_to_extract: Specifies the data to extract from Azure blob storage and tells the
+    :paramtype delimited_text_delimiter: str
+    :keyword first_line_contains_headers: For CSV blobs, indicates that the first (non-blank) line
+     of each blob contains headers.
+    :paramtype first_line_contains_headers: bool
+    :keyword document_root: For JSON arrays, given a structured or semi-structured document, you
+     can specify a path to the array using this property.
+    :paramtype document_root: str
+    :keyword data_to_extract: Specifies the data to extract from Azure blob storage and tells the
      indexer which data to extract from image content when "imageAction" is set to a value other
      than "none".  This applies to embedded image content in a .PDF or other application, or image
      files such as .jpg and .png, in Azure blobs. Possible values include: "storageMetadata",
      "allMetadata", "contentAndMetadata". Default value: "contentAndMetadata".
-    :type data_to_extract: str or ~azure.search.documents.indexes.models.BlobIndexerDataToExtract
-    :param image_action: Determines how to process embedded images and image files in Azure blob
+    :paramtype data_to_extract: str or
+     ~azure.search.documents.indexes.models.BlobIndexerDataToExtract
+    :keyword image_action: Determines how to process embedded images and image files in Azure blob
      storage.  Setting the "imageAction" configuration to any value other than "none" requires that
      a skillset also be attached to that indexer. Possible values include: "none",
      "generateNormalizedImages", "generateNormalizedImagePerPage". Default value: "none".
-    :type image_action: str or ~azure.search.documents.indexes.models.BlobIndexerImageAction
-    :param allow_skillset_to_read_file_data: If true, will create a path //document//file_data that
-     is an object representing the original file data downloaded from your blob data source.  This
-     allows you to pass the original file data to a custom skill for processing within the
+    :paramtype image_action: str or ~azure.search.documents.indexes.models.BlobIndexerImageAction
+    :keyword allow_skillset_to_read_file_data: If true, will create a path //document//file_data
+     that is an object representing the original file data downloaded from your blob data source.
+     This allows you to pass the original file data to a custom skill for processing within the
      enrichment pipeline, or to the Document Extraction skill.
-    :type allow_skillset_to_read_file_data: bool
-    :param pdf_text_rotation_algorithm: Determines algorithm for text extraction from PDF files in
-     Azure blob storage. Possible values include: "none", "detectAngles". Default value: "none".
-    :type pdf_text_rotation_algorithm: str or
+    :paramtype allow_skillset_to_read_file_data: bool
+    :keyword pdf_text_rotation_algorithm: Determines algorithm for text extraction from PDF files
+     in Azure blob storage. Possible values include: "none", "detectAngles". Default value: "none".
+    :paramtype pdf_text_rotation_algorithm: str or
      ~azure.search.documents.indexes.models.BlobIndexerPDFTextRotationAlgorithm
-    :param execution_environment: Specifies the environment in which the indexer should execute.
+    :keyword execution_environment: Specifies the environment in which the indexer should execute.
      Possible values include: "standard", "private". Default value: "standard".
-    :type execution_environment: str or
+    :paramtype execution_environment: str or
      ~azure.search.documents.indexes.models.IndexerExecutionEnvironment
-    :param query_timeout: Increases the timeout beyond the 5-minute default for Azure SQL database
-     data sources, specified in the format "hh:mm:ss".
-    :type query_timeout: str
+    :keyword query_timeout: Increases the timeout beyond the 5-minute default for Azure SQL
+     database data sources, specified in the format "hh:mm:ss".
+    :paramtype query_timeout: str
     """
 
     _attribute_map = {
@@ -2390,10 +2483,10 @@ class IndexingSchedule(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param interval: Required. The interval of time between indexer executions.
-    :type interval: ~datetime.timedelta
-    :param start_time: The time when an indexer should start running.
-    :type start_time: ~datetime.datetime
+    :keyword interval: Required. The interval of time between indexer executions.
+    :paramtype interval: ~datetime.timedelta
+    :keyword start_time: The time when an indexer should start running.
+    :paramtype start_time: ~datetime.datetime
     """
 
     _validation = {
@@ -2419,14 +2512,14 @@ class InputFieldMappingEntry(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the input.
-    :type name: str
-    :param source: The source of the input.
-    :type source: str
-    :param source_context: The source context used for selecting recursive inputs.
-    :type source_context: str
-    :param inputs: The recursive inputs used when creating a complex type.
-    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :keyword name: Required. The name of the input.
+    :paramtype name: str
+    :keyword source: The source of the input.
+    :paramtype source: str
+    :keyword source_context: The source context used for selecting recursive inputs.
+    :paramtype source_context: str
+    :keyword inputs: The recursive inputs used when creating a complex type.
+    :paramtype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
     """
 
     _validation = {
@@ -2456,18 +2549,18 @@ class KeepTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+    :keyword odata_type: Required. Identifies the concrete type of the token filter.Constant filled
      by server.
-    :type odata_type: str
-    :param name: Required. The name of the token filter. It must only contain letters, digits,
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters.
-    :type name: str
-    :param keep_words: Required. The list of words to keep.
-    :type keep_words: list[str]
-    :param lower_case_keep_words: A value indicating whether to lower case all words first. Default
-     is false.
-    :type lower_case_keep_words: bool
+    :paramtype name: str
+    :keyword keep_words: Required. The list of words to keep.
+    :paramtype keep_words: list[str]
+    :keyword lower_case_keep_words: A value indicating whether to lower case all words first.
+     Default is false.
+    :paramtype lower_case_keep_words: bool
     """
 
     _validation = {
@@ -2498,37 +2591,38 @@ class KeyPhraseExtractionSkill(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the skill.Constant filled by
      server.
-    :type odata_type: str
-    :param name: The name of the skill which uniquely identifies it within the skillset. A skill
+    :paramtype odata_type: str
+    :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
      prefixed with the character '#'.
-    :type name: str
-    :param description: The description of the skill which describes the inputs, outputs, and usage
-     of the skill.
-    :type description: str
-    :param context: Represents the level at which operations take place, such as the document root
-     or document content (for example, /document or /document/content). The default is /document.
-    :type context: str
-    :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
-     output of an upstream skill.
-    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :param outputs: Required. The output of a skill is either a field in a search index, or a value
-     that can be consumed as an input by another skill.
-    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
-    :param default_language_code: A value indicating which language code to use. Default is en.
+    :paramtype name: str
+    :keyword description: The description of the skill which describes the inputs, outputs, and
+     usage of the skill.
+    :paramtype description: str
+    :keyword context: Represents the level at which operations take place, such as the document
+     root or document content (for example, /document or /document/content). The default is
+     /document.
+    :paramtype context: str
+    :keyword inputs: Required. Inputs of the skills could be a column in the source data set, or
+     the output of an upstream skill.
+    :paramtype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :keyword outputs: Required. The output of a skill is either a field in a search index, or a
+     value that can be consumed as an input by another skill.
+    :paramtype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :keyword default_language_code: A value indicating which language code to use. Default is en.
      Possible values include: "da", "nl", "en", "fi", "fr", "de", "it", "ja", "ko", "no", "pl",
      "pt-PT", "pt-BR", "ru", "es", "sv".
-    :type default_language_code: str or
+    :paramtype default_language_code: str or
      ~azure.search.documents.indexes.models.KeyPhraseExtractionSkillLanguage
-    :param max_key_phrase_count: A number indicating how many key phrases to return. If absent, all
-     identified key phrases will be returned.
-    :type max_key_phrase_count: int
-    :param model_version: The version of the model to use when calling the Text Analytics service.
-     It will default to the latest available when not specified. We recommend you do not specify
-     this value unless absolutely necessary.
-    :type model_version: str
+    :keyword max_key_phrase_count: A number indicating how many key phrases to return. If absent,
+     all identified key phrases will be returned.
+    :paramtype max_key_phrase_count: int
+    :keyword model_version: The version of the model to use when calling the Text Analytics
+     service. It will default to the latest available when not specified. We recommend you do not
+     specify this value unless absolutely necessary.
+    :paramtype model_version: str
     """
 
     _validation = {
@@ -2565,18 +2659,18 @@ class KeywordMarkerTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+    :keyword odata_type: Required. Identifies the concrete type of the token filter.Constant filled
      by server.
-    :type odata_type: str
-    :param name: Required. The name of the token filter. It must only contain letters, digits,
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters.
-    :type name: str
-    :param keywords: Required. A list of words to mark as keywords.
-    :type keywords: list[str]
-    :param ignore_case: A value indicating whether to ignore case. If true, all words are converted
-     to lower case first. Default is false.
-    :type ignore_case: bool
+    :paramtype name: str
+    :keyword keywords: Required. A list of words to mark as keywords.
+    :paramtype keywords: list[str]
+    :keyword ignore_case: A value indicating whether to ignore case. If true, all words are
+     converted to lower case first. Default is false.
+    :paramtype ignore_case: bool
     """
 
     _validation = {
@@ -2607,15 +2701,15 @@ class KeywordTokenizer(LexicalTokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
      server.
-    :type odata_type: str
-    :param name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
-     dashes or underscores, can only start and end with alphanumeric characters, and is limited to
-     128 characters.
-    :type name: str
-    :param buffer_size: The read buffer size in bytes. Default is 256.
-    :type buffer_size: int
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the tokenizer. It must only contain letters, digits,
+     spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
+     limited to 128 characters.
+    :paramtype name: str
+    :keyword buffer_size: The read buffer size in bytes. Default is 256.
+    :paramtype buffer_size: int
     """
 
     _validation = {
@@ -2643,16 +2737,16 @@ class KeywordTokenizerV2(LexicalTokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
      server.
-    :type odata_type: str
-    :param name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
-     dashes or underscores, can only start and end with alphanumeric characters, and is limited to
-     128 characters.
-    :type name: str
-    :param max_token_length: The maximum token length. Default is 256. Tokens longer than the
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the tokenizer. It must only contain letters, digits,
+     spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
+     limited to 128 characters.
+    :paramtype name: str
+    :keyword max_token_length: The maximum token length. Default is 256. Tokens longer than the
      maximum length are split. The maximum token length that can be used is 300 characters.
-    :type max_token_length: int
+    :paramtype max_token_length: int
     """
 
     _validation = {
@@ -2681,32 +2775,33 @@ class LanguageDetectionSkill(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the skill.Constant filled by
      server.
-    :type odata_type: str
-    :param name: The name of the skill which uniquely identifies it within the skillset. A skill
+    :paramtype odata_type: str
+    :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
      prefixed with the character '#'.
-    :type name: str
-    :param description: The description of the skill which describes the inputs, outputs, and usage
-     of the skill.
-    :type description: str
-    :param context: Represents the level at which operations take place, such as the document root
-     or document content (for example, /document or /document/content). The default is /document.
-    :type context: str
-    :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
-     output of an upstream skill.
-    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :param outputs: Required. The output of a skill is either a field in a search index, or a value
-     that can be consumed as an input by another skill.
-    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
-    :param default_country_hint: A country code to use as a hint to the language detection model if
-     it cannot disambiguate the language.
-    :type default_country_hint: str
-    :param model_version: The version of the model to use when calling the Text Analytics service.
-     It will default to the latest available when not specified. We recommend you do not specify
-     this value unless absolutely necessary.
-    :type model_version: str
+    :paramtype name: str
+    :keyword description: The description of the skill which describes the inputs, outputs, and
+     usage of the skill.
+    :paramtype description: str
+    :keyword context: Represents the level at which operations take place, such as the document
+     root or document content (for example, /document or /document/content). The default is
+     /document.
+    :paramtype context: str
+    :keyword inputs: Required. Inputs of the skills could be a column in the source data set, or
+     the output of an upstream skill.
+    :paramtype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :keyword outputs: Required. The output of a skill is either a field in a search index, or a
+     value that can be consumed as an input by another skill.
+    :paramtype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :keyword default_country_hint: A country code to use as a hint to the language detection model
+     if it cannot disambiguate the language.
+    :paramtype default_country_hint: str
+    :keyword model_version: The version of the model to use when calling the Text Analytics
+     service. It will default to the latest available when not specified. We recommend you do not
+     specify this value unless absolutely necessary.
+    :paramtype model_version: str
     """
 
     _validation = {
@@ -2741,18 +2836,18 @@ class LengthTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+    :keyword odata_type: Required. Identifies the concrete type of the token filter.Constant filled
      by server.
-    :type odata_type: str
-    :param name: Required. The name of the token filter. It must only contain letters, digits,
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters.
-    :type name: str
-    :param min_length: The minimum length in characters. Default is 0. Maximum is 300. Must be less
-     than the value of max.
-    :type min_length: int
-    :param max_length: The maximum length in characters. Default and maximum is 300.
-    :type max_length: int
+    :paramtype name: str
+    :keyword min_length: The minimum length in characters. Default is 0. Maximum is 300. Must be
+     less than the value of max.
+    :paramtype min_length: int
+    :keyword max_length: The maximum length in characters. Default and maximum is 300.
+    :paramtype max_length: int
     """
 
     _validation = {
@@ -2784,18 +2879,18 @@ class LimitTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+    :keyword odata_type: Required. Identifies the concrete type of the token filter.Constant filled
      by server.
-    :type odata_type: str
-    :param name: Required. The name of the token filter. It must only contain letters, digits,
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters.
-    :type name: str
-    :param max_token_count: The maximum number of tokens to produce. Default is 1.
-    :type max_token_count: int
-    :param consume_all_tokens: A value indicating whether all tokens from the input must be
+    :paramtype name: str
+    :keyword max_token_count: The maximum number of tokens to produce. Default is 1.
+    :paramtype max_token_count: int
+    :keyword consume_all_tokens: A value indicating whether all tokens from the input must be
      consumed even if maxTokenCount is reached. Default is false.
-    :type consume_all_tokens: bool
+    :paramtype consume_all_tokens: bool
     """
 
     _validation = {
@@ -2960,18 +3055,18 @@ class LuceneStandardAnalyzer(LexicalAnalyzer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the analyzer.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the analyzer.Constant filled by
      server.
-    :type odata_type: str
-    :param name: Required. The name of the analyzer. It must only contain letters, digits, spaces,
-     dashes or underscores, can only start and end with alphanumeric characters, and is limited to
-     128 characters.
-    :type name: str
-    :param max_token_length: The maximum token length. Default is 255. Tokens longer than the
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the analyzer. It must only contain letters, digits,
+     spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
+     limited to 128 characters.
+    :paramtype name: str
+    :keyword max_token_length: The maximum token length. Default is 255. Tokens longer than the
      maximum length are split. The maximum token length that can be used is 300 characters.
-    :type max_token_length: int
-    :param stopwords: A list of stopwords.
-    :type stopwords: list[str]
+    :paramtype max_token_length: int
+    :keyword stopwords: A list of stopwords.
+    :paramtype stopwords: list[str]
     """
 
     _validation = {
@@ -3002,16 +3097,16 @@ class LuceneStandardTokenizer(LexicalTokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
      server.
-    :type odata_type: str
-    :param name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
-     dashes or underscores, can only start and end with alphanumeric characters, and is limited to
-     128 characters.
-    :type name: str
-    :param max_token_length: The maximum token length. Default is 255. Tokens longer than the
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the tokenizer. It must only contain letters, digits,
+     spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
+     limited to 128 characters.
+    :paramtype name: str
+    :keyword max_token_length: The maximum token length. Default is 255. Tokens longer than the
      maximum length are split.
-    :type max_token_length: int
+    :paramtype max_token_length: int
     """
 
     _validation = {
@@ -3039,16 +3134,16 @@ class LuceneStandardTokenizerV2(LexicalTokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
      server.
-    :type odata_type: str
-    :param name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
-     dashes or underscores, can only start and end with alphanumeric characters, and is limited to
-     128 characters.
-    :type name: str
-    :param max_token_length: The maximum token length. Default is 255. Tokens longer than the
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the tokenizer. It must only contain letters, digits,
+     spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
+     limited to 128 characters.
+    :paramtype name: str
+    :keyword max_token_length: The maximum token length. Default is 255. Tokens longer than the
      maximum length are split. The maximum token length that can be used is 300 characters.
-    :type max_token_length: int
+    :paramtype max_token_length: int
     """
 
     _validation = {
@@ -3077,20 +3172,21 @@ class MagnitudeScoringFunction(ScoringFunction):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the type of function to use. Valid values include magnitude,
+    :keyword type: Required. Indicates the type of function to use. Valid values include magnitude,
      freshness, distance, and tag. The function type must be lower case.Constant filled by server.
-    :type type: str
-    :param field_name: Required. The name of the field used as input to the scoring function.
-    :type field_name: str
-    :param boost: Required. A multiplier for the raw score. Must be a positive number not equal to
-     1.0.
-    :type boost: float
-    :param interpolation: A value indicating how boosting will be interpolated across document
+    :paramtype type: str
+    :keyword field_name: Required. The name of the field used as input to the scoring function.
+    :paramtype field_name: str
+    :keyword boost: Required. A multiplier for the raw score. Must be a positive number not equal
+     to 1.0.
+    :paramtype boost: float
+    :keyword interpolation: A value indicating how boosting will be interpolated across document
      scores; defaults to "Linear". Possible values include: "linear", "constant", "quadratic",
      "logarithmic".
-    :type interpolation: str or ~azure.search.documents.indexes.models.ScoringFunctionInterpolation
-    :param parameters: Required. Parameter values for the magnitude scoring function.
-    :type parameters: ~azure.search.documents.indexes.models.MagnitudeScoringParameters
+    :paramtype interpolation: str or
+     ~azure.search.documents.indexes.models.ScoringFunctionInterpolation
+    :keyword parameters: Required. Parameter values for the magnitude scoring function.
+    :paramtype parameters: ~azure.search.documents.indexes.models.MagnitudeScoringParameters
     """
 
     _validation = {
@@ -3122,13 +3218,13 @@ class MagnitudeScoringParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param boosting_range_start: Required. The field value at which boosting starts.
-    :type boosting_range_start: float
-    :param boosting_range_end: Required. The field value at which boosting ends.
-    :type boosting_range_end: float
-    :param should_boost_beyond_range_by_constant: A value indicating whether to apply a constant
+    :keyword boosting_range_start: Required. The field value at which boosting starts.
+    :paramtype boosting_range_start: float
+    :keyword boosting_range_end: Required. The field value at which boosting ends.
+    :paramtype boosting_range_end: float
+    :keyword should_boost_beyond_range_by_constant: A value indicating whether to apply a constant
      boost for field values beyond the range end value; default is false.
-    :type should_boost_beyond_range_by_constant: bool
+    :paramtype should_boost_beyond_range_by_constant: bool
     """
 
     _validation = {
@@ -3157,16 +3253,16 @@ class MappingCharFilter(CharFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the char filter.Constant filled by
-     server.
-    :type odata_type: str
-    :param name: Required. The name of the char filter. It must only contain letters, digits,
+    :keyword odata_type: Required. Identifies the concrete type of the char filter.Constant filled
+     by server.
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the char filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters.
-    :type name: str
-    :param mappings: Required. A list of mappings of the following format: "a=>b" (all occurrences
-     of the character "a" will be replaced with character "b").
-    :type mappings: list[str]
+    :paramtype name: str
+    :keyword mappings: Required. A list of mappings of the following format: "a=>b" (all
+     occurrences of the character "a" will be replaced with character "b").
+    :paramtype mappings: list[str]
     """
 
     _validation = {
@@ -3195,31 +3291,32 @@ class MergeSkill(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the skill.Constant filled by
      server.
-    :type odata_type: str
-    :param name: The name of the skill which uniquely identifies it within the skillset. A skill
+    :paramtype odata_type: str
+    :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
      prefixed with the character '#'.
-    :type name: str
-    :param description: The description of the skill which describes the inputs, outputs, and usage
-     of the skill.
-    :type description: str
-    :param context: Represents the level at which operations take place, such as the document root
-     or document content (for example, /document or /document/content). The default is /document.
-    :type context: str
-    :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
-     output of an upstream skill.
-    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :param outputs: Required. The output of a skill is either a field in a search index, or a value
-     that can be consumed as an input by another skill.
-    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
-    :param insert_pre_tag: The tag indicates the start of the merged text. By default, the tag is
+    :paramtype name: str
+    :keyword description: The description of the skill which describes the inputs, outputs, and
+     usage of the skill.
+    :paramtype description: str
+    :keyword context: Represents the level at which operations take place, such as the document
+     root or document content (for example, /document or /document/content). The default is
+     /document.
+    :paramtype context: str
+    :keyword inputs: Required. Inputs of the skills could be a column in the source data set, or
+     the output of an upstream skill.
+    :paramtype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :keyword outputs: Required. The output of a skill is either a field in a search index, or a
+     value that can be consumed as an input by another skill.
+    :paramtype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :keyword insert_pre_tag: The tag indicates the start of the merged text. By default, the tag is
      an empty space.
-    :type insert_pre_tag: str
-    :param insert_post_tag: The tag indicates the end of the merged text. By default, the tag is an
-     empty space.
-    :type insert_post_tag: str
+    :paramtype insert_pre_tag: str
+    :keyword insert_post_tag: The tag indicates the end of the merged text. By default, the tag is
+     an empty space.
+    :paramtype insert_post_tag: str
     """
 
     _validation = {
@@ -3254,29 +3351,29 @@ class MicrosoftLanguageStemmingTokenizer(LexicalTokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
      server.
-    :type odata_type: str
-    :param name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
-     dashes or underscores, can only start and end with alphanumeric characters, and is limited to
-     128 characters.
-    :type name: str
-    :param max_token_length: The maximum token length. Tokens longer than the maximum length are
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the tokenizer. It must only contain letters, digits,
+     spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
+     limited to 128 characters.
+    :paramtype name: str
+    :keyword max_token_length: The maximum token length. Tokens longer than the maximum length are
      split. Maximum token length that can be used is 300 characters. Tokens longer than 300
      characters are first split into tokens of length 300 and then each of those tokens is split
      based on the max token length set. Default is 255.
-    :type max_token_length: int
-    :param is_search_tokenizer: A value indicating how the tokenizer is used. Set to true if used
+    :paramtype max_token_length: int
+    :keyword is_search_tokenizer: A value indicating how the tokenizer is used. Set to true if used
      as the search tokenizer, set to false if used as the indexing tokenizer. Default is false.
-    :type is_search_tokenizer: bool
-    :param language: The language to use. The default is English. Possible values include:
+    :paramtype is_search_tokenizer: bool
+    :keyword language: The language to use. The default is English. Possible values include:
      "arabic", "bangla", "bulgarian", "catalan", "croatian", "czech", "danish", "dutch", "english",
      "estonian", "finnish", "french", "german", "greek", "gujarati", "hebrew", "hindi", "hungarian",
      "icelandic", "indonesian", "italian", "kannada", "latvian", "lithuanian", "malay", "malayalam",
      "marathi", "norwegianBokmaal", "polish", "portuguese", "portugueseBrazilian", "punjabi",
      "romanian", "russian", "serbianCyrillic", "serbianLatin", "slovak", "slovenian", "spanish",
      "swedish", "tamil", "telugu", "turkish", "ukrainian", "urdu".
-    :type language: str or
+    :paramtype language: str or
      ~azure.search.documents.indexes.models.MicrosoftStemmingTokenizerLanguage
     """
 
@@ -3310,29 +3407,29 @@ class MicrosoftLanguageTokenizer(LexicalTokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
      server.
-    :type odata_type: str
-    :param name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
-     dashes or underscores, can only start and end with alphanumeric characters, and is limited to
-     128 characters.
-    :type name: str
-    :param max_token_length: The maximum token length. Tokens longer than the maximum length are
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the tokenizer. It must only contain letters, digits,
+     spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
+     limited to 128 characters.
+    :paramtype name: str
+    :keyword max_token_length: The maximum token length. Tokens longer than the maximum length are
      split. Maximum token length that can be used is 300 characters. Tokens longer than 300
      characters are first split into tokens of length 300 and then each of those tokens is split
      based on the max token length set. Default is 255.
-    :type max_token_length: int
-    :param is_search_tokenizer: A value indicating how the tokenizer is used. Set to true if used
+    :paramtype max_token_length: int
+    :keyword is_search_tokenizer: A value indicating how the tokenizer is used. Set to true if used
      as the search tokenizer, set to false if used as the indexing tokenizer. Default is false.
-    :type is_search_tokenizer: bool
-    :param language: The language to use. The default is English. Possible values include:
+    :paramtype is_search_tokenizer: bool
+    :keyword language: The language to use. The default is English. Possible values include:
      "bangla", "bulgarian", "catalan", "chineseSimplified", "chineseTraditional", "croatian",
      "czech", "danish", "dutch", "english", "french", "german", "greek", "gujarati", "hindi",
      "icelandic", "indonesian", "italian", "japanese", "kannada", "korean", "malay", "malayalam",
      "marathi", "norwegianBokmaal", "polish", "portuguese", "portugueseBrazilian", "punjabi",
      "romanian", "russian", "serbianCyrillic", "serbianLatin", "slovenian", "spanish", "swedish",
      "tamil", "telugu", "thai", "ukrainian", "urdu", "vietnamese".
-    :type language: str or ~azure.search.documents.indexes.models.MicrosoftTokenizerLanguage
+    :paramtype language: str or ~azure.search.documents.indexes.models.MicrosoftTokenizerLanguage
     """
 
     _validation = {
@@ -3365,18 +3462,18 @@ class NGramTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+    :keyword odata_type: Required. Identifies the concrete type of the token filter.Constant filled
      by server.
-    :type odata_type: str
-    :param name: Required. The name of the token filter. It must only contain letters, digits,
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters.
-    :type name: str
-    :param min_gram: The minimum n-gram length. Default is 1. Must be less than the value of
+    :paramtype name: str
+    :keyword min_gram: The minimum n-gram length. Default is 1. Must be less than the value of
      maxGram.
-    :type min_gram: int
-    :param max_gram: The maximum n-gram length. Default is 2.
-    :type max_gram: int
+    :paramtype min_gram: int
+    :keyword max_gram: The maximum n-gram length. Default is 2.
+    :paramtype max_gram: int
     """
 
     _validation = {
@@ -3406,18 +3503,18 @@ class NGramTokenFilterV2(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+    :keyword odata_type: Required. Identifies the concrete type of the token filter.Constant filled
      by server.
-    :type odata_type: str
-    :param name: Required. The name of the token filter. It must only contain letters, digits,
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters.
-    :type name: str
-    :param min_gram: The minimum n-gram length. Default is 1. Maximum is 300. Must be less than the
-     value of maxGram.
-    :type min_gram: int
-    :param max_gram: The maximum n-gram length. Default is 2. Maximum is 300.
-    :type max_gram: int
+    :paramtype name: str
+    :keyword min_gram: The minimum n-gram length. Default is 1. Maximum is 300. Must be less than
+     the value of maxGram.
+    :paramtype min_gram: int
+    :keyword max_gram: The maximum n-gram length. Default is 2. Maximum is 300.
+    :paramtype max_gram: int
     """
 
     _validation = {
@@ -3449,20 +3546,20 @@ class NGramTokenizer(LexicalTokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
      server.
-    :type odata_type: str
-    :param name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
-     dashes or underscores, can only start and end with alphanumeric characters, and is limited to
-     128 characters.
-    :type name: str
-    :param min_gram: The minimum n-gram length. Default is 1. Maximum is 300. Must be less than the
-     value of maxGram.
-    :type min_gram: int
-    :param max_gram: The maximum n-gram length. Default is 2. Maximum is 300.
-    :type max_gram: int
-    :param token_chars: Character classes to keep in the tokens.
-    :type token_chars: list[str or ~azure.search.documents.indexes.models.TokenCharacterKind]
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the tokenizer. It must only contain letters, digits,
+     spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
+     limited to 128 characters.
+    :paramtype name: str
+    :keyword min_gram: The minimum n-gram length. Default is 1. Maximum is 300. Must be less than
+     the value of maxGram.
+    :paramtype min_gram: int
+    :keyword max_gram: The maximum n-gram length. Default is 2. Maximum is 300.
+    :paramtype max_gram: int
+    :keyword token_chars: Character classes to keep in the tokens.
+    :paramtype token_chars: list[str or ~azure.search.documents.indexes.models.TokenCharacterKind]
     """
 
     _validation = {
@@ -3496,37 +3593,39 @@ class OcrSkill(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the skill.Constant filled by
      server.
-    :type odata_type: str
-    :param name: The name of the skill which uniquely identifies it within the skillset. A skill
+    :paramtype odata_type: str
+    :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
      prefixed with the character '#'.
-    :type name: str
-    :param description: The description of the skill which describes the inputs, outputs, and usage
-     of the skill.
-    :type description: str
-    :param context: Represents the level at which operations take place, such as the document root
-     or document content (for example, /document or /document/content). The default is /document.
-    :type context: str
-    :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
-     output of an upstream skill.
-    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :param outputs: Required. The output of a skill is either a field in a search index, or a value
-     that can be consumed as an input by another skill.
-    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
-    :param default_language_code: A value indicating which language code to use. Default is en.
+    :paramtype name: str
+    :keyword description: The description of the skill which describes the inputs, outputs, and
+     usage of the skill.
+    :paramtype description: str
+    :keyword context: Represents the level at which operations take place, such as the document
+     root or document content (for example, /document or /document/content). The default is
+     /document.
+    :paramtype context: str
+    :keyword inputs: Required. Inputs of the skills could be a column in the source data set, or
+     the output of an upstream skill.
+    :paramtype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :keyword outputs: Required. The output of a skill is either a field in a search index, or a
+     value that can be consumed as an input by another skill.
+    :paramtype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :keyword default_language_code: A value indicating which language code to use. Default is en.
      Possible values include: "zh-Hans", "zh-Hant", "cs", "da", "nl", "en", "fi", "fr", "de", "el",
      "hu", "it", "ja", "ko", "nb", "pl", "pt", "ru", "es", "sv", "tr", "ar", "ro", "sr-Cyrl",
      "sr-Latn", "sk".
-    :type default_language_code: str or ~azure.search.documents.indexes.models.OcrSkillLanguage
-    :param should_detect_orientation: A value indicating to turn orientation detection on or not.
+    :paramtype default_language_code: str or
+     ~azure.search.documents.indexes.models.OcrSkillLanguage
+    :keyword should_detect_orientation: A value indicating to turn orientation detection on or not.
      Default is false.
-    :type should_detect_orientation: bool
-    :param line_ending: Defines the sequence of characters to use between the lines of text
+    :paramtype should_detect_orientation: bool
+    :keyword line_ending: Defines the sequence of characters to use between the lines of text
      recognized by the OCR skill. The default value is "space". Possible values include: "space",
      "carriageReturn", "lineFeed", "carriageReturnLineFeed".
-    :type line_ending: str or ~azure.search.documents.indexes.models.LineEnding
+    :paramtype line_ending: str or ~azure.search.documents.indexes.models.LineEnding
     """
 
     _validation = {
@@ -3563,10 +3662,10 @@ class OutputFieldMappingEntry(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the output defined by the skill.
-    :type name: str
-    :param target_name: The target name of the output. It is optional and default to name.
-    :type target_name: str
+    :keyword name: Required. The name of the output defined by the skill.
+    :paramtype name: str
+    :keyword target_name: The target name of the output. It is optional and default to name.
+    :paramtype target_name: str
     """
 
     _validation = {
@@ -3592,24 +3691,24 @@ class PathHierarchyTokenizerV2(LexicalTokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
      server.
-    :type odata_type: str
-    :param name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
-     dashes or underscores, can only start and end with alphanumeric characters, and is limited to
-     128 characters.
-    :type name: str
-    :param delimiter: The delimiter character to use. Default is "/".
-    :type delimiter: str
-    :param replacement: A value that, if set, replaces the delimiter character. Default is "/".
-    :type replacement: str
-    :param max_token_length: The maximum token length. Default and maximum is 300.
-    :type max_token_length: int
-    :param reverse_token_order: A value indicating whether to generate tokens in reverse order.
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the tokenizer. It must only contain letters, digits,
+     spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
+     limited to 128 characters.
+    :paramtype name: str
+    :keyword delimiter: The delimiter character to use. Default is "/".
+    :paramtype delimiter: str
+    :keyword replacement: A value that, if set, replaces the delimiter character. Default is "/".
+    :paramtype replacement: str
+    :keyword max_token_length: The maximum token length. Default and maximum is 300.
+    :paramtype max_token_length: int
+    :keyword reverse_token_order: A value indicating whether to generate tokens in reverse order.
      Default is false.
-    :type reverse_token_order: bool
-    :param number_of_tokens_to_skip: The number of initial tokens to skip. Default is 0.
-    :type number_of_tokens_to_skip: int
+    :paramtype reverse_token_order: bool
+    :keyword number_of_tokens_to_skip: The number of initial tokens to skip. Default is 0.
+    :paramtype number_of_tokens_to_skip: int
     """
 
     _validation = {
@@ -3641,29 +3740,52 @@ class PathHierarchyTokenizerV2(LexicalTokenizer):
         self.number_of_tokens_to_skip = kwargs.get('number_of_tokens_to_skip', 0)
 
 
+class Paths1Cj7DxmIndexersIndexernameSearchResetdocsPostRequestbodyContentApplicationJsonSchema(msrest.serialization.Model):
+    """Paths1Cj7DxmIndexersIndexernameSearchResetdocsPostRequestbodyContentApplicationJsonSchema.
+
+    :keyword document_keys: document keys to be reset.
+    :paramtype document_keys: list[str]
+    :keyword datasource_document_ids: datasource document identifiers to be reset.
+    :paramtype datasource_document_ids: list[str]
+    """
+
+    _attribute_map = {
+        'document_keys': {'key': 'documentKeys', 'type': '[str]'},
+        'datasource_document_ids': {'key': 'datasourceDocumentIds', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Paths1Cj7DxmIndexersIndexernameSearchResetdocsPostRequestbodyContentApplicationJsonSchema, self).__init__(**kwargs)
+        self.document_keys = kwargs.get('document_keys', None)
+        self.datasource_document_ids = kwargs.get('datasource_document_ids', None)
+
+
 class PatternAnalyzer(LexicalAnalyzer):
     """Flexibly separates text into terms via a regular expression pattern. This analyzer is implemented using Apache Lucene.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the analyzer.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the analyzer.Constant filled by
      server.
-    :type odata_type: str
-    :param name: Required. The name of the analyzer. It must only contain letters, digits, spaces,
-     dashes or underscores, can only start and end with alphanumeric characters, and is limited to
-     128 characters.
-    :type name: str
-    :param lower_case_terms: A value indicating whether terms should be lower-cased. Default is
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the analyzer. It must only contain letters, digits,
+     spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
+     limited to 128 characters.
+    :paramtype name: str
+    :keyword lower_case_terms: A value indicating whether terms should be lower-cased. Default is
      true.
-    :type lower_case_terms: bool
-    :param pattern: A regular expression pattern to match token separators. Default is an
+    :paramtype lower_case_terms: bool
+    :keyword pattern: A regular expression pattern to match token separators. Default is an
      expression that matches one or more non-word characters.
-    :type pattern: str
-    :param flags: Regular expression flags. Possible values include: "CANON_EQ",
+    :paramtype pattern: str
+    :keyword flags: Regular expression flags. Possible values include: "CANON_EQ",
      "CASE_INSENSITIVE", "COMMENTS", "DOTALL", "LITERAL", "MULTILINE", "UNICODE_CASE", "UNIX_LINES".
-    :type flags: str or ~azure.search.documents.indexes.models.RegexFlags
-    :param stopwords: A list of stopwords.
-    :type stopwords: list[str]
+    :paramtype flags: str or ~azure.search.documents.indexes.models.RegexFlags
+    :keyword stopwords: A list of stopwords.
+    :paramtype stopwords: list[str]
     """
 
     _validation = {
@@ -3697,18 +3819,18 @@ class PatternCaptureTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+    :keyword odata_type: Required. Identifies the concrete type of the token filter.Constant filled
      by server.
-    :type odata_type: str
-    :param name: Required. The name of the token filter. It must only contain letters, digits,
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters.
-    :type name: str
-    :param patterns: Required. A list of patterns to match against each token.
-    :type patterns: list[str]
-    :param preserve_original: A value indicating whether to return the original token even if one
+    :paramtype name: str
+    :keyword patterns: Required. A list of patterns to match against each token.
+    :paramtype patterns: list[str]
+    :keyword preserve_original: A value indicating whether to return the original token even if one
      of the patterns matches. Default is true.
-    :type preserve_original: bool
+    :paramtype preserve_original: bool
     """
 
     _validation = {
@@ -3739,17 +3861,17 @@ class PatternReplaceCharFilter(CharFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the char filter.Constant filled by
-     server.
-    :type odata_type: str
-    :param name: Required. The name of the char filter. It must only contain letters, digits,
+    :keyword odata_type: Required. Identifies the concrete type of the char filter.Constant filled
+     by server.
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the char filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters.
-    :type name: str
-    :param pattern: Required. A regular expression pattern.
-    :type pattern: str
-    :param replacement: Required. The replacement text.
-    :type replacement: str
+    :paramtype name: str
+    :keyword pattern: Required. A regular expression pattern.
+    :paramtype pattern: str
+    :keyword replacement: Required. The replacement text.
+    :paramtype replacement: str
     """
 
     _validation = {
@@ -3781,17 +3903,17 @@ class PatternReplaceTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+    :keyword odata_type: Required. Identifies the concrete type of the token filter.Constant filled
      by server.
-    :type odata_type: str
-    :param name: Required. The name of the token filter. It must only contain letters, digits,
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters.
-    :type name: str
-    :param pattern: Required. A regular expression pattern.
-    :type pattern: str
-    :param replacement: Required. The replacement text.
-    :type replacement: str
+    :paramtype name: str
+    :keyword pattern: Required. A regular expression pattern.
+    :paramtype pattern: str
+    :keyword replacement: Required. The replacement text.
+    :paramtype replacement: str
     """
 
     _validation = {
@@ -3823,23 +3945,23 @@ class PatternTokenizer(LexicalTokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
      server.
-    :type odata_type: str
-    :param name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
-     dashes or underscores, can only start and end with alphanumeric characters, and is limited to
-     128 characters.
-    :type name: str
-    :param pattern: A regular expression pattern to match token separators. Default is an
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the tokenizer. It must only contain letters, digits,
+     spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
+     limited to 128 characters.
+    :paramtype name: str
+    :keyword pattern: A regular expression pattern to match token separators. Default is an
      expression that matches one or more non-word characters.
-    :type pattern: str
-    :param flags: Regular expression flags. Possible values include: "CANON_EQ",
+    :paramtype pattern: str
+    :keyword flags: Regular expression flags. Possible values include: "CANON_EQ",
      "CASE_INSENSITIVE", "COMMENTS", "DOTALL", "LITERAL", "MULTILINE", "UNICODE_CASE", "UNIX_LINES".
-    :type flags: str or ~azure.search.documents.indexes.models.RegexFlags
-    :param group: The zero-based ordinal of the matching group in the regular expression pattern to
-     extract into tokens. Use -1 if you want to use the entire pattern to split the input into
+    :paramtype flags: str or ~azure.search.documents.indexes.models.RegexFlags
+    :keyword group: The zero-based ordinal of the matching group in the regular expression pattern
+     to extract into tokens. Use -1 if you want to use the entire pattern to split the input into
      tokens, irrespective of matching groups. Default is -1.
-    :type group: int
+    :paramtype group: int
     """
 
     _validation = {
@@ -3871,20 +3993,20 @@ class PhoneticTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+    :keyword odata_type: Required. Identifies the concrete type of the token filter.Constant filled
      by server.
-    :type odata_type: str
-    :param name: Required. The name of the token filter. It must only contain letters, digits,
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters.
-    :type name: str
-    :param encoder: The phonetic encoder to use. Default is "metaphone". Possible values include:
+    :paramtype name: str
+    :keyword encoder: The phonetic encoder to use. Default is "metaphone". Possible values include:
      "metaphone", "doubleMetaphone", "soundex", "refinedSoundex", "caverphone1", "caverphone2",
      "cologne", "nysiis", "koelnerPhonetik", "haasePhonetik", "beiderMorse".
-    :type encoder: str or ~azure.search.documents.indexes.models.PhoneticEncoder
-    :param replace_original_tokens: A value indicating whether encoded tokens should replace
+    :paramtype encoder: str or ~azure.search.documents.indexes.models.PhoneticEncoder
+    :keyword replace_original_tokens: A value indicating whether encoded tokens should replace
      original tokens. If false, encoded tokens are added as synonyms. Default is true.
-    :type replace_original_tokens: bool
+    :paramtype replace_original_tokens: bool
     """
 
     _validation = {
@@ -3914,46 +4036,48 @@ class PIIDetectionSkill(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the skill.Constant filled by
      server.
-    :type odata_type: str
-    :param name: The name of the skill which uniquely identifies it within the skillset. A skill
+    :paramtype odata_type: str
+    :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
      prefixed with the character '#'.
-    :type name: str
-    :param description: The description of the skill which describes the inputs, outputs, and usage
-     of the skill.
-    :type description: str
-    :param context: Represents the level at which operations take place, such as the document root
-     or document content (for example, /document or /document/content). The default is /document.
-    :type context: str
-    :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
-     output of an upstream skill.
-    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :param outputs: Required. The output of a skill is either a field in a search index, or a value
-     that can be consumed as an input by another skill.
-    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
-    :param default_language_code: A value indicating which language code to use. Default is en.
-    :type default_language_code: str
-    :param minimum_precision: A value between 0 and 1 that be used to only include entities whose
+    :paramtype name: str
+    :keyword description: The description of the skill which describes the inputs, outputs, and
+     usage of the skill.
+    :paramtype description: str
+    :keyword context: Represents the level at which operations take place, such as the document
+     root or document content (for example, /document or /document/content). The default is
+     /document.
+    :paramtype context: str
+    :keyword inputs: Required. Inputs of the skills could be a column in the source data set, or
+     the output of an upstream skill.
+    :paramtype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :keyword outputs: Required. The output of a skill is either a field in a search index, or a
+     value that can be consumed as an input by another skill.
+    :paramtype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :keyword default_language_code: A value indicating which language code to use. Default is en.
+    :paramtype default_language_code: str
+    :keyword minimum_precision: A value between 0 and 1 that be used to only include entities whose
      confidence score is greater than the value specified. If not set (default), or if explicitly
      set to null, all entities will be included.
-    :type minimum_precision: float
-    :param masking_mode: A parameter that provides various ways to mask the personal information
+    :paramtype minimum_precision: float
+    :keyword masking_mode: A parameter that provides various ways to mask the personal information
      detected in the input text. Default is 'none'. Possible values include: "none", "replace".
-    :type masking_mode: str or ~azure.search.documents.indexes.models.PIIDetectionSkillMaskingMode
-    :param masking_character: The character used to mask the text if the maskingMode parameter is
+    :paramtype masking_mode: str or
+     ~azure.search.documents.indexes.models.PIIDetectionSkillMaskingMode
+    :keyword masking_character: The character used to mask the text if the maskingMode parameter is
      set to replace. Default is '*'.
-    :type masking_character: str
-    :param model_version: The version of the model to use when calling the Text Analytics service.
-     It will default to the latest available when not specified. We recommend you do not specify
-     this value unless absolutely necessary.
-    :type model_version: str
-    :param pii_categories: A list of PII entity categories that should be extracted and masked.
-    :type pii_categories: list[str]
-    :param domain: If specified, will set the PII domain to include only a subset of the entity
+    :paramtype masking_character: str
+    :keyword model_version: The version of the model to use when calling the Text Analytics
+     service. It will default to the latest available when not specified. We recommend you do not
+     specify this value unless absolutely necessary.
+    :paramtype model_version: str
+    :keyword pii_categories: A list of PII entity categories that should be extracted and masked.
+    :paramtype pii_categories: list[str]
+    :keyword domain: If specified, will set the PII domain to include only a subset of the entity
      categories. Possible values include: 'phi', 'none'. Default is 'none'.
-    :type domain: str
+    :paramtype domain: str
     """
 
     _validation = {
@@ -3998,8 +4122,8 @@ class PIIDetectionSkill(SearchIndexerSkill):
 class RequestOptions(msrest.serialization.Model):
     """Parameter group.
 
-    :param x_ms_client_request_id: The tracking ID sent with the request to help with debugging.
-    :type x_ms_client_request_id: str
+    :keyword x_ms_client_request_id: The tracking ID sent with the request to help with debugging.
+    :paramtype x_ms_client_request_id: str
     """
 
     _attribute_map = {
@@ -4019,10 +4143,10 @@ class ResourceCounter(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param usage: Required. The resource usage amount.
-    :type usage: long
-    :param quota: The resource amount quota.
-    :type quota: long
+    :keyword usage: Required. The resource usage amount.
+    :paramtype usage: long
+    :keyword quota: The resource amount quota.
+    :paramtype quota: long
     """
 
     _validation = {
@@ -4048,17 +4172,17 @@ class ScoringProfile(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the scoring profile.
-    :type name: str
-    :param text_weights: Parameters that boost scoring based on text matches in certain index
+    :keyword name: Required. The name of the scoring profile.
+    :paramtype name: str
+    :keyword text_weights: Parameters that boost scoring based on text matches in certain index
      fields.
-    :type text_weights: ~azure.search.documents.indexes.models.TextWeights
-    :param functions: The collection of functions that influence the scoring of documents.
-    :type functions: list[~azure.search.documents.indexes.models.ScoringFunction]
-    :param function_aggregation: A value indicating how the results of individual scoring functions
-     should be combined. Defaults to "Sum". Ignored if there are no scoring functions. Possible
-     values include: "sum", "average", "minimum", "maximum", "firstMatching".
-    :type function_aggregation: str or
+    :paramtype text_weights: ~azure.search.documents.indexes.models.TextWeights
+    :keyword functions: The collection of functions that influence the scoring of documents.
+    :paramtype functions: list[~azure.search.documents.indexes.models.ScoringFunction]
+    :keyword function_aggregation: A value indicating how the results of individual scoring
+     functions should be combined. Defaults to "Sum". Ignored if there are no scoring functions.
+     Possible values include: "sum", "average", "minimum", "maximum", "firstMatching".
+    :paramtype function_aggregation: str or
      ~azure.search.documents.indexes.models.ScoringFunctionAggregation
     """
 
@@ -4126,43 +4250,43 @@ class SearchField(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the field, which must be unique within the fields collection
-     of the index or parent field.
-    :type name: str
-    :param type: Required. The data type of the field. Possible values include: "Edm.String",
+    :keyword name: Required. The name of the field, which must be unique within the fields
+     collection of the index or parent field.
+    :paramtype name: str
+    :keyword type: Required. The data type of the field. Possible values include: "Edm.String",
      "Edm.Int32", "Edm.Int64", "Edm.Double", "Edm.Boolean", "Edm.DateTimeOffset",
      "Edm.GeographyPoint", "Edm.ComplexType".
-    :type type: str or ~azure.search.documents.indexes.models.SearchFieldDataType
-    :param key: A value indicating whether the field uniquely identifies documents in the index.
+    :paramtype type: str or ~azure.search.documents.indexes.models.SearchFieldDataType
+    :keyword key: A value indicating whether the field uniquely identifies documents in the index.
      Exactly one top-level field in each index must be chosen as the key field and it must be of
      type Edm.String. Key fields can be used to look up documents directly and update or delete
      specific documents. Default is false for simple fields and null for complex fields.
-    :type key: bool
-    :param retrievable: A value indicating whether the field can be returned in a search result.
+    :paramtype key: bool
+    :keyword retrievable: A value indicating whether the field can be returned in a search result.
      You can disable this option if you want to use a field (for example, margin) as a filter,
      sorting, or scoring mechanism but do not want the field to be visible to the end user. This
      property must be true for key fields, and it must be null for complex fields. This property can
      be changed on existing fields. Enabling this property does not cause any increase in index
      storage requirements. Default is true for simple fields and null for complex fields.
-    :type retrievable: bool
-    :param searchable: A value indicating whether the field is full-text searchable. This means it
-     will undergo analysis such as word-breaking during indexing. If you set a searchable field to a
-     value like "sunny day", internally it will be split into the individual tokens "sunny" and
+    :paramtype retrievable: bool
+    :keyword searchable: A value indicating whether the field is full-text searchable. This means
+     it will undergo analysis such as word-breaking during indexing. If you set a searchable field
+     to a value like "sunny day", internally it will be split into the individual tokens "sunny" and
      "day". This enables full-text searches for these terms. Fields of type Edm.String or
      Collection(Edm.String) are searchable by default. This property must be false for simple fields
      of other non-string data types, and it must be null for complex fields. Note: searchable fields
      consume extra space in your index since Azure Cognitive Search will store an additional
      tokenized version of the field value for full-text searches. If you want to save space in your
      index and you don't need a field to be included in searches, set searchable to false.
-    :type searchable: bool
-    :param filterable: A value indicating whether to enable the field to be referenced in $filter
+    :paramtype searchable: bool
+    :keyword filterable: A value indicating whether to enable the field to be referenced in $filter
      queries. filterable differs from searchable in how strings are handled. Fields of type
      Edm.String or Collection(Edm.String) that are filterable do not undergo word-breaking, so
      comparisons are for exact matches only. For example, if you set such a field f to "sunny day",
      $filter=f eq 'sunny' will find no matches, but $filter=f eq 'sunny day' will. This property
      must be null for complex fields. Default is true for simple fields and null for complex fields.
-    :type filterable: bool
-    :param sortable: A value indicating whether to enable the field to be referenced in $orderby
+    :paramtype filterable: bool
+    :keyword sortable: A value indicating whether to enable the field to be referenced in $orderby
      expressions. By default Azure Cognitive Search sorts results by score, but in many experiences
      users will want to sort by fields in the documents. A simple field can be sortable only if it
      is single-valued (it has a single value in the scope of the parent document). Simple collection
@@ -4172,15 +4296,15 @@ class SearchField(msrest.serialization.Model):
      cannot be sortable and the sortable property must be null for such fields. The default for
      sortable is true for single-valued simple fields, false for multi-valued simple fields, and
      null for complex fields.
-    :type sortable: bool
-    :param facetable: A value indicating whether to enable the field to be referenced in facet
+    :paramtype sortable: bool
+    :keyword facetable: A value indicating whether to enable the field to be referenced in facet
      queries. Typically used in a presentation of search results that includes hit count by category
      (for example, search for digital cameras and see hits by brand, by megapixels, by price, and so
      on). This property must be null for complex fields. Fields of type Edm.GeographyPoint or
      Collection(Edm.GeographyPoint) cannot be facetable. Default is true for all other simple
      fields.
-    :type facetable: bool
-    :param analyzer: The name of the analyzer to use for the field. This option can be used only
+    :paramtype facetable: bool
+    :keyword analyzer: The name of the analyzer to use for the field. This option can be used only
      with searchable fields and it can't be set together with either searchAnalyzer or
      indexAnalyzer. Once the analyzer is chosen, it cannot be changed for the field. Must be null
      for complex fields. Possible values include: "ar.microsoft", "ar.lucene", "hy.lucene",
@@ -4200,11 +4324,11 @@ class SearchField(msrest.serialization.Model):
      "th.microsoft", "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft",
      "vi.microsoft", "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern",
      "simple", "stop", "whitespace".
-    :type analyzer: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
-    :param search_analyzer: The name of the analyzer used at search time for the field. This option
-     can be used only with searchable fields. It must be set together with indexAnalyzer and it
-     cannot be set together with the analyzer option. This property cannot be set to the name of a
-     language analyzer; use the analyzer property instead if you need a language analyzer. This
+    :paramtype analyzer: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
+    :keyword search_analyzer: The name of the analyzer used at search time for the field. This
+     option can be used only with searchable fields. It must be set together with indexAnalyzer and
+     it cannot be set together with the analyzer option. This property cannot be set to the name of
+     a language analyzer; use the analyzer property instead if you need a language analyzer. This
      analyzer can be updated on an existing field. Must be null for complex fields. Possible values
      include: "ar.microsoft", "ar.lucene", "hy.lucene", "bn.microsoft", "eu.lucene", "bg.microsoft",
      "bg.lucene", "ca.microsoft", "ca.lucene", "zh-Hans.microsoft", "zh-Hans.lucene",
@@ -4223,8 +4347,8 @@ class SearchField(msrest.serialization.Model):
      "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft", "vi.microsoft",
      "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop",
      "whitespace".
-    :type search_analyzer: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
-    :param index_analyzer: The name of the analyzer used at indexing time for the field. This
+    :paramtype search_analyzer: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
+    :keyword index_analyzer: The name of the analyzer used at indexing time for the field. This
      option can be used only with searchable fields. It must be set together with searchAnalyzer and
      it cannot be set together with the analyzer option.  This property cannot be set to the name of
      a language analyzer; use the analyzer property instead if you need a language analyzer. Once
@@ -4246,21 +4370,21 @@ class SearchField(msrest.serialization.Model):
      "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft", "vi.microsoft",
      "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop",
      "whitespace".
-    :type index_analyzer: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
-    :param normalizer: The name of the normalizer to use for the field. This option can be used
+    :paramtype index_analyzer: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
+    :keyword normalizer: The name of the normalizer to use for the field. This option can be used
      only with fields with filterable, sortable, or facetable enabled. Once the normalizer is
      chosen, it cannot be changed for the field. Must be null for complex fields. Possible values
      include: "asciifolding", "elision", "lowercase", "standard", "uppercase".
-    :type normalizer: str or ~azure.search.documents.indexes.models.LexicalNormalizerName
-    :param synonym_maps: A list of the names of synonym maps to associate with this field. This
+    :paramtype normalizer: str or ~azure.search.documents.indexes.models.LexicalNormalizerName
+    :keyword synonym_maps: A list of the names of synonym maps to associate with this field. This
      option can be used only with searchable fields. Currently only one synonym map per field is
      supported. Assigning a synonym map to a field ensures that query terms targeting that field are
      expanded at query-time using the rules in the synonym map. This attribute can be changed on
      existing fields. Must be null or an empty collection for complex fields.
-    :type synonym_maps: list[str]
-    :param fields: A list of sub-fields if this is a field of type Edm.ComplexType or
+    :paramtype synonym_maps: list[str]
+    :keyword fields: A list of sub-fields if this is a field of type Edm.ComplexType or
      Collection(Edm.ComplexType). Must be null or empty for simple fields.
-    :type fields: list[~azure.search.documents.indexes.models.SearchField]
+    :paramtype fields: list[~azure.search.documents.indexes.models.SearchField]
     """
 
     _validation = {
@@ -4311,31 +4435,31 @@ class SearchIndex(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the index.
-    :type name: str
-    :param fields: Required. The fields of the index.
-    :type fields: list[~azure.search.documents.indexes.models.SearchField]
-    :param scoring_profiles: The scoring profiles for the index.
-    :type scoring_profiles: list[~azure.search.documents.indexes.models.ScoringProfile]
-    :param default_scoring_profile: The name of the scoring profile to use if none is specified in
-     the query. If this property is not set and no scoring profile is specified in the query, then
-     default scoring (tf-idf) will be used.
-    :type default_scoring_profile: str
-    :param cors_options: Options to control Cross-Origin Resource Sharing (CORS) for the index.
-    :type cors_options: ~azure.search.documents.indexes.models.CorsOptions
-    :param suggesters: The suggesters for the index.
-    :type suggesters: list[~azure.search.documents.indexes.models.Suggester]
-    :param analyzers: The analyzers for the index.
-    :type analyzers: list[~azure.search.documents.indexes.models.LexicalAnalyzer]
-    :param tokenizers: The tokenizers for the index.
-    :type tokenizers: list[~azure.search.documents.indexes.models.LexicalTokenizer]
-    :param token_filters: The token filters for the index.
-    :type token_filters: list[~azure.search.documents.indexes.models.TokenFilter]
-    :param char_filters: The character filters for the index.
-    :type char_filters: list[~azure.search.documents.indexes.models.CharFilter]
-    :param normalizers: The normalizers for the index.
-    :type normalizers: list[~azure.search.documents.indexes.models.LexicalNormalizer]
-    :param encryption_key: A description of an encryption key that you create in Azure Key Vault.
+    :keyword name: Required. The name of the index.
+    :paramtype name: str
+    :keyword fields: Required. The fields of the index.
+    :paramtype fields: list[~azure.search.documents.indexes.models.SearchField]
+    :keyword scoring_profiles: The scoring profiles for the index.
+    :paramtype scoring_profiles: list[~azure.search.documents.indexes.models.ScoringProfile]
+    :keyword default_scoring_profile: The name of the scoring profile to use if none is specified
+     in the query. If this property is not set and no scoring profile is specified in the query,
+     then default scoring (tf-idf) will be used.
+    :paramtype default_scoring_profile: str
+    :keyword cors_options: Options to control Cross-Origin Resource Sharing (CORS) for the index.
+    :paramtype cors_options: ~azure.search.documents.indexes.models.CorsOptions
+    :keyword suggesters: The suggesters for the index.
+    :paramtype suggesters: list[~azure.search.documents.indexes.models.Suggester]
+    :keyword analyzers: The analyzers for the index.
+    :paramtype analyzers: list[~azure.search.documents.indexes.models.LexicalAnalyzer]
+    :keyword tokenizers: The tokenizers for the index.
+    :paramtype tokenizers: list[~azure.search.documents.indexes.models.LexicalTokenizer]
+    :keyword token_filters: The token filters for the index.
+    :paramtype token_filters: list[~azure.search.documents.indexes.models.TokenFilter]
+    :keyword char_filters: The character filters for the index.
+    :paramtype char_filters: list[~azure.search.documents.indexes.models.CharFilter]
+    :keyword normalizers: The normalizers for the index.
+    :paramtype normalizers: list[~azure.search.documents.indexes.models.LexicalNormalizer]
+    :keyword encryption_key: A description of an encryption key that you create in Azure Key Vault.
      This key is used to provide an additional level of encryption-at-rest for your data when you
      want full assurance that no one, not even Microsoft, can decrypt your data in Azure Cognitive
      Search. Once you have encrypted your data, it will always remain encrypted. Azure Cognitive
@@ -4343,14 +4467,14 @@ class SearchIndex(msrest.serialization.Model):
      needed if you want to rotate your encryption key; Your data will be unaffected. Encryption with
      customer-managed keys is not available for free search services, and is only available for paid
      services created on or after January 1, 2019.
-    :type encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
-    :param similarity: The type of similarity algorithm to be used when scoring and ranking the
+    :paramtype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
+    :keyword similarity: The type of similarity algorithm to be used when scoring and ranking the
      documents matching a search query. The similarity algorithm can only be defined at index
      creation time and cannot be modified on existing indexes. If null, the ClassicSimilarity
      algorithm is used.
-    :type similarity: ~azure.search.documents.indexes.models.Similarity
-    :param e_tag: The ETag of the index.
-    :type e_tag: str
+    :paramtype similarity: ~azure.search.documents.indexes.models.Similarity
+    :keyword e_tag: The ETag of the index.
+    :paramtype e_tag: str
     """
 
     _validation = {
@@ -4401,32 +4525,32 @@ class SearchIndexer(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the indexer.
-    :type name: str
-    :param description: The description of the indexer.
-    :type description: str
-    :param data_source_name: Required. The name of the datasource from which this indexer reads
+    :keyword name: Required. The name of the indexer.
+    :paramtype name: str
+    :keyword description: The description of the indexer.
+    :paramtype description: str
+    :keyword data_source_name: Required. The name of the datasource from which this indexer reads
      data.
-    :type data_source_name: str
-    :param skillset_name: The name of the skillset executing with this indexer.
-    :type skillset_name: str
-    :param target_index_name: Required. The name of the index to which this indexer writes data.
-    :type target_index_name: str
-    :param schedule: The schedule for this indexer.
-    :type schedule: ~azure.search.documents.indexes.models.IndexingSchedule
-    :param parameters: Parameters for indexer execution.
-    :type parameters: ~azure.search.documents.indexes.models.IndexingParameters
-    :param field_mappings: Defines mappings between fields in the data source and corresponding
+    :paramtype data_source_name: str
+    :keyword skillset_name: The name of the skillset executing with this indexer.
+    :paramtype skillset_name: str
+    :keyword target_index_name: Required. The name of the index to which this indexer writes data.
+    :paramtype target_index_name: str
+    :keyword schedule: The schedule for this indexer.
+    :paramtype schedule: ~azure.search.documents.indexes.models.IndexingSchedule
+    :keyword parameters: Parameters for indexer execution.
+    :paramtype parameters: ~azure.search.documents.indexes.models.IndexingParameters
+    :keyword field_mappings: Defines mappings between fields in the data source and corresponding
      target fields in the index.
-    :type field_mappings: list[~azure.search.documents.indexes.models.FieldMapping]
-    :param output_field_mappings: Output field mappings are applied after enrichment and
+    :paramtype field_mappings: list[~azure.search.documents.indexes.models.FieldMapping]
+    :keyword output_field_mappings: Output field mappings are applied after enrichment and
      immediately before indexing.
-    :type output_field_mappings: list[~azure.search.documents.indexes.models.FieldMapping]
-    :param is_disabled: A value indicating whether the indexer is disabled. Default is false.
-    :type is_disabled: bool
-    :param e_tag: The ETag of the indexer.
-    :type e_tag: str
-    :param encryption_key: A description of an encryption key that you create in Azure Key Vault.
+    :paramtype output_field_mappings: list[~azure.search.documents.indexes.models.FieldMapping]
+    :keyword is_disabled: A value indicating whether the indexer is disabled. Default is false.
+    :paramtype is_disabled: bool
+    :keyword e_tag: The ETag of the indexer.
+    :paramtype e_tag: str
+    :keyword encryption_key: A description of an encryption key that you create in Azure Key Vault.
      This key is used to provide an additional level of encryption-at-rest for your indexer
      definition (as well as indexer execution status) when you want full assurance that no one, not
      even Microsoft, can decrypt them in Azure Cognitive Search. Once you have encrypted your
@@ -4435,10 +4559,10 @@ class SearchIndexer(msrest.serialization.Model):
      rotate your encryption key; Your indexer definition (and indexer execution status) will be
      unaffected. Encryption with customer-managed keys is not available for free search services,
      and is only available for paid services created on or after January 1, 2019.
-    :type encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
-    :param cache: Adds caching to an enrichment pipeline to allow for incremental modification
+    :paramtype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
+    :keyword cache: Adds caching to an enrichment pipeline to allow for incremental modification
      steps without having to rebuild the index every time.
-    :type cache: ~azure.search.documents.indexes.models.SearchIndexerCache
+    :paramtype cache: ~azure.search.documents.indexes.models.SearchIndexerCache
     """
 
     _validation = {
@@ -4486,11 +4610,11 @@ class SearchIndexer(msrest.serialization.Model):
 class SearchIndexerCache(msrest.serialization.Model):
     """SearchIndexerCache.
 
-    :param storage_connection_string: The connection string to the storage account where the cache
-     data will be persisted.
-    :type storage_connection_string: str
-    :param enable_reprocessing: Specifies whether incremental reprocessing is enabled.
-    :type enable_reprocessing: bool
+    :keyword storage_connection_string: The connection string to the storage account where the
+     cache data will be persisted.
+    :paramtype storage_connection_string: str
+    :keyword enable_reprocessing: Specifies whether incremental reprocessing is enabled.
+    :paramtype enable_reprocessing: bool
     """
 
     _attribute_map = {
@@ -4512,12 +4636,12 @@ class SearchIndexerDataContainer(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the table or view (for Azure SQL data source) or collection
-     (for CosmosDB data source) that will be indexed.
-    :type name: str
-    :param query: A query that is applied to this data container. The syntax and meaning of this
+    :keyword name: Required. The name of the table or view (for Azure SQL data source) or
+     collection (for CosmosDB data source) that will be indexed.
+    :paramtype name: str
+    :keyword query: A query that is applied to this data container. The syntax and meaning of this
      parameter is datasource-specific. Not supported by Azure SQL datasources.
-    :type query: str
+    :paramtype query: str
     """
 
     _validation = {
@@ -4546,9 +4670,9 @@ class SearchIndexerDataIdentity(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the identity.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the identity.Constant filled by
      server.
-    :type odata_type: str
+    :paramtype odata_type: str
     """
 
     _validation = {
@@ -4576,9 +4700,9 @@ class SearchIndexerDataNoneIdentity(SearchIndexerDataIdentity):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the identity.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the identity.Constant filled by
      server.
-    :type odata_type: str
+    :paramtype odata_type: str
     """
 
     _validation = {
@@ -4602,31 +4726,31 @@ class SearchIndexerDataSource(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the datasource.
-    :type name: str
-    :param description: The description of the datasource.
-    :type description: str
-    :param type: Required. The type of the datasource. Possible values include: "azuresql",
+    :keyword name: Required. The name of the datasource.
+    :paramtype name: str
+    :keyword description: The description of the datasource.
+    :paramtype description: str
+    :keyword type: Required. The type of the datasource. Possible values include: "azuresql",
      "cosmosdb", "azureblob", "azuretable", "mysql", "adlsgen2".
-    :type type: str or ~azure.search.documents.indexes.models.SearchIndexerDataSourceType
-    :param credentials: Required. Credentials for the datasource.
-    :type credentials: ~azure.search.documents.indexes.models.DataSourceCredentials
-    :param container: Required. The data container for the datasource.
-    :type container: ~azure.search.documents.indexes.models.SearchIndexerDataContainer
-    :param identity: An explicit managed identity to use for this datasource. If not specified and
-     the connection string is a managed identity, the system-assigned managed identity is used. If
-     not specified, the value remains unchanged. If "none" is specified, the value of this property
-     is cleared.
-    :type identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
-    :param data_change_detection_policy: The data change detection policy for the datasource.
-    :type data_change_detection_policy:
+    :paramtype type: str or ~azure.search.documents.indexes.models.SearchIndexerDataSourceType
+    :keyword credentials: Required. Credentials for the datasource.
+    :paramtype credentials: ~azure.search.documents.indexes.models.DataSourceCredentials
+    :keyword container: Required. The data container for the datasource.
+    :paramtype container: ~azure.search.documents.indexes.models.SearchIndexerDataContainer
+    :keyword identity: An explicit managed identity to use for this datasource. If not specified
+     and the connection string is a managed identity, the system-assigned managed identity is used.
+     If not specified, the value remains unchanged. If "none" is specified, the value of this
+     property is cleared.
+    :paramtype identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
+    :keyword data_change_detection_policy: The data change detection policy for the datasource.
+    :paramtype data_change_detection_policy:
      ~azure.search.documents.indexes.models.DataChangeDetectionPolicy
-    :param data_deletion_detection_policy: The data deletion detection policy for the datasource.
-    :type data_deletion_detection_policy:
+    :keyword data_deletion_detection_policy: The data deletion detection policy for the datasource.
+    :paramtype data_deletion_detection_policy:
      ~azure.search.documents.indexes.models.DataDeletionDetectionPolicy
-    :param e_tag: The ETag of the data source.
-    :type e_tag: str
-    :param encryption_key: A description of an encryption key that you create in Azure Key Vault.
+    :keyword e_tag: The ETag of the data source.
+    :paramtype e_tag: str
+    :keyword encryption_key: A description of an encryption key that you create in Azure Key Vault.
      This key is used to provide an additional level of encryption-at-rest for your datasource
      definition when you want full assurance that no one, not even Microsoft, can decrypt your data
      source definition in Azure Cognitive Search. Once you have encrypted your data source
@@ -4635,7 +4759,7 @@ class SearchIndexerDataSource(msrest.serialization.Model):
      encryption key; Your datasource definition will be unaffected. Encryption with customer-managed
      keys is not available for free search services, and is only available for paid services created
      on or after January 1, 2019.
-    :type encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
+    :paramtype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
     """
 
     _validation = {
@@ -4680,14 +4804,14 @@ class SearchIndexerDataUserAssignedIdentity(SearchIndexerDataIdentity):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the identity.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the identity.Constant filled by
      server.
-    :type odata_type: str
-    :param user_assigned_identity: Required. The fully qualified Azure resource Id of a user
+    :paramtype odata_type: str
+    :keyword user_assigned_identity: Required. The fully qualified Azure resource Id of a user
      assigned managed identity typically in the form
      "/subscriptions/12345678-1234-1234-1234-1234567890ab/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId"
      that should have been assigned to the search service.
-    :type user_assigned_identity: str
+    :paramtype user_assigned_identity: str
     """
 
     _validation = {
@@ -4773,11 +4897,11 @@ class SearchIndexerKnowledgeStore(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param storage_connection_string: Required. The connection string to the storage account
+    :keyword storage_connection_string: Required. The connection string to the storage account
      projections will be stored in.
-    :type storage_connection_string: str
-    :param projections: Required. A list of additional projections to perform during indexing.
-    :type projections:
+    :paramtype storage_connection_string: str
+    :keyword projections: Required. A list of additional projections to perform during indexing.
+    :paramtype projections:
      list[~azure.search.documents.indexes.models.SearchIndexerKnowledgeStoreProjection]
     """
 
@@ -4803,16 +4927,16 @@ class SearchIndexerKnowledgeStore(msrest.serialization.Model):
 class SearchIndexerKnowledgeStoreProjectionSelector(msrest.serialization.Model):
     """Abstract class to share properties between concrete selectors.
 
-    :param reference_key_name: Name of reference key to different projection.
-    :type reference_key_name: str
-    :param generated_key_name: Name of generated key to store projection under.
-    :type generated_key_name: str
-    :param source: Source data to project.
-    :type source: str
-    :param source_context: Source context for complex projections.
-    :type source_context: str
-    :param inputs: Nested inputs for complex projections.
-    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :keyword reference_key_name: Name of reference key to different projection.
+    :paramtype reference_key_name: str
+    :keyword generated_key_name: Name of generated key to store projection under.
+    :paramtype generated_key_name: str
+    :keyword source: Source data to project.
+    :paramtype source: str
+    :keyword source_context: Source context for complex projections.
+    :paramtype source_context: str
+    :keyword inputs: Nested inputs for complex projections.
+    :paramtype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
     """
 
     _attribute_map = {
@@ -4840,18 +4964,18 @@ class SearchIndexerKnowledgeStoreBlobProjectionSelector(SearchIndexerKnowledgeSt
 
     All required parameters must be populated in order to send to Azure.
 
-    :param reference_key_name: Name of reference key to different projection.
-    :type reference_key_name: str
-    :param generated_key_name: Name of generated key to store projection under.
-    :type generated_key_name: str
-    :param source: Source data to project.
-    :type source: str
-    :param source_context: Source context for complex projections.
-    :type source_context: str
-    :param inputs: Nested inputs for complex projections.
-    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :param storage_container: Required. Blob container to store projections in.
-    :type storage_container: str
+    :keyword reference_key_name: Name of reference key to different projection.
+    :paramtype reference_key_name: str
+    :keyword generated_key_name: Name of generated key to store projection under.
+    :paramtype generated_key_name: str
+    :keyword source: Source data to project.
+    :paramtype source: str
+    :keyword source_context: Source context for complex projections.
+    :paramtype source_context: str
+    :keyword inputs: Nested inputs for complex projections.
+    :paramtype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :keyword storage_container: Required. Blob container to store projections in.
+    :paramtype storage_container: str
     """
 
     _validation = {
@@ -4880,18 +5004,18 @@ class SearchIndexerKnowledgeStoreFileProjectionSelector(SearchIndexerKnowledgeSt
 
     All required parameters must be populated in order to send to Azure.
 
-    :param reference_key_name: Name of reference key to different projection.
-    :type reference_key_name: str
-    :param generated_key_name: Name of generated key to store projection under.
-    :type generated_key_name: str
-    :param source: Source data to project.
-    :type source: str
-    :param source_context: Source context for complex projections.
-    :type source_context: str
-    :param inputs: Nested inputs for complex projections.
-    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :param storage_container: Required. Blob container to store projections in.
-    :type storage_container: str
+    :keyword reference_key_name: Name of reference key to different projection.
+    :paramtype reference_key_name: str
+    :keyword generated_key_name: Name of generated key to store projection under.
+    :paramtype generated_key_name: str
+    :keyword source: Source data to project.
+    :paramtype source: str
+    :keyword source_context: Source context for complex projections.
+    :paramtype source_context: str
+    :keyword inputs: Nested inputs for complex projections.
+    :paramtype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :keyword storage_container: Required. Blob container to store projections in.
+    :paramtype storage_container: str
     """
 
     _validation = {
@@ -4919,18 +5043,18 @@ class SearchIndexerKnowledgeStoreObjectProjectionSelector(SearchIndexerKnowledge
 
     All required parameters must be populated in order to send to Azure.
 
-    :param reference_key_name: Name of reference key to different projection.
-    :type reference_key_name: str
-    :param generated_key_name: Name of generated key to store projection under.
-    :type generated_key_name: str
-    :param source: Source data to project.
-    :type source: str
-    :param source_context: Source context for complex projections.
-    :type source_context: str
-    :param inputs: Nested inputs for complex projections.
-    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :param storage_container: Required. Blob container to store projections in.
-    :type storage_container: str
+    :keyword reference_key_name: Name of reference key to different projection.
+    :paramtype reference_key_name: str
+    :keyword generated_key_name: Name of generated key to store projection under.
+    :paramtype generated_key_name: str
+    :keyword source: Source data to project.
+    :paramtype source: str
+    :keyword source_context: Source context for complex projections.
+    :paramtype source_context: str
+    :keyword inputs: Nested inputs for complex projections.
+    :paramtype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :keyword storage_container: Required. Blob container to store projections in.
+    :paramtype storage_container: str
     """
 
     _validation = {
@@ -4956,14 +5080,14 @@ class SearchIndexerKnowledgeStoreObjectProjectionSelector(SearchIndexerKnowledge
 class SearchIndexerKnowledgeStoreProjection(msrest.serialization.Model):
     """Container object for various projection selectors.
 
-    :param tables: Projections to Azure Table storage.
-    :type tables:
+    :keyword tables: Projections to Azure Table storage.
+    :paramtype tables:
      list[~azure.search.documents.indexes.models.SearchIndexerKnowledgeStoreTableProjectionSelector]
-    :param objects: Projections to Azure Blob storage.
-    :type objects:
+    :keyword objects: Projections to Azure Blob storage.
+    :paramtype objects:
      list[~azure.search.documents.indexes.models.SearchIndexerKnowledgeStoreObjectProjectionSelector]
-    :param files: Projections to Azure File storage.
-    :type files:
+    :keyword files: Projections to Azure File storage.
+    :paramtype files:
      list[~azure.search.documents.indexes.models.SearchIndexerKnowledgeStoreFileProjectionSelector]
     """
 
@@ -4988,18 +5112,18 @@ class SearchIndexerKnowledgeStoreTableProjectionSelector(SearchIndexerKnowledgeS
 
     All required parameters must be populated in order to send to Azure.
 
-    :param reference_key_name: Name of reference key to different projection.
-    :type reference_key_name: str
-    :param generated_key_name: Name of generated key to store projection under.
-    :type generated_key_name: str
-    :param source: Source data to project.
-    :type source: str
-    :param source_context: Source context for complex projections.
-    :type source_context: str
-    :param inputs: Nested inputs for complex projections.
-    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :param table_name: Required. Name of the Azure table to store projected data in.
-    :type table_name: str
+    :keyword reference_key_name: Name of reference key to different projection.
+    :paramtype reference_key_name: str
+    :keyword generated_key_name: Name of generated key to store projection under.
+    :paramtype generated_key_name: str
+    :keyword source: Source data to project.
+    :paramtype source: str
+    :keyword source_context: Source context for complex projections.
+    :paramtype source_context: str
+    :keyword inputs: Nested inputs for complex projections.
+    :paramtype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :keyword table_name: Required. Name of the Azure table to store projected data in.
+    :paramtype table_name: str
     """
 
     _validation = {
@@ -5066,22 +5190,22 @@ class SearchIndexerSkillset(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the skillset.
-    :type name: str
-    :param description: The description of the skillset.
-    :type description: str
-    :param skills: Required. A list of skills in the skillset.
-    :type skills: list[~azure.search.documents.indexes.models.SearchIndexerSkill]
-    :param cognitive_services_account: Details about cognitive services to be used when running
+    :keyword name: Required. The name of the skillset.
+    :paramtype name: str
+    :keyword description: The description of the skillset.
+    :paramtype description: str
+    :keyword skills: Required. A list of skills in the skillset.
+    :paramtype skills: list[~azure.search.documents.indexes.models.SearchIndexerSkill]
+    :keyword cognitive_services_account: Details about cognitive services to be used when running
      skills.
-    :type cognitive_services_account:
+    :paramtype cognitive_services_account:
      ~azure.search.documents.indexes.models.CognitiveServicesAccount
-    :param knowledge_store: Definition of additional projections to azure blob, table, or files, of
-     enriched data.
-    :type knowledge_store: ~azure.search.documents.indexes.models.SearchIndexerKnowledgeStore
-    :param e_tag: The ETag of the skillset.
-    :type e_tag: str
-    :param encryption_key: A description of an encryption key that you create in Azure Key Vault.
+    :keyword knowledge_store: Definition of additional projections to azure blob, table, or files,
+     of enriched data.
+    :paramtype knowledge_store: ~azure.search.documents.indexes.models.SearchIndexerKnowledgeStore
+    :keyword e_tag: The ETag of the skillset.
+    :paramtype e_tag: str
+    :keyword encryption_key: A description of an encryption key that you create in Azure Key Vault.
      This key is used to provide an additional level of encryption-at-rest for your skillset
      definition when you want full assurance that no one, not even Microsoft, can decrypt your
      skillset definition in Azure Cognitive Search. Once you have encrypted your skillset
@@ -5090,7 +5214,7 @@ class SearchIndexerSkillset(msrest.serialization.Model):
      encryption key; Your skillset definition will be unaffected. Encryption with customer-managed
      keys is not available for free search services, and is only available for paid services created
      on or after January 1, 2019.
-    :type encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
+    :paramtype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
     """
 
     _validation = {
@@ -5222,25 +5346,25 @@ class SearchResourceEncryptionKey(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param key_name: Required. The name of your Azure Key Vault key to be used to encrypt your data
-     at rest.
-    :type key_name: str
-    :param key_version: Required. The version of your Azure Key Vault key to be used to encrypt
+    :keyword key_name: Required. The name of your Azure Key Vault key to be used to encrypt your
+     data at rest.
+    :paramtype key_name: str
+    :keyword key_version: Required. The version of your Azure Key Vault key to be used to encrypt
      your data at rest.
-    :type key_version: str
-    :param vault_uri: Required. The URI of your Azure Key Vault, also referred to as DNS name, that
-     contains the key to be used to encrypt your data at rest. An example URI might be
+    :paramtype key_version: str
+    :keyword vault_uri: Required. The URI of your Azure Key Vault, also referred to as DNS name,
+     that contains the key to be used to encrypt your data at rest. An example URI might be
      https://my-keyvault-name.vault.azure.net.
-    :type vault_uri: str
-    :param access_credentials: Optional Azure Active Directory credentials used for accessing your
-     Azure Key Vault. Not required if using managed identity instead.
-    :type access_credentials:
+    :paramtype vault_uri: str
+    :keyword access_credentials: Optional Azure Active Directory credentials used for accessing
+     your Azure Key Vault. Not required if using managed identity instead.
+    :paramtype access_credentials:
      ~azure.search.documents.indexes.models.AzureActiveDirectoryApplicationCredentials
-    :param identity: An explicit managed identity to use for this encryption key. If not specified
-     and the access credentials property is null, the system-assigned managed identity is used. On
-     update to the resource, if the explicit identity is unspecified, it remains unchanged. If
-     "none" is specified, the value of this property is cleared.
-    :type identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
+    :keyword identity: An explicit managed identity to use for this encryption key. If not
+     specified and the access credentials property is null, the system-assigned managed identity is
+     used. On update to the resource, if the explicit identity is unspecified, it remains unchanged.
+     If "none" is specified, the value of this property is cleared.
+    :paramtype identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
     """
 
     _validation = {
@@ -5274,29 +5398,30 @@ class SentimentSkill(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the skill.Constant filled by
      server.
-    :type odata_type: str
-    :param name: The name of the skill which uniquely identifies it within the skillset. A skill
+    :paramtype odata_type: str
+    :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
      prefixed with the character '#'.
-    :type name: str
-    :param description: The description of the skill which describes the inputs, outputs, and usage
-     of the skill.
-    :type description: str
-    :param context: Represents the level at which operations take place, such as the document root
-     or document content (for example, /document or /document/content). The default is /document.
-    :type context: str
-    :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
-     output of an upstream skill.
-    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :param outputs: Required. The output of a skill is either a field in a search index, or a value
-     that can be consumed as an input by another skill.
-    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
-    :param default_language_code: A value indicating which language code to use. Default is en.
+    :paramtype name: str
+    :keyword description: The description of the skill which describes the inputs, outputs, and
+     usage of the skill.
+    :paramtype description: str
+    :keyword context: Represents the level at which operations take place, such as the document
+     root or document content (for example, /document or /document/content). The default is
+     /document.
+    :paramtype context: str
+    :keyword inputs: Required. Inputs of the skills could be a column in the source data set, or
+     the output of an upstream skill.
+    :paramtype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :keyword outputs: Required. The output of a skill is either a field in a search index, or a
+     value that can be consumed as an input by another skill.
+    :paramtype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :keyword default_language_code: A value indicating which language code to use. Default is en.
      Possible values include: "da", "nl", "en", "fi", "fr", "de", "el", "it", "no", "pl", "pt-PT",
      "ru", "es", "sv", "tr".
-    :type default_language_code: str or
+    :paramtype default_language_code: str or
      ~azure.search.documents.indexes.models.SentimentSkillLanguage
     """
 
@@ -5330,35 +5455,36 @@ class SentimentSkillV3(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the skill.Constant filled by
      server.
-    :type odata_type: str
-    :param name: The name of the skill which uniquely identifies it within the skillset. A skill
+    :paramtype odata_type: str
+    :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
      prefixed with the character '#'.
-    :type name: str
-    :param description: The description of the skill which describes the inputs, outputs, and usage
-     of the skill.
-    :type description: str
-    :param context: Represents the level at which operations take place, such as the document root
-     or document content (for example, /document or /document/content). The default is /document.
-    :type context: str
-    :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
-     output of an upstream skill.
-    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :param outputs: Required. The output of a skill is either a field in a search index, or a value
-     that can be consumed as an input by another skill.
-    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
-    :param default_language_code: A value indicating which language code to use. Default is en.
-    :type default_language_code: str
-    :param include_opinion_mining: If set to true, the skill output will include information from
+    :paramtype name: str
+    :keyword description: The description of the skill which describes the inputs, outputs, and
+     usage of the skill.
+    :paramtype description: str
+    :keyword context: Represents the level at which operations take place, such as the document
+     root or document content (for example, /document or /document/content). The default is
+     /document.
+    :paramtype context: str
+    :keyword inputs: Required. Inputs of the skills could be a column in the source data set, or
+     the output of an upstream skill.
+    :paramtype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :keyword outputs: Required. The output of a skill is either a field in a search index, or a
+     value that can be consumed as an input by another skill.
+    :paramtype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :keyword default_language_code: A value indicating which language code to use. Default is en.
+    :paramtype default_language_code: str
+    :keyword include_opinion_mining: If set to true, the skill output will include information from
      Text Analytics for opinion mining, namely targets (nouns or verbs) and their associated
      assessment (adjective) in the text. Default is false.
-    :type include_opinion_mining: bool
-    :param model_version: The version of the model to use when calling the Text Analytics service.
-     It will default to the latest available when not specified. We recommend you do not specify
-     this value unless absolutely necessary.
-    :type model_version: str
+    :paramtype include_opinion_mining: bool
+    :keyword model_version: The version of the model to use when calling the Text Analytics
+     service. It will default to the latest available when not specified. We recommend you do not
+     specify this value unless absolutely necessary.
+    :paramtype model_version: str
     """
 
     _validation = {
@@ -5395,20 +5521,21 @@ class ServiceCounters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param document_counter: Required. Total number of documents across all indexes in the service.
-    :type document_counter: ~azure.search.documents.indexes.models.ResourceCounter
-    :param index_counter: Required. Total number of indexes.
-    :type index_counter: ~azure.search.documents.indexes.models.ResourceCounter
-    :param indexer_counter: Required. Total number of indexers.
-    :type indexer_counter: ~azure.search.documents.indexes.models.ResourceCounter
-    :param data_source_counter: Required. Total number of data sources.
-    :type data_source_counter: ~azure.search.documents.indexes.models.ResourceCounter
-    :param storage_size_counter: Required. Total size of used storage in bytes.
-    :type storage_size_counter: ~azure.search.documents.indexes.models.ResourceCounter
-    :param synonym_map_counter: Required. Total number of synonym maps.
-    :type synonym_map_counter: ~azure.search.documents.indexes.models.ResourceCounter
-    :param skillset_counter: Total number of skillsets.
-    :type skillset_counter: ~azure.search.documents.indexes.models.ResourceCounter
+    :keyword document_counter: Required. Total number of documents across all indexes in the
+     service.
+    :paramtype document_counter: ~azure.search.documents.indexes.models.ResourceCounter
+    :keyword index_counter: Required. Total number of indexes.
+    :paramtype index_counter: ~azure.search.documents.indexes.models.ResourceCounter
+    :keyword indexer_counter: Required. Total number of indexers.
+    :paramtype indexer_counter: ~azure.search.documents.indexes.models.ResourceCounter
+    :keyword data_source_counter: Required. Total number of data sources.
+    :paramtype data_source_counter: ~azure.search.documents.indexes.models.ResourceCounter
+    :keyword storage_size_counter: Required. Total size of used storage in bytes.
+    :paramtype storage_size_counter: ~azure.search.documents.indexes.models.ResourceCounter
+    :keyword synonym_map_counter: Required. Total number of synonym maps.
+    :paramtype synonym_map_counter: ~azure.search.documents.indexes.models.ResourceCounter
+    :keyword skillset_counter: Total number of skillsets.
+    :paramtype skillset_counter: ~azure.search.documents.indexes.models.ResourceCounter
     """
 
     _validation = {
@@ -5447,17 +5574,17 @@ class ServiceCounters(msrest.serialization.Model):
 class ServiceLimits(msrest.serialization.Model):
     """Represents various service level limits.
 
-    :param max_fields_per_index: The maximum allowed fields per index.
-    :type max_fields_per_index: int
-    :param max_field_nesting_depth_per_index: The maximum depth which you can nest sub-fields in an
-     index, including the top-level complex field. For example, a/b/c has a nesting depth of 3.
-    :type max_field_nesting_depth_per_index: int
-    :param max_complex_collection_fields_per_index: The maximum number of fields of type
+    :keyword max_fields_per_index: The maximum allowed fields per index.
+    :paramtype max_fields_per_index: int
+    :keyword max_field_nesting_depth_per_index: The maximum depth which you can nest sub-fields in
+     an index, including the top-level complex field. For example, a/b/c has a nesting depth of 3.
+    :paramtype max_field_nesting_depth_per_index: int
+    :keyword max_complex_collection_fields_per_index: The maximum number of fields of type
      Collection(Edm.ComplexType) allowed in an index.
-    :type max_complex_collection_fields_per_index: int
-    :param max_complex_objects_in_collections_per_document: The maximum number of objects in
+    :paramtype max_complex_collection_fields_per_index: int
+    :keyword max_complex_objects_in_collections_per_document: The maximum number of objects in
      complex collections allowed per document.
-    :type max_complex_objects_in_collections_per_document: int
+    :paramtype max_complex_objects_in_collections_per_document: int
     """
 
     _attribute_map = {
@@ -5483,10 +5610,10 @@ class ServiceStatistics(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param counters: Required. Service level resource counters.
-    :type counters: ~azure.search.documents.indexes.models.ServiceCounters
-    :param limits: Required. Service level general limits.
-    :type limits: ~azure.search.documents.indexes.models.ServiceLimits
+    :keyword counters: Required. Service level resource counters.
+    :paramtype counters: ~azure.search.documents.indexes.models.ServiceCounters
+    :keyword limits: Required. Service level general limits.
+    :paramtype limits: ~azure.search.documents.indexes.models.ServiceLimits
     """
 
     _validation = {
@@ -5513,25 +5640,26 @@ class ShaperSkill(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the skill.Constant filled by
      server.
-    :type odata_type: str
-    :param name: The name of the skill which uniquely identifies it within the skillset. A skill
+    :paramtype odata_type: str
+    :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
      prefixed with the character '#'.
-    :type name: str
-    :param description: The description of the skill which describes the inputs, outputs, and usage
-     of the skill.
-    :type description: str
-    :param context: Represents the level at which operations take place, such as the document root
-     or document content (for example, /document or /document/content). The default is /document.
-    :type context: str
-    :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
-     output of an upstream skill.
-    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :param outputs: Required. The output of a skill is either a field in a search index, or a value
-     that can be consumed as an input by another skill.
-    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :paramtype name: str
+    :keyword description: The description of the skill which describes the inputs, outputs, and
+     usage of the skill.
+    :paramtype description: str
+    :keyword context: Represents the level at which operations take place, such as the document
+     root or document content (for example, /document or /document/content). The default is
+     /document.
+    :paramtype context: str
+    :keyword inputs: Required. Inputs of the skills could be a column in the source data set, or
+     the output of an upstream skill.
+    :paramtype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :keyword outputs: Required. The output of a skill is either a field in a search index, or a
+     value that can be consumed as an input by another skill.
+    :paramtype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
     """
 
     _validation = {
@@ -5562,31 +5690,31 @@ class ShingleTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+    :keyword odata_type: Required. Identifies the concrete type of the token filter.Constant filled
      by server.
-    :type odata_type: str
-    :param name: Required. The name of the token filter. It must only contain letters, digits,
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters.
-    :type name: str
-    :param max_shingle_size: The maximum shingle size. Default and minimum value is 2.
-    :type max_shingle_size: int
-    :param min_shingle_size: The minimum shingle size. Default and minimum value is 2. Must be less
-     than the value of maxShingleSize.
-    :type min_shingle_size: int
-    :param output_unigrams: A value indicating whether the output stream will contain the input
+    :paramtype name: str
+    :keyword max_shingle_size: The maximum shingle size. Default and minimum value is 2.
+    :paramtype max_shingle_size: int
+    :keyword min_shingle_size: The minimum shingle size. Default and minimum value is 2. Must be
+     less than the value of maxShingleSize.
+    :paramtype min_shingle_size: int
+    :keyword output_unigrams: A value indicating whether the output stream will contain the input
      tokens (unigrams) as well as shingles. Default is true.
-    :type output_unigrams: bool
-    :param output_unigrams_if_no_shingles: A value indicating whether to output unigrams for those
-     times when no shingles are available. This property takes precedence when outputUnigrams is set
-     to false. Default is false.
-    :type output_unigrams_if_no_shingles: bool
-    :param token_separator: The string to use when joining adjacent tokens to form a shingle.
+    :paramtype output_unigrams: bool
+    :keyword output_unigrams_if_no_shingles: A value indicating whether to output unigrams for
+     those times when no shingles are available. This property takes precedence when outputUnigrams
+     is set to false. Default is false.
+    :paramtype output_unigrams_if_no_shingles: bool
+    :keyword token_separator: The string to use when joining adjacent tokens to form a shingle.
      Default is a single space (" ").
-    :type token_separator: str
-    :param filter_token: The string to insert for each position at which there is no token. Default
-     is an underscore ("_").
-    :type filter_token: str
+    :paramtype token_separator: str
+    :keyword filter_token: The string to insert for each position at which there is no token.
+     Default is an underscore ("_").
+    :paramtype filter_token: str
     """
 
     _validation = {
@@ -5626,18 +5754,18 @@ class SnowballTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+    :keyword odata_type: Required. Identifies the concrete type of the token filter.Constant filled
      by server.
-    :type odata_type: str
-    :param name: Required. The name of the token filter. It must only contain letters, digits,
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters.
-    :type name: str
-    :param language: Required. The language to use. Possible values include: "armenian", "basque",
-     "catalan", "danish", "dutch", "english", "finnish", "french", "german", "german2", "hungarian",
-     "italian", "kp", "lovins", "norwegian", "porter", "portuguese", "romanian", "russian",
-     "spanish", "swedish", "turkish".
-    :type language: str or ~azure.search.documents.indexes.models.SnowballTokenFilterLanguage
+    :paramtype name: str
+    :keyword language: Required. The language to use. Possible values include: "armenian",
+     "basque", "catalan", "danish", "dutch", "english", "finnish", "french", "german", "german2",
+     "hungarian", "italian", "kp", "lovins", "norwegian", "porter", "portuguese", "romanian",
+     "russian", "spanish", "swedish", "turkish".
+    :paramtype language: str or ~azure.search.documents.indexes.models.SnowballTokenFilterLanguage
     """
 
     _validation = {
@@ -5666,13 +5794,13 @@ class SoftDeleteColumnDeletionDetectionPolicy(DataDeletionDetectionPolicy):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the data deletion detection
+    :keyword odata_type: Required. Identifies the concrete type of the data deletion detection
      policy.Constant filled by server.
-    :type odata_type: str
-    :param soft_delete_column_name: The name of the column to use for soft-deletion detection.
-    :type soft_delete_column_name: str
-    :param soft_delete_marker_value: The marker value that identifies an item as deleted.
-    :type soft_delete_marker_value: str
+    :paramtype odata_type: str
+    :keyword soft_delete_column_name: The name of the column to use for soft-deletion detection.
+    :paramtype soft_delete_column_name: str
+    :keyword soft_delete_marker_value: The marker value that identifies an item as deleted.
+    :paramtype soft_delete_marker_value: str
     """
 
     _validation = {
@@ -5700,33 +5828,35 @@ class SplitSkill(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the skill.Constant filled by
      server.
-    :type odata_type: str
-    :param name: The name of the skill which uniquely identifies it within the skillset. A skill
+    :paramtype odata_type: str
+    :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
      prefixed with the character '#'.
-    :type name: str
-    :param description: The description of the skill which describes the inputs, outputs, and usage
-     of the skill.
-    :type description: str
-    :param context: Represents the level at which operations take place, such as the document root
-     or document content (for example, /document or /document/content). The default is /document.
-    :type context: str
-    :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
-     output of an upstream skill.
-    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :param outputs: Required. The output of a skill is either a field in a search index, or a value
-     that can be consumed as an input by another skill.
-    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
-    :param default_language_code: A value indicating which language code to use. Default is en.
+    :paramtype name: str
+    :keyword description: The description of the skill which describes the inputs, outputs, and
+     usage of the skill.
+    :paramtype description: str
+    :keyword context: Represents the level at which operations take place, such as the document
+     root or document content (for example, /document or /document/content). The default is
+     /document.
+    :paramtype context: str
+    :keyword inputs: Required. Inputs of the skills could be a column in the source data set, or
+     the output of an upstream skill.
+    :paramtype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :keyword outputs: Required. The output of a skill is either a field in a search index, or a
+     value that can be consumed as an input by another skill.
+    :paramtype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :keyword default_language_code: A value indicating which language code to use. Default is en.
      Possible values include: "da", "de", "en", "es", "fi", "fr", "it", "ko", "pt".
-    :type default_language_code: str or ~azure.search.documents.indexes.models.SplitSkillLanguage
-    :param text_split_mode: A value indicating which split mode to perform. Possible values
+    :paramtype default_language_code: str or
+     ~azure.search.documents.indexes.models.SplitSkillLanguage
+    :keyword text_split_mode: A value indicating which split mode to perform. Possible values
      include: "pages", "sentences".
-    :type text_split_mode: str or ~azure.search.documents.indexes.models.TextSplitMode
-    :param maximum_page_length: The desired maximum page length. Default is 10000.
-    :type maximum_page_length: int
+    :paramtype text_split_mode: str or ~azure.search.documents.indexes.models.TextSplitMode
+    :keyword maximum_page_length: The desired maximum page length. Default is 10000.
+    :paramtype maximum_page_length: int
     """
 
     _validation = {
@@ -5763,9 +5893,9 @@ class SqlIntegratedChangeTrackingPolicy(DataChangeDetectionPolicy):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the data change detection
+    :keyword odata_type: Required. Identifies the concrete type of the data change detection
      policy.Constant filled by server.
-    :type odata_type: str
+    :paramtype odata_type: str
     """
 
     _validation = {
@@ -5789,16 +5919,16 @@ class StemmerOverrideTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+    :keyword odata_type: Required. Identifies the concrete type of the token filter.Constant filled
      by server.
-    :type odata_type: str
-    :param name: Required. The name of the token filter. It must only contain letters, digits,
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters.
-    :type name: str
-    :param rules: Required. A list of stemming rules in the following format: "word => stem", for
+    :paramtype name: str
+    :keyword rules: Required. A list of stemming rules in the following format: "word => stem", for
      example: "ran => run".
-    :type rules: list[str]
+    :paramtype rules: list[str]
     """
 
     _validation = {
@@ -5827,23 +5957,23 @@ class StemmerTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+    :keyword odata_type: Required. Identifies the concrete type of the token filter.Constant filled
      by server.
-    :type odata_type: str
-    :param name: Required. The name of the token filter. It must only contain letters, digits,
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters.
-    :type name: str
-    :param language: Required. The language to use. Possible values include: "arabic", "armenian",
-     "basque", "brazilian", "bulgarian", "catalan", "czech", "danish", "dutch", "dutchKp",
-     "english", "lightEnglish", "minimalEnglish", "possessiveEnglish", "porter2", "lovins",
-     "finnish", "lightFinnish", "french", "lightFrench", "minimalFrench", "galician",
+    :paramtype name: str
+    :keyword language: Required. The language to use. Possible values include: "arabic",
+     "armenian", "basque", "brazilian", "bulgarian", "catalan", "czech", "danish", "dutch",
+     "dutchKp", "english", "lightEnglish", "minimalEnglish", "possessiveEnglish", "porter2",
+     "lovins", "finnish", "lightFinnish", "french", "lightFrench", "minimalFrench", "galician",
      "minimalGalician", "german", "german2", "lightGerman", "minimalGerman", "greek", "hindi",
      "hungarian", "lightHungarian", "indonesian", "irish", "italian", "lightItalian", "sorani",
      "latvian", "norwegian", "lightNorwegian", "minimalNorwegian", "lightNynorsk", "minimalNynorsk",
      "portuguese", "lightPortuguese", "minimalPortuguese", "portugueseRslp", "romanian", "russian",
      "lightRussian", "spanish", "lightSpanish", "swedish", "lightSwedish", "turkish".
-    :type language: str or ~azure.search.documents.indexes.models.StemmerTokenFilterLanguage
+    :paramtype language: str or ~azure.search.documents.indexes.models.StemmerTokenFilterLanguage
     """
 
     _validation = {
@@ -5872,15 +6002,15 @@ class StopAnalyzer(LexicalAnalyzer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the analyzer.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the analyzer.Constant filled by
      server.
-    :type odata_type: str
-    :param name: Required. The name of the analyzer. It must only contain letters, digits, spaces,
-     dashes or underscores, can only start and end with alphanumeric characters, and is limited to
-     128 characters.
-    :type name: str
-    :param stopwords: A list of stopwords.
-    :type stopwords: list[str]
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the analyzer. It must only contain letters, digits,
+     spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
+     limited to 128 characters.
+    :paramtype name: str
+    :keyword stopwords: A list of stopwords.
+    :paramtype stopwords: list[str]
     """
 
     _validation = {
@@ -5908,29 +6038,29 @@ class StopwordsTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+    :keyword odata_type: Required. Identifies the concrete type of the token filter.Constant filled
      by server.
-    :type odata_type: str
-    :param name: Required. The name of the token filter. It must only contain letters, digits,
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters.
-    :type name: str
-    :param stopwords: The list of stopwords. This property and the stopwords list property cannot
+    :paramtype name: str
+    :keyword stopwords: The list of stopwords. This property and the stopwords list property cannot
      both be set.
-    :type stopwords: list[str]
-    :param stopwords_list: A predefined list of stopwords to use. This property and the stopwords
+    :paramtype stopwords: list[str]
+    :keyword stopwords_list: A predefined list of stopwords to use. This property and the stopwords
      property cannot both be set. Default is English. Possible values include: "arabic", "armenian",
      "basque", "brazilian", "bulgarian", "catalan", "czech", "danish", "dutch", "english",
      "finnish", "french", "galician", "german", "greek", "hindi", "hungarian", "indonesian",
      "irish", "italian", "latvian", "norwegian", "persian", "portuguese", "romanian", "russian",
      "sorani", "spanish", "swedish", "thai", "turkish".
-    :type stopwords_list: str or ~azure.search.documents.indexes.models.StopwordsList
-    :param ignore_case: A value indicating whether to ignore case. If true, all words are converted
-     to lower case first. Default is false.
-    :type ignore_case: bool
-    :param remove_trailing_stop_words: A value indicating whether to ignore the last search term if
-     it's a stop word. Default is true.
-    :type remove_trailing_stop_words: bool
+    :paramtype stopwords_list: str or ~azure.search.documents.indexes.models.StopwordsList
+    :keyword ignore_case: A value indicating whether to ignore case. If true, all words are
+     converted to lower case first. Default is false.
+    :paramtype ignore_case: bool
+    :keyword remove_trailing_stop_words: A value indicating whether to ignore the last search term
+     if it's a stop word. Default is true.
+    :paramtype remove_trailing_stop_words: bool
     """
 
     _validation = {
@@ -5966,14 +6096,14 @@ class Suggester(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the suggester.
-    :type name: str
+    :keyword name: Required. The name of the suggester.
+    :paramtype name: str
     :ivar search_mode: A value indicating the capabilities of the suggester. Has constant value:
      "analyzingInfixMatching".
     :vartype search_mode: str
-    :param source_fields: Required. The list of field names to which the suggester applies. Each
+    :keyword source_fields: Required. The list of field names to which the suggester applies. Each
      field must be searchable.
-    :type source_fields: list[str]
+    :paramtype source_fields: list[str]
     """
 
     _validation = {
@@ -6006,15 +6136,15 @@ class SynonymMap(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the synonym map.
-    :type name: str
+    :keyword name: Required. The name of the synonym map.
+    :paramtype name: str
     :ivar format: The format of the synonym map. Only the 'solr' format is currently supported. Has
      constant value: "solr".
     :vartype format: str
-    :param synonyms: Required. A series of synonym rules in the specified synonym map format. The
+    :keyword synonyms: Required. A series of synonym rules in the specified synonym map format. The
      rules must be separated by newlines.
-    :type synonyms: str
-    :param encryption_key: A description of an encryption key that you create in Azure Key Vault.
+    :paramtype synonyms: str
+    :keyword encryption_key: A description of an encryption key that you create in Azure Key Vault.
      This key is used to provide an additional level of encryption-at-rest for your data when you
      want full assurance that no one, not even Microsoft, can decrypt your data in Azure Cognitive
      Search. Once you have encrypted your data, it will always remain encrypted. Azure Cognitive
@@ -6022,9 +6152,9 @@ class SynonymMap(msrest.serialization.Model):
      needed if you want to rotate your encryption key; Your data will be unaffected. Encryption with
      customer-managed keys is not available for free search services, and is only available for paid
      services created on or after January 1, 2019.
-    :type encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
-    :param e_tag: The ETag of the synonym map.
-    :type e_tag: str
+    :paramtype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
+    :keyword e_tag: The ETag of the synonym map.
+    :paramtype e_tag: str
     """
 
     _validation = {
@@ -6059,30 +6189,30 @@ class SynonymTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+    :keyword odata_type: Required. Identifies the concrete type of the token filter.Constant filled
      by server.
-    :type odata_type: str
-    :param name: Required. The name of the token filter. It must only contain letters, digits,
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters.
-    :type name: str
-    :param synonyms: Required. A list of synonyms in following one of two formats: 1. incredible,
+    :paramtype name: str
+    :keyword synonyms: Required. A list of synonyms in following one of two formats: 1. incredible,
      unbelievable, fabulous => amazing - all terms on the left side of => symbol will be replaced
      with all terms on its right side; 2. incredible, unbelievable, fabulous, amazing - comma
      separated list of equivalent words. Set the expand option to change how this list is
      interpreted.
-    :type synonyms: list[str]
-    :param ignore_case: A value indicating whether to case-fold input for matching. Default is
+    :paramtype synonyms: list[str]
+    :keyword ignore_case: A value indicating whether to case-fold input for matching. Default is
      false.
-    :type ignore_case: bool
-    :param expand: A value indicating whether all words in the list of synonyms (if => notation is
-     not used) will map to one another. If true, all words in the list of synonyms (if => notation
-     is not used) will map to one another. The following list: incredible, unbelievable, fabulous,
-     amazing is equivalent to: incredible, unbelievable, fabulous, amazing => incredible,
+    :paramtype ignore_case: bool
+    :keyword expand: A value indicating whether all words in the list of synonyms (if => notation
+     is not used) will map to one another. If true, all words in the list of synonyms (if =>
+     notation is not used) will map to one another. The following list: incredible, unbelievable,
+     fabulous, amazing is equivalent to: incredible, unbelievable, fabulous, amazing => incredible,
      unbelievable, fabulous, amazing. If false, the following list: incredible, unbelievable,
      fabulous, amazing will be equivalent to: incredible, unbelievable, fabulous, amazing =>
      incredible. Default is true.
-    :type expand: bool
+    :paramtype expand: bool
     """
 
     _validation = {
@@ -6115,20 +6245,21 @@ class TagScoringFunction(ScoringFunction):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the type of function to use. Valid values include magnitude,
+    :keyword type: Required. Indicates the type of function to use. Valid values include magnitude,
      freshness, distance, and tag. The function type must be lower case.Constant filled by server.
-    :type type: str
-    :param field_name: Required. The name of the field used as input to the scoring function.
-    :type field_name: str
-    :param boost: Required. A multiplier for the raw score. Must be a positive number not equal to
-     1.0.
-    :type boost: float
-    :param interpolation: A value indicating how boosting will be interpolated across document
+    :paramtype type: str
+    :keyword field_name: Required. The name of the field used as input to the scoring function.
+    :paramtype field_name: str
+    :keyword boost: Required. A multiplier for the raw score. Must be a positive number not equal
+     to 1.0.
+    :paramtype boost: float
+    :keyword interpolation: A value indicating how boosting will be interpolated across document
      scores; defaults to "Linear". Possible values include: "linear", "constant", "quadratic",
      "logarithmic".
-    :type interpolation: str or ~azure.search.documents.indexes.models.ScoringFunctionInterpolation
-    :param parameters: Required. Parameter values for the tag scoring function.
-    :type parameters: ~azure.search.documents.indexes.models.TagScoringParameters
+    :paramtype interpolation: str or
+     ~azure.search.documents.indexes.models.ScoringFunctionInterpolation
+    :keyword parameters: Required. Parameter values for the tag scoring function.
+    :paramtype parameters: ~azure.search.documents.indexes.models.TagScoringParameters
     """
 
     _validation = {
@@ -6160,9 +6291,9 @@ class TagScoringParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param tags_parameter: Required. The name of the parameter passed in search queries to specify
-     the list of tags to compare against the target field.
-    :type tags_parameter: str
+    :keyword tags_parameter: Required. The name of the parameter passed in search queries to
+     specify the list of tags to compare against the target field.
+    :paramtype tags_parameter: str
     """
 
     _validation = {
@@ -6186,44 +6317,45 @@ class TextTranslationSkill(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the skill.Constant filled by
      server.
-    :type odata_type: str
-    :param name: The name of the skill which uniquely identifies it within the skillset. A skill
+    :paramtype odata_type: str
+    :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
      prefixed with the character '#'.
-    :type name: str
-    :param description: The description of the skill which describes the inputs, outputs, and usage
-     of the skill.
-    :type description: str
-    :param context: Represents the level at which operations take place, such as the document root
-     or document content (for example, /document or /document/content). The default is /document.
-    :type context: str
-    :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
-     output of an upstream skill.
-    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :param outputs: Required. The output of a skill is either a field in a search index, or a value
-     that can be consumed as an input by another skill.
-    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
-    :param default_to_language_code: Required. The language code to translate documents into for
+    :paramtype name: str
+    :keyword description: The description of the skill which describes the inputs, outputs, and
+     usage of the skill.
+    :paramtype description: str
+    :keyword context: Represents the level at which operations take place, such as the document
+     root or document content (for example, /document or /document/content). The default is
+     /document.
+    :paramtype context: str
+    :keyword inputs: Required. Inputs of the skills could be a column in the source data set, or
+     the output of an upstream skill.
+    :paramtype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :keyword outputs: Required. The output of a skill is either a field in a search index, or a
+     value that can be consumed as an input by another skill.
+    :paramtype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :keyword default_to_language_code: Required. The language code to translate documents into for
      documents that don't specify the to language explicitly. Possible values include: "af", "ar",
      "bn", "bs", "bg", "yue", "ca", "zh-Hans", "zh-Hant", "hr", "cs", "da", "nl", "en", "et", "fj",
      "fil", "fi", "fr", "de", "el", "ht", "he", "hi", "mww", "hu", "is", "id", "it", "ja", "sw",
      "tlh", "tlh-Latn", "tlh-Piqd", "ko", "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl", "pt",
      "pt-br", "pt-PT", "otq", "ro", "ru", "sm", "sr-Cyrl", "sr-Latn", "sk", "sl", "es", "sv", "ty",
      "ta", "te", "th", "to", "tr", "uk", "ur", "vi", "cy", "yua", "ga", "kn", "mi", "ml", "pa".
-    :type default_to_language_code: str or
+    :paramtype default_to_language_code: str or
      ~azure.search.documents.indexes.models.TextTranslationSkillLanguage
-    :param default_from_language_code: The language code to translate documents from for documents
-     that don't specify the from language explicitly. Possible values include: "af", "ar", "bn",
-     "bs", "bg", "yue", "ca", "zh-Hans", "zh-Hant", "hr", "cs", "da", "nl", "en", "et", "fj", "fil",
-     "fi", "fr", "de", "el", "ht", "he", "hi", "mww", "hu", "is", "id", "it", "ja", "sw", "tlh",
-     "tlh-Latn", "tlh-Piqd", "ko", "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl", "pt", "pt-br",
-     "pt-PT", "otq", "ro", "ru", "sm", "sr-Cyrl", "sr-Latn", "sk", "sl", "es", "sv", "ty", "ta",
-     "te", "th", "to", "tr", "uk", "ur", "vi", "cy", "yua", "ga", "kn", "mi", "ml", "pa".
-    :type default_from_language_code: str or
+    :keyword default_from_language_code: The language code to translate documents from for
+     documents that don't specify the from language explicitly. Possible values include: "af", "ar",
+     "bn", "bs", "bg", "yue", "ca", "zh-Hans", "zh-Hant", "hr", "cs", "da", "nl", "en", "et", "fj",
+     "fil", "fi", "fr", "de", "el", "ht", "he", "hi", "mww", "hu", "is", "id", "it", "ja", "sw",
+     "tlh", "tlh-Latn", "tlh-Piqd", "ko", "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl", "pt",
+     "pt-br", "pt-PT", "otq", "ro", "ru", "sm", "sr-Cyrl", "sr-Latn", "sk", "sl", "es", "sv", "ty",
+     "ta", "te", "th", "to", "tr", "uk", "ur", "vi", "cy", "yua", "ga", "kn", "mi", "ml", "pa".
+    :paramtype default_from_language_code: str or
      ~azure.search.documents.indexes.models.TextTranslationSkillLanguage
-    :param suggested_from: The language code to translate documents from when neither the
+    :keyword suggested_from: The language code to translate documents from when neither the
      fromLanguageCode input nor the defaultFromLanguageCode parameter are provided, and the
      automatic language detection is unsuccessful. Default is en. Possible values include: "af",
      "ar", "bn", "bs", "bg", "yue", "ca", "zh-Hans", "zh-Hant", "hr", "cs", "da", "nl", "en", "et",
@@ -6232,7 +6364,7 @@ class TextTranslationSkill(SearchIndexerSkill):
      "pt", "pt-br", "pt-PT", "otq", "ro", "ru", "sm", "sr-Cyrl", "sr-Latn", "sk", "sl", "es", "sv",
      "ty", "ta", "te", "th", "to", "tr", "uk", "ur", "vi", "cy", "yua", "ga", "kn", "mi", "ml",
      "pa".
-    :type suggested_from: str or
+    :paramtype suggested_from: str or
      ~azure.search.documents.indexes.models.TextTranslationSkillLanguage
     """
 
@@ -6271,9 +6403,9 @@ class TextWeights(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param weights: Required. The dictionary of per-field weights to boost document scoring. The
+    :keyword weights: Required. The dictionary of per-field weights to boost document scoring. The
      keys are field names and the values are the weights for each field.
-    :type weights: dict[str, float]
+    :paramtype weights: dict[str, float]
     """
 
     _validation = {
@@ -6297,15 +6429,15 @@ class TruncateTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+    :keyword odata_type: Required. Identifies the concrete type of the token filter.Constant filled
      by server.
-    :type odata_type: str
-    :param name: Required. The name of the token filter. It must only contain letters, digits,
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters.
-    :type name: str
-    :param length: The length at which terms will be truncated. Default and maximum is 300.
-    :type length: int
+    :paramtype name: str
+    :keyword length: The length at which terms will be truncated. Default and maximum is 300.
+    :paramtype length: int
     """
 
     _validation = {
@@ -6334,16 +6466,16 @@ class UaxUrlEmailTokenizer(LexicalTokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
      server.
-    :type odata_type: str
-    :param name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
-     dashes or underscores, can only start and end with alphanumeric characters, and is limited to
-     128 characters.
-    :type name: str
-    :param max_token_length: The maximum token length. Default is 255. Tokens longer than the
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the tokenizer. It must only contain letters, digits,
+     spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
+     limited to 128 characters.
+    :paramtype name: str
+    :keyword max_token_length: The maximum token length. Default is 255. Tokens longer than the
      maximum length are split. The maximum token length that can be used is 300 characters.
-    :type max_token_length: int
+    :paramtype max_token_length: int
     """
 
     _validation = {
@@ -6372,16 +6504,16 @@ class UniqueTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+    :keyword odata_type: Required. Identifies the concrete type of the token filter.Constant filled
      by server.
-    :type odata_type: str
-    :param name: Required. The name of the token filter. It must only contain letters, digits,
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters.
-    :type name: str
-    :param only_on_same_position: A value indicating whether to remove duplicates only at the same
-     position. Default is false.
-    :type only_on_same_position: bool
+    :paramtype name: str
+    :keyword only_on_same_position: A value indicating whether to remove duplicates only at the
+     same position. Default is false.
+    :paramtype only_on_same_position: bool
     """
 
     _validation = {
@@ -6409,38 +6541,39 @@ class WebApiSkill(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+    :keyword odata_type: Required. Identifies the concrete type of the skill.Constant filled by
      server.
-    :type odata_type: str
-    :param name: The name of the skill which uniquely identifies it within the skillset. A skill
+    :paramtype odata_type: str
+    :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
      prefixed with the character '#'.
-    :type name: str
-    :param description: The description of the skill which describes the inputs, outputs, and usage
-     of the skill.
-    :type description: str
-    :param context: Represents the level at which operations take place, such as the document root
-     or document content (for example, /document or /document/content). The default is /document.
-    :type context: str
-    :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
-     output of an upstream skill.
-    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :param outputs: Required. The output of a skill is either a field in a search index, or a value
-     that can be consumed as an input by another skill.
-    :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
-    :param uri: Required. The url for the Web API.
-    :type uri: str
-    :param http_headers: The headers required to make the http request.
-    :type http_headers: dict[str, str]
-    :param http_method: The method for the http request.
-    :type http_method: str
-    :param timeout: The desired timeout for the request. Default is 30 seconds.
-    :type timeout: ~datetime.timedelta
-    :param batch_size: The desired batch size which indicates number of documents.
-    :type batch_size: int
-    :param degree_of_parallelism: If set, the number of parallel calls that can be made to the Web
-     API.
-    :type degree_of_parallelism: int
+    :paramtype name: str
+    :keyword description: The description of the skill which describes the inputs, outputs, and
+     usage of the skill.
+    :paramtype description: str
+    :keyword context: Represents the level at which operations take place, such as the document
+     root or document content (for example, /document or /document/content). The default is
+     /document.
+    :paramtype context: str
+    :keyword inputs: Required. Inputs of the skills could be a column in the source data set, or
+     the output of an upstream skill.
+    :paramtype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :keyword outputs: Required. The output of a skill is either a field in a search index, or a
+     value that can be consumed as an input by another skill.
+    :paramtype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :keyword uri: Required. The url for the Web API.
+    :paramtype uri: str
+    :keyword http_headers: The headers required to make the http request.
+    :paramtype http_headers: dict[str, str]
+    :keyword http_method: The method for the http request.
+    :paramtype http_method: str
+    :keyword timeout: The desired timeout for the request. Default is 30 seconds.
+    :paramtype timeout: ~datetime.timedelta
+    :keyword batch_size: The desired batch size which indicates number of documents.
+    :paramtype batch_size: int
+    :keyword degree_of_parallelism: If set, the number of parallel calls that can be made to the
+     Web API.
+    :paramtype degree_of_parallelism: int
     """
 
     _validation = {
@@ -6484,43 +6617,44 @@ class WordDelimiterTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+    :keyword odata_type: Required. Identifies the concrete type of the token filter.Constant filled
      by server.
-    :type odata_type: str
-    :param name: Required. The name of the token filter. It must only contain letters, digits,
+    :paramtype odata_type: str
+    :keyword name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters.
-    :type name: str
-    :param generate_word_parts: A value indicating whether to generate part words. If set, causes
+    :paramtype name: str
+    :keyword generate_word_parts: A value indicating whether to generate part words. If set, causes
      parts of words to be generated; for example "AzureSearch" becomes "Azure" "Search". Default is
      true.
-    :type generate_word_parts: bool
-    :param generate_number_parts: A value indicating whether to generate number subwords. Default
+    :paramtype generate_word_parts: bool
+    :keyword generate_number_parts: A value indicating whether to generate number subwords. Default
      is true.
-    :type generate_number_parts: bool
-    :param catenate_words: A value indicating whether maximum runs of word parts will be catenated.
-     For example, if this is set to true, "Azure-Search" becomes "AzureSearch". Default is false.
-    :type catenate_words: bool
-    :param catenate_numbers: A value indicating whether maximum runs of number parts will be
+    :paramtype generate_number_parts: bool
+    :keyword catenate_words: A value indicating whether maximum runs of word parts will be
+     catenated. For example, if this is set to true, "Azure-Search" becomes "AzureSearch". Default
+     is false.
+    :paramtype catenate_words: bool
+    :keyword catenate_numbers: A value indicating whether maximum runs of number parts will be
      catenated. For example, if this is set to true, "1-2" becomes "12". Default is false.
-    :type catenate_numbers: bool
-    :param catenate_all: A value indicating whether all subword parts will be catenated. For
+    :paramtype catenate_numbers: bool
+    :keyword catenate_all: A value indicating whether all subword parts will be catenated. For
      example, if this is set to true, "Azure-Search-1" becomes "AzureSearch1". Default is false.
-    :type catenate_all: bool
-    :param split_on_case_change: A value indicating whether to split words on caseChange. For
+    :paramtype catenate_all: bool
+    :keyword split_on_case_change: A value indicating whether to split words on caseChange. For
      example, if this is set to true, "AzureSearch" becomes "Azure" "Search". Default is true.
-    :type split_on_case_change: bool
-    :param preserve_original: A value indicating whether original words will be preserved and added
-     to the subword list. Default is false.
-    :type preserve_original: bool
-    :param split_on_numerics: A value indicating whether to split on numbers. For example, if this
-     is set to true, "Azure1Search" becomes "Azure" "1" "Search". Default is true.
-    :type split_on_numerics: bool
-    :param stem_english_possessive: A value indicating whether to remove trailing "'s" for each
+    :paramtype split_on_case_change: bool
+    :keyword preserve_original: A value indicating whether original words will be preserved and
+     added to the subword list. Default is false.
+    :paramtype preserve_original: bool
+    :keyword split_on_numerics: A value indicating whether to split on numbers. For example, if
+     this is set to true, "Azure1Search" becomes "Azure" "1" "Search". Default is true.
+    :paramtype split_on_numerics: bool
+    :keyword stem_english_possessive: A value indicating whether to remove trailing "'s" for each
      subword. Default is true.
-    :type stem_english_possessive: bool
-    :param protected_words: A list of tokens to protect from being delimited.
-    :type protected_words: list[str]
+    :paramtype stem_english_possessive: bool
+    :keyword protected_words: A list of tokens to protect from being delimited.
+    :paramtype protected_words: list[str]
     """
 
     _validation = {

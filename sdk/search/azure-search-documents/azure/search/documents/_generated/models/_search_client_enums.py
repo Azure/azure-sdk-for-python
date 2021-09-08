@@ -6,27 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class Answers(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Answers(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """This parameter is only valid if the query type is 'semantic'. If set, the query returns answers
     extracted from key passages in the highest ranked documents. The number of answers returned can
     be configured by appending the pipe character '|' followed by the 'count-:code:`<number of
@@ -40,7 +25,7 @@ class Answers(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: expressed as a question in natural language.
     EXTRACTIVE = "extractive"
 
-class AutocompleteMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AutocompleteMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the mode for Autocomplete. The default is 'oneTerm'. Use 'twoTerms' to get shingles
     and 'oneTermWithContext' to use the current context in producing autocomplete terms.
     """
@@ -57,7 +42,7 @@ class AutocompleteMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: terms could include 'washington medicaid' and 'washington medical'.
     ONE_TERM_WITH_CONTEXT = "oneTermWithContext"
 
-class Captions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Captions(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """This parameter is only valid if the query type is 'semantic'. If set, the query returns
     captions extracted from key passages in the highest ranked documents. When Captions is set to
     'extractive', highlighting is enabled by default, and can be configured by appending the pipe
@@ -71,7 +56,7 @@ class Captions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: query.
     EXTRACTIVE = "extractive"
 
-class IndexActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class IndexActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The operation to perform on a document in an indexing batch.
     """
 
@@ -90,7 +75,7 @@ class IndexActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: document, use merge instead and set the field explicitly to null.
     DELETE = "delete"
 
-class QueryLanguage(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class QueryLanguage(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The language of the query.
     """
 
@@ -99,7 +84,7 @@ class QueryLanguage(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: English.
     EN_US = "en-us"
 
-class QueryType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class QueryType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the syntax of the search query. The default is 'simple'. Use 'full' if your query
     uses the Lucene query syntax and 'semantic' if query syntax is not needed.
     """
@@ -117,7 +102,7 @@ class QueryType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: on the Web corpus.
     SEMANTIC = "semantic"
 
-class ScoringStatistics(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ScoringStatistics(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """A value that specifies whether we want to calculate scoring statistics (such as document
     frequency) globally for more consistent scoring, or locally, for lower latency. The default is
     'local'. Use 'global' to aggregate scoring statistics globally before scoring. Using global
@@ -129,7 +114,7 @@ class ScoringStatistics(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: The scoring statistics will be calculated globally for more consistent scoring.
     GLOBAL_ENUM = "global"
 
-class SearchMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SearchMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies whether any or all of the search terms must be matched in order to count the document
     as a match.
     """
@@ -139,7 +124,7 @@ class SearchMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: All of the search terms must be matched in order to count the document as a match.
     ALL = "all"
 
-class Speller(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Speller(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Improve search recall by spell-correcting individual search query terms.
     """
 

@@ -6,27 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class BlobIndexerDataToExtract(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BlobIndexerDataToExtract(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the data to extract from Azure blob storage and tells the indexer which data to
     extract from image content when "imageAction" is set to a value other than "none".  This
     applies to embedded image content in a .PDF or other application, or image files such as .jpg
@@ -41,7 +26,7 @@ class BlobIndexerDataToExtract(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     #: Extracts all metadata and textual content from each blob.
     CONTENT_AND_METADATA = "contentAndMetadata"
 
-class BlobIndexerImageAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BlobIndexerImageAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Determines how to process embedded images and image files in Azure blob storage.  Setting the
     "imageAction" configuration to any value other than "none" requires that a skillset also be
     attached to that indexer.
@@ -61,7 +46,7 @@ class BlobIndexerImageAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     #: types will be treated the same as if "generateNormalizedImages" was set.
     GENERATE_NORMALIZED_IMAGE_PER_PAGE = "generateNormalizedImagePerPage"
 
-class BlobIndexerParsingMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BlobIndexerParsingMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Represents the parsing mode for indexing from an Azure blob data source.
     """
 
@@ -80,7 +65,7 @@ class BlobIndexerParsingMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     #: documents in Azure Cognitive Search.
     JSON_LINES = "jsonLines"
 
-class BlobIndexerPDFTextRotationAlgorithm(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BlobIndexerPDFTextRotationAlgorithm(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Determines algorithm for text extraction from PDF files in Azure blob storage.
     """
 
@@ -92,7 +77,7 @@ class BlobIndexerPDFTextRotationAlgorithm(with_metaclass(_CaseInsensitiveEnumMet
     #: rotated text appears within an embedded image in the PDF, this parameter does not apply.
     DETECT_ANGLES = "detectAngles"
 
-class CharFilterName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CharFilterName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Defines the names of all character filters supported by Azure Cognitive Search.
     """
 
@@ -100,7 +85,7 @@ class CharFilterName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: https://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/charfilter/HTMLStripCharFilter.html.
     HTML_STRIP = "html_strip"
 
-class CjkBigramTokenFilterScripts(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CjkBigramTokenFilterScripts(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Scripts that can be ignored by CjkBigramTokenFilter.
     """
 
@@ -113,7 +98,7 @@ class CjkBigramTokenFilterScripts(with_metaclass(_CaseInsensitiveEnumMeta, str, 
     #: Ignore Hangul script when forming bigrams of CJK terms.
     HANGUL = "hangul"
 
-class CustomEntityLookupSkillLanguage(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CustomEntityLookupSkillLanguage(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The language codes supported for input text by CustomEntityLookupSkill.
     """
 
@@ -136,7 +121,7 @@ class CustomEntityLookupSkillLanguage(with_metaclass(_CaseInsensitiveEnumMeta, s
     #: Portuguese.
     PT = "pt"
 
-class EdgeNGramTokenFilterSide(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class EdgeNGramTokenFilterSide(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies which side of the input an n-gram should be generated from.
     """
 
@@ -145,7 +130,7 @@ class EdgeNGramTokenFilterSide(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     #: Specifies that the n-gram should be generated from the back of the input.
     BACK = "back"
 
-class EntityCategory(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class EntityCategory(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """A string indicating what entity categories to return.
     """
 
@@ -164,7 +149,7 @@ class EntityCategory(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Entities describing an email address.
     EMAIL = "email"
 
-class EntityRecognitionSkillLanguage(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class EntityRecognitionSkillLanguage(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The language codes supported for input text by EntityRecognitionSkill.
     """
 
@@ -215,7 +200,7 @@ class EntityRecognitionSkillLanguage(with_metaclass(_CaseInsensitiveEnumMeta, st
     #: Turkish.
     TR = "tr"
 
-class ImageAnalysisSkillLanguage(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ImageAnalysisSkillLanguage(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The language codes supported for input by ImageAnalysisSkill.
     """
 
@@ -230,7 +215,7 @@ class ImageAnalysisSkillLanguage(with_metaclass(_CaseInsensitiveEnumMeta, str, E
     #: Chinese.
     ZH = "zh"
 
-class ImageDetail(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ImageDetail(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """A string indicating which domain-specific details to return.
     """
 
@@ -239,7 +224,7 @@ class ImageDetail(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Details recognized as landmarks.
     LANDMARKS = "landmarks"
 
-class IndexerExecutionEnvironment(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class IndexerExecutionEnvironment(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the environment in which the indexer should execute.
     """
 
@@ -251,7 +236,7 @@ class IndexerExecutionEnvironment(with_metaclass(_CaseInsensitiveEnumMeta, str, 
     #: to access resources securely over shared private link resources.
     PRIVATE = "private"
 
-class IndexerExecutionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class IndexerExecutionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Represents the status of an individual indexer execution.
     """
 
@@ -265,7 +250,14 @@ class IndexerExecutionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     #: Indexer has been reset.
     RESET = "reset"
 
-class IndexerStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class IndexerExecutionStatusDetail(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Details the status of an individual indexer execution.
+    """
+
+    #: Indicates that the reset that occurred was for a call to ResetDocs.
+    RESET_DOCS = "resetDocs"
+
+class IndexerStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Represents the overall indexer status.
     """
 
@@ -277,7 +269,17 @@ class IndexerStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Indicates that the indexer is running normally.
     RUNNING = "running"
 
-class KeyPhraseExtractionSkillLanguage(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class IndexingMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Represents the mode the indexer is executing in.
+    """
+
+    #: The indexer is indexing all documents in the datasource.
+    INDEXING_ALL_DOCS = "indexingAllDocs"
+    #: The indexer is indexing selective, reset documents in the datasource. The documents being
+    #: indexed are defined on indexer status.
+    INDEXING_RESET_DOCS = "indexingResetDocs"
+
+class KeyPhraseExtractionSkillLanguage(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The language codes supported for input text by KeyPhraseExtractionSkill.
     """
 
@@ -314,7 +316,7 @@ class KeyPhraseExtractionSkillLanguage(with_metaclass(_CaseInsensitiveEnumMeta, 
     #: Swedish.
     SV = "sv"
 
-class LexicalAnalyzerName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class LexicalAnalyzerName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Defines the names of all text analyzers supported by Azure Cognitive Search.
     """
 
@@ -512,7 +514,7 @@ class LexicalAnalyzerName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/core/WhitespaceAnalyzer.html.
     WHITESPACE = "whitespace"
 
-class LexicalNormalizerName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class LexicalNormalizerName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Defines the names of all text normalizers supported by Azure Cognitive Search.
     """
 
@@ -534,7 +536,7 @@ class LexicalNormalizerName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     #: https://lucene.apache.org/core/6_6_1/analyzers-common/org/apache/lucene/analysis/core/UpperCaseFilter.html.
     UPPERCASE = "uppercase"
 
-class LexicalTokenizerName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class LexicalTokenizerName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Defines the names of all tokenizers supported by Azure Cognitive Search.
     """
 
@@ -577,7 +579,7 @@ class LexicalTokenizerName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/core/WhitespaceTokenizer.html.
     WHITESPACE = "whitespace"
 
-class LineEnding(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class LineEnding(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Defines the sequence of characters to use between the lines of text recognized by the OCR
     skill. The default value is "space".
     """
@@ -591,7 +593,7 @@ class LineEnding(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Lines are separated by a carriage return and a line feed ('\r\n') character.
     CARRIAGE_RETURN_LINE_FEED = "carriageReturnLineFeed"
 
-class MicrosoftStemmingTokenizerLanguage(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MicrosoftStemmingTokenizerLanguage(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Lists the languages supported by the Microsoft language stemming tokenizer.
     """
 
@@ -686,7 +688,7 @@ class MicrosoftStemmingTokenizerLanguage(with_metaclass(_CaseInsensitiveEnumMeta
     #: Selects the Microsoft stemming tokenizer for Urdu.
     URDU = "urdu"
 
-class MicrosoftTokenizerLanguage(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MicrosoftTokenizerLanguage(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Lists the languages supported by the Microsoft language tokenizer.
     """
 
@@ -775,7 +777,7 @@ class MicrosoftTokenizerLanguage(with_metaclass(_CaseInsensitiveEnumMeta, str, E
     #: Selects the Microsoft tokenizer for Vietnamese.
     VIETNAMESE = "vietnamese"
 
-class OcrSkillLanguage(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OcrSkillLanguage(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The language codes supported for input by OcrSkill.
     """
 
@@ -832,7 +834,7 @@ class OcrSkillLanguage(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Slovak.
     SK = "sk"
 
-class PhoneticEncoder(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PhoneticEncoder(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Identifies the type of phonetic encoder to use with a PhoneticTokenFilter.
     """
 
@@ -859,7 +861,7 @@ class PhoneticEncoder(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Encodes a token into a Beider-Morse value.
     BEIDER_MORSE = "beiderMorse"
 
-class PIIDetectionSkillMaskingMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PIIDetectionSkillMaskingMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """A string indicating what maskingMode to use to mask the personal information detected in the
     input text.
     """
@@ -871,7 +873,7 @@ class PIIDetectionSkillMaskingMode(with_metaclass(_CaseInsensitiveEnumMeta, str,
     #: correctly correspond to both the input text as well as the output maskedText.
     REPLACE = "replace"
 
-class RegexFlags(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RegexFlags(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Defines flags that can be combined to control how regular expressions are used in the pattern
     analyzer and pattern tokenizer.
     """
@@ -893,7 +895,7 @@ class RegexFlags(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Enables Unix lines mode.
     UNIX_LINES = "UNIX_LINES"
 
-class ScoringFunctionAggregation(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ScoringFunctionAggregation(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Defines the aggregation function used to combine the results of all the scoring functions in a
     scoring profile.
     """
@@ -909,7 +911,7 @@ class ScoringFunctionAggregation(with_metaclass(_CaseInsensitiveEnumMeta, str, E
     #: Boost scores using the first applicable scoring function in the scoring profile.
     FIRST_MATCHING = "firstMatching"
 
-class ScoringFunctionInterpolation(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ScoringFunctionInterpolation(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Defines the function used to interpolate score boosting across a range of documents.
     """
 
@@ -927,7 +929,7 @@ class ScoringFunctionInterpolation(with_metaclass(_CaseInsensitiveEnumMeta, str,
     #: scoring functions.
     LOGARITHMIC = "logarithmic"
 
-class SearchFieldDataType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SearchFieldDataType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Defines the data type of a field in a search index.
     """
 
@@ -949,7 +951,7 @@ class SearchFieldDataType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: other types.
     COMPLEX = "Edm.ComplexType"
 
-class SearchIndexerDataSourceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SearchIndexerDataSourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Defines the type of a datasource.
     """
 
@@ -966,7 +968,7 @@ class SearchIndexerDataSourceType(with_metaclass(_CaseInsensitiveEnumMeta, str, 
     #: Indicates an ADLS Gen2 datasource.
     ADLS_GEN2 = "adlsgen2"
 
-class SentimentSkillLanguage(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SentimentSkillLanguage(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The language codes supported for input text by SentimentSkill.
     """
 
@@ -1001,7 +1003,7 @@ class SentimentSkillLanguage(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     #: Turkish.
     TR = "tr"
 
-class SnowballTokenFilterLanguage(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SnowballTokenFilterLanguage(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The language to use for a Snowball token filter.
     """
 
@@ -1053,7 +1055,7 @@ class SnowballTokenFilterLanguage(with_metaclass(_CaseInsensitiveEnumMeta, str, 
     #: Selects the Lucene Snowball stemming tokenizer for Turkish.
     TURKISH = "turkish"
 
-class SplitSkillLanguage(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SplitSkillLanguage(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The language codes supported for input text by SplitSkill.
     """
 
@@ -1076,7 +1078,7 @@ class SplitSkillLanguage(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Portuguese.
     PT = "pt"
 
-class StemmerTokenFilterLanguage(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class StemmerTokenFilterLanguage(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The language to use for a stemmer token filter.
     """
 
@@ -1190,7 +1192,7 @@ class StemmerTokenFilterLanguage(with_metaclass(_CaseInsensitiveEnumMeta, str, E
     #: Selects the Lucene stemming tokenizer for Turkish.
     TURKISH = "turkish"
 
-class StopwordsList(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class StopwordsList(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Identifies a predefined list of language-specific stopwords.
     """
 
@@ -1257,7 +1259,7 @@ class StopwordsList(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Selects the stopword list for Turkish.
     TURKISH = "turkish"
 
-class TextSplitMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TextSplitMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """A value indicating which split mode to perform.
     """
 
@@ -1266,7 +1268,7 @@ class TextSplitMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Split the text into individual sentences.
     SENTENCES = "sentences"
 
-class TextTranslationSkillLanguage(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TextTranslationSkillLanguage(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The language codes supported for input text by TextTranslationSkill.
     """
 
@@ -1415,7 +1417,7 @@ class TextTranslationSkillLanguage(with_metaclass(_CaseInsensitiveEnumMeta, str,
     #: Punjabi.
     PA = "pa"
 
-class TokenCharacterKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TokenCharacterKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Represents classes of characters on which a token filter can operate.
     """
 
@@ -1430,7 +1432,7 @@ class TokenCharacterKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Keeps symbols in tokens.
     SYMBOL = "symbol"
 
-class TokenFilterName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TokenFilterName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Defines the names of all token filters supported by Azure Cognitive Search.
     """
 
@@ -1542,7 +1544,7 @@ class TokenFilterName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Splits words into subwords and performs optional transformations on subword groups.
     WORD_DELIMITER = "word_delimiter"
 
-class VisualFeature(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class VisualFeature(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The strings indicating what visual feature types to return.
     """
 
