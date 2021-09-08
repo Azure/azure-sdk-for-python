@@ -141,10 +141,11 @@ class DefaultAzureCredential(ChainedTokenCredential):
             credentials.append(AzurePowerShellCredential(**kwargs))
         if not exclude_interactive_browser_credential:
             if interactive_browser_client_id:
-                credentials.append(InteractiveBrowserCredential(
-                    tenant_id=interactive_browser_tenant_id,
-                    client_id=interactive_browser_client_id,
-                    **kwargs))
+                credentials.append(
+                    InteractiveBrowserCredential(
+                        tenant_id=interactive_browser_tenant_id, client_id=interactive_browser_client_id, **kwargs
+                    )
+                )
             else:
                 credentials.append(InteractiveBrowserCredential(tenant_id=interactive_browser_tenant_id, **kwargs))
 
