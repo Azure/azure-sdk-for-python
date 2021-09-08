@@ -4,18 +4,19 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, List
+from typing import Any, List, Optional
 
 from azure.core.tracing.decorator import distributed_trace
 
 from ._generated.aio.operations import ServerCallsOperations
 from ._generated.models import PlayAudioRequest, StartCallRecordingRequest, \
-    CallRecordingProperties, AddParticipantRequest, PhoneNumberIdentifierModel, \
+    AddParticipantRequest, PhoneNumberIdentifierModel, \
     CommunicationIdentifierModel, JoinCallRequest
 from ._models import PlayAudioResult, JoinCallResult, AddParticipantResult, \
-    StartCallRecordingResult, MediaType, EventSubscriptionType
+    StartCallRecordingResult, MediaType, EventSubscriptionType, CallRecordingProperties
 from ._communication_identifier_serializer import (deserialize_identifier,
                                                    serialize_identifier)
+from ._shared.models import CommunicationIdentifier
 from azure.core.pipeline.transport import AsyncHttpResponse
 
 class ServerCall(object):
@@ -215,7 +216,6 @@ class ServerCall(object):
     def add_participant(
             self,
             participant, # type: CommunicationIdentifier
-            callback_uri, # type: str
             alternate_caller_id, # type: Optional[str]
             operation_context, # type: Optional[str]
             **kwargs # type: Any
@@ -224,12 +224,15 @@ class ServerCall(object):
         if not participant:
             raise ValueError("participant can not be None")
 
+        request = AddParticipantRequest(participant=serialize_identifier(participant),
+        alternate_caller_id=None if alternate_caller_id == None else PhoneNumberIdentifierModel(value=alternate_caller_id.properties['value']),
+        operation_context=operation_context,
+        callback_uri=None,
+        **kwargs)
+
         add_participant_result = self.server_call_client.add_participant(
             server_call_id=self.server_call_id,
-            participant=serialize_identifier(participant),
-            alternate_caller_id=None if alternate_caller_id == None else PhoneNumberIdentifierModel(value=alternate_caller_id.properties['value']),
-            callback_uri=callback_uri,
-            operation_context=operation_context,
+            add_participant_request=request,
             **kwargs
         )
 
