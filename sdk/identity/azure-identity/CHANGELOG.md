@@ -1,6 +1,6 @@
 # Release History
 
-## 1.7.0b4 (2021-09-08)
+## 1.7.0b4 (2021-09-09)
 
 ### Features Added
 - `CertificateCredential` accepts certificates in PKCS12 format
