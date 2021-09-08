@@ -4,8 +4,6 @@
 # ------------------------------------
 from functools import partial
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.polling import LROPoller
-from azure.keyvault.keys import KeyType
 
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map as _error_map
@@ -21,7 +19,9 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Optional, Union
     from azure.core.paging import ItemPaged
+    from azure.core.polling import LROPoller
     from ._models import JsonWebKey
+    from ._enums import KeyType
 
 
 class KeyClient(KeyVaultClientBase):

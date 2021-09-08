@@ -126,7 +126,7 @@ class CryptographyClient(KeyVaultClientBase):
         else:
             raise ValueError("'key' must be a KeyVaultKey instance or a key ID string including a version")
 
-        if not (self._jwk or self._key_id.version if self._key_id else None):
+        if not (self._jwk or (self._key_id.version if self._key_id else None)):
             raise ValueError("'key' must include a version")
 
         if self._jwk:
@@ -139,7 +139,7 @@ class CryptographyClient(KeyVaultClientBase):
             self._local_provider = NoLocalCryptography()
             self._initialized = False
 
-        self._vault_url = None if self._jwk else self._key_id.vault_url if self._key_id else None  # type: ignore
+        self._vault_url = None if (self._jwk or self._key_id is None) else self._key_id.vault_url  # type: ignore
         super(CryptographyClient, self).__init__(
             vault_url=self._vault_url or "vault_url", credential=credential, **kwargs
         )

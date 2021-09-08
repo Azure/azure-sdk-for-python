@@ -65,21 +65,24 @@ class LocalCryptographyProvider(ABC):
         self._raise_if_unsupported(KeyOperation.encrypt, algorithm)
         ciphertext = self._internal_key.encrypt(plaintext, algorithm=algorithm.value, iv=iv)
         return EncryptResult(
-            key_id=self._key.kid, algorithm=algorithm, ciphertext=ciphertext, iv=iv)  # type: ignore[attr-defined]
+            key_id=self._key.kid, algorithm=algorithm, ciphertext=ciphertext, iv=iv
+        )  # type: ignore[attr-defined]
 
     def decrypt(self, algorithm, ciphertext, iv=None):
         # type: (EncryptionAlgorithm, bytes, Optional[bytes]) -> DecryptResult
         self._raise_if_unsupported(KeyOperation.decrypt, algorithm)
         plaintext = self._internal_key.decrypt(ciphertext, iv=iv, algorithm=algorithm.value)
         return DecryptResult(
-            key_id=self._key.kid, algorithm=algorithm, plaintext=plaintext)  # type: ignore[attr-defined]
+            key_id=self._key.kid, algorithm=algorithm, plaintext=plaintext
+        )  # type: ignore[attr-defined]
 
     def wrap_key(self, algorithm, key):
         # type: (KeyWrapAlgorithm, bytes) -> WrapResult
         self._raise_if_unsupported(KeyOperation.wrap_key, algorithm)
         encrypted_key = self._internal_key.wrap_key(key, algorithm=algorithm.value)
         return WrapResult(
-            key_id=self._key.kid, algorithm=algorithm, encrypted_key=encrypted_key)  # type: ignore[attr-defined]
+            key_id=self._key.kid, algorithm=algorithm, encrypted_key=encrypted_key
+        )  # type: ignore[attr-defined]
 
     def unwrap_key(self, algorithm, encrypted_key):
         # type: (KeyWrapAlgorithm, bytes) -> UnwrapResult
