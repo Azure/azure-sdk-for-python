@@ -19,7 +19,8 @@ import pytest
 import six
 from six.moves.urllib_parse import urlparse
 
-from helpers import build_aad_response, FAKE_CLIENT_ID, get_discovery_response, mock_response
+from fake_credentials import FAKE_CLIENT_ID
+from helpers import build_aad_response, get_discovery_response, mock_response
 from recorded_test_case import RecordedTestCase
 from test_certificate_credential import PEM_CERT_PATH
 

@@ -23,7 +23,7 @@ from azure.identity._credentials.azure_powershell import (
 )
 import pytest
 
-from helpers import POWERSHELL_INVALID_OPERATION_EXCEPTION, POWERSHELL_NOT_LOGGED_IN_ERROR
+from fake_credentials import POWERSHELL_INVALID_OPERATION_EXCEPTION, POWERSHELL_NOT_LOGGED_IN_ERROR
 from helpers_async import get_completed_future
 from test_powershell_credential import PREPARING_MODULES
 

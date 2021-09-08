@@ -11,7 +11,7 @@ import time
 from azure_devtools.scenario_tests import RecordingProcessor
 import six
 
-from helpers import FAKE_CLIENT_ID
+from fake_credentials import FAKE_CLIENT_ID
 
 ID_TOKEN_PII_CLAIMS = ("email", "name", "preferred_username", "unique_name")
 

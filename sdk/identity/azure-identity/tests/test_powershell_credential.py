@@ -27,7 +27,7 @@ from azure.identity._credentials.azure_powershell import (
 )
 import pytest
 
-from helpers import POWERSHELL_INVALID_OPERATION_EXCEPTION, POWERSHELL_NOT_LOGGED_IN_ERROR
+from fake_credentials import POWERSHELL_INVALID_OPERATION_EXCEPTION, POWERSHELL_NOT_LOGGED_IN_ERROR
 
 
 POPEN = AzurePowerShellCredential.__module__ + ".subprocess.Popen"
