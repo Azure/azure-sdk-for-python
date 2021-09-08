@@ -12,12 +12,13 @@ from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
 from ._version import VERSION
+from ._policies import JwtCredentialPolicy
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
+    from typing import Any, Optional, Union
 
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials import TokenCredential, AzureKeyCredential
 
 
 class WebPubSubServiceClientConfiguration(Configuration):
@@ -27,17 +28,15 @@ class WebPubSubServiceClientConfiguration(Configuration):
     attributes.
 
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: Union[~azure.core.credentials.TokenCredential, ~azure.core.credentials.AzureKeyCredential]
     """
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
+        credential,  # type: Union[TokenCredential, AzureKeyCredential]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        if credential is None:
-            raise ValueError("Parameter 'credential' must not be None.")
         super(WebPubSubServiceClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
@@ -60,4 +59,7 @@ class WebPubSubServiceClientConfiguration(Configuration):
         self.redirect_policy = kwargs.get('redirect_policy') or policies.RedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get('authentication_policy')
         if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.BearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
+            if kwargs.get("accesskey"):
+                self.authentication_policy = JwtCredentialPolicy(self.credential)
+            else:
+                self.authentication_policy = policies.BearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)

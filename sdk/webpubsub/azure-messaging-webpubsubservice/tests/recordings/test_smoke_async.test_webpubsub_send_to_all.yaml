@@ -2,12 +2,6 @@ interactions:
 - request:
     body: '{"hello": "world!!!"}'
     headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       Content-Length:
       - '21'
       Content-Type:
@@ -20,15 +14,12 @@ interactions:
     body:
       string: ''
     headers:
-      connection:
-      - keep-alive
-      content-length:
-      - '0'
-      date:
-      - Wed, 08 Sep 2021 05:40:36 GMT
-      strict-transport-security:
-      - max-age=15724800; includeSubDomains
+      connection: keep-alive
+      content-length: '0'
+      date: Wed, 08 Sep 2021 05:28:44 GMT
+      strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 202
       message: Accepted
+    url: https://webpubsub-yyc.webpubsub.azure.com/api/hubs/Hub/:send?api-version=2021-08-01-preview
 version: 1

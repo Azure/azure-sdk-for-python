@@ -2,12 +2,6 @@ interactions:
 - request:
     body: null
     headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       User-Agent:
       - azsdk-python-messaging-webpubsubservice/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: HEAD
@@ -16,13 +10,11 @@ interactions:
     body:
       string: ''
     headers:
-      connection:
-      - keep-alive
-      date:
-      - Wed, 08 Sep 2021 05:40:48 GMT
-      strict-transport-security:
-      - max-age=15724800; includeSubDomains
+      connection: keep-alive
+      date: Wed, 08 Sep 2021 05:28:42 GMT
+      strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 200
       message: OK
+    url: https://webpubsub-yyc.webpubsub.azure.com/api/health?api-version=2021-08-01-preview
 version: 1

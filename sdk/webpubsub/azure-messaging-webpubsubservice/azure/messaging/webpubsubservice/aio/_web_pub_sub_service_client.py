@@ -12,9 +12,11 @@ from typing import Any, Awaitable, Optional, TYPE_CHECKING
 from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from msrest import Deserializer, Serializer
+from azure.core.credentials import AzureKeyCredential
 
 from ._configuration import WebPubSubServiceClientConfiguration
 from .operations import HealthApiOperations, WebPubSubOperations
+from .._web_pub_sub_service_client import _parse_connection_string
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,11 +39,17 @@ class WebPubSubServiceClient:
 
     def __init__(
         self,
-        credential: "AsyncTokenCredential",
-        *,
-        endpoint: str = "",
+        connection_string: str = None,
+        credential: "AsyncTokenCredential" = None,
         **kwargs: Any
     ) -> None:
+        if connection_string:
+            kwargs = _parse_connection_string(connection_string, **kwargs)
+            credential = AzureKeyCredential(kwargs.get("accesskey"))
+        elif credential is None:
+            raise ValueError("Parameter 'credential' and 'connection_string' must not be None at the same time.")
+
+        endpoint = kwargs.pop('endpoint', "")  # type: str
         self._config = WebPubSubServiceClientConfiguration(credential, **kwargs)
         self._client = AsyncPipelineClient(base_url=endpoint, config=self._config, **kwargs)
 
