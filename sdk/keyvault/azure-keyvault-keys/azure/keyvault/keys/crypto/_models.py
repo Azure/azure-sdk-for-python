@@ -22,7 +22,7 @@ class DecryptResult:
         # type: (Optional[str], EncryptionAlgorithm, bytes) -> None
         self.key_id = key_id
         self.algorithm = algorithm
-        self.plaintext = plaintext 
+        self.plaintext = plaintext
 
 
 class EncryptResult:
@@ -43,7 +43,7 @@ class EncryptResult:
         # type: (Optional[str], EncryptionAlgorithm, bytes, **Any) -> None
         self.key_id = key_id
         self.algorithm = algorithm
-        self.ciphertext = ciphertext      
+        self.ciphertext = ciphertext
         self.iv = kwargs.pop("iv", None)
         self.tag = kwargs.pop("authentication_tag", None)
         self.aad = kwargs.pop("additional_authenticated_data", None)
