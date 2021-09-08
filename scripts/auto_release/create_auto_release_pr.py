@@ -8,7 +8,7 @@ def main():
     pr_title = "[AutoRelease] {}(Do not merge)".format(os.getenv('NEW_BRANCH'))
     pr_head = "{}:{}".format(os.getenv('USR_NAME'), os.getenv('NEW_BRANCH'))
     pr_base = os.getenv('TARGET_BRANCH')
-    pr_body = "{} \n{}".format(os.getenv('ISSUE_LINK'), os.getenv('TEST_RESULT'))
+    pr_body = "{} \n{} \n{}".format(os.getenv('ISSUE_LINK'), os.getenv('TEST_RESULT'), os.getenv('PIPELINE_LINK'))
     res_create = api.pulls.create(pr_title, pr_head, pr_base, pr_body)
     pr_number = res_create.number
 
