@@ -18,11 +18,11 @@ class DecryptResult:
     :param bytes plaintext: The decrypted bytes
     """
 
-    def __init__(self, algorithm, plaintext, key_id=None):
-        # type: (EncryptionAlgorithm, bytes, Optional[str]) -> None
-        self.algorithm = algorithm
-        self.plaintext = plaintext
+    def __init__(self, key_id, algorithm, plaintext):
+        # type: (Optional[str], EncryptionAlgorithm, bytes) -> None
         self.key_id = key_id
+        self.algorithm = algorithm
+        self.plaintext = plaintext 
 
 
 class EncryptResult:
@@ -39,11 +39,11 @@ class EncryptResult:
         authenticated algorithm
     """
 
-    def __init__(self, algorithm, ciphertext, key_id=None, **kwargs):
-        # type: (EncryptionAlgorithm, bytes, Optional[str], **Any) -> None
-        self.algorithm = algorithm
-        self.ciphertext = ciphertext
+    def __init__(self, key_id, algorithm, ciphertext, **kwargs):
+        # type: (Optional[str], EncryptionAlgorithm, bytes, **Any) -> None
         self.key_id = key_id
+        self.algorithm = algorithm
+        self.ciphertext = ciphertext      
         self.iv = kwargs.pop("iv", None)
         self.tag = kwargs.pop("authentication_tag", None)
         self.aad = kwargs.pop("additional_authenticated_data", None)
@@ -58,11 +58,11 @@ class SignResult:
     :param bytes signature:
     """
 
-    def __init__(self, algorithm, signature, key_id=None):
-        # type: (SignatureAlgorithm, bytes, Optional[str]) -> None
+    def __init__(self, key_id, algorithm, signature):
+        # type: (Optional[str], SignatureAlgorithm, bytes) -> None
+        self.key_id = key_id
         self.algorithm = algorithm
         self.signature = signature
-        self.key_id = key_id
 
 
 class VerifyResult:
@@ -74,11 +74,11 @@ class VerifyResult:
     :type algorithm: ~azure.keyvault.keys.crypto.SignatureAlgorithm
     """
 
-    def __init__(self, is_valid, algorithm, key_id=None):
-        # type: (bool, SignatureAlgorithm, Optional[str]) -> None
+    def __init__(self, key_id, is_valid, algorithm):
+        # type: (Optional[str], bool, SignatureAlgorithm) -> None
+        self.key_id = key_id
         self.is_valid = is_valid
         self.algorithm = algorithm
-        self.key_id = key_id
 
 
 class UnwrapResult:
@@ -90,11 +90,11 @@ class UnwrapResult:
     :param bytes key: The unwrapped key
     """
 
-    def __init__(self, algorithm, key, key_id=None):
-        # type: (KeyWrapAlgorithm, bytes, Optional[str]) -> None
+    def __init__(self, key_id, algorithm, key):
+        # type: (Optional[str], KeyWrapAlgorithm, bytes) -> None
+        self.key_id = key_id
         self.algorithm = algorithm
         self.key = key
-        self.key_id = key_id
 
 
 class WrapResult:
@@ -106,8 +106,8 @@ class WrapResult:
     :param bytes encrypted_key: The encrypted key bytes
     """
 
-    def __init__(self, algorithm, encrypted_key, key_id=None):
-        # type: (KeyWrapAlgorithm, bytes, Optional[str]) -> None
+    def __init__(self, key_id, algorithm, encrypted_key):
+        # type: (Optional[str], KeyWrapAlgorithm, bytes) -> None
+        self.key_id = key_id
         self.algorithm = algorithm
         self.encrypted_key = encrypted_key
-        self.key_id = key_id
