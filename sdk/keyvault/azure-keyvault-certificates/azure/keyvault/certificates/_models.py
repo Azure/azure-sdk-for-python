@@ -1292,7 +1292,7 @@ class LifetimeAction(object):
         should be between 1 and 972 (36 * 27).
     """
 
-    def __init__(self, action=None, lifetime_percentage=None, days_before_expiry=None):
+    def __init__(self, action, lifetime_percentage=None, days_before_expiry=None):
         # type: (Optional[CertificatePolicyAction], Optional[int], Optional[int]) -> None
         self._lifetime_percentage = lifetime_percentage
         self._days_before_expiry = days_before_expiry
