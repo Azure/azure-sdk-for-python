@@ -78,7 +78,6 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         if not (self._jwk or (self._key_id.version if self._key_id else None)):
             raise ValueError("'key' must include a version")
 
-        self._initialized = None  # type: Optional[bool]
         if self._jwk:
             try:
                 self._local_provider = get_local_cryptography_provider(cast(JsonWebKey, self._key))
@@ -205,9 +204,9 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         )
 
         return EncryptResult(
+            key_id=self.key_id,
             algorithm=algorithm,
             ciphertext=operation_result.result,
-            key_id=self.key_id,
             iv=operation_result.iv,
             authentication_tag=operation_result.authentication_tag,
             additional_authenticated_data=operation_result.additional_authenticated_data,
@@ -266,7 +265,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             **kwargs
         )
 
-        return DecryptResult(algorithm=algorithm, plaintext=operation_result.result, key_id=self.key_id)
+        return DecryptResult(key_id=self.key_id, algorithm=algorithm, plaintext=operation_result.result)
 
     @distributed_trace_async
     async def wrap_key(self, algorithm: "KeyWrapAlgorithm", key: bytes, **kwargs: "Any") -> WrapResult:
@@ -308,7 +307,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             **kwargs
         )
 
-        return WrapResult(algorithm=algorithm, encrypted_key=operation_result.result, key_id=self.key_id)
+        return WrapResult(key_id=self.key_id, algorithm=algorithm, encrypted_key=operation_result.result)
 
     @distributed_trace_async
     async def unwrap_key(self, algorithm: "KeyWrapAlgorithm", encrypted_key: bytes, **kwargs: "Any") -> UnwrapResult:
@@ -349,7 +348,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             **kwargs
         )
 
-        return UnwrapResult(algorithm=algorithm, key=operation_result.result, key_id=self.key_id)
+        return UnwrapResult(key_id=self.key_id, algorithm=algorithm, key=operation_result.result)
 
     @distributed_trace_async
     async def sign(self, algorithm: "SignatureAlgorithm", digest: bytes, **kwargs: "Any") -> SignResult:
@@ -391,7 +390,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             **kwargs
         )
 
-        return SignResult(algorithm=algorithm, signature=operation_result.result, key_id=self.key_id)
+        return SignResult(key_id=self.key_id, algorithm=algorithm, signature=operation_result.result)
 
     @distributed_trace_async
     async def verify(
@@ -436,4 +435,4 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             **kwargs
         )
 
-        return VerifyResult(algorithm=algorithm, is_valid=operation_result.value, key_id=self.key_id)
+        return VerifyResult(key_id=self.key_id, algorithm=algorithm, is_valid=operation_result.value)

@@ -261,9 +261,9 @@ class CryptographyClient(KeyVaultClientBase):
         )
 
         return EncryptResult(
+            key_id=self.key_id,
             algorithm=algorithm,
             ciphertext=operation_result.result,
-            key_id=self.key_id,
             iv=operation_result.iv,
             authentication_tag=operation_result.authentication_tag,
             additional_authenticated_data=operation_result.additional_authenticated_data,
@@ -323,7 +323,7 @@ class CryptographyClient(KeyVaultClientBase):
             **kwargs
         )
 
-        return DecryptResult(algorithm=algorithm, plaintext=operation_result.result, key_id=self.key_id)
+        return DecryptResult(key_id=self.key_id, algorithm=algorithm, plaintext=operation_result.result)
 
     @distributed_trace
     def wrap_key(self, algorithm, key, **kwargs):
@@ -366,7 +366,7 @@ class CryptographyClient(KeyVaultClientBase):
             **kwargs
         )
 
-        return WrapResult(algorithm=algorithm, encrypted_key=operation_result.result, key_id=self.key_id)
+        return WrapResult(key_id=self.key_id, algorithm=algorithm, encrypted_key=operation_result.result)
 
     @distributed_trace
     def unwrap_key(self, algorithm, encrypted_key, **kwargs):
@@ -407,7 +407,7 @@ class CryptographyClient(KeyVaultClientBase):
             parameters=self._models.KeyOperationsParameters(algorithm=algorithm, value=encrypted_key),
             **kwargs
         )
-        return UnwrapResult(algorithm=algorithm, key=operation_result.result, key_id=self.key_id)
+        return UnwrapResult(key_id=self.key_id, algorithm=algorithm, key=operation_result.result)
 
     @distributed_trace
     def sign(self, algorithm, digest, **kwargs):
@@ -494,4 +494,4 @@ class CryptographyClient(KeyVaultClientBase):
             **kwargs
         )
 
-        return VerifyResult(algorithm=algorithm, is_valid=operation_result.value, key_id=self.key_id)
+        return VerifyResult(key_id=self.key_id, algorithm=algorithm, is_valid=operation_result.value)

@@ -11,7 +11,7 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Optional, Union, Type
+    from typing import Optional, Union
     from cryptography.hazmat.primitives import hashes
 
 _alg_registry = {}
