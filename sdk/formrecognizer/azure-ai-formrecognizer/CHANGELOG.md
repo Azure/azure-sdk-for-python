@@ -1,6 +1,16 @@
 # Release History
 
-## 3.1.2 (Unreleased)
+## 3.1.3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 3.1.2 (2021-08-10)
 
 ### Bugs Fixed
 - A `HttpResponseError` will be immediately raised when the call quota volume is exceeded in a `F0` tier Form Recognizer

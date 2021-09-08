@@ -971,7 +971,7 @@ class VaultCheckNameAvailabilityParameters(msrest.serialization.Model):
 
     :param name: Required. The vault name.
     :type name: str
-    :ivar type: Required. The type of resource, Microsoft.KeyVault/vaults. Default value:
+    :ivar type: The type of resource, Microsoft.KeyVault/vaults. Has constant value:
      "Microsoft.KeyVault/vaults".
     :vartype type: str
     """
@@ -1273,8 +1273,7 @@ class VirtualNetworkRule(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param id: Required. Full resource id of a vnet subnet, such as
-     '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-
-     vnet/subnets/subnet1'.
+     '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet1'.
     :type id: str
     """
 

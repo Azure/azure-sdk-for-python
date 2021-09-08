@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/library%2Falpine/_tags
   response:
@@ -18,7 +18,7 @@ interactions:
       connection: keep-alive
       content-length: '217'
       content-type: application/json; charset=utf-8
-      date: Fri, 28 May 2021 15:20:24 GMT
+      date: Mon, 30 Aug 2021 20:27:58 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -27,18 +27,18 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://seankaneanon.azurecr.io/acr/v1/library%2Falpine/_tags
+    url: https://yalinlitestsanon.azurecr.io/acr/v1/library%2Falpine/_tags
 - request:
     body:
       grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
       - password
       scope: repository:library/alpine:metadata_read
-      service: seankaneanon.azurecr.io
+      service: yalinlitestsanon.azurecr.io
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/token
   response:
@@ -47,37 +47,37 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Fri, 28 May 2021 15:20:24 GMT
+      date: Mon, 30 Aug 2021 20:27:58 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.65'
+      x-ms-ratelimit-remaining-calls-per-second: '166.633333'
     status:
       code: 200
       message: OK
-    url: https://seankaneanon.azurecr.io/oauth2/token
+    url: https://yalinlitestsanon.azurecr.io/oauth2/token
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/library%2Falpine/_tags
   response:
     body:
-      string: '{"registry": "fake_url.azurecr.io", "imageName": "library/alpine",
-        "tags": [{"name": "latest", "digest": "sha256:69e70a79f2d41ab5d637de98c1e0b055206ba40a8145e7bddb55ccc04e13cf8f",
-        "createdTime": "2021-05-11T21:18:10.1680148Z", "lastUpdateTime": "2021-05-11T21:18:10.1680148Z",
+      string: '{"registry": "yalinlitestsanon.azurecr.io", "imageName": "library/alpine",
+        "tags": [{"name": "latest", "digest": "sha256:e1c082e3d3c45cccac829840a25941e679c25d438cc8412c2fa221cf1a824e6a",
+        "createdTime": "2021-08-30T10:55:43.9735079Z", "lastUpdateTime": "2021-08-30T10:55:43.9735079Z",
         "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
         true, "readEnabled": true, "listEnabled": true}}]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '390'
+      content-length: '394'
       content-type: application/json; charset=utf-8
-      date: Fri, 28 May 2021 15:20:24 GMT
+      date: Mon, 30 Aug 2021 20:27:58 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -85,5 +85,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://seankaneanon.azurecr.io/acr/v1/library%2Falpine/_tags
+    url: https://yalinlitestsanon.azurecr.io/acr/v1/library%2Falpine/_tags
 version: 1

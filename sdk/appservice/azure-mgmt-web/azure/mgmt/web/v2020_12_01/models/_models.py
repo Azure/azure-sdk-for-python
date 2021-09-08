@@ -343,8 +343,9 @@ class ApiKVReference(ProxyOnlyResource):
     :type identity_type: ~azure.mgmt.web.v2020_12_01.models.ManagedServiceIdentity
     :param details:
     :type details: str
-    :ivar source:  Default value: "KeyVault".
-    :vartype source: str
+    :param source:  The only acceptable values to pass in are None and "KeyVault". The default
+     value is None.
+    :type source: str
     :param active_version:
     :type active_version: str
     """
@@ -353,7 +354,6 @@ class ApiKVReference(ProxyOnlyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'source': {'constant': True},
     }
 
     _attribute_map = {
@@ -372,8 +372,6 @@ class ApiKVReference(ProxyOnlyResource):
         'active_version': {'key': 'properties.activeVersion', 'type': 'str'},
     }
 
-    source = "KeyVault"
-
     def __init__(
         self,
         **kwargs
@@ -386,6 +384,7 @@ class ApiKVReference(ProxyOnlyResource):
         self.secret_version = kwargs.get('secret_version', None)
         self.identity_type = kwargs.get('identity_type', None)
         self.details = kwargs.get('details', None)
+        self.source = kwargs.get('source', None)
         self.active_version = kwargs.get('active_version', None)
 
 
@@ -9841,9 +9840,9 @@ class OpenIdConnectClientCredential(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar method: The method that should be used to authenticate the user. Default value:
-     "ClientSecretPost".
-    :vartype method: str
+    :param method: The method that should be used to authenticate the user. The only acceptable
+     values to pass in are None and "ClientSecretPost". The default value is None.
+    :type method: str
     :param client_secret_setting_name: The app setting that contains the client secret for the
      custom Open ID Connect provider.
     :type client_secret_setting_name: str
@@ -9853,7 +9852,6 @@ class OpenIdConnectClientCredential(ProxyOnlyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'method': {'constant': True},
     }
 
     _attribute_map = {
@@ -9865,13 +9863,12 @@ class OpenIdConnectClientCredential(ProxyOnlyResource):
         'client_secret_setting_name': {'key': 'properties.clientSecretSettingName', 'type': 'str'},
     }
 
-    method = "ClientSecretPost"
-
     def __init__(
         self,
         **kwargs
     ):
         super(OpenIdConnectClientCredential, self).__init__(**kwargs)
+        self.method = kwargs.get('method', None)
         self.client_secret_setting_name = kwargs.get('client_secret_setting_name', None)
 
 

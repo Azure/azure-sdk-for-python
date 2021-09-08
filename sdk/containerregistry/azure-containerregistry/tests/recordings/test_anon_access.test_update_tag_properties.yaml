@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world/_tags/latest
   response:
@@ -30,7 +30,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 28 May 2021 14:21:45 GMT
+      - Mon, 30 Aug 2021 20:27:56 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -46,7 +46,7 @@ interactions:
       code: 401
       message: Unauthorized
 - request:
-    body: service=seankaneanon.azurecr.io&scope=repository%3Alibrary%2Fhello-world%3Ametadata_read&grant_type=password
+    body: service=yalinlitestsanon.azurecr.io&scope=repository%3Alibrary%2Fhello-world%3Ametadata_read&grant_type=password
     headers:
       Accept:
       - application/json
@@ -55,11 +55,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '108'
+      - '112'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/token
   response:
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 28 May 2021 14:21:45 GMT
+      - Mon, 30 Aug 2021 20:27:56 GMT
       server:
       - openresty
       strict-transport-security:
@@ -79,7 +79,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.65'
+      - '165.95'
     status:
       code: 200
       message: OK
@@ -93,14 +93,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world/_tags/latest
   response:
     body:
-      string: '{"registry": "fake_url.azurecr.io", "imageName": "library/hello-world",
-        "tag": {"name": "latest", "digest": "sha256:5122f6204b6a3596e048758cabba3c46b1c937a46b5be6225b835d091b90e46c",
-        "createdTime": "2021-05-11T21:17:46.0365675Z", "lastUpdateTime": "2021-05-13T16:00:26.9280451Z",
+      string: '{"registry": "yalinlitestsanon.azurecr.io", "imageName": "library/hello-world",
+        "tag": {"name": "latest", "digest": "sha256:7d91b69e04a9029b99f3585aaaccae2baa80bcf318f4a5d2165a9898cd2dc0a1",
+        "createdTime": "2021-08-30T10:55:20.0468904Z", "lastUpdateTime": "2021-08-30T10:55:20.0468904Z",
         "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
         true, "readEnabled": true, "listEnabled": true}}}'
     headers:
@@ -112,11 +112,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '392'
+      - '396'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 28 May 2021 14:21:46 GMT
+      - Mon, 30 Aug 2021 20:27:56 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -144,7 +144,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: PATCH
     uri: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world/_tags/latest
   response:
@@ -165,7 +165,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 28 May 2021 14:21:46 GMT
+      - Mon, 30 Aug 2021 20:27:56 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -181,7 +181,7 @@ interactions:
       code: 401
       message: Unauthorized
 - request:
-    body: service=seankaneanon.azurecr.io&scope=repository%3Alibrary%2Fhello-world%3Ametadata_write&grant_type=password
+    body: service=yalinlitestsanon.azurecr.io&scope=repository%3Alibrary%2Fhello-world%3Ametadata_write&grant_type=password
     headers:
       Accept:
       - application/json
@@ -190,11 +190,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '109'
+      - '113'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/token
   response:
@@ -206,7 +206,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 28 May 2021 14:21:46 GMT
+      - Mon, 30 Aug 2021 20:27:56 GMT
       server:
       - openresty
       strict-transport-security:
@@ -214,7 +214,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.633333'
+      - '165.933333'
     status:
       code: 200
       message: OK
@@ -233,7 +233,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: PATCH
     uri: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world/_tags/latest
   response:
@@ -254,7 +254,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 28 May 2021 14:21:46 GMT
+      - Mon, 30 Aug 2021 20:27:56 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

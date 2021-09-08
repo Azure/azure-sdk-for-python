@@ -20,7 +20,7 @@ if TYPE_CHECKING:
         # AsyncTokenCredential is a typing_extensions.Protocol; we don't depend on that package
         pass
 
-DEFAULT_VERSION = ApiVersion.V7_2
+DEFAULT_VERSION = ApiVersion.V7_3_PREVIEW
 
 class AsyncKeyVaultClientBase(object):
     def __init__(self, vault_url: str, credential: "AsyncTokenCredential", **kwargs: "Any") -> None:

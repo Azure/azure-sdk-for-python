@@ -117,10 +117,13 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2019-09-01: :class:`KeysOperations<azure.mgmt.keyvault.v2019_09_01.aio.operations.KeysOperations>`
+           * 2020-04-01-preview: :class:`KeysOperations<azure.mgmt.keyvault.v2020_04_01_preview.aio.operations.KeysOperations>`
         """
         api_version = self._get_api_version('keys')
         if api_version == '2019-09-01':
             from ..v2019_09_01.aio.operations import KeysOperations as OperationClass
+        elif api_version == '2020-04-01-preview':
+            from ..v2020_04_01_preview.aio.operations import KeysOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'keys'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -241,13 +244,10 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2020-04-01-preview: :class:`SecretsOperations<azure.mgmt.keyvault.v2020_04_01_preview.aio.operations.SecretsOperations>`
-           * 2021-04-01-preview: :class:`SecretsOperations<azure.mgmt.keyvault.v2021_04_01_preview.aio.operations.SecretsOperations>`
         """
         api_version = self._get_api_version('secrets')
         if api_version == '2020-04-01-preview':
             from ..v2020_04_01_preview.aio.operations import SecretsOperations as OperationClass
-        elif api_version == '2021-04-01-preview':
-            from ..v2021_04_01_preview.aio.operations import SecretsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'secrets'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

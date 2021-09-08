@@ -23,7 +23,6 @@ try:
     from ._models_py3 import FirewallRuleListResult
     from ._models_py3 import GetPrivateDnsZoneSuffixResponse
     from ._models_py3 import HighAvailability
-    from ._models_py3 import Identity
     from ._models_py3 import MaintenanceWindow
     from ._models_py3 import NameAvailability
     from ._models_py3 import NameAvailabilityRequest
@@ -66,7 +65,6 @@ except (SyntaxError, ImportError):
     from ._models import FirewallRuleListResult  # type: ignore
     from ._models import GetPrivateDnsZoneSuffixResponse  # type: ignore
     from ._models import HighAvailability  # type: ignore
-    from ._models import Identity  # type: ignore
     from ._models import MaintenanceWindow  # type: ignore
     from ._models import NameAvailability  # type: ignore
     from ._models import NameAvailabilityRequest  # type: ignore
@@ -126,7 +124,6 @@ __all__ = [
     'FirewallRuleListResult',
     'GetPrivateDnsZoneSuffixResponse',
     'HighAvailability',
-    'Identity',
     'MaintenanceWindow',
     'NameAvailability',
     'NameAvailabilityRequest',

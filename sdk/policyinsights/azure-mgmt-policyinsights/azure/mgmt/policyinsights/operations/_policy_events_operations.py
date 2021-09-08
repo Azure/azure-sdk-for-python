@@ -128,9 +128,18 @@ class PolicyEventsOperations(object):
 
                 request = self._client.post(url, query_parameters, header_parameters)
             else:
-                url = next_link
+                url = '{nextLink}'
+                path_format_arguments = {
+                    'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if _skip_token is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skip_token", _skip_token, 'str')
+
+                request = self._client.post(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -147,7 +156,7 @@ class PolicyEventsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.QueryFailure, response)
+                error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -238,9 +247,18 @@ class PolicyEventsOperations(object):
 
                 request = self._client.post(url, query_parameters, header_parameters)
             else:
-                url = next_link
+                url = '{nextLink}'
+                path_format_arguments = {
+                    'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if _skip_token is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skip_token", _skip_token, 'str')
+
+                request = self._client.post(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -257,7 +275,7 @@ class PolicyEventsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.QueryFailure, response)
+                error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -352,9 +370,18 @@ class PolicyEventsOperations(object):
 
                 request = self._client.post(url, query_parameters, header_parameters)
             else:
-                url = next_link
+                url = '{nextLink}'
+                path_format_arguments = {
+                    'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if _skip_token is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skip_token", _skip_token, 'str')
+
+                request = self._client.post(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -371,7 +398,7 @@ class PolicyEventsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.QueryFailure, response)
+                error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -466,9 +493,18 @@ class PolicyEventsOperations(object):
 
                 request = self._client.post(url, query_parameters, header_parameters)
             else:
-                url = next_link
+                url = '{nextLink}'
+                path_format_arguments = {
+                    'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if _skip_token is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skip_token", _skip_token, 'str')
+
+                request = self._client.post(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -485,7 +521,7 @@ class PolicyEventsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.QueryFailure, response)
+                error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -582,9 +618,18 @@ class PolicyEventsOperations(object):
 
                 request = self._client.post(url, query_parameters, header_parameters)
             else:
-                url = next_link
+                url = '{nextLink}'
+                path_format_arguments = {
+                    'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if _skip_token is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skip_token", _skip_token, 'str')
+
+                request = self._client.post(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -601,7 +646,7 @@ class PolicyEventsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.QueryFailure, response)
+                error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -698,9 +743,18 @@ class PolicyEventsOperations(object):
 
                 request = self._client.post(url, query_parameters, header_parameters)
             else:
-                url = next_link
+                url = '{nextLink}'
+                path_format_arguments = {
+                    'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if _skip_token is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skip_token", _skip_token, 'str')
+
+                request = self._client.post(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -717,7 +771,7 @@ class PolicyEventsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.QueryFailure, response)
+                error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -814,9 +868,18 @@ class PolicyEventsOperations(object):
 
                 request = self._client.post(url, query_parameters, header_parameters)
             else:
-                url = next_link
+                url = '{nextLink}'
+                path_format_arguments = {
+                    'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if _skip_token is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skip_token", _skip_token, 'str')
+
+                request = self._client.post(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -833,7 +896,7 @@ class PolicyEventsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.QueryFailure, response)
+                error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -934,9 +997,18 @@ class PolicyEventsOperations(object):
 
                 request = self._client.post(url, query_parameters, header_parameters)
             else:
-                url = next_link
+                url = '{nextLink}'
+                path_format_arguments = {
+                    'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if _skip_token is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skip_token", _skip_token, 'str')
+
+                request = self._client.post(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -953,7 +1025,7 @@ class PolicyEventsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.QueryFailure, response)
+                error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

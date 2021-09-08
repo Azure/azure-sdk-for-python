@@ -653,8 +653,8 @@ class HighAvailability(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param mode: High availability mode for a server. Possible values include: "Enabled",
-     "Disabled", "ZoneRedundant", "SameZone".
+    :param mode: High availability mode for a server. Possible values include: "Disabled",
+     "ZoneRedundant", "SameZone".
     :type mode: str or ~azure.mgmt.rdbms.mysql_flexibleservers.models.HighAvailabilityMode
     :ivar state: The state of server high availability. Possible values include: "NotEnabled",
      "CreatingStandby", "Healthy", "FailingOver", "RemovingStandby".
@@ -684,43 +684,6 @@ class HighAvailability(msrest.serialization.Model):
         self.mode = mode
         self.state = None
         self.standby_availability_zone = standby_availability_zone
-
-
-class Identity(msrest.serialization.Model):
-    """Identity for the resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar principal_id: The principal ID of resource identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of resource.
-    :vartype tenant_id: str
-    :param type: The identity type. The only acceptable values to pass in are None and
-     "SystemAssigned". The default value is None.
-    :type type: str
-    """
-
-    _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        type: Optional[str] = None,
-        **kwargs
-    ):
-        super(Identity, self).__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
-        self.type = type
 
 
 class MaintenanceWindow(msrest.serialization.Model):
@@ -1027,8 +990,6 @@ class Server(TrackedResource):
     :type tags: dict[str, str]
     :param location: Required. The geo-location where the resource lives.
     :type location: str
-    :param identity: The Azure Active Directory identity of the server.
-    :type identity: ~azure.mgmt.rdbms.mysql_flexibleservers.models.Identity
     :param sku: The SKU (pricing tier) of the server.
     :type sku: ~azure.mgmt.rdbms.mysql_flexibleservers.models.Sku
     :ivar system_data: The system metadata relating to this resource.
@@ -1090,7 +1051,6 @@ class Server(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'Identity'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'administrator_login': {'key': 'properties.administratorLogin', 'type': 'str'},
@@ -1116,7 +1076,6 @@ class Server(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["Identity"] = None,
         sku: Optional["Sku"] = None,
         administrator_login: Optional[str] = None,
         administrator_login_password: Optional[str] = None,
@@ -1134,7 +1093,6 @@ class Server(TrackedResource):
         **kwargs
     ):
         super(Server, self).__init__(tags=tags, location=location, **kwargs)
-        self.identity = identity
         self.sku = sku
         self.system_data = None
         self.administrator_login = administrator_login

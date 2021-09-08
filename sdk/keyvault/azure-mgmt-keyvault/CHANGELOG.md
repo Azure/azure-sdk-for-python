@@ -1,5 +1,15 @@
 # Release History
 
+## 9.1.0 (2021-08-26)
+
+**Features**
+
+  - Model VirtualNetworkRule has a new parameter ignore_missing_vnet_service_endpoint
+  - Model VaultProperties has a new parameter hsm_pool_resource_id
+  - Model PrivateEndpointConnectionItem has a new parameter etag
+  - Model PrivateEndpointConnectionItem has a new parameter id
+  - Model ServiceSpecification has a new parameter metric_specifications
+
 ## 9.0.0 (2021-04-19)
 
 **Features**

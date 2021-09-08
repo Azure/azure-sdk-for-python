@@ -11,6 +11,8 @@ try:
     from ._models_py3 import AutoScaleProperties
     from ._models_py3 import AvailableRpOperation
     from ._models_py3 import AvailableRpOperationDisplayInfo
+    from ._models_py3 import AzureADOnlyAuthentication
+    from ._models_py3 import AzureADOnlyAuthenticationListResult
     from ._models_py3 import AzureEntityResource
     from ._models_py3 import BigDataPoolPatchInfo
     from ._models_py3 import BigDataPoolResourceInfo
@@ -20,6 +22,7 @@ try:
     from ._models_py3 import CmdkeySetup
     from ._models_py3 import ComponentSetup
     from ._models_py3 import CreateSqlPoolRestorePointDefinition
+    from ._models_py3 import CspWorkspaceAdminProperties
     from ._models_py3 import CustomSetupBase
     from ._models_py3 import CustomerManagedKeyDetails
     from ._models_py3 import DataLakeStorageAccountDetails
@@ -54,6 +57,10 @@ try:
     from ._models_py3 import IntegrationRuntimeMonitoringData
     from ._models_py3 import IntegrationRuntimeNodeIpAddress
     from ._models_py3 import IntegrationRuntimeNodeMonitoringData
+    from ._models_py3 import IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint
+    from ._models_py3 import IntegrationRuntimeOutboundNetworkDependenciesEndpoint
+    from ._models_py3 import IntegrationRuntimeOutboundNetworkDependenciesEndpointDetails
+    from ._models_py3 import IntegrationRuntimeOutboundNetworkDependenciesEndpointsResponse
     from ._models_py3 import IntegrationRuntimeRegenerateKeyParameters
     from ._models_py3 import IntegrationRuntimeResource
     from ._models_py3 import IntegrationRuntimeSsisCatalogInfo
@@ -64,6 +71,7 @@ try:
     from ._models_py3 import IpFirewallRuleInfo
     from ._models_py3 import IpFirewallRuleInfoListResult
     from ._models_py3 import IpFirewallRuleProperties
+    from ._models_py3 import KekIdentityProperties
     from ._models_py3 import Key
     from ._models_py3 import KeyInfoListResult
     from ._models_py3 import LibraryInfo
@@ -145,6 +153,9 @@ try:
     from ._models_py3 import ServerVulnerabilityAssessment
     from ._models_py3 import ServerVulnerabilityAssessmentListResult
     from ._models_py3 import Sku
+    from ._models_py3 import SparkConfigProperties
+    from ._models_py3 import SparkConfigurationListResponse
+    from ._models_py3 import SparkConfigurationResource
     from ._models_py3 import SqlPool
     from ._models_py3 import SqlPoolBlobAuditingPolicy
     from ._models_py3 import SqlPoolBlobAuditingPolicyListResult
@@ -185,6 +196,7 @@ try:
     from ._models_py3 import TransparentDataEncryptionListResult
     from ._models_py3 import UpdateIntegrationRuntimeNodeRequest
     from ._models_py3 import UpdateIntegrationRuntimeRequest
+    from ._models_py3 import UserAssignedManagedIdentity
     from ._models_py3 import VirtualNetworkProfile
     from ._models_py3 import VulnerabilityAssessmentRecurringScansProperties
     from ._models_py3 import VulnerabilityAssessmentScanError
@@ -205,6 +217,8 @@ except (SyntaxError, ImportError):
     from ._models import AutoScaleProperties  # type: ignore
     from ._models import AvailableRpOperation  # type: ignore
     from ._models import AvailableRpOperationDisplayInfo  # type: ignore
+    from ._models import AzureADOnlyAuthentication  # type: ignore
+    from ._models import AzureADOnlyAuthenticationListResult  # type: ignore
     from ._models import AzureEntityResource  # type: ignore
     from ._models import BigDataPoolPatchInfo  # type: ignore
     from ._models import BigDataPoolResourceInfo  # type: ignore
@@ -214,6 +228,7 @@ except (SyntaxError, ImportError):
     from ._models import CmdkeySetup  # type: ignore
     from ._models import ComponentSetup  # type: ignore
     from ._models import CreateSqlPoolRestorePointDefinition  # type: ignore
+    from ._models import CspWorkspaceAdminProperties  # type: ignore
     from ._models import CustomSetupBase  # type: ignore
     from ._models import CustomerManagedKeyDetails  # type: ignore
     from ._models import DataLakeStorageAccountDetails  # type: ignore
@@ -248,6 +263,10 @@ except (SyntaxError, ImportError):
     from ._models import IntegrationRuntimeMonitoringData  # type: ignore
     from ._models import IntegrationRuntimeNodeIpAddress  # type: ignore
     from ._models import IntegrationRuntimeNodeMonitoringData  # type: ignore
+    from ._models import IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint  # type: ignore
+    from ._models import IntegrationRuntimeOutboundNetworkDependenciesEndpoint  # type: ignore
+    from ._models import IntegrationRuntimeOutboundNetworkDependenciesEndpointDetails  # type: ignore
+    from ._models import IntegrationRuntimeOutboundNetworkDependenciesEndpointsResponse  # type: ignore
     from ._models import IntegrationRuntimeRegenerateKeyParameters  # type: ignore
     from ._models import IntegrationRuntimeResource  # type: ignore
     from ._models import IntegrationRuntimeSsisCatalogInfo  # type: ignore
@@ -258,6 +277,7 @@ except (SyntaxError, ImportError):
     from ._models import IpFirewallRuleInfo  # type: ignore
     from ._models import IpFirewallRuleInfoListResult  # type: ignore
     from ._models import IpFirewallRuleProperties  # type: ignore
+    from ._models import KekIdentityProperties  # type: ignore
     from ._models import Key  # type: ignore
     from ._models import KeyInfoListResult  # type: ignore
     from ._models import LibraryInfo  # type: ignore
@@ -339,6 +359,9 @@ except (SyntaxError, ImportError):
     from ._models import ServerVulnerabilityAssessment  # type: ignore
     from ._models import ServerVulnerabilityAssessmentListResult  # type: ignore
     from ._models import Sku  # type: ignore
+    from ._models import SparkConfigProperties  # type: ignore
+    from ._models import SparkConfigurationListResponse  # type: ignore
+    from ._models import SparkConfigurationResource  # type: ignore
     from ._models import SqlPool  # type: ignore
     from ._models import SqlPoolBlobAuditingPolicy  # type: ignore
     from ._models import SqlPoolBlobAuditingPolicyListResult  # type: ignore
@@ -379,6 +402,7 @@ except (SyntaxError, ImportError):
     from ._models import TransparentDataEncryptionListResult  # type: ignore
     from ._models import UpdateIntegrationRuntimeNodeRequest  # type: ignore
     from ._models import UpdateIntegrationRuntimeRequest  # type: ignore
+    from ._models import UserAssignedManagedIdentity  # type: ignore
     from ._models import VirtualNetworkProfile  # type: ignore
     from ._models import VulnerabilityAssessmentRecurringScansProperties  # type: ignore
     from ._models import VulnerabilityAssessmentScanError  # type: ignore
@@ -396,9 +420,11 @@ except (SyntaxError, ImportError):
     from ._models import WorkspaceRepositoryConfiguration  # type: ignore
 
 from ._synapse_management_client_enums import (
+    AzureADOnlyAuthenticationName,
     BlobAuditingPolicyName,
     BlobAuditingPolicyState,
     ColumnDataType,
+    ConfigurationType,
     ConnectionPolicyName,
     DataFlowComputeType,
     DataMaskingFunction,
@@ -445,6 +471,7 @@ from ._synapse_management_client_enums import (
     SensitivityLabelUpdateKind,
     ServerKeyType,
     SsisObjectMetadataType,
+    StateValue,
     StorageAccountType,
     TransparentDataEncryptionName,
     TransparentDataEncryptionStatus,
@@ -460,6 +487,8 @@ __all__ = [
     'AutoScaleProperties',
     'AvailableRpOperation',
     'AvailableRpOperationDisplayInfo',
+    'AzureADOnlyAuthentication',
+    'AzureADOnlyAuthenticationListResult',
     'AzureEntityResource',
     'BigDataPoolPatchInfo',
     'BigDataPoolResourceInfo',
@@ -469,6 +498,7 @@ __all__ = [
     'CmdkeySetup',
     'ComponentSetup',
     'CreateSqlPoolRestorePointDefinition',
+    'CspWorkspaceAdminProperties',
     'CustomSetupBase',
     'CustomerManagedKeyDetails',
     'DataLakeStorageAccountDetails',
@@ -503,6 +533,10 @@ __all__ = [
     'IntegrationRuntimeMonitoringData',
     'IntegrationRuntimeNodeIpAddress',
     'IntegrationRuntimeNodeMonitoringData',
+    'IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint',
+    'IntegrationRuntimeOutboundNetworkDependenciesEndpoint',
+    'IntegrationRuntimeOutboundNetworkDependenciesEndpointDetails',
+    'IntegrationRuntimeOutboundNetworkDependenciesEndpointsResponse',
     'IntegrationRuntimeRegenerateKeyParameters',
     'IntegrationRuntimeResource',
     'IntegrationRuntimeSsisCatalogInfo',
@@ -513,6 +547,7 @@ __all__ = [
     'IpFirewallRuleInfo',
     'IpFirewallRuleInfoListResult',
     'IpFirewallRuleProperties',
+    'KekIdentityProperties',
     'Key',
     'KeyInfoListResult',
     'LibraryInfo',
@@ -594,6 +629,9 @@ __all__ = [
     'ServerVulnerabilityAssessment',
     'ServerVulnerabilityAssessmentListResult',
     'Sku',
+    'SparkConfigProperties',
+    'SparkConfigurationListResponse',
+    'SparkConfigurationResource',
     'SqlPool',
     'SqlPoolBlobAuditingPolicy',
     'SqlPoolBlobAuditingPolicyListResult',
@@ -634,6 +672,7 @@ __all__ = [
     'TransparentDataEncryptionListResult',
     'UpdateIntegrationRuntimeNodeRequest',
     'UpdateIntegrationRuntimeRequest',
+    'UserAssignedManagedIdentity',
     'VirtualNetworkProfile',
     'VulnerabilityAssessmentRecurringScansProperties',
     'VulnerabilityAssessmentScanError',
@@ -649,9 +688,11 @@ __all__ = [
     'WorkspaceKeyDetails',
     'WorkspacePatchInfo',
     'WorkspaceRepositoryConfiguration',
+    'AzureADOnlyAuthenticationName',
     'BlobAuditingPolicyName',
     'BlobAuditingPolicyState',
     'ColumnDataType',
+    'ConfigurationType',
     'ConnectionPolicyName',
     'DataFlowComputeType',
     'DataMaskingFunction',
@@ -698,6 +739,7 @@ __all__ = [
     'SensitivityLabelUpdateKind',
     'ServerKeyType',
     'SsisObjectMetadataType',
+    'StateValue',
     'StorageAccountType',
     'TransparentDataEncryptionName',
     'TransparentDataEncryptionStatus',

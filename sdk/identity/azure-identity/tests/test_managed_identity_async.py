@@ -16,7 +16,7 @@ from azure.identity._internal.user_agent import USER_AGENT
 import pytest
 
 from helpers import build_aad_response, mock_response, Request
-from helpers_async import async_validating_transport, AsyncMockTransport, get_completed_future
+from helpers_async import async_validating_transport, AsyncMockTransport
 from test_managed_identity import ALL_ENVIRONMENTS
 
 
@@ -92,6 +92,17 @@ async def test_context_manager(environ):
 
     assert transport.__aenter__.call_count == 1
     assert transport.__aexit__.call_count == 1
+
+
+@pytest.mark.asyncio
+async def test_close_incomplete_configuration():
+    await ManagedIdentityCredential().close()
+
+
+@pytest.mark.asyncio
+async def test_context_manager_incomplete_configuration():
+    async with ManagedIdentityCredential():
+        pass
 
 
 @pytest.mark.asyncio
@@ -759,7 +770,7 @@ async def test_token_exchange(tmpdir):
             EnvironmentVariables.AZURE_AUTHORITY_HOST: authority,
             EnvironmentVariables.AZURE_CLIENT_ID: client_id,
             EnvironmentVariables.AZURE_TENANT_ID: tenant,
-            EnvironmentVariables.TOKEN_FILE_PATH: token_file.strpath,
+            EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE: token_file.strpath,
         },
         clear=True,
     ):

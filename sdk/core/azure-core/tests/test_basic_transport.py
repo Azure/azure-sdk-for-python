@@ -5,9 +5,7 @@
 # -------------------------------------------------------------------------
 from six.moves.http_client import HTTPConnection
 from collections import OrderedDict
-import time
 import sys
-import json
 
 try:
     from unittest import mock
@@ -96,12 +94,12 @@ def test_url_join():
     assert _urljoin('devstoreaccount1/', 'testdir/') == 'devstoreaccount1/testdir/'
 
 
-def test_http_client_response():
+def test_http_client_response(port):
     # Create a core request
-    request = HttpRequest("GET", "www.httpbin.org")
+    request = HttpRequest("GET", "http://localhost:{}".format(port))
 
     # Fake a transport based on http.client
-    conn = HTTPConnection("www.httpbin.org")
+    conn = HTTPConnection("localhost", port)
     conn.request("GET", "/get")
     r1 = conn.getresponse()
 
@@ -1108,10 +1106,11 @@ def test_close_unopened_transport():
     transport = RequestsTransport()
     transport.close()
 
-def test_timeout(caplog):
+
+def test_timeout(caplog, port):
     transport = RequestsTransport()
 
-    request = HttpRequest("GET", "https://www.bing.com")
+    request = HttpRequest("GET", "http://localhost:{}/basic/string".format(port))
 
     with caplog.at_level(logging.WARNING, logger="azure.core.pipeline.transport"):
         with Pipeline(transport) as pipeline:
@@ -1119,10 +1118,11 @@ def test_timeout(caplog):
 
     assert "Tuple timeout setting is deprecated" not in caplog.text
 
-def test_tuple_timeout(caplog):
+
+def test_tuple_timeout(caplog, port):
     transport = RequestsTransport()
 
-    request = HttpRequest("GET", "https://www.bing.com")
+    request = HttpRequest("GET", "http://localhost:{}/basic/string".format(port))
 
     with caplog.at_level(logging.WARNING, logger="azure.core.pipeline.transport"):
         with Pipeline(transport) as pipeline:
@@ -1130,14 +1130,16 @@ def test_tuple_timeout(caplog):
 
     assert "Tuple timeout setting is deprecated" in caplog.text
 
-def test_conflict_timeout(caplog):
+
+def test_conflict_timeout(caplog, port):
     transport = RequestsTransport()
 
-    request = HttpRequest("GET", "https://www.bing.com")
+    request = HttpRequest("GET", "http://localhost:{}/basic/string".format(port))
 
     with pytest.raises(ValueError):
         with Pipeline(transport) as pipeline:
             pipeline.run(request, connection_timeout=(100, 100), read_timeout = 100)
+
 
 @pytest.mark.skipif(sys.version_info < (3, 10), reason="Loop parameter is deprecated since Python 3.10")
 def test_aiohttp_loop():

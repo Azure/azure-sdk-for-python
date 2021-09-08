@@ -43,7 +43,7 @@ class Operations:
     async def check_name_availability(
         self,
         request: "_models.CheckNameAvailabilityRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CheckNameAvailabilityResponse":
         """Check name availability.
 
@@ -61,7 +61,7 @@ class Operations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -103,7 +103,7 @@ class Operations:
 
     async def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.AvailableRpOperation"]:
         """All operations.
 
@@ -153,7 +153,7 @@ class Operations:
         resource_group_name: str,
         workspace_name: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Get operation result.
 
@@ -175,14 +175,14 @@ class Operations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
         url = self.get_location_header_result.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'operationId': self._serialize.url("operation_id", operation_id, 'str'),
         }
@@ -215,7 +215,7 @@ class Operations:
         resource_group_name: str,
         workspace_name: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.OperationResource"]:
         """Get operation status.
 
@@ -237,14 +237,14 @@ class Operations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
         url = self.get_azure_async_header_result.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'operationId': self._serialize.url("operation_id", operation_id, 'str'),
         }

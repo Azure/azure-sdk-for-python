@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2020-10-01-preview",
-    "total_api_version_list": ["2020-10-01-preview"],
+    "chosen_version": "2020-10-01",
+    "total_api_version_list": ["2020-10-01"],
     "client": {
         "name": "MicrosoftLogz",
         "filename": "_microsoft_logz",

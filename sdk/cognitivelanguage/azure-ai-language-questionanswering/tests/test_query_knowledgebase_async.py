@@ -37,7 +37,7 @@ class QnAKnowledgeBaseTestsAsync(AsyncQuestionAnsweringTest):
                 "previousQnAId": 4
             }
         }
-        request = build_query_knowledgebase_request(
+        request = build_query_knowledge_base_request(
             json=json_content,
             project_name=qna_project,
             deployment_name='test'
@@ -86,7 +86,7 @@ class QnAKnowledgeBaseTestsAsync(AsyncQuestionAnsweringTest):
                 "topAnswersWithSpan": 2
             }
         }
-        request = build_query_knowledgebase_request(
+        request = build_query_knowledge_base_request(
             json=json_content,
             project_name=qna_project,
             deployment_name='test'
@@ -137,7 +137,7 @@ class QnAKnowledgeBaseTestsAsync(AsyncQuestionAnsweringTest):
         )
 
         async with client:
-            output = await client.query_knowledgebase(
+            output = await client.query_knowledge_base(
                 query_params,
                 project_name=qna_project,
                 deployment_name='test'
@@ -183,7 +183,7 @@ class QnAKnowledgeBaseTestsAsync(AsyncQuestionAnsweringTest):
         )
 
         async with client:
-            output = await client.query_knowledgebase(
+            output = await client.query_knowledge_base(
                 query_params,
                 project_name=qna_project,
                 deployment_name='test'
@@ -233,7 +233,7 @@ class QnAKnowledgeBaseTestsAsync(AsyncQuestionAnsweringTest):
         }
 
         async with client:
-            output = await client.query_knowledgebase(
+            output = await client.query_knowledge_base(
                 query_params,
                 project_name=qna_project,
                 deployment_name='test'
@@ -248,7 +248,7 @@ class QnAKnowledgeBaseTestsAsync(AsyncQuestionAnsweringTest):
     async def test_query_knowledgebase_overload(self, qna_account, qna_key, qna_project):
         client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
         async with client:
-            output = await client.query_knowledgebase(
+            output = await client.query_knowledge_base(
                 project_name=qna_project,
                 deployment_name='test',
                 question="How long should my Surface battery last?",
@@ -285,7 +285,7 @@ class QnAKnowledgeBaseTestsAsync(AsyncQuestionAnsweringTest):
                 include_unstructured_sources=True
             )
 
-            output = await client.query_knowledgebase(
+            output = await client.query_knowledge_base(
                 query_params,
                 project_name=qna_project,
                 deployment_name='test'
@@ -310,7 +310,7 @@ class QnAKnowledgeBaseTestsAsync(AsyncQuestionAnsweringTest):
                 ),
                 include_unstructured_sources=True
             )
-            output = await client.query_knowledgebase(
+            output = await client.query_knowledge_base(
                 query_params,
                 project_name=qna_project,
                 deployment_name='test'
@@ -327,7 +327,7 @@ class QnAKnowledgeBaseTestsAsync(AsyncQuestionAnsweringTest):
         async with client:
             query_params = {"qnaId": 19}
 
-            output = await client.query_knowledgebase(
+            output = await client.query_knowledge_base(
                 query_params,
                 project_name=qna_project,
                 deployment_name='test'
@@ -341,7 +341,7 @@ class QnAKnowledgeBaseTestsAsync(AsyncQuestionAnsweringTest):
         async with client:
             query_params = {"qna_id": 19}
 
-            output = await client.query_knowledgebase(
+            output = await client.query_knowledge_base(
                 query_params,
                 project_name=qna_project,
                 deployment_name='test'
