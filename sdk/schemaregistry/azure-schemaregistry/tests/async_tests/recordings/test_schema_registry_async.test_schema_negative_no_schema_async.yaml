@@ -5,47 +5,47 @@ interactions:
       Accept:
       - text/plain; charset=utf-8
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.7.10 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/getSchemaById/a?api-version=2020-09-01-preview
   response:
     body:
       string: '{"Code":400,"Detail":"SubCode=40000, UnknownType:The request is invalid.
-        [MGResponseHttpError=BadRequest]. TrackingId:645389d5-1337-41c1-ba12-e9ec8aa555d4_G5,
-        SystemTracker:fake_resource.servicebus.windows.net/:$schemagroups\/getSchemaById\/a,
-        Timestamp:2021-08-31T22:25:31"}'
+        [MGResponseHttpError=BadRequest]. TrackingId:faf1cce9-f0c7-4dfb-bdcc-4410c3f74b30_G29,
+        SystemTracker:swathip-test-eventhubs.servicebus.windows.net:$schemagroups\/getSchemaById\/a,
+        Timestamp:2021-09-03T21:37:47"}'
     headers:
       content-type: application/json
-      date: Tue, 31 Aug 2021 22:25:31 GMT
+      date: Fri, 03 Sep 2021 21:37:47 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked
     status:
       code: 400
       message: Bad Request
-    url: https://sr-playground.servicebus.windows.net/$schemagroups/getSchemaById/a?api-version=2020-09-01-preview
+    url: https://swathip-test-eventhubs.servicebus.windows.net/$schemagroups/getSchemaById/a?api-version=2020-09-01-preview
 - request:
     body: null
     headers:
       Accept:
       - text/plain; charset=utf-8
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.7.10 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fake_resource.servicebus.windows.net/$schemagroups/getSchemaById/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?api-version=2020-09-01-preview
   response:
     body:
       string: '{"Code":404,"Detail":"Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa does
-        not exist. TrackingId:2f235cd0-3f3f-4066-a793-c22a377b65a8_G5, SystemTracker:fake_resource.servicebus.windows.net/:$schemagroups\/getSchemaById\/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
-        Timestamp:2021-08-31T22:25:31"}'
+        not exist. TrackingId:520d7a70-c165-4edd-8855-046ff6be2f72_G29, SystemTracker:swathip-test-eventhubs.servicebus.windows.net:$schemagroups\/getSchemaById\/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
+        Timestamp:2021-09-03T21:37:48"}'
     headers:
       content-type: application/json
-      date: Tue, 31 Aug 2021 22:25:31 GMT
+      date: Fri, 03 Sep 2021 21:37:47 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked
     status:
       code: 404
       message: Not Found
-    url: https://sr-playground.servicebus.windows.net/$schemagroups/getSchemaById/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?api-version=2020-09-01-preview
+    url: https://swathip-test-eventhubs.servicebus.windows.net/$schemagroups/getSchemaById/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?api-version=2020-09-01-preview
 version: 1
