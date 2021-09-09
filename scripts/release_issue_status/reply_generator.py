@@ -98,19 +98,16 @@ def add_label(label_name, labels):
     issue_object_rg.set_labels(*labels)
 
 
-def begin_reply_generate(item, rest_repo, readme_link, sdk_repo, output_folder):
+def begin_reply_generate(item, rest_repo, readme_link, sdk_repo, pipeline_url):
     global issue_object_rg
     issue_object_rg = item.issue_object
     link_dict = get_links(readme_link)
     labels = item.labels
     whether_change_readme = weather_change_readme(rest_repo, link_dict, labels)
-    search_url = r'https://dev.azure.com/azure-sdk/internal/_build?view=folders&pipelineNameFilter=python%20-%20{}'.format(
-        output_folder)
 
     if not whether_change_readme:
         latest_pr_number = get_latest_pr_from_readme(rest_repo, link_dict)
         reply_content, sdk_link_number = latest_pr_parse(rest_repo, latest_pr_number)
-        pipeline_url = apr.get_pipeline_url(search_url)
         run_pipeline = apr.run_pipeline(issue_link=issue_object_rg.html_url,
                                         sdk_issue_object=sdk_repo.get_pull(int(sdk_link_number)),
                                         pipeline_url=pipeline_url

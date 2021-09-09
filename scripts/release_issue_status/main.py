@@ -1,14 +1,18 @@
 import time
 import os
 import re
-from github import Github
 from datetime import date, datetime
 import subprocess as sp
+import traceback
+
+from github import Github
 from azure.storage.blob import BlobClient
+
 import reply_generator as rg
 from update_issue_body import update_issue_body, find_readme_link
 from auto_close import auto_close_issue
-import traceback
+from get_python_pipeline import get_python_pipelines, get_pipeline_url
+
 
 _NULL = ' '
 _FILE_OUT = 'release_issue_status.csv'
@@ -122,7 +126,7 @@ def _latest_comment_time(comments, delay_from_create_date):
     return delay_from_create_date if not q else int((time.time() - q[-1][0]) / 3600 / 24)
 
 
-def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue):
+def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python_piplines):
     print("==========new issue number: {}".format(item.issue_object.number))
     output_folder = ''
     if 'auto-link' not in item.labels:
@@ -150,8 +154,9 @@ def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue):
             item.issue_object.set_labels(*item.labels)
             raise
     try:
+        pipeline_url = get_pipeline_url(python_piplines, output_folder)
         rg.begin_reply_generate(item=item, rest_repo=rest_repo, readme_link=readme_link,
-                                sdk_repo=sdk_repo,output_folder=output_folder)
+                                sdk_repo=sdk_repo, pipeline_url=pipeline_url)
     except Exception as e:
         item.bot_advice = 'auto reply failed, Please intervene manually !!'
         print('Error from auto reply ========================')
@@ -172,6 +177,9 @@ def main():
     issue_status_python = []
     duplicated_issue = dict()
     start_time = time.time()
+    # get pipeline definitionid
+    python_piplines = get_python_pipelines()
+
     for item in open_issues:
         if not item.number:
             continue
@@ -213,7 +221,7 @@ def main():
         elif item.comment_num == 0 and 'Python' in item.labels:
             item.bot_advice = 'new issue and better to confirm quickly.'
             try:
-                auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue)
+                auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python_piplines)
             except Exception as e:
                 continue
         elif not item.author_latest_comment in _PYTHON_SDK_ADMINISTRATORS:
