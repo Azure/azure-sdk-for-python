@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b4 (09-09-2021)
+## 1.0.0b4 (2021-09-09)
 
 ### Features Added
 
@@ -39,8 +39,6 @@
 ### Bugs Fixed
 
 - `include_statistics` and `include_visualization` args can now work together.
-
-### Other Changes
 
 ## 1.0.0b3 (2021-08-09)
 
