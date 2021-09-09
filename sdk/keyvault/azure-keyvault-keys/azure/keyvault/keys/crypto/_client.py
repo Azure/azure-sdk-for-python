@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 import six
 from azure.core.exceptions import HttpResponseError
@@ -112,7 +112,7 @@ class CryptographyClient(KeyVaultClientBase):
         self._key_id = None  # type: Optional[KeyVaultResourceId]
 
         if isinstance(key, KeyVaultKey):
-            self._key = key.key
+            self._key = key.key  # type: Union[JsonWebKey, KeyVaultKey, str, None]
             self._key_id = parse_key_vault_id(key.id)
             if key.properties._attributes:  # pylint:disable=protected-access
                 self._not_before = key.properties.not_before
@@ -120,18 +120,18 @@ class CryptographyClient(KeyVaultClientBase):
         elif isinstance(key, six.string_types):
             self._key = None
             self._key_id = parse_key_vault_id(key)
-            self._keys_get_forbidden = None  # type: Optional[bool]
+            self._keys_get_forbidden = False
         elif self._jwk:
             self._key = key
         else:
             raise ValueError("'key' must be a KeyVaultKey instance or a key ID string including a version")
 
-        if not (self._jwk or self._key_id.version):
+        if not (self._jwk or (self._key_id.version if self._key_id else None)):
             raise ValueError("'key' must include a version")
 
         if self._jwk:
             try:
-                self._local_provider = get_local_cryptography_provider(self._key)
+                self._local_provider = get_local_cryptography_provider(cast(JsonWebKey, self._key))
                 self._initialized = True
             except Exception as ex:  # pylint:disable=broad-except
                 six.raise_from(ValueError("The provided jwk is not valid for local cryptography"), ex)
@@ -139,7 +139,7 @@ class CryptographyClient(KeyVaultClientBase):
             self._local_provider = NoLocalCryptography()
             self._initialized = False
 
-        self._vault_url = None if self._jwk else self._key_id.vault_url
+        self._vault_url = None if (self._jwk or self._key_id is None) else self._key_id.vault_url  # type: ignore
         super(CryptographyClient, self).__init__(
             vault_url=self._vault_url or "vault_url", credential=credential, **kwargs
         )
@@ -154,11 +154,11 @@ class CryptographyClient(KeyVaultClientBase):
         :rtype: str or None
         """
         if not self._jwk:
-            return self._key_id.source_id
-        return self._key.kid
+            return self._key_id.source_id if self._key_id else None
+        return cast(JsonWebKey, self._key).kid  # type: ignore[attr-defined]
 
     @property
-    def vault_url(self):
+    def vault_url(self):  # type: ignore
         # type: () -> Optional[str]
         """The base vault URL of the client's key.
 
@@ -179,7 +179,7 @@ class CryptographyClient(KeyVaultClientBase):
         """
         if not isinstance(jwk, JsonWebKey):
             jwk = JsonWebKey(**jwk)
-        return cls(jwk, object(), _jwk=True)
+        return cls(jwk, object(), _jwk=True)  # type: ignore
 
     @distributed_trace
     def _initialize(self, **kwargs):
@@ -191,7 +191,10 @@ class CryptographyClient(KeyVaultClientBase):
         if not (self._key or self._keys_get_forbidden):
             try:
                 key_bundle = self._client.get_key(
-                    self._key_id.vault_url, self._key_id.name, self._key_id.version, **kwargs
+                    self._key_id.vault_url if self._key_id else None,
+                    self._key_id.name if self._key_id else None,
+                    self._key_id.version if self._key_id else None,
+                    **kwargs
                 )
                 self._key = KeyVaultKey._from_key_bundle(key_bundle).key  # pylint:disable=protected-access
             except HttpResponseError as ex:
@@ -201,7 +204,7 @@ class CryptographyClient(KeyVaultClientBase):
 
         # if we have the key material, create a local crypto provider with it
         if self._key:
-            self._local_provider = get_local_cryptography_provider(self._key)
+            self._local_provider = get_local_cryptography_provider(cast(JsonWebKey, self._key))
             self._initialized = True
         else:
             # try to get the key again next time unless we know we're forbidden to do so
@@ -250,9 +253,9 @@ class CryptographyClient(KeyVaultClientBase):
             )
 
         operation_result = self._client.encrypt(
-            vault_base_url=self._key_id.vault_url,
-            key_name=self._key_id.name,
-            key_version=self._key_id.version,
+            vault_base_url=self._key_id.vault_url if self._key_id else None,
+            key_name=self._key_id.name if self._key_id else None,
+            key_version=self._key_id.version if self._key_id else None,
             parameters=self._models.KeyOperationsParameters(algorithm=algorithm, value=plaintext, iv=iv, aad=aad),
             **kwargs
         )
@@ -311,9 +314,9 @@ class CryptographyClient(KeyVaultClientBase):
             )
 
         operation_result = self._client.decrypt(
-            vault_base_url=self._key_id.vault_url,
-            key_name=self._key_id.name,
-            key_version=self._key_id.version,
+            vault_base_url=self._key_id.vault_url if self._key_id else None,
+            key_name=self._key_id.name if self._key_id else None,
+            key_version=self._key_id.version if self._key_id else None,
             parameters=self._models.KeyOperationsParameters(
                 algorithm=algorithm, value=ciphertext, iv=iv, tag=tag, aad=aad
             ),
@@ -356,9 +359,9 @@ class CryptographyClient(KeyVaultClientBase):
             )
 
         operation_result = self._client.wrap_key(
-            vault_base_url=self._key_id.vault_url,
-            key_name=self._key_id.name,
-            key_version=self._key_id.version,
+            vault_base_url=self._key_id.vault_url if self._key_id else None,
+            key_name=self._key_id.name if self._key_id else None,
+            key_version=self._key_id.version if self._key_id else None,
             parameters=self._models.KeyOperationsParameters(algorithm=algorithm, value=key),
             **kwargs
         )
@@ -398,9 +401,9 @@ class CryptographyClient(KeyVaultClientBase):
             )
 
         operation_result = self._client.unwrap_key(
-            vault_base_url=self._key_id.vault_url,
-            key_name=self._key_id.name,
-            key_version=self._key_id.version,
+            vault_base_url=self._key_id.vault_url if self._key_id else None,
+            key_name=self._key_id.name if self._key_id else None,
+            key_version=self._key_id.version if self._key_id else None,
             parameters=self._models.KeyOperationsParameters(algorithm=algorithm, value=encrypted_key),
             **kwargs
         )
@@ -440,9 +443,9 @@ class CryptographyClient(KeyVaultClientBase):
             )
 
         operation_result = self._client.sign(
-            vault_base_url=self._key_id.vault_url,
-            key_name=self._key_id.name,
-            key_version=self._key_id.version,
+            vault_base_url=self._key_id.vault_url if self._key_id else None,
+            key_name=self._key_id.name if self._key_id else None,
+            key_version=self._key_id.version if self._key_id else None,
             parameters=self._models.KeySignParameters(algorithm=algorithm, value=digest),
             **kwargs
         )
@@ -484,9 +487,9 @@ class CryptographyClient(KeyVaultClientBase):
             )
 
         operation_result = self._client.verify(
-            vault_base_url=self._key_id.vault_url,
-            key_name=self._key_id.name,
-            key_version=self._key_id.version,
+            vault_base_url=self._key_id.vault_url if self._key_id else None,
+            key_name=self._key_id.name if self._key_id else None,
+            key_version=self._key_id.version if self._key_id else None,
             parameters=self._models.KeyVerifyParameters(algorithm=algorithm, digest=digest, signature=signature),
             **kwargs
         )

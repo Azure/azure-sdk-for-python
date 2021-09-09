@@ -20,7 +20,7 @@ _PRIVATE_KEY_OPERATIONS = frozenset((KeyOperation.decrypt, KeyOperation.sign, Ke
 class RsaCryptographyProvider(LocalCryptographyProvider):
     def _get_internal_key(self, key):
         # type: (JsonWebKey) -> Key
-        if key.kty not in (KeyType.rsa, KeyType.rsa_hsm):
+        if key.kty not in (KeyType.rsa, KeyType.rsa_hsm):  # type: ignore[attr-defined]
             raise ValueError('"key" must be an RSA or RSA-HSM key')
         return RsaKey.from_jwk(key)
 
