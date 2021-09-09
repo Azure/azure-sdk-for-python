@@ -19,7 +19,9 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Optional, Union
     from azure.core.paging import ItemPaged
+    from azure.core.polling import LROPoller
     from ._models import JsonWebKey
+    from ._enums import KeyType
 
 
 class KeyClient(KeyVaultClientBase):
@@ -55,7 +57,7 @@ class KeyClient(KeyVaultClientBase):
 
     @distributed_trace
     def create_key(self, name, key_type, **kwargs):
-        # type: (str, Union[str, azure.keyvault.keys.KeyType], **Any) -> KeyVaultKey
+        # type: (str, Union[str, KeyType], **Any) -> KeyVaultKey
         """Create a key or, if ``name`` is already in use, create a new version of the key.
 
         Requires keys/create permission.
@@ -242,7 +244,7 @@ class KeyClient(KeyVaultClientBase):
 
     @distributed_trace
     def begin_delete_key(self, name, **kwargs):
-        # type: (str, **Any) -> DeletedKey
+        # type: (str, **Any) -> LROPoller
         """Delete all versions of a key and its cryptographic material.
 
         Requires keys/delete permission. When this method returns Key Vault has begun deleting the key. Deletion may
@@ -450,7 +452,7 @@ class KeyClient(KeyVaultClientBase):
 
     @distributed_trace
     def begin_recover_deleted_key(self, name, **kwargs):
-        # type: (str, **Any) -> KeyVaultKey
+        # type: (str, **Any) -> LROPoller
         """Recover a deleted key to its latest version. Possible only in a vault with soft-delete enabled.
 
         Requires keys/recover permission.
