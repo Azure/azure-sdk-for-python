@@ -16,7 +16,7 @@ _headers = {
 
 def run_pipeline(issue_link, sdk_issue_object, pipeline_url):
     paramaters = {
-        "stages_to_skip": [],
+        "stagesToSkip": [],
         "resources": {
             "repositories": {
                 "self": {
@@ -26,11 +26,15 @@ def run_pipeline(issue_link, sdk_issue_object, pipeline_url):
         },
         "variables": {
             "BASE_BRANCH": {
-                "value": "AzureSDKAutomation:sdkAuto/track2_azure-mgmt-logz",
+                "value": f"{sdk_issue_object.head.label}",
                 "isSecret": False
             },
             "ISSUE_LINK": {
-                "value": "https://github.com/Azure/sdk-release-request/issues/1826",
+                "value": f"{issue_link}",
+                "isSecret": False
+            },
+            "PIPELINE_LINK": {
+                "value": f"{pipeline_url}",
                 "isSecret": False
             }
         }
