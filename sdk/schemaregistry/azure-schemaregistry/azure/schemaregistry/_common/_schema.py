@@ -30,12 +30,10 @@ class SchemaProperties(object):
     """
     Meta properties of a schema.
 
-    :ivar schema_id: References specific schema in registry namespace.
-    :type schema_id: str
+    :ivar id: References specific schema in registry namespace.
+    :type id: str
     :ivar location: URL location of schema, identified by schema group, schema name, and version.
     :type location: str
-    :ivar location_by_id: URL location of schema, identified by schema ID.
-    :type location_by_id: str
     :ivar serialization_type: Serialization type for the schema being stored.
     :type serialization_type: str
     :ivar version: Version of the returned schema.
@@ -54,13 +52,12 @@ class SchemaProperties(object):
 
     def __init__(
         self,
-        schema_id=None,
+        id=None,    # pylint:disable=redefined-builtin
         **kwargs
     ):
         # type: (Optional[str], Any) -> None
-        self.schema_id = schema_id
+        self.id = id
         self.location = kwargs.get('location')
-        self.location_by_id = kwargs.get('location_by_id')
         self.serialization_type = kwargs.get('serialization_type')
         self.version = kwargs.get('version')
 
@@ -69,10 +66,10 @@ class Schema(object):
     """
     The schema content of a schema, along with id and meta properties.
 
-    :ivar schema_content: The content of the schema.
-    :type schema_content: str
-    :ivar schema_properties: The properties of the schema.
-    :type schema_properties: SchemaProperties
+    :ivar content: The content of the schema.
+    :type content: str
+    :ivar properties: The properties of the schema.
+    :type properties: SchemaProperties
 
     .. admonition:: Example:
 
@@ -87,9 +84,9 @@ class Schema(object):
 
     def __init__(
         self,
-        schema_content,
-        schema_properties,
+        content,
+        properties,
     ):
         # type: (str, SchemaProperties) -> None
-        self.schema_content = schema_content
-        self.schema_properties = schema_properties
+        self.content = content
+        self.properties = properties
