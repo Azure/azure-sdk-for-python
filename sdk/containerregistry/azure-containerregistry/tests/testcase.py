@@ -11,22 +11,20 @@ import pytest
 import six
 import time
 
-from azure.containerregistry import (
-    ContainerRegistryClient,
-)
+from azure.containerregistry import ContainerRegistryClient
 from azure.containerregistry._helpers import _is_tag
 
 from azure.core.credentials import AccessToken
 from azure.mgmt.containerregistry import ContainerRegistryManagementClient
 from azure.mgmt.containerregistry.models import ImportImageParameters, ImportSource, ImportMode
-from azure.identity import DefaultAzureCredential, AzureAuthorityHosts
+from azure.identity import DefaultAzureCredential, AzureAuthorityHosts, ClientSecretCredential
 
 from devtools_testutils import AzureTestCase, is_live
 from azure_devtools.scenario_tests import (
     OAuthRequestResponsesFilter,
     RecordingProcessor,
 )
-from azure_devtools.scenario_tests import RecordingProcessor
+from msrestazure.azure_cloud import AZURE_CHINA_CLOUD, AZURE_US_GOV_CLOUD, AZURE_PUBLIC_CLOUD, AZURE_GERMAN_CLOUD
 
 
 REDACTED = "REDACTED"
@@ -175,15 +173,15 @@ class ContainerRegistryTestClass(AzureTestCase):
         authority = get_authority(endpoint)
         audience = kwargs.pop("audience", None)
         if not audience:
-            audience = get_authorization_scope(authority)
+            audience = get_audience(authority)
         credential = self.get_credential(authority=authority)
         logger.warning("Authority: {} \nAuthorization scope: {}".format(authority, audience))
-        return ContainerRegistryClient(endpoint=endpoint, credential=credential, credential_scopes=audience, **kwargs)
+        return ContainerRegistryClient(endpoint=endpoint, credential=credential, audience=audience, **kwargs)
 
     def create_anon_client(self, endpoint, **kwargs):
         authority = get_authority(endpoint)
-        audience = get_authorization_scope(authority)
-        return ContainerRegistryClient(endpoint=endpoint, credential=None, credential_scopes=audience, **kwargs)
+        audience = get_audience(authority)
+        return ContainerRegistryClient(endpoint=endpoint, credential=None, audience=audience, **kwargs)
 
     def set_all_properties(self, properties, value):
         properties.can_delete = value
@@ -220,19 +218,25 @@ def get_authority(endpoint):
     if ".azurecr.us" in endpoint:
         logger.warning("US Gov Authority:")
         return AzureAuthorityHosts.AZURE_GOVERNMENT
+    if ".azurecr.de" in endpoint:
+        logger.warning("Germany Authority:")
+        return AzureAuthorityHosts.AZURE_GERMANY
     raise ValueError("Endpoint ({}) could not be understood".format(endpoint))
 
 
-def get_authorization_scope(authority):
+def get_audience(authority):
     if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
         logger.warning("Public auth scope")
-        return ["https://management.core.windows.net/.default"]
+        return "https://management.azure.com"
     if authority == AzureAuthorityHosts.AZURE_CHINA:
         logger.warning("China scope")
-        return ["https://management.chinacloudapi.cn/.default"]
+        return "https://management.chinacloudapi.cn"
     if authority == AzureAuthorityHosts.AZURE_GOVERNMENT:
         logger.warning("US Gov scope")
-        return ["https://management.usgovcloudapi.net/.default"]
+        return "https://management.usgovcloudapi.net"
+    if authority == AzureAuthorityHosts.AZURE_GERMANY:
+        logger.warning("Germany scope")
+        return "https://management.microsoftazure.de"
 
 def get_base_url(authority):
     if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
@@ -244,11 +248,9 @@ def get_base_url(authority):
     if authority == AzureAuthorityHosts.AZURE_GOVERNMENT:
         logger.warning("US Gov scope")
         return AZURE_US_GOV_CLOUD
-
-
-
-from azure.identity import ClientSecretCredential
-from msrestazure.azure_cloud import AZURE_CHINA_CLOUD, AZURE_US_GOV_CLOUD, AZURE_PUBLIC_CLOUD
+    if authority == AzureAuthorityHosts.AZURE_GERMANY:
+        logger.warning("Germany scope")
+        return AZURE_GERMAN_CLOUD
 
 # Moving this out of testcase so the fixture and individual tests can use it
 def import_image(authority, repository, tags):

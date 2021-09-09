@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/library%2Falpine/_tags
   response:
@@ -18,7 +18,7 @@ interactions:
       connection: keep-alive
       content-length: '217'
       content-type: application/json; charset=utf-8
-      date: Tue, 17 Aug 2021 18:06:58 GMT
+      date: Mon, 30 Aug 2021 20:27:58 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -38,7 +38,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/token
   response:
@@ -47,11 +47,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Tue, 17 Aug 2021 18:06:58 GMT
+      date: Mon, 30 Aug 2021 20:27:58 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '165.933333'
+      x-ms-ratelimit-remaining-calls-per-second: '166.633333'
     status:
       code: 200
       message: OK
@@ -62,14 +62,14 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/library%2Falpine/_tags
   response:
     body:
       string: '{"registry": "yalinlitestsanon.azurecr.io", "imageName": "library/alpine",
-        "tags": [{"name": "latest", "digest": "sha256:eb3e4e175ba6d212ba1d6e04fc0782916c08e1c9d7b45892e9796141b1d379ae",
-        "createdTime": "2021-08-17T18:06:23.0267255Z", "lastUpdateTime": "2021-08-17T18:06:23.0267255Z",
+        "tags": [{"name": "latest", "digest": "sha256:e1c082e3d3c45cccac829840a25941e679c25d438cc8412c2fa221cf1a824e6a",
+        "createdTime": "2021-08-30T10:55:43.9735079Z", "lastUpdateTime": "2021-08-30T10:55:43.9735079Z",
         "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
         true, "readEnabled": true, "listEnabled": true}}]}'
     headers:
@@ -77,7 +77,7 @@ interactions:
       connection: keep-alive
       content-length: '394'
       content-type: application/json; charset=utf-8
-      date: Tue, 17 Aug 2021 18:06:58 GMT
+      date: Mon, 30 Aug 2021 20:27:58 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains

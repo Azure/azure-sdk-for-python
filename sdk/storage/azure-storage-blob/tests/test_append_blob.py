@@ -1363,7 +1363,7 @@ class StorageAppendBlobTest(StorageTestCase):
         blob = bsc.get_blob_client(container_name, blob_name)
 
         immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
-                                                 policy_mode=BlobImmutabilityPolicyMode.UNLOCKED)
+                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
         blob.create_append_blob(immutability_policy=immutability_policy,
                                 legal_hold=True)
 

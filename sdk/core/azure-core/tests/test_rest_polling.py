@@ -104,3 +104,15 @@ def test_delete_operation_location(lro_poller):
 
 def test_request_id(lro_poller):
     result = lro_poller(HttpRequest("POST", "/polling/request-id"), request_id="123456789").result()
+
+def test_continuation_token(client, lro_poller, deserialization_callback):
+    poller = lro_poller(HttpRequest("POST", "/polling/post/location-and-operation-location"))
+    token = poller.continuation_token()
+    new_poller = LROPoller.from_continuation_token(
+        continuation_token=token,
+        polling_method=LROBasePolling(0),
+        client=client._client,
+        deserialization_callback=deserialization_callback,
+    )
+    result = new_poller.result()
+    assert result == {'location_result': True}

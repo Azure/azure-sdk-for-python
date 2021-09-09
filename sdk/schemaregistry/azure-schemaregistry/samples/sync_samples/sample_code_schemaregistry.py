@@ -43,36 +43,35 @@ def create_client():
     return schema_registry_client
 
 
-def register_scehma(schema_registry_client):
+def register_schema(schema_registry_client):
     # [START register_schema_sync]
     SCHEMA_GROUP = os.environ['SCHEMA_REGISTRY_GROUP']
     SCHEMA_NAME = 'your-schema-name'
     SERIALIZATION_TYPE = SerializationType.AVRO
     SCHEMA_CONTENT = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
-    schema_properties = schema_registry_client.register_schema(SCHEMA_GROUP, SCHEMA_NAME, SERIALIZATION_TYPE, SCHEMA_CONTENT)
-    schem_id = schema_properties.schema_id
+    schema_properties = schema_registry_client.register_schema(SCHEMA_GROUP, SCHEMA_NAME, SCHEMA_CONTENT, SERIALIZATION_TYPE)
+    schema_id = schema_properties.id
     # [END register_schema_sync]
 
     # [START print_schema_properties]
-    print(schema_properties.schema_id)
+    print(schema_properties.id)
     print(schema_properties.location)
-    print(schema_properties.location_by_id)
     print(schema_properties.serialization_type)
     print(schema_properties.version)
     # [END print_schema_properties]
 
-    return schem_id
+    return schema_id
 
 
 def get_schema(schema_registry_client, schema_id):
     # [START get_schema_sync]
     schema = schema_registry_client.get_schema(schema_id)
-    schema_content = schema.schema_content
+    schema_content = schema.content
     # [END get_schema_sync]
 
     # [START print_schema]
-    print(schema.schema_content)
-    print(schema.schema_properties)
+    print(schema.content)
+    print(schema.properties)
     # [END print_schema]
     return schema
 
@@ -83,15 +82,15 @@ def get_schema_id(schema_registry_client):
     serialization_type = SerializationType.AVRO
     schema_content = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
     # [START get_schema_id_sync]
-    schema_properties = schema_registry_client.get_schema_id(schema_group, schema_name, serialization_type, schema_content)
-    schem_id = schema_properties.schema_id
+    schema_properties = schema_registry_client.get_schema_properties(schema_group, schema_name, schema_content, serialization_type)
+    schema_id = schema_properties.id
     # [END get_schema_id_sync]
-    return schem_id
+    return schema_id
 
 
 if __name__ == '__main__':
     client = create_client()
     with client:
-        id = register_scehma(client)
+        id = register_schema(client)
         schema = get_schema(client, id)
         id = get_schema_id(client)

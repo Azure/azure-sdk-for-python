@@ -8,6 +8,10 @@
 
 ### Breaking Changes
 
+- `schema_registry` parameter in the `SchemaRegistryAvroSerializer` constructor has been renamed `client`.
+- `schema_group` parameter in the `SchemaRegistryAvroSerializer` constructor has been renamed `group_name`.
+- `data` parameter in the `serialize` and `deserialize` methods on `SchemaRegistryAvroSerializer` has been renamed `value`.
+
 ### Bugs Fixed
 
 ### Other Changes

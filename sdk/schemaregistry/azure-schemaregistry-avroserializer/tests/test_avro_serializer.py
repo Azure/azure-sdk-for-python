@@ -75,7 +75,7 @@ class SchemaRegistryAvroSerializerTests(AzureTestCase):
             raw_avro_object_serializer.serialize(dict_data_missing_required_field, schema)
 
     @SchemaRegistryPowerShellPreparer()
-    def test_basic_sr_avro_serializer(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
+    def test_basic_sr_avro_serializer_with_auto_register_schemas(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
         sr_client = self.create_basic_client(SchemaRegistryClient, endpoint=schemaregistry_endpoint)
         sr_avro_serializer = SchemaRegistryAvroSerializer(sr_client, schemaregistry_group, auto_register_schemas=True)
 

@@ -1,6 +1,16 @@
 # Release History
 
-## 1.0.0b5 (Unreleased)
+## 1.0.0b6 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b5 (2021-09-08)
 
 ### Breaking Changes
 - Changed: `list_all_translation_statuses` has been renamed to `list_translation_statuses`

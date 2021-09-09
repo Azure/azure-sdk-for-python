@@ -46,7 +46,7 @@ class SqlPoolSecurityAlertPoliciesOperations:
         resource_group_name: str,
         workspace_name: str,
         sql_pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListSqlPoolSecurityAlertPolicies"]:
         """List Sql pool's security alert policies.
 
@@ -68,7 +68,7 @@ class SqlPoolSecurityAlertPoliciesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -81,7 +81,7 @@ class SqlPoolSecurityAlertPoliciesOperations:
                 url = self.list.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
                     'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
                 }
@@ -127,7 +127,7 @@ class SqlPoolSecurityAlertPoliciesOperations:
         workspace_name: str,
         sql_pool_name: str,
         security_alert_policy_name: Union[str, "_models.SecurityAlertPolicyName"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SqlPoolSecurityAlertPolicy":
         """Get a Sql pool's security alert policy.
 
@@ -151,14 +151,14 @@ class SqlPoolSecurityAlertPoliciesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
             'securityAlertPolicyName': self._serialize.url("security_alert_policy_name", security_alert_policy_name, 'str'),
@@ -196,7 +196,7 @@ class SqlPoolSecurityAlertPoliciesOperations:
         sql_pool_name: str,
         security_alert_policy_name: Union[str, "_models.SecurityAlertPolicyName"],
         parameters: "_models.SqlPoolSecurityAlertPolicy",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SqlPoolSecurityAlertPolicy":
         """Create or update a Sql pool's security alert policy.
 
@@ -222,7 +222,7 @@ class SqlPoolSecurityAlertPoliciesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -230,7 +230,7 @@ class SqlPoolSecurityAlertPoliciesOperations:
         url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
             'securityAlertPolicyName': self._serialize.url("security_alert_policy_name", security_alert_policy_name, 'str'),

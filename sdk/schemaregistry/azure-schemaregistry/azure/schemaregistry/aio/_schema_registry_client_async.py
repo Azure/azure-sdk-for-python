@@ -83,10 +83,10 @@ class SchemaRegistryClient(object):
 
     async def register_schema(
         self,
-        schema_group: str,
-        schema_name: str,
+        group_name: str,
+        name: str,
+        content: str,
         serialization_type: Union[str, SerializationType],
-        schema_content: str,
         **kwargs: Any
     ) -> SchemaProperties:
         """
@@ -94,12 +94,12 @@ class SchemaRegistryClient(object):
         schema is created at version 1. If schema of specified name exists already in specified group,
         schema is created at latest version + 1.
 
-        :param str schema_group: Schema group under which schema should be registered.
-        :param str schema_name: Name of schema being registered.
+        :param str group_name: Schema group under which schema should be registered.
+        :param str name: Name of schema being registered.
+        :param str content: String representation of the schema being registered.
         :param serialization_type: Serialization type for the schema being registered.
          For now Avro is the only supported serialization type by the service.
         :type serialization_type: Union[str, SerializationType]
-        :param str schema_content: String representation of the schema being registered.
         :rtype: SchemaProperties
 
         .. admonition:: Example:
@@ -118,9 +118,9 @@ class SchemaRegistryClient(object):
             pass
 
         request = schema_rest.build_register_request(
-            group_name=schema_group,
-            schema_name=schema_name,
-            content=schema_content,
+            group_name=group_name,
+            schema_name=name,
+            content=content,
             serialization_type=serialization_type,
             content_type=kwargs.pop("content_type", "application/json"),
             **kwargs
@@ -131,13 +131,13 @@ class SchemaRegistryClient(object):
         schema_properties = _parse_response_schema_properties(response)
 
         schema_description = (
-            schema_group,
-            schema_name,
+            group_name,
+            name,
+            content,
             serialization_type,
-            schema_content,
         )
-        self._id_to_schema[schema_properties.schema_id] = Schema(
-            schema_content, schema_properties
+        self._id_to_schema[schema_properties.id] = Schema(
+            content, schema_properties
         )
         self._description_to_properties[schema_description] = schema_properties
 
@@ -145,14 +145,14 @@ class SchemaRegistryClient(object):
 
     async def get_schema(
         self,
-        schema_id: str,
+        id: str,    # pylint:disable=redefined-builtin
         **kwargs: Any
     ) -> Schema:
         """
         Gets a registered schema by its unique ID.
         Azure Schema Registry guarantees that ID is unique within a namespace.
 
-        :param str schema_id: References specific schema in registry namespace.
+        :param str id: References specific schema in registry namespace.
         :rtype: Schema
 
         .. admonition:: Example:
@@ -166,32 +166,32 @@ class SchemaRegistryClient(object):
 
         """
         try:
-            return self._id_to_schema[schema_id]
+            return self._id_to_schema[id]
         except KeyError:
-            request = schema_rest.build_get_by_id_request(schema_id=schema_id)
+            request = schema_rest.build_get_by_id_request(schema_id=id)
             response = await self._generated_client.send_request(request, **kwargs)
             response.raise_for_status()
             schema = _parse_response_schema(response)
-            self._id_to_schema[schema_id] = schema
+            self._id_to_schema[id] = schema
             return schema
 
-    async def get_schema_id(
+    async def get_schema_properties(
         self,
-        schema_group: str,
-        schema_name: str,
+        group_name: str,
+        name: str,
+        content: str,
         serialization_type: Union[str, SerializationType],
-        schema_content: str,
         **kwargs: Any
     ) -> SchemaProperties:
         """
         Gets the ID referencing an existing schema within the specified schema group,
         as matched by schema content comparison.
 
-        :param str schema_group: Schema group under which schema should be registered.
-        :param str schema_name: Name of schema being registered.
+        :param str group_name: Schema group under which schema should be registered.
+        :param str name: Name of schema being registered.
+        :param str content: String representation of the schema being registered.
         :param serialization_type: Serialization type for the schema being registered.
         :type serialization_type: Union[str, SerializationType]
-        :param str schema_content: String representation of the schema being registered.
         :rtype: SchemaProperties
 
         .. admonition:: Example:
@@ -211,14 +211,14 @@ class SchemaRegistryClient(object):
 
         try:
             properties = self._description_to_properties[
-                (schema_group, schema_name, serialization_type, schema_content)
+                (group_name, name, content, serialization_type)
             ]
             return properties
         except KeyError:
             request = schema_rest.build_query_id_by_content_request(
-                group_name=schema_group,
-                schema_name=schema_name,
-                content=schema_content,
+                group_name=group_name,
+                schema_name=name,
+                content=content,
                 serialization_type=serialization_type,
                 content_type=kwargs.pop("content_type", "application/json"),
                 **kwargs
@@ -228,11 +228,11 @@ class SchemaRegistryClient(object):
             response.raise_for_status()
             schema_properties = _parse_response_schema_properties(response)
 
-            if not self._id_to_schema.get(schema_properties.schema_id):
-                self._id_to_schema[schema_properties.schema_id] = Schema(schema_content, schema_properties)
+            if not self._id_to_schema.get(schema_properties.id):
+                self._id_to_schema[schema_properties.id] = Schema(content, schema_properties)
             else:
-                schema_properties = self._id_to_schema[schema_properties.schema_id].schema_properties
+                schema_properties = self._id_to_schema[schema_properties.id].properties
             self._description_to_properties[
-                (schema_group, schema_name, serialization_type, schema_content)
+                (group_name, name, content, serialization_type)
             ] = schema_properties
             return schema_properties

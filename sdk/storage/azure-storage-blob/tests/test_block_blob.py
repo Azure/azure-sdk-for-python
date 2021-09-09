@@ -477,7 +477,7 @@ class StorageBlockBlobTest(StorageTestCase):
         # Act
         block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
         immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
-                                                 policy_mode=BlobImmutabilityPolicyMode.UNLOCKED)
+                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
         put_block_list_resp = blob.commit_block_list(block_list,
                                                      immutability_policy=immutability_policy,
                                                      legal_hold=True,

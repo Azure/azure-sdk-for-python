@@ -36,10 +36,10 @@ class SubscriptionClientOperationsMixin(object):
 
         :param resource_name_definition: Resource object with values for resource name and resource
          type.
-        :type resource_name_definition: ~azure.mgmt.resource.subscriptions.v2019_11_01.models.ResourceName
+        :type resource_name_definition: ~azure.mgmt.resource.subscriptions.v2021_01_01.models.ResourceName
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckResourceNameResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.subscriptions.v2019_11_01.models.CheckResourceNameResult
+        :rtype: ~azure.mgmt.resource.subscriptions.v2021_01_01.models.CheckResourceNameResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('check_resource_name')
@@ -51,6 +51,8 @@ class SubscriptionClientOperationsMixin(object):
             from .v2019_06_01.operations import SubscriptionClientOperationsMixin as OperationClass
         elif api_version == '2019-11-01':
             from .v2019_11_01.operations import SubscriptionClientOperationsMixin as OperationClass
+        elif api_version == '2021-01-01':
+            from .v2021_01_01.operations import SubscriptionClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'check_resource_name'".format(api_version))
         mixin_instance = OperationClass()
