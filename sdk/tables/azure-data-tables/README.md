@@ -1,15 +1,15 @@
-# Azure Data Tables client library for Python
+# Azure Tables client library for Python
 
-Azure Data Tables is a NoSQL data storage service that can be accessed from anywhere in the world via authenticated calls using HTTP or HTTPS.
+Azure Tables is a NoSQL data storage service that can be accessed from anywhere in the world via authenticated calls using HTTP or HTTPS.
 Tables scales as needed to support the amount of data inserted, and allow for the storing of data with non-complex accessing.
-The Azure Data Tables client can be used to access Azure Storage or Cosmos accounts. This document covers [`azure-data-tables`][Tables_pypi].
+The Azure Tables client can be used to access Azure Storage or Cosmos accounts. This document covers [`azure-data-tables`][Tables_pypi].
 
 Please note, this package is a replacement for [`azure-cosmosdb-tables`](https://github.com/Azure/azure-cosmos-table-python/tree/master/azure-cosmosdb-table) which is now deprecated. See the [migration guide][migration_guide] for more details.
 
 [Source code][source_code] | [Package (PyPI)][Tables_pypi] | [API reference documentation][Tables_ref_docs] | [Samples][Tables_samples]
 
 ## Getting started
-The Azure Data Tables SDK can access an Azure Storage or CosmosDB account.
+The Azure Tables SDK can access an Azure Storage or CosmosDB account.
 
 ### Prerequisites
 * Python 2.7, or 3.6 or later is required to use this package.
@@ -22,13 +22,13 @@ The Azure Data Tables SDK can access an Azure Storage or CosmosDB account.
 * To create a new cosmos storage account, you can use the [Azure CLI][azure_cli_create_cosmos] or [Azure Portal][azure_portal_create_cosmos].
 
 ### Install the package
-Install the Azure Data Tables client library for Python with [pip][pip_link]:
+Install the Azure Tables client library for Python with [pip][pip_link]:
 ```bash
 pip install azure-data-tables
 ```
 
 #### Create the client
-The Azure Data Tables library allows you to interact with two types of resources:
+The Azure Tables library allows you to interact with two types of resources:
 * the tables in your account
 * the entities within those tables.
 Interaction with these resources starts with an instance of a [client](#clients). To create a client object, you will need the account's table service endpoint URL and a credential that allows you to access the account. The `endpoint` can be found on the page for your storage account in the [Azure Portal][azure_portal_account_url] under the "Access Keys" section or by running the following Azure CLI command:
@@ -111,12 +111,12 @@ Common uses of the Table service included:
 * Quickly querying data using a clustered index
 * Accessing data using the OData protocol and LINQ filter expressions
 
-The following components make up the Azure Data Tables Service:
+The following components make up the Azure Tables Service:
 * The account
 * A table within the account, which contains a set of entities
 * An entity within a table, as a dictionary
 
-The Azure Data Tables client library for Python allows you to interact with each of these components through the
+The Azure Tables client library for Python allows you to interact with each of these components through the
 use of a dedicated client object.
 
 ### Clients
@@ -252,7 +252,7 @@ the client level to enable it for all requests.
 ## Troubleshooting
 
 ### General
-Azure Data Tables clients raise exceptions defined in [Azure Core][azure_core_readme].
+Azure Tables clients raise exceptions defined in [Azure Core][azure_core_readme].
 When you interact with the Azure table library using the Python SDK, errors returned by the service respond ot the same HTTP status codes for [REST API][tables_rest] requests. The Table service operations will throw a `HttpResponseError` on failure with helpful [error codes][tables_error_codes].
 
 For examples, if you try to create a table that already exists, a `409` error is returned indicating "Conflict".
@@ -306,10 +306,10 @@ service_client.create_entity(entity=my_entity, logging_enable=True)
 
 Get started with our [Table samples][tables_samples].
 
-Several Azure Data Tables Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Tables.
+Several Azure Tables Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Tables.
 
 ### Common Scenarios
-These code samples show common scenario operations with the Azure Data tables client library. The async versions of the samples (the python sample files appended with _async) show asynchronous operations with Tables and require Python 3.5 or later.
+These code samples show common scenario operations with the Azure Tables client library. The async versions of the samples (the python sample files appended with _async) show asynchronous operations with Tables and require Python 3.5 or later.
 
 * Create and delete tables: [sample_create_delete_table.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_create_delete_table.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_create_delete_table_async.py))
 * List and query tables: [sample_query_tables.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_query_tables.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_query_tables_async.py))
@@ -319,7 +319,7 @@ These code samples show common scenario operations with the Azure Data tables cl
 * Committing many requests in a single transaction: [sample_batching.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_batching.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_batching_async.py))
 
 ### Additional documentation
-For more extensive documentation on Azure Data Tables, see the [Azure Data Tables documentation][Tables_product_doc] on docs.microsoft.com.
+For more extensive documentation on Azure Tables, see the [Azure Tables documentation][Tables_product_doc] on docs.microsoft.com.
 
 ## Known Issues
 A list of currently known issues relating to Cosmos DB table endpoints can be found [here](https://aka.ms/tablesknownissues).
