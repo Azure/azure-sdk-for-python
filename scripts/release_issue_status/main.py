@@ -154,6 +154,8 @@ def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python
             item.issue_object.set_labels(*item.labels)
             raise
     try:
+        print("*********************")
+        print(python_piplines)
         pipeline_url = get_pipeline_url(python_piplines, output_folder)
         rg.begin_reply_generate(item=item, rest_repo=rest_repo, readme_link=readme_link,
                                 sdk_repo=sdk_repo, pipeline_url=pipeline_url)
