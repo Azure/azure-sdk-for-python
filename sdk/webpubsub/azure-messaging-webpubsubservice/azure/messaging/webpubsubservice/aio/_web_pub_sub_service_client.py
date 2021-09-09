@@ -43,6 +43,7 @@ class WebPubSubServiceClient:
         **kwargs: Any
     ) -> None:
         endpoint = kwargs.pop('endpoint', "")  # type: str
+        kwargs['origin_endpoint'] = endpoint
         self._config = WebPubSubServiceClientConfiguration(credential, **kwargs)
         self._client = AsyncPipelineClient(base_url=endpoint, config=self._config, **kwargs)
 

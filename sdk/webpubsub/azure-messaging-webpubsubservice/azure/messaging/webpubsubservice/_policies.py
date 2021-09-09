@@ -85,7 +85,7 @@ class JwtCredentialPolicy(SansIOHTTPPolicy):
 
 class ApiManagementProxy(ProxyPolicy):
 
-    def __init__(self, endpoint=None, proxy_endpoint=None, **kwargs):
+    def __init__(self, **kwargs):
         # type: (typing.Optional[str], typing.Optional[str]) -> None
         """Create a new instance of the policy.
 
@@ -94,9 +94,10 @@ class ApiManagementProxy(ProxyPolicy):
         :param proxy_endpoint: proxy endpoint
         :type proxy_endpoint: str
         """
+        self._endpoint = kwargs.pop('origin_endpoint', None)
+        self._reverse_proxy_endpoint = kwargs.pop('reverse_proxy_endpoint', None)
         super(ApiManagementProxy, self).__init__(**kwargs)
-        self._endpoint = endpoint
-        self._proxy_endpoint = proxy_endpoint
+
 
     def on_request(self, request):
         # type: (PipelineRequest) -> None
@@ -106,5 +107,5 @@ class ApiManagementProxy(ProxyPolicy):
         :type request: ~azure.core.pipeline.PipelineRequest
         """
         super(ApiManagementProxy, self).on_request(request)
-        if self._endpoint and self._proxy_endpoint:
-            request.http_request.url = request.http_request.url.replace(self._endpoint, self._proxy_endpoint)
+        if self._endpoint and self._reverse_proxy_endpoint:
+            request.http_request.url = request.http_request.url.replace(self._endpoint, self._reverse_proxy_endpoint)
