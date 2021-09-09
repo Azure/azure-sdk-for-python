@@ -13,18 +13,13 @@ from azure.core.pipeline import policies
 
 from ._version import VERSION
 from ._policies import JwtCredentialPolicy, ApiManagementProxy
+from azure.core.credentials import AzureKeyCredential
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Optional, Union
 
-    from azure.core.credentials import TokenCredential, AzureKeyCredential
-
-
-def _proxy_policy(**kwargs):
-    if kwargs.get('proxy_endpoint'):
-        return ApiManagementProxy(kwargs.get('endpoint'), kwargs.get('proxy_endpoint'))
-    return None
+    from azure.core.credentials import TokenCredential
 
 
 class WebPubSubServiceClientConfiguration(Configuration):
@@ -57,7 +52,7 @@ class WebPubSubServiceClientConfiguration(Configuration):
         # type: (...) -> None
         self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
         self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
-        self.proxy_policy = _proxy_policy(**kwargs) or policies.ProxyPolicy(**kwargs)
+        self.proxy_policy = kwargs.get('proxy_policy') or ApiManagementProxy(kwargs.get('endpoint'), kwargs.get('proxy_endpoint'), **kwargs)
         self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
         self.http_logging_policy = kwargs.get('http_logging_policy') or policies.HttpLoggingPolicy(**kwargs)
         self.retry_policy = kwargs.get('retry_policy') or policies.RetryPolicy(**kwargs)
@@ -65,7 +60,7 @@ class WebPubSubServiceClientConfiguration(Configuration):
         self.redirect_policy = kwargs.get('redirect_policy') or policies.RedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get('authentication_policy')
         if self.credential and not self.authentication_policy:
-            if kwargs.get("accesskey"):
-                self.authentication_policy = JwtCredentialPolicy(self.credential)
+            if isinstance(self.credential, AzureKeyCredential):
+                self.authentication_policy = JwtCredentialPolicy(self.credential, kwargs.get('user'))
             else:
                 self.authentication_policy = policies.BearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)

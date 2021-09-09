@@ -3,6 +3,7 @@ import logging
 import os
 
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
+from azure.core.exceptions import HttpResponseError
 
 logging.basicConfig(level=logging.DEBUG)
 LOG = logging.getLogger()
@@ -21,16 +22,16 @@ try:
     # Raise an exception if the service rejected the call
     client.web_pub_sub.send_to_all('Hub', message={'Hello': 'all!'})
     print('Successfully sent a JSON message')
-except:
-    print('Failed to send JSON message')
+except HttpResponseError as e:
+    print('Failed to send JSON message: {}'.format(e.response.json()))
 
 # Send a text message to everybody on the given hub...
 try:
     # Raise an exception if the service rejected the call
     client.web_pub_sub.send_to_all('Hub', message='hello, text!', content_type='text/plain')
     print('Successfully sent a JSON message')
-except:
-    print('Failed to send JSON message')
+except HttpResponseError as e:
+    print('Failed to send JSON message: {}'.format(e.response.json()))
 
 
 # Send a json message from a stream to everybody on the given hub...
@@ -38,6 +39,6 @@ try:
     # Raise an exception if the service rejected the call
     client.web_pub_sub.send_to_all('Hub', message=io.BytesIO(b'{ "hello": "world" }'), content_type='application/json')
     print('Successfully sent a JSON message')
-except:
-    print('Failed to send JSON message')
+except HttpResponseError as e:
+    print('Failed to send JSON message: {}'.format(e.response.json()))
 

@@ -29,7 +29,7 @@ import typing
 import jwt
 import six
 
-from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.core.pipeline.policies import SansIOHTTPPolicy, ProxyPolicy
 
 from ._utils import UTC
 
@@ -83,10 +83,10 @@ class JwtCredentialPolicy(SansIOHTTPPolicy):
         return six.ensure_str(encoded)
 
 
-class ApiManagementProxy(SansIOHTTPPolicy):
+class ApiManagementProxy(ProxyPolicy):
 
-    def __init__(self, endpoint, proxy_endpoint):
-        # type: (str, str) -> None
+    def __init__(self, endpoint=None, proxy_endpoint=None, **kwargs):
+        # type: (typing.Optional[str], typing.Optional[str]) -> None
         """Create a new instance of the policy.
 
         :param endpoint: endpoint to be replaced
@@ -94,15 +94,17 @@ class ApiManagementProxy(SansIOHTTPPolicy):
         :param proxy_endpoint: proxy endpoint
         :type proxy_endpoint: str
         """
+        super(ApiManagementProxy, self).__init__(**kwargs)
         self._endpoint = endpoint
         self._proxy_endpoint = proxy_endpoint
 
     def on_request(self, request):
-        # type: (PipelineRequest) -> typing.Union[None, typing.Awaitable[None]]
+        # type: (PipelineRequest) -> None
         """Is executed before sending the request from next policy.
 
         :param request: Request to be modified before sent from next policy.
         :type request: ~azure.core.pipeline.PipelineRequest
         """
-        request.http_request.url = request.http_request.url.replace(self._endpoint, self._proxy_endpoint)
-        return super(ApiManagementProxy, self).on_request(request)
+        super(ApiManagementProxy, self).on_request(request)
+        if self._endpoint and self._proxy_endpoint:
+            request.http_request.url = request.http_request.url.replace(self._endpoint, self._proxy_endpoint)

@@ -43,6 +43,26 @@ python -m pip install azure-messaging-webpubsubservice
 
 ### Authenticating the client
 
+#### 1. Create with an API Key Credential
+
+You can get the [API key][api_key] or [Connection string][connection_string] in the [Azure Portal][azure_portal].
+Once you have the value for the API key or Connection string, you can pass it as a string into an instance of [AzureKeyCredential][azure-key-credential]. 
+Use the key as the credential parameter to authenticate the client:
+
+```python
+>>> from azure.messaging.webpubsubservice import WebPubSubServiceClient
+>>> from azure.core.credentials import AzureKeyCredential
+
+>>> client = WebPubSubServiceClient(endpoint='<endpoint>', credential=AzureKeyCredential("<api_key>"))
+```
+Or
+```python
+>>> from azure.messaging.webpubsubservice import WebPubSubServiceClient
+
+>>> client = WebPubSubServiceClient.from_connection_string(connection_string='<connection_string>')
+```
+
+#### 2. Create with an Azure Active Directory Credential
 To use an [Azure Active Directory (AAD) token credential][authenticate_with_token],
 provide an instance of the desired credential type obtained from the
 [azure-identity][azure_identity_credentials] library.
@@ -62,7 +82,7 @@ Use the returned token credential to authenticate the client:
 ```python
 >>> from azure.messaging.webpubsubservice import WebPubSubServiceClient
 >>> from azure.identity import DefaultAzureCredential
->>> client = WebPubSubServiceClient(endpoint='https://myname.webpubsub.azure.com', credential=DefaultAzureCredential())
+>>> client = WebPubSubServiceClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 ```
 
 ## Examples
@@ -74,7 +94,7 @@ Use the returned token credential to authenticate the client:
 >>> from azure.identity import DefaultAzureCredential
 >>> from azure.core.exceptions import HttpResponseError
 
->>> client = WebPubSubServiceClient(endpoint='https://myname.webpubsub.azure.com', credential=DefaultAzureCredential())
+>>> client = WebPubSubServiceClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 >>> with open('file.json', 'r') as f:
     try:
         client.web_pub_sub.send_to_all('ahub', content=f, content_type='application/json')
@@ -126,7 +146,7 @@ logger.setLevel(logging.DEBUG)
 handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
-endpoint = "https://myname.webpubsub.azure.com"
+endpoint = "<endpoint>"
 credential = DefaultAzureCredential()
 
 # This client will log detailed information about its HTTP sessions, at DEBUG level
@@ -180,3 +200,7 @@ additional questions or comments.
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [pip]: https://pypi.org/project/pip/
 [enable_aad]: https://docs.microsoft.com/en-us/azure/azure-web-pubsub/howto-develop-create-instance
+[api_key]: https://docs.microsoft.com/en-us/azure/azure-web-pubsub/howto-websocket-connect?tabs=browser#authorization
+[connection_string]: https://docs.microsoft.com/en-us/azure/azure-web-pubsub/howto-websocket-connect?tabs=browser#authorization
+[azure_portal]: https://docs.microsoft.com/en-us/azure/azure-web-pubsub/howto-develop-create-instance
+[azure-key-credential]: https://aka.ms/azsdk-python-core-azurekeycredential

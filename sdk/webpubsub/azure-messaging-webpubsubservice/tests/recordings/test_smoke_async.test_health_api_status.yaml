@@ -3,7 +3,7 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-messaging-webpubsubservice/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-messaging-webpubsubservice/1.0.0b2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: HEAD
     uri: https://myservice.webpubsub.azure.com/api/health?api-version=2021-08-01-preview
   response:
@@ -11,7 +11,7 @@ interactions:
       string: ''
     headers:
       connection: keep-alive
-      date: Wed, 08 Sep 2021 07:01:54 GMT
+      date: Thu, 09 Sep 2021 06:18:46 GMT
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 200

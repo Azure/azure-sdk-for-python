@@ -100,5 +100,5 @@ class WebPubSubServiceClient:
         """
         kwargs = _parse_connection_string(connection_string, **kwargs)
 
-        credential = AzureKeyCredential(kwargs.get("accesskey"))
+        credential = AzureKeyCredential(kwargs.pop("accesskey"))
         return cls(credential=credential, **kwargs)
