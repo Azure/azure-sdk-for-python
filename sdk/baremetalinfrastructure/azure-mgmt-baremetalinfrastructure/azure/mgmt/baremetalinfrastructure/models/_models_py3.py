@@ -6,24 +6,27 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional
+import datetime
+from typing import Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
+from ._bare_metal_infrastructure_client_enums import *
+
 
 class Resource(msrest.serialization.Model):
-    """Resource.
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     """
 
@@ -50,19 +53,19 @@ class Resource(msrest.serialization.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for a ARM tracked top level resource.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
@@ -104,18 +107,20 @@ class AzureBareMetalInstance(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :param location: Required. The geo-location where the resource lives.
     :type location: str
+    :ivar system_data: The system metadata relating to this resource.
+    :vartype system_data: ~bare_metal_infrastructure_client.models.SystemData
     :param hardware_profile: Specifies the hardware settings for the AzureBareMetal instance.
     :type hardware_profile: ~bare_metal_infrastructure_client.models.HardwareProfile
     :param storage_profile: Specifies the storage settings for the AzureBareMetal instance disks.
@@ -148,6 +153,7 @@ class AzureBareMetalInstance(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'system_data': {'readonly': True},
         'azure_bare_metal_instance_id': {'readonly': True},
         'power_state': {'readonly': True},
         'proximity_placement_group': {'readonly': True},
@@ -161,6 +167,7 @@ class AzureBareMetalInstance(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'hardware_profile': {'key': 'properties.hardwareProfile', 'type': 'HardwareProfile'},
         'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
         'os_profile': {'key': 'properties.osProfile', 'type': 'OSProfile'},
@@ -186,6 +193,7 @@ class AzureBareMetalInstance(TrackedResource):
         **kwargs
     ):
         super(AzureBareMetalInstance, self).__init__(tags=tags, location=location, **kwargs)
+        self.system_data = None
         self.hardware_profile = hardware_profile
         self.storage_profile = storage_profile
         self.os_profile = os_profile
@@ -266,25 +274,15 @@ class Display(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar provider: The localized friendly form of the resource provider name. This form is also
-     expected to include the publisher/company responsible. Use Title Casing. Begin with "Microsoft"
-     for 1st party services.
+    :ivar provider: The localized friendly form of the resource provider name.
     :vartype provider: str
     :ivar resource: The localized friendly form of the resource type related to this
-     action/operation. This form should match the public documentation for the resource provider.
-     Use Title Casing. For examples, refer to the “name” section.
+     action/operation.
     :vartype resource: str
-    :ivar operation: The localized friendly name for the operation as shown to the user. This name
-     should be concise (to fit in drop downs), but clear (self-documenting). Use Title Casing and
-     include the entity/resource to which it applies.
+    :ivar operation: The localized friendly name for the operation as shown to the user.
     :vartype operation: str
     :ivar description: The localized friendly description for the operation as shown to the user.
-     This description should be thorough, yet concise. It will be used in tool-tips and detailed
-     views.
     :vartype description: str
-    :ivar origin: The intended executor of the operation; governs the display of the operation in
-     the RBAC UX and the audit logs UX. Default value is 'user,system'.
-    :vartype origin: str
     """
 
     _validation = {
@@ -292,7 +290,6 @@ class Display(msrest.serialization.Model):
         'resource': {'readonly': True},
         'operation': {'readonly': True},
         'description': {'readonly': True},
-        'origin': {'readonly': True},
     }
 
     _attribute_map = {
@@ -300,7 +297,6 @@ class Display(msrest.serialization.Model):
         'resource': {'key': 'resource', 'type': 'str'},
         'operation': {'key': 'operation', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
-        'origin': {'key': 'origin', 'type': 'str'},
     }
 
     def __init__(
@@ -312,7 +308,6 @@ class Display(msrest.serialization.Model):
         self.resource = None
         self.operation = None
         self.description = None
-        self.origin = None
 
 
 class ErrorDefinition(msrest.serialization.Model):
@@ -471,12 +466,13 @@ class Operation(msrest.serialization.Model):
     :vartype name: str
     :param display: Displayed AzureBareMetal operation information.
     :type display: ~bare_metal_infrastructure_client.models.Display
-    :param is_data_action: indicates whether an operation is a data action or not.
-    :type is_data_action: bool
+    :ivar is_data_action: indicates whether an operation is a data action or not.
+    :vartype is_data_action: bool
     """
 
     _validation = {
         'name': {'readonly': True},
+        'is_data_action': {'readonly': True},
     }
 
     _attribute_map = {
@@ -489,13 +485,12 @@ class Operation(msrest.serialization.Model):
         self,
         *,
         display: Optional["Display"] = None,
-        is_data_action: Optional[bool] = None,
         **kwargs
     ):
         super(Operation, self).__init__(**kwargs)
         self.name = None
         self.display = display
-        self.is_data_action = is_data_action
+        self.is_data_action = None
 
 
 class OperationList(msrest.serialization.Model):
@@ -611,6 +606,54 @@ class StorageProfile(msrest.serialization.Model):
         super(StorageProfile, self).__init__(**kwargs)
         self.nfs_ip_address = None
         self.os_disks = os_disks
+
+
+class SystemData(msrest.serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource. Possible values
+     include: "User", "Application", "ManagedIdentity", "Key".
+    :type created_by_type: str or ~bare_metal_infrastructure_client.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: ~datetime.datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+     values include: "User", "Application", "ManagedIdentity", "Key".
+    :type last_modified_by_type: str or ~bare_metal_infrastructure_client.models.CreatedByType
+    :param last_modified_at: The timestamp of resource last modification (UTC).
+    :type last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        *,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
+        **kwargs
+    ):
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
 
 
 class Tags(msrest.serialization.Model):
