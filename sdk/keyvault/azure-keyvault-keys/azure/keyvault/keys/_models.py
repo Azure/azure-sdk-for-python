@@ -13,10 +13,10 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Any, Dict, Optional
+    from typing import Any, Dict, Optional, List
     from datetime import datetime
     from ._generated.v7_0 import models as _models
-    from ._enums import KeyOperation
+    from ._enums import KeyOperation, KeyType
 
 KeyOperationResult = namedtuple("KeyOperationResult", ["id", "value"])
 
@@ -83,13 +83,15 @@ class KeyProperties(object):
         """Construct a KeyProperties from an autorest-generated KeyBundle"""
         # release_policy was added in 7.3-preview
         release_policy = None
-        if hasattr(key_bundle, "release_policy") and key_bundle.release_policy is not None:
+        if (hasattr(key_bundle, "release_policy") and
+            key_bundle.release_policy is not None):  # type: ignore[attr-defined]
             release_policy = KeyReleasePolicy(
-                data=key_bundle.release_policy.data, content_type=key_bundle.release_policy.content_type
+                data=key_bundle.release_policy.data,  # type: ignore[attr-defined]
+                content_type=key_bundle.release_policy.content_type  # type: ignore[attr-defined]
             )
 
         return cls(
-            key_bundle.key.kid,
+            key_bundle.key.kid,  # type: ignore
             attributes=key_bundle.attributes,
             managed=key_bundle.managed,
             tags=key_bundle.tags,
@@ -100,7 +102,12 @@ class KeyProperties(object):
     def _from_key_item(cls, key_item):
         # type: (_models.KeyItem) -> KeyProperties
         """Construct a KeyProperties from an autorest-generated KeyItem"""
-        return cls(key_id=key_item.kid, attributes=key_item.attributes, managed=key_item.managed, tags=key_item.tags)
+        return cls(
+            key_id=key_item.kid,  # type: ignore
+            attributes=key_item.attributes,
+            managed=key_item.managed,
+            tags=key_item.tags
+        )
 
     @property
     def id(self):
@@ -122,57 +129,57 @@ class KeyProperties(object):
 
     @property
     def version(self):
-        # type: () -> str
+        # type: () -> Optional[str]
         """The key's version
 
-        :rtype: str
+        :rtype: str or None
         """
         return self._vault_id.version
 
     @property
     def enabled(self):
-        # type: () -> bool
+        # type: () -> Optional[bool]
         """Whether the key is enabled for use
 
-        :rtype: bool
+        :rtype: bool or None
         """
-        return self._attributes.enabled
+        return self._attributes.enabled if self._attributes else None
 
     @property
     def not_before(self):
-        # type: () -> datetime
+        # type: () -> Optional[datetime]
         """The time before which the key can not be used, in UTC
 
-        :rtype: ~datetime.datetime
+        :rtype: ~datetime.datetime or None
         """
-        return self._attributes.not_before
+        return self._attributes.not_before if self._attributes else None
 
     @property
     def expires_on(self):
-        # type: () -> datetime
+        # type: () -> Optional[datetime]
         """When the key will expire, in UTC
 
-        :rtype: ~datetime.datetime
+        :rtype: ~datetime.datetime or None
         """
-        return self._attributes.expires
+        return self._attributes.expires if self._attributes else None
 
     @property
     def created_on(self):
-        # type: () -> datetime
+        # type: () -> Optional[datetime]
         """When the key was created, in UTC
 
-        :rtype: ~datetime.datetime
+        :rtype: ~datetime.datetime or None
         """
-        return self._attributes.created
+        return self._attributes.created if self._attributes else None
 
     @property
     def updated_on(self):
-        # type: () -> datetime
+        # type: () -> Optional[datetime]
         """When the key was last updated, in UTC
 
-        :rtype: ~datetime.datetime
+        :rtype: ~datetime.datetime or None
         """
-        return self._attributes.updated
+        return self._attributes.updated if self._attributes else None
 
     @property
     def vault_url(self):
@@ -188,7 +195,7 @@ class KeyProperties(object):
         # type: () -> Optional[int]
         """The number of days the key is retained before being deleted from a soft-delete enabled Key Vault.
 
-        :rtype: int
+        :rtype: int or None
         """
         # recoverable_days was added in 7.1-preview
         if self._attributes:
@@ -197,12 +204,12 @@ class KeyProperties(object):
 
     @property
     def recovery_level(self):
-        # type: () -> str
+        # type: () -> Optional[str]
         """The vault's deletion recovery level for keys
 
-        :rtype: str
+        :rtype: str or None
         """
-        return self._attributes.recovery_level
+        return self._attributes.recovery_level if self._attributes else None
 
     @property
     def tags(self):
@@ -326,7 +333,7 @@ class KeyVaultKey(object):
         """Construct a KeyVaultKey from an autorest-generated KeyBundle"""
         # pylint:disable=protected-access
         return cls(
-            key_id=key_bundle.key.kid,
+            key_id=key_bundle.key.kid,  # type: ignore
             jwk={field: getattr(key_bundle.key, field, None) for field in JsonWebKey._FIELDS},
             properties=KeyProperties._from_key_bundle(key_bundle),
         )
@@ -369,21 +376,23 @@ class KeyVaultKey(object):
 
     @property
     def key_type(self):
-        # type: () -> str
+        # type: () -> KeyType
         """The key's type. See :class:`~azure.keyvault.keys.KeyType` for possible values.
 
         :rtype: ~azure.keyvault.keys.KeyType or str
         """
-        return self._key_material.kty  # pylint:disable=no-member
+        # pylint:disable=no-member
+        return self._key_material.kty  # type: ignore[attr-defined]
 
     @property
     def key_operations(self):
-        # type: () -> list[KeyOperation]
+        # type: () -> List[KeyOperation]
         """Permitted operations. See :class:`~azure.keyvault.keys.KeyOperation` for possible values.
 
         :rtype: list[~azure.keyvault.keys.KeyOperation or str]
         """
-        return self._key_material.key_ops  # pylint:disable=no-member
+        # pylint:disable=no-member
+        return self._key_material.key_ops  # type: ignore[attr-defined]
 
 
 class KeyVaultKeyIdentifier(object):
@@ -454,7 +463,7 @@ class DeletedKey(KeyVaultKey):
         # pylint:disable=protected-access
         return cls(
             properties=KeyProperties._from_key_bundle(deleted_key_bundle),
-            key_id=deleted_key_bundle.key.kid,
+            key_id=deleted_key_bundle.key.kid,  # type: ignore
             jwk={field: getattr(deleted_key_bundle.key, field, None) for field in JsonWebKey._FIELDS},
             deleted_date=deleted_key_bundle.deleted_date,
             recovery_id=deleted_key_bundle.recovery_id,
@@ -475,28 +484,28 @@ class DeletedKey(KeyVaultKey):
 
     @property
     def deleted_date(self):
-        # type: () -> datetime
+        # type: () -> Optional[datetime]
         """When the key was deleted, in UTC
 
-        :rtype: ~datetime.datetime
+        :rtype: ~datetime.datetime or None
         """
         return self._deleted_date
 
     @property
     def recovery_id(self):
-        # type: () -> str
+        # type: () -> Optional[str]
         """An identifier used to recover the deleted key. Returns ``None`` if soft-delete is disabled.
 
-        :rtype: str
+        :rtype: str or None
         """
         return self._recovery_id
 
     @property
     def scheduled_purge_date(self):
-        # type: () -> datetime
+        # type: () -> Optional[datetime]
         """When the key is scheduled to be purged, in UTC. Returns ``None`` if soft-delete is disabled.
 
-        :rtype: ~datetime.datetime
+        :rtype: ~datetime.datetime or None
         """
         return self._scheduled_purge_date
 
