@@ -1,7 +1,9 @@
 import json
 import os
 import re
-
+from msrest.authentication import BasicAuthentication
+from azure.devops.v6_0.pipelines.pipelines_client import PipelinesClient
+from azure.devops.v6_0.pipelines import models
 import requests
 
 _headers = {
@@ -13,8 +15,8 @@ _headers = {
 }
 
 def run_pipeline(issue_link, sdk_issue_object, pipeline_url):
-    payload = json.dumps({
-        "stagesToSkip": [],
+    paramaters = {
+        "stages_to_skip": [],
         "resources": {
             "repositories": {
                 "self": {
@@ -24,26 +26,29 @@ def run_pipeline(issue_link, sdk_issue_object, pipeline_url):
         },
         "variables": {
             "BASE_BRANCH": {
-                "value": f"{sdk_issue_object.head.label}",
+                "value": "AzureSDKAutomation:sdkAuto/track2_azure-mgmt-logz",
                 "isSecret": False
             },
             "ISSUE_LINK": {
-                "value": f"{issue_link}",
-                "isSecret": False
-            },
-            "PIPELINE_LINK": {
-                "value": f"{pipeline_url}",
+                "value": "https://github.com/Azure/sdk-release-request/issues/1826",
                 "isSecret": False
             }
         }
-    })
-    _headers['Cookie'] = os.getenv('COOKIE')
-    response = requests.request("POST", os.getenv('URL'), headers=_headers, data=payload)
-    if response.status_code == 200:
+    }
+    # Fill in with your personal access token and org URL
+    personal_access_token = os.getenv('PIPELINE_TOKEN')
+    organization_url = 'https://dev.azure.com/azure-sdk'
+
+    # Create a connection to the org
+    credentials = BasicAuthentication('', personal_access_token)
+    run_parameters = models.RunPipelineParameters(**paramaters)
+    client = PipelinesClient(base_url=organization_url, creds=credentials)
+    result = client.run_pipeline(project='internal',pipeline_id=2500,run_parameters=run_parameters)
+    if result.state == 'inProgress':
         return True
     else:
-        print(response.status_code)
         return False
+    
 
 
 def get_pipeline_url(search_url):
