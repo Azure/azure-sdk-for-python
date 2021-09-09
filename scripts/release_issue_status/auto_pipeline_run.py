@@ -16,7 +16,7 @@ _headers = {
 
 def run_pipeline(issue_link, sdk_issue_object, pipeline_url):
     paramaters = {
-        "stagesToSkip": [],
+        "stages_to_skip": [],
         "resources": {
             "repositories": {
                 "self": {
