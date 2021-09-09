@@ -309,8 +309,6 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         self.tags = kwargs.get("tags", {})
         self.secret_id = secret_id
         self._value = json.dumps({"uri": secret_id})
-        if not self._value:
-            self._value = json.dumps({"secret_uri": secret_id})
 
     @property
     def value(self):
