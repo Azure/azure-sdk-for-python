@@ -5,6 +5,7 @@ import os
 import pandas as pd
 from datetime import timedelta
 from azure.monitor.query import LogsQueryClient
+from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
 
 # [START client_auth_with_token_cred]
@@ -21,8 +22,14 @@ range x from 1 to 3 step 1
 | summarize percentilesw(x, Weight * 100, 50)"""
 
 # returns LogsQueryResult 
-response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=timedelta(days=1))
+try:
+    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=timedelta(days=1), allow_partial_errors=True)
+except HttpResponseError as error:
+    print (error)
 
+if response.partial_error:
+    e = response.partial_error
+    print(e)
 for table in response.tables:
     df = pd.DataFrame(table.rows, columns=table.columns)
     print(df)
