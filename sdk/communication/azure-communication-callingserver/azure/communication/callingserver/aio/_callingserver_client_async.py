@@ -161,7 +161,7 @@ class CallingServerClient(object):
             callback_uri=options.callback_uri,
             requested_media_types=options.requested_media_types,
             requested_call_events=options.requested_call_events,
-            alternate_caller_id=None if options.alternate_Caller_Id == None else PhoneNumberIdentifierModel(value=options.alternate_Caller_Id.properties['value']),
+            alternate_caller_id=None if options.alternate_Caller_Id == None else PhoneNumberIdentifierModel(value=options.alternate_Caller_Id),
             subject=options.subject,
             **kwargs
         )
@@ -200,11 +200,10 @@ class CallingServerClient(object):
         if not call_options:
             raise ValueError("call_options can not be None")
 
-        join_call_request = JoinCallRequestConverter.convert(source, call_options)
+        join_call_request = JoinCallRequestConverter.convert(serialize_identifier(source), call_options)
 
         join_call_response = await self._server_call_client.join_call(
             server_call_id=server_call_id,
-            source=source,
             call_request=join_call_request,
             **kwargs
         )

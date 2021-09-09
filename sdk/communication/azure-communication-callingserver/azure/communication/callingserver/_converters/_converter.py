@@ -6,11 +6,11 @@
 
 from .._models import JoinCallOptions, PlayAudioOptions
 from .._shared.models import CommunicationIdentifier
-from .._generated.models import JoinCallRequest, PlayAudioRequest
+from .._generated.models import JoinCallRequest, PlayAudioRequest, CommunicationIdentifierModel
 
 class JoinCallRequestConverter(object):
     @classmethod
-    def convert(self, source: CommunicationIdentifier, join_call_options: JoinCallOptions):
+    def convert(self, source: CommunicationIdentifierModel, join_call_options: JoinCallOptions):
         if not source:
             raise ValueError("source can not be None")
         if not join_call_options:
