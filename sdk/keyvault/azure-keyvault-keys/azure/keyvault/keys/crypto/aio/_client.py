@@ -348,7 +348,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             **kwargs
         )
 
-        return UnwrapResult(key_id=self._key_id, algorithm=algorithm, key=operation_result.result)
+        return UnwrapResult(key_id=self.key_id, algorithm=algorithm, key=operation_result.result)
 
     @distributed_trace_async
     async def sign(self, algorithm: "SignatureAlgorithm", digest: bytes, **kwargs: "Any") -> SignResult:
