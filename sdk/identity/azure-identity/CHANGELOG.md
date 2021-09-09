@@ -11,10 +11,6 @@
 - `DefaultAzureCredential` allows specifying the client ID of interactive browser via keyword argument `interactive_browser_client_id`
   ([#20487](https://github.com/Azure/azure-sdk-for-python/issues/20487))
 
-### Breaking Changes
-
-### Bugs Fixed
-
 ### Other Changes
 - Added context manager methods and `close()` to credentials in the
   `azure.identity` namespace. At the end of a `with` block, or when `close()`
