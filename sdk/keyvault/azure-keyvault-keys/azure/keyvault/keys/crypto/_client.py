@@ -450,7 +450,7 @@ class CryptographyClient(KeyVaultClientBase):
             **kwargs
         )
 
-        return SignResult(algorithm=algorithm, signature=operation_result.result, key_id=self.key_id)
+        return SignResult(key_id=self.key_id, algorithm=algorithm, signature=operation_result.result)
 
     @distributed_trace
     def verify(self, algorithm, digest, signature, **kwargs):
