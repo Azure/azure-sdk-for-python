@@ -6,8 +6,8 @@
 
 ### Breaking Changes
 
-- `get_schema_id` method on sync and async `SchemaRegistryClient` has been renamed `get_schema_properties`
-- `schema_id` parameter in `get_schema` method on sync and async `SchemaRegistryClient` has been renamed `id`
+- `get_schema_id` method on sync and async `SchemaRegistryClient` has been renamed `get_schema_properties`.
+- `schema_id` parameter in `get_schema` method on sync and async `SchemaRegistryClient` has been renamed `id`.
 - `register_schema` and `get_schema_properties` methods on sync and async `SchemaRegistryClient` now take in the following parameters in the given order:
   - `group_name`, which has been renamed from `schema_group`
   - `name`, which has been renamed from `schema_name`
