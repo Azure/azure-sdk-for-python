@@ -49,11 +49,11 @@ class RoleAssignmentsOperations:
         resource_type: str,
         resource_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RoleAssignmentListResult"]:
         """Gets role assignments for a resource.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param resource_provider_namespace: The namespace of the resource provider.
         :type resource_provider_namespace: str
@@ -89,12 +89,12 @@ class RoleAssignmentsOperations:
                 # Construct URL
                 url = self.list_for_resource.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+                    'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str', skip_quote=True),
                     'parentResourcePath': self._serialize.url("parent_resource_path", parent_resource_path, 'str', skip_quote=True),
                     'resourceType': self._serialize.url("resource_type", resource_type, 'str', skip_quote=True),
                     'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -124,8 +124,9 @@ class RoleAssignmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -138,11 +139,11 @@ class RoleAssignmentsOperations:
         self,
         resource_group_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RoleAssignmentListResult"]:
         """Gets role assignments for a resource group.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param filter: The filter to apply on the operation. Use $filter=atScope() to return all role
          assignments at or above the scope. Use $filter=principalId eq {id} to return all role
@@ -170,8 +171,8 @@ class RoleAssignmentsOperations:
                 # Construct URL
                 url = self.list_for_resource_group.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -201,8 +202,9 @@ class RoleAssignmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -215,8 +217,8 @@ class RoleAssignmentsOperations:
         self,
         scope: str,
         role_assignment_name: str,
-        **kwargs
-    ) -> "_models.RoleAssignment":
+        **kwargs: Any
+    ) -> Optional["_models.RoleAssignment"]:
         """Deletes a role assignment.
 
         :param scope: The scope of the role assignment to delete.
@@ -225,10 +227,10 @@ class RoleAssignmentsOperations:
         :type role_assignment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RoleAssignment, or the result of cls(response)
-        :rtype: ~azure.mgmt.authorization.v2018_09_01_preview.models.RoleAssignment
+        :rtype: ~azure.mgmt.authorization.v2018_09_01_preview.models.RoleAssignment or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleAssignment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.RoleAssignment"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -256,11 +258,14 @@ class RoleAssignmentsOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('RoleAssignment', pipeline_response)
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('RoleAssignment', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -273,15 +278,16 @@ class RoleAssignmentsOperations:
         scope: str,
         role_assignment_name: str,
         parameters: "_models.RoleAssignmentCreateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RoleAssignment":
         """Creates a role assignment.
 
         :param scope: The scope of the role assignment to create. The scope can be any REST resource
          instance. For example, use '/subscriptions/{subscription-id}/' for a subscription,
          '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}' for a resource group,
-         and '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/{resource-
-         provider}/{resource-type}/{resource-name}' for a resource.
+         and
+         '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/{resource-provider}/{resource-type}/{resource-name}'
+         for a resource.
         :type scope: str
         :param role_assignment_name: The name of the role assignment to create. It can be any valid
          GUID.
@@ -328,7 +334,8 @@ class RoleAssignmentsOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RoleAssignment', pipeline_response)
 
@@ -342,7 +349,7 @@ class RoleAssignmentsOperations:
         self,
         scope: str,
         role_assignment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RoleAssignment":
         """Get the specified role assignment.
 
@@ -385,7 +392,8 @@ class RoleAssignmentsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RoleAssignment', pipeline_response)
 
@@ -398,18 +406,18 @@ class RoleAssignmentsOperations:
     async def delete_by_id(
         self,
         role_id: str,
-        **kwargs
-    ) -> "_models.RoleAssignment":
+        **kwargs: Any
+    ) -> Optional["_models.RoleAssignment"]:
         """Deletes a role assignment.
 
         :param role_id: The ID of the role assignment to delete.
         :type role_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RoleAssignment, or the result of cls(response)
-        :rtype: ~azure.mgmt.authorization.v2018_09_01_preview.models.RoleAssignment
+        :rtype: ~azure.mgmt.authorization.v2018_09_01_preview.models.RoleAssignment or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleAssignment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.RoleAssignment"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -436,11 +444,14 @@ class RoleAssignmentsOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('RoleAssignment', pipeline_response)
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('RoleAssignment', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -452,7 +463,7 @@ class RoleAssignmentsOperations:
         self,
         role_id: str,
         parameters: "_models.RoleAssignmentCreateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RoleAssignment":
         """Creates a role assignment by ID.
 
@@ -499,7 +510,8 @@ class RoleAssignmentsOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RoleAssignment', pipeline_response)
 
@@ -512,7 +524,7 @@ class RoleAssignmentsOperations:
     async def get_by_id(
         self,
         role_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RoleAssignment":
         """Gets a role assignment by ID.
 
@@ -552,7 +564,8 @@ class RoleAssignmentsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RoleAssignment', pipeline_response)
 
@@ -565,7 +578,7 @@ class RoleAssignmentsOperations:
     def list(
         self,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RoleAssignmentListResult"]:
         """Gets all role assignments for the subscription.
 
@@ -595,7 +608,7 @@ class RoleAssignmentsOperations:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -625,8 +638,9 @@ class RoleAssignmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -639,7 +653,7 @@ class RoleAssignmentsOperations:
         self,
         scope: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RoleAssignmentListResult"]:
         """Gets role assignments for a scope.
 
@@ -701,8 +715,9 @@ class RoleAssignmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 

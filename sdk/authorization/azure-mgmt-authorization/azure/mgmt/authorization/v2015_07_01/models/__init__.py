@@ -9,6 +9,9 @@
 try:
     from ._models_py3 import ClassicAdministrator
     from ._models_py3 import ClassicAdministratorListResult
+    from ._models_py3 import ErrorAdditionalInfo
+    from ._models_py3 import ErrorDetail
+    from ._models_py3 import ErrorResponse
     from ._models_py3 import Permission
     from ._models_py3 import PermissionGetResult
     from ._models_py3 import ProviderOperation
@@ -27,6 +30,9 @@ try:
 except (SyntaxError, ImportError):
     from ._models import ClassicAdministrator  # type: ignore
     from ._models import ClassicAdministratorListResult  # type: ignore
+    from ._models import ErrorAdditionalInfo  # type: ignore
+    from ._models import ErrorDetail  # type: ignore
+    from ._models import ErrorResponse  # type: ignore
     from ._models import Permission  # type: ignore
     from ._models import PermissionGetResult  # type: ignore
     from ._models import ProviderOperation  # type: ignore
@@ -46,6 +52,9 @@ except (SyntaxError, ImportError):
 __all__ = [
     'ClassicAdministrator',
     'ClassicAdministratorListResult',
+    'ErrorAdditionalInfo',
+    'ErrorDetail',
+    'ErrorResponse',
     'Permission',
     'PermissionGetResult',
     'ProviderOperation',
