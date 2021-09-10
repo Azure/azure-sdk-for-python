@@ -25,13 +25,13 @@ from ._shared.models import(
 )
 from ._generated.models import (
     RehydratePriority,
-    BlobImmutabilityPolicyMode
 )
 from ._models import (
     BlobType,
     BlockState,
     StandardBlobTier,
     PremiumPageBlobTier,
+    BlobImmutabilityPolicyMode,
     SequenceNumberAction,
     PublicAccess,
     BlobAnalyticsLogging,

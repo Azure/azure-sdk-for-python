@@ -325,10 +325,10 @@ Note that you will need to install the [azure-storage-blob][azure_storage_blob] 
 
 ## Advanced Topics
 
-The following section provides some insights for some of the advanced translation features such as glossaries and custom translation models.
+The following section provides some insights for some advanced translation features such as glossaries and custom translation models.
 
 ### **Glossaries**
-Glossaries are domain-specific dictionaries. For example, if you want to translate some medical-related documents, you may need support for the many words, terminology, and idioms in the medical field which you can't find in the standard translation dictionary or you simply need specific translation. This is why Document Translation provides support for glossaries. 
+Glossaries are domain-specific dictionaries. For example, if you want to translate some medical-related documents, you may need support for the many words, terminology, and idioms in the medical field which you can't find in the standard translation dictionary, or you simply need specific translation. This is why Document Translation provides support for glossaries. 
 
 #### **How To Create Glossary File**
 
@@ -337,14 +337,13 @@ Document Translation supports glossaries in the following formats:
 |**File Type**|**Extension**|**Description**|**Samples**|
 |---------------|---------------|---------------|---------------|
 |Tab-Separated Values/TAB|.tsv, .tab|Read more on [wikipedia][tsv_files_wikipedia]|[glossary_sample.tsv][sample_tsv_file]|
-|Comma-Seperated Values|.csv|Read more on [wikipedia][csv_files_wikipedia]|[glossary_sample.csv][sample_csv_file]|
+|Comma-Separated Values|.csv|Read more on [wikipedia][csv_files_wikipedia]|[glossary_sample.csv][sample_csv_file]|
 |Localization Interchange File Format|.xlf, .xliff|Read more on [wikipedia][xlf_files_wikipedia]|[glossary_sample.xlf][sample_xlf_file]|
 
 View all supported formats [here][supported_glossary_formats].
 
 #### **How Use Glossaries in Document Translation**
-In order to use glossaries with Document Translation, you first need to upload your glossaries file to some blob container, and then provide the SaS url to of this glossary file to Document Translation as in the code samples [sample_translation_with_glossaries.py][sample_translation_with_glossaries].
-
+In order to use glossaries with Document Translation, you first need to upload your glossary file to a blob container, and then provide the SAS URL to the file as in the code samples [sample_translation_with_glossaries.py][sample_translation_with_glossaries].
 
 ### **Custom Translation Models**
 Instead of using Document Translation's engine for translation, you can use your own custom Azure machine/deep learning model.

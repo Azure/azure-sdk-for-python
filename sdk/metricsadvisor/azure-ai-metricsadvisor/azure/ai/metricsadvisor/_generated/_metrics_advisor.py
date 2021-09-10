@@ -6,39 +6,42 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
-from azure.core import AsyncPipelineClient
-from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
+from azure.core import PipelineClient
 from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials_async import AsyncTokenCredential
+    from typing import Any
 
-from ._configuration import MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2Configuration
-from .operations import MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin
-from .. import models
+    from azure.core.credentials import TokenCredential
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
+
+from ._configuration import MetricsAdvisorConfiguration
+from .operations import MetricsAdvisorOperationsMixin
+from . import models
 
 
-class MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2(MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin):
+class MetricsAdvisor(MetricsAdvisorOperationsMixin):
     """Microsoft Azure Metrics Advisor REST API (OpenAPI v2).
 
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :type credential: ~azure.core.credentials.TokenCredential
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example: https://:code:`<resource-name>`.cognitiveservices.azure.com).
     :type endpoint: str
     """
 
     def __init__(
         self,
-        credential: "AsyncTokenCredential",
-        endpoint: str,
-        **kwargs: Any
-    ) -> None:
+        credential,  # type: "TokenCredential"
+        endpoint,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
         base_url = '{endpoint}/metricsadvisor/v1.0'
-        self._config = MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2Configuration(credential, endpoint, **kwargs)
-        self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._config = MetricsAdvisorConfiguration(credential, endpoint, **kwargs)
+        self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -46,29 +49,33 @@ class MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2(MicrosoftAzureMetricsAdvisorR
         self._deserialize = Deserializer(client_models)
 
 
-    async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
+    def _send_request(self, http_request, **kwargs):
+        # type: (HttpRequest, Any) -> HttpResponse
         """Runs the network request through the client's chained policies.
 
         :param http_request: The network request you want to make. Required.
         :type http_request: ~azure.core.pipeline.transport.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+        :rtype: ~azure.core.pipeline.transport.HttpResponse
         """
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
         stream = kwargs.pop("stream", True)
-        pipeline_response = await self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
         return pipeline_response.http_response
 
-    async def close(self) -> None:
-        await self._client.close()
+    def close(self):
+        # type: () -> None
+        self._client.close()
 
-    async def __aenter__(self) -> "MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2":
-        await self._client.__aenter__()
+    def __enter__(self):
+        # type: () -> MetricsAdvisor
+        self._client.__enter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
-        await self._client.__aexit__(*exc_details)
+    def __exit__(self, *exc_details):
+        # type: (Any) -> None
+        self._client.__exit__(*exc_details)
