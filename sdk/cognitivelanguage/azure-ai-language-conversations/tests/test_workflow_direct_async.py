@@ -14,13 +14,11 @@ from testcase import (
     GlobalConversationAccountPreparer
 )
 
-from azure.ai.language.conversations import ConversationAnalysisClient
+from azure.ai.language.conversations.aio import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
     ConversationAnalysisInput,
     ConversationAnalysisResult,
-    QuestionAnsweringParameters,
-    DeepstackParameters,
-    DeepstackCallingOptions
+    QuestionAnsweringParameters
 )
 from azure.ai.language.questionanswering.models import KnowledgeBaseQueryOptions
 
@@ -28,7 +26,7 @@ from azure.ai.language.questionanswering.models import KnowledgeBaseQueryOptions
 class WorkflowDirectAnalysisTests(ConversationTest):
 
     @GlobalConversationAccountPreparer()
-    def test_direct_kb_analysis(self, conv_account, conv_key, workflow_project):
+    async def test_direct_kb_analysis(self, conv_account, conv_key, workflow_project):
 
         client = ConversationAnalysisClient(conv_account, AzureKeyCredential(conv_key))
         params = ConversationAnalysisInput(
@@ -45,8 +43,8 @@ class WorkflowDirectAnalysisTests(ConversationTest):
             }
         )
 
-        with client:
-            result = client.analyze_conversations(
+        async with client:
+            result = await client.analyze_conversations(
                 params,
                 project_name=workflow_project,
                 deployment_name='production',
@@ -56,7 +54,7 @@ class WorkflowDirectAnalysisTests(ConversationTest):
         assert result.query == "How do you make sushi rice?"
 
     @GlobalConversationAccountPreparer()
-    def test_direct_kb_analysis_with_model(self, conv_account, conv_key, workflow_project):
+    async def test_direct_kb_analysis_with_model(self, conv_account, conv_key, workflow_project):
 
         client = ConversationAnalysisClient(conv_account, AzureKeyCredential(conv_key))
         params = ConversationAnalysisInput(
@@ -73,8 +71,8 @@ class WorkflowDirectAnalysisTests(ConversationTest):
             }
         )
 
-        with client:
-            result = client.analyze_conversations(
+        async with client:
+            result = await client.analyze_conversations(
                 params,
                 project_name=workflow_project,
                 deployment_name='production',
@@ -82,30 +80,3 @@ class WorkflowDirectAnalysisTests(ConversationTest):
         
         assert isinstance(result, ConversationAnalysisResult)
         assert result.query == "How do you make sushi rice?"
-
-    @pytest.mark.skip("Pending fix to service.")
-    @GlobalConversationAccountPreparer()
-    def test_direct_deepstack_analysis(self, conv_account, conv_key, workflow_project):
-
-        client = ConversationAnalysisClient(conv_account, AzureKeyCredential(conv_key))
-        params = ConversationAnalysisInput(
-            query="I will have the oyako donburi please.",
-            direct_target="SushiOrder",
-            parameters={
-                "SushiOrder": DeepstackParameters(
-                    calling_options={
-                       "verbose": True,
-                    }
-                )
-            }
-        )
-
-        with client:
-            result = client.analyze_conversations(
-                params,
-                project_name=workflow_project,
-                deployment_name='production',
-            )
-        
-        assert isinstance(result, ConversationAnalysisResult)
-        assert result.query == "I will have the oyako donburi please."
