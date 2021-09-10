@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._microsoft_azure_metrics_advisor_restapi_open_ap_iv2 import MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2
-__all__ = ['MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2']
+from ._metrics_advisor import MetricsAdvisor
+__all__ = ['MetricsAdvisor']
 
 try:
     from ._patch import patch_sdk  # type: ignore

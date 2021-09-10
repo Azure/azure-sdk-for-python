@@ -24,7 +24,7 @@ from ._generated.models import (
     FeedbackDimensionFilter,
     DimensionGroupIdentity,
 )
-from ._generated import MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2 as _Client
+from ._generated import MetricsAdvisor as _Client
 from ._helpers import (
     convert_to_sub_feedback,
     convert_datetime,

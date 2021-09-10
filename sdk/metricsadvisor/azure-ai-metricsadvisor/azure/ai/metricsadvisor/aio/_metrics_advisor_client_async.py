@@ -28,9 +28,7 @@ from .._generated.models import (
     FeedbackDimensionFilter,
     DimensionGroupIdentity,
 )
-from .._generated.aio import (
-    MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2 as _ClientAsync,
-)
+from .._generated.aio import MetricsAdvisor as _ClientAsync
 from .._helpers import (
     convert_to_sub_feedback,
     convert_datetime,
