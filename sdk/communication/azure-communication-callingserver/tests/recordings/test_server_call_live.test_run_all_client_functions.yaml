@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"source": {"communicationUser": {"id": "8:acs:016a7064-0581-40b9-be73-6dde64d69d72_5c7914d2-3031-4daa-9eae-25430ade619c"}},
+    body: '{"source": {"communicationUser": {"id": "8:acs:016a7064-0581-40b9-be73-6dde64d69d72_8779d06f-aa1e-4f29-abeb-e642807dfef6"}},
       "callbackUri": "https://host.app/api/callback/calling", "requestedMediaTypes":
       ["audio"], "requestedCallEvents": ["participantsUpdated"]}'
     headers:
@@ -17,29 +17,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
       x-ms-date:
-      - Fri, 10 Sep 2021 21:27:50 GMT
+      - Fri, 10 Sep 2021 23:08:14 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
     uri: https://sanitized.communication.azure.com/calling/serverCalls/sanitized/:join?api-version=2021-06-15-preview
   response:
-    body: '{"callConnectionId": "411f0b00-6bcc-4346-a37d-4a3e019b2b67"}'
+    body: '{"callConnectionId": "421f0b00-ab3d-406a-9cf9-ed0f493e4647"}'
     headers:
       content-length:
       - '59'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Sep 2021 21:27:51 GMT
+      - Fri, 10 Sep 2021 23:08:14 GMT
       x-cache:
       - CONFIG_NOCACHE
       x-microsoft-skype-chain-id:
-      - 7def9584-2a30-4d95-8ba9-476a66bfaeca
+      - 4099d3b6-8308-4f19-a874-e67a6022f6ff
     status:
       code: 202
       message: Accepted
 - request:
-    body: '{"source": {"communicationUser": {"id": "8:acs:016a7064-0581-40b9-be73-6dde64d69d72_4d9ca9ce-204d-44b8-babb-ac533a125720"}},
+    body: '{"source": {"communicationUser": {"id": "8:acs:016a7064-0581-40b9-be73-6dde64d69d72_72092a14-0e2c-4ddf-9e34-9481fdcdefa5"}},
       "callbackUri": "https://host.app/api/callback/calling", "requestedMediaTypes":
       ["audio"], "requestedCallEvents": ["participantsUpdated"]}'
     headers:
@@ -56,24 +56,24 @@ interactions:
       User-Agent:
       - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
       x-ms-date:
-      - Fri, 10 Sep 2021 21:27:52 GMT
+      - Fri, 10 Sep 2021 23:08:15 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
     uri: https://sanitized.communication.azure.com/calling/serverCalls/sanitized/:join?api-version=2021-06-15-preview
   response:
-    body: '{"callConnectionId": "411f0b00-e98f-46d1-bb3e-061351957f73"}'
+    body: '{"callConnectionId": "421f0b00-a6d1-4109-b2ff-14e5a94a431d"}'
     headers:
       content-length:
       - '59'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Sep 2021 21:27:52 GMT
+      - Fri, 10 Sep 2021 23:08:15 GMT
       x-cache:
       - CONFIG_NOCACHE
       x-microsoft-skype-chain-id:
-      - 3532a0b5-71ef-4761-9fe7-ccae0e5fb5e2
+      - fa0c4261-3880-47d4-b261-f54f7ac36eb5
     status:
       code: 202
       message: Accepted
@@ -93,7 +93,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
       x-ms-date:
-      - Fri, 10 Sep 2021 21:27:54 GMT
+      - Fri, 10 Sep 2021 23:08:17 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -106,11 +106,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Sep 2021 21:27:56 GMT
+      - Fri, 10 Sep 2021 23:08:19 GMT
       x-cache:
       - CONFIG_NOCACHE
       x-microsoft-skype-chain-id:
-      - 6568e067-80fa-4837-8631-d513bf6b8913
+      - 4f2949a2-7870-412a-9f09-465bb8ea174d
     status:
       code: 200
       message: OK
@@ -126,7 +126,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
       x-ms-date:
-      - Fri, 10 Sep 2021 21:28:02 GMT
+      - Fri, 10 Sep 2021 23:08:25 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -139,11 +139,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Sep 2021 21:28:02 GMT
+      - Fri, 10 Sep 2021 23:08:25 GMT
       x-cache:
       - CONFIG_NOCACHE
       x-microsoft-skype-chain-id:
-      - d6e59b84-f40e-416c-892d-e2932791f752
+      - af2a0942-c3d8-4d25-b317-98b3c68d574d
     status:
       code: 200
       message: OK
@@ -161,7 +161,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
       x-ms-date:
-      - Fri, 10 Sep 2021 21:28:02 GMT
+      - Fri, 10 Sep 2021 23:08:25 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -173,11 +173,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 10 Sep 2021 21:28:02 GMT
+      - Fri, 10 Sep 2021 23:08:25 GMT
       x-cache:
       - CONFIG_NOCACHE
       x-microsoft-skype-chain-id:
-      - d1ae6bd9-8ce3-49e5-8206-261241576c32
+      - a595cf4c-8330-47c1-84fb-acefd17dafd3
     status:
       code: 200
       message: OK
@@ -193,7 +193,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
       x-ms-date:
-      - Fri, 10 Sep 2021 21:28:08 GMT
+      - Fri, 10 Sep 2021 23:08:32 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -206,11 +206,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Sep 2021 21:28:08 GMT
+      - Fri, 10 Sep 2021 23:08:31 GMT
       x-cache:
       - CONFIG_NOCACHE
       x-microsoft-skype-chain-id:
-      - 79a1a553-162c-47d2-b2d3-0aee0b39dafd
+      - bba5c29f-b5ca-4d49-aa6f-76d1a3d8e5a9
     status:
       code: 200
       message: OK
@@ -228,7 +228,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
       x-ms-date:
-      - Fri, 10 Sep 2021 21:28:08 GMT
+      - Fri, 10 Sep 2021 23:08:32 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -240,11 +240,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 10 Sep 2021 21:28:08 GMT
+      - Fri, 10 Sep 2021 23:08:32 GMT
       x-cache:
       - CONFIG_NOCACHE
       x-microsoft-skype-chain-id:
-      - b75eabda-07bd-4738-919b-48da842eef79
+      - 37594920-7a28-4885-99c9-76ba941215b5
     status:
       code: 200
       message: OK
@@ -260,7 +260,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
       x-ms-date:
-      - Fri, 10 Sep 2021 21:28:14 GMT
+      - Fri, 10 Sep 2021 23:08:38 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -273,11 +273,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Sep 2021 21:28:14 GMT
+      - Fri, 10 Sep 2021 23:08:38 GMT
       x-cache:
       - CONFIG_NOCACHE
       x-microsoft-skype-chain-id:
-      - 997f35fd-1c6f-4189-9a67-bcf2509c904a
+      - 3d617dec-d0da-4fdc-ac95-374611d6f8a5
     status:
       code: 200
       message: OK
@@ -295,7 +295,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
       x-ms-date:
-      - Fri, 10 Sep 2021 21:28:15 GMT
+      - Fri, 10 Sep 2021 23:08:38 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -307,11 +307,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 10 Sep 2021 21:28:15 GMT
+      - Fri, 10 Sep 2021 23:08:38 GMT
       x-cache:
       - CONFIG_NOCACHE
       x-microsoft-skype-chain-id:
-      - 0855d805-f5eb-4c46-80f1-5a8e3de26cb2
+      - 8769715e-f2ba-464b-9e18-6488fc39358e
     status:
       code: 200
       message: OK
@@ -329,7 +329,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
       x-ms-date:
-      - Fri, 10 Sep 2021 21:28:15 GMT
+      - Fri, 10 Sep 2021 23:08:39 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -341,11 +341,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 10 Sep 2021 21:28:15 GMT
+      - Fri, 10 Sep 2021 23:08:38 GMT
       x-cache:
       - CONFIG_NOCACHE
       x-microsoft-skype-chain-id:
-      - 8635e30d-32a8-444b-b862-5099cc8b1c37
+      - b0b0e090-f29c-42a6-bc07-674faa62407c
     status:
       code: 202
       message: Accepted
@@ -363,7 +363,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
       x-ms-date:
-      - Fri, 10 Sep 2021 21:28:15 GMT
+      - Fri, 10 Sep 2021 23:08:39 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -375,11 +375,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 10 Sep 2021 21:28:15 GMT
+      - Fri, 10 Sep 2021 23:08:38 GMT
       x-cache:
       - CONFIG_NOCACHE
       x-microsoft-skype-chain-id:
-      - 4b63cdc6-c1cd-4a6c-8799-260439eb238b
+      - 9245f024-7dc6-4a85-9507-26b0d7d8caef
     status:
       code: 202
       message: Accepted

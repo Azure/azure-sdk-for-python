@@ -31,7 +31,7 @@ class JoinCallRequestConverter(object):
             raise ValueError("join_call_options can not be None")
 
         return JoinCallRequest(
-            source=CommunicationIdentifierConverter.convert(source),
+            source=source,
             callback_uri=join_call_options.callback_uri,
             requested_media_types=join_call_options.requested_media_types,
             requested_call_events=join_call_options.requested_call_events,

@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
       x-ms-date:
-      - Fri, 10 Sep 2021 22:08:24 GMT
+      - Fri, 10 Sep 2021 23:04:17 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -22,9 +22,9 @@ interactions:
     headers:
       content-length: '93'
       content-type: application/json; charset=utf-8
-      date: Fri, 10 Sep 2021 22:08:25 GMT
+      date: Fri, 10 Sep 2021 23:04:18 GMT
       x-cache: CONFIG_NOCACHE
-      x-microsoft-skype-chain-id: 70071aa0-88df-463a-adec-1250891c88c3
+      x-microsoft-skype-chain-id: b26a4f68-10d0-477c-805c-52b08af96220
     status:
       code: 400
       message: Bad Request

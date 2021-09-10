@@ -35,6 +35,7 @@ from typing import (
     cast,
     Tuple,
 )
+from azure.core.exceptions import HttpResponseError
 
 from helper import URIIdentityReplacer, CallingServerURIReplacer
 from _shared.utils import get_http_logging_policy
@@ -133,5 +134,5 @@ class CallConnectionLiveTest(CommunicationTestCase):
         invalid_server_call_id = "aHR0cHM6Ly9jb252LXVzd2UtMDkuY29udi5za3lwZS5jb20vY29udi9EZVF2WEJGVVlFV1NNZkFXYno2azN3P2k9MTEmZT02Mzc1NzIyMjk0Mjc0NTI4Nzk="
         server_call = self.calling_server_client.initialize_server_call(invalid_server_call_id)
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(HttpResponseError):
             server_call.start_recording(self.variables_map["CALLBACK_URI"])

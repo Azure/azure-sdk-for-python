@@ -123,6 +123,7 @@ class JoinCallOptions(object):
         self.__callback_uri = callback_uri
         self.__requested_media_types = requested_media_types
         self.__requested_call_events = requested_call_events
+        self._subject = None
 
     @property
     def callback_uri(self):

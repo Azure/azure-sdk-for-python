@@ -81,8 +81,8 @@ class CallConnectionLiveTest(CommunicationTestCase):
 
         from_user = "8:acs:" + self.variables_map["AZURE_TENANT_ID"] + "_" + str(uuid4())
         to_user = "8:acs:" + self.variables_map["AZURE_TENANT_ID"] + "_" + str(uuid4())
-        from_participant = CommunicationUserIdentifier(from_user)
-        to_participant = CommunicationUserIdentifier(to_user)
+        from_participant = CommunicationUserIdentifier(from_user, raw_id=from_user)
+        to_participant = CommunicationUserIdentifier(to_user, raw_id=from_user)
 
         call_options = JoinCallOptions(
             callback_uri=self.variables_map["CALLBACK_URI"],
