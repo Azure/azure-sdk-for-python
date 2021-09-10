@@ -10,54 +10,57 @@ from ._generated.operations import CallConnectionsOperations
 from ._generated.models import CancelAllMediaOperationsRequest, PlayAudioRequest, \
     AddParticipantRequest, PhoneNumberIdentifierModel, CommunicationIdentifierModel, \
     CreateCallRequest
-from ._models import PlayAudioResult, CancelAllMediaOperationsResult, AddParticipantResult, \
+from ._models import PlayAudioOptions, PlayAudioResult, CancelAllMediaOperationsResult, AddParticipantResult, \
     CreateCallResult, MediaType, EventSubscriptionType
 from ._communication_identifier_serializer import (deserialize_identifier,
                                                    serialize_identifier)
 from ._shared.models import CommunicationIdentifier
+
+
 class CallConnection(object):
     def __init__(
-            self,
-            call_connection_id, # type: str
-            call_connection_client, # type: CallConnectionsOperations
-            **kwargs  # type: Any
-        ): # type: (...) -> None
+        self,
+        call_connection_id,  # type: str
+        call_connection_client,  # type: CallConnectionsOperations
+        **kwargs  # type: Any
+    ):  # type: (...) -> None
 
         self.call_connection_id = call_connection_id
         self.call_connection_client = call_connection_client
 
     @distributed_trace()
     def create_call(self,
-            source: CommunicationIdentifierModel, 
-            targets: List[CommunicationIdentifierModel],
-            alternate_caller_id: PhoneNumberIdentifierModel,
-            subject: str, 
-            callback_uri: str, 
-            requested_media_types: List[MediaType],
-            requested_call_events: List[EventSubscriptionType],
-            **kwargs: Any
-    ):
+                    source: CommunicationIdentifierModel,
+                    targets: List[CommunicationIdentifierModel],
+                    alternate_caller_id: PhoneNumberIdentifierModel,
+                    subject: str,
+                    callback_uri: str,
+                    requested_media_types: List[MediaType],
+                    requested_call_events: List[EventSubscriptionType],
+                    **kwargs: Any
+                    ):
         # type: (...) -> CreateCallResult
 
         request = CreateCallRequest(
-            alternate_caller_id = alternate_caller_id,
-            targets = targets,
-            source = source,
-            subject = subject,
-            callback_uri = callback_uri,
-            requested_media_types = requested_media_types,
-            requested_call_events = requested_call_events,
+            alternate_caller_id=alternate_caller_id,
+            targets=targets,
+            source=source,
+            subject=subject,
+            callback_uri=callback_uri,
+            requested_media_types=requested_media_types,
+            requested_call_events=requested_call_events,
             **kwargs)
 
-        create_call_result = self.call_connection_client.create_call(call_request=request)
-        
+        create_call_result = self.call_connection_client.create_call(
+            call_request=request)
+
         return CreateCallResult._from_generated(create_call_result)
 
     @distributed_trace()
     def hang_up(
-            self,
-            **kwargs # type: Any
-        ): # type: (...) -> None
+        self,
+        **kwargs  # type: Any
+    ):  # type: (...) -> None
 
         return self.call_connection_client.hangup_call(
             call_connection_id=self.call_connection_id,
@@ -66,10 +69,10 @@ class CallConnection(object):
 
     @distributed_trace()
     def cancel_all_media_operations(
-            self,
-            operation_context = None, # type: Optional[str]
-            **kwargs # type: Any
-        ): # type: (...) -> CancelAllMediaOperationsResult
+        self,
+        operation_context=None,  # type: Optional[str]
+        **kwargs  # type: Any
+    ):  # type: (...) -> CancelAllMediaOperationsResult
 
         if operation_context is not None:
             kwargs['operation_context'] = operation_context
@@ -85,14 +88,11 @@ class CallConnection(object):
 
     @distributed_trace()
     def play_audio(
-            self,
-            audio_file_uri, # type: str
-            loop, # type: bool
-            audio_file_id, # type: str
-            callback_uri, # type: str
-            operation_context = None, # type: Optional[str]
-            **kwargs, # type: Any
-        ): # type: (...) -> PlayAudioResult
+        self,
+        audio_file_uri,  # type: str
+        play_audio_options,  # type: PlayAudioOptions
+        **kwargs,  # type: Any
+    ):  # type: (...) -> PlayAudioResult
 
         try:
             if not audio_file_uri.lower().startswith('http'):
@@ -100,21 +100,22 @@ class CallConnection(object):
         except AttributeError:
             raise ValueError("URL must be a string.")
 
-        if not audio_file_id:
+        if not play_audio_options.audio_file_id:
             raise ValueError("audio_file_id can not be None")
 
         try:
-            if not callback_uri.lower().startswith('http'):
-                callback_uri = "https://" + callback_uri
+            callback_uri = play_audio_options.callback_uri
+            if not play_audio_options.callback_uri.lower().startswith('http'):
+                callback_uri = "https://" + play_audio_options.callback_uri
         except AttributeError:
             raise ValueError("URL must be a string.")
 
         play_audio_request = PlayAudioRequest(
             audio_file_uri=audio_file_uri,
-            loop = loop,
-            audio_file_id=audio_file_id,
+            loop=play_audio_options.loop,
+            audio_file_id=play_audio_options.audio_file_id,
             callback_uri=callback_uri,
-            operation_context=operation_context,
+            operation_context=play_audio_options.operation_context,
         )
 
         play_audio_result = self.call_connection_client.play_audio(
@@ -127,33 +128,34 @@ class CallConnection(object):
 
     @distributed_trace()
     def add_participant(
-            self,
-            participant,  # type: CommunicationIdentifier
-            alternate_caller_id, # type: Optional[str]
-            operation_context, # type: Optional[str]
-            **kwargs # type: Any
-        ): # type: (...) -> AddParticipantResult
+        self,
+        participant,  # type: CommunicationIdentifier
+        alternate_caller_id,  # type: Optional[str]
+        operation_context,  # type: Optional[str]
+        **kwargs  # type: Any
+    ):  # type: (...) -> AddParticipantResult
 
         if not participant:
             raise ValueError("participant can not be None")
 
         request = AddParticipantRequest(participant=serialize_identifier(participant),
-        alternate_caller_id=None if alternate_caller_id == None else PhoneNumberIdentifierModel(value=alternate_caller_id.properties['value']),
-        operation_context=operation_context,
-        callback_uri=None,
-        **kwargs)
+                                        alternate_caller_id=None if alternate_caller_id == None else PhoneNumberIdentifierModel(
+                                            value=alternate_caller_id.properties['value']),
+                                        operation_context=operation_context,
+                                        callback_uri=None,
+                                        **kwargs)
 
-        add_participant_result = self.call_connection_client.add_participant(call_connection_id=self.call_connection_id, 
-        add_participant_request=request)
+        add_participant_result = self.call_connection_client.add_participant(call_connection_id=self.call_connection_id,
+                                                                             add_participant_request=request)
 
         return AddParticipantResult._from_generated(add_participant_result)
 
     @distributed_trace()
     def remove_participant(
-            self,
-            participant_id,  # type: str
-            **kwargs # type: Any
-        ): # type: (...) -> None
+        self,
+        participant_id,  # type: str
+        **kwargs  # type: Any
+    ):  # type: (...) -> None
 
         return self.call_connection_client.remove_participant(
             call_connection_id=self.call_connection_id,

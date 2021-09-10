@@ -19,6 +19,7 @@ from ._communication_identifier_serializer import (deserialize_identifier,
 from ._shared.models import CommunicationIdentifier
 from azure.core.pipeline.transport import AsyncHttpResponse
 
+
 class ServerCall(object):
 
     def __init__(
@@ -34,13 +35,13 @@ class ServerCall(object):
     @distributed_trace()
     def play_audio(
         self,
-        audio_file_uri, # type: str
-        loop, # type: bool
-        audio_file_id, # type: str
-        callback_uri, # type: str
-        operation_context = None, # type: Optional[str]
-        **kwargs, # type: Any
-    ): # type: (...) -> PlayAudioResult
+        audio_file_uri,  # type: str
+        loop,  # type: bool
+        audio_file_id,  # type: str
+        callback_uri,  # type: str
+        operation_context=None,  # type: Optional[str]
+        **kwargs,  # type: Any
+    ):  # type: (...) -> PlayAudioResult
 
         try:
             if not audio_file_uri.lower().startswith('http'):
@@ -62,7 +63,7 @@ class ServerCall(object):
 
         request = PlayAudioRequest(
             audio_file_uri=audio_file_uri,
-            loop = False,
+            loop=False,
             operation_context=operation_context,
             audio_file_id=audio_file_id,
             callback_uri=callback_uri
@@ -79,10 +80,10 @@ class ServerCall(object):
     @distributed_trace()
     def start_recording(
             self,
-            server_call_id, # type: str
-            recording_state_callback_uri, # type: str
-            **kwargs, # type: Any
-    ): # type: (...) -> StartCallRecordingResult
+            server_call_id,  # type: str
+            recording_state_callback_uri,  # type: str
+            **kwargs,  # type: Any
+    ):  # type: (...) -> StartCallRecordingResult
 
         if not server_call_id:
             raise ValueError("server_call_id cannot be None")
@@ -99,14 +100,13 @@ class ServerCall(object):
 
         return StartCallRecordingResult._from_generated(start_recording_result)
 
-
     @distributed_trace()
     def pause_recording(
             self,
-            server_call_id, # type: str
-            recording_id, # type: str
-            **kwargs, # type: Any
-    ): # type: (...) -> AsyncHttpResponse
+            server_call_id,  # type: str
+            recording_id,  # type: str
+            **kwargs,  # type: Any
+    ):  # type: (...) -> AsyncHttpResponse
 
         if not server_call_id:
             raise ValueError("server_call_id cannot be None")
@@ -124,10 +124,10 @@ class ServerCall(object):
     @distributed_trace()
     def resume_recording(
             self,
-            server_call_id, # type: str
-            recording_id, # type: str
-            **kwargs, # type: Any
-    ): # type: (...) -> AsyncHttpResponse
+            server_call_id,  # type: str
+            recording_id,  # type: str
+            **kwargs,  # type: Any
+    ):  # type: (...) -> AsyncHttpResponse
 
         if not server_call_id:
             raise ValueError("server_call_id cannot be None")
@@ -142,14 +142,13 @@ class ServerCall(object):
 
         return resume_recording_result
 
-
     @distributed_trace()
     def stop_recording(
             self,
-            server_call_id, # type: str
-            recording_id, # type: str
-            **kwargs, # type: Any
-    ): # type: (...) -> AsyncHttpResponse
+            server_call_id,  # type: str
+            recording_id,  # type: str
+            **kwargs,  # type: Any
+    ):  # type: (...) -> AsyncHttpResponse
 
         if not server_call_id:
             raise ValueError("server_call_id cannot be None")
@@ -164,14 +163,13 @@ class ServerCall(object):
 
         return stop_recording_result
 
-
     @distributed_trace()
     def get_recording_properities(
             self,
-            server_call_id, # type: str
-            recording_id, # type: str
-            **kwargs, # type: Any
-    ): # type: (...) -> CallRecordingProperties
+            server_call_id,  # type: str
+            recording_id,  # type: str
+            **kwargs,  # type: Any
+    ):  # type: (...) -> CallRecordingProperties
 
         if not server_call_id:
             raise ValueError("server_call_id cannot be None")
@@ -186,49 +184,49 @@ class ServerCall(object):
 
         return CallRecordingProperties._from_generated(recording_status_result)
 
-
     @distributed_trace()
     def join_call(
             self,
-            source: CommunicationIdentifierModel, 
-            subject, # type: str 
-            callback_uri, # type: str 
+            source: CommunicationIdentifierModel,
+            subject,  # type: str
+            callback_uri,  # type: str
             requested_media_types: List[MediaType],
             requested_call_events: List[EventSubscriptionType],
-            **kwargs, # type: Any
-    ): # type: (...) -> JoinCallResult
+            **kwargs,  # type: Any
+    ):  # type: (...) -> JoinCallResult
 
         request = JoinCallRequest(
-            source = source,
-            subject = subject,
-            callback_uri = callback_uri,
-            requested_media_types = requested_media_types,
-            requested_call_events = requested_call_events,
+            source=source,
+            subject=subject,
+            callback_uri=callback_uri,
+            requested_media_types=requested_media_types,
+            requested_call_events=requested_call_events,
             **kwargs
         )
 
         join_call_result = self.server_call_client.join_call(server_call_id=self.server_call_id,
-        call_request=request)
+                                                             call_request=request)
 
         return JoinCallResult._from_generated(join_call_result)
 
     @distributed_trace()
     def add_participant(
-            self,
-            participant, # type: CommunicationIdentifier
-            alternate_caller_id, # type: Optional[str]
-            operation_context, # type: Optional[str]
-            **kwargs # type: Any
-        ): # type: (...) -> AddParticipantResult
+        self,
+        participant,  # type: CommunicationIdentifier
+        alternate_caller_id,  # type: Optional[str]
+        operation_context,  # type: Optional[str]
+        **kwargs  # type: Any
+    ):  # type: (...) -> AddParticipantResult
 
         if not participant:
             raise ValueError("participant can not be None")
 
         request = AddParticipantRequest(participant=serialize_identifier(participant),
-        alternate_caller_id=None if alternate_caller_id == None else PhoneNumberIdentifierModel(value=alternate_caller_id.properties['value']),
-        operation_context=operation_context,
-        callback_uri=None,
-        **kwargs)
+                                        alternate_caller_id=None if alternate_caller_id == None else PhoneNumberIdentifierModel(
+                                            value=alternate_caller_id.properties['value']),
+                                        operation_context=operation_context,
+                                        callback_uri=None,
+                                        **kwargs)
 
         add_participant_result = self.server_call_client.add_participant(
             server_call_id=self.server_call_id,
@@ -240,10 +238,10 @@ class ServerCall(object):
 
     @distributed_trace()
     def remove_participant(
-            self,
-            participant_id, # type: str
-            **kwargs # type: Any
-        ): # type: (...) -> None
+        self,
+        participant_id,  # type: str
+        **kwargs  # type: Any
+    ):  # type: (...) -> None
 
         return self.server_call_client.remove_participant(
             server_call_id=self.server_call_id,

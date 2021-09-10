@@ -20,7 +20,8 @@ if TYPE_CHECKING:
     from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 
     T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+    ClsType = Optional[Callable[[
+        PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 
 class ContentDownloader(object):
@@ -87,13 +88,16 @@ class ContentDownloader(object):
         query_parameters = {}  # type: Dict[str, Any]
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['UriToSignWith'] = self._serialize.header("uri_to_sign_with", uri_to_sign_with, 'str')
+        header_parameters['UriToSignWith'] = self._serialize.header(
+            "uri_to_sign_with", uri_to_sign_with, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=True, **kwargs)
+        pipeline_response = self._client._pipeline.run(
+            request, stream=True, **kwargs)
         response = pipeline_response.http_response
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(status_code=response.status_code,
+                      response=response, error_map=error_map)
             raise HttpResponseError(response=response)
         deserialized = response.stream_download(self._client._pipeline)
 
@@ -101,7 +105,6 @@ class ContentDownloader(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-
 
     def get_url_to_sign_request_with(self, content_url: str):
         path = urlparse(content_url).path

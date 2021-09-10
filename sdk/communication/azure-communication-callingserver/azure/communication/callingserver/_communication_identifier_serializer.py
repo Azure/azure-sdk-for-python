@@ -30,7 +30,8 @@ def serialize_identifier(identifier):
             request_model[identifier.kind] = dict(identifier.properties)
         return request_model
     except AttributeError:
-        raise TypeError("Unsupported identifier type " + identifier.__class__.__name__)
+        raise TypeError("Unsupported identifier type " +
+                        identifier.__class__.__name__)
 
 
 def deserialize_identifier(identifier_model):
