@@ -267,10 +267,10 @@ def main():
     print_check('git push -f origin HEAD')
 
     # upload to storage account(it is created in advance)
-    blob = BlobClient.from_connection_string(conn_str=os.getenv('CONN_STR'), container_name=os.getenv('FILE'),
-                                             blob_name=_FILE_OUT)
-    with open(_FILE_OUT, 'rb') as data:
-        blob.upload_blob(data, overwrite=True)
+#     blob = BlobClient.from_connection_string(conn_str=os.getenv('CONN_STR'), container_name=os.getenv('FILE'),
+#                                              blob_name=_FILE_OUT)
+#     with open(_FILE_OUT, 'rb') as data:
+#         blob.upload_blob(data, overwrite=True)
         
 
 if __name__ == '__main__':
