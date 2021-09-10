@@ -1,5 +1,15 @@
 # Release History
 
+## 4.1.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 4.1.0b1 (2021-09-09)
 
 ### Features Added
