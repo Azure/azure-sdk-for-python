@@ -15,7 +15,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
       x-ms-date:
-      - Fri, 10 Sep 2021 23:08:39 GMT
+      - Fri, 10 Sep 2021 23:22:49 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Sep 2021 23:08:38 GMT
+      - Fri, 10 Sep 2021 23:22:50 GMT
       x-cache:
       - CONFIG_NOCACHE
     status:
