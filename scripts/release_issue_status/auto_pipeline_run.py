@@ -6,13 +6,6 @@ from azure.devops.v6_0.pipelines.pipelines_client import PipelinesClient
 from azure.devops.v6_0.pipelines import models
 import requests
 
-_headers = {
-    'x-vss-reauthenticationaction': 'Suppress',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36 Edg/92.0.902.73',
-    'accept': 'application/json;api-version=5.1-preview.1;excludeUrls=true;enumsAsNumbers=true;msDateFormat=true;noArrayWrap=true',
-    'Content-Type': 'application/json',
-    'Cookie': ''
-}
 
 def run_pipeline(issue_link, sdk_issue_object, pipeline_url):
     paramaters = {
