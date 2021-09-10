@@ -10,7 +10,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._generated.operations import CallConnectionsOperations
 from ._generated.models import CancelAllMediaOperationsRequest, PlayAudioRequest, PhoneNumberIdentifierModel
-from ._converters import PlayAudioRequestConverter
+from ._converters import PlayAudioRequestConverter, AddParticipantRequestConverter
 from ._models import PlayAudioOptions, PlayAudioResult, CancelAllMediaOperationsResult, AddParticipantResult
 from ._communication_identifier_serializer import (deserialize_identifier,
                                                    serialize_identifier)
@@ -60,53 +60,17 @@ class CallConnection(object):
     def play_audio(
             self,
             audio_file_uri, # type: str
-            loop, # type: bool
-            audio_file_id, # type: str
-            callback_uri, # type: str
-            operation_context = None, # type: Optional[str]
-            **kwargs, # type: str: Any
-        ): # type: (...) -> PlayAudioResult
-
-        try:
-            if not audio_file_uri.lower().startswith('http'):
-                audio_file_uri = "https://" + audio_file_uri
-        except AttributeError:
-            raise ValueError("URL must be a string.")
-
-        if not audio_file_id:
-            raise ValueError("audio_file_id can not be None")
-
-        try:
-            if not callback_uri.lower().startswith('http'):
-                callback_uri = "https://" + callback_uri
-        except AttributeError:
-            raise ValueError("URL must be a string.")
-
-        play_audio_options = PlayAudioOptions(
-            audio_file_uri=audio_file_uri,
-            loop = loop,
-            audio_file_id=audio_file_id,
-            callback_uri=callback_uri,
-            operation_context=operation_context,
-        )
-
-        return self.play_audio(
-            playaudio_options=play_audio_options,
-            **kwargs
-        )
-
-    @distributed_trace()
-    @overload
-    def play_audio(
-            self,
             play_audio_options, # type: PlayAudioOptions
             **kwargs, # type: str: Any
         ): # type: (...) -> PlayAudioResult
 
+        if not audio_file_uri:
+            raise ValueError("audio_file_uri can not be None")
+
         if not play_audio_options:
             raise ValueError("options can not be None")
 
-        play_audio_request = PlayAudioRequestConverter.convert(play_audio_options)
+        play_audio_request = PlayAudioRequestConverter.convert(audio_file_uri, play_audio_options)
 
         play_audio_result = self.call_connection_client.play_audio(
             call_connection_id=self.call_connection_id,
@@ -128,12 +92,17 @@ class CallConnection(object):
         if not participant:
             raise ValueError("participant can not be None")
 
+        alternate_caller_id = None if alternate_caller_id == None else PhoneNumberIdentifierModel(value=alternate_caller_id)
+
+        add_participant_request = AddParticipantRequestConverter.convert(
+            serialize_identifier(participant),
+            alternate_caller_id,
+            operation_context
+            )
+
         add_participant_result = self.call_connection_client.add_participant(
             call_connection_id=self.call_connection_id,
-            participant=serialize_identifier(participant),
-            alternate_caller_id=None if alternate_caller_id == None else PhoneNumberIdentifierModel(value=alternate_caller_id.properties['value']),
-            operation_context=operation_context,
-            callback_uri=None,
+            add_participant_request=add_participant_request,
             **kwargs
         )
 

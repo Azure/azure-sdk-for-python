@@ -22,51 +22,51 @@ except ImportError:  # python < 3.3
 
 
 def test_data_source_create_connection():
-    option = CreateCallOptions(
+    options = CreateCallOptions(
             callback_uri=_test_constants.CALLBACK_URI,
             requested_media_types=[MediaType.AUDIO],
             requested_call_events=[EventSubscriptionType.PARTICIPANTS_UPDATED])
-    option.subject=_test_constants.CALL_SUBJECT
-    option.alternate_Caller_Id = PhoneNumberIdentifier(_test_constants.Phone_Number),
+    options.subject=_test_constants.CALL_SUBJECT
+    options.alternate_Caller_Id = PhoneNumberIdentifier(_test_constants.Phone_Number)
 
     parameters = []
     parameters.append((
         _test_constants.ClientType_ConnectionString,
         CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
         [CommunicationUserIdentifier(_test_constants.RESOURCE_TARGET), PhoneNumberIdentifier(_test_constants.Phone_Number)],
-        option,
+        options,
         ))
 
     parameters.append((
         _test_constants.ClientType_ManagedIdentity,
         CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
         [CommunicationUserIdentifier(_test_constants.RESOURCE_TARGET), PhoneNumberIdentifier(_test_constants.Phone_Number)],
-        option,
+        options,
         True,
         ))
 
     return parameters
 
 def test_data_source_join_call():
-    option = JoinCallOptions(
+    options = JoinCallOptions(
             callback_uri=_test_constants.CALLBACK_URI,
             requested_media_types=[MediaType.AUDIO],
             requested_call_events=[EventSubscriptionType.PARTICIPANTS_UPDATED])
-    option.subject=_test_constants.CALL_SUBJECT
+    options.subject=_test_constants.CALL_SUBJECT
 
     parameters = []
     parameters.append((
         _test_constants.ClientType_ConnectionString,
         _test_constants.SEVERCALL_ID,
         CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
-        option,
+        options,
         ))
 
     parameters.append((
         _test_constants.ClientType_ManagedIdentity,
         _test_constants.SEVERCALL_ID,
         CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
-        option,
+        options,
         True,
         ))
 
@@ -106,7 +106,7 @@ class TestCallingServerClient(unittest.TestCase):
         use_managed_identity = False
         ):
 
-        calling_server_client = _test_utils.create_mock_calling_server_client(status_code=400, payload=_test_constants.ErrorPayload, is_async=False, use_managed_identity = use_managed_identity)
+        calling_server_client = _test_utils.create_mock_calling_server_client(status_code=404, payload=_test_constants.ErrorPayload, is_async=False, use_managed_identity = use_managed_identity)
         raised = False
         try:
             calling_server_client.create_call_connection(source_user, target_users, options)
@@ -151,7 +151,7 @@ class TestCallingServerClient(unittest.TestCase):
         ):
 
         calling_server_client = _test_utils.create_mock_calling_server_client(
-            status_code=400,
+            status_code=404,
             payload=_test_constants.ErrorPayload,
             is_async=False,
             use_managed_identity = use_managed_identity

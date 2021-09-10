@@ -161,7 +161,7 @@ class CallingServerClient(object):
             callback_uri=options.callback_uri,
             requested_media_types=options.requested_media_types,
             requested_call_events=options.requested_call_events,
-            alternate_caller_id=None if options.alternate_Caller_Id == None else PhoneNumberIdentifierModel(value=options.alternate_Caller_Id),
+            alternate_caller_id=None if options.alternate_Caller_Id == None else PhoneNumberIdentifierModel(value=options.alternate_Caller_Id.properties['value']),
             subject=options.subject,
             **kwargs
         )

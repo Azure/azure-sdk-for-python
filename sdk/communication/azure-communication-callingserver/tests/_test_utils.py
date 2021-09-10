@@ -28,9 +28,9 @@ class FakeTokenCredential_Async(object):
     async def get_token(self, *args):
         return self.token
 
-def create_mock_call_connection(status_code, payload, is_async=False):
-    calling_server_client = create_mock_calling_server_client(status_code, payload, is_async)
-    return calling_server_client.get_call_connection(_test_constants.CALL_ID)
+def create_mock_call_connection(call_connection_id, status_code, payload, is_async=False, use_managed_identity=False):
+    calling_server_client = create_mock_calling_server_client(status_code, payload, is_async, use_managed_identity)
+    return calling_server_client.get_call_connection(call_connection_id)
 
 def create_mock_calling_server_client(status_code, payload, is_async=False, use_managed_identity=False):
     async def async_mock_send(*_, **__):
