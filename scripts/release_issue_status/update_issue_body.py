@@ -86,7 +86,7 @@ def get_pkname_and_readme_link(rest_repo, link):
     return pk_name, readme_link, out_folder
 
 
-def find_readme_link(sdk_repo, issue_number):
+def find_readme_and_output_folder(sdk_repo, rest_repo, issue_number):
     # Get Issue Number
     issue_info = sdk_repo.get_issue(number=issue_number)
     issue_body = issue_info.body
@@ -94,5 +94,12 @@ def find_readme_link(sdk_repo, issue_number):
     for row in issue_body_list:
         if 'resource-manager' in row:
             readme_link = '{}/readme.md'.format(row.strip("\r"))
-            return readme_link
+            # Get output folder from readme.python.md
+            readme_python_link = readme_link.split('/resource-manager')[0] + '/resource-manager/readme.python.md'
+            readme_python_link_part = '/specification' + readme_python_link.split('/specification')[-1]
+            readme_contents = str(rest_repo.get_contents(readme_python_link_part).decoded_content)
+            output_folder = re.findall(r'\$\(python-sdks-folder\)/(.*?)/azure-', readme_contents)[0]
+
+            return readme_link, output_folder
     raise Exception('Not find readme link,please check')
+

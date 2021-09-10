@@ -9,7 +9,7 @@ from github import Github
 from azure.storage.blob import BlobClient
 
 import reply_generator as rg
-from update_issue_body import update_issue_body, find_readme_link
+from update_issue_body import update_issue_body, find_readme_and_output_folder
 from auto_close import auto_close_issue
 from get_python_pipeline import get_python_pipelines, get_pipeline_url
 
@@ -128,7 +128,6 @@ def _latest_comment_time(comments, delay_from_create_date):
 
 def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python_piplines):
     print("==========new issue number: {}".format(item.issue_object.number))
-    output_folder = ''
     if 'auto-link' not in item.labels:
         item.labels.append('auto-link')
         item.issue_object.set_labels(*item.labels)
@@ -146,7 +145,7 @@ def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python
             raise
     else:
         try:
-            readme_link = find_readme_link(request_repo, item.issue_object.number)
+            readme_link, output_folder = find_readme_and_output_folder(request_repo, rest_repo, item.issue_object.number)
         except Exception as e:
             print('Issue: {}  updates body failed'.format(item.issue_object.number))
             item.bot_advice = 'failed to find Readme link, Please check !!'
