@@ -42,7 +42,7 @@ def send_event_data_batch(producer, serializer):
     # Use the serialize method to convert dict object to bytes with the given avro schema.
     # The serialize method would automatically register the schema into the Schema Registry Service and
     # schema would be cached locally for future usage.
-    payload_bytes = serializer.serialize(data=dict_data, schema=SCHEMA_STRING)
+    payload_bytes = serializer.serialize(value=dict_data, schema=SCHEMA_STRING)
     print('The bytes of serialized dict data is {}.'.format(payload_bytes))
 
     event_data = EventData(body=payload_bytes)  # pass the bytes data to the body of an EventData
@@ -60,11 +60,11 @@ eventhub_producer = EventHubProducerClient.from_connection_string(
 
 # create a SchemaRegistryAvroSerializer instance
 avro_serializer = SchemaRegistryAvroSerializer(
-    schema_registry=SchemaRegistryClient(
+    client=SchemaRegistryClient(
         endpoint=SCHEMA_REGISTRY_ENDPOINT,
         credential=DefaultAzureCredential()
     ),
-    schema_group=SCHEMA_GROUP
+    group_name=SCHEMA_GROUP
 )
 
 

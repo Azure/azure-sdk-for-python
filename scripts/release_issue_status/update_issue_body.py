@@ -20,7 +20,7 @@ def update_issue_body(sdk_repo, rest_repo, issue_number):
         link = link.split(']')[0]
         link = link.replace('[', "").replace(']', "").replace('(', "").replace(')', "")
 
-    package_name, readme_link = get_pkname_and_readme_link(rest_repo, link)
+    package_name, readme_link, output_folder = get_pkname_and_readme_link(rest_repo, link)
     
     # Check readme tag format
     if 'package' not in readme_tag:
@@ -36,7 +36,7 @@ def update_issue_body(sdk_repo, rest_repo, issue_number):
         issue_body_up += raw + '\n'
 
     issue_info.edit(body=issue_body_up)
-    return package_name, readme_link
+    return package_name, readme_link, output_folder
         
 
 def get_pkname_and_readme_link(rest_repo, link):
@@ -46,6 +46,7 @@ def get_pkname_and_readme_link(rest_repo, link):
         commit_sha = link.split('commit/')[-1]
         commit = rest_repo.get_commit(commit_sha)
         link = commit.files[0].blob_url
+        link = re.sub('blob/(.*?)/specification', 'blob/main/specification', link)
 
     # if link is a pr, it can get both pakeage name and readme link.
     if 'pull' in link:
@@ -79,18 +80,26 @@ def get_pkname_and_readme_link(rest_repo, link):
     readme_link_part = '/specification' + readme_link.split('/specification')[-1]
     readme_contents = str(rest_repo.get_contents(readme_link_part).decoded_content)
     pk_name = re.findall(r'package-name: (.*?)\\n', readme_contents)[0]
+    out_folder = re.findall(r'\$\(python-sdks-folder\)/(.*?)/azure-', readme_contents)[0]
     readme_link = readme_link.replace('python.', '')
 
-    return pk_name, readme_link
+    return pk_name, readme_link, out_folder
 
 
-def find_readme_link(sdk_repo, issue_number):
+def find_readme_and_output_folder(sdk_repo, rest_repo, issue_number):
     # Get Issue Number
     issue_info = sdk_repo.get_issue(number=issue_number)
     issue_body = issue_info.body
     issue_body_list = issue_body.split("\n")
     for row in issue_body_list:
         if 'resource-manager' in row:
-            readme_link = row + '/readme.md'
-            return readme_link
+            readme_link = '{}/readme.md'.format(row.strip("\r"))
+            # Get output folder from readme.python.md
+            readme_python_link = readme_link.split('/resource-manager')[0] + '/resource-manager/readme.python.md'
+            readme_python_link_part = '/specification' + readme_python_link.split('/specification')[-1]
+            readme_contents = str(rest_repo.get_contents(readme_python_link_part).decoded_content)
+            output_folder = re.findall(r'\$\(python-sdks-folder\)/(.*?)/azure-', readme_contents)[0]
+
+            return readme_link, output_folder
     raise Exception('Not find readme link,please check')
+

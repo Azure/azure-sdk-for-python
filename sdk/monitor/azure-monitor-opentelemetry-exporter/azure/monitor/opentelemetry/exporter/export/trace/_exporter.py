@@ -108,7 +108,7 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
     envelope.tags["ai.operation.id"] = "{:032x}".format(span.context.trace_id)
     if "enduser.id" in span.attributes:
         envelope.tags["ai.user.id"] = span.attributes["enduser.id"]
-    if span.parent:
+    if span.parent and span.parent.span_id:
         envelope.tags["ai.operation.parentId"] = "{:016x}".format(
             span.parent.span_id
         )
@@ -314,8 +314,7 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
             elif "rpc.system" in span.attributes:  # Rpc
                 data.type = "rpc.system"
                 # TODO: data.data for rpc
-                # rpc specific logic for target
-                if "peer.service" not in span.attributes:
+                if target is None:
                     target = span.attributes["rpc.system"]
             else:
                 # TODO: Azure specific types
@@ -325,7 +324,8 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
             # TODO: data.data for messaging
             # TODO: Special logic for data.target for messaging?
         else:  # SpanKind.INTERNAL
-            data.type = "InProc"
+            if span.parent:
+                data.type = "InProc"
             data.success = True
         # Apply truncation
         if data.result_code:
