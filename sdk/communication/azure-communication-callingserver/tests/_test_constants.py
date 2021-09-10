@@ -7,6 +7,7 @@
 RESOURCE_SOURCE = "8:acs:resource_source"
 RESOURCE_TARGET = "8:acs:resource_target"
 CALL_ID = "cad9df7b-f3ac-4c53-96f7-c76e7437b3c1"
+SERVER_CALL_ID = "0d11d342-297f-4584-bb92-13fcbb3ae3bd"
 FAKE_ENDPOINT = "https://endpoint"
 FAKE_TOKEN = "Fake Token"
 CALL_SUBJECT = "testsubject"
@@ -18,13 +19,14 @@ CreateOrJoinCallPayload={
     }
 
 # Common
-Phone_Number = "+14255550123"
+PHONE_NUMBER = "+14255550123"
 OPERATION_CONTEXT = "dummyOperationContext"
 ErrorPayload={"msg": "some error"}
 ClientType_ConnectionString = "use connectionString"
 ClientType_ManagedIdentity = "use managedIdentity"
 CALLBACK_URI = "https://bot.contoso.io/callback"
 CONNECTION_STRING = "endpoint=https://REDACTED.communication.azure.com/;accesskey=eyJhbG=="
+PARTICIPANT_ID = "dummyParticipantId"
 
 # CancelAllMediaOperaions
 CancelAllMediaOperaionsResponsePayload = {
@@ -56,8 +58,5 @@ PlayAudioResponsePayload = {
 
 # AddParticipant
 AddParticipantResultPayload = {
-    "participantId": "dummyparticipantid"
+    "participantId": PARTICIPANT_ID
     }
-
-# RemoveParticipant
-ParticipantId = "dummyParticipantId"

@@ -63,7 +63,8 @@ class AddParticipantRequestConverter(object):
         self,
         participant: CommunicationIdentifierModel,
         alternate_caller_id: PhoneNumberIdentifierModel = None,
-        operation_context: str = None
+        operation_context: str = None,
+        callback_uri: str = None
         ): # type: (...) -> AddParticipantRequest
 
         if not participant:
@@ -73,5 +74,5 @@ class AddParticipantRequestConverter(object):
             alternate_caller_id = alternate_caller_id,
             participant = participant,
             operation_context=operation_context,
-            callback_uri=None
+            callback_uri=callback_uri
             )

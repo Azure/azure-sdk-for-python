@@ -19,33 +19,33 @@ except ImportError:  # python < 3.3
     from mock import Mock, patch  # type: ignore
 
 
-def test_data_source_create_connection():
+def data_source_test_create_connection():
     options = CreateCallOptions(
             callback_uri=_test_constants.CALLBACK_URI,
             requested_media_types=[MediaType.AUDIO],
             requested_call_events=[EventSubscriptionType.PARTICIPANTS_UPDATED])
     options.subject=_test_constants.CALL_SUBJECT
-    options.alternate_Caller_Id = PhoneNumberIdentifier(_test_constants.Phone_Number)
+    options.alternate_Caller_Id = PhoneNumberIdentifier(_test_constants.PHONE_NUMBER)
 
     parameters = []
     parameters.append((
         _test_constants.ClientType_ConnectionString,
         CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
-        [CommunicationUserIdentifier(_test_constants.RESOURCE_TARGET), PhoneNumberIdentifier(_test_constants.Phone_Number)],
+        [CommunicationUserIdentifier(_test_constants.RESOURCE_TARGET), PhoneNumberIdentifier(_test_constants.PHONE_NUMBER)],
         options,
         ))
 
     parameters.append((
         _test_constants.ClientType_ManagedIdentity,
         CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
-        [CommunicationUserIdentifier(_test_constants.RESOURCE_TARGET), PhoneNumberIdentifier(_test_constants.Phone_Number)],
+        [CommunicationUserIdentifier(_test_constants.RESOURCE_TARGET), PhoneNumberIdentifier(_test_constants.PHONE_NUMBER)],
         options,
         True,
         ))
 
     return parameters
 
-def test_data_source_join_call():
+def data_source_test_join_call():
     options = JoinCallOptions(
             callback_uri=_test_constants.CALLBACK_URI,
             requested_media_types=[MediaType.AUDIO],
@@ -71,7 +71,7 @@ def test_data_source_join_call():
     return parameters
 
 
-@parameterized.expand(test_data_source_create_connection())
+@parameterized.expand(data_source_test_create_connection())
 @pytest.mark.asyncio
 async def test_create_connection_succeed(
     test_name: str,
@@ -87,7 +87,7 @@ async def test_create_connection_succeed(
     assert call_connection.call_connection_id == _test_constants.CALL_ID
     assert call_connection.call_connection_client
 
-@parameterized.expand(test_data_source_create_connection())
+@parameterized.expand(data_source_test_create_connection())
 @pytest.mark.asyncio
 async def test_create_connection_failed(
     test_name: str,
@@ -105,7 +105,7 @@ async def test_create_connection_failed(
         raised = True
     assert raised == True
 
-@parameterized.expand(test_data_source_join_call())
+@parameterized.expand(data_source_test_join_call())
 @pytest.mark.asyncio
 async def test_join_call_succeed(
     test_name: str,
@@ -131,7 +131,7 @@ async def test_join_call_succeed(
     assert call_connection.call_connection_id == _test_constants.CALL_ID
     assert call_connection.call_connection_client
 
-@parameterized.expand(test_data_source_join_call())
+@parameterized.expand(data_source_test_join_call())
 @pytest.mark.asyncio
 async def test_join_call_failed(
     test_name: str,

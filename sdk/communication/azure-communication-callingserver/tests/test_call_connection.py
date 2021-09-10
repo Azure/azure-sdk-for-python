@@ -27,7 +27,7 @@ except ImportError:  # python < 3.3
     from mock import Mock, patch  # type: ignore
 
 
-def test_data_source_hang_up():
+def data_source_test_hang_up():
     parameters = []
     parameters.append((
         _test_constants.ClientType_ConnectionString,
@@ -42,7 +42,7 @@ def test_data_source_hang_up():
 
     return parameters
 
-def test_data_source_cancel_all_media_operations():
+def data_source_test_cancel_all_media_operations():
     parameters = []
     parameters.append((
         _test_constants.ClientType_ConnectionString,
@@ -59,7 +59,7 @@ def test_data_source_cancel_all_media_operations():
 
     return parameters
 
-def test_data_source_play_audio():
+def data_source_test_play_audio():
     options = PlayAudioOptions(
             loop = True,
             audio_file_id = _test_constants.AUDIO_FILE_ID,
@@ -84,14 +84,14 @@ def test_data_source_play_audio():
 
     return parameters
 
-def test_data_source_add_participant():
+def data_source_test_add_participant():
 
     parameters = []
     parameters.append((
         _test_constants.ClientType_ConnectionString,
         _test_constants.CALL_ID,
         CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
-        _test_constants.Phone_Number,
+        _test_constants.PHONE_NUMBER,
         _test_constants.OPERATION_CONTEXT,
         ))
 
@@ -99,26 +99,26 @@ def test_data_source_add_participant():
         _test_constants.ClientType_ManagedIdentity,
         _test_constants.CALL_ID,
         CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
-        _test_constants.Phone_Number,
+        _test_constants.PHONE_NUMBER,
         _test_constants.OPERATION_CONTEXT,
         True,
         ))
 
     return parameters
 
-def test_data_source_remove_participant():
+def data_source_test_remove_participant():
 
     parameters = []
     parameters.append((
         _test_constants.ClientType_ConnectionString,
         _test_constants.CALL_ID,
-        _test_constants.ParticipantId,
+        _test_constants.PARTICIPANT_ID,
         ))
 
     parameters.append((
         _test_constants.ClientType_ManagedIdentity,
         _test_constants.CALL_ID,
-        _test_constants.ParticipantId,
+        _test_constants.PARTICIPANT_ID,
         True,
         ))
 
@@ -139,11 +139,11 @@ def verify_play_audio_result(result: CancelAllMediaOperationsResult):
     assert "dummyMessage" == result.result_info.message
 
 def verify_add_participant_result(result: AddParticipantResult):
-    assert "dummyparticipantid" == result.participant_id
+    assert _test_constants.PARTICIPANT_ID == result.participant_id
 
 class TestCallConnection(unittest.TestCase):
 
-    @parameterized.expand(test_data_source_hang_up())
+    @parameterized.expand(data_source_test_hang_up())
     def test_hang_up_succeed(
         self,
         test_name: str,
@@ -163,7 +163,7 @@ class TestCallConnection(unittest.TestCase):
         assert call_connection.call_connection_id == _test_constants.CALL_ID
         assert call_connection.call_connection_client
 
-    @parameterized.expand(test_data_source_hang_up())
+    @parameterized.expand(data_source_test_hang_up())
     def test_hang_up_failed(
         self,
         test_name: str,
@@ -186,7 +186,7 @@ class TestCallConnection(unittest.TestCase):
             raised = True
         assert raised == True
 
-    @parameterized.expand(test_data_source_cancel_all_media_operations())
+    @parameterized.expand(data_source_test_cancel_all_media_operations())
     def test_cancel_all_media_operations_succeed(
         self,
         test_name: str,
@@ -206,7 +206,7 @@ class TestCallConnection(unittest.TestCase):
         result = call_connection.cancel_all_media_operations(operation_context)
         verify_cancel_all_media_operations_result(result)
 
-    @parameterized.expand(test_data_source_cancel_all_media_operations())
+    @parameterized.expand(data_source_test_cancel_all_media_operations())
     def test_cancel_all_media_operations_failed(
         self,
         test_name: str,
@@ -230,7 +230,7 @@ class TestCallConnection(unittest.TestCase):
             raised = True
         assert raised == True
 
-    @parameterized.expand(test_data_source_play_audio())
+    @parameterized.expand(data_source_test_play_audio())
     def test_play_audio_succeed(
         self,
         test_name: str,
@@ -251,7 +251,7 @@ class TestCallConnection(unittest.TestCase):
         result = call_connection.play_audio(audio_file_uri, options)
         verify_play_audio_result(result)
 
-    @parameterized.expand(test_data_source_play_audio())
+    @parameterized.expand(data_source_test_play_audio())
     def test_play_audio_failed(
         self,
         test_name: str,
@@ -276,7 +276,7 @@ class TestCallConnection(unittest.TestCase):
             raised = True
         assert raised == True
 
-    @parameterized.expand(test_data_source_add_participant())
+    @parameterized.expand(data_source_test_add_participant())
     def test_add_participant_succeed(
         self,
         test_name: str,
@@ -302,7 +302,7 @@ class TestCallConnection(unittest.TestCase):
             )
         verify_add_participant_result(result)
 
-    @parameterized.expand(test_data_source_add_participant())
+    @parameterized.expand(data_source_test_add_participant())
     def test_add_participant_failed(
         self,
         test_name: str,
@@ -332,7 +332,7 @@ class TestCallConnection(unittest.TestCase):
             raised = True
         assert raised == True
 
-    @parameterized.expand(test_data_source_remove_participant())
+    @parameterized.expand(data_source_test_remove_participant())
     def test_remove_participant_succeed(
         self,
         test_name: str,
@@ -344,7 +344,7 @@ class TestCallConnection(unittest.TestCase):
         call_connection = _test_utils.create_mock_call_connection(
             call_connection_id,
             status_code=202,
-            payload=_test_constants.AddParticipantResultPayload,
+            payload=None,
             is_async=False,
             use_managed_identity=use_managed_identity
             )
@@ -355,7 +355,7 @@ class TestCallConnection(unittest.TestCase):
         assert call_connection.call_connection_id == _test_constants.CALL_ID
         assert call_connection.call_connection_client
 
-    @parameterized.expand(test_data_source_remove_participant())
+    @parameterized.expand(data_source_test_remove_participant())
     def test_remove_participant_failed(
         self,
         test_name: str,

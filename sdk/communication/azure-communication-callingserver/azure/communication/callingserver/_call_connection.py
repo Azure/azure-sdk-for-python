@@ -95,9 +95,9 @@ class CallConnection(object):
         alternate_caller_id = None if alternate_caller_id == None else PhoneNumberIdentifierModel(value=alternate_caller_id)
 
         add_participant_request = AddParticipantRequestConverter.convert(
-            serialize_identifier(participant),
-            alternate_caller_id,
-            operation_context
+            participant = serialize_identifier(participant),
+            alternate_caller_id = alternate_caller_id,
+            operation_context = operation_context
             )
 
         add_participant_result = self.call_connection_client.add_participant(
