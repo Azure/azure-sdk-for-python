@@ -18,14 +18,10 @@ def get_python_pipelines():
 
 
 def get_pipeline_url(python_piplines, output_folder):
-
-    for key, value in python_piplines.items():
-        if key == output_folder:
-            definitionId = value
-            pipeline_url = 'https://dev.azure.com/azure-sdk/internal/_build?definitionId={}'.format(definitionId)
-            break
+    definitionId = python_piplines.get(output_folder)
+    if definitionId:
+        pipeline_url = 'https://dev.azure.com/azure-sdk/internal/_build?definitionId={}'.format(definitionId)
     else:
         print('Cannot find definitionId, Do not display pipeline_url')
         pipeline_url = ''
-
     return pipeline_url
