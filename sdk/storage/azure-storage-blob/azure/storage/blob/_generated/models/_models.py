@@ -67,7 +67,7 @@ class AppendPositionAccessConditions(msrest.serialization.Model):
 
 
 class ArrowConfiguration(msrest.serialization.Model):
-    """arrow configuration.
+    """Groups the settings used for formatting the response if the response should be Arrow formatted.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -95,7 +95,7 @@ class ArrowConfiguration(msrest.serialization.Model):
 
 
 class ArrowField(msrest.serialization.Model):
-    """field of an arrow schema.
+    """Groups settings regarding specific field of an arrow schema.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -281,7 +281,7 @@ class BlobItemInternal(msrest.serialization.Model):
         'properties': {'key': 'Properties', 'type': 'BlobPropertiesInternal'},
         'metadata': {'key': 'Metadata', 'type': 'BlobMetadata'},
         'blob_tags': {'key': 'BlobTags', 'type': 'BlobTags'},
-        'object_replication_metadata': {'key': 'OrMetadata', 'type': '{str}'},
+        'object_replication_metadata': {'key': 'ObjectReplicationMetadata', 'type': '{str}'},
         'has_versions_only': {'key': 'HasVersionsOnly', 'type': 'bool'},
     }
     _xml_map = {
@@ -443,7 +443,7 @@ class BlobPropertiesInternal(msrest.serialization.Model):
     :type last_accessed_on: ~datetime.datetime
     :param immutability_policy_expires_on:
     :type immutability_policy_expires_on: ~datetime.datetime
-    :param immutability_policy_mode:  Possible values include: "Unlocked", "Locked", "Mutable".
+    :param immutability_policy_mode:  Possible values include: "Mutable", "Unlocked", "Locked".
     :type immutability_policy_mode: str or ~azure.storage.blob.models.BlobImmutabilityPolicyMode
     :param legal_hold:
     :type legal_hold: bool
@@ -978,72 +978,20 @@ class CpkScopeInfo(msrest.serialization.Model):
         self.encryption_scope = kwargs.get('encryption_scope', None)
 
 
-class DataLakeStorageError(msrest.serialization.Model):
-    """DataLakeStorageError.
-
-    :param data_lake_storage_error_details: The service error response object.
-    :type data_lake_storage_error_details: ~azure.storage.blob.models.DataLakeStorageErrorError
-    """
-
-    _attribute_map = {
-        'data_lake_storage_error_details': {'key': 'error', 'type': 'DataLakeStorageErrorError'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DataLakeStorageError, self).__init__(**kwargs)
-        self.data_lake_storage_error_details = kwargs.get('data_lake_storage_error_details', None)
-
-
-class DataLakeStorageErrorError(msrest.serialization.Model):
-    """The service error response object.
-
-    :param code: The service error code.
-    :type code: str
-    :param message: The service error message.
-    :type message: str
-    """
-
-    _attribute_map = {
-        'code': {'key': 'Code', 'type': 'str'},
-        'message': {'key': 'Message', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DataLakeStorageErrorError, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
-
-
 class DelimitedTextConfiguration(msrest.serialization.Model):
-    """delimited text configuration.
+    """Groups the settings used for interpreting the blob data if the blob is delimited text formatted.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param column_separator: Required. column separator.
+    :param column_separator: The string used to separate columns.
     :type column_separator: str
-    :param field_quote: Required. field quote.
+    :param field_quote: The string used to quote a specific field.
     :type field_quote: str
-    :param record_separator: Required. record separator.
+    :param record_separator: The string used to separate records.
     :type record_separator: str
-    :param escape_char: Required. escape char.
+    :param escape_char: The string used as an escape character.
     :type escape_char: str
-    :param headers_present: Required. has headers.
+    :param headers_present: Represents whether the data has headers.
     :type headers_present: bool
     """
-
-    _validation = {
-        'column_separator': {'required': True},
-        'field_quote': {'required': True},
-        'record_separator': {'required': True},
-        'escape_char': {'required': True},
-        'headers_present': {'required': True},
-    }
 
     _attribute_map = {
         'column_separator': {'key': 'ColumnSeparator', 'type': 'str', 'xml': {'name': 'ColumnSeparator'}},
@@ -1061,46 +1009,11 @@ class DelimitedTextConfiguration(msrest.serialization.Model):
         **kwargs
     ):
         super(DelimitedTextConfiguration, self).__init__(**kwargs)
-        self.column_separator = kwargs['column_separator']
-        self.field_quote = kwargs['field_quote']
-        self.record_separator = kwargs['record_separator']
-        self.escape_char = kwargs['escape_char']
-        self.headers_present = kwargs['headers_present']
-
-
-class DirectoryHttpHeaders(msrest.serialization.Model):
-    """Parameter group.
-
-    :param cache_control: Cache control for given resource.
-    :type cache_control: str
-    :param content_type: Content type for given resource.
-    :type content_type: str
-    :param content_encoding: Content encoding for given resource.
-    :type content_encoding: str
-    :param content_language: Content language for given resource.
-    :type content_language: str
-    :param content_disposition: Content disposition for given resource.
-    :type content_disposition: str
-    """
-
-    _attribute_map = {
-        'cache_control': {'key': 'cacheControl', 'type': 'str'},
-        'content_type': {'key': 'contentType', 'type': 'str'},
-        'content_encoding': {'key': 'contentEncoding', 'type': 'str'},
-        'content_language': {'key': 'contentLanguage', 'type': 'str'},
-        'content_disposition': {'key': 'contentDisposition', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DirectoryHttpHeaders, self).__init__(**kwargs)
-        self.cache_control = kwargs.get('cache_control', None)
-        self.content_type = kwargs.get('content_type', None)
-        self.content_encoding = kwargs.get('content_encoding', None)
-        self.content_language = kwargs.get('content_language', None)
-        self.content_disposition = kwargs.get('content_disposition', None)
+        self.column_separator = kwargs.get('column_separator', None)
+        self.field_quote = kwargs.get('field_quote', None)
+        self.record_separator = kwargs.get('record_separator', None)
+        self.escape_char = kwargs.get('escape_char', None)
+        self.headers_present = kwargs.get('headers_present', None)
 
 
 class FilterBlobItem(msrest.serialization.Model):
@@ -1218,15 +1131,9 @@ class GeoReplication(msrest.serialization.Model):
 class JsonTextConfiguration(msrest.serialization.Model):
     """json text configuration.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param record_separator: Required. record separator.
+    :param record_separator: The string used to separate records.
     :type record_separator: str
     """
-
-    _validation = {
-        'record_separator': {'required': True},
-    }
 
     _attribute_map = {
         'record_separator': {'key': 'RecordSeparator', 'type': 'str', 'xml': {'name': 'RecordSeparator'}},
@@ -1240,7 +1147,7 @@ class JsonTextConfiguration(msrest.serialization.Model):
         **kwargs
     ):
         super(JsonTextConfiguration, self).__init__(**kwargs)
-        self.record_separator = kwargs['record_separator']
+        self.record_separator = kwargs.get('record_separator', None)
 
 
 class KeyInfo(msrest.serialization.Model):
@@ -1636,18 +1543,26 @@ class PageRange(msrest.serialization.Model):
 class QueryFormat(msrest.serialization.Model):
     """QueryFormat.
 
-    :param type: The quick query format type. Possible values include: "delimited", "json",
-     "arrow", "parquet".
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. The quick query format type. Possible values include: "delimited",
+     "json", "arrow", "parquet".
     :type type: str or ~azure.storage.blob.models.QueryFormatType
-    :param delimited_text_configuration: delimited text configuration.
+    :param delimited_text_configuration: Groups the settings used for interpreting the blob data if
+     the blob is delimited text formatted.
     :type delimited_text_configuration: ~azure.storage.blob.models.DelimitedTextConfiguration
     :param json_text_configuration: json text configuration.
     :type json_text_configuration: ~azure.storage.blob.models.JsonTextConfiguration
-    :param arrow_configuration: arrow configuration.
+    :param arrow_configuration: Groups the settings used for formatting the response if the
+     response should be Arrow formatted.
     :type arrow_configuration: ~azure.storage.blob.models.ArrowConfiguration
     :param parquet_text_configuration: Any object.
     :type parquet_text_configuration: any
     """
+
+    _validation = {
+        'type': {'required': True},
+    }
 
     _attribute_map = {
         'type': {'key': 'Type', 'type': 'str', 'xml': {'name': 'Type'}},
@@ -1662,7 +1577,7 @@ class QueryFormat(msrest.serialization.Model):
         **kwargs
     ):
         super(QueryFormat, self).__init__(**kwargs)
-        self.type = kwargs.get('type', None)
+        self.type = kwargs['type']
         self.delimited_text_configuration = kwargs.get('delimited_text_configuration', None)
         self.json_text_configuration = kwargs.get('json_text_configuration', None)
         self.arrow_configuration = kwargs.get('arrow_configuration', None)
@@ -1670,15 +1585,17 @@ class QueryFormat(msrest.serialization.Model):
 
 
 class QueryRequest(msrest.serialization.Model):
-    """the quick query body.
+    """Groups the set of query request settings.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar query_type: Required. the query type. Default value: "SQL".
+    :ivar query_type: Required. The type of the provided query expression. Has constant value:
+     "SQL".
     :vartype query_type: str
-    :param expression: Required. a query statement.
+    :param expression: Required. The query expression in SQL. The maximum size of the query
+     expression is 256KiB.
     :type expression: str
     :param input_serialization:
     :type input_serialization: ~azure.storage.blob.models.QuerySerialization
