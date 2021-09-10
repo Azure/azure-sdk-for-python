@@ -128,8 +128,8 @@ def _latest_comment_time(comments, delay_from_create_date):
 
 def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python_piplines):
     print("==========new issue number: {}".format(item.issue_object.number))
-    if 'Configed' in item.labels:
-        item.labels.remove('Configed')
+    if 'Configured' in item.labels:
+        item.labels.remove('Configured')
 
     if 'auto-link' not in item.labels:
         item.labels.append('auto-link')
@@ -222,7 +222,7 @@ def main():
     for item in issue_status:
         if item.status == 'release':
             item.bot_advice = 'better to release asap.'
-        elif (item.comment_num == 0 or 'Configed' in item.labels) and 'Python' in item.labels:
+        elif (item.comment_num == 0 or 'Configured' in item.labels) and 'Python' in item.labels:
             item.bot_advice = 'new issue and better to confirm quickly.'
             try:
                 auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python_piplines)
