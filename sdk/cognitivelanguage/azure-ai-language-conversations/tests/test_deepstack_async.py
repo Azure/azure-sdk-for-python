@@ -9,10 +9,8 @@ import pytest
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
 
-from testcase import (
-    ConversationTest,
-    GlobalConversationAccountPreparer
-)
+from testcase import GlobalConversationAccountPreparer
+from asynctestcase import AsyncConversationTest
 
 from azure.ai.language.conversations.aio import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
@@ -22,7 +20,7 @@ from azure.ai.language.conversations.models import (
 )
 
 
-class DeepstackAnalysisAsyncTests(ConversationTest):
+class DeepstackAnalysisAsyncTests(AsyncConversationTest):
 
     @GlobalConversationAccountPreparer()
     async def test_analysis(self, conv_account, conv_key, conv_project):

@@ -8,7 +8,7 @@ import asyncio
 import functools
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 from azure.core.credentials import AccessToken
-from testcase import QuestionAnsweringTest
+from testcase import ConversationTest
 
 
 class AsyncFakeTokenCredential(object):
@@ -22,7 +22,7 @@ class AsyncFakeTokenCredential(object):
         return self.token
 
 
-class AsyncQuestionAnsweringTest(QuestionAnsweringTest):
+class AsyncConversationTest(ConversationTest):
 
     def generate_oauth_token(self):
         if self.is_live:

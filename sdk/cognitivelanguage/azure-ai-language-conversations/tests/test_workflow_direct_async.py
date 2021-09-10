@@ -9,10 +9,8 @@ import pytest
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
 
-from testcase import (
-    ConversationTest,
-    GlobalConversationAccountPreparer
-)
+from testcase import GlobalConversationAccountPreparer
+from asynctestcase import AsyncConversationTest
 
 from azure.ai.language.conversations.aio import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
@@ -23,7 +21,7 @@ from azure.ai.language.conversations.models import (
 from azure.ai.language.questionanswering.models import KnowledgeBaseQueryOptions
 
 
-class WorkflowDirectAnalysisTests(ConversationTest):
+class WorkflowDirectAnalysisTests(AsyncConversationTest):
 
     @GlobalConversationAccountPreparer()
     async def test_direct_kb_analysis(self, conv_account, conv_key, workflow_project):
