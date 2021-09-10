@@ -1,6 +1,16 @@
 # Release History
 
-## 1.7.0b4 (2021-09-08)
+## 1.7.0b5 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.7.0b4 (2021-09-09)
 
 ### Features Added
 - `CertificateCredential` accepts certificates in PKCS12 format
@@ -8,10 +18,8 @@
 - `OnBehalfOfCredential` supports the on-behalf-of authentication flow for
   accessing resources on behalf of users
   ([#19308](https://github.com/Azure/azure-sdk-for-python/issues/19308))
-
-### Breaking Changes
-
-### Bugs Fixed
+- `DefaultAzureCredential` allows specifying the client ID of interactive browser via keyword argument `interactive_browser_client_id`
+  ([#20487](https://github.com/Azure/azure-sdk-for-python/issues/20487))
 
 ### Other Changes
 - Added context manager methods and `close()` to credentials in the

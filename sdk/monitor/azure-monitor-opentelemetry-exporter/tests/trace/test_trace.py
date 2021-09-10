@@ -401,6 +401,7 @@ class TestAzureTraceExporter(unittest.TestCase):
                 is_remote=False,
             ),
             attributes={
+                "peer.service": "service",
                 "rpc.system": "rpc",
                 "rpc.service": "Test service",
             },
@@ -422,7 +423,16 @@ class TestAzureTraceExporter(unittest.TestCase):
 
         self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
         self.assertEqual(envelope.data.base_data.type, "rpc.system")
+        self.assertEqual(envelope.data.base_data.target, "service")
+        
+        # target
+        span._attributes = {
+            "rpc.system": "rpc",
+            "rpc.service": "Test service",
+        }
+        envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.target, "rpc")
+
         # TODO: data.data
         # self.assertEqual(envelope.data.base_data.data, "SELECT")
         self.assertEqual(envelope.data.base_data.result_code, "1")
@@ -475,13 +485,15 @@ class TestAzureTraceExporter(unittest.TestCase):
         end_time = start_time + 1001000000
 
         # SpanKind.INTERNAL
-        span = trace._Span(
-            name="test",
-            context=SpanContext(
+        context = SpanContext(
                 trace_id=36873507687745823477771305566750195431,
                 span_id=12030755672171557337,
                 is_remote=False,
-            ),
+            )
+        span = trace._Span(
+            name="test",
+            context=context,
+            parent=context,
             attributes={},
             kind=SpanKind.INTERNAL,
         )
@@ -502,6 +514,11 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
         self.assertEqual(envelope.data.base_data.type, "InProc")
         self.assertEqual(envelope.data.base_data.result_code, "1")
+
+        # type
+        span._parent = None
+        envelope = exporter._span_to_envelope(span)
+        self.assertIsNone(envelope.data.base_data.type)
 
     def test_span_envelope_server_http(self):
         exporter = self._exporter

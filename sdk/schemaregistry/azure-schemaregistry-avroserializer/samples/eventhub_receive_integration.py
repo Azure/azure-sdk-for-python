@@ -46,11 +46,11 @@ eventhub_consumer = EventHubConsumerClient.from_connection_string(
 
 # create a SchemaRegistryAvroSerializer instance
 avro_serializer = SchemaRegistryAvroSerializer(
-    schema_registry=SchemaRegistryClient(
+    client=SchemaRegistryClient(
         endpoint=SCHEMA_REGISTRY_ENDPOINT,
         credential=DefaultAzureCredential()
     ),
-    schema_group=SCHEMA_GROUP
+    group_name=SCHEMA_GROUP
 )
 
 

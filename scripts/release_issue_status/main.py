@@ -1,13 +1,18 @@
 import time
 import os
 import re
-from github import Github
 from datetime import date, datetime
 import subprocess as sp
-from azure.storage.blob import BlobClient
-import reply_generator as rg
-from update_issue_body import update_issue_body, find_readme_link
 import traceback
+
+from github import Github
+from azure.storage.blob import BlobClient
+
+import reply_generator as rg
+from update_issue_body import update_issue_body, find_readme_and_output_folder
+from auto_close import auto_close_issue
+from get_python_pipeline import get_python_pipelines, get_pipeline_url
+
 
 _NULL = ' '
 _FILE_OUT = 'release_issue_status.csv'
@@ -121,11 +126,16 @@ def _latest_comment_time(comments, delay_from_create_date):
     return delay_from_create_date if not q else int((time.time() - q[-1][0]) / 3600 / 24)
 
 
-def auto_reply(item, sdk_repo, rest_repo, duplicated_issue):
+def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python_piplines):
     print("==========new issue number: {}".format(item.issue_object.number))
+    if 'Configured' in item.labels:
+        item.labels.remove('Configured')
+
     if 'auto-link' not in item.labels:
+        item.labels.append('auto-link')
+        item.issue_object.set_labels(*item.labels)
         try:
-            package_name, readme_link = update_issue_body(sdk_repo, rest_repo, item.issue_object.number)
+            package_name, readme_link, output_folder = update_issue_body(request_repo, rest_repo, item.issue_object.number)
             print("pkname, readme", package_name, readme_link)
             item.package = package_name
             key = ('Python', item.package)
@@ -133,20 +143,24 @@ def auto_reply(item, sdk_repo, rest_repo, duplicated_issue):
         except Exception as e:
             item.bot_advice = 'failed to modify the body of the new issue. Please modify manually'
             item.labels.append('attention')
+            item.issue_object.set_labels(*item.labels)
             print(e)
             raise
-        item.labels.append('auto-link')
-        item.issue_object.set_labels(*item.labels)
     else:
         try:
-            readme_link = find_readme_link(sdk_repo, item.issue_object.number)
+            readme_link, output_folder = find_readme_and_output_folder(request_repo, rest_repo, item.issue_object.number)
         except Exception as e:
             print('Issue: {}  updates body failed'.format(item.issue_object.number))
             item.bot_advice = 'failed to find Readme link, Please check !!'
             item.labels.append('attention')
+            item.issue_object.set_labels(*item.labels)
             raise
     try:
-        reply = rg.begin_reply_generate(item=item, rest_repo=rest_repo, readme_link=readme_link)
+        print("*********************")
+        print(python_piplines)
+        pipeline_url = get_pipeline_url(python_piplines, output_folder)
+        rg.begin_reply_generate(item=item, rest_repo=rest_repo, readme_link=readme_link,
+                                sdk_repo=sdk_repo, pipeline_url=pipeline_url)
     except Exception as e:
         item.bot_advice = 'auto reply failed, Please intervene manually !!'
         print('Error from auto reply ========================')
@@ -158,14 +172,18 @@ def auto_reply(item, sdk_repo, rest_repo, duplicated_issue):
 def main():
     # get latest issue status
     g = Github(os.getenv('TOKEN'))  # please fill user_token
-    sdk_repo = g.get_repo('Azure/sdk-release-request')
-    rest_repo = g.get_repo('Azure/azure-rest-api-specs')
-    label1 = sdk_repo.get_label('ManagementPlane')
-    open_issues = sdk_repo.get_issues(state='open', labels=[label1])
+    request_repo = g.get_repo('Azure/sdk-release-request')
+    rest_repo = g.get_repo('Azure/azure-rest-api-specs')   
+    sdk_repo = g.get_repo('Azure/azure-sdk-for-python')
+    label1 = request_repo.get_label('ManagementPlane')
+    open_issues = request_repo.get_issues(state='open', labels=[label1])
     issue_status = []
     issue_status_python = []
     duplicated_issue = dict()
     start_time = time.time()
+    # get pipeline definitionid
+    python_piplines = get_python_pipelines()
+
     for item in open_issues:
         if not item.number:
             continue
@@ -204,16 +222,22 @@ def main():
     for item in issue_status:
         if item.status == 'release':
             item.bot_advice = 'better to release asap.'
-        elif item.comment_num == 0 and 'Python' in item.labels:
+        elif (item.comment_num == 0 or 'Configured' in item.labels) and 'Python' in item.labels:
             item.bot_advice = 'new issue and better to confirm quickly.'
             try:
-                auto_reply(item, sdk_repo, rest_repo, duplicated_issue)
+                auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python_piplines)
             except Exception as e:
                 continue
         elif not item.author_latest_comment in _PYTHON_SDK_ADMINISTRATORS:
             item.bot_advice = 'new comment for author.'
         elif item.delay_from_latest_update >= 7:
             item.bot_advice = 'delay for a long time and better to handle now.'
+        if item.comment_num > 1 and item.language == 'Python':
+            try:
+                auto_close_issue(request_repo, item)
+            except Exception as e:
+                item.bot_advice = 'auto-close failed, please check!'
+                print(f"=====issue: {item.issue_object.number}, {e}")
 
         if item.days_from_latest_commit >= 30 and item.language == 'Python' and '30days attention' not in item.labels:
             item.labels.append('30days attention')
@@ -243,10 +267,10 @@ def main():
     print_check('git push -f origin HEAD')
 
     # upload to storage account(it is created in advance)
-    blob = BlobClient.from_connection_string(conn_str=os.getenv('CONN_STR'), container_name=os.getenv('FILE'),
-                                             blob_name=_FILE_OUT)
-    with open(_FILE_OUT, 'rb') as data:
-        blob.upload_blob(data, overwrite=True)
+#     blob = BlobClient.from_connection_string(conn_str=os.getenv('CONN_STR'), container_name=os.getenv('FILE'),
+#                                              blob_name=_FILE_OUT)
+#     with open(_FILE_OUT, 'rb') as data:
+#         blob.upload_blob(data, overwrite=True)
         
 
 if __name__ == '__main__':
