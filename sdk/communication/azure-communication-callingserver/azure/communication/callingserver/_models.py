@@ -40,24 +40,37 @@ class CreateCallOptions(object):
         if not requested_call_events:
             raise ValueError("requestedCallEvents can not be None or empty")
 
-        self.callback_uri = callback_uri
-        self.requested_media_types = requested_media_types
-        self.requested_call_events = requested_call_events
-        self.subject = None
+        self.__callback_uri = callback_uri
+        self.__requested_media_types = requested_media_types
+        self.__requested_call_events = requested_call_events
+        self.__alternate_Caller_Id = None
+        self.__subject = None
+
+    @property
+    def callback_uri(self):
+        return self.__callback_uri
+
+    @property
+    def requested_media_types(self):
+        return self.__requested_media_types
+
+    @property
+    def requested_call_events(self):
+        return self.__requested_call_events
 
     @property
     def alternate_Caller_Id(self):
-        return self._alternate_Caller_Id
+        return self.__alternate_Caller_Id
     @alternate_Caller_Id.setter
-    def alternate_Caller_Id(self, value: PhoneNumberIdentifier):
-        self._alternate_Caller_Id = value
+    def alternate_Caller_Id(self, alternate_Caller_Id: PhoneNumberIdentifier):
+        self.__alternate_Caller_Id = alternate_Caller_Id
 
     @property
     def subject(self):
-        return self._subject
+        return self.__subject
     @subject.setter
-    def subject(self, value: str):
-        self._subject = value
+    def subject(self, subject: str):
+        self.__subject = subject
 
 class JoinCallOptions(object):
 
@@ -84,9 +97,21 @@ class JoinCallOptions(object):
         if not requested_call_events:
             raise ValueError("requestedCallEvents can not be None or empty")
 
-        self._callback_uri = callback_uri
-        self._requested_media_types = requested_media_types
-        self._requested_call_events = requested_call_events
+        self.__callback_uri = callback_uri
+        self.__requested_media_types = requested_media_types
+        self.__requested_call_events = requested_call_events
+
+    @property
+    def callback_uri(self):
+        return self.__callback_uri
+
+    @property
+    def requested_media_types(self):
+        return self.__requested_media_types
+
+    @property
+    def requested_call_events(self):
+        return self.__requested_call_events
 
     @property
     def subject(self):
@@ -100,13 +125,11 @@ class PlayAudioOptions(object):
     def __init__(
         self,
         *,
-        audio_file_uri: str,
         loop: bool,
         operation_context: str,
         audio_file_id: str,
         callback_uri: str,
     ):
-        self.audio_file_uri = audio_file_uri
         self.loop = loop
         self.operation_context = operation_context
         self.audio_file_id = audio_file_id
@@ -154,15 +177,15 @@ class CancelAllMediaOperationsResult(object):
         self.result_info = kwargs['result_info']
 
     @classmethod
-    def _from_generated(cls, play_audio_result):
-        if play_audio_result is None:
+    def _from_generated(cls, cancel_all_media_operations_result):
+        if cancel_all_media_operations_result is None:
             return None
 
         return cls(
-            operation_id=play_audio_result.operation_id,
-            status=play_audio_result.status,
-            operation_context=play_audio_result.operation_context,
-            result_info=ResultInfo._from_generated(play_audio_result.result_info)
+            operation_id=cancel_all_media_operations_result.operation_id,
+            status=cancel_all_media_operations_result.status,
+            operation_context=cancel_all_media_operations_result.operation_context,
+            result_info=ResultInfo._from_generated(cancel_all_media_operations_result.result_info)
         )
 
 class AddParticipantResult(object):

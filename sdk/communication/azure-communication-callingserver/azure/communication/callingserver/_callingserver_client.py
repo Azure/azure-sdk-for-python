@@ -23,6 +23,8 @@ if TYPE_CHECKING:
 
 from ._shared.utils import (get_authentication_policy, get_current_utc_time,
                             parse_connection_str)
+from ._converters import JoinCallRequestConverter
+
 from ._version import SDK_MONIKER
 
 
@@ -177,7 +179,7 @@ class CallingServerClient(object):
         self,
         server_call_id,  # type: str
         source,  # type: CommunicationIdentifier
-        options,  # type: JoinCallOptions
+        call_options,  # type: JoinCallOptions
         **kwargs  # type: Any
     ): # type: (...) -> CallConnection
         """Join the call using server call id.
@@ -197,13 +199,14 @@ class CallingServerClient(object):
         if not source:
             raise ValueError("source can not be None")
 
-        if not options:
-            raise ValueError("options can not be None")
+        if not call_options:
+            raise ValueError("call_options can not be None")
+
+        join_call_request = JoinCallRequestConverter.convert(serialize_identifier(source), call_options)
 
         join_call_response = self._server_call_client.join_call(
             server_call_id=server_call_id,
-            source=source,
-            call_options=options,
+            call_request=join_call_request,
             **kwargs
         )
 
