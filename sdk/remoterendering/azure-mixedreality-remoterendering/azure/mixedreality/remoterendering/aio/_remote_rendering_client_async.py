@@ -107,7 +107,7 @@ class RemoteRenderingClient(object):
         self.polling_interval = kwargs.pop("polling_interval", 5)
 
         authentication_policy = AsyncBearerTokenCredentialPolicy(
-            pipeline_credential, [endpoint_url + '/.default'])
+            pipeline_credential, endpoint_url + '/.default')
 
         self._account_id = account_id
 
