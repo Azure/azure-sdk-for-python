@@ -12,7 +12,7 @@ from ._generated.aio.operations import ServerCallsOperations
 from ._generated.models import PlayAudioRequest, StartCallRecordingRequest, \
     AddParticipantRequest, PhoneNumberIdentifierModel, \
     CommunicationIdentifierModel, JoinCallRequest
-from ._models import PlayAudioResult, JoinCallResult, AddParticipantResult, \
+from ._models import PlayAudioOptions, PlayAudioResult, JoinCallResult, AddParticipantResult, \
     StartCallRecordingResult, MediaType, EventSubscriptionType, CallRecordingProperties
 from ._communication_identifier_serializer import (deserialize_identifier,
                                                    serialize_identifier)
@@ -36,10 +36,7 @@ class ServerCall(object):
     def play_audio(
         self,
         audio_file_uri,  # type: str
-        loop,  # type: bool
-        audio_file_id,  # type: str
-        callback_uri,  # type: str
-        operation_context=None,  # type: Optional[str]
+        play_audio_options,  # type: PlayAudioOptions
         **kwargs,  # type: Any
     ):  # type: (...) -> PlayAudioResult
 
@@ -49,29 +46,30 @@ class ServerCall(object):
         except AttributeError:
             raise ValueError("URL must be a string.")
 
-        if not audio_file_id:
-            raise ValueError("audio_File_id can not be None")
+        if not play_audio_options.audio_file_id:
+            raise ValueError("audio_file_id can not be None")
 
         try:
+            callback_uri = play_audio_options.callback_uri
             if not callback_uri.lower().startswith('http'):
                 callback_uri = "https://" + callback_uri
         except AttributeError:
             raise ValueError("URL must be a string.")
 
-        if not operation_context:
+        if not play_audio_options.operation_context:
             raise ValueError("operation_context can not be None")
 
-        request = PlayAudioRequest(
+        play_audio_request = PlayAudioRequest(
             audio_file_uri=audio_file_uri,
             loop=False,
-            operation_context=operation_context,
-            audio_file_id=audio_file_id,
+            operation_context=play_audio_options.operation_context,
+            audio_file_id=play_audio_options.audio_file_id,
             callback_uri=callback_uri
         )
 
         play_audio_result = self.server_call_client.play_audio(
             server_call_id=self.server_call_id,
-            request=request,
+            request=play_audio_request,
             **kwargs
         )
 

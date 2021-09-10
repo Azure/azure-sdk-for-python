@@ -105,14 +105,14 @@ class CallConnection(object):
 
         try:
             callback_uri = play_audio_options.callback_uri
-            if not play_audio_options.callback_uri.lower().startswith('http'):
-                callback_uri = "https://" + play_audio_options.callback_uri
+            if not callback_uri.lower().startswith('http'):
+                callback_uri = "https://" + callback_uri
         except AttributeError:
             raise ValueError("URL must be a string.")
 
         play_audio_request = PlayAudioRequest(
             audio_file_uri=audio_file_uri,
-            loop=play_audio_options.loop,
+            loop=False,
             audio_file_id=play_audio_options.audio_file_id,
             callback_uri=callback_uri,
             operation_context=play_audio_options.operation_context,
