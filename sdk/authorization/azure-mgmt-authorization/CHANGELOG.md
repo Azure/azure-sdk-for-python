@@ -1,5 +1,63 @@
 # Release History
 
+## 2.0.0 (2021-09-10)
+
+**Features**
+
+  - Model RoleAssignment has a new parameter created_on
+  - Model RoleAssignment has a new parameter updated_on
+  - Model RoleAssignment has a new parameter updated_by
+  - Model RoleAssignment has a new parameter created_by
+  - Model RoleAssignment has a new parameter condition
+  - Model RoleAssignment has a new parameter description
+  - Model RoleAssignment has a new parameter condition_version
+  - Model RoleAssignment has a new parameter delegated_managed_identity_resource_id
+  - Added operation RoleAssignmentsOperations.validate
+  - Added operation RoleAssignmentsOperations.validate_by_id
+  - Added operation RoleAssignmentsOperations.list_for_subscription
+  - Added operation RoleAssignmentsOperations.create_by_id
+  - Added operation RoleAssignmentsOperations.delete_by_id
+  - Added operation RoleAssignmentsOperations.get_by_id
+  - Added operation group RoleManagementPolicyAssignmentsOperations
+  - Added operation group RoleManagementPoliciesOperations
+  - Added operation group EligibleChildResourcesOperations
+  - Added operation group RoleAssignmentApprovalStepsOperations
+  - Added operation group RoleEligibilityScheduleInstancesOperations
+  - Added operation group AccessReviewInstanceOperations
+  - Added operation group AccessReviewScheduleDefinitionsOperations
+  - Added operation group AccessReviewScheduleDefinitionsAssignedForMyApprovalOperations
+  - Added operation group RoleAssignmentMetricsOperations
+  - Added operation group RoleAssignmentApprovalStepOperations
+  - Added operation group ScopeRoleAssignmentApprovalStepsOperations
+  - Added operation group Operations
+  - Added operation group AccessReviewDefaultSettingsOperations
+  - Added operation group AccessReviewInstanceDecisionsOperations
+  - Added operation group ScopeRoleAssignmentApprovalStepOperations
+  - Added operation group AccessReviewInstancesAssignedForMyApprovalOperations
+  - Added operation group RoleAssignmentScheduleInstancesOperations
+  - Added operation group RoleAssignmentApprovalOperations
+  - Added operation group RoleEligibilityScheduleRequestsOperations
+  - Added operation group AccessReviewInstanceMyDecisionsOperations
+  - Added operation group RoleAssignmentSchedulesOperations
+  - Added operation group RoleEligibilitySchedulesOperations
+  - Added operation group ScopeRoleAssignmentApprovalOperations
+  - Added operation group RoleAssignmentScheduleRequestsOperations
+  - Added operation group AccessReviewInstancesOperations
+
+**Breaking changes**
+
+  - Operation RoleAssignmentsOperations.list_for_resource has a new signature
+  - Operation RoleAssignmentsOperations.delete has a new signature
+  - Operation RoleAssignmentsOperations.get has a new signature
+  - Operation RoleAssignmentsOperations.list_for_resource has a new signature
+  - Operation RoleAssignmentsOperations.list_for_resource_group has a new signature
+  - Operation RoleAssignmentsOperations.list_for_scope has a new signature
+  - Model RoleAssignmentFilter no longer has parameter can_delegate
+  - Model RoleAssignment no longer has parameter can_delegate
+  - Removed operation RoleAssignmentsOperations.list
+  - Model RoleAssignmentCreateParameters has a new signature
+  - Model Principal has a new signature
+
 ## 1.0.0 (2020-11-23)
 
 ## 1.0.0b1 (2020-10-13)
