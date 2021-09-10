@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: null
+    body: '{"hello": "test_webpubsub_send_to_all_api_management_proxy"}'
     headers:
       Accept:
       - '*/*'
@@ -8,21 +8,27 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
+      Content-Length:
+      - '60'
+      Content-Type:
+      - text/plain
       User-Agent:
       - azsdk-python-messaging-webpubsubservice/1.0.0b2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
-    method: HEAD
-    uri: https://myservice.webpubsub.azure.com/api/health?api-version=2021-08-01-preview
+    method: POST
+    uri: https://myservice.webpubsub.azure.com/api/hubs/Hub/:send?api-version=2021-08-01-preview
   response:
     body:
       string: ''
     headers:
       connection:
       - keep-alive
+      content-length:
+      - '0'
       date:
-      - Fri, 10 Sep 2021 06:17:26 GMT
+      - Fri, 10 Sep 2021 06:17:31 GMT
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
-      code: 200
-      message: OK
+      code: 202
+      message: Accepted
 version: 1

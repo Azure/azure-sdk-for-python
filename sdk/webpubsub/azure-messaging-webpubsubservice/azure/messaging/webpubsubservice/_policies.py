@@ -29,7 +29,7 @@ import typing
 import jwt
 import six
 
-from azure.core.pipeline.policies import SansIOHTTPPolicy, ProxyPolicy
+from azure.core.pipeline.policies import SansIOHTTPPolicy, CustomHookPolicy
 
 from ._utils import UTC
 
@@ -83,7 +83,7 @@ class JwtCredentialPolicy(SansIOHTTPPolicy):
         return six.ensure_str(encoded)
 
 
-class ApiManagementProxy(ProxyPolicy):
+class ApiManagementProxy(CustomHookPolicy):
 
     def __init__(self, **kwargs):
         # type: (typing.Optional[str], typing.Optional[str]) -> None
@@ -97,7 +97,6 @@ class ApiManagementProxy(ProxyPolicy):
         self._endpoint = kwargs.pop('origin_endpoint', None)
         self._reverse_proxy_endpoint = kwargs.pop('reverse_proxy_endpoint', None)
         super(ApiManagementProxy, self).__init__(**kwargs)
-
 
     def on_request(self, request):
         # type: (PipelineRequest) -> None

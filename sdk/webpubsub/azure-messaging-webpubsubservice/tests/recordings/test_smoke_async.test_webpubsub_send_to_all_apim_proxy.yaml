@@ -1,15 +1,9 @@
 interactions:
 - request:
-    body: '{"hello": "test_webpubsub_send_to_all"}'
+    body: '{"hello": "test_webpubsub_send_to_all_apim_proxy"}'
     headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       Content-Length:
-      - '39'
+      - '50'
       Content-Type:
       - text/plain
       User-Agent:
@@ -20,15 +14,12 @@ interactions:
     body:
       string: ''
     headers:
-      connection:
-      - keep-alive
-      content-length:
-      - '0'
-      date:
-      - Fri, 10 Sep 2021 06:17:28 GMT
-      strict-transport-security:
-      - max-age=15724800; includeSubDomains
+      connection: keep-alive
+      content-length: '0'
+      date: Fri, 10 Sep 2021 06:22:27 GMT
+      strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 202
       message: Accepted
+    url: https://webpubsub-yyc.webpubsub.azure.com/api/hubs/Hub/:send?api-version=2021-08-01-preview
 version: 1
