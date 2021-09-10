@@ -323,7 +323,7 @@ except (SyntaxError, ImportError):
     from ._models import WholeMetricConfiguration  # type: ignore
     from ._models import WholeMetricConfigurationPatch  # type: ignore
 
-from ._microsoft_azure_metrics_advisor_restapi_open_ap_iv2_enums import (
+from ._metrics_advisor_enums import (
     AnomalyAlertingConfigurationLogicType,
     AnomalyDetectionConfigurationLogicType,
     AnomalyDetectorDirection,
