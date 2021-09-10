@@ -225,7 +225,7 @@ class ResultInfo(object):
             message=result_info.message,
         )
 
-class CreateCallResult(msrest.serialization.Model):
+class CreateCallResult(object):
     """The response payload of the create call operation.
 
     :param call_connection_id: The call connection id.
@@ -247,7 +247,7 @@ class CreateCallResult(msrest.serialization.Model):
             call_connection_id = create_call_result.call_connection_id
         )
 
-class JoinCallResult(msrest.serialization.Model):
+class JoinCallResult(object):
     """The response payload of the join call operation.
 
     :param call_connection_id: The call connection id.
@@ -269,7 +269,7 @@ class JoinCallResult(msrest.serialization.Model):
             call_connection_id = join_call_result.call_connection_id
         )
 
-class StartCallRecordingResult(msrest.serialization.Model):
+class StartCallRecordingResult(object):
     """The response payload of start call recording operation.
 
     :param recording_id: The recording id of the started recording.
@@ -291,7 +291,7 @@ class StartCallRecordingResult(msrest.serialization.Model):
             recording_id = start_call_recording_result.recording_id
         )
 
-class CallRecordingProperties(msrest.serialization.Model):
+class CallRecordingProperties(object):
     """The response payload of get call recording properties operation.
 
     All required parameters must be populated in order to send to Azure.
@@ -313,7 +313,6 @@ class CallRecordingProperties(msrest.serialization.Model):
         self,
         **kwargs # type: Any
     ):
-        super(CallRecordingProperties, self).__init__(**kwargs)
         self.recording_state = kwargs['recording_state']
 
     @classmethod

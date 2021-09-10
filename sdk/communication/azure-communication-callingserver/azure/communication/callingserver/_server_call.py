@@ -62,7 +62,7 @@ class ServerCall(object):
 
         request = PlayAudioRequest(
             audio_file_uri=audio_file_uri,
-            loop = loop,
+            loop = False,
             operation_context=operation_context,
             audio_file_id=audio_file_id,
             callback_uri=callback_uri
