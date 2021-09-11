@@ -10,15 +10,13 @@ import _test_constants
 
 from typing import List
 from parameterized import parameterized
-from azure.communication.callingserver._shared.models import CommunicationIdentifier, CommunicationUserIdentifier, PhoneNumberIdentifier
-from azure.communication.callingserver._models import (
-    CreateCallOptions,
-    MediaType,
-    EventSubscriptionType,
-    JoinCallOptions,
+from azure.communication.callingserver._shared.models import CommunicationIdentifier, CommunicationUserIdentifier
+from azure.communication.callingserver._generated.models import (
     CancelAllMediaOperationsResult,
-    PlayAudioOptions,
     AddParticipantResult
+    )
+from azure.communication.callingserver._models import (
+    PlayAudioOptions
     )
 
 try:
@@ -233,7 +231,6 @@ class TestServerCall(unittest.TestCase):
             participant_id = participant_id
             )
         assert server_call.server_call_id == _test_constants.SERVER_CALL_ID
-        assert server_call.server_call_client
 
     @parameterized.expand(data_source_test_remove_participant())
     def test_remove_participant_failed(

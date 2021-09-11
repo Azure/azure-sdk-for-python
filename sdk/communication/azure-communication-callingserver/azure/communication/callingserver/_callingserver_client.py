@@ -9,13 +9,12 @@ from typing import TYPE_CHECKING, Any, List
 from azure.core.tracing.decorator import distributed_trace
 
 from ._call_connection import CallConnection
-from ._communication_identifier_serializer import (deserialize_identifier,
-                                                   serialize_identifier)
-from ._generated._azure_communication_calling_server_service import \
-    AzureCommunicationCallingServerService
-from ._generated.models import CreateCallRequest, PhoneNumberIdentifierModel
-from ._models import CreateCallOptions, JoinCallOptions
 from ._server_call import ServerCall
+from ._communication_identifier_serializer import serialize_identifier
+from ._generated._azure_communication_calling_server_service import (
+    AzureCommunicationCallingServerService
+)
+from ._generated.models import CreateCallRequest, PhoneNumberIdentifierModel
 from ._shared.models import CommunicationIdentifier
 
 if TYPE_CHECKING:

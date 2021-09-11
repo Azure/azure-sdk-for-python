@@ -8,17 +8,17 @@ import pytest
 import _test_utils
 import _test_constants
 
-from typing import List
 from parameterized import parameterized
-from azure.communication.callingserver._shared.models import CommunicationIdentifier, CommunicationUserIdentifier, PhoneNumberIdentifier
-from azure.communication.callingserver._models import (
-    CreateCallOptions,
-    MediaType,
-    EventSubscriptionType,
-    JoinCallOptions,
+from azure.communication.callingserver._shared.models import (
+    CommunicationIdentifier,
+    CommunicationUserIdentifier,
+    )
+from azure.communication.callingserver._generated.models import (
     CancelAllMediaOperationsResult,
-    PlayAudioOptions,
     AddParticipantResult
+    )
+from azure.communication.callingserver._models import (
+    PlayAudioOptions,
     )
 
 try:
@@ -161,7 +161,6 @@ class TestCallConnection(unittest.TestCase):
 
         call_connection.hang_up()
         assert call_connection.call_connection_id == _test_constants.CALL_ID
-        assert call_connection.call_connection_client
 
     @parameterized.expand(data_source_test_hang_up())
     def test_hang_up_failed(
@@ -353,7 +352,6 @@ class TestCallConnection(unittest.TestCase):
             participant_id = participant_id
             )
         assert call_connection.call_connection_id == _test_constants.CALL_ID
-        assert call_connection.call_connection_client
 
     @parameterized.expand(data_source_test_remove_participant())
     def test_remove_participant_failed(

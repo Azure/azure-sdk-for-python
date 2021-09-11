@@ -9,11 +9,16 @@ from typing import Any, overload
 from azure.core.tracing.decorator import distributed_trace
 
 from ._generated.operations import CallConnectionsOperations
-from ._generated.models import CancelAllMediaOperationsRequest, PlayAudioRequest, PhoneNumberIdentifierModel
+from ._generated.models import (
+    CancelAllMediaOperationsRequest,
+    PlayAudioRequest,
+    PhoneNumberIdentifierModel,
+    CancelAllMediaOperationsResult,
+    AddParticipantResult,
+    PlayAudioResult
+    )
 from ._converters import PlayAudioRequestConverter, AddParticipantRequestConverter
-from ._models import PlayAudioOptions, PlayAudioResult, CancelAllMediaOperationsResult, AddParticipantResult
-from ._communication_identifier_serializer import (deserialize_identifier,
-                                                   serialize_identifier)
+from ._communication_identifier_serializer import serialize_identifier
 
 class CallConnection(object):
     def __init__(
@@ -24,7 +29,7 @@ class CallConnection(object):
         ): # type: (...) -> None
 
         self.call_connection_id = call_connection_id
-        self.call_connection_client = call_connection_client
+        self._call_connection_client = call_connection_client
 
     @distributed_trace()
     def hang_up(
@@ -32,7 +37,7 @@ class CallConnection(object):
             **kwargs # type: Any
         ): # type: (...) -> None
 
-        return self.call_connection_client.hangup_call(
+        return self._call_connection_client.hangup_call(
             call_connection_id=self.call_connection_id,
             **kwargs
         )
@@ -48,13 +53,11 @@ class CallConnection(object):
             kwargs['operation_context'] = operation_context
         request = CancelAllMediaOperationsRequest(**kwargs)
 
-        cancel_all_media_operations_result = self.call_connection_client.cancel_all_media_operations(
+        return self._call_connection_client.cancel_all_media_operations(
             call_connection_id=self.call_connection_id,
             cancel_all_media_operation_request=request,
             **kwargs
         )
-
-        return CancelAllMediaOperationsResult._from_generated(cancel_all_media_operations_result)
 
     @distributed_trace()
     def play_audio(
@@ -72,13 +75,11 @@ class CallConnection(object):
 
         play_audio_request = PlayAudioRequestConverter.convert(audio_file_uri, play_audio_options)
 
-        play_audio_result = self.call_connection_client.play_audio(
+        return self._call_connection_client.play_audio(
             call_connection_id=self.call_connection_id,
             request=play_audio_request,
             **kwargs
         )
-
-        return PlayAudioResult._from_generated(play_audio_result)
 
     @distributed_trace()
     def add_participant(
@@ -100,13 +101,11 @@ class CallConnection(object):
             operation_context = operation_context
             )
 
-        add_participant_result = self.call_connection_client.add_participant(
+        return self._call_connection_client.add_participant(
             call_connection_id=self.call_connection_id,
             add_participant_request=add_participant_request,
             **kwargs
         )
-
-        return AddParticipantResult._from_generated(add_participant_result)
 
     @distributed_trace()
     def remove_participant(
@@ -115,7 +114,7 @@ class CallConnection(object):
             **kwargs # type: Any
         ): # type: (...) -> None
 
-        return self.call_connection_client.remove_participant(
+        return self._call_connection_client.remove_participant(
             call_connection_id=self.call_connection_id,
             participant_id=participant_id,
             **kwargs

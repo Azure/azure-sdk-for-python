@@ -94,7 +94,6 @@ class TestCallingServerClient(unittest.TestCase):
         call_connection = calling_server_client.create_call_connection(source_user,
             target_users, options)
         assert call_connection.call_connection_id == _test_constants.CALL_ID
-        assert call_connection.call_connection_client
 
     @parameterized.expand(data_source_test_create_connection())
     def test_create_connection_failed(
@@ -138,7 +137,6 @@ class TestCallingServerClient(unittest.TestCase):
             )
 
         assert call_connection.call_connection_id == _test_constants.CALL_ID
-        assert call_connection.call_connection_client
 
     @parameterized.expand(data_source_test_join_call())
     def test_join_call_failed(

@@ -9,20 +9,18 @@ from typing import TYPE_CHECKING, Any, List
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._call_connection_async import CallConnection
-from .._communication_identifier_serializer import (deserialize_identifier,
-                                                   serialize_identifier)
-from .._generated.aio._azure_communication_calling_server_service import \
-    AzureCommunicationCallingServerService
-from .._generated.models import CreateCallRequest, PhoneNumberIdentifierModel
-from .._models import CreateCallOptions, JoinCallOptions
 from ._server_call_async import ServerCall
+from .._communication_identifier_serializer import serialize_identifier
+from .._generated.aio._azure_communication_calling_server_service import (
+    AzureCommunicationCallingServerService
+)
+from .._generated.models import CreateCallRequest, PhoneNumberIdentifierModel
 from .._shared.models import CommunicationIdentifier
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
-from .._shared.utils import (get_authentication_policy, get_current_utc_time,
-                            parse_connection_str)
+from .._shared.utils import (get_authentication_policy, parse_connection_str)
 from .._converters import JoinCallRequestConverter
 
 from .._version import SDK_MONIKER
