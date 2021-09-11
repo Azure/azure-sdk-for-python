@@ -26,6 +26,13 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
+class AuthenticationMethod(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The mode of client authentication.
+    """
+
+    TOKEN = "Token"
+    AAD = "AAD"
+
 class ConnectivityStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Represents the connectivity status of the connected cluster.
     """

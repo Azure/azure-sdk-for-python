@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2021-03-01",
-    "total_api_version_list": ["2021-03-01"],
+    "chosen_version": "2021-10-01",
+    "total_api_version_list": ["2021-10-01"],
     "client": {
         "name": "ConnectedKubernetesClient",
         "filename": "_connected_kubernetes_client",
