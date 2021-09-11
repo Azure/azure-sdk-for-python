@@ -4,21 +4,28 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from .._generated.aio.operations import ServerCallsOperations
-from .._generated.models import PlayAudioRequest, PhoneNumberIdentifierModel, PlayAudioResult, AddParticipantResult
-from .._converters import PlayAudioRequestConverter, AddParticipantRequestConverter
 from .._communication_identifier_serializer import serialize_identifier
+from .._converters import (AddParticipantRequestConverter,
+                           PlayAudioRequestConverter)
+from .._generated.models import (AddParticipantResult,
+                                 PhoneNumberIdentifierModel, PlayAudioRequest,
+                                 PlayAudioResult)
+
+if TYPE_CHECKING:
+    from .._generated.aio.operations import ServerCallsOperations
+    from .._models import PlayAudioOptions
+    from .._shared.models import CommunicationIdentifier
 
 class ServerCall(object):
 
     def __init__(
         self,
         server_call_id: str,  # type: str
-        server_call_client: ServerCallsOperations,  # type: AsyncTokenCredential
+        server_call_client,  # type: ServerCallsOperations
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -30,7 +37,7 @@ class ServerCall(object):
             self,
             audio_file_uri, # type: str
             play_audio_options, # type: PlayAudioOptions
-            **kwargs, # type: str: Any
+            **kwargs  # type: Any
         ): # type: (...) -> PlayAudioResult
 
         if not audio_file_uri:

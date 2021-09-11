@@ -4,21 +4,22 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, overload
+from typing import TYPE_CHECKING, Any, overload
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from .._generated.aio.operations import CallConnectionsOperations
-from .._generated.models import (
-    CancelAllMediaOperationsRequest,
-    PlayAudioRequest,
-    PhoneNumberIdentifierModel,
-    CancelAllMediaOperationsResult,
-    AddParticipantResult,
-    PlayAudioResult
-    )
-from .._converters import PlayAudioRequestConverter, AddParticipantRequestConverter
 from .._communication_identifier_serializer import serialize_identifier
+from .._converters import (AddParticipantRequestConverter,
+                           PlayAudioRequestConverter)
+from .._generated.models import (AddParticipantResult,
+                                 CancelAllMediaOperationsRequest,
+                                 CancelAllMediaOperationsResult,
+                                 PhoneNumberIdentifierModel, PlayAudioRequest,
+                                 PlayAudioResult)
+
+if TYPE_CHECKING:
+    from .._generated.aio.operations import CallConnectionsOperations
+    from .._models import PlayAudioOptions
 
 class CallConnection(object):
     def __init__(

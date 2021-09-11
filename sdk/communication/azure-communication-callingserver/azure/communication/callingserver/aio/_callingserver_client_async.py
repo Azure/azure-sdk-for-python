@@ -8,22 +8,22 @@ from typing import TYPE_CHECKING, Any, List
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from ._call_connection_async import CallConnection
-from ._server_call_async import ServerCall
 from .._communication_identifier_serializer import serialize_identifier
-from .._generated.aio._azure_communication_calling_server_service import (
+from .._generated.aio._azure_communication_calling_server_service import \
     AzureCommunicationCallingServerService
-)
 from .._generated.models import CreateCallRequest, PhoneNumberIdentifierModel
 from .._shared.models import CommunicationIdentifier
+from ._call_connection_async import CallConnection
+from ._server_call_async import ServerCall
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
+    from .._models import CreateCallOptions, JoinCallOptions
 
-from .._shared.utils import (get_authentication_policy, parse_connection_str)
 from .._converters import JoinCallRequestConverter
-
+from .._shared.utils import get_authentication_policy, parse_connection_str
 from .._version import SDK_MONIKER
+
 
 class CallingServerClient(object):
     """A client to interact with the AzureCommunicationService Calling Server.
