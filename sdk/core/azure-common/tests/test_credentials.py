@@ -19,7 +19,7 @@ import azure.common.credentials
 
 class MockCliCredentials:
     def _token_retriever(self, resource):
-        return "NOTUSED", f"TOKEN-{resource}", {'expiresIn': 42}
+        return "NOTUSED", "TOKEN-" + resource, {'expiresIn': 42}
 
     def signed_session(self, session=None):
         return session
@@ -60,7 +60,7 @@ def test_cli_credentials_accesstoken():
     # Track2 scenario
     access_token = cred.get_token("http://resource.id/.default")
     assert cli_profile.received_resource == "http://resource.id"
-    assert access_token.token == f"TOKEN-{cli_profile.received_resource}"
+    assert access_token.token == "TOKEN" + cli_profile.received_resource
     assert access_token.expires_on <= int(time.time() + 42)
 
     access_token = cred.get_token("http://resource.newid")
