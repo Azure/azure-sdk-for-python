@@ -13,7 +13,7 @@ from azure.core.exceptions import HttpResponseError
 from .._generated.aio._monitor_query_client import MonitorQueryClient
 
 from .._generated.models import BatchRequest, QueryBody as LogsQueryBody
-from .._helpers import construct_iso8601, order_results, process_error
+from .._helpers import construct_iso8601, order_results, process_error, process_prefer
 from .._models import LogsQueryResult, LogsBatchQuery
 from ._helpers_asyc import get_authentication_policy
 from .._exceptions import  LogsQueryError, QueryPartialErrorException
@@ -83,17 +83,7 @@ class LogsQueryClient(object):
         server_timeout = kwargs.pop("server_timeout", None)
         additional_workspaces = kwargs.pop("additional_workspaces", None)
 
-        prefer = ""
-        if server_timeout:
-            prefer += "wait=" + str(server_timeout)
-        if include_statistics:
-            if len(prefer) > 0:
-                prefer += ","
-            prefer += "include-statistics=true"
-        if include_visualization:
-            if len(prefer) > 0:
-                prefer += ","
-            prefer += "include-render=true"
+        prefer = process_prefer(server_timeout, include_statistics, include_visualization)
 
         body = LogsQueryBody(
             query=query,
@@ -111,14 +101,15 @@ class LogsQueryClient(object):
             )
         except HttpResponseError as err:
             process_error(err)
-        response = LogsQueryResult._from_generated(generated_response)
+        response = LogsQueryResult._from_generated(generated_response) # pylint: disable=protected-access
         if not generated_response.error:
             return response
-        else:
-            if not allow_partial_errors:
-                raise QueryPartialErrorException(error=generated_response.error)
-            response.partial_error = LogsQueryError._from_generated(generated_response.error)
-            return response
+        if not allow_partial_errors:
+            raise QueryPartialErrorException(error=generated_response.error)
+        response.partial_error = LogsQueryError._from_generated( # pylint: disable=protected-access
+            generated_response.error
+            )
+        return response
 
     @distributed_trace_async
     async def query_batch(

@@ -12,7 +12,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._generated._monitor_query_client import MonitorQueryClient
 
 from ._generated.models import BatchRequest, QueryBody as LogsQueryBody
-from ._helpers import get_authentication_policy, construct_iso8601, order_results, process_error
+from ._helpers import get_authentication_policy, construct_iso8601, order_results, process_error, process_prefer
 from ._models import LogsBatchQuery, LogsQueryResult
 from ._exceptions import  LogsQueryError, QueryPartialErrorException
 
@@ -112,6 +112,7 @@ class LogsQueryClient(object):
             if len(prefer) > 0:
                 prefer += ","
             prefer += "include-render=true"
+        prefer = process_prefer(server_timeout, include_statistics, include_visualization)
 
         body = LogsQueryBody(
             query=query,
@@ -129,14 +130,15 @@ class LogsQueryClient(object):
             )
         except HttpResponseError as err:
             process_error(err)
-        response = LogsQueryResult._from_generated(generated_response)
+        response = LogsQueryResult._from_generated(generated_response) # pylint: disable=protected-access
         if not generated_response.error:
             return response
-        else:
-            if not allow_partial_errors:
-                raise QueryPartialErrorException(error=generated_response.error)
-            response.partial_error = LogsQueryError._from_generated(generated_response.error)
-            return response
+        if not allow_partial_errors:
+            raise QueryPartialErrorException(error=generated_response.error)
+        response.partial_error = LogsQueryError._from_generated( # pylint: disable=protected-access
+            generated_response.error
+            )
+        return response
 
     @distributed_trace
     def query_batch(self, queries, **kwargs):

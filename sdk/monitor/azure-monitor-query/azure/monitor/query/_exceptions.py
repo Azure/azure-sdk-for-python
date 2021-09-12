@@ -42,7 +42,7 @@ class LogsQueryError(object):
             return None
         details = None
         if generated.details is not None:
-            details=[d.serialize() for d in generated.details]
+            details = [d.serialize() for d in generated.details]
         return cls(
             code=generated.code,
             message=generated.message,
