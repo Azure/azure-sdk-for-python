@@ -69,7 +69,7 @@ class _CliCredentials(object):
             resource = scope
 
         credentials = self._get_cred(resource)
-        _, token, fulltoken = credentials._token_retriever()  # pylint:disable=protected-access
+        _, token, fulltoken = credentials._token_retriever(resource)  # pylint:disable=protected-access
 
         return _AccessToken(token, int(fulltoken['expiresIn'] + time.time()))
 
