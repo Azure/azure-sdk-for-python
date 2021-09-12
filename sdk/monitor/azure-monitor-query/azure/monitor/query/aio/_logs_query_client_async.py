@@ -7,15 +7,16 @@
 
 from datetime import datetime, timedelta
 from typing import Any, Tuple, Union, Sequence, Dict, List, TYPE_CHECKING
-from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.exceptions import HttpResponseError
 
 from .._generated.aio._monitor_query_client import MonitorQueryClient
 
 from .._generated.models import BatchRequest, QueryBody as LogsQueryBody
-from .._helpers import process_error, construct_iso8601, order_results
-from .._models import LogsQueryResult, LogsBatchQuery, LogsQueryError
+from .._helpers import construct_iso8601, order_results, process_error
+from .._models import LogsQueryResult, LogsBatchQuery
 from ._helpers_asyc import get_authentication_policy
+from .._exceptions import  LogsQueryError, QueryPartialErrorException
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -75,6 +76,7 @@ class LogsQueryClient(object):
         :rtype: ~azure.monitor.query.LogsQueryResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        allow_partial_errors = kwargs.pop('allow_partial_errors', False)
         timespan = construct_iso8601(timespan)
         include_statistics = kwargs.pop("include_statistics", False)
         include_visualization = kwargs.pop("include_visualization", False)
@@ -101,14 +103,22 @@ class LogsQueryClient(object):
         )
 
         try:
-            return LogsQueryResult._from_generated(await self._query_op.execute( # pylint: disable=protected-access
+            generated_response = await self._query_op.execute( # pylint: disable=protected-access
                 workspace_id=workspace_id,
                 body=body,
                 prefer=prefer,
                 **kwargs
-            ))
-        except HttpResponseError as e:
-            process_error(e)
+            )
+        except HttpResponseError as err:
+            process_error(err)
+        response = LogsQueryResult._from_generated(generated_response)
+        if not generated_response.error:
+            return response
+        else:
+            if not allow_partial_errors:
+                raise QueryPartialErrorException(error=generated_response.error)
+            response.partial_error = LogsQueryError._from_generated(generated_response.error)
+            return response
 
     @distributed_trace_async
     async def query_batch(

@@ -33,7 +33,7 @@ requests = [
         include_statistics=True
     ),
 ]
-responses = client.query_batch(requests, allow_partial_errors=True)
+responses = client.query_batch(requests, allow_partial_errors=False)
 
 for response in responses:
     if not response.is_error:
@@ -43,7 +43,7 @@ for response in responses:
         print("\n\n-------------------------\n\n")
     else:
         error = response
-        print(error.innererror.message)
+        print(error.message)
 
 
 # [END send_query_batch]
