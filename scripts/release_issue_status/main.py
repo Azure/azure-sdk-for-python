@@ -223,6 +223,13 @@ def main():
             item.bot_advice = 'better to release asap.'
         elif (item.comment_num == 0 or 'Configured' in item.labels) and 'Python' in item.labels:
             item.bot_advice = 'new issue and better to confirm quickly.'
+            if 'assigned' not in item.labels:
+                assign_count = int(str(time.time())[-1]) % 2
+                if assign_count == 1:
+                    item.issue_object.remove_from_assignees(*['RAY-316'])
+                    item.issue_object.add_to_assignees(*['BigCat20196'])
+                item.labels.append('assigned')
+                item.issue_object.set_labels.set_labels(*item.labels)
             try:
                 auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python_piplines)
             except Exception as e:
