@@ -199,8 +199,8 @@ additional questions or comments.
 [azure_identity_pip]: https://pypi.org/project/azure-identity/
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [pip]: https://pypi.org/project/pip/
-[enable_aad]: https://docs.microsoft.com/en-us/azure/azure-web-pubsub/howto-develop-create-instance
-[api_key]: https://docs.microsoft.com/en-us/azure/azure-web-pubsub/howto-websocket-connect?tabs=browser#authorization
-[connection_string]: https://docs.microsoft.com/en-us/azure/azure-web-pubsub/howto-websocket-connect?tabs=browser#authorization
-[azure_portal]: https://docs.microsoft.com/en-us/azure/azure-web-pubsub/howto-develop-create-instance
+[enable_aad]: https://docs.microsoft.com/azure/azure-web-pubsub/howto-develop-create-instance
+[api_key]: https://docs.microsoft.com/azure/azure-web-pubsub/howto-websocket-connect?tabs=browser#authorization
+[connection_string]: https://docs.microsoft.com/azure/azure-web-pubsub/howto-websocket-connect?tabs=browser#authorization
+[azure_portal]: https://docs.microsoft.com/azure/azure-web-pubsub/howto-develop-create-instance
 [azure-key-credential]: https://aka.ms/azsdk-python-core-azurekeycredential
