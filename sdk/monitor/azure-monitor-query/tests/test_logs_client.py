@@ -55,8 +55,9 @@ def test_logs_single_query_with_non_200():
 def test_logs_single_query_with_partial_success():
     credential = _credential()
     client = LogsQueryClient(credential)
-    query = "set truncationmaxrecords=1; union * | project TimeGenerated | take 10"
-
+    query = """let Weight = 92233720368547758;
+    range x from 1 to 3 step 1
+    | summarize percentilesw(x, Weight * 100, 50)"""
     response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None, allow_partial_errors=True)
 
     assert response.partial_error is not None
