@@ -10,7 +10,7 @@ import datetime
 from typing import Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
-from 
+import msrest.serialization
 
 from ._monitor_query_client_enums import *
 
