@@ -100,8 +100,6 @@ def process_row(col_types, row):
     return [native_col_type(col_types[ind], val) for ind, val in enumerate(row)]
 
 def process_error(error, model):
-    if not error:
-        return None
     try:
         model = model._from_generated(error.model.error) # pylint: disable=protected-access
     except AttributeError: # model can be none
@@ -114,13 +112,9 @@ def process_error(error, model):
 def process_prefer(server_timeout, include_statistics, include_visualization):
     prefer = ""
     if server_timeout:
-        prefer += "wait=" + str(server_timeout)
+        prefer += "wait=" + str(server_timeout) + ","
     if include_statistics:
-        if len(prefer) > 0:
-            prefer += ","
-        prefer += "include-statistics=true"
+        prefer += "include-statistics=true,"
     if include_visualization:
-        if len(prefer) > 0:
-            prefer += ","
         prefer += "include-render=true"
-    return prefer
+    return prefer.rstrip(",")

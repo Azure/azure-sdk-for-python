@@ -101,17 +101,6 @@ class LogsQueryClient(object):
         server_timeout = kwargs.pop("server_timeout", None)
         workspaces = kwargs.pop("additional_workspaces", None)
 
-        prefer = ""
-        if server_timeout:
-            prefer += "wait=" + str(server_timeout)
-        if include_statistics:
-            if len(prefer) > 0:
-                prefer += ","
-            prefer += "include-statistics=true"
-        if include_visualization:
-            if len(prefer) > 0:
-                prefer += ","
-            prefer += "include-render=true"
         prefer = process_prefer(server_timeout, include_statistics, include_visualization)
 
         body = LogsQueryBody(

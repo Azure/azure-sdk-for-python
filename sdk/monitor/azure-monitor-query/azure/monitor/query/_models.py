@@ -201,7 +201,6 @@ class LogsQueryResult(object):
             tables=tables,
             statistics=generated.statistics,
             visualization=generated.render,
-            is_error=False
         )
 
 

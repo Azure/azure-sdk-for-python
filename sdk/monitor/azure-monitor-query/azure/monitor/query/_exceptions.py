@@ -49,7 +49,6 @@ class LogsQueryError(object):
             innererror=cls._from_generated(generated.innererror) if generated.innererror else None,
             additional_properties=generated.additional_properties,
             details=details,
-            is_error=True
         )
 
 class QueryPartialErrorException(HttpResponseError):
@@ -67,8 +66,6 @@ class QueryPartialErrorException(HttpResponseError):
     :ivar additional_properties: Additional properties that can be provided on the error info
      object.
     :vartype additional_properties: object
-    :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always True for an instance of a LogsQueryError.
     """
 
     def __init__(self, **kwargs):
@@ -79,5 +76,4 @@ class QueryPartialErrorException(HttpResponseError):
             self.details = [d.serialize() for d in error.details] if error.details else None
             self.innererror = LogsQueryError._from_generated(error.innererror) if error.innererror else None
             self.additional_properties = error.additional_properties
-            self.is_error = True
         super(QueryPartialErrorException, self).__init__(message=self.message)
