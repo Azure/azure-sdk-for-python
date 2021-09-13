@@ -568,7 +568,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        self._validate_skillset(skillset)
+        _validate_skillset(skillset)
         skillset = skillset._to_generated() if hasattr(skillset, '_to_generated') else skillset # pylint:disable=protected-access
 
         result = self._client.skillsets.create(skillset, **kwargs)
@@ -593,9 +593,9 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             skillset, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
         kwargs.update(access_condition)
-        self._validate_skillset(skillset)
+        _validate_skillset(skillset)
         skillset = skillset._to_generated() if hasattr(skillset, '_to_generated') else skillset # pylint:disable=protected-access
-        
+
         result = self._client.skillsets.create_or_update(
             skillset_name=skillset.name,
             skillset=skillset,
@@ -604,32 +604,43 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         )
         return SearchIndexerSkillset._from_generated(result) # pylint:disable=protected-access
 
-    def _validate_skillset(self, skillset):
-        """Validates any multi-version skills in the skillset to verify that unsupported
-        parameters are not supplied by the user.
-        """
-        skills = getattr(skillset, 'skills', None)
-        if not skills:
-            return
+def _validate_skillset(skillset):
+    """Validates any multi-version skills in the skillset to verify that unsupported
+    parameters are not supplied by the user.
+    """
+    skills = getattr(skillset, 'skills', None)
+    if not skills:
+        return
 
-        error_strings = []
-        for skill in skills:
-            dict_skill = skill if isinstance(skill, dict) else skill.as_dict()
-            skill_version = dict_skill.get('skill_version')
-            if not skill_version:
-                continue
+    error_strings = []
+    for skill in skills:
+        if isinstance(skill, dict):
+            skill_version = skill.get('skill_version')
+        else:
+            skill_version = getattr(skill, 'skill_version', None)
+        if not skill_version:
+            continue
 
-            if skill_version == SentimentSkillVersion.V1:
-                unsupported = ['model_version', 'include_opinion_mining']
-            elif skill_version == SentimentSkillVersion.V3:
-                unsupported = []
-            elif skill_version == EntityRecognitionSkillVersion.V1:
-                unsupported = ['model_version']
-            elif skill_version == EntityRecognitionSkillVersion.V3:
-                unsupported = ['include_typeless_entities']
+        if skill_version == SentimentSkillVersion.V1:
+            unsupported = ['model_version', 'include_opinion_mining']
+        elif skill_version == SentimentSkillVersion.V3:
+            unsupported = []
+        elif skill_version == EntityRecognitionSkillVersion.V1:
+            unsupported = ['model_version']
+        elif skill_version == EntityRecognitionSkillVersion.V3:
+            unsupported = ['include_typeless_entities']
 
-            errors = [x for x in unsupported if x in dict_skill]
-            if errors:
-                error_strings.append("Unsupported parameters for skill version {}: {}".format(skill_version, ", ".join(errors)))
-        if error_strings:
-            raise ValueError("\n".join(error_strings))
+        errors = []
+        for item in unsupported:
+            if isinstance(skill, dict):
+                if skill.get(item, None):
+                    errors.append(item)
+            else:
+                if skill.__dict__.get(item, None):
+                    errors.append(item)
+        if errors:
+            error_strings.append("Unsupported parameters for skill version {}: {}".format(
+                skill_version, ", ".join(errors))
+            )
+    if error_strings:
+        raise ValueError("\n".join(error_strings))

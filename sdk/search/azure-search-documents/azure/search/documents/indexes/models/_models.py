@@ -211,8 +211,7 @@ class EntityRecognitionSkill(SearchIndexerSkill):
                 categories=self.categories,
                 default_language_code=self.default_language_code,
                 include_typeless_entities=self.include_typeless_entities,
-                minimum_precision=self.minimum_precision,
-                model_version=self.model_version
+                minimum_precision=self.minimum_precision
             )
         if self.skill_version in [EntityRecognitionSkillVersion.V3, EntityRecognitionSkillVersion.LATEST]:
             return _EntityRecognitionSkillV3(
@@ -222,7 +221,6 @@ class EntityRecognitionSkill(SearchIndexerSkill):
                 odata_type=self.odata_type,
                 categories=self.categories,
                 default_language_code=self.default_language_code,
-                include_typeless_entities=self.include_typeless_entities,
                 minimum_precision=self.minimum_precision,
                 model_version=self.model_version
             )
@@ -333,7 +331,7 @@ class SentimentSkill(SearchIndexerSkill):
         self.skill_version = skill_version
         self.odata_type = self.skill_version  # type: str
         self.default_language_code = kwargs.get('default_language_code', None)
-        self.include_opinion_mining = kwargs.get('include_opinion_mining', False)
+        self.include_opinion_mining = kwargs.get('include_opinion_mining', None)
         self.model_version = kwargs.get('model_version', None)
 
     def _to_generated(self):
@@ -343,10 +341,8 @@ class SentimentSkill(SearchIndexerSkill):
                 outputs=self.outputs,
                 name=self.name,
                 odata_type=self.odata_type,
-                default_language_code=self.default_language_code,
-                include_opinion_mining=self.include_opinion_mining,
-                model_version=self.model_version
-            )
+                default_language_code=self.default_language_code
+        )
         if self.skill_version in [SentimentSkillVersion.V3, SentimentSkillVersion.LATEST]:
             return _SentimentSkillV3(
                 inputs=self.inputs,
