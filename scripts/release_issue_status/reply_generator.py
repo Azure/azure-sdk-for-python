@@ -1,4 +1,4 @@
-import auto_pipeline_run as apr
+from utils import run_pipeline
 import re
 
 issue_object_rg = None
@@ -108,11 +108,11 @@ def begin_reply_generate(item, rest_repo, readme_link, sdk_repo, pipeline_url):
     if not whether_change_readme:
         latest_pr_number = get_latest_pr_from_readme(rest_repo, link_dict)
         reply_content, sdk_link_number = latest_pr_parse(rest_repo, latest_pr_number)
-        run_pipeline = apr.run_pipeline(issue_link=issue_object_rg.html_url,
+        res_run = run_pipeline(issue_link=issue_object_rg.html_url,
                                         sdk_issue_object=sdk_repo.get_pull(int(sdk_link_number)),
                                         pipeline_url=pipeline_url
                                         )
-        if run_pipeline:
+        if res_run:
             print(f'{issue_object_rg.number} run pipeline successfully')
         else:
             print(f'{issue_object_rg.number} run pipeline fail')
