@@ -4,6 +4,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+from typing import Any
+
 from ._generated.models import EventSubscriptionType, MediaType
 from ._shared.models import PhoneNumberIdentifier
 
@@ -11,9 +13,6 @@ try:
     from urllib.parse import urlparse
 except ImportError:
     from urlparse import urlparse # type: ignore
-
-from typing import Any
-
 
 class CreateCallOptions(object):
 

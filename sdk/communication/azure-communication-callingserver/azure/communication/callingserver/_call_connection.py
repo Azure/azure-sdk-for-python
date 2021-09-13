@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Any, overload
+from typing import TYPE_CHECKING
 
 from azure.core.tracing.decorator import distributed_trace
 
@@ -14,7 +14,7 @@ from ._converters import (AddParticipantRequestConverter,
 from ._generated.models import (AddParticipantResult,
                                 CancelAllMediaOperationsRequest,
                                 CancelAllMediaOperationsResult,
-                                PhoneNumberIdentifierModel, PlayAudioRequest,
+                                PhoneNumberIdentifierModel,
                                 PlayAudioResult)
 
 if TYPE_CHECKING:
@@ -26,7 +26,6 @@ class CallConnection(object):
             self,
             call_connection_id, # type: str
             call_connection_client, # type: CallConnectionsOperations
-            **kwargs  # type: Any
         ): # type: (...) -> None
 
         self.call_connection_id = call_connection_id
@@ -46,7 +45,7 @@ class CallConnection(object):
     @distributed_trace()
     def cancel_all_media_operations(
             self,
-            operation_context = None, # type: Optional[str]
+            operation_context, # type: Optional[str]
             **kwargs # type: Any
         ): # type: (...) -> CancelAllMediaOperationsResult
 
@@ -94,12 +93,14 @@ class CallConnection(object):
         if not participant:
             raise ValueError("participant can not be None")
 
-        alternate_caller_id = None if alternate_caller_id == None else PhoneNumberIdentifierModel(value=alternate_caller_id)
+        alternate_caller_id = (None
+            if alternate_caller_id is None
+            else PhoneNumberIdentifierModel(value=alternate_caller_id))
 
         add_participant_request = AddParticipantRequestConverter.convert(
-            participant = serialize_identifier(participant),
-            alternate_caller_id = alternate_caller_id,
-            operation_context = operation_context
+            participant=serialize_identifier(participant),
+            alternate_caller_id=alternate_caller_id,
+            operation_context=operation_context
             )
 
         return self._call_connection_client.add_participant(

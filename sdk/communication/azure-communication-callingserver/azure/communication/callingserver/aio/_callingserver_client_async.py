@@ -15,15 +15,13 @@ from .._generated.models import CreateCallRequest, PhoneNumberIdentifierModel
 from .._shared.models import CommunicationIdentifier
 from ._call_connection_async import CallConnection
 from ._server_call_async import ServerCall
-
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
-    from .._models import CreateCallOptions, JoinCallOptions
-
 from .._converters import JoinCallRequestConverter
 from .._shared.utils import get_authentication_policy, parse_connection_str
 from .._version import SDK_MONIKER
 
+if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
+    from .._models import CreateCallOptions, JoinCallOptions
 
 class CallingServerClient(object):
     """A client to interact with the AzureCommunicationService Calling Server.
@@ -159,7 +157,9 @@ class CallingServerClient(object):
             callback_uri=options.callback_uri,
             requested_media_types=options.requested_media_types,
             requested_call_events=options.requested_call_events,
-            alternate_caller_id=None if options.alternate_Caller_Id == None else PhoneNumberIdentifierModel(value=options.alternate_Caller_Id.properties['value']),
+            alternate_caller_id=(None
+                if options.alternate_Caller_Id is None
+                else PhoneNumberIdentifierModel(value=options.alternate_Caller_Id.properties['value'])),
             subject=options.subject,
             **kwargs
         )

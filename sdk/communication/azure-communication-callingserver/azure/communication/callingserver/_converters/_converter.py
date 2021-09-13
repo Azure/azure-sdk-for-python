@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 from .._models import JoinCallOptions, PlayAudioOptions
-from .._shared.models import CommunicationIdentifier, PhoneNumberIdentifier
+from .._shared.models import CommunicationIdentifier
 from .._generated.models import (
     JoinCallRequest,
     PlayAudioRequest,
@@ -15,9 +15,8 @@ from .._generated.models import (
     )
 
 class JoinCallRequestConverter(object):
-    @classmethod
+    @staticmethod
     def convert(
-        self,
         source: CommunicationIdentifierModel,
         join_call_options: JoinCallOptions
         ): # type: (...) -> JoinCallRequest
@@ -32,14 +31,13 @@ class JoinCallRequestConverter(object):
             callback_uri=join_call_options.callback_uri,
             requested_media_types=join_call_options.requested_media_types,
             requested_call_events=join_call_options.requested_call_events,
-            subject= join_call_options.subject
+            subject=join_call_options.subject
             )
 
 
 class PlayAudioRequestConverter(object):
-    @classmethod
+    @staticmethod
     def convert(
-        self,
         audio_file_uri: str,
         play_audio_options: PlayAudioOptions
         ): # type: (...) -> PlayAudioRequest
@@ -51,16 +49,15 @@ class PlayAudioRequestConverter(object):
 
         return PlayAudioRequest(
             audio_file_uri=audio_file_uri,
-            loop = play_audio_options.loop,
+            loop=play_audio_options.loop,
             operation_context=play_audio_options,
             audio_file_id=play_audio_options.audio_file_id,
             callback_uri=play_audio_options.callback_uri
             )
 
 class AddParticipantRequestConverter(object):
-    @classmethod
+    @staticmethod
     def convert(
-        self,
         participant: CommunicationIdentifierModel,
         alternate_caller_id: PhoneNumberIdentifierModel = None,
         operation_context: str = None,
@@ -71,8 +68,8 @@ class AddParticipantRequestConverter(object):
             raise ValueError("participant can not be None")
 
         return AddParticipantRequest(
-            alternate_caller_id = alternate_caller_id,
-            participant = participant,
+            alternate_caller_id=alternate_caller_id,
+            participant=participant,
             operation_context=operation_context,
             callback_uri=callback_uri
             )

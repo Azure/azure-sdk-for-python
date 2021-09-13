@@ -12,7 +12,7 @@ from ._communication_identifier_serializer import serialize_identifier
 from ._converters import (AddParticipantRequestConverter,
                           PlayAudioRequestConverter)
 from ._generated.models import (AddParticipantResult,
-                                PhoneNumberIdentifierModel, PlayAudioRequest,
+                                PhoneNumberIdentifierModel,
                                 PlayAudioResult)
 
 if TYPE_CHECKING:
@@ -26,7 +26,6 @@ class ServerCall(object):
         self,
         server_call_id,  # type: str
         server_call_client,  # type: ServerCallsOperations
-        **kwargs  # type: Any
     ):
         # type: (...) -> None
         self.server_call_id = server_call_id
@@ -67,13 +66,15 @@ class ServerCall(object):
         if not participant:
             raise ValueError("participant can not be None")
 
-        alternate_caller_id = None if alternate_caller_id == None else PhoneNumberIdentifierModel(value=alternate_caller_id)
+        alternate_caller_id = (None
+            if alternate_caller_id is None
+            else PhoneNumberIdentifierModel(value=alternate_caller_id))
 
         add_participant_request = AddParticipantRequestConverter.convert(
-            participant = serialize_identifier(participant),
-            alternate_caller_id = alternate_caller_id,
-            operation_context = operation_context,
-            callback_uri = callback_uri
+            participant=serialize_identifier(participant),
+            alternate_caller_id=alternate_caller_id,
+            operation_context=operation_context,
+            callback_uri=callback_uri
             )
 
         return self._server_call_client.add_participant(
