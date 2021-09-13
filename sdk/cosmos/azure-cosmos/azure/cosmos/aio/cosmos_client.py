@@ -22,7 +22,8 @@
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, Optional, Union, cast, Iterable, List  # pylint: disable=unused-import
+from typing import Any, Dict, Optional, Union, cast, Iterable, List
+from azure.core.tracing.decorator_async import distributed_trace_async  # pylint: disable=unused-import
 
 import six
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
@@ -171,6 +172,101 @@ class CosmosClient(object):
             pass
         database_id = cast("Dict[str, str]", database_or_id)["id"]
         return "dbs/{}".format(database_id)
+
+    @distributed_trace_async
+    async def create_database(  # pylint: disable=redefined-builtin
+        self,
+        id,  # type: str
+        populate_query_metrics=None,  # type: Optional[bool]
+        offer_throughput=None,  # type: Optional[int]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> DatabaseProxy
+        """
+        Create a new database with the given ID (name).
+
+        :param id: ID (name) of the database to create.
+        :param bool populate_query_metrics: Enable returning query metrics in response headers.
+        :param int offer_throughput: The provisioned throughput for this offer.
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
+            has changed, and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: A DatabaseProxy instance representing the new database.
+        :rtype: ~azure.cosmos.DatabaseProxy
+        :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: Database with the given ID already exists.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/examples.py
+                :start-after: [START create_database]
+                :end-before: [END create_database]
+                :language: python
+                :dedent: 0
+                :caption: Create a database in the Cosmos DB account:
+                :name: create_database
+        """
+
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
+        if populate_query_metrics is not None:
+            request_options["populateQueryMetrics"] = populate_query_metrics
+        if offer_throughput is not None:
+            request_options["offerThroughput"] = offer_throughput
+
+        result = await self.client_connection.CreateDatabase(database=dict(id=id), options=request_options, **kwargs)
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
+        return DatabaseProxy(self.client_connection, id=result["id"], properties=result)        
+
+    @distributed_trace_async
+    async def create_database_if_not_exists(  # pylint: disable=redefined-builtin
+        self,
+        id,  # type: str
+        populate_query_metrics=None,  # type: Optional[bool]
+        offer_throughput=None,  # type: Optional[int]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> DatabaseProxy
+        """
+        Create the database if it does not exist already.
+
+        If the database already exists, the existing settings are returned.
+
+        ..note::
+            This function does not check or update existing database settings or
+            offer throughput if they differ from what is passed in.
+
+        :param id: ID (name) of the database to read or create.
+        :param bool populate_query_metrics: Enable returning query metrics in response headers.
+        :param int offer_throughput: The provisioned throughput for this offer.
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
+            has changed, and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: A DatabaseProxy instance representing the database.
+        :rtype: ~azure.cosmos.DatabaseProxy
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
+        """
+        try:
+            database_proxy = self.get_database_client(id)
+            await database_proxy.read(
+                populate_query_metrics=populate_query_metrics,
+                **kwargs
+            )
+            print("Read DB with success")
+            return database_proxy
+        except CosmosResourceNotFoundError:
+            return await self.create_database(
+                id,
+                populate_query_metrics=populate_query_metrics,
+                offer_throughput=offer_throughput,
+                **kwargs
+            )
 
     def get_database_client(self, database):
         # type: (Union[str, DatabaseProxy, Dict[str, Any]]) -> DatabaseProxy

@@ -10,8 +10,8 @@ from azure.cosmos.cosmos_client import CosmosClient as SyncClient
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.partition_key import PartitionKey
 
-endpoint = 'https://simonmoreno-sql.documents.azure.com:443/'
-key = 'ix7V0n09yDyiUarBkQnDRAqBwkxXMM6iGq7FlDHmHRlHZPUDRnBu55Vx2gwzd2Mkh6Qyrc8VnJWR6djgnkl8cw=='
+endpoint = ''
+key = ''
 
 import uuid
 
@@ -41,31 +41,37 @@ def create_test(db_name, cont_name, num):
     print("Created {} items in {} DB successfully".format(num, db_name))
     return ids
 
-async def async_read_test(db_name, cont_name, num):
-	ids = create_test(db_name, cont_name, num)
-	client = AsyncClient(endpoint, key)
-	if client: print(client)
-	db = client.get_database_client(db_name)
-	if db: print(db)
-	x = await db.read()
-	print(x)
-	await client.close()
+def timed_sync_create(db_name, cont_name, num):
+    client = SyncClient(endpoint, key)
+    db = client.create_database(id=db_name)
+    container = db.create_container(
+        id=cont_name,
+		partition_key=PartitionKey(path="/id"))
+    ids = []
+    start = time.time()
+    for i in range(num):
+        body = get_test_item()
+        ids.append(body.get("id"))
+        container.create_item(body=body)
+    print("Sync client created {} items in {} seconds".format(num, time.time() - start))
+    return ids
 
-async def with_read_test(db_name, cont_name, item_name):
-	async with AsyncClient(endpoint, key) as client:
-		print(client)
-		db = client.get_database_client(db_name)
-		if db: print(db)
-		x = await db.read()
-		print(x)
-		cont = db.get_container_client(cont_name)
-		if cont: print(cont)
-		x = await cont.read()
-		print(x)
-		x = await cont.read_item(item=item_name, partition_key=item_name)
-		print(x)
+async def timed_async_create(db_name, cont_name, num):
+    async with AsyncClient(endpoint, key) as client:
+        db = await client.create_database_if_not_exists(id=db_name)
+        cont = await db.create_container_if_not_exists(
+            id=cont_name,
+            partition_key=PartitionKey(path="/id"))
+        ids = []
+        start = time.time()
+        for i in range(num):
+            body = get_test_item()
+            ids.append(body.get("id"))
+            await cont.create_item(body=body)
+    print("Async client created {} items in {} seconds".format(num, time.time() - start))
+    return ids
 
-def timed_sync(db2, cont2, num, ids):
+def timed_sync_read(db2, cont2, num, ids):
     client = SyncClient(endpoint, key)
     db = client.get_database_client(db2)
     cont = db.get_container_client(cont2)
@@ -76,7 +82,7 @@ def timed_sync(db2, cont2, num, ids):
             print("Error retrieving item {}".format(id))
     print("Sync client retrieved {} items in {} seconds".format(num, time.time() - start))
 
-async def timed_async(db1, cont1, num, ids):
+async def timed_async_read(db1, cont1, num, ids):
 	async with AsyncClient(endpoint, key) as client:
 		db = client.get_database_client(db1)
 		cont = db.get_container_client(cont1)
@@ -87,13 +93,35 @@ async def timed_async(db1, cont1, num, ids):
 				print("Error retrieving item {}".format(id))
 		print("Async client retrieved {} items in {} seconds".format(num, time.time() - start))
 
-async def main():
+async def read_tests():
     db = "db01"
     cont = "c01"
-    num = 100000
+    num = 1000
     ids = create_test(db, cont, num)
-    timed_sync(db,cont,num,ids)
-    await timed_async(db,cont,num,ids)
+    timed_sync_read(db,cont,num,ids)
+    await timed_async_read(db,cont,num,ids)
+
+async def create_tests():
+    db1, db2 = "db01", "db02"
+    cont1, cont2 = "c01", "c02"
+    num = 10
+    ids1 = timed_sync_create(db1,cont1,num)
+    ids2 = await timed_async_create(db2,cont2,num)
+    print(len(ids1) == len(ids2))
+
+def user_test():
+    client = SyncClient(endpoint, key)
+    db = client.get_database_client("xusud")
+    use = db.get_user_client(user="testid")
+    data = use.read()
+    print(data)
+    perms = use.list_permissions()
+    print(list(perms))
+
+async def main():
+    # await read_tests()
+    await create_tests()
+
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
