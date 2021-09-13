@@ -296,7 +296,7 @@ class HttpRequestBackcompatMixin(object):
         This is deprecated and will be removed in a later release.
         """
         try:
-            return self.__multipart_mixed_info
+            return self._multipart_mixed_info_val
         except AttributeError:
             return None
 
@@ -305,7 +305,7 @@ class HttpRequestBackcompatMixin(object):
         """DEPRECATED: Set information to make multipart mixed requests.
         This is deprecated and will be removed in a later release.
         """
-        self.__multipart_mixed_info = val
+        self._multipart_mixed_info_val = val
 
     @property
     def _query(self):
