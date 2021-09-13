@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import List, Dict, Any  # pylint: disable=unused-import
+from typing import Dict, Any  # pylint: disable=unused-import
 
 try:
     from urllib.parse import urlparse
@@ -15,7 +15,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._generated.models import (
     SipConfiguration,
     SipConfigurationPatch,
-    TrunkPatch,
+    Trunk,
     TrunkRoute,
 )
 
@@ -107,29 +107,29 @@ class SipRoutingClient(object):
     @distributed_trace
     def update_sip_configuration(
         self,
-        sip_trunks,  # type: Dict[str,TrunkPatch]
-        sip_routes,  # type: List[TrunkRoute]
+        sip_configuration,  # type: SipConfiguration
         **kwargs  # type: any
     ):  # type: (...) -> SipConfiguration
         """Updates SIP routing configuration with new SIP trunks and trunk routes.
 
-        :param sip_trunks: SIP trunks for routing calls
-        :type sip_trunks: Dict[str, ~azure.communication.siprouting.models.TrunkPatch]
-        :param sip_routes: Trunk routes for routing calls. Route's name is used as the key.
-        :type sip_routes: List[~azure.communication.siprouting.models.TrunkRoute]
+        :param sip_configuration: new SIP configuration
+        :type sip_configuration: ~azure.communication.siprouting.models.SipConfiguration
         :returns: Updated SIP configuration.
         :rtype: ~azure.communication.siprouting.models.SipConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
 
-        if not sip_trunks:
+        if not sip_configuration:
+            raise ValueError("SIP configuration can not be null")
+
+        if not sip_configuration.trunks:
             raise ValueError("SIP trunks can not be null")
 
-        if not sip_routes:
+        if not sip_configuration.routes:
             raise ValueError("SIP routes can not be null")
 
         updated_sip_configuration = SipConfigurationPatch(
-            trunks=sip_trunks, routes=sip_routes
+            trunks=sip_configuration.trunks, routes=sip_configuration.routes
         )
         return self._rest_service.patch_sip_configuration(
             body=updated_sip_configuration, **kwargs
@@ -138,13 +138,13 @@ class SipRoutingClient(object):
     @distributed_trace
     def update_sip_trunks(
         self,
-        sip_trunks,  # type: Dict[str,TrunkPatch]
+        sip_trunks,  # type: Dict[str,Trunk]
         **kwargs  # type: any
     ):  # type: (...) -> SipConfiguration
         """Updates SIP routing configuration with new SIP trunks.
 
         :param sip_trunks: SIP trunks for routing calls
-        :type sip_trunks: Dict[str, ~azure.communication.siprouting.models.TrunkPatch]
+        :type sip_trunks: Dict[str, ~azure.communication.siprouting.models.Trunk]
         :returns: Updated SIP configuration.
         :rtype: ~azure.communication.siprouting.models.SipConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError

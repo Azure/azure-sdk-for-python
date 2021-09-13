@@ -121,6 +121,7 @@ class AzureCommunicationSIPRoutingServiceOperationsMixin(object):
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         if body is not None:
+            print(body)
             body_content = self._serialize.body(body, 'SipConfigurationPatch')
         else:
             body_content = None

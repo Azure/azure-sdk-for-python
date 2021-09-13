@@ -8,7 +8,7 @@ import unittest
 import json
 
 from azure.communication.siprouting import SipRoutingClient
-from azure.communication.siprouting._generated.models import Trunk, TrunkRoute
+from azure.communication.siprouting._generated.models import SipConfiguration, Trunk, TrunkRoute
 from testcases.fake_token_credential import FakeTokenCredential
 
 try:
@@ -74,7 +74,7 @@ class TestSipRoutingClient(unittest.TestCase):
             "https://endpoint", FakeTokenCredential(), transport=mock)
 
         test_client.update_sip_configuration(
-            self.test_trunks, self.test_routes)
+            SipConfiguration(trunks=self.test_trunks, routes=self.test_routes))
 
         captured_request = mock.send.call_args[0][0]
         self.assertEqual(
@@ -111,13 +111,19 @@ class TestSipRoutingClient(unittest.TestCase):
         test_client = self.get_simple_test_client()
 
         with self.assertRaises(ValueError):
-            test_client.update_sip_configuration(None, self.test_routes)
+            test_client.update_sip_configuration(None)
+
+    def test_update_sip_configuration_no_sip_trunks_raises_value_error(self):
+        test_client = self.get_simple_test_client()
+
+        with self.assertRaises(ValueError):
+            test_client.update_sip_configuration(SipConfiguration(routes=self.test_routes))
 
     def test_update_sip_configuration_no_sip_routes_raises_value_error(self):
         test_client = self.get_simple_test_client()
 
         with self.assertRaises(ValueError):
-            test_client.update_sip_configuration(self.test_trunks, None)
+            test_client.update_sip_configuration(SipConfiguration(trunks=self.test_trunks))
 
     def test_update_sip_trunks_no_gateways_raises_value_error(self):
         test_client = self.get_simple_test_client()

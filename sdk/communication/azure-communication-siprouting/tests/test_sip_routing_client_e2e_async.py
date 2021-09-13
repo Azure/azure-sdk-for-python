@@ -6,7 +6,7 @@
 
 from testcases.async_communication_testcase import AsyncCommunicationTestCase
 from testcases.uri_replacer_processor import URIReplacerProcessor
-from azure.communication.siprouting.aio import SipRoutingClient
+from azure.communication.siprouting.aio import SipRoutingClient, SipConfiguration
 
 
 class TestSipRoutingClientE2EAsync(AsyncCommunicationTestCase):
@@ -45,7 +45,7 @@ class TestSipRoutingClientE2EAsync(AsyncCommunicationTestCase):
 
         async with self._sip_routing_client as client:
             new_configuration = await client.update_sip_configuration(
-                new_trunks, new_routes
+                SipConfiguration(trunks=new_trunks,routes=new_routes)
             )
             assert new_configuration is not None
             assert (

@@ -6,7 +6,7 @@
 
 from testcases.communication_testcase import CommunicationTestCase
 from testcases.uri_replacer_processor import URIReplacerProcessor
-from azure.communication.siprouting import SipRoutingClient
+from azure.communication.siprouting import SipRoutingClient, SipConfiguration
 
 class TestSipRoutingClientE2E(CommunicationTestCase):
     def __init__(self, method_name):
@@ -50,7 +50,7 @@ class TestSipRoutingClientE2E(CommunicationTestCase):
 
         try:
             new_configuration = self._sip_routing_client.update_sip_configuration(
-                new_trunks, new_routes
+                SipConfiguration(trunks=new_trunks, routes=new_routes)
             )
         except Exception as e:
             raised = True
@@ -109,6 +109,7 @@ class TestSipRoutingClientE2E(CommunicationTestCase):
         test_trunk = {test_trunk_name: {"sipSignalingPort": 9876}}
         configuration_with_test_trunks = self._sip_routing_client.update_sip_trunks(test_trunk)
 
+        print("test")
         configuration = self._sip_routing_client.update_sip_trunks({test_trunk_name: None})
 
         assert test_trunk_name in configuration_with_test_trunks.trunks.keys(), "Test trunk not setup."

@@ -10,7 +10,7 @@ import pytest
 
 from azure.communication.siprouting.aio import SipRoutingClient
 from azure.core.credentials import AccessToken
-from azure.communication.siprouting._generated.models import Trunk, TrunkRoute
+from azure.communication.siprouting._generated.models import Trunk, TrunkRoute, SipConfiguration
 from testcases.fake_token_credential import FakeTokenCredential
 
 try:
@@ -79,7 +79,7 @@ class TestSipRoutingClientAsync(aiounittest.AsyncTestCase):
         test_client = self.get_simple_test_client()
 
         await test_client.update_sip_configuration(
-            self.test_trunks, self.test_routes)
+            SipConfiguration(trunks=self.test_trunks, routes=self.test_routes))
 
         self.assertEqual(mock.call_args[1]['body'].trunks, self.test_trunks)
         self.assertEqual(mock.call_args[1]['body'].routes, self.test_routes)
@@ -107,7 +107,7 @@ class TestSipRoutingClientAsync(aiounittest.AsyncTestCase):
         test_client = self.get_simple_test_client()
 
         try:
-            await test_client.update_sip_configuration(None, self.test_routes)
+            await test_client.update_sip_configuration(SipConfiguration(routes=self.test_routes))
             raised = False
         except ValueError:
             raised = True
@@ -115,11 +115,25 @@ class TestSipRoutingClientAsync(aiounittest.AsyncTestCase):
         self.assertTrue(raised)
 
     @pytest.mark.asyncio
+    @patch("azure.communication.siprouting._generated.aio._azure_communication_sip_routing_service.AzureCommunicationSIPRoutingService.patch_sip_configuration")
+    async def test_update_sip_configuration_no_sip_trunks_raises_value_error(self,mock):
+        test_client = self.get_simple_test_client()
+        trunk = {"trunk_1": None}
+
+        try:
+            await test_client.update_sip_configuration(SipConfiguration(trunks=trunk,routes=self.test_routes))
+            raised = False
+        except ValueError:
+            raised = True
+
+        self.assertFalse(raised)
+
+    @pytest.mark.asyncio
     async def test_update_sip_configuration_no_sip_routes_raises_value_error(self):
         test_client = self.get_simple_test_client()
 
         try:
-            await test_client.update_sip_configuration(self.test_trunks, None)
+            await test_client.update_sip_configuration(SipConfiguration(trunks=self.test_trunks))
             raised = False
         except ValueError:
             raised = True
