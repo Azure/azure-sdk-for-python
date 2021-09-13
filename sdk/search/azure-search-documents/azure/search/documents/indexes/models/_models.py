@@ -181,6 +181,7 @@ class EntityRecognitionSkill(SearchIndexerSkill):
         'include_typeless_entities': {'key': 'includeTypelessEntities', 'type': 'bool'},
         'minimum_precision': {'key': 'minimumPrecision', 'type': 'float'},
         'model_version': {'key': 'modelVersion', 'type': 'str'},
+        'skill_version': {'key': 'skillVersion', 'type': 'str'}
     }
 
     def __init__(
@@ -318,6 +319,7 @@ class SentimentSkill(SearchIndexerSkill):
         'default_language_code': {'key': 'defaultLanguageCode', 'type': 'str'},
         'include_opinion_mining': {'key': 'includeOpinionMining', 'type': 'bool'},
         'model_version': {'key': 'modelVersion', 'type': 'str'},
+        'skill_version': {'key': 'skillVersion', 'type': 'str'}
     }
 
     def __init__(
