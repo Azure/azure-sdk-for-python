@@ -99,10 +99,17 @@ def native_col_type(col_type, value):
 def process_row(col_types, row):
     return [native_col_type(col_types[ind], val) for ind, val in enumerate(row)]
 
-def process_error(error):
+def process_error(error, model):
     if not error:
         return None
-    raise HttpResponseError(message=error.message, response=error.response)
+    try:
+        model = model._from_generated(error.model.error)
+    except AttributeError: # model can be none
+        pass
+    raise HttpResponseError(
+        message=error.message,
+        response=error.response,
+        model=model)
 
 def process_prefer(server_timeout, include_statistics, include_visualization):
     prefer = ""

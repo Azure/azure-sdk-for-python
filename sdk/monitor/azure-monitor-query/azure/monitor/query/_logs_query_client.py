@@ -129,7 +129,7 @@ class LogsQueryClient(object):
                 **kwargs
             )
         except HttpResponseError as err:
-            process_error(err)
+            process_error(err, LogsQueryError)
         response = LogsQueryResult._from_generated(generated_response) # pylint: disable=protected-access
         if not generated_response.error:
             return response
