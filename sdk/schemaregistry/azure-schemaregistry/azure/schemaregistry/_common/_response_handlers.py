@@ -29,8 +29,7 @@ from ._schema import SchemaProperties, Schema
 def _parse_schema_properties_dict(response):
     return {
         'location': response.headers.get('location'),
-        'location_by_id': response.headers.get('schema-id-location'),
-        'schema_id': response.headers.get('schema-id'),
+        'id': response.headers.get('schema-id'),
         'serialization_type': response.headers.get('serialization-type'),
         'version': int(response.headers.get('schema-version'))
     }
@@ -38,7 +37,7 @@ def _parse_schema_properties_dict(response):
 
 def _parse_response_schema_properties(response):
     properties_dict = _parse_schema_properties_dict(response)
-    properties_dict['schema_id'] = response.json()["id"]
+    properties_dict['id'] = response.json()["id"]
     return SchemaProperties(
         **properties_dict
     )
@@ -46,6 +45,6 @@ def _parse_response_schema_properties(response):
 
 def _parse_response_schema(response):
     return Schema(
-        schema_content=response.text(),
-        schema_properties=SchemaProperties(**_parse_schema_properties_dict(response))
+        content=response.text(),
+        properties=SchemaProperties(**_parse_schema_properties_dict(response))
     )

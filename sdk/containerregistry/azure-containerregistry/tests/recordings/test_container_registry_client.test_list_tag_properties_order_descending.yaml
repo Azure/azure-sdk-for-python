@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/repo45431dd7/_tags?orderby=timedesc
   response:
@@ -30,7 +30,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 17 Aug 2021 18:11:52 GMT
+      - Mon, 30 Aug 2021 20:32:49 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -55,11 +55,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1347'
+      - '1337'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/exchange
   response:
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 17 Aug 2021 18:11:54 GMT
+      - Mon, 30 Aug 2021 20:32:49 GMT
       server:
       - openresty
       strict-transport-security:
@@ -79,7 +79,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.583333'
+      - '166.65'
     status:
       code: 200
       message: OK
@@ -97,7 +97,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/token
   response:
@@ -109,7 +109,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 17 Aug 2021 18:11:54 GMT
+      - Mon, 30 Aug 2021 20:32:49 GMT
       server:
       - openresty
       strict-transport-security:
@@ -117,7 +117,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.566667'
+      - '166.633333'
     status:
       code: 200
       message: OK
@@ -131,26 +131,26 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/repo45431dd7/_tags?orderby=timedesc
   response:
     body:
       string: '{"registry": "yalinlitests.azurecr.io", "imageName": "repo45431dd7",
-        "tags": [{"name": "tag45431dd73", "digest": "sha256:0fe98d7debd9049c50b597ef1f85b7c1e8cc81f59c8d623fcb2250e8bec85b38",
-        "createdTime": "2021-08-17T18:11:34.6676299Z", "lastUpdateTime": "2021-08-17T18:11:34.6676299Z",
-        "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
-        true, "readEnabled": true, "listEnabled": true}}, {"name": "tag45431dd71",
-        "digest": "sha256:0fe98d7debd9049c50b597ef1f85b7c1e8cc81f59c8d623fcb2250e8bec85b38",
-        "createdTime": "2021-08-17T18:11:34.2609761Z", "lastUpdateTime": "2021-08-17T18:11:34.2609761Z",
+        "tags": [{"name": "tag45431dd71", "digest": "sha256:7d91b69e04a9029b99f3585aaaccae2baa80bcf318f4a5d2165a9898cd2dc0a1",
+        "createdTime": "2021-08-30T20:32:30.7930861Z", "lastUpdateTime": "2021-08-30T20:32:30.7930861Z",
         "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
         true, "readEnabled": true, "listEnabled": true}}, {"name": "tag45431dd72",
-        "digest": "sha256:0fe98d7debd9049c50b597ef1f85b7c1e8cc81f59c8d623fcb2250e8bec85b38",
-        "createdTime": "2021-08-17T18:11:34.113109Z", "lastUpdateTime": "2021-08-17T18:11:34.113109Z",
+        "digest": "sha256:7d91b69e04a9029b99f3585aaaccae2baa80bcf318f4a5d2165a9898cd2dc0a1",
+        "createdTime": "2021-08-30T20:32:30.6998691Z", "lastUpdateTime": "2021-08-30T20:32:30.6998691Z",
+        "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
+        true, "readEnabled": true, "listEnabled": true}}, {"name": "tag45431dd73",
+        "digest": "sha256:7d91b69e04a9029b99f3585aaaccae2baa80bcf318f4a5d2165a9898cd2dc0a1",
+        "createdTime": "2021-08-30T20:32:30.6608484Z", "lastUpdateTime": "2021-08-30T20:32:30.6608484Z",
         "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
         true, "readEnabled": true, "listEnabled": true}}, {"name": "tag45431dd70",
-        "digest": "sha256:0fe98d7debd9049c50b597ef1f85b7c1e8cc81f59c8d623fcb2250e8bec85b38",
-        "createdTime": "2021-08-17T18:11:32.769452Z", "lastUpdateTime": "2021-08-17T18:11:32.769452Z",
+        "digest": "sha256:7d91b69e04a9029b99f3585aaaccae2baa80bcf318f4a5d2165a9898cd2dc0a1",
+        "createdTime": "2021-08-30T20:32:29.3518131Z", "lastUpdateTime": "2021-08-30T20:32:29.3518131Z",
         "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
         true, "readEnabled": true, "listEnabled": true}}]}'
     headers:
@@ -162,11 +162,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '1347'
+      - '1351'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 17 Aug 2021 18:11:54 GMT
+      - Mon, 30 Aug 2021 20:32:49 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -189,7 +189,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/repo45431dd7/_tags?orderby=timedesc
   response:
@@ -210,7 +210,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 17 Aug 2021 18:11:54 GMT
+      - Mon, 30 Aug 2021 20:32:49 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -235,11 +235,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1347'
+      - '1337'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/exchange
   response:
@@ -251,7 +251,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 17 Aug 2021 18:11:54 GMT
+      - Mon, 30 Aug 2021 20:32:49 GMT
       server:
       - openresty
       strict-transport-security:
@@ -259,7 +259,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.55'
+      - '166.616667'
     status:
       code: 200
       message: OK
@@ -277,7 +277,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/token
   response:
@@ -289,7 +289,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 17 Aug 2021 18:11:55 GMT
+      - Mon, 30 Aug 2021 20:32:49 GMT
       server:
       - openresty
       strict-transport-security:
@@ -297,7 +297,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.533333'
+      - '166.6'
     status:
       code: 200
       message: OK
@@ -311,26 +311,26 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/repo45431dd7/_tags?orderby=timedesc
   response:
     body:
       string: '{"registry": "yalinlitests.azurecr.io", "imageName": "repo45431dd7",
-        "tags": [{"name": "tag45431dd73", "digest": "sha256:0fe98d7debd9049c50b597ef1f85b7c1e8cc81f59c8d623fcb2250e8bec85b38",
-        "createdTime": "2021-08-17T18:11:34.6676299Z", "lastUpdateTime": "2021-08-17T18:11:34.6676299Z",
-        "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
-        true, "readEnabled": true, "listEnabled": true}}, {"name": "tag45431dd71",
-        "digest": "sha256:0fe98d7debd9049c50b597ef1f85b7c1e8cc81f59c8d623fcb2250e8bec85b38",
-        "createdTime": "2021-08-17T18:11:34.2609761Z", "lastUpdateTime": "2021-08-17T18:11:34.2609761Z",
+        "tags": [{"name": "tag45431dd71", "digest": "sha256:7d91b69e04a9029b99f3585aaaccae2baa80bcf318f4a5d2165a9898cd2dc0a1",
+        "createdTime": "2021-08-30T20:32:30.7930861Z", "lastUpdateTime": "2021-08-30T20:32:30.7930861Z",
         "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
         true, "readEnabled": true, "listEnabled": true}}, {"name": "tag45431dd72",
-        "digest": "sha256:0fe98d7debd9049c50b597ef1f85b7c1e8cc81f59c8d623fcb2250e8bec85b38",
-        "createdTime": "2021-08-17T18:11:34.113109Z", "lastUpdateTime": "2021-08-17T18:11:34.113109Z",
+        "digest": "sha256:7d91b69e04a9029b99f3585aaaccae2baa80bcf318f4a5d2165a9898cd2dc0a1",
+        "createdTime": "2021-08-30T20:32:30.6998691Z", "lastUpdateTime": "2021-08-30T20:32:30.6998691Z",
+        "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
+        true, "readEnabled": true, "listEnabled": true}}, {"name": "tag45431dd73",
+        "digest": "sha256:7d91b69e04a9029b99f3585aaaccae2baa80bcf318f4a5d2165a9898cd2dc0a1",
+        "createdTime": "2021-08-30T20:32:30.6608484Z", "lastUpdateTime": "2021-08-30T20:32:30.6608484Z",
         "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
         true, "readEnabled": true, "listEnabled": true}}, {"name": "tag45431dd70",
-        "digest": "sha256:0fe98d7debd9049c50b597ef1f85b7c1e8cc81f59c8d623fcb2250e8bec85b38",
-        "createdTime": "2021-08-17T18:11:32.769452Z", "lastUpdateTime": "2021-08-17T18:11:32.769452Z",
+        "digest": "sha256:7d91b69e04a9029b99f3585aaaccae2baa80bcf318f4a5d2165a9898cd2dc0a1",
+        "createdTime": "2021-08-30T20:32:29.3518131Z", "lastUpdateTime": "2021-08-30T20:32:29.3518131Z",
         "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
         true, "readEnabled": true, "listEnabled": true}}]}'
     headers:
@@ -342,11 +342,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '1347'
+      - '1351'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 17 Aug 2021 18:11:55 GMT
+      - Mon, 30 Aug 2021 20:32:50 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

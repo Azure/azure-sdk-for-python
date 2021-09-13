@@ -392,7 +392,7 @@ contact opencode@microsoft.com with any additional questions or comments.
 [keyvault_docs]: https://docs.microsoft.com/azure/key-vault/
 [managed_hsm]: https://docs.microsoft.com/azure/key-vault/managed-hsm/
 [pip]: https://pypi.org/project/pip/
-[pypi_package_administration]: https://aka.ms/azsdk/python/keyvault-administration/pypi
+[pypi_package_administration]: https://pypi.org/project/azure-keyvault-administration
 [reference_docs]: https://aka.ms/azsdk/python/keyvault-administration/docs
 
 

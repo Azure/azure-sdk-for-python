@@ -4,7 +4,13 @@
 
 ### Features Added
 
+- `auto_register_schemas` keyword argument has been added to `SchemaRegistryAvroSerializer`, which will allow for automatically registering schemas passed in to the `serialize`.
+
 ### Breaking Changes
+
+- `schema_registry` parameter in the `SchemaRegistryAvroSerializer` constructor has been renamed `client`.
+- `schema_group` parameter in the `SchemaRegistryAvroSerializer` constructor has been renamed `group_name`.
+- `data` parameter in the `serialize` and `deserialize` methods on `SchemaRegistryAvroSerializer` has been renamed `value`.
 
 ### Bugs Fixed
 

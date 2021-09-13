@@ -986,7 +986,7 @@ class StorageQuickQueryTest(StorageTestCase):
         with open(parquet_path, "rb") as parquet_data:
             blob_client.upload_blob(parquet_data, overwrite=True)
 
-        reader = blob_client.query_blob(expression, blob_format=QuickQueryDialect.ParquetDialect)
+        reader = blob_client.query_blob(expression, blob_format=QuickQueryDialect.Parquet)
         real_data = reader.readall()
 
         self.assertEqual(real_data, expected_data)

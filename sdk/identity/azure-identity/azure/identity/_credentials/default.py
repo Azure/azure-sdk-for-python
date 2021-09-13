@@ -70,6 +70,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
         AZURE_TENANT_ID, if any. If unspecified, users will authenticate in their home tenants.
     :keyword str managed_identity_client_id: The client ID of a user-assigned managed identity. Defaults to the value
         of the environment variable AZURE_CLIENT_ID, if any. If not specified, a system-assigned identity will be used.
+    :keyword str interactive_browser_client_id: The client ID to be used in interactive browser credential. If not
+        specified, users will authenticate to an Azure development application.
     :keyword str shared_cache_username: Preferred username for :class:`~azure.identity.SharedTokenCacheCredential`.
         Defaults to the value of environment variable AZURE_USERNAME, if any.
     :keyword str shared_cache_tenant_id: Preferred tenant for :class:`~azure.identity.SharedTokenCacheCredential`.
@@ -102,6 +104,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         managed_identity_client_id = kwargs.pop(
             "managed_identity_client_id", os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
         )
+        interactive_browser_client_id = kwargs.pop("interactive_browser_client_id", None)
 
         shared_cache_username = kwargs.pop("shared_cache_username", os.environ.get(EnvironmentVariables.AZURE_USERNAME))
         shared_cache_tenant_id = kwargs.pop(
@@ -137,7 +140,14 @@ class DefaultAzureCredential(ChainedTokenCredential):
         if not exclude_powershell_credential:
             credentials.append(AzurePowerShellCredential(**kwargs))
         if not exclude_interactive_browser_credential:
-            credentials.append(InteractiveBrowserCredential(tenant_id=interactive_browser_tenant_id, **kwargs))
+            if interactive_browser_client_id:
+                credentials.append(
+                    InteractiveBrowserCredential(
+                        tenant_id=interactive_browser_tenant_id, client_id=interactive_browser_client_id, **kwargs
+                    )
+                )
+            else:
+                credentials.append(InteractiveBrowserCredential(tenant_id=interactive_browser_tenant_id, **kwargs))
 
         super(DefaultAzureCredential, self).__init__(*credentials)
 
