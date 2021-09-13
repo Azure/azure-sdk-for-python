@@ -11,6 +11,7 @@ from azure.core import MatchConditions
 from azure.eventhub import CheckpointStore  # type: ignore  # pylint: disable=no-name-in-module
 from azure.eventhub.exceptions import OwnershipLostError  # type: ignore
 from azure.core.exceptions import (
+    ResourceModifiedError,
     ResourceExistsError,
     ResourceNotFoundError,
 )
@@ -39,7 +40,7 @@ def _to_timestamp(date):
         timestamp += date.microsecond / 1e6
     return timestamp
 
-def _to_datetime(value):
+def _timestamp_to_datetime(value):
     # Cosmos returns this with a decimal point that throws an error on deserialization
     cleaned_value = clean_up_dotnet_timestamps(value)
     try:
@@ -178,10 +179,8 @@ class TableCheckpointStore(CheckpointStore):
                 entity=ownership_entity, headers={"Prefer": "return-content"}, **kwargs
             )
             ownership["etag"] = metadata["etag"]
-            print('swathi')
-            print(metadata["content"]["Timestamp"])
             ownership["last_modified_time"] = _to_timestamp(
-                _to_datetime(metadata["content"]["Timestamp"])
+                _timestamp_to_datetime(metadata["content"]["Timestamp"])
             )
 
     def _claim_one_partition(self, ownership, **kwargs):
@@ -189,7 +188,7 @@ class TableCheckpointStore(CheckpointStore):
         try:
             self._update_ownership(new_ownership, **kwargs)
             return new_ownership
-        except ResourceExistsError:
+        except (ResourceModifiedError, ResourceExistsError):
             logger.info(
                 "EventProcessor instance %r of namespace %r eventhub %r consumer group %r "
                 "lost ownership to partition %r",
