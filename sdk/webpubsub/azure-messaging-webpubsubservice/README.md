@@ -99,7 +99,7 @@ Use the returned token credential to authenticate the client:
     try:
         client.web_pub_sub.send_to_all('ahub', content=f, content_type='application/json')
     except HttpResponseError as e:
-        print('service responds error')
+        print('service responds error: {}'.format(e.response.json()))
 
 ```
 

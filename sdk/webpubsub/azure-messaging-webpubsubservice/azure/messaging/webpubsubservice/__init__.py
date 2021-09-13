@@ -6,11 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._web_pub_sub_service_client import WebPubSubServiceClient, build_authentication_token
+from ._web_pub_sub_service_client import WebPubSubServiceClient
 from ._version import VERSION
 
 __version__ = VERSION
-__all__ = ['WebPubSubServiceClient', 'build_authentication_token']
+__all__ = ['WebPubSubServiceClient']
 
 try:
     from ._patch import patch_sdk  # type: ignore

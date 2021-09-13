@@ -7,16 +7,14 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional, TYPE_CHECKING, Union
+from typing import Any, Awaitable, Optional, TYPE_CHECKING
 
 from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from msrest import Deserializer, Serializer
-from azure.core.credentials import AzureKeyCredential
 
 from ._configuration import WebPubSubServiceClientConfiguration
 from .operations import HealthApiOperations, WebPubSubOperations
-from .._web_pub_sub_service_client import _parse_connection_string
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -32,18 +30,18 @@ class WebPubSubServiceClient:
     :ivar web_pub_sub: WebPubSubOperations operations
     :vartype web_pub_sub: azure.messaging.webpubsubservice.aio.operations.WebPubSubOperations
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: Union[~azure.core.credentials_async.AsyncTokenCredential, ~azure.core.credentials.AzureKeyCredential]
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword endpoint: Service URL. Default value is ''.
     :paramtype endpoint: str
     """
 
     def __init__(
         self,
-        credential: Union["AsyncTokenCredential", "AzureKeyCredential"],
+        credential: "AsyncTokenCredential",
+        *,
+        endpoint: str = "",
         **kwargs: Any
     ) -> None:
-        endpoint = kwargs.pop('endpoint', "")  # type: str
-        kwargs['origin_endpoint'] = endpoint
         self._config = WebPubSubServiceClientConfiguration(credential, **kwargs)
         self._client = AsyncPipelineClient(base_url=endpoint, config=self._config, **kwargs)
 
@@ -89,17 +87,3 @@ class WebPubSubServiceClient:
 
     async def __aexit__(self, *exc_details) -> None:
         await self._client.__aexit__(*exc_details)
-
-    @classmethod
-    def from_connection_string(cls, connection_string, **kwargs):
-        # type: (Type[ClientType], str, Any) -> ClientType
-        """Create a new WebPubSubServiceClient from a connection string.
-
-        :param connection_string: Connection string
-        :type connection_string: ~str
-        :rtype: WebPubSubServiceClient
-        """
-        kwargs = _parse_connection_string(connection_string, **kwargs)
-
-        credential = AzureKeyCredential(kwargs.pop("accesskey"))
-        return cls(credential=credential, **kwargs)

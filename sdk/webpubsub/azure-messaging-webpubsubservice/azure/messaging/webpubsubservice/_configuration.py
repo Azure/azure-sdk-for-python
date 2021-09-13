@@ -12,12 +12,10 @@ from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
 from ._version import VERSION
-from ._policies import JwtCredentialPolicy, ApiManagementProxy
-from azure.core.credentials import AzureKeyCredential
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional, Union
+    from typing import Any, Optional
 
     from azure.core.credentials import TokenCredential
 
@@ -29,15 +27,17 @@ class WebPubSubServiceClientConfiguration(Configuration):
     attributes.
 
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: Union[~azure.core.credentials.TokenCredential, ~azure.core.credentials.AzureKeyCredential]
+    :type credential: ~azure.core.credentials.TokenCredential
     """
 
     def __init__(
         self,
-        credential,  # type: Union[TokenCredential, AzureKeyCredential]
+        credential,  # type: "TokenCredential"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
+        if credential is None:
+            raise ValueError("Parameter 'credential' must not be None.")
         super(WebPubSubServiceClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
@@ -56,11 +56,8 @@ class WebPubSubServiceClientConfiguration(Configuration):
         self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
         self.http_logging_policy = kwargs.get('http_logging_policy') or policies.HttpLoggingPolicy(**kwargs)
         self.retry_policy = kwargs.get('retry_policy') or policies.RetryPolicy(**kwargs)
-        self.custom_hook_policy = kwargs.get('custom_hook_policy') or ApiManagementProxy(**kwargs)
+        self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
         self.redirect_policy = kwargs.get('redirect_policy') or policies.RedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get('authentication_policy')
         if self.credential and not self.authentication_policy:
-            if isinstance(self.credential, AzureKeyCredential):
-                self.authentication_policy = JwtCredentialPolicy(self.credential, kwargs.get('user'))
-            else:
-                self.authentication_policy = policies.BearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
+            self.authentication_policy = policies.BearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)

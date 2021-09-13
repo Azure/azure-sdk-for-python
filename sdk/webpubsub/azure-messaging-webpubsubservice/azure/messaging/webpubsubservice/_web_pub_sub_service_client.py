@@ -8,120 +8,19 @@
 
 from copy import deepcopy
 from typing import TYPE_CHECKING
-from datetime import datetime, timedelta
-
-import jwt
-import six
 
 from azure.core import PipelineClient
 from msrest import Deserializer, Serializer
-from azure.core.credentials import AzureKeyCredential
 
 from ._configuration import WebPubSubServiceClientConfiguration
 from .operations import HealthApiOperations, WebPubSubOperations
-from ._utils import UTC as _UTC
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Dict, Optional, Union
+    from typing import Any, Dict, Optional
 
     from azure.core.credentials import TokenCredential
     from azure.core.rest import HttpRequest, HttpResponse
-
-
-def _parse_connection_string(connection_string, **kwargs):
-    # type: (str, Any) -> Dict[Any]
-    for segment in connection_string.split(";"):
-        if "=" in segment:
-            key, value = segment.split("=", maxsplit=1)
-            key = key.lower()
-            if key not in ("version",):
-                kwargs.setdefault(key, value)
-        elif segment:
-            raise ValueError(
-                "Malformed connection string - expected 'key=value', found segment '{}' in '{}'".format(
-                    segment, connection_string
-                )
-            )
-
-    if "endpoint" not in kwargs:
-        raise ValueError("connection_string missing 'endpoint' field")
-
-    if "accesskey" not in kwargs:
-        raise ValueError("connection_string missing 'accesskey' field")
-
-    return kwargs
-
-
-def build_authentication_token(endpoint, hub, **kwargs):
-    # type: (str, str, Any) -> Dict[Any]
-    """Build an authentication token for the given endpoint, hub using the provided key.
-
-    :keyword endpoint: connetion string or HTTP or HTTPS endpoint for the WebPubSub service instance.
-    :type endpoint: ~str
-    :keyword hub: The hub to give access to.
-    :type hub: ~str
-    :keyword accesskey: Key to sign the token with. Required if endpoint is not a connection string
-    :type accesskey: ~str
-    :keyword ttl: Optional ttl timedelta for the token. Default is 1 hour.
-    :type ttl: ~datetime.timedelta
-    :keyword user: Optional user name (subject) for the token. Default is no user.
-    :type user: ~str
-    :keyword roles: Roles for the token.
-    :type roles: typing.List[str]. Default is no roles.
-    :returns: ~dict containing the web socket endpoint, the token and a url with the generated access token.
-    :rtype: ~dict
-
-
-    Example:
-    >>> build_authentication_token(endpoint='https://contoso.com/api/webpubsub', hub='theHub', key='123')
-    {
-        'baseUrl': 'wss://contoso.com/api/webpubsub/client/hubs/theHub',
-        'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ...',
-        'url': 'wss://contoso.com/api/webpubsub/client/hubs/theHub?access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ...'
-    }
-    """
-    if 'accesskey' not in kwargs:
-        kwargs = _parse_connection_string(endpoint, **kwargs)
-        endpoint = kwargs.pop('endpoint')
-
-    user = kwargs.pop("user", None)
-    key = kwargs.pop("accesskey")
-    ttl = kwargs.pop("ttl", timedelta(hours=1))
-    roles = kwargs.pop("roles", [])
-    endpoint = endpoint.lower()
-    if not endpoint.startswith("http://") and not endpoint.startswith("https://"):
-        raise ValueError(
-            "Invalid endpoint: '{}' has unknown scheme - expected 'http://' or 'https://'".format(
-                endpoint
-            )
-        )
-
-    # Ensure endpoint has no trailing slash
-    endpoint = endpoint.rstrip("/")
-
-    # Switch from http(s) to ws(s) scheme
-    client_endpoint = "ws" + endpoint[4:]
-    client_url = "{}/client/hubs/{}".format(client_endpoint, hub)
-    audience = "{}/client/hubs/{}".format(endpoint, hub)
-
-    payload = {
-        "aud": audience,
-        "iat": datetime.now(tz=_UTC),
-        "exp": datetime.now(tz=_UTC) + ttl,
-    }
-    if user:
-        payload["sub"] = user
-    if roles:
-        payload["role"] = roles
-
-    token = six.ensure_str(jwt.encode(payload, key, algorithm="HS256"))
-    return {
-        "baseUrl": client_url,
-        "token": token,
-        "url": "{}?access_token={}".format(client_url, token),
-    }
-
 
 class WebPubSubServiceClient(object):
     """WebPubSubServiceClient.
@@ -130,22 +29,20 @@ class WebPubSubServiceClient(object):
     :vartype health_api: azure.messaging.webpubsubservice.operations.HealthApiOperations
     :ivar web_pub_sub: WebPubSubOperations operations
     :vartype web_pub_sub: azure.messaging.webpubsubservice.operations.WebPubSubOperations
-    :keyword connection_string: connection string needed for the client to connect to Azure.
-    :paramtype connection_string： str
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: Union[~azure.core.credentials.TokenCredential, ~azure.core.credentials.AzureKeyCredential]
+    :type credential: ~azure.core.credentials.TokenCredential
     :keyword endpoint: Service URL. Default value is ''.
     :paramtype endpoint: str
     """
 
     def __init__(
         self,
-        credential,  # type: Union[TokenCredential, AzureKeyCredential]
+        credential,  # type: "TokenCredential"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         endpoint = kwargs.pop('endpoint', "")  # type: str
-        kwargs['origin_endpoint'] = endpoint
+
         self._config = WebPubSubServiceClientConfiguration(credential, **kwargs)
         self._client = PipelineClient(base_url=endpoint, config=self._config, **kwargs)
 
@@ -195,17 +92,3 @@ class WebPubSubServiceClient(object):
     def __exit__(self, *exc_details):
         # type: (Any) -> None
         self._client.__exit__(*exc_details)
-
-    @classmethod
-    def from_connection_string(cls, connection_string, **kwargs):
-        # type: (Type[ClientType], str, Any) -> ClientType
-        """Create a new WebPubSubServiceClient from a connection string.
-
-        :param connection_string: Connection string
-        :type connection_string: ~str
-        :rtype: WebPubSubServiceClient
-        """
-        kwargs = _parse_connection_string(connection_string, **kwargs)
-
-        credential = AzureKeyCredential(kwargs.pop("accesskey"))
-        return cls(credential=credential, **kwargs)
