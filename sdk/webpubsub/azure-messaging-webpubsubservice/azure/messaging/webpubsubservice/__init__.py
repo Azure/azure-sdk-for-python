@@ -15,5 +15,8 @@ __all__ = ['WebPubSubServiceClient']
 try:
     from ._patch import patch_sdk  # type: ignore
     patch_sdk()
+
+    from ._patch import build_authentication_token
+    __all__.append('build_authentication_token')
 except ImportError:
     pass

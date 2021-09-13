@@ -32,7 +32,7 @@ from msrest import Deserializer, Serializer
 
 from .._version import VERSION
 from .operations import HealthApiOperations, WebPubSubOperations
-from .._patch import JwtCredentialPolicy, ApiManagementProxy
+from .._patch import JwtCredentialPolicy, ApiManagementProxy, _parse_connection_string
 from ._web_pub_sub_service_client import WebPubSubServiceClient
 
 
@@ -91,6 +91,7 @@ class WebPubSubServiceClientConfiguration(Configuration):
                 self.authentication_policy = JwtCredentialPolicy(self.credential, kwargs.get('user'))
             else:
                 self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
+
 
 class AsyncWebPubSubServicePatchClient:
     """WebPubSubServiceClient.
