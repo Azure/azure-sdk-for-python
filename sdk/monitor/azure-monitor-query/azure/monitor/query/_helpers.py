@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
-from msrest import Serializer
+from msrest import Serializer, Deserializer
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 
@@ -45,10 +45,9 @@ def process_error(exception):
     raise_error = HttpResponseError
     raise raise_error(message=exception.message, response=exception.response)
 
-def order_results(request_order, responses):
-    mapping = {item.id: item for item in responses}
+def order_results(request_order, mapping, obj):
     ordered = [mapping[id] for id in request_order]
-    return ordered
+    return [obj._from_generated(rsp) for rsp in ordered] # pylint: disable=protected-access
 
 def construct_iso8601(timespan=None):
     if not timespan:
@@ -81,3 +80,13 @@ def construct_iso8601(timespan=None):
     else:
         iso_str = duration
     return iso_str
+
+def native_col_type(col_type, value):
+    if col_type == 'datetime':
+        value = Deserializer.deserialize_iso(value)
+    elif col_type in ('timespan', 'guid'):
+        value = str(value)
+    return value
+
+def process_row(col_types, row):
+    return [native_col_type(col_types[ind], val) for ind, val in enumerate(row)]

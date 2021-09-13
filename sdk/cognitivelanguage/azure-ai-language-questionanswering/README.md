@@ -79,7 +79,7 @@ params = qna.KnowledgeBaseQueryOptions(
     question="How long should my Surface battery last?"
 )
 
-output = client.query_knowledge_base(
+output = client.query_knowledgebase(
     params,
     project_name="FAQ",
 )
@@ -93,18 +93,17 @@ You can set additional properties on `KnowledgeBaseQueryOptions` to limit the nu
 
 ### Ask a follow-up question
 
-If your knowledge base is configured for [chit-chat][questionanswering_docs_chat], you can ask a follow-up question provided the previous question-answering ID and, optionally, the exact question the user asked:
+If your knowledge base is configured for [chit-chat][questionanswering_docs_chat], the answers from the knowledge base may include suggested [prompts for follow-up questions][questionanswering_refdocs_prompts] to initiate a conversation. You can ask a follow-up question by providing the ID of your chosen answer as the context for the continued conversation:
 
 ```python
 params = qna.models.KnowledgeBaseQueryOptions(
     question="How long should charging take?"
     context=qna.models.KnowledgeBaseAnswerRequestContext(
-        previous_user_query="How long should my Surface battery last?",
         previous_qna_id=previous_answer.id
     )
 )
 
-output = client.query_knowledge_base(
+output = client.query_knowledgebase(
     params,
     project_name="FAQ"
 )
@@ -127,7 +126,7 @@ params = qna.KnowledgeBaseQueryOptions(
     question="How long should my Surface battery last?"
 )
 
-output = await client.query_knowledge_base(
+output = await client.query_knowledgebase(
     params,
     project_name="FAQ"
 )
@@ -148,7 +147,7 @@ For example, if you submit a question to a non-existant knowledge base, a `400` 
 from azure.core.exceptions import HttpResponseError
 
 try:
-    client.query_knowledge_base(
+    client.query_knowledgebase(
         params,
         project_name="invalid-knowledge-base"
     )
@@ -198,14 +197,15 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_core_ref_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html
 [azure_core_readme]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
 [pip_link]:https://pypi.org/project/pip/
-[questionanswering_client_class]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/azure/ai/language/questionanswering/_question_answering_client.py#L27
+[questionanswering_client_class]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-language-questionanswering/1.0.0b1/azure.ai.language.questionanswering.html#azure.ai.language.questionanswering.QuestionAnsweringClient
+[questionanswering_refdocs_prompts]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-language-questionanswering/1.0.0b1/azure.ai.language.questionanswering.models.html#azure.ai.language.questionanswering.models.KnowledgeBaseAnswerDialog
 [questionanswering_client_src]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/
 [questionanswering_docs]: https://azure.microsoft.com/services/cognitive-services/qna-maker/
 [questionanswering_docs_chat]: https://docs.microsoft.com/azure/cognitive-services/qnamaker/how-to/chit-chat-knowledge-base
 [questionanswering_docs_demos]: https://azure.microsoft.com/services/cognitive-services/qna-maker/#demo
 [questionanswering_docs_features]: https://azure.microsoft.com/services/cognitive-services/qna-maker/#features
-[questionanswering_pypi_package]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/
-[questionanswering_refdocs]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/
+[questionanswering_pypi_package]: https://pypi.org/project/azure-ai-language-questionanswering/
+[questionanswering_refdocs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-language-questionanswering/1.0.0b1/azure.ai.language.questionanswering.html
 [questionanswering_rest_docs]: https://docs.microsoft.com/rest/api/cognitiveservices-qnamaker/
 [questionanswering_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/README.md
 

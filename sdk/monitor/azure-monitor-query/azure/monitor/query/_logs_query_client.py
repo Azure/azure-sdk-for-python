@@ -5,18 +5,19 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Any, Union, Sequence, Dict, Optional
+from typing import TYPE_CHECKING, Any, Union, Sequence, Dict, List
 from azure.core.exceptions import HttpResponseError
+from azure.core.tracing.decorator import distributed_trace
 
 from ._generated._monitor_query_client import MonitorQueryClient
 
 from ._generated.models import BatchRequest, QueryBody as LogsQueryBody
 from ._helpers import get_authentication_policy, process_error, construct_iso8601, order_results
-from ._models import LogsQueryResult, LogsBatchQuery, LogsBatchQueryResult
+from ._models import LogsBatchQuery, LogsQueryResult
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from datetime import timedelta
+    from datetime import timedelta, datetime
 
 
 class LogsQueryClient(object):
@@ -49,8 +50,9 @@ class LogsQueryClient(object):
         )
         self._query_op = self._client.query
 
-    def query(self, workspace_id, query, timespan=None, **kwargs):
-        # type: (str, str, Optional[timedelta], Any) -> LogsQueryResult
+    @distributed_trace
+    def query(self, workspace_id, query, **kwargs):
+        # type: (str, str, Any) -> LogsQueryResult
         """Execute an Analytics query.
 
         Executes an Analytics query for data.
@@ -58,12 +60,12 @@ class LogsQueryClient(object):
         :param workspace_id: ID of the workspace. This is Workspace ID from the Properties blade in the
          Azure portal.
         :type workspace_id: str
-        :param query: The Analytics query. Learn more about the `Analytics query syntax
-         <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
+        :param query: The Kusto query. Learn more about the `Kusto query syntax
+         <https://docs.microsoft.com/azure/data-explorer/kusto/query/>`_.
         :type query: str
-        :param timespan: The timespan for which to query the data. This can be a timedelta,
+        :keyword timespan: The timespan for which to query the data. This can be a timedelta,
          a timedelta and a start datetime, or a start datetime/end datetime.
-        :type timespan: ~datetime.timedelta or tuple[~datetime.datetime, ~datetime.timedelta]
+        :paramtype timespan: ~datetime.timedelta or tuple[~datetime.datetime, ~datetime.timedelta]
          or tuple[~datetime.datetime, ~datetime.datetime]
         :keyword int server_timeout: the server timeout in seconds. The default timeout is 3 minutes,
          and the maximum timeout is 10 minutes.
@@ -74,7 +76,7 @@ class LogsQueryClient(object):
         :keyword additional_workspaces: A list of workspaces that are included in the query.
          These can be qualified workspace names, workspace Ids, or Azure resource Ids.
         :paramtype additional_workspaces: list[str]
-        :return: QueryResults, or the result of cls(response)
+        :return: LogsQueryResult, or the result of cls(response)
         :rtype: ~azure.monitor.query.LogsQueryResult
         :raises: ~azure.core.exceptions.HttpResponseError
 
@@ -87,7 +89,9 @@ class LogsQueryClient(object):
             :dedent: 0
             :caption: Get a response for a single Log Query
         """
-        timespan = construct_iso8601(timespan)
+        if 'timespan' not in kwargs:
+            raise TypeError("query() missing 1 required keyword-only argument: 'timespan'")
+        timespan = construct_iso8601(kwargs.pop('timespan'))
         include_statistics = kwargs.pop("include_statistics", False)
         include_visualization = kwargs.pop("include_visualization", False)
         server_timeout = kwargs.pop("server_timeout", None)
@@ -122,17 +126,18 @@ class LogsQueryClient(object):
         except HttpResponseError as e:
             process_error(e)
 
+    @distributed_trace
     def query_batch(self, queries, **kwargs):
-        # type: (Union[Sequence[Dict], Sequence[LogsBatchQuery]], Any) -> Sequence[LogsBatchQueryResult]
+        # type: (Union[Sequence[Dict], Sequence[LogsBatchQuery]], Any) -> List[LogsQueryResult]
         """Execute a list of analytics queries. Each request can be either a LogQueryRequest
         object or an equivalent serialized model.
 
         The response is returned in the same order as that of the requests sent.
 
-        :param queries: The list of queries that should be processed
+        :param queries: The list of Kusto queries to execute.
         :type queries: list[dict] or list[~azure.monitor.query.LogsBatchQuery]
-        :return: List of LogsBatchQueryResult, or the result of cls(response)
-        :rtype: ~list[~azure.monitor.query.LogsBatchQueryResult]
+        :return: List of LogsQueryResult, or the result of cls(response)
+        :rtype: list[~azure.monitor.query.LogsQueryResult]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -155,11 +160,8 @@ class LogsQueryClient(object):
             request_order = [req['id'] for req in queries]
         batch = BatchRequest(requests=queries)
         generated = self._query_op.batch(batch, **kwargs)
-        return order_results(
-            request_order,
-            [
-                LogsBatchQueryResult._from_generated(rsp) for rsp in generated.responses # pylint: disable=protected-access
-            ])
+        mapping = {item.id: item for item in generated.responses}
+        return order_results(request_order, mapping, LogsQueryResult)
 
     def close(self):
         # type: () -> None

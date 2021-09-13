@@ -16,6 +16,7 @@ def _credential():
     return credential
 
 @pytest.mark.live_test_only
+@pytest.mark.asyncio
 async def test_logs_auth():
     credential = _credential()
     client = LogsQueryClient(credential)
@@ -29,8 +30,23 @@ async def test_logs_auth():
     assert response is not None
     assert response.tables is not None
 
+@pytest.mark.live_test_only
+@pytest.mark.asyncio
+async def test_logs_auth_no_timespan():
+    credential = _credential()
+    client = LogsQueryClient(credential)
+    query = """AppRequests | 
+    where TimeGenerated > ago(12h) | 
+    summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
+
+    # returns LogsQueryResult 
+    with pytest.raises(TypeError):
+        await client.query(os.environ['LOG_WORKSPACE_ID'], query)
+
+
 @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/19917")
 @pytest.mark.live_test_only
+@pytest.mark.asyncio
 async def test_logs_server_timeout():
     client = LogsQueryClient(_credential())
     with pytest.raises(HttpResponseError) as e:
@@ -43,7 +59,17 @@ async def test_logs_server_timeout():
         assert e.message.contains('Gateway timeout')
 
 @pytest.mark.live_test_only
-async def test_logs_query_batch():
+@pytest.mark.asyncio
+async def test_logs_query_batch_raises_on_no_timespan():
+    with pytest.raises(TypeError):
+        LogsBatchQuery(
+                    query="AzureActivity | summarize count()",
+                    workspace_id= os.environ['LOG_WORKSPACE_ID']
+                )
+
+@pytest.mark.live_test_only
+@pytest.mark.asyncio
+async def test_logs_query_batch_default():
     client = LogsQueryClient(_credential())
 
     requests = [
@@ -59,7 +85,7 @@ async def test_logs_query_batch():
             workspace_id= os.environ['LOG_WORKSPACE_ID']
         ),
         LogsBatchQuery(
-            query= "AppRequests | take 2",
+            query= "Wrong query | take 2",
             workspace_id= os.environ['LOG_WORKSPACE_ID'],
             timespan=None
         ),
@@ -67,6 +93,14 @@ async def test_logs_query_batch():
     response = await client.query_batch(requests)
 
     assert len(response) == 3
+    r0 = response[0]
+    assert r0.tables[0].columns == ['count_']
+    r1 = response[1]
+    assert r1.tables[0].columns[0] == 'TimeGenerated'
+    assert r1.tables[0].columns[1] == '_ResourceId'
+    assert r1.tables[0].columns[2] == 'avgRequestDuration'
+    r2 = response[2]
+    assert r2.error is not None
 
 @pytest.mark.skip('https://github.com/Azure/azure-sdk-for-python/issues/19382')
 @pytest.mark.live_test_only

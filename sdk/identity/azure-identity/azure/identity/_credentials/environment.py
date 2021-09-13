@@ -42,7 +42,7 @@ class EnvironmentCredential(object):
     Service principal with certificate:
       - **AZURE_TENANT_ID**: ID of the service principal's tenant. Also called its 'directory' ID.
       - **AZURE_CLIENT_ID**: the service principal's client ID
-      - **AZURE_CLIENT_CERTIFICATE_PATH**: path to a PEM-encoded certificate file including the private key. The
+      - **AZURE_CLIENT_CERTIFICATE_PATH**: path to a PEM or PKCS12 certificate file including the private key. The
         certificate must not be password-protected.
 
     User with username and password:

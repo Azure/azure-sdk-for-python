@@ -215,7 +215,38 @@ class StorageQuickQueryTest(StorageTestCase):
         self._teardown(bsc)
 
     @GlobalStorageAccountPreparer()
-    def test_quick_query_iter_records_with_headers(self, resource_group, location, storage_account, storage_account_key):
+    def test_quick_query_iter_output_records_excluding_headers(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account, "blob"),
+            credential=storage_account_key)
+        self._setup(bsc)
+
+        # upload the csv file
+        blob_name = self._get_blob_reference()
+        blob_client = bsc.get_blob_client(self.container_name, blob_name)
+        blob_client.upload_blob(CSV_DATA, overwrite=True)
+
+        input_format = DelimitedTextDialect(has_header=True)
+        output_format = DelimitedTextDialect(has_header=False)
+        reader = blob_client.query_blob("SELECT * from BlobStorage", blob_format=input_format, output_format=output_format)
+        read_records = reader.records()
+
+        # Assert first line does not include header
+        data = next(read_records)
+        self.assertEqual(data, b'App Configuration,azure-data-appconfiguration,1,appconfiguration,FALSE')
+
+        for record in read_records:
+            data += record
+
+        self.assertEqual(len(reader), len(CSV_DATA))
+        self.assertEqual(reader._size, reader._bytes_processed)
+        self.assertEqual(data, CSV_DATA.replace(b'\r\n', b'')[44:])
+        self._teardown(bsc)
+
+    @GlobalStorageAccountPreparer()
+    def test_quick_query_iter_output_records_including_headers(self, resource_group, location, storage_account,
+                                                   storage_account_key):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account, "blob"),
@@ -233,14 +264,14 @@ class StorageQuickQueryTest(StorageTestCase):
 
         # Assert first line does not include header
         data = next(read_records)
-        self.assertEqual(data, b'App Configuration,azure-data-appconfiguration,1,appconfiguration,FALSE')
+        self.assertEqual(data, b'Service,Package,Version,RepoPath,MissingDocs')
 
         for record in read_records:
             data += record
 
         self.assertEqual(len(reader), len(CSV_DATA))
         self.assertEqual(reader._size, reader._bytes_processed)
-        self.assertEqual(data, CSV_DATA.replace(b'\r\n', b'')[44:])
+        self.assertEqual(data, CSV_DATA.replace(b'\r\n', b''))
         self._teardown(bsc)
 
     @GlobalStorageAccountPreparer()
@@ -955,7 +986,7 @@ class StorageQuickQueryTest(StorageTestCase):
         with open(parquet_path, "rb") as parquet_data:
             blob_client.upload_blob(parquet_data, overwrite=True)
 
-        reader = blob_client.query_blob(expression, blob_format=QuickQueryDialect.ParquetDialect)
+        reader = blob_client.query_blob(expression, blob_format=QuickQueryDialect.Parquet)
         real_data = reader.readall()
 
         self.assertEqual(real_data, expected_data)

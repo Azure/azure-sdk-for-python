@@ -50,6 +50,7 @@ try:
     from urlparse import urlparse  # type: ignore
 except ImportError:
     from urllib.parse import urlparse
+from azure.core.serialization import AzureJSONEncoder
 
 ################################### TYPES SECTION #########################
 
@@ -182,7 +183,7 @@ def set_content_body(content):
 
 def set_json_body(json):
     # type: (Any) -> Tuple[Dict[str, str], Any]
-    body = dumps(json)
+    body = dumps(json, cls=AzureJSONEncoder)
     return {
         "Content-Type": "application/json",
         "Content-Length": str(len(body))
@@ -226,40 +227,6 @@ def lookup_encoding(encoding):
     except LookupError:
         return False
 
-def parse_lines_from_text(text):
-    # largely taken from httpx's LineDecoder code
-    lines = []
-    last_chunk_of_text = ""
-    while text:
-        text_length = len(text)
-        for idx in range(text_length):
-            curr_char = text[idx]
-            next_char = None if idx == len(text) - 1 else text[idx + 1]
-            if curr_char == "\n":
-                lines.append(text[: idx + 1])
-                text = text[idx + 1: ]
-                break
-            if curr_char == "\r" and next_char == "\n":
-                # if it ends with \r\n, we only do \n
-                lines.append(text[:idx] + "\n")
-                text = text[idx + 2:]
-                break
-            if curr_char == "\r" and next_char is not None:
-                # if it's \r then a normal character, we switch \r to \n
-                lines.append(text[:idx] + "\n")
-                text = text[idx + 1:]
-                break
-            if next_char is None:
-                last_chunk_of_text += text
-                text = ""
-                break
-    if last_chunk_of_text.endswith("\r"):
-        # if ends with \r, we switch \r to \n
-        lines.append(last_chunk_of_text[:-1] + "\n")
-    elif last_chunk_of_text:
-        lines.append(last_chunk_of_text)
-    return lines
-
 def to_pipeline_transport_request_helper(rest_request):
     from ..pipeline.transport import HttpRequest as PipelineTransportHttpRequest
     return PipelineTransportHttpRequest(
@@ -293,6 +260,8 @@ def get_charset_encoding(response):
 
 def decode_to_text(encoding, content):
     # type: (Optional[str], bytes) -> str
+    if not content:
+        return ""
     if encoding == "utf-8":
         encoding = "utf-8-sig"
     if encoding:

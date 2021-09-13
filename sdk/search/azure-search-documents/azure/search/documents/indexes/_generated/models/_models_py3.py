@@ -67,37 +67,36 @@ class AnalyzeRequest(msrest.serialization.Model):
 
     :param text: Required. The text to break into tokens.
     :type text: str
-    :param analyzer: The name of the analyzer to use to break the given text. If this parameter is
-     not specified, you must specify a tokenizer instead. The tokenizer and analyzer parameters are
-     mutually exclusive. Possible values include: "ar.microsoft", "ar.lucene", "hy.lucene",
-     "bn.microsoft", "eu.lucene", "bg.microsoft", "bg.lucene", "ca.microsoft", "ca.lucene",
-     "zh-Hans.microsoft", "zh-Hans.lucene", "zh-Hant.microsoft", "zh-Hant.lucene", "hr.microsoft",
-     "cs.microsoft", "cs.lucene", "da.microsoft", "da.lucene", "nl.microsoft", "nl.lucene",
-     "en.microsoft", "en.lucene", "et.microsoft", "fi.microsoft", "fi.lucene", "fr.microsoft",
-     "fr.lucene", "gl.lucene", "de.microsoft", "de.lucene", "el.microsoft", "el.lucene",
-     "gu.microsoft", "he.microsoft", "hi.microsoft", "hi.lucene", "hu.microsoft", "hu.lucene",
-     "is.microsoft", "id.microsoft", "id.lucene", "ga.lucene", "it.microsoft", "it.lucene",
-     "ja.microsoft", "ja.lucene", "kn.microsoft", "ko.microsoft", "ko.lucene", "lv.microsoft",
-     "lv.lucene", "lt.microsoft", "ml.microsoft", "ms.microsoft", "mr.microsoft", "nb.microsoft",
-     "no.lucene", "fa.lucene", "pl.microsoft", "pl.lucene", "pt-BR.microsoft", "pt-BR.lucene",
-     "pt-PT.microsoft", "pt-PT.lucene", "pa.microsoft", "ro.microsoft", "ro.lucene", "ru.microsoft",
-     "ru.lucene", "sr-cyrillic.microsoft", "sr-latin.microsoft", "sk.microsoft", "sl.microsoft",
-     "es.microsoft", "es.lucene", "sv.microsoft", "sv.lucene", "ta.microsoft", "te.microsoft",
-     "th.microsoft", "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft",
-     "vi.microsoft", "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern",
-     "simple", "stop", "whitespace".
+    :param analyzer: The name of the analyzer to use to break the given text. Possible values
+     include: "ar.microsoft", "ar.lucene", "hy.lucene", "bn.microsoft", "eu.lucene", "bg.microsoft",
+     "bg.lucene", "ca.microsoft", "ca.lucene", "zh-Hans.microsoft", "zh-Hans.lucene",
+     "zh-Hant.microsoft", "zh-Hant.lucene", "hr.microsoft", "cs.microsoft", "cs.lucene",
+     "da.microsoft", "da.lucene", "nl.microsoft", "nl.lucene", "en.microsoft", "en.lucene",
+     "et.microsoft", "fi.microsoft", "fi.lucene", "fr.microsoft", "fr.lucene", "gl.lucene",
+     "de.microsoft", "de.lucene", "el.microsoft", "el.lucene", "gu.microsoft", "he.microsoft",
+     "hi.microsoft", "hi.lucene", "hu.microsoft", "hu.lucene", "is.microsoft", "id.microsoft",
+     "id.lucene", "ga.lucene", "it.microsoft", "it.lucene", "ja.microsoft", "ja.lucene",
+     "kn.microsoft", "ko.microsoft", "ko.lucene", "lv.microsoft", "lv.lucene", "lt.microsoft",
+     "ml.microsoft", "ms.microsoft", "mr.microsoft", "nb.microsoft", "no.lucene", "fa.lucene",
+     "pl.microsoft", "pl.lucene", "pt-BR.microsoft", "pt-BR.lucene", "pt-PT.microsoft",
+     "pt-PT.lucene", "pa.microsoft", "ro.microsoft", "ro.lucene", "ru.microsoft", "ru.lucene",
+     "sr-cyrillic.microsoft", "sr-latin.microsoft", "sk.microsoft", "sl.microsoft", "es.microsoft",
+     "es.lucene", "sv.microsoft", "sv.lucene", "ta.microsoft", "te.microsoft", "th.microsoft",
+     "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft", "vi.microsoft",
+     "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop",
+     "whitespace".
     :type analyzer: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
-    :param tokenizer: The name of the tokenizer to use to break the given text. If this parameter
-     is not specified, you must specify an analyzer instead. The tokenizer and analyzer parameters
-     are mutually exclusive. Possible values include: "classic", "edgeNGram", "keyword_v2",
-     "letter", "lowercase", "microsoft_language_tokenizer", "microsoft_language_stemming_tokenizer",
-     "nGram", "path_hierarchy_v2", "pattern", "standard_v2", "uax_url_email", "whitespace".
+    :param tokenizer: The name of the tokenizer to use to break the given text. Possible values
+     include: "classic", "edgeNGram", "keyword_v2", "letter", "lowercase",
+     "microsoft_language_tokenizer", "microsoft_language_stemming_tokenizer", "nGram",
+     "path_hierarchy_v2", "pattern", "standard_v2", "uax_url_email", "whitespace".
     :type tokenizer: str or ~azure.search.documents.indexes.models.LexicalTokenizerName
+    :param normalizer: The name of the normalizer to use to normalize the given text. Possible
+     values include: "asciifolding", "elision", "lowercase", "standard", "uppercase".
+    :type normalizer: str or ~azure.search.documents.indexes.models.LexicalNormalizerName
     :param token_filters: An optional list of token filters to use when breaking the given text.
-     This parameter can only be set when using the tokenizer parameter.
     :type token_filters: list[str or ~azure.search.documents.indexes.models.TokenFilterName]
     :param char_filters: An optional list of character filters to use when breaking the given text.
-     This parameter can only be set when using the tokenizer parameter.
     :type char_filters: list[str or ~azure.search.documents.indexes.models.CharFilterName]
     """
 
@@ -109,6 +108,7 @@ class AnalyzeRequest(msrest.serialization.Model):
         'text': {'key': 'text', 'type': 'str'},
         'analyzer': {'key': 'analyzer', 'type': 'str'},
         'tokenizer': {'key': 'tokenizer', 'type': 'str'},
+        'normalizer': {'key': 'normalizer', 'type': 'str'},
         'token_filters': {'key': 'tokenFilters', 'type': '[str]'},
         'char_filters': {'key': 'charFilters', 'type': '[str]'},
     }
@@ -119,6 +119,7 @@ class AnalyzeRequest(msrest.serialization.Model):
         text: str,
         analyzer: Optional[Union[str, "LexicalAnalyzerName"]] = None,
         tokenizer: Optional[Union[str, "LexicalTokenizerName"]] = None,
+        normalizer: Optional[Union[str, "LexicalNormalizerName"]] = None,
         token_filters: Optional[List[Union[str, "TokenFilterName"]]] = None,
         char_filters: Optional[List[Union[str, "CharFilterName"]]] = None,
         **kwargs
@@ -127,6 +128,7 @@ class AnalyzeRequest(msrest.serialization.Model):
         self.text = text
         self.analyzer = analyzer
         self.tokenizer = tokenizer
+        self.normalizer = normalizer
         self.token_filters = token_filters
         self.char_filters = char_filters
 

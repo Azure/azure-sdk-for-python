@@ -9,5 +9,5 @@
 from ._documents_operations import DocumentsOperations
 
 __all__ = [
-    "DocumentsOperations",
+    'DocumentsOperations',
 ]

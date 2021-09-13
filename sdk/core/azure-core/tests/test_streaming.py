@@ -23,7 +23,6 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import os
 from azure.core import PipelineClient
 from azure.core.exceptions import DecodeError
 

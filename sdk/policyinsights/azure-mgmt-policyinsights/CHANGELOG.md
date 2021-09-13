@@ -1,5 +1,11 @@
 # Release History
 
+## 1.1.0b1 (2021-08-23)
+
+**Features**
+
+  - Added operation group AttestationsOperations
+
 ## 1.0.0 (2020-12-22)
 
 **Features**
