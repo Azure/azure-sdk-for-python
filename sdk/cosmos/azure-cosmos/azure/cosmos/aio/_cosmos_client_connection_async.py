@@ -507,6 +507,125 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             **kwargs
         )
 
+    async def DeleteDatabase(self, database_link, options=None, **kwargs):
+        """Deletes a database.
+
+        :param str database_link:
+            The link to the database.
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The deleted Database.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        path = base.GetPathFromLink(database_link)
+        database_id = base.GetResourceIdOrFullNameFromLink(database_link)
+        return await self.DeleteResource(path, "dbs", database_id, None, options, **kwargs)
+
+    async def DeleteContainer(self, collection_link, options=None, **kwargs):
+        """Deletes a collection.
+
+        :param str collection_link:
+            The link to the document collection.
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The deleted Collection.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        path = base.GetPathFromLink(collection_link)
+        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
+        return await self.DeleteResource(path, "colls", collection_id, None, options, **kwargs)
+
+
+    async def DeleteItem(self, document_link, options=None, **kwargs):
+        """Deletes a document.
+
+        :param str document_link:
+            The link to the document.
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The deleted Document.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        path = base.GetPathFromLink(document_link)
+        document_id = base.GetResourceIdOrFullNameFromLink(document_link)
+        return await self.DeleteResource(path, "docs", document_id, None, options, **kwargs)
+
+    async def DeleteResource(self, path, typ, id, initial_headers, options=None, **kwargs):  # pylint: disable=redefined-builtin
+        """Deletes a Azure Cosmos resource and returns it.
+
+        :param str path:
+        :param str typ:
+        :param str id:
+        :param dict initial_headers:
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The deleted Azure Cosmos resource.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        initial_headers = initial_headers or self.default_headers
+        headers = base.GetHeaders(self, initial_headers, "delete", path, id, typ, options)
+        # Delete will use WriteEndpoint since it uses DELETE operation
+        request_params = _request_object.RequestObject(typ, documents._OperationType.Delete)
+        result, self.last_response_headers = await self.__Delete(path, request_params, headers, **kwargs)
+
+        # update session for request mutates data on server side
+        self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
+
+        return result
+
+    async def __Delete(self, path, request_params, req_headers, **kwargs):
+        """Azure Cosmos 'DELETE' http request.
+
+        :params str url:
+        :params str path:
+        :params dict req_headers:
+
+        :return:
+            Tuple of (result, headers).
+        :rtype:
+            tuple of (dict, dict)
+
+        """
+        request = self.pipeline_client.delete(url=path, headers=req_headers)
+        return await asynchronous_request.AsynchronousRequest(
+            client=self,
+            request_params=request_params,
+            global_endpoint_manager=self._global_endpoint_manager,
+            connection_policy=self.connection_policy,
+            pipeline_client=self.pipeline_client,
+            request=request,
+            request_data=None,
+            **kwargs
+        )
+
     def _UpdateSessionIfRequired(self, request_headers, response_result, response_headers):
         """
         Updates session if necessary.

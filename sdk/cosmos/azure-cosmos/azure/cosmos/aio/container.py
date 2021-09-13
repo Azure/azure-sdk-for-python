@@ -228,7 +228,7 @@ class ContainerProxy(object):
         doc_link = self._get_document_link(item)
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-
+        
         if partition_key is not None:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
         if populate_query_metrics is not None:
@@ -240,3 +240,49 @@ class ContainerProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
+
+    @distributed_trace_async
+    async def delete_item(
+        self,
+        item,  # type: Union[Dict[str, Any], str]
+        partition_key,  # type: Any
+        populate_query_metrics=None,  # type: Optional[bool]
+        pre_trigger_include=None,  # type: Optional[str]
+        post_trigger_include=None,  # type: Optional[str]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Delete the specified item from the container.
+
+        If the item does not already exist in the container, an exception is raised.
+
+        :param item: The ID (name) or dict representing item to be deleted.
+        :param partition_key: Specifies the partition key value for the item.
+        :param populate_query_metrics: Enable returning query metrics in response headers.
+        :param pre_trigger_include: trigger id to be used as pre operation trigger.
+        :param post_trigger_include: trigger id to be used as post operation trigger.
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
+            has changed, and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The item wasn't deleted successfully.
+        :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The item does not exist in the container.
+        :rtype: None
+        """
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
+        if partition_key is not None:
+            request_options["partitionKey"] = self._set_partition_key(partition_key)
+        if populate_query_metrics is not None:
+            request_options["populateQueryMetrics"] = populate_query_metrics
+        if pre_trigger_include is not None:
+            request_options["preTriggerInclude"] = pre_trigger_include
+        if post_trigger_include is not None:
+            request_options["postTriggerInclude"] = post_trigger_include
+
+        document_link = self._get_document_link(item)
+        result = await self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers, result)

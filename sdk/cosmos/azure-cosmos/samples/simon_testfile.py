@@ -27,6 +27,48 @@ def get_test_item():
     }
     return async_item
 
+async def async_crud_test():
+    db_name = "asyncccc"
+    cont_name = "contttt"
+    async with AsyncClient(endpoint, key) as client:
+        db = await client.create_database(db_name)
+        print("Created DB, now reading and attempting create_if_not_exist")
+        print(await db.read())
+        db = await client.create_database_if_not_exists(db_name)
+        print("Create if not exist had no problems, deleting DB now")
+        await client.delete_database(db_name)
+        print("DB deleted, now attempting read")
+        try:
+            await db.read()
+        except:
+            print("Error returned successfully for reading DB")
+        print("Re-creating DB for testing container")
+        db = await client.create_database(db_name)
+        cont = await db.create_container(id=cont_name, partition_key=PartitionKey(path="/id"))
+        print("Created CONT, now reading and attempting create_if_not_exists")
+        await cont.read()
+        cont = await db.create_container_if_not_exists(id=cont_name, partition_key=PartitionKey(path="/id"))
+        print("Create if not exist had no problems, deleting CONT now")
+        await db.delete_container(cont_name)
+        print("CONT deleted, now attempting read")
+        try:
+            await cont.read()
+        except:
+            print("Error returned succesfully")
+        print("Re-creating CONT for testing items")
+        cont = await db.create_container_if_not_exists(id=cont_name, partition_key=PartitionKey(path="/id"))
+        body = get_test_item()
+        await cont.create_item(body=body)
+        print("created item, now reading")
+        await cont.read_item(item=body.get("id"), partition_key=body.get("id"))
+        print("now deleting item and attempting to read")
+        await cont.delete_item(item=body.get("id"), partition_key=body.get("id"))
+        try:
+            await cont.read_item(item=body.get("id"), partition_key=body.get("id"))
+        except:
+            print("item delete failed successfully, now cleaning up")
+        await client.delete_database(db_name)
+
 def create_test(db_name, cont_name, num):
     client = SyncClient(endpoint, key)
     db = client.create_database(id=db_name)
@@ -106,7 +148,7 @@ async def create_tests():
     cont1, cont2 = "c01", "c02"
     num = 10
     ids1 = timed_sync_create(db1,cont1,num)
-    ids2 = await timed_async_create(db2,cont2,num)
+    ids2 = await timed_async_create(db1,cont1,num)
     print(len(ids1) == len(ids2))
 
 def user_test():
@@ -118,9 +160,16 @@ def user_test():
     perms = use.list_permissions()
     print(list(perms))
 
+def wrong_test():
+    client = SyncClient(endpoint, key)
+    db = client.get_database_client("db01")
+    cont = db.get_container_client("c01")
+    cont.read()
+    cont.read_item(item="Async_c7997ca0-69c8-46f3-a9a3-5d85f50bafdf")
+
 async def main():
     # await read_tests()
-    await create_tests()
+    await async_crud_test()
 
 
 if __name__ == "__main__":

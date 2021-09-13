@@ -258,7 +258,6 @@ class CosmosClient(object):
                 populate_query_metrics=populate_query_metrics,
                 **kwargs
             )
-            print("Read DB with success")
             return database_proxy
         except CosmosResourceNotFoundError:
             return await self.create_database(
@@ -287,3 +286,36 @@ class CosmosClient(object):
                 id_value = database
 
         return DatabaseProxy(self.client_connection, id_value)
+
+    @distributed_trace_async
+    async def delete_database(
+        self,
+        database,  # type: Union[str, DatabaseProxy, Dict[str, Any]]
+        populate_query_metrics=None,  # type: Optional[bool]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Delete the database with the given ID (name).
+
+        :param database: The ID (name), dict representing the properties or :class:`DatabaseProxy`
+            instance of the database to delete.
+        :type database: str or dict(str, str) or ~azure.cosmos.DatabaseProxy
+        :param bool populate_query_metrics: Enable returning query metrics in response headers.
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
+            has changed, and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the database couldn't be deleted.
+        :rtype: None
+        """
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
+        if populate_query_metrics is not None:
+            request_options["populateQueryMetrics"] = populate_query_metrics
+
+        database_link = self._get_database_link(database)
+        await self.client_connection.DeleteDatabase(database_link, options=request_options, **kwargs)
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)

@@ -83,6 +83,21 @@ class DatabaseProxy(object):
         # type () -> str
         return "<DatabaseProxy [{}]>".format(self.database_link)[:1024]
 
+    @staticmethod
+    def _get_container_id(container_or_id):
+        # type: (Union[str, ContainerProxy, Dict[str, Any]]) -> str
+        if isinstance(container_or_id, six.string_types):
+            return container_or_id
+        try:
+            return cast("ContainerProxy", container_or_id).id
+        except AttributeError:
+            pass
+        return cast("Dict[str, str]", container_or_id)["id"]
+
+    def _get_container_link(self, container_or_id):
+        # type: (Union[str, ContainerProxy, Dict[str, Any]]) -> str
+        return u"{}/colls/{}".format(self.database_link, self._get_container_id(container_or_id))
+
     @distributed_trace_async
     async def create_container(
         self,
@@ -226,7 +241,6 @@ class DatabaseProxy(object):
                 populate_query_metrics=populate_query_metrics,
                 **kwargs
             )
-            print("Read CONTAINER with success")
             return container_proxy
         except CosmosResourceNotFoundError:
             return await self.create_container(
@@ -298,3 +312,36 @@ class DatabaseProxy(object):
                 id_value = container
 
         return ContainerProxy(self.client_connection, self.database_link, id_value)
+
+    @distributed_trace_async
+    async def delete_container(
+        self,
+        container,  # type: Union[str, ContainerProxy, Dict[str, Any]]
+        populate_query_metrics=None,  # type: Optional[bool]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Delete a container.
+
+        :param container: The ID (name) of the container to delete. You can either
+            pass in the ID of the container to delete, a :class:`ContainerProxy` instance or
+            a dict representing the properties of the container.
+        :param populate_query_metrics: Enable returning query metrics in response headers.
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
+            has changed, and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the container couldn't be deleted.
+        :rtype: None
+        """
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
+        if populate_query_metrics is not None:
+            request_options["populateQueryMetrics"] = populate_query_metrics
+
+        collection_link = self._get_container_link(container)
+        result = await self.client_connection.DeleteContainer(collection_link, options=request_options, **kwargs)
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers, result)
