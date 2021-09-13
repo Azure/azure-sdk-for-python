@@ -74,9 +74,8 @@ class CallConnection(object):
         **kwargs  # type: Any
     ):  # type: (...) -> CancelAllMediaOperationsResult
 
-        if operation_context is not None:
-            kwargs['operation_context'] = operation_context
-        request = CancelAllMediaOperationsRequest(**kwargs)
+        request = CancelAllMediaOperationsRequest(operation_context=operation_context,
+                                                  **kwargs)
 
         cancel_all_media_operations_result = self.call_connection_client.cancel_all_media_operations(
             call_connection_id=self.call_connection_id,
