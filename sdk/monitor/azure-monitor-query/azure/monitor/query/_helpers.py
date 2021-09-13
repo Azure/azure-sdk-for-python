@@ -103,7 +103,7 @@ def process_error(error, model):
     if not error:
         return None
     try:
-        model = model._from_generated(error.model.error)
+        model = model._from_generated(error.model.error) # pylint: disable=protected-access
     except AttributeError: # model can be none
         pass
     raise HttpResponseError(
