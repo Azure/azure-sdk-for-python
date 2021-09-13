@@ -229,7 +229,7 @@ def main():
                     item.issue_object.remove_from_assignees(*['RAY-316'])
                     item.issue_object.add_to_assignees(*['BigCat20196'])
                 item.labels.append('assigned')
-                item.issue_object.set_labels.set_labels(*item.labels)
+                item.issue_object.set_labels(*item.labels)
             try:
                 auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python_piplines)
             except Exception as e:
