@@ -44,7 +44,7 @@ class QueueServicesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ListQueueServices":
         """List all queue services for the storage account.
 
@@ -107,7 +107,7 @@ class QueueServicesOperations:
         resource_group_name: str,
         account_name: str,
         parameters: "_models.QueueServiceProperties",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.QueueServiceProperties":
         """Sets the properties of a storage account’s Queue service, including properties for Storage
         Analytics and CORS (Cross-Origin Resource Sharing) rules.
@@ -180,7 +180,7 @@ class QueueServicesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.QueueServiceProperties":
         """Gets the properties of a storage account’s Queue service, including properties for Storage
         Analytics and CORS (Cross-Origin Resource Sharing) rules.
