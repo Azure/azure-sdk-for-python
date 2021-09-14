@@ -42,7 +42,6 @@ class SchemaRegistryAvroSerializer(object):
     :param str group_name: Schema group under which schema should be registered.
     :keyword bool auto_register_schemas: When true, register new schemas passed to serialize.
      Otherwise, and by default, fail if it has not been pre-registered in the registry.
-    :keyword str codec: The writer codec. If None, let the avro library decides.
 
     """
 
