@@ -7,7 +7,7 @@ jobs:
     displayName: Validate Release Candidate Python
     variables:
       skipComponentGovernanceDetection: true
-      targetRC: "3.10.0-rc.1"
+      targetRC: "3.10.0-rc.2"
 
     timeoutInMinutes: 90
 
