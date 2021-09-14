@@ -28,8 +28,8 @@ Please follow the configuration instructions in the `Credential Unavailable Erro
 | --- | --- |
 | Environment Credential | [Environment Credential Troubleshooting Guide](#troubleshooting-environment-credential-authentication-issues) |
 | Managed Identity Credential | [Managed Identity Troubleshooting Guide](#troubleshooting-managed-identity-authentication-issues) |
-| Visual Studio Code Credential | [Visual Studio Code Troubleshooting Guide](#troubleshooting-visual-studio-code-authenticaiton-issues) |
-| Azure CLI Credential | [Azure CLI Troubleshooting Guide](#troubleshooting-azure-cli-authenticaiton-issues) |
+| Visual Studio Code Credential | [Visual Studio Code Troubleshooting Guide](#troubleshooting-visual-studio-code-authentication-issues) |
+| Azure CLI Credential | [Azure CLI Troubleshooting Guide](#troubleshooting-azure-cli-authentication-issues) |
 | Azure Powershell Credential | [Azure Powershell Troubleshooting Guide](#troubleshooting-azure-powershell-authentication-issues) |
 
 ## Troubleshooting Environment Credential Authentication Issues
