@@ -16,7 +16,7 @@ from .._generated.models import (
 
 class JoinCallRequestConverter(object):
     @staticmethod
-    def convert(
+    def _convert(
         source: CommunicationIdentifierModel,
         join_call_options: JoinCallOptions
         ): # type: (...) -> JoinCallRequest
@@ -37,7 +37,7 @@ class JoinCallRequestConverter(object):
 
 class PlayAudioRequestConverter(object):
     @staticmethod
-    def convert(
+    def _convert(
         audio_file_uri: str,
         play_audio_options: PlayAudioOptions
         ): # type: (...) -> PlayAudioRequest
@@ -57,7 +57,7 @@ class PlayAudioRequestConverter(object):
 
 class AddParticipantRequestConverter(object):
     @staticmethod
-    def convert(
+    def _convert(
         participant: CommunicationIdentifierModel,
         alternate_caller_id: PhoneNumberIdentifierModel = None,
         operation_context: str = None,

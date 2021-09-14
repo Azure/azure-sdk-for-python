@@ -198,7 +198,7 @@ class CallingServerClient(object):
         if not call_options:
             raise ValueError("call_options can not be None")
 
-        join_call_request = JoinCallRequestConverter.convert(serialize_identifier(source), call_options)
+        join_call_request = JoinCallRequestConverter._convert(serialize_identifier(source), call_options)
 
         join_call_response = await self._server_call_client.join_call(
             server_call_id=server_call_id,
