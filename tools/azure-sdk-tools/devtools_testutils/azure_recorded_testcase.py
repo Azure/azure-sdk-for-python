@@ -19,6 +19,8 @@ from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_functi
 
 from . import mgmt_settings_fake as fake_settings
 from .azure_testcase import _is_autorest_v3, get_resource_name, get_qualified_method_name
+from .helpers import is_live
+from .sanitizers import add_general_regex_sanitizer
 
 try:
     # Try to import the AsyncFakeCredential, if we cannot assume it is Python 2
@@ -33,11 +35,12 @@ if TYPE_CHECKING:
 load_dotenv(find_dotenv())
 
 
-def is_live():
-    """A module version of is_live, that could be used in pytest marker."""
-    if not hasattr(is_live, "_cache"):
-        is_live._cache = TestConfig().record_mode
-    return is_live._cache
+def _sanitize_token(token, fake_token):
+    add_general_regex_sanitizer(value=fake_token, regex=token)
+    url_safe_token = token.replace("/", u"%2F")
+    add_general_regex_sanitizer(value=fake_token, regex=url_safe_token)
+    async_token = token.replace(u"%3A", ":")
+    add_general_regex_sanitizer(value=fake_token, regex=async_token)
 
 
 class AzureRecordedTestCase(object):
@@ -204,6 +207,7 @@ class AzureRecordedTestCase(object):
         token = sas_func(*sas_func_pos_args, **kwargs)
 
         fake_token = self._create_fake_token(token, fake_value)
+        _sanitize_token(token, fake_token)
 
         if self.is_live:
             return token

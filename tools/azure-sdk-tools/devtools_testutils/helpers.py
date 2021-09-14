@@ -3,6 +3,50 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import requests
+
+from azure_devtools.scenario_tests.config import TestConfig
+from .config import PROXY_URL
+
+
+def is_live():
+    """A module version of is_live, that could be used in pytest marker."""
+    if not hasattr(is_live, "_cache"):
+        is_live._cache = TestConfig().record_mode
+    return is_live._cache
+
+
+def send_proxy_matcher_request(matcher, headers):
+    # type: (str, Dict) -> None
+    """Send a POST request to the test proxy endpoint to register the specified matcher.
+
+    :param str matcher: The name of the matcher to set.
+    :param dict headers: Headers for the matcher setting request, as a dictionary.
+    """
+
+    headers_to_send = {"x-abstraction-identifier": matcher}
+    headers_to_send.update(headers)
+    response = requests.post(
+        "{}/Admin/SetMatcher".format(PROXY_URL),
+        headers=headers_to_send,
+    )
+
+
+def send_proxy_sanitizer_request(sanitizer, parameters):
+    # type: (str, Dict) -> None
+    """Send a POST request to the test proxy endpoint to register the specified sanitizer.
+
+    :param str sanitizer: The name of the sanitizer to add.
+    :param dict parameters: The sanitizer constructor parameters, as a dictionary.
+    """
+
+    response = requests.post(
+        "{}/Admin/AddSanitizer".format(PROXY_URL),
+        headers={"x-abstraction-identifier": sanitizer, "Content-Type": "application/json"},
+        json=parameters
+    )
+
+
 class RetryCounter(object):
     def __init__(self):
         self.count = 0

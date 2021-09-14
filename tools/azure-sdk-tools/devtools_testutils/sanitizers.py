@@ -3,13 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import pytest
 import requests
 from typing import TYPE_CHECKING
 
 from .config import PROXY_URL
+from .helpers import send_proxy_sanitizer_request
 
 if TYPE_CHECKING:
-    from typing import Any, Dict
+    from typing import Any, Dict, Optional
 
 
 def add_body_key_sanitizer(**kwargs):
@@ -28,7 +30,7 @@ def add_body_key_sanitizer(**kwargs):
     """
 
     request_args = _get_request_args(**kwargs)
-    _send_request("BodyKeySanitizer", request_args)
+    send_proxy_sanitizer_request("BodyKeySanitizer", request_args)
 
 
 def add_body_regex_sanitizer(**kwargs):
@@ -46,7 +48,7 @@ def add_body_regex_sanitizer(**kwargs):
     """
 
     request_args = _get_request_args(**kwargs)
-    _send_request("BodyRegexSanitizer", request_args)
+    send_proxy_sanitizer_request("BodyRegexSanitizer", request_args)
 
 
 def add_continuation_sanitizer(**kwargs):
@@ -65,7 +67,7 @@ def add_continuation_sanitizer(**kwargs):
     """
 
     request_args = _get_request_args(**kwargs)
-    _send_request("ContinuationSanitizer", request_args)
+    send_proxy_sanitizer_request("ContinuationSanitizer", request_args)
 
 
 def add_general_regex_sanitizer(**kwargs):
@@ -82,7 +84,7 @@ def add_general_regex_sanitizer(**kwargs):
     """
 
     request_args = _get_request_args(**kwargs)
-    _send_request("GeneralRegexSanitizer", request_args)
+    send_proxy_sanitizer_request("GeneralRegexSanitizer", request_args)
 
 
 def add_header_regex_sanitizer(**kwargs):
@@ -102,14 +104,14 @@ def add_header_regex_sanitizer(**kwargs):
     """
 
     request_args = _get_request_args(**kwargs)
-    _send_request("HeaderRegexSanitizer", request_args)
+    send_proxy_sanitizer_request("HeaderRegexSanitizer", request_args)
 
 
 def add_oauth_response_sanitizer():
     # type: () -> None
     """Registers a sanitizer that cleans out all request/response pairs that match an oauth regex in their URI."""
 
-    _send_request("OAuthResponseSanitizer", {})
+    send_proxy_sanitizer_request("OAuthResponseSanitizer", {})
 
 
 def add_remove_header_sanitizer(**kwargs):
@@ -121,7 +123,7 @@ def add_remove_header_sanitizer(**kwargs):
     """
 
     request_args = _get_request_args(**kwargs)
-    _send_request("RemoveHeaderSanitizer", request_args)
+    send_proxy_sanitizer_request("RemoveHeaderSanitizer", request_args)
 
 
 def add_request_subscription_id_sanitizer(**kwargs):
@@ -134,7 +136,7 @@ def add_request_subscription_id_sanitizer(**kwargs):
     """
 
     request_args = _get_request_args(**kwargs)
-    _send_request("ReplaceRequestSubscriptionId", request_args)
+    send_proxy_sanitizer_request("ReplaceRequestSubscriptionId", request_args)
 
 
 def add_uri_regex_sanitizer(**kwargs):
@@ -149,7 +151,7 @@ def add_uri_regex_sanitizer(**kwargs):
     """
 
     request_args = _get_request_args(**kwargs)
-    _send_request("UriRegexSanitizer", request_args)
+    send_proxy_sanitizer_request("UriRegexSanitizer", request_args)
 
 
 def _get_request_args(**kwargs):
@@ -157,27 +159,20 @@ def _get_request_args(**kwargs):
     """Returns a dictionary of sanitizer constructor headers"""
 
     request_args = {}
-    request_args["groupForReplace"] = kwargs.get("group_for_replace")
-    request_args["headersForRemoval"] = kwargs.get("headers")
-    request_args["jsonPath"] = kwargs.get("json_path")
-    request_args["key"] = kwargs.get("key")
-    request_args["method"] = kwargs.get("method")
-    request_args["regex"] = kwargs.get("regex")
-    request_args["resetAfterFirst"] = kwargs.get("reset_after_first")
-    request_args["value"] = kwargs.get("value")
+    if "group_for_replace" in kwargs:
+        request_args["groupForReplace"] = kwargs.get("group_for_replace")
+    if "headers" in kwargs:
+        request_args["headersForRemoval"] = kwargs.get("headers")
+    if "json_path" in kwargs:
+        request_args["jsonPath"] = kwargs.get("json_path")
+    if "key" in kwargs:
+        request_args["key"] = kwargs.get("key")
+    if "method" in kwargs:
+        request_args["method"] = kwargs.get("method")
+    if "regex" in kwargs:
+        request_args["regex"] = kwargs.get("regex")
+    if "reset_after_first" in kwargs:
+        request_args["resetAfterFirst"] = kwargs.get("reset_after_first")
+    if "value" in kwargs:
+        request_args["value"] = kwargs.get("value")
     return request_args
-
-
-def _send_request(sanitizer, parameters):
-    # type: (str, Dict) -> None
-    """Send a POST request to the test proxy endpoint to register the specified sanitizer.
-
-    :param str sanitizer: The name of the sanitizer to add.
-    :param dict parameters: The sanitizer constructor parameters, as a dictionary.
-    """
-
-    requests.post(
-        "{}/Admin/AddSanitizer".format(PROXY_URL),
-        headers={"x-abstraction-identifier": sanitizer},
-        json=parameters
-    )
