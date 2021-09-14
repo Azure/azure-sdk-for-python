@@ -4,7 +4,7 @@ import pytest
 import os
 from azure.identity.aio import ClientSecretCredential
 from azure.core.exceptions import HttpResponseError
-from azure.monitor.query import LogsBatchQuery, LogsQueryError, LogsTable, LogsQueryResult
+from azure.monitor.query import LogsBatchQuery, LogsQueryError, LogsTable, LogsQueryResult, LogsTableRow
 from azure.monitor.query.aio import LogsQueryClient
 
 def _credential():
@@ -202,3 +202,23 @@ async def test_logs_query_result_iterate_over_tables():
     assert response.visualization is not None
     assert len(response.tables) == 2
     assert response.__class__ == LogsQueryResult
+
+@pytest.mark.live_test_only
+@pytest.mark.asyncio
+async def test_logs_query_result_row_type():
+    client = LogsQueryClient(_credential())
+
+    query = "AppRequests | take 5"
+
+    response = await client.query(
+        os.environ['LOG_WORKSPACE_ID'],
+        query,
+        timespan=None,
+    )
+
+    ## should iterate over tables
+    for table in response:
+        assert table.__class__ == LogsTable
+
+        row = table.row
+        assert row.__class__ == LogsTableRow
