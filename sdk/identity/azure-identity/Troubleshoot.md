@@ -101,7 +101,7 @@ then you can retrieve the client/app id by following the instructions [here](htt
 #### Client Secret Argument
 
 The client secret is the secret string that the application uses to prove its identity when requesting a token; this can also can be referred to as an application password.
-If you have already created a service principal you can follow the instructions [here](https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal#option-2-create-a-new-application-secret) to get the client secret for your application.
+If you have already created a service principal you can follow the instructions [here](https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal#option-2-create-a-new-application-secret) to create a client secret for your application.
 
 ### Client Certificate Credential Issues
 
