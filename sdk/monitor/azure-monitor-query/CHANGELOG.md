@@ -12,6 +12,7 @@
 ### Breaking Changes
 
 - `LogsQueryResult` now iterates over the tables directly as a convinience.
+- `metric_namespace` is renamed to `namespace` and is a keyword-only argument in `list_metric_definitions` API.
 
 ### Bugs Fixed
 

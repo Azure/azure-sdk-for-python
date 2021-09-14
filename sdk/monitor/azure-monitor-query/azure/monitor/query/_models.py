@@ -63,11 +63,11 @@ class LogsTableRow(object):
     """
     def __init__(self, **kwargs):
         # type: (Any) -> None
-        _col_types = kwargs.pop('col_types', None)
-        row = kwargs.get('row', None)
+        _col_types = kwargs['col_types']
+        row = kwargs['row']
         self.row = process_row(_col_types, row)
-        self.row_index = kwargs.get('row_index', None)
-        _columns = kwargs.pop('columns', None)
+        self.row_index = kwargs['row_index']
+        _columns = kwargs['columns']
         self._row_dict = {
             _columns[i]: self.row[i] for i in range(len(self.row))
         }
