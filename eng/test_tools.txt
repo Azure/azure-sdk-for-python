@@ -13,15 +13,19 @@ bandit==1.6.2
 
 # locking packages defined as deps from azure-sdk-tools or azure-devtools
 pytoml==0.1.21
-readme-renderer[md]==25.0
+readme-renderer[md]==29.0
 pyOpenSSL==19.1.0
 json-delta==2.0
 ConfigArgParse==1.2.3
 six==1.14.0
-pyyaml==5.3.1
+pyyaml==5.4.0
 packaging==20.4
 wheel==0.34.2
 Jinja2==2.11.2
+
+# pinning these to resolve CG alerts
+urllib3==1.26.5
+py==1.10.0
 
 # Locking pylint and required packages
 pylint==1.8.4; python_version < '3.4'

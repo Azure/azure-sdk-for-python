@@ -11,7 +11,7 @@ tox-monorepo==0.1.2
 twine==1.15.0; python_version == '2.7' or python_version == '3.5'
 twine==3.1.1; python_version >= '3.6'
 pathlib2==2.3.5
-readme-renderer[md]==25.0
+readme-renderer[md]==29.0
 doc-warden==0.7.1
 # we pin coverage to 4.5.4 because there is an bug with `pytest-cov`. the generated coverage files cannot be `coverage combine`ed
 coverage==4.5.4
@@ -27,7 +27,7 @@ pyOpenSSL==19.1.0
 json-delta==2.0
 ConfigArgParse==1.2.3
 six==1.14.0
-pyyaml==5.3.1
+pyyaml==5.4.0
 pytest==5.4.2; python_version >= '3.5'
 pytest==4.6.9; python_version == '2.7'
 pytest-cov==2.8.1
