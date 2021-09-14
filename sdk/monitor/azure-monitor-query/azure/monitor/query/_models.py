@@ -165,21 +165,27 @@ class LogsQueryResult(object):
     :ivar visualization: This will include a visualization property in the response that specifies the type of
      visualization selected by the query and any properties for that visualization.
     :vartype visualization: object
-    :ivar error: Any error info.
-    :vartype error: ~azure.core.exceptions.HttpResponseError
+    :ivar partial_error: Any error info. This is none except in the case where `allow_partial_errors`
+     is explicitly set to True.
+    :vartype partial_error: ~azure.core.exceptions.HttpResponseError
+    :ivar bool is_error: Boolean check for error item when iterating over list of
+        results. Always False for an instance of a LogsQueryResult.
     """
     def __init__(
         self,
         **kwargs
     ):
         self.tables = kwargs.get('tables', None)
-        self.error = kwargs.get('error', None)
+        self.partial_error = None
         self.statistics = kwargs.get('statistics', None)
         self.visualization = kwargs.get('visualization', None)
+        self.is_error = False
+
+    def __iter__(self):
+        return iter(self.tables)
 
     @classmethod
     def _from_generated(cls, generated):
-
         if not generated:
             return cls()
         tables = None
@@ -195,7 +201,6 @@ class LogsQueryResult(object):
             tables=tables,
             statistics=generated.statistics,
             visualization=generated.render,
-            error=generated.error
         )
 
 
