@@ -111,7 +111,7 @@ The `Client Certificate Credential` accepts `pfx` and `pem` certificates. The ce
 
 ### Create a new service principal
 
-If you're looking to create a new service principal and would like to use that, then follow tne instructions [here](https://docs.microsoft.com/cli/azure/create-an-azure-service-principal-azure-cli) to create a new service principal.
+If you're looking to create and use a new service principal, please follow the instructions [here](https://docs.microsoft.com/cli/azure/create-an-azure-service-principal-azure-cli) to create a new service principal.
 
 ## Troubleshooting Managed Identity Authentication Issues
 
