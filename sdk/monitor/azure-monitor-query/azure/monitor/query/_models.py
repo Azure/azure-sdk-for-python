@@ -76,7 +76,7 @@ class LogsTableRow(object):
         """This will iterate over the row directly.
         """
         return iter(self.row)
-    
+
     def __getitem__(self, column):
         """This type must be subscriptable directly to row.
         Must be gettableby both column name and row index
