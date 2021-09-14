@@ -3,7 +3,7 @@ import pytest
 import os
 from azure.identity import ClientSecretCredential
 from azure.core.exceptions import HttpResponseError
-from azure.monitor.query import LogsQueryClient, LogsBatchQuery
+from azure.monitor.query import LogsQueryClient, LogsBatchQuery, LogsQueryError, LogsTable, LogsQueryResult
 
 def _credential():
     credential  = ClientSecretCredential(
@@ -55,11 +55,12 @@ def test_logs_single_query_with_non_200():
 def test_logs_single_query_with_partial_success():
     credential = _credential()
     client = LogsQueryClient(credential)
-    query = "set truncationmaxrecords=1; union * | project TimeGenerated | take 10"
+    query = """let Weight = 92233720368547758;
+    range x from 1 to 3 step 1
+    | summarize percentilesw(x, Weight * 100, 50)"""
+    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None, allow_partial_errors=True)
 
-    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None)
-
-    assert response is not None
+    assert response.partial_error is not None
 
 @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/19917")
 @pytest.mark.live_test_only
@@ -108,7 +109,7 @@ def test_logs_query_batch_default():
     assert r1.tables[0].columns[1] == '_ResourceId'
     assert r1.tables[0].columns[2] == 'avgRequestDuration'
     r2 = response[2]
-    assert r2.error is not None
+    assert r2.__class__ == LogsQueryError
 
 @pytest.mark.live_test_only
 def test_logs_single_query_with_statistics():
@@ -221,3 +222,26 @@ def test_logs_query_batch_additional_workspaces():
 
     for resp in response:
         assert len(resp.tables[0].rows) == 2
+
+@pytest.mark.live_test_only
+def test_logs_query_result_iterate_over_tables():
+    client = LogsQueryClient(_credential())
+
+    query = "AppRequests; AppRequests | take 5"
+
+    response = client.query(
+        os.environ['LOG_WORKSPACE_ID'],
+        query,
+        timespan=None,
+        include_statistics=True,
+        include_visualization=True
+    )
+
+    ## should iterate over tables
+    for item in response:
+        assert item.__class__ == LogsTable
+    
+    assert response.statistics is not None
+    assert response.visualization is not None
+    assert len(response.tables) == 2
+    assert response.__class__ == LogsQueryResult

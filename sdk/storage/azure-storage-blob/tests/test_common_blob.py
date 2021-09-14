@@ -1222,7 +1222,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
         copyblob = self.bsc.get_blob_client(container_name, 'blob1copy')
         immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
-                                                 policy_mode=BlobImmutabilityPolicyMode.UNLOCKED)
+                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
         copy = copyblob.start_copy_from_url(sourceblob, immutability_policy=immutability_policy,
                                             legal_hold=True,
                                             )
@@ -1837,7 +1837,7 @@ class StorageCommonBlobTest(StorageTestCase):
         blob = BlobClient(
             self.bsc.url, container_name= container_name, blob_name=blob_name, credential=account_sas_token)
         immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
-                                                 policy_mode=BlobImmutabilityPolicyMode.UNLOCKED)
+                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
         resp_with_account_sas = blob.set_immutability_policy(immutability_policy=immutability_policy)
         blob_response = requests.get(blob.url)
 
@@ -1858,7 +1858,7 @@ class StorageCommonBlobTest(StorageTestCase):
             self.bsc.url, container_name=container_name, blob_name=blob_name, credential=container_sas_token)
 
         immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
-                                                 policy_mode=BlobImmutabilityPolicyMode.UNLOCKED)
+                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
         resp_with_container_sas = blob1.set_immutability_policy(immutability_policy=immutability_policy)
         # Assert response using container sas
         self.assertIsNotNone(resp_with_container_sas['immutability_policy_until_date'])
@@ -1876,7 +1876,7 @@ class StorageCommonBlobTest(StorageTestCase):
         blob2 = BlobClient(
             self.bsc.url, container_name=container_name, blob_name=blob_name, credential=blob_sas_token)
         immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
-                                                 policy_mode=BlobImmutabilityPolicyMode.UNLOCKED)
+                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
         resp_with_blob_sas = blob2.set_immutability_policy(immutability_policy=immutability_policy)
 
         # Assert response using blob sas
@@ -2586,7 +2586,7 @@ class StorageCommonBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(container_name, blob_name)
         blob.upload_blob(b"abc", overwrite=True)
         immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
-                                                 policy_mode=BlobImmutabilityPolicyMode.UNLOCKED)
+                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
         resp = blob.set_immutability_policy(immutability_policy=immutability_policy)
 
         # Assert
@@ -2668,7 +2668,7 @@ class StorageCommonBlobTest(StorageTestCase):
         content = b"abcedfg"
 
         immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
-                                                 policy_mode=BlobImmutabilityPolicyMode.UNLOCKED)
+                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
         blob.upload_blob(content,
                          immutability_policy=immutability_policy,
                          legal_hold=True,
@@ -2710,7 +2710,7 @@ class StorageCommonBlobTest(StorageTestCase):
         content = b"abcedfg"
 
         immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
-                                                 policy_mode=BlobImmutabilityPolicyMode.UNLOCKED)
+                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
         blob.upload_blob(content,immutability_policy=immutability_policy,
                          legal_hold=True,
                          overwrite=True)
