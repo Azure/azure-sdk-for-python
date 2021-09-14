@@ -12,12 +12,13 @@ from typing import TYPE_CHECKING
 from azure.core import PipelineClient
 from msrest import Deserializer, Serializer
 
+from . import models
 from ._configuration import ConversationAnalysisClientConfiguration
 from .operations import ConversationAnalysisClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Dict, Optional
+    from typing import Any, Optional
 
     from azure.core.credentials import AzureKeyCredential
     from azure.core.rest import HttpRequest, HttpResponse
@@ -45,8 +46,9 @@ class ConversationAnalysisClient(ConversationAnalysisClientOperationsMixin):
         self._config = ConversationAnalysisClientConfiguration(endpoint, credential, **kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
-        self._serialize = Serializer()
-        self._deserialize = Deserializer()
+        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self._serialize = Serializer(client_models)
+        self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
 
 

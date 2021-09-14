@@ -15,6 +15,7 @@ from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 
+from ... import models as _models
 from ...operations._operations import build_analyze_conversations_request
 
 T = TypeVar('T')
@@ -25,53 +26,26 @@ class ConversationAnalysisClientOperationsMixin:
     @distributed_trace_async
     async def analyze_conversations(
         self,
-        conversation_analysis_input: Any,
+        conversation_analysis_input: "_models.ConversationAnalysisInput",
         *,
         project_name: str,
         deployment_name: str,
         **kwargs: Any
-    ) -> Any:
+    ) -> "_models.ConversationAnalysisResult":
         """Analyzes the input conversation utterance.
 
         :param conversation_analysis_input: Post body of the request.
-        :type conversation_analysis_input: Any
+        :type conversation_analysis_input:
+         ~azure.ai.language.conversations.models.ConversationAnalysisInput
         :keyword project_name: The project name.
         :paramtype project_name: str
         :keyword deployment_name: The deployment name/deployed version.
         :paramtype deployment_name: str
-        :return: JSON object
-        :rtype: Any
+        :return: ConversationAnalysisResult
+        :rtype: ~azure.ai.language.conversations.models.ConversationAnalysisResult
         :raises: ~azure.core.exceptions.HttpResponseError
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                conversation_analysis_input = {
-                    "directTarget": "str",  # Optional. The name of the target project this request is sending to directly.
-                    "isLoggingEnabled": bool,  # Optional. If true, the query will be kept by the service for customers to further review, to improve the model quality.
-                    "language": "str",  # Optional. The language to use in this request. This will be the language setting when communicating with all other target projects.
-                    "parameters": {
-                        "str": {
-                            "apiVersion": "str",  # Optional. The API version to use when call a specific target service.
-                            targetKind: targetKind
-                        }
-                    },
-                    "query": "str",  # The conversation utterance to be analyzed.
-                    "verbose": bool  # Optional. If true, the service will return more detailed information in the response.
-                }
-
-                # response body for status code(s): 200
-                response.json() == {
-                    "detectedLanguage": "str",  # Optional. The system detected language for the query.
-                    "prediction": {
-                        "topIntent": "str",  # Optional. The intent with the highest score.
-                        projectKind: projectKind
-                    },
-                    "query": "str"  # The conversation utterance given by the caller.
-                }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConversationAnalysisResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -79,7 +53,7 @@ class ConversationAnalysisClientOperationsMixin:
 
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = conversation_analysis_input
+        json = self._serialize.body(conversation_analysis_input, 'ConversationAnalysisInput')
 
         request = build_analyze_conversations_request(
             content_type=content_type,
@@ -98,12 +72,10 @@ class ConversationAnalysisClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
+        deserialized = self._deserialize('ConversationAnalysisResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
