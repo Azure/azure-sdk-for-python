@@ -77,11 +77,11 @@ class TestCallingServerClient(unittest.TestCase):
     @parameterized.expand(data_source_test_create_connection())
     def test_create_connection_succeed(
         self,
-        test_name: str,
-        source_user: CommunicationIdentifier,
-        target_users: List[CommunicationIdentifier],
-        options: CreateCallOptions,
-        use_managed_identity = False
+        test_name, # type: str
+        source_user, # type: CommunicationIdentifier
+        target_users, # type: List[CommunicationIdentifier]
+        options, # type: CreateCallOptions,
+        use_managed_identity = False # type: bool
         ):
 
         calling_server_client = _test_utils.create_mock_calling_server_client(
@@ -98,11 +98,11 @@ class TestCallingServerClient(unittest.TestCase):
     @parameterized.expand(data_source_test_create_connection())
     def test_create_connection_failed(
         self,
-        test_name: str,
-        source_user: CommunicationIdentifier,
-        target_users: List[CommunicationIdentifier],
-        options: CreateCallOptions,
-        use_managed_identity = False
+        test_name, # type: str
+        source_user, # type: CommunicationIdentifier
+        target_users, # type: List[CommunicationIdentifier]
+        options, # type: CreateCallOptions,
+        use_managed_identity = False # type: bool
         ):
 
         calling_server_client = _test_utils.create_mock_calling_server_client(status_code=404, payload=_test_constants.ErrorPayload, is_async=False, use_managed_identity = use_managed_identity)
@@ -116,11 +116,11 @@ class TestCallingServerClient(unittest.TestCase):
     @parameterized.expand(data_source_test_join_call())
     def test_join_call_succeed(
         self,
-        test_name: str,
-        servercall_id: str,
-        source_user: CommunicationIdentifier,
-        options: JoinCallOptions,
-        use_managed_identity = False
+        test_name, # type: str
+        servercall_id, # type: str
+        source_user, # type: CommunicationIdentifier
+        options, # type: JoinCallOptions,
+        use_managed_identity = False # type: bool
         ):
 
         calling_server_client = _test_utils.create_mock_calling_server_client(
@@ -141,11 +141,11 @@ class TestCallingServerClient(unittest.TestCase):
     @parameterized.expand(data_source_test_join_call())
     def test_join_call_failed(
         self,
-        test_name: str,
-        servercall_id: str,
-        source_user: CommunicationIdentifier,
-        options: JoinCallOptions,
-        use_managed_identity = False
+        test_name, # type: str
+        servercall_id, # type: str
+        source_user, # type: CommunicationIdentifier
+        options, # type: JoinCallOptions
+        use_managed_identity = False # type: bool
         ):
 
         calling_server_client = _test_utils.create_mock_calling_server_client(

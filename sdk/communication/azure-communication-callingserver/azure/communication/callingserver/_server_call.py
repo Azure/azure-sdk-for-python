@@ -36,7 +36,7 @@ class ServerCall(object):
             self,
             audio_file_uri, # type: str
             play_audio_options, # type: PlayAudioOptions
-            **kwargs, # type: Any
+            **kwargs # type: Any
         ): # type: (...) -> PlayAudioResult
 
         if not audio_file_uri:

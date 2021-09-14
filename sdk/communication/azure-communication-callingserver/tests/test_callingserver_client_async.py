@@ -73,11 +73,11 @@ def data_source_test_join_call():
 @parameterized.expand(data_source_test_create_connection())
 @pytest.mark.asyncio
 async def test_create_connection_succeed(
-    test_name: str,
-    source_user: CommunicationIdentifier,
-    target_users: List[CommunicationIdentifier],
-    options: CreateCallOptions,
-    use_managed_identity = False
+    test_name, # type: str
+    source_user, # type: CommunicationIdentifier
+    target_users, # type: List[CommunicationIdentifier]
+    options, # type: CreateCallOptions
+    use_managed_identity = False # type: bool
     ):
 
     calling_server_client = _test_utils.create_mock_calling_server_client(status_code=201, payload=_test_constants.CreateOrJoinCallPayload, is_async=True, use_managed_identity = use_managed_identity)
@@ -88,11 +88,11 @@ async def test_create_connection_succeed(
 @parameterized.expand(data_source_test_create_connection())
 @pytest.mark.asyncio
 async def test_create_connection_failed(
-    test_name: str,
-    source_user: CommunicationIdentifier,
-    target_users: List[CommunicationIdentifier],
-    options: CreateCallOptions,
-    use_managed_identity = False
+    test_name, # type: str
+    source_user, # type: CommunicationIdentifier
+    target_users, # type: List[CommunicationIdentifier]
+    options, # type: CreateCallOptions
+    use_managed_identity = False # type: bool
     ):
 
     calling_server_client = _test_utils.create_mock_calling_server_client(status_code=404, payload=_test_constants.ErrorPayload, is_async=True, use_managed_identity = use_managed_identity)
@@ -106,11 +106,11 @@ async def test_create_connection_failed(
 @parameterized.expand(data_source_test_join_call())
 @pytest.mark.asyncio
 async def test_join_call_succeed(
-    test_name: str,
-    servercall_id: str,
-    source_user: CommunicationIdentifier,
-    options: JoinCallOptions,
-    use_managed_identity = False
+    test_name, # type: str
+    servercall_id, # type: str
+    source_user, # type: CommunicationIdentifier
+    options, # type: JoinCallOptions
+    use_managed_identity = False # type: bool
     ):
 
     calling_server_client = _test_utils.create_mock_calling_server_client(
@@ -131,11 +131,11 @@ async def test_join_call_succeed(
 @parameterized.expand(data_source_test_join_call())
 @pytest.mark.asyncio
 async def test_join_call_failed(
-    test_name: str,
-    servercall_id: str,
-    source_user: CommunicationIdentifier,
-    options: JoinCallOptions,
-    use_managed_identity = False
+    test_name, # type: str
+    servercall_id, # type: str
+    source_user, # type: CommunicationIdentifier
+    options, # type: JoinCallOptions
+    use_managed_identity = False # type: bool
     ):
 
     calling_server_client = _test_utils.create_mock_calling_server_client(

@@ -15,7 +15,8 @@ from azure.communication.callingserver._shared.models import (
     )
 from azure.communication.callingserver._generated.models import (
     CancelAllMediaOperationsResult,
-    AddParticipantResult
+    AddParticipantResult,
+    PlayAudioResult
     )
 from azure.communication.callingserver._models import (
     PlayAudioOptions,
@@ -124,21 +125,24 @@ def data_source_test_remove_participant():
 
     return parameters
 
-def verify_cancel_all_media_operations_result(result: CancelAllMediaOperationsResult):
+def verify_cancel_all_media_operations_result(result):
+    # type: (CancelAllMediaOperationsResult) -> None
     assert "dummyId" == result.operation_id
     assert "completed" == result.status
     assert _test_constants.OPERATION_CONTEXT == result.operation_context
     assert 200 == result.result_info.code
     assert "dummyMessage" == result.result_info.message
 
-def verify_play_audio_result(result: CancelAllMediaOperationsResult):
+def verify_play_audio_result(result):
+    # type: (PlayAudioResult) -> None
     assert "dummyId" == result.operation_id
     assert "running" == result.status
     assert _test_constants.OPERATION_CONTEXT == result.operation_context
     assert 200 == result.result_info.code
     assert "dummyMessage" == result.result_info.message
 
-def verify_add_participant_result(result: AddParticipantResult):
+def verify_add_participant_result(result):
+    # type: (AddParticipantResult) -> None
     assert _test_constants.PARTICIPANT_ID == result.participant_id
 
 class TestCallConnection(unittest.TestCase):
@@ -146,9 +150,9 @@ class TestCallConnection(unittest.TestCase):
     @parameterized.expand(data_source_test_hang_up())
     def test_hang_up_succeed(
         self,
-        test_name: str,
-        call_connection_id: str,
-        use_managed_identity = False
+        test_name, # type: str
+        call_connection_id, # type: str
+        use_managed_identity = False, # type: bool
         ):
 
         call_connection = _test_utils.create_mock_call_connection(
@@ -165,9 +169,9 @@ class TestCallConnection(unittest.TestCase):
     @parameterized.expand(data_source_test_hang_up())
     def test_hang_up_failed(
         self,
-        test_name: str,
-        call_connection_id: str,
-        use_managed_identity = False
+        test_name, # type: str
+        call_connection_id, # type: str
+        use_managed_identity = False, # type: bool
         ):
 
         call_connection = _test_utils.create_mock_call_connection(
@@ -188,10 +192,10 @@ class TestCallConnection(unittest.TestCase):
     @parameterized.expand(data_source_test_cancel_all_media_operations())
     def test_cancel_all_media_operations_succeed(
         self,
-        test_name: str,
-        call_connection_id: str,
-        operation_context: str = None,
-        use_managed_identity = False
+        test_name, # type: str
+        call_connection_id, # type: str
+        operation_context = None, # type: str
+        use_managed_identity = False # type: bool
         ):
 
         call_connection = _test_utils.create_mock_call_connection(
@@ -208,10 +212,10 @@ class TestCallConnection(unittest.TestCase):
     @parameterized.expand(data_source_test_cancel_all_media_operations())
     def test_cancel_all_media_operations_failed(
         self,
-        test_name: str,
-        call_connection_id: str,
-        operation_context: str = None,
-        use_managed_identity = False
+        test_name, # type: str
+        call_connection_id, # type: str
+        operation_context = None, # type: str
+        use_managed_identity = False # type: bool
         ):
 
         call_connection = _test_utils.create_mock_call_connection(
@@ -232,11 +236,11 @@ class TestCallConnection(unittest.TestCase):
     @parameterized.expand(data_source_test_play_audio())
     def test_play_audio_succeed(
         self,
-        test_name: str,
-        call_connection_id: str,
-        audio_file_uri: str,
-        options: PlayAudioOptions,
-        use_managed_identity = False
+        test_name, # type: str
+        call_connection_id, # type: str
+        audio_file_uri, # type: str
+        options, # type: PlayAudioOptions
+        use_managed_identity = False # type: bool
         ):
 
         call_connection = _test_utils.create_mock_call_connection(
@@ -253,11 +257,11 @@ class TestCallConnection(unittest.TestCase):
     @parameterized.expand(data_source_test_play_audio())
     def test_play_audio_failed(
         self,
-        test_name: str,
-        call_connection_id: str,
-        audio_file_uri: str,
-        options: PlayAudioOptions,
-        use_managed_identity = False
+        test_name, # type: str
+        call_connection_id, # type: str
+        audio_file_uri, # type: str
+        options, # type: PlayAudioOptions
+        use_managed_identity = False # type: bool
         ):
 
         call_connection = _test_utils.create_mock_call_connection(
@@ -278,12 +282,12 @@ class TestCallConnection(unittest.TestCase):
     @parameterized.expand(data_source_test_add_participant())
     def test_add_participant_succeed(
         self,
-        test_name: str,
-        call_connection_id: str,
-        participant: CommunicationIdentifier,
-        alternate_caller_id: str,
-        operation_context: str,
-        use_managed_identity = False
+        test_name, # type: str
+        call_connection_id, # type: str
+        participant, # type: CommunicationIdentifier
+        alternate_caller_id, # type: str
+        operation_context, # type: str
+        use_managed_identity = False # type: bool
         ):
 
         call_connection = _test_utils.create_mock_call_connection(
@@ -304,12 +308,12 @@ class TestCallConnection(unittest.TestCase):
     @parameterized.expand(data_source_test_add_participant())
     def test_add_participant_failed(
         self,
-        test_name: str,
-        call_connection_id: str,
-        participant: CommunicationIdentifier,
-        alternate_caller_id: str,
-        operation_context: str,
-        use_managed_identity = False
+        test_name, # type: str
+        call_connection_id, # type: str
+        participant, # type: CommunicationIdentifier
+        alternate_caller_id, # type: str
+        operation_context, # type: str
+        use_managed_identity = False # type: bool
         ):
 
         call_connection = _test_utils.create_mock_call_connection(
@@ -334,10 +338,10 @@ class TestCallConnection(unittest.TestCase):
     @parameterized.expand(data_source_test_remove_participant())
     def test_remove_participant_succeed(
         self,
-        test_name: str,
-        call_connection_id: str,
-        participant_id: str,
-        use_managed_identity = False
+        test_name, # type: str
+        call_connection_id, # type: str
+        participant_id, # type: str
+        use_managed_identity = False # type: bool
         ):
 
         call_connection = _test_utils.create_mock_call_connection(
@@ -356,10 +360,10 @@ class TestCallConnection(unittest.TestCase):
     @parameterized.expand(data_source_test_remove_participant())
     def test_remove_participant_failed(
         self,
-        test_name: str,
-        call_connection_id: str,
-        participant_id: str,
-        use_managed_identity = False
+        test_name, # type: str
+        call_connection_id, # type: str
+        participant_id, # type: str
+        use_managed_identity = False # type: bool
         ):
 
         call_connection = _test_utils.create_mock_call_connection(
