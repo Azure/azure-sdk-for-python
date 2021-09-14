@@ -1,5 +1,58 @@
 # Release History
 
+## 7.0.0b1 (2021-09-14)
+
+**Features**
+
+  - Model GremlinGraphGetResults has a new parameter identity
+  - Model GremlinGraphCreateUpdateParameters has a new parameter identity
+  - Model SqlDatabaseGetResults has a new parameter identity
+  - Model MongoDBDatabaseCreateUpdateParameters has a new parameter identity
+  - Model SqlTriggerCreateUpdateParameters has a new parameter identity
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter diagnostic_log_settings
+  - Model ThroughputSettingsGetResults has a new parameter identity
+  - Model ARMResourceProperties has a new parameter identity
+  - Model GremlinDatabaseGetResults has a new parameter identity
+  - Model GremlinDatabaseCreateUpdateParameters has a new parameter identity
+  - Model DatabaseAccountGetResults has a new parameter diagnostic_log_settings
+  - Model PeriodicModeProperties has a new parameter backup_storage_redundancy
+  - Model SqlDatabaseCreateUpdateParameters has a new parameter identity
+  - Model SqlStoredProcedureCreateUpdateParameters has a new parameter identity
+  - Model SqlStoredProcedureGetResults has a new parameter identity
+  - Model MongoDBDatabaseGetResults has a new parameter identity
+  - Model SqlUserDefinedFunctionCreateUpdateParameters has a new parameter identity
+  - Model SqlUserDefinedFunctionGetResults has a new parameter identity
+  - Model SqlContainerGetResults has a new parameter identity
+  - Model DatabaseAccountUpdateParameters has a new parameter diagnostic_log_settings
+  - Model CassandraKeyspaceGetResults has a new parameter identity
+  - Model TableGetResults has a new parameter identity
+  - Model SqlTriggerGetResults has a new parameter identity
+  - Model MongoDBCollectionGetResults has a new parameter identity
+  - Model ThroughputSettingsUpdateParameters has a new parameter identity
+  - Model TableCreateUpdateParameters has a new parameter identity
+  - Model CassandraKeyspaceCreateUpdateParameters has a new parameter identity
+  - Model CassandraTableGetResults has a new parameter identity
+  - Model MongoDBCollectionCreateUpdateParameters has a new parameter identity
+  - Model SqlContainerCreateUpdateParameters has a new parameter identity
+  - Model CassandraTableCreateUpdateParameters has a new parameter identity
+  - Added operation CassandraResourcesOperations.get_cassandra_view_throughput
+  - Added operation CassandraResourcesOperations.list_cassandra_views
+  - Added operation CassandraResourcesOperations.begin_migrate_cassandra_view_to_manual_throughput
+  - Added operation CassandraResourcesOperations.begin_create_update_cassandra_view
+  - Added operation CassandraResourcesOperations.begin_migrate_cassandra_view_to_autoscale
+  - Added operation CassandraResourcesOperations.begin_delete_cassandra_view
+  - Added operation CassandraResourcesOperations.begin_update_cassandra_view_throughput
+  - Added operation CassandraResourcesOperations.get_cassandra_view
+  - Added operation group CassandraDataCentersOperations
+  - Added operation group CosmosDBManagementClientOperationsMixin
+  - Added operation group CassandraClustersOperations
+  - Added operation group GraphResourcesOperations
+  - Added operation group ServiceOperations
+
+**Breaking changes**
+
+  - Parameter create_mode of model DatabaseAccountCreateUpdateParameters is now required
+
 ## 6.4.0 (2021-06-22)
 
 **Features**
