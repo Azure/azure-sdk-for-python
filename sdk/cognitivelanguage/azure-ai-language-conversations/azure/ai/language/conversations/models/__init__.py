@@ -13,8 +13,8 @@ try:
     from ._models_py3 import ConversationAnalysisResult
     from ._models_py3 import DSTargetIntentResult
     from ._models_py3 import DeepstackCallingOptions
-    from ._models_py3 import DeepstackClassification
     from ._models_py3 import DeepstackEntity
+    from ._models_py3 import DeepstackIntent
     from ._models_py3 import DeepstackParameters
     from ._models_py3 import DeepstackPrediction
     from ._models_py3 import DeepstackResult
@@ -35,8 +35,8 @@ except (SyntaxError, ImportError):
     from ._models import ConversationAnalysisResult  # type: ignore
     from ._models import DSTargetIntentResult  # type: ignore
     from ._models import DeepstackCallingOptions  # type: ignore
-    from ._models import DeepstackClassification  # type: ignore
     from ._models import DeepstackEntity  # type: ignore
+    from ._models import DeepstackIntent  # type: ignore
     from ._models import DeepstackParameters  # type: ignore
     from ._models import DeepstackPrediction  # type: ignore
     from ._models import DeepstackResult  # type: ignore
@@ -54,8 +54,8 @@ except (SyntaxError, ImportError):
 from ._conversation_analysis_client_enums import (
     ErrorCode,
     InnerErrorCode,
-    ProjectType,
-    TargetType,
+    ProjectKind,
+    TargetKind,
 )
 
 __all__ = [
@@ -65,8 +65,8 @@ __all__ = [
     'ConversationAnalysisResult',
     'DSTargetIntentResult',
     'DeepstackCallingOptions',
-    'DeepstackClassification',
     'DeepstackEntity',
+    'DeepstackIntent',
     'DeepstackParameters',
     'DeepstackPrediction',
     'DeepstackResult',
@@ -82,6 +82,6 @@ __all__ = [
     'WorkflowPrediction',
     'ErrorCode',
     'InnerErrorCode',
-    'ProjectType',
-    'TargetType',
+    'ProjectKind',
+    'TargetKind',
 ]
