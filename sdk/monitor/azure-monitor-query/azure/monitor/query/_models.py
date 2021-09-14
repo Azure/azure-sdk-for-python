@@ -28,7 +28,7 @@ class LogsTable(object):
     :ivar column_types: The types of columns in this table.
     :vartype columns: list[object]
     :ivar rows: Required. The resulting rows from this query.
-    :vartype rows: list[list[object]]
+    :vartype rows: list[~azure.monitor.query.LogsTableRow]
     """
     def __init__(self, **kwargs):
         # type: (Any) -> None
@@ -36,7 +36,14 @@ class LogsTable(object):
         self.columns = kwargs.pop('columns', None) # type: Optional[str]
         self.columns_types = kwargs.pop('column_types', None) # type: Optional[Any]
         _rows = kwargs.pop('rows', None)
-        self.rows = [process_row(self.columns_types, row) for row in _rows]
+        self.rows = [
+            LogsTableRow(
+                row=row,
+                row_index=ind,
+                col_types=self.columns_types,
+                columns=self.columns
+                ) for ind, row in enumerate(_rows)
+            ]
 
     @classmethod
     def _from_generated(cls, generated):
@@ -56,22 +63,15 @@ class LogsTableRow(object):
     """
     def __init__(self, **kwargs):
         # type: (Any) -> None
-        self.row = kwargs.get('row', None)
+        _col_types = kwargs.pop('col_types', None)
+        row = kwargs.get('row', None)
+        self.row = process_row(_col_types, row)
         self.row_index = kwargs.get('row_index', None)
         _columns = kwargs.pop('columns', None)
         self._row_dict = {
             _columns[i]: self.row[i] for i in range(len(self.row))
         }
 
-    @classmethod
-    def _from_generated(cls, generated):
-        if not generated:
-            return None
-        return cls(
-            row=generated.row,
-            row_index=generated.row_index
-        )
-    
     def __iter__(self):
         """This will iterate over the row directly.
         """

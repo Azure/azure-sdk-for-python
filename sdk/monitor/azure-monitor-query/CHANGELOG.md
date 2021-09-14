@@ -7,6 +7,7 @@
 - Added `QueryPartialErrorException` and `LogsQueryError` to handle errors.
 - Added `partial_error` and `is_error` attributes to `LogsQueryResult`.
 - Added an option `allow_partial_errors` that defaults to False, which can be set to not throw if there are any partial errors.
+- Added a new `LogsTableRow` type that represents a single row in a table.
 
 ### Breaking Changes
 
