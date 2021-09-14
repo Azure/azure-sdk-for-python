@@ -32,12 +32,11 @@ from azure.core.exceptions import HttpResponseError
 
 from ..utils._utils import _case_insensitive_dict
 from ._helpers import (
-    FilesType,
     set_content_body,
     set_json_body,
     set_multipart_body,
     set_urlencoded_body,
-    format_parameters,
+    _format_parameters_helper,
     get_charset_encoding,
     decode_to_text,
     HttpRequestBackcompatMixin,
@@ -106,7 +105,7 @@ class HttpRequest(HttpRequestBackcompatMixin):
 
         params = kwargs.pop("params", None)
         if params:
-            self.url = format_parameters(self.url, params)
+            _format_parameters_helper(self, params)
         self._files = None
         self._data = None
 
@@ -126,10 +125,14 @@ class HttpRequest(HttpRequestBackcompatMixin):
                 )
             )
 
-    def _set_body(self, content, data, files, json):
-        # type: (Optional[ContentType], Optional[dict], Optional[FilesType], Any) -> HeadersType
+    def _set_body(self, **kwargs):
+        # type: (Any) -> HeadersType
         """Sets the body of the request, and returns the default headers
         """
+        content = kwargs.pop("content", None)
+        data = kwargs.pop("data", None)
+        files = kwargs.pop("files", None)
+        json = kwargs.pop("json", None)
         default_headers = {}
         if data is not None and not isinstance(data, dict):
             # should we warn?

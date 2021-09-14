@@ -31,11 +31,10 @@ from typing import (
     Any,
     AsyncIterable,
     AsyncIterator,
-    Dict,
     Iterable, Iterator,
     Optional,
-    Type,
     Union,
+    cast,
 )
 
 
@@ -47,11 +46,10 @@ from ._helpers import (
     ParamsType,
     FilesType,
     HeadersType,
-    cast,
     set_json_body,
     set_multipart_body,
     set_urlencoded_body,
-    format_parameters,
+    _format_parameters_helper,
     get_charset_encoding,
     decode_to_text,
     HttpRequestBackcompatMixin,
@@ -136,7 +134,7 @@ class HttpRequest(HttpRequestBackcompatMixin):
         self.method = method
 
         if params:
-            self.url = format_parameters(self.url, params)
+            _format_parameters_helper(self, params)
         self._files = None
         self._data = None  # type: Any
 
@@ -158,10 +156,10 @@ class HttpRequest(HttpRequestBackcompatMixin):
 
     def _set_body(
         self,
-        content: Optional[ContentType],
-        data: Optional[dict],
-        files: Optional[FilesType],
-        json: Any,
+        content: Optional[ContentType] = None,
+        data: Optional[dict] = None,
+        files: Optional[FilesType] = None,
+        json: Any = None,
     ) -> HeadersType:
         """Sets the body of the request, and returns the default headers
         """

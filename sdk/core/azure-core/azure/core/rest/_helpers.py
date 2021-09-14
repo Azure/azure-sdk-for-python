@@ -23,12 +23,13 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import os
 import codecs
 import cgi
-from enum import Enum
 from json import dumps
-import collections
+try:
+    import collections.abc as collections
+except ImportError:
+    import collections  # type: ignore
 from typing import (
     Optional,
     Union,
@@ -40,9 +41,6 @@ from typing import (
     Any,
     Dict,
     Iterable,
-    Iterator,
-    cast,
-    Callable,
 )
 import xml.etree.ElementTree as ET
 import six
@@ -58,6 +56,7 @@ from ..utils._pipeline_transport_rest_shared import (
     _pad_attr_name,
     _prepare_multipart_body_helper,
     _serialize_request,
+    _format_data_helper,
 )
 
 ################################### TYPES SECTION #########################
@@ -81,19 +80,6 @@ FilesType = Union[
 
 ContentTypeBase = Union[str, bytes, Iterable[bytes]]
 
-class HttpVerbs(str, Enum):
-    GET = "GET"
-    PUT = "PUT"
-    POST = "POST"
-    HEAD = "HEAD"
-    PATCH = "PATCH"
-    DELETE = "DELETE"
-    MERGE = "MERGE"
-
-########################### ERRORS SECTION #################################
-
-
-
 ########################### HELPER SECTION #################################
 
 def _verify_data_object(name, value):
@@ -109,25 +95,6 @@ def _verify_data_object(name, value):
                 type(name), name
             )
         )
-
-def _format_data(data):
-    # type: (Union[str, IO]) -> Union[Tuple[None, str], Tuple[Optional[str], IO, str]]
-    """Format field data according to whether it is a stream or
-    a string for a form-data request.
-
-    :param data: The request field data.
-    :type data: str or file-like object.
-    """
-    if hasattr(data, "read"):
-        data = cast(IO, data)
-        data_name = None
-        try:
-            if data.name[0] != "<" and data.name[-1] != ">":
-                data_name = os.path.basename(data.name)
-        except (AttributeError, TypeError):
-            pass
-        return (data_name, data, "application/octet-stream")
-    return (None, cast(str, data))
 
 def set_urlencoded_body(data, has_files):
     body = {}
@@ -149,7 +116,7 @@ def set_urlencoded_body(data, has_files):
 
 def set_multipart_body(files):
     formatted_files = {
-        f: _format_data(d) for f, d in files.items() if d is not None
+        f: _format_data_helper(d) for f, d in files.items() if d is not None
     }
     return {}, formatted_files
 
@@ -196,35 +163,6 @@ def set_json_body(json):
         "Content-Type": "application/json",
         "Content-Length": str(len(body))
     }, body
-
-def format_parameters(url, params):
-    """Format parameters into a valid query string.
-    It's assumed all parameters have already been quoted as
-    valid URL strings.
-
-    :param dict params: A dictionary of parameters.
-    """
-    query = urlparse(url).query
-    if query:
-        url = url.partition("?")[0]
-        existing_params = {
-            p[0]: p[-1] for p in [p.partition("=") for p in query.split("&")]
-        }
-        params.update(existing_params)
-    query_params = []
-    for k, v in params.items():
-        if isinstance(v, list):
-            for w in v:
-                if w is None:
-                    raise ValueError("Query parameter {} cannot be None".format(k))
-                query_params.append("{}={}".format(k, w))
-        else:
-            if v is None:
-                raise ValueError("Query parameter {} cannot be None".format(k))
-            query_params.append("{}={}".format(k, v))
-    query = "?" + "&".join(query_params)
-    url += query
-    return url
 
 def lookup_encoding(encoding):
     # type: (str) -> bool
@@ -331,11 +269,6 @@ class HttpRequestBackcompatMixin(object):
         """
         self._data = val
 
-    @staticmethod
-    def _format_data(data):
-        from ..pipeline.transport._base import HttpRequest as PipelineTransportHttpRequest
-        return PipelineTransportHttpRequest._format_data(data)  # pylint: disable=protected-access
-
     def _format_parameters(self, params):
         """DEPRECATED: Format the query parameters
         This is deprecated and will be removed in a later release.
@@ -355,19 +288,17 @@ class HttpRequestBackcompatMixin(object):
             raise TypeError(
                 "A streamable data source must be an open file-like object or iterable."
             )
-        self._data = data
+        headers = self._set_body(content=data)
         self._files = None
+        self.headers.update(headers)
 
     def _set_text_body(self, data):
         """DEPRECATED: Set the text body
         This is deprecated and will be removed in a later release.
         You should pass your text content through the `content` kwarg instead
         """
-        if data is None:
-            self._data = None
-        else:
-            self._data = data
-            self.headers["Content-Length"] = str(len(self._data))
+        headers = self._set_body(content=data)
+        self.headers.update(headers)
         self._files = None
 
     def _set_xml_body(self, data):
@@ -375,12 +306,8 @@ class HttpRequestBackcompatMixin(object):
         This is deprecated and will be removed in a later release.
         You should pass your xml content through the `content` kwarg instead
         """
-        if data is None:
-            self._data = None
-        else:
-            bytes_data = ET.tostring(data, encoding="utf8")
-            self._data = bytes_data.replace(b"encoding='utf8'", b"encoding='utf-8'")
-            self.headers["Content-Length"] = str(len(self._data))
+        headers = self._set_body(content=data)
+        self.headers.update(headers)
         self._files = None
 
     def _set_json_body(self, data):
@@ -388,11 +315,8 @@ class HttpRequestBackcompatMixin(object):
         This is deprecated and will be removed in a later release.
         You should pass your json content through the `json` kwarg instead
         """
-        if data is None:
-            self._data = None
-        else:
-            self._data = dumps(data)
-            self.headers["Content-Length"] = str(len(self._data))
+        headers = self._set_body(json=data)
+        self.headers.update(headers)
         self._files = None
 
     def _set_formdata_body(self, data=None):
@@ -405,22 +329,24 @@ class HttpRequestBackcompatMixin(object):
         content_type = self.headers.pop("Content-Type", None) if self.headers else None
 
         if content_type and content_type.lower() == "application/x-www-form-urlencoded":
-            self._data = {f: d for f, d in data.items() if d is not None}
+            headers = self._set_body(data=data)
             self._files = None
         else:  # Assume "multipart/form-data"
-            self._files = {
-                f: self._format_data(d) for f, d in data.items() if d is not None
-            }
+            headers = self._set_body(files=data)
             self._data = None
+        self.headers.update(headers)
 
     def _set_bytes_body(self, data):
         """DEPRECATED: Set the bytes request body.
         This is deprecated and will be removed in a later release.
         You should pass your bytes content through the `content` kwarg instead
         """
-        if data:
-            self.headers["Content-Length"] = str(len(data))
-        self._data = data
+        headers = self._set_body(content=data)
+        # we don't want default Content-Type
+        # in 2.7, byte strings are still strings, so they get set with text/plain content type
+
+        headers.pop("Content-Type", None)
+        self.headers.update(headers)
         self._files = None
 
     def _set_multipart_mixed(self, *requests, **kwargs):

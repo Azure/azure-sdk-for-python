@@ -34,7 +34,6 @@ except ImportError:  # 2.7
 from io import BytesIO
 import json
 import logging
-import os
 import time
 import copy
 
@@ -50,7 +49,6 @@ from typing import (
     TYPE_CHECKING,
     Generic,
     TypeVar,
-    cast,
     IO,
     List,
     Union,
@@ -79,6 +77,7 @@ from ...utils._pipeline_transport_rest_shared import (
     _format_parameters_helper,
     _prepare_multipart_body_helper,
     _serialize_request,
+    _format_data_helper,
 )
 
 
@@ -228,16 +227,7 @@ class HttpRequest(object):
         :param data: The request field data.
         :type data: str or file-like object.
         """
-        if hasattr(data, "read"):
-            data = cast(IO, data)
-            data_name = None
-            try:
-                if data.name[0] != "<" and data.name[-1] != ">":
-                    data_name = os.path.basename(data.name)
-            except (AttributeError, TypeError):
-                pass
-            return (data_name, data, "application/octet-stream")
-        return (None, cast(str, data))
+        return _format_data_helper(data)
 
     def format_parameters(self, params):
         # type: (Dict[str, str]) -> None

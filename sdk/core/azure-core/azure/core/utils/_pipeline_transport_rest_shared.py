@@ -5,6 +5,8 @@
 # license information.
 # --------------------------------------------------------------------------
 from __future__ import absolute_import
+import os
+from typing import cast, IO
 from email.message import Message
 from six.moves.http_client import HTTPConnection
 try:
@@ -116,3 +118,15 @@ def _serialize_request(http_request):
         headers=http_request.headers,
     )
     return serializer.buffer
+
+def _format_data_helper(data):
+    if hasattr(data, "read"):
+        data = cast(IO, data)
+        data_name = None
+        try:
+            if data.name[0] != "<" and data.name[-1] != ">":
+                data_name = os.path.basename(data.name)
+        except (AttributeError, TypeError):
+            pass
+        return (data_name, data, "application/octet-stream")
+    return (None, cast(str, data))

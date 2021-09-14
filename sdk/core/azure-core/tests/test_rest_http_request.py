@@ -311,10 +311,3 @@ def test_use_custom_json_encoder():
 #             b"--+++--\r\n",
 #         ]
 #     )
-
-
-def test_backcompat_mixin():
-    old_request = PipelineTransportHttpRequest("GET", "/")
-    new_request = HttpRequest("GET", "/")
-    for attr in dir(old_request):
-        assert hasattr(new_request, attr)
