@@ -18,24 +18,24 @@ class AnalyzeParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param target_type: Required. The type of a target service.Constant filled by server.  Possible
+    :param target_kind: Required. The type of a target service.Constant filled by server.  Possible
      values include: "luis", "luis_deepstack", "question_answering".
-    :type target_type: str or ~azure.ai.language.conversations.models.TargetType
+    :type target_kind: str or ~azure.ai.language.conversations.models.TargetKind
     :param api_version: The API version to use when call a specific target service.
     :type api_version: str
     """
 
     _validation = {
-        'target_type': {'required': True},
+        'target_kind': {'required': True},
     }
 
     _attribute_map = {
-        'target_type': {'key': 'targetType', 'type': 'str'},
+        'target_kind': {'key': 'targetKind', 'type': 'str'},
         'api_version': {'key': 'apiVersion', 'type': 'str'},
     }
 
     _subtype_map = {
-        'target_type': {'luis': 'LUISParameters', 'luis_deepstack': 'DeepstackParameters', 'question_answering': 'QuestionAnsweringParameters'}
+        'target_kind': {'luis': 'LUISParameters', 'luis_deepstack': 'DeepstackParameters', 'question_answering': 'QuestionAnsweringParameters'}
     }
 
     def __init__(
@@ -43,7 +43,7 @@ class AnalyzeParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(AnalyzeParameters, self).__init__(**kwargs)
-        self.target_type = None  # type: Optional[str]
+        self.target_kind = None  # type: Optional[str]
         self.api_version = kwargs.get('api_version', None)
 
 
@@ -55,24 +55,24 @@ class BasePrediction(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param project_type: Required. The type of the project.Constant filled by server.  Possible
+    :param project_kind: Required. The type of the project.Constant filled by server.  Possible
      values include: "conversation", "workflow".
-    :type project_type: str or ~azure.ai.language.conversations.models.ProjectType
+    :type project_kind: str or ~azure.ai.language.conversations.models.ProjectKind
     :param top_intent: The intent with the highest score.
     :type top_intent: str
     """
 
     _validation = {
-        'project_type': {'required': True},
+        'project_kind': {'required': True},
     }
 
     _attribute_map = {
-        'project_type': {'key': 'projectType', 'type': 'str'},
+        'project_kind': {'key': 'projectKind', 'type': 'str'},
         'top_intent': {'key': 'topIntent', 'type': 'str'},
     }
 
     _subtype_map = {
-        'project_type': {'conversation': 'DeepstackPrediction', 'workflow': 'WorkflowPrediction'}
+        'project_kind': {'conversation': 'DeepstackPrediction', 'workflow': 'WorkflowPrediction'}
     }
 
     def __init__(
@@ -80,7 +80,7 @@ class BasePrediction(msrest.serialization.Model):
         **kwargs
     ):
         super(BasePrediction, self).__init__(**kwargs)
-        self.project_type = None  # type: Optional[str]
+        self.project_kind = None  # type: Optional[str]
         self.top_intent = kwargs.get('top_intent', None)
 
 
@@ -193,36 +193,6 @@ class DeepstackCallingOptions(msrest.serialization.Model):
         self.is_logging_enabled = kwargs.get('is_logging_enabled', None)
 
 
-class DeepstackClassification(msrest.serialization.Model):
-    """The classification result of a LUIS Deepstack project.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param category: Required. A predicted class.
-    :type category: str
-    :param confidence_score: Required. The confidence score of the class from 0.0 to 1.0.
-    :type confidence_score: float
-    """
-
-    _validation = {
-        'category': {'required': True},
-        'confidence_score': {'required': True, 'maximum': 1, 'minimum': 0},
-    }
-
-    _attribute_map = {
-        'category': {'key': 'category', 'type': 'str'},
-        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DeepstackClassification, self).__init__(**kwargs)
-        self.category = kwargs['category']
-        self.confidence_score = kwargs['confidence_score']
-
-
 class DeepstackEntity(msrest.serialization.Model):
     """The entity extraction result of a LUIS Deepstack project.
 
@@ -268,14 +238,44 @@ class DeepstackEntity(msrest.serialization.Model):
         self.confidence_score = kwargs['confidence_score']
 
 
+class DeepstackIntent(msrest.serialization.Model):
+    """The intent classification result of a LUIS Deepstack project.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param category: Required. A predicted class.
+    :type category: str
+    :param confidence_score: Required. The confidence score of the class from 0.0 to 1.0.
+    :type confidence_score: float
+    """
+
+    _validation = {
+        'category': {'required': True},
+        'confidence_score': {'required': True, 'maximum': 1, 'minimum': 0},
+    }
+
+    _attribute_map = {
+        'category': {'key': 'category', 'type': 'str'},
+        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DeepstackIntent, self).__init__(**kwargs)
+        self.category = kwargs['category']
+        self.confidence_score = kwargs['confidence_score']
+
+
 class DeepstackParameters(AnalyzeParameters):
     """This is a set of request parameters for LUIS Deepstack projects.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param target_type: Required. The type of a target service.Constant filled by server.  Possible
+    :param target_kind: Required. The type of a target service.Constant filled by server.  Possible
      values include: "luis", "luis_deepstack", "question_answering".
-    :type target_type: str or ~azure.ai.language.conversations.models.TargetType
+    :type target_kind: str or ~azure.ai.language.conversations.models.TargetKind
     :param api_version: The API version to use when call a specific target service.
     :type api_version: str
     :param calling_options: The option to set to call a LUIS Deepstack project.
@@ -283,11 +283,11 @@ class DeepstackParameters(AnalyzeParameters):
     """
 
     _validation = {
-        'target_type': {'required': True},
+        'target_kind': {'required': True},
     }
 
     _attribute_map = {
-        'target_type': {'key': 'targetType', 'type': 'str'},
+        'target_kind': {'key': 'targetKind', 'type': 'str'},
         'api_version': {'key': 'apiVersion', 'type': 'str'},
         'calling_options': {'key': 'callingOptions', 'type': 'DeepstackCallingOptions'},
     }
@@ -297,7 +297,7 @@ class DeepstackParameters(AnalyzeParameters):
         **kwargs
     ):
         super(DeepstackParameters, self).__init__(**kwargs)
-        self.target_type = 'luis_deepstack'  # type: str
+        self.target_kind = 'luis_deepstack'  # type: str
         self.calling_options = kwargs.get('calling_options', None)
 
 
@@ -306,27 +306,27 @@ class DeepstackPrediction(BasePrediction):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param project_type: Required. The type of the project.Constant filled by server.  Possible
+    :param project_kind: Required. The type of the project.Constant filled by server.  Possible
      values include: "conversation", "workflow".
-    :type project_type: str or ~azure.ai.language.conversations.models.ProjectType
+    :type project_kind: str or ~azure.ai.language.conversations.models.ProjectKind
     :param top_intent: The intent with the highest score.
     :type top_intent: str
-    :param classifications: Required. The classification results.
-    :type classifications: list[~azure.ai.language.conversations.models.DeepstackClassification]
+    :param intents: Required. The intent classification results.
+    :type intents: list[~azure.ai.language.conversations.models.DeepstackIntent]
     :param entities: Required. The entity extraction results.
     :type entities: list[~azure.ai.language.conversations.models.DeepstackEntity]
     """
 
     _validation = {
-        'project_type': {'required': True},
-        'classifications': {'required': True},
+        'project_kind': {'required': True},
+        'intents': {'required': True},
         'entities': {'required': True},
     }
 
     _attribute_map = {
-        'project_type': {'key': 'projectType', 'type': 'str'},
+        'project_kind': {'key': 'projectKind', 'type': 'str'},
         'top_intent': {'key': 'topIntent', 'type': 'str'},
-        'classifications': {'key': 'intents', 'type': '[DeepstackClassification]'},
+        'intents': {'key': 'intents', 'type': '[DeepstackIntent]'},
         'entities': {'key': 'entities', 'type': '[DeepstackEntity]'},
     }
 
@@ -335,8 +335,8 @@ class DeepstackPrediction(BasePrediction):
         **kwargs
     ):
         super(DeepstackPrediction, self).__init__(**kwargs)
-        self.project_type = 'conversation'  # type: str
-        self.classifications = kwargs['classifications']
+        self.project_kind = 'conversation'  # type: str
+        self.intents = kwargs['intents']
         self.entities = kwargs['entities']
 
 
@@ -382,11 +382,11 @@ class TargetIntentResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param target_type: Required. This discriminator property specifies the type of the target
+    :param target_kind: Required. This discriminator property specifies the type of the target
      project that returns the response. 'luis' means the type is LUIS Generally Available.
      'luis_deepstack' means LUIS vNext. 'question_answering' means Question Answering.Constant
      filled by server.  Possible values include: "luis", "luis_deepstack", "question_answering".
-    :type target_type: str or ~azure.ai.language.conversations.models.TargetType
+    :type target_kind: str or ~azure.ai.language.conversations.models.TargetKind
     :param api_version: The API version used to call a target service.
     :type api_version: str
     :param confidence_score: Required. The prediction score and it ranges from 0.0 to 1.0.
@@ -394,18 +394,18 @@ class TargetIntentResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'target_type': {'required': True},
+        'target_kind': {'required': True},
         'confidence_score': {'required': True, 'maximum': 1, 'minimum': 0},
     }
 
     _attribute_map = {
-        'target_type': {'key': 'targetType', 'type': 'str'},
+        'target_kind': {'key': 'targetKind', 'type': 'str'},
         'api_version': {'key': 'apiVersion', 'type': 'str'},
         'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
     }
 
     _subtype_map = {
-        'target_type': {'luis': 'LUISTargetIntentResult', 'luis_deepstack': 'DSTargetIntentResult', 'question_answering': 'QuestionAnsweringTargetIntentResult'}
+        'target_kind': {'luis': 'LUISTargetIntentResult', 'luis_deepstack': 'DSTargetIntentResult', 'question_answering': 'QuestionAnsweringTargetIntentResult'}
     }
 
     def __init__(
@@ -413,7 +413,7 @@ class TargetIntentResult(msrest.serialization.Model):
         **kwargs
     ):
         super(TargetIntentResult, self).__init__(**kwargs)
-        self.target_type = None  # type: Optional[str]
+        self.target_kind = None  # type: Optional[str]
         self.api_version = kwargs.get('api_version', None)
         self.confidence_score = kwargs['confidence_score']
 
@@ -423,11 +423,11 @@ class DSTargetIntentResult(TargetIntentResult):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param target_type: Required. This discriminator property specifies the type of the target
+    :param target_kind: Required. This discriminator property specifies the type of the target
      project that returns the response. 'luis' means the type is LUIS Generally Available.
      'luis_deepstack' means LUIS vNext. 'question_answering' means Question Answering.Constant
      filled by server.  Possible values include: "luis", "luis_deepstack", "question_answering".
-    :type target_type: str or ~azure.ai.language.conversations.models.TargetType
+    :type target_kind: str or ~azure.ai.language.conversations.models.TargetKind
     :param api_version: The API version used to call a target service.
     :type api_version: str
     :param confidence_score: Required. The prediction score and it ranges from 0.0 to 1.0.
@@ -437,12 +437,12 @@ class DSTargetIntentResult(TargetIntentResult):
     """
 
     _validation = {
-        'target_type': {'required': True},
+        'target_kind': {'required': True},
         'confidence_score': {'required': True, 'maximum': 1, 'minimum': 0},
     }
 
     _attribute_map = {
-        'target_type': {'key': 'targetType', 'type': 'str'},
+        'target_kind': {'key': 'targetKind', 'type': 'str'},
         'api_version': {'key': 'apiVersion', 'type': 'str'},
         'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
         'result': {'key': 'result', 'type': 'DeepstackResult'},
@@ -453,7 +453,7 @@ class DSTargetIntentResult(TargetIntentResult):
         **kwargs
     ):
         super(DSTargetIntentResult, self).__init__(**kwargs)
-        self.target_type = 'luis_deepstack'  # type: str
+        self.target_kind = 'luis_deepstack'  # type: str
         self.result = kwargs.get('result', None)
 
 
@@ -611,9 +611,9 @@ class LUISParameters(AnalyzeParameters):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param target_type: Required. The type of a target service.Constant filled by server.  Possible
+    :param target_kind: Required. The type of a target service.Constant filled by server.  Possible
      values include: "luis", "luis_deepstack", "question_answering".
-    :type target_type: str or ~azure.ai.language.conversations.models.TargetType
+    :type target_kind: str or ~azure.ai.language.conversations.models.TargetKind
     :param api_version: The API version to use when call a specific target service.
     :type api_version: str
     :param additional_properties: Unmatched properties from the message are deserialized to this
@@ -627,12 +627,12 @@ class LUISParameters(AnalyzeParameters):
     """
 
     _validation = {
-        'target_type': {'required': True},
+        'target_kind': {'required': True},
         'query': {'max_length': 500, 'min_length': 0},
     }
 
     _attribute_map = {
-        'target_type': {'key': 'targetType', 'type': 'str'},
+        'target_kind': {'key': 'targetKind', 'type': 'str'},
         'api_version': {'key': 'apiVersion', 'type': 'str'},
         'additional_properties': {'key': '', 'type': '{object}'},
         'query': {'key': 'query', 'type': 'str'},
@@ -644,7 +644,7 @@ class LUISParameters(AnalyzeParameters):
         **kwargs
     ):
         super(LUISParameters, self).__init__(**kwargs)
-        self.target_type = 'luis'  # type: str
+        self.target_kind = 'luis'  # type: str
         self.additional_properties = kwargs.get('additional_properties', None)
         self.query = kwargs.get('query', None)
         self.calling_options = kwargs.get('calling_options', None)
@@ -655,11 +655,11 @@ class LUISTargetIntentResult(TargetIntentResult):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param target_type: Required. This discriminator property specifies the type of the target
+    :param target_kind: Required. This discriminator property specifies the type of the target
      project that returns the response. 'luis' means the type is LUIS Generally Available.
      'luis_deepstack' means LUIS vNext. 'question_answering' means Question Answering.Constant
      filled by server.  Possible values include: "luis", "luis_deepstack", "question_answering".
-    :type target_type: str or ~azure.ai.language.conversations.models.TargetType
+    :type target_kind: str or ~azure.ai.language.conversations.models.TargetKind
     :param api_version: The API version used to call a target service.
     :type api_version: str
     :param confidence_score: Required. The prediction score and it ranges from 0.0 to 1.0.
@@ -669,12 +669,12 @@ class LUISTargetIntentResult(TargetIntentResult):
     """
 
     _validation = {
-        'target_type': {'required': True},
+        'target_kind': {'required': True},
         'confidence_score': {'required': True, 'maximum': 1, 'minimum': 0},
     }
 
     _attribute_map = {
-        'target_type': {'key': 'targetType', 'type': 'str'},
+        'target_kind': {'key': 'targetKind', 'type': 'str'},
         'api_version': {'key': 'apiVersion', 'type': 'str'},
         'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
         'result': {'key': 'result', 'type': 'object'},
@@ -685,7 +685,7 @@ class LUISTargetIntentResult(TargetIntentResult):
         **kwargs
     ):
         super(LUISTargetIntentResult, self).__init__(**kwargs)
-        self.target_type = 'luis'  # type: str
+        self.target_kind = 'luis'  # type: str
         self.result = kwargs.get('result', None)
 
 
@@ -694,23 +694,23 @@ class QuestionAnsweringParameters(AnalyzeParameters):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param target_type: Required. The type of a target service.Constant filled by server.  Possible
+    :param target_kind: Required. The type of a target service.Constant filled by server.  Possible
      values include: "luis", "luis_deepstack", "question_answering".
-    :type target_type: str or ~azure.ai.language.conversations.models.TargetType
+    :type target_kind: str or ~azure.ai.language.conversations.models.TargetKind
     :param api_version: The API version to use when call a specific target service.
     :type api_version: str
-    :param project_parameters: The parameters send to a Question Answering KB.
-    :type project_parameters: any
+    :param calling_options: The options sent to a Question Answering KB.
+    :type calling_options: any
     """
 
     _validation = {
-        'target_type': {'required': True},
+        'target_kind': {'required': True},
     }
 
     _attribute_map = {
-        'target_type': {'key': 'targetType', 'type': 'str'},
+        'target_kind': {'key': 'targetKind', 'type': 'str'},
         'api_version': {'key': 'apiVersion', 'type': 'str'},
-        'project_parameters': {'key': 'projectParameters', 'type': 'object'},
+        'calling_options': {'key': 'callingOptions', 'type': 'object'},
     }
 
     def __init__(
@@ -718,8 +718,8 @@ class QuestionAnsweringParameters(AnalyzeParameters):
         **kwargs
     ):
         super(QuestionAnsweringParameters, self).__init__(**kwargs)
-        self.target_type = 'question_answering'  # type: str
-        self.project_parameters = kwargs.get('project_parameters', None)
+        self.target_kind = 'question_answering'  # type: str
+        self.calling_options = kwargs.get('calling_options', None)
 
 
 class QuestionAnsweringTargetIntentResult(TargetIntentResult):
@@ -727,11 +727,11 @@ class QuestionAnsweringTargetIntentResult(TargetIntentResult):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param target_type: Required. This discriminator property specifies the type of the target
+    :param target_kind: Required. This discriminator property specifies the type of the target
      project that returns the response. 'luis' means the type is LUIS Generally Available.
      'luis_deepstack' means LUIS vNext. 'question_answering' means Question Answering.Constant
      filled by server.  Possible values include: "luis", "luis_deepstack", "question_answering".
-    :type target_type: str or ~azure.ai.language.conversations.models.TargetType
+    :type target_kind: str or ~azure.ai.language.conversations.models.TargetKind
     :param api_version: The API version used to call a target service.
     :type api_version: str
     :param confidence_score: Required. The prediction score and it ranges from 0.0 to 1.0.
@@ -741,12 +741,12 @@ class QuestionAnsweringTargetIntentResult(TargetIntentResult):
     """
 
     _validation = {
-        'target_type': {'required': True},
+        'target_kind': {'required': True},
         'confidence_score': {'required': True, 'maximum': 1, 'minimum': 0},
     }
 
     _attribute_map = {
-        'target_type': {'key': 'targetType', 'type': 'str'},
+        'target_kind': {'key': 'targetKind', 'type': 'str'},
         'api_version': {'key': 'apiVersion', 'type': 'str'},
         'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
         'result': {'key': 'result', 'type': 'object'},
@@ -757,7 +757,7 @@ class QuestionAnsweringTargetIntentResult(TargetIntentResult):
         **kwargs
     ):
         super(QuestionAnsweringTargetIntentResult, self).__init__(**kwargs)
-        self.target_type = 'question_answering'  # type: str
+        self.target_kind = 'question_answering'  # type: str
         self.result = kwargs.get('result', None)
 
 
@@ -766,9 +766,9 @@ class WorkflowPrediction(BasePrediction):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param project_type: Required. The type of the project.Constant filled by server.  Possible
+    :param project_kind: Required. The type of the project.Constant filled by server.  Possible
      values include: "conversation", "workflow".
-    :type project_type: str or ~azure.ai.language.conversations.models.ProjectType
+    :type project_kind: str or ~azure.ai.language.conversations.models.ProjectKind
     :param top_intent: The intent with the highest score.
     :type top_intent: str
     :param intents: Required. A dictionary that contains all intents. A key is an intent name and a
@@ -778,12 +778,12 @@ class WorkflowPrediction(BasePrediction):
     """
 
     _validation = {
-        'project_type': {'required': True},
+        'project_kind': {'required': True},
         'intents': {'required': True},
     }
 
     _attribute_map = {
-        'project_type': {'key': 'projectType', 'type': 'str'},
+        'project_kind': {'key': 'projectKind', 'type': 'str'},
         'top_intent': {'key': 'topIntent', 'type': 'str'},
         'intents': {'key': 'intents', 'type': '{TargetIntentResult}'},
     }
@@ -793,5 +793,5 @@ class WorkflowPrediction(BasePrediction):
         **kwargs
     ):
         super(WorkflowPrediction, self).__init__(**kwargs)
-        self.project_type = 'workflow'  # type: str
+        self.project_kind = 'workflow'  # type: str
         self.intents = kwargs['intents']

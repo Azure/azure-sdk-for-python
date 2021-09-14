@@ -6,83 +6,68 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from copy import deepcopy
 from typing import TYPE_CHECKING
 
 from azure.core import PipelineClient
 from msrest import Deserializer, Serializer
 
-from . import models
-from ._configuration import ConversationAnalysisClientConfiguration
-from .operations import ConversationAnalysisClientOperationsMixin
-
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
+    from typing import Any
 
     from azure.core.credentials import AzureKeyCredential
-    from azure.core.rest import HttpRequest, HttpResponse
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
+
+from ._configuration import ConversationAnalysisClientConfiguration
+from .operations import ConversationAnalysisClientOperationsMixin
+from . import models
+
 
 class ConversationAnalysisClient(ConversationAnalysisClientOperationsMixin):
     """This API accepts a request and mediates among multiple language projects, such as LUIS Generally Available, Question Answering, LUIS Deepstack, and then calls the best candidate service to handle the request. At last, it returns a response with the candidate service's response as a payload.
 
  In some cases, this API needs to forward requests and responses between the caller and an upstream service.
 
-    :param endpoint: Supported Cognitive Services endpoint (e.g.,
-     https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
-    :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.AzureKeyCredential
+    :param endpoint: Supported Cognitive Services endpoint (e.g., https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
+    :type endpoint: str
     """
 
     def __init__(
         self,
-        endpoint,  # type: str
         credential,  # type: AzureKeyCredential
+        endpoint,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        _endpoint = '{Endpoint}/language'
-        self._config = ConversationAnalysisClientConfiguration(endpoint, credential, **kwargs)
-        self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        base_url = '{Endpoint}/language'
+        self._config = ConversationAnalysisClientConfiguration(credential, endpoint, **kwargs)
+        self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
+        self._deserialize = Deserializer(client_models)
 
 
-    def send_request(
-        self,
-        request,  # type: HttpRequest
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> HttpResponse
+    def _send_request(self, http_request, **kwargs):
+        # type: (HttpRequest, Any) -> HttpResponse
         """Runs the network request through the client's chained policies.
 
-        We have helper methods to create requests specific to this service in `azure.ai.language.conversations.rest`.
-        Use these helper methods to create the request you pass to this method.
-
-
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
-
-        For advanced cases, you can also create your own :class:`~azure.core.rest.HttpRequest`
-        and pass it in.
-
-        :param request: The network request you want to make. Required.
-        :type request: ~azure.core.rest.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.rest.HttpResponse
+        :rtype: ~azure.core.pipeline.transport.HttpResponse
         """
-
-        request_copy = deepcopy(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
-
-        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
-        return self._client.send_request(request_copy, **kwargs)
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
 
     def close(self):
         # type: () -> None
