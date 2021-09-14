@@ -38,7 +38,7 @@ Please follow the configuration instructions in the `Credential Unavailable Erro
 
 #### Environment variables not configured
 
-The `EnvironmentCredential` supports Service Principal authentication and Username + Password Authentication. To utilize the desired way of authentication via `EnvironmentCredential`, you need to ensure the environment variables below are configured properly and the application is able to read them.
+The `EnvironmentCredential` supports Service Principal authentication and Username + Password authentication. To utilize the desired way of authentication via `EnvironmentCredential`, you need to ensure the environment variables below are configured properly and the application is able to read them.
 
 ##### Service principal with secret
 
