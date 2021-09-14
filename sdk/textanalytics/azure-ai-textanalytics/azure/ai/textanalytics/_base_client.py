@@ -16,7 +16,7 @@ class TextAnalyticsApiVersion(str, Enum):
     """Text Analytics API versions supported by this package"""
 
     #: this is the default version
-    V3_2_PREVIEW = "v3.2-preview.1"
+    V3_2_PREVIEW = "v3.2-preview.2"
     V3_1 = "v3.1"
     V3_0 = "v3.0"
 

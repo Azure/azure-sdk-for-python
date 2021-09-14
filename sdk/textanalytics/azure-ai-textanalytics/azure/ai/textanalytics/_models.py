@@ -11,7 +11,7 @@ from ._generated.models import (
 )
 
 from ._generated.v3_0 import models as _v3_0_models
-from ._generated.v3_2_preview_1 import models as _v3_2_preview_1_models
+from ._generated.v3_2_preview_2 import models as _v3_2_preview_models
 from ._version import DEFAULT_API_VERSION
 
 
@@ -2141,8 +2141,8 @@ class ExtractSummaryAction(DictMixin):
         )
 
     def _to_generated(self, api_version):  # pylint: disable=unused-argument
-        return _v3_2_preview_1_models.ExtractiveSummarizationTask(
-            parameters=_v3_2_preview_1_models.ExtractiveSummarizationTaskParameters(
+        return _v3_2_preview_models.ExtractiveSummarizationTask(
+            parameters=_v3_2_preview_models.ExtractiveSummarizationTaskParameters(
                 model_version=self.model_version,
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs,
