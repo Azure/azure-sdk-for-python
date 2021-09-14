@@ -10,7 +10,8 @@ import os
 import sys
 import pytest
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils.aio import RecordedByProxyAsync
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
@@ -40,8 +41,9 @@ from async_preparers import cosmos_decorator_async
 TEST_TABLE_PREFIX = 'table'
 #------------------------------------------------------------------------------
 
-class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
+class TestTableBatchCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
+    @RecordedByProxyAsync
     async def test_batch_single_insert(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -73,6 +75,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @cosmos_decorator_async
+    @RecordedByProxyAsync
     async def test_batch_single_update(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -108,6 +111,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @cosmos_decorator_async
+    @RecordedByProxyAsync
     async def test_batch_update(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -142,6 +146,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @cosmos_decorator_async
+    @RecordedByProxyAsync
     async def test_batch_merge(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -180,6 +185,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @cosmos_decorator_async
+    @RecordedByProxyAsync
     async def test_batch_update_if_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -207,6 +213,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @cosmos_decorator_async
+    @RecordedByProxyAsync
     async def test_batch_update_if_doesnt_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -236,6 +243,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @cosmos_decorator_async
+    @RecordedByProxyAsync
     async def test_batch_insert_replace(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -265,6 +273,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @cosmos_decorator_async
+    @RecordedByProxyAsync
     async def test_batch_insert_merge(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -294,6 +303,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @cosmos_decorator_async
+    @RecordedByProxyAsync
     async def test_batch_delete(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -325,6 +335,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @cosmos_decorator_async
+    @RecordedByProxyAsync
     async def test_batch_inserts(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -362,6 +373,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @cosmos_decorator_async
+    @RecordedByProxyAsync
     async def test_batch_all_operations_together(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -434,6 +446,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @cosmos_decorator_async
+    @RecordedByProxyAsync
     async def test_batch_different_partition_operations_fail(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -459,6 +472,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @cosmos_decorator_async
+    @RecordedByProxyAsync
     async def test_new_non_existent_table(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -492,6 +506,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             resp = await self.table.submit_transaction(batch)
 
     @cosmos_decorator_async
+    @RecordedByProxyAsync
     async def test_new_delete_nonexistent_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -531,6 +546,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @cosmos_decorator_async
+    @RecordedByProxyAsync
     async def test_delete_batch_with_bad_kwarg(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -606,6 +622,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @cosmos_decorator_async
+    @RecordedByProxyAsync
     async def test_batch_with_specialchar_partitionkey(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")

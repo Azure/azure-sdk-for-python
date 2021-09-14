@@ -8,7 +8,7 @@
 import time
 import pytest
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase, ProxyRecordingSanitizer, RecordedByProxy
 
 from azure.data.tables import (
     TableServiceClient,
@@ -25,8 +25,12 @@ from preparers import tables_decorator
 # ------------------------------------------------------------------------------
 
 
-class TableServicePropertiesTest(AzureTestCase, TableTestCase):
+class TestTableServiceProperties(AzureRecordedTestCase, TableTestCase):
+    def setup_method(self):
+        self.add_sanitizer(ProxyRecordingSanitizer.URI, value="fakeendpoint")
+
     @tables_decorator
+    @RecordedByProxy
     def test_table_service_properties(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
@@ -46,6 +50,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
 
     # --Test cases per feature ---------------------------------------
     @tables_decorator
+    @RecordedByProxy
     def test_set_logging(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
@@ -62,6 +67,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
         self._assert_logging_equal(received_props['analytics_logging'], logging)
 
     @tables_decorator
+    @RecordedByProxy
     def test_set_hour_metrics(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
@@ -78,6 +84,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
         self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
 
     @tables_decorator
+    @RecordedByProxy
     def test_set_minute_metrics(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
@@ -95,6 +102,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
         self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
 
     @tables_decorator
+    @RecordedByProxy
     def test_set_cors(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
@@ -124,6 +132,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
 
     # --Test cases for errors ---------------------------------------
     @tables_decorator
+    @RecordedByProxy
     def test_too_many_cors_rules(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
@@ -136,6 +145,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
                           tsc.set_service_properties, cors=cors)
 
     @tables_decorator
+    @RecordedByProxy
     def test_retention_too_long(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)

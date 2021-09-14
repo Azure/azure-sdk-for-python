@@ -7,7 +7,8 @@ from azure.core.credentials import AzureNamedKeyCredential
 import pytest
 import platform
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils.aio import RecordedByProxyAsync
 
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.data.tables.aio import TableServiceClient, TableClient
@@ -27,9 +28,10 @@ _CONNECTION_ENDPOINTS = {'table': 'TableEndpoint'}
 _CONNECTION_ENDPOINTS_SECONDARY = {'table': 'TableSecondaryEndpoint'}
 
 
-class TestTableClient(AzureTestCase, AsyncTableTestCase):
+class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
+    @RecordedByProxyAsync
     async def test_user_agent_default_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         service = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
 
@@ -49,6 +51,7 @@ class TestTableClient(AzureTestCase, AsyncTableTestCase):
             count += 1
 
     @tables_decorator_async
+    @RecordedByProxyAsync
     async def test_user_agent_custom_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         custom_app = "TestApp/v1.0"
         service = TableServiceClient(
@@ -85,6 +88,7 @@ class TestTableClient(AzureTestCase, AsyncTableTestCase):
             count += 1
 
     @tables_decorator_async
+    @RecordedByProxyAsync
     async def test_user_agent_append(self, tables_storage_account_name, tables_primary_storage_account_key):
         service = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
 

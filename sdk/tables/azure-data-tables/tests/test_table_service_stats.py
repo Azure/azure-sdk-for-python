@@ -3,17 +3,20 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase, ProxyRecordingSanitizer, RecordedByProxy
 
 from azure.data.tables import TableServiceClient
 from _shared.testcase import TableTestCase
 from preparers import tables_decorator
 
 # --Test Class -----------------------------------------------------------------
-class TestTableServiceStats(AzureTestCase, TableTestCase):
+class TestTableServiceStats(AzureRecordedTestCase, TableTestCase):
+    def setup_method(self):
+        self.add_sanitizer(ProxyRecordingSanitizer.URI, value="fakeendpoint")
 
     # --Test cases per service ---------------------------------------
     @tables_decorator
+    @RecordedByProxy
     def test_table_service_stats_f(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
@@ -24,6 +27,7 @@ class TestTableServiceStats(AzureTestCase, TableTestCase):
         self._assert_stats_default(stats)
 
     @tables_decorator
+    @RecordedByProxy
     def test_table_service_stats_when_unavailable(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)

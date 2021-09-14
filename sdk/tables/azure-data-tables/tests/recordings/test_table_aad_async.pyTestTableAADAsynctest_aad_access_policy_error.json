@@ -1,0 +1,112 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "176",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-identity/1.6.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": "client_id=e44dee3b-e7da-43fe-9d75-d959fd12aace\u0026client_secret=769ea470-236a-4eca-a34f-b78bcd17f2d5\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Fstorage.azure.com%2F.default",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-store, no-cache",
+        "Content-Length": "1318",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Sep 2021 09:26:01 GMT",
+        "Expires": "-1",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Pragma": "no-cache",
+        "Set-Cookie": [
+          "fpc=AsNB2FLMcG9NlaWieNuWrh4V08hTEQAAAE8E1dgOAAAA; expires=Sat, 16-Oct-2021 09:26:01 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
+          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.12071.7 - EUS ProdSlices",
+        "x-ms-request-id": "d483e391-8838-45ce-93c5-894958df0f00"
+      },
+      "ResponseBody": {
+        "token_type": "Bearer",
+        "expires_in": 86399,
+        "ext_expires_in": 86399,
+        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Imwzc1EtNTBjQ0g0eEJWWkxIVEd3blNSNzY4MCIsImtpZCI6Imwzc1EtNTBjQ0g0eEJWWkxIVEd3blNSNzY4MCJ9.eyJhdWQiOiJodHRwczovL3N0b3JhZ2UuYXp1cmUuY29tIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3LyIsImlhdCI6MTYzMTc4NDA2MSwibmJmIjoxNjMxNzg0MDYxLCJleHAiOjE2MzE4NzA3NjEsImFpbyI6IkUyWmdZTml5Ly9MMmQyMzcxaS96WVBUaGlEMHJDd0E9IiwiYXBwaWQiOiJlNDRkZWUzYi1lN2RhLTQzZmUtOWQ3NS1kOTU5ZmQxMmFhY2UiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwib2lkIjoiOTFlOWViMmUtMDZjMS00N2QxLWJjNzItYTBiYzgzZjg4ZWRlIiwicmgiOiIwLkFSb0F2NGo1Y3ZHR3IwR1JxeTE4MEJIYlJ6dnVUZVRhNV81RG5YWFpXZjBTcXM0YUFBQS4iLCJzdWIiOiI5MWU5ZWIyZS0wNmMxLTQ3ZDEtYmM3Mi1hMGJjODNmODhlZGUiLCJ0aWQiOiI3MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDciLCJ1dGkiOiJrZU9EMURpSXprV1R4WWxKV044UEFBIiwidmVyIjoiMS4wIn0.Xso2IjCjWcx8lL63YhHOW_r-bKVEj3S5z84pnxIit1mQNMmthZeSGcBR7g8BmYeZWN3w0LtlZLT7aWlaARQe8wwTNvVBn4jh0dYeFFKmqp-bS4aNUP9CzWlc_kQYjlFSjr29RY5gPoaiHovYbjUugaB8-y-q_DCcbzX9x5j9t2jK5BaeIgyBOKYJ7LswElVTrmmp9izcR7yErZTPLYQSxzSPvv02j1kbbX9R7xZ9JdvzmnYgQ8oxGh0p2reVFBr9oc5Ue9va8lz986aeTdnxBQBA25DaqdyVtg1CTpzD53ZmaAJXOrTja1mmfXLDcgD_SnKOya_KSUskCmxA3-doGw"
+      }
+    },
+    {
+      "RequestUri": "https://yalltablestestsprim.table.core.windows.net/pytableasyncc86c2b52?comp=acl",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Date": "Thu, 16 Sep 2021 09:26:02 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "1c6dffd9-16d0-11ec-8178-5cf37093a909",
+        "x-ms-date": "Thu, 16 Sep 2021 09:26:02 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Content-Length": "322",
+        "Content-Type": "application/xml",
+        "Date": "Thu, 16 Sep 2021 09:26:01 GMT",
+        "Server": [
+          "Windows-Azure-Table/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "1c6dffd9-16d0-11ec-8178-5cf37093a909",
+        "x-ms-error-code": "ResourceNotFound",
+        "x-ms-request-id": "6cea0dae-b002-00b9-58dc-aa0225000000",
+        "x-ms-version": "2019-02-02"
+      },
+      "ResponseBody": [
+        "\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003Cm:error xmlns:m=\u0022http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\u0022\u003E\u003Cm:code\u003EResourceNotFound\u003C/m:code\u003E\u003Cm:message xml:lang=\u0022en-US\u0022\u003EThe specified resource does not exist.\n",
+        "RequestId:6cea0dae-b002-00b9-58dc-aa0225000000\n",
+        "Time:2021-09-16T09:26:01.8769106Z\u003C/m:message\u003E\u003C/m:error\u003E"
+      ]
+    },
+    {
+      "RequestUri": "https://yalltablestestsprim.table.core.windows.net/pytableasyncc86c2b52?comp=acl",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "Content-Type": "application/xml",
+        "Date": "Thu, 16 Sep 2021 09:26:02 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "1c87afc5-16d0-11ec-abe6-5cf37093a909",
+        "x-ms-date": "Thu, 16 Sep 2021 09:26:02 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Content-Length": "322",
+        "Content-Type": "application/xml",
+        "Date": "Thu, 16 Sep 2021 09:26:01 GMT",
+        "Server": [
+          "Windows-Azure-Table/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "1c87afc5-16d0-11ec-abe6-5cf37093a909",
+        "x-ms-error-code": "ResourceNotFound",
+        "x-ms-request-id": "6cea0db4-b002-00b9-5cdc-aa0225000000",
+        "x-ms-version": "2019-02-02"
+      },
+      "ResponseBody": [
+        "\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003Cm:error xmlns:m=\u0022http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\u0022\u003E\u003Cm:code\u003EResourceNotFound\u003C/m:code\u003E\u003Cm:message xml:lang=\u0022en-US\u0022\u003EThe specified resource does not exist.\n",
+        "RequestId:6cea0db4-b002-00b9-5cdc-aa0225000000\n",
+        "Time:2021-09-16T09:26:01.8959240Z\u003C/m:message\u003E\u003C/m:error\u003E"
+      ]
+    }
+  ],
+  "Variables": {}
+}

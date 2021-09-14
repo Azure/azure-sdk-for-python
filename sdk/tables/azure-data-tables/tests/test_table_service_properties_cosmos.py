@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 import pytest
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase, ProxyRecordingSanitizer, RecordedByProxy
 
 from azure.core.exceptions import HttpResponseError
 
@@ -22,8 +22,12 @@ from _shared.testcase import TableTestCase, SLEEP_DELAY
 from preparers import cosmos_decorator
 # ------------------------------------------------------------------------------
 
-class TableServicePropertiesTest(AzureTestCase, TableTestCase):
+class TestTableServicePropertiesCosmos(AzureRecordedTestCase, TableTestCase):
+    def setup_method(self):
+        self.add_sanitizer(ProxyRecordingSanitizer.URI, value="fakeendpoint")
+
     @cosmos_decorator
+    @RecordedByProxy
     def test_too_many_cors_rules(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         cors = []
@@ -34,6 +38,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
             tsc.set_service_properties(cors=cors)
 
     @cosmos_decorator
+    @RecordedByProxy
     def test_retention_too_long(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         minute_metrics = TableMetrics(enabled=True, include_apis=True, retention_policy=TableRetentionPolicy(enabled=True, days=366))

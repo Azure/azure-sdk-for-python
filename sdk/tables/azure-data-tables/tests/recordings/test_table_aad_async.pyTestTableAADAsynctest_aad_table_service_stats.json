@@ -1,0 +1,71 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "176",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-identity/1.6.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": "client_id=e44dee3b-e7da-43fe-9d75-d959fd12aace\u0026client_secret=769ea470-236a-4eca-a34f-b78bcd17f2d5\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Fstorage.azure.com%2F.default",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-store, no-cache",
+        "Content-Length": "1318",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Sep 2021 09:25:59 GMT",
+        "Expires": "-1",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Pragma": "no-cache",
+        "Set-Cookie": [
+          "fpc=AsNB2FLMcG9NlaWieNuWrh4V08hTDwAAAE8E1dgOAAAA; expires=Sat, 16-Oct-2021 09:25:59 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
+          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.12071.7 - SCUS ProdSlices",
+        "x-ms-request-id": "2cefaf02-4436-45b5-899e-0e09b8b61400"
+      },
+      "ResponseBody": {
+        "token_type": "Bearer",
+        "expires_in": 86399,
+        "ext_expires_in": 86399,
+        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Imwzc1EtNTBjQ0g0eEJWWkxIVEd3blNSNzY4MCIsImtpZCI6Imwzc1EtNTBjQ0g0eEJWWkxIVEd3blNSNzY4MCJ9.eyJhdWQiOiJodHRwczovL3N0b3JhZ2UuYXp1cmUuY29tIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3LyIsImlhdCI6MTYzMTc4NDA1OSwibmJmIjoxNjMxNzg0MDU5LCJleHAiOjE2MzE4NzA3NTksImFpbyI6IkUyWmdZTENQNUxYUm0zNXRlMm1Td1pITDFmZlVBUT09IiwiYXBwaWQiOiJlNDRkZWUzYi1lN2RhLTQzZmUtOWQ3NS1kOTU5ZmQxMmFhY2UiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwib2lkIjoiOTFlOWViMmUtMDZjMS00N2QxLWJjNzItYTBiYzgzZjg4ZWRlIiwicmgiOiIwLkFSb0F2NGo1Y3ZHR3IwR1JxeTE4MEJIYlJ6dnVUZVRhNV81RG5YWFpXZjBTcXM0YUFBQS4iLCJzdWIiOiI5MWU5ZWIyZS0wNmMxLTQ3ZDEtYmM3Mi1hMGJjODNmODhlZGUiLCJ0aWQiOiI3MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDciLCJ1dGkiOiJBcV92TERaRXRVV0puZzRKdUxZVUFBIiwidmVyIjoiMS4wIn0.U_JysehwqqsKR9hCQHsZ9XatnFiRMGA0-GBLrY_QdcSLq8C8YcAGG5qw0gmZ_JXISJtMs8KGIvsjsX7C-KvrAa9zBi_MjoqXRDQh7uC3nK1PzXLIQ5rTQ-WvNa64qEDBpKPj8a18MacFJ7yDKONBdri4HHWKmp1Fi2njw6xk2RFlzVP6Vyn9orsZCUP7I1P9MsU88bCnX2iQ4nkSRGG3fPbQ9BWrkSgnZu7Z4fTX9g65lWrrCozewbmAfcNq3hOv_uNaa4xXjjLnc5MKSNV_IYhhIrujX_Fw-j5uR8PySbTK7wUffB8AJ1KyW92W78JVCyBL1M14lu1-tR0THHvU3g"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint-secondary.table.core.windows.net/?restype=service\u0026comp=stats",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Date": "Thu, 16 Sep 2021 09:26:00 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "1b48c01c-16d0-11ec-b827-5cf37093a909",
+        "x-ms-date": "Thu, 16 Sep 2021 09:26:00 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/xml",
+        "Date": "Thu, 16 Sep 2021 09:25:59 GMT",
+        "Server": [
+          "Windows-Azure-Table/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "x-ms-client-request-id": "1b48c01c-16d0-11ec-b827-5cf37093a909",
+        "x-ms-request-id": "b0243fc6-d002-006d-3adc-aa0f08000000",
+        "x-ms-version": "2019-02-02"
+      },
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CStorageServiceStats\u003E\u003CGeoReplication\u003E\u003CStatus\u003Elive\u003C/Status\u003E\u003CLastSyncTime\u003EThu, 16 Sep 2021 09:22:06 GMT\u003C/LastSyncTime\u003E\u003C/GeoReplication\u003E\u003C/StorageServiceStats\u003E"
+    }
+  ],
+  "Variables": {}
+}

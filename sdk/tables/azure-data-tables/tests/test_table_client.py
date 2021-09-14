@@ -6,7 +6,7 @@
 import pytest
 import platform
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase, ProxyRecordingSanitizer, RecordedByProxy
 
 from azure.data.tables import TableServiceClient, TableClient
 from azure.data.tables import __version__ as VERSION
@@ -29,9 +29,12 @@ _CONNECTION_ENDPOINTS = {'table': 'TableEndpoint', 'cosmos': 'TableEndpoint'}
 
 _CONNECTION_ENDPOINTS_SECONDARY = {'table': 'TableSecondaryEndpoint', 'cosmos': 'TableSecondaryEndpoint'}
 
-class TestTableClient(AzureTestCase, TableTestCase):
+class TestTableClient(AzureRecordedTestCase, TableTestCase):
+    def setup_method(self):
+        self.add_sanitizer(ProxyRecordingSanitizer.URI, value="fakeendpoint")
 
     @tables_decorator
+    @RecordedByProxy
     def test_user_agent_custom(self, tables_storage_account_name, tables_primary_storage_account_key):
         custom_app = "TestApp/v1.0"
         service = TableServiceClient(
@@ -68,6 +71,7 @@ class TestTableClient(AzureTestCase, TableTestCase):
             count += 1
 
     @tables_decorator
+    @RecordedByProxy
     def test_user_agent_append(self, tables_storage_account_name, tables_primary_storage_account_key):
         service = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
 
@@ -84,6 +88,7 @@ class TestTableClient(AzureTestCase, TableTestCase):
             count += 1
 
     @tables_decorator
+    @RecordedByProxy
     def test_user_agent_default(self, tables_storage_account_name, tables_primary_storage_account_key):
         service = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
 
