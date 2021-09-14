@@ -47,7 +47,7 @@ class AppsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.App":
         """Get the metadata of an IoT Central application.
 
@@ -66,7 +66,7 @@ class AppsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -107,14 +107,14 @@ class AppsOperations:
         resource_group_name: str,
         resource_name: str,
         app: "_models.App",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.App"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.App"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -165,7 +165,7 @@ class AppsOperations:
         resource_group_name: str,
         resource_name: str,
         app: "_models.App",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.App"]:
         """Create or update the metadata of an IoT Central application. The usual pattern to modify a
         property is to retrieve the IoT Central application metadata and security metadata, and then
@@ -180,8 +180,8 @@ class AppsOperations:
         :type app: ~azure.mgmt.iotcentral.models.App
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either App or the result of cls(response)
@@ -239,14 +239,14 @@ class AppsOperations:
         resource_group_name: str,
         resource_name: str,
         app_patch: "_models.AppPatch",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.App"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.App"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -294,7 +294,7 @@ class AppsOperations:
         resource_group_name: str,
         resource_name: str,
         app_patch: "_models.AppPatch",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.App"]:
         """Update the metadata of an IoT Central application.
 
@@ -307,8 +307,8 @@ class AppsOperations:
         :type app_patch: ~azure.mgmt.iotcentral.models.AppPatch
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either App or the result of cls(response)
@@ -365,14 +365,14 @@ class AppsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -409,7 +409,7 @@ class AppsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete an IoT Central application.
 
@@ -420,8 +420,8 @@ class AppsOperations:
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -472,7 +472,7 @@ class AppsOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AppListResult"]:
         """Get all IoT Central Applications in a subscription.
 
@@ -486,7 +486,7 @@ class AppsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -539,7 +539,7 @@ class AppsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AppListResult"]:
         """Get all the IoT Central Applications in a resource group.
 
@@ -556,7 +556,7 @@ class AppsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -610,7 +610,7 @@ class AppsOperations:
     async def check_name_availability(
         self,
         operation_inputs: "_models.OperationInputs",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AppAvailabilityInfo":
         """Check if an IoT Central application name is available.
 
@@ -627,7 +627,7 @@ class AppsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -669,7 +669,7 @@ class AppsOperations:
     async def check_subdomain_availability(
         self,
         operation_inputs: "_models.OperationInputs",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AppAvailabilityInfo":
         """Check if an IoT Central application subdomain is available.
 
@@ -686,7 +686,7 @@ class AppsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -727,7 +727,7 @@ class AppsOperations:
 
     def list_templates(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AppTemplatesResult"]:
         """Get all available application templates.
 
@@ -741,7 +741,7 @@ class AppsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):

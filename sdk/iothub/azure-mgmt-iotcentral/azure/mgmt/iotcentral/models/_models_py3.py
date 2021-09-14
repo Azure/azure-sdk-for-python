@@ -91,6 +91,9 @@ class App(Resource):
      characteristics and behaviors of an application. Optional; if not specified, defaults to a
      blank blueprint and allows the application to be defined from scratch.
     :type template: str
+    :ivar state: The current state of the application. Possible values include: "created",
+     "suspended".
+    :vartype state: str or ~azure.mgmt.iotcentral.models.AppState
     """
 
     _validation = {
@@ -100,6 +103,7 @@ class App(Resource):
         'location': {'required': True},
         'sku': {'required': True},
         'application_id': {'readonly': True},
+        'state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -113,6 +117,7 @@ class App(Resource):
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'subdomain': {'key': 'properties.subdomain', 'type': 'str'},
         'template': {'key': 'properties.template', 'type': 'str'},
+        'state': {'key': 'properties.state', 'type': 'str'},
     }
 
     def __init__(
@@ -132,6 +137,7 @@ class App(Resource):
         self.display_name = display_name
         self.subdomain = subdomain
         self.template = template
+        self.state = None
 
 
 class AppAvailabilityInfo(msrest.serialization.Model):
@@ -214,10 +220,14 @@ class AppPatch(msrest.serialization.Model):
      characteristics and behaviors of an application. Optional; if not specified, defaults to a
      blank blueprint and allows the application to be defined from scratch.
     :type template: str
+    :ivar state: The current state of the application. Possible values include: "created",
+     "suspended".
+    :vartype state: str or ~azure.mgmt.iotcentral.models.AppState
     """
 
     _validation = {
         'application_id': {'readonly': True},
+        'state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -227,6 +237,7 @@ class AppPatch(msrest.serialization.Model):
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'subdomain': {'key': 'properties.subdomain', 'type': 'str'},
         'template': {'key': 'properties.template', 'type': 'str'},
+        'state': {'key': 'properties.state', 'type': 'str'},
     }
 
     def __init__(
@@ -246,6 +257,7 @@ class AppPatch(msrest.serialization.Model):
         self.display_name = display_name
         self.subdomain = subdomain
         self.template = template
+        self.state = None
 
 
 class AppSkuInfo(msrest.serialization.Model):
@@ -253,8 +265,7 @@ class AppSkuInfo(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the SKU. Possible values include: "F1", "S1", "ST0", "ST1",
-     "ST2".
+    :param name: Required. The name of the SKU. Possible values include: "ST0", "ST1", "ST2".
     :type name: str or ~azure.mgmt.iotcentral.models.AppSku
     """
 
@@ -450,7 +461,7 @@ class Operation(msrest.serialization.Model):
     :ivar origin: The intended executor of the operation.
     :vartype origin: str
     :ivar properties: Additional descriptions for the operation.
-    :vartype properties: str
+    :vartype properties: any
     """
 
     _validation = {
@@ -463,7 +474,7 @@ class Operation(msrest.serialization.Model):
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
         'origin': {'key': 'origin', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'object'},
     }
 
     def __init__(

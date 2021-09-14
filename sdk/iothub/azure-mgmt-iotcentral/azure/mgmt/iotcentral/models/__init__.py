@@ -39,6 +39,7 @@ except (SyntaxError, ImportError):
 
 from ._iot_central_client_enums import (
     AppSku,
+    AppState,
 )
 
 __all__ = [
@@ -57,4 +58,5 @@ __all__ = [
     'OperationListResult',
     'Resource',
     'AppSku',
+    'AppState',
 ]
