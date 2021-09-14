@@ -1,6 +1,6 @@
 # Troubleshooting Azure Identity Authentication Issues
 
-The Azure Identity SDK offers various `TokenCredential` implementations. These implementations tend to throw `CredentialUnavailableError` and `ClientAuthenticationError` exceptions.
+The Azure Identity SDK offers various `TokenCredential` implementations. These implementations typically throw `CredentialUnavailableError` and `ClientAuthenticationError` exceptions.
 The `CredentialUnavailableError` indicates that the credential cannot execute in the current environment setup due to lack of required configuration.
 The `ClientAuthenticationError` indicates that the credential was able to run/execute but ran into an authentication issue from the server's end. This can happen due to invalid configuration/details passed in to the credential at construction time.
 This troubleshooting guide covers mitigation steps to resolve these exceptions thrown by various `TokenCredential` implementations in the Azure Identity Python client library.
