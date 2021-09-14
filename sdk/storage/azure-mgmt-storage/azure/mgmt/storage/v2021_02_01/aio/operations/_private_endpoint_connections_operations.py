@@ -45,7 +45,7 @@ class PrivateEndpointConnectionsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PrivateEndpointConnectionListResult"]:
         """List all the private endpoint connections associated with the storage account.
 
@@ -123,7 +123,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         account_name: str,
         private_endpoint_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateEndpointConnection":
         """Gets the specified private endpoint connection associated with the storage account.
 
@@ -191,7 +191,7 @@ class PrivateEndpointConnectionsOperations:
         account_name: str,
         private_endpoint_connection_name: str,
         properties: "_models.PrivateEndpointConnection",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateEndpointConnection":
         """Update the state of specified private endpoint connection associated with the storage account.
 
@@ -265,7 +265,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         account_name: str,
         private_endpoint_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the specified private endpoint connection associated with the storage account.
 
