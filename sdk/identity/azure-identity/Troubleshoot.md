@@ -107,7 +107,7 @@ If you have already created a service principal you can follow the instructions 
 
 #### Client Certificate Argument
 
-The `Client Certificate Credential` accepts `pfx` and `pem` certificates. The certificate needs to be associated with your registered application/service principal. To create and associate a certificate with your registered app. please follow the instructions [here](https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal#option-1-upload-a-certificate).
+The `Client Certificate Credential` accepts `pfx` and `pem` certificates. The certificate needs to be associated with your registered application/service principal. To create and associate a certificate with your registered app, please follow the instructions [here](https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal#option-1-upload-a-certificate).
 
 ### Create a new service principal
 
