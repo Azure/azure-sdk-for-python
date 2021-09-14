@@ -262,5 +262,5 @@ def test_logs_query_result_row_type():
     for table in response:
         assert table.__class__ == LogsTable
 
-        row = table.row
-        assert row.__class__ == LogsTableRow
+        for row in table.rows:
+            assert row.__class__ == LogsTableRow
