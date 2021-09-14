@@ -17,13 +17,14 @@ client = LogsQueryClient(credential)
 # Response time trend 
 # request duration over the last 12 hours. 
 # [START send_logs_query]
-query = """AppRwequests | take 5"""
+query = """AppRequests | take 5"""
 
 # returns LogsQueryResult 
 try:
     response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=timedelta(days=1))
     for table in response:
-        print(table)
+        df = pd.DataFrame(data=table.rows, columns=table.columns)
+        print(df)
 except QueryPartialErrorException as err:
     print("this is a partial error")
     print(err.details)
