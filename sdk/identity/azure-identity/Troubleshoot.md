@@ -66,7 +66,7 @@ AZURE_PASSWORD | The associated password for the given username. |
 
 ### Client Authentication Error
 
-The `EnvironmentCredential` supports Service Principal authentication and Username + Password Authentication.
+The `EnvironmentCredential` supports Service Principal authentication and Username + Password authentication.
 Please follow the troubleshooting guidelines below for the respective authentication which you tried and failed.
 
 | Authentication Type | Troubleshoot Guide |
