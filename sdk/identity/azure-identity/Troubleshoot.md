@@ -119,9 +119,9 @@ If you're looking to create and use a new service principal, please follow the i
 
 #### Connection Timed Out / Connection could not be established / Target Environment could not be determined
 
-The Managed Identity credential runs only on Azure Hosted machines/servers. So ensure that you are running your application on an
-Azure Hosted resource. Currently Azure Identity SDK supports [Managed Identity Authentication](https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview)
-in the below listed Azure Services, so ensure you're running your application on one of these resources and have enabled the Managed Identity on
+The Managed Identity credential works only on Azure Hosted machines/servers.
+Currently the Azure Identity SDK supports [Managed Identity Authentication](https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview)
+in the below listed Azure services; ensure you're running your application on one of these resources and have enabled the Managed Identity on
 them by following the instructions at their configuration links below.
 
 Azure Service | Managed Identity Configuration
