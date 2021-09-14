@@ -26,27 +26,27 @@ class ConversationAnalysisClientConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
     :param endpoint: Supported Cognitive Services endpoint (e.g., https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
     :type endpoint: str
+    :param credential: Credential needed for the client to connect to Azure.
+    :type credential: ~azure.core.credentials.AzureKeyCredential
     """
 
     def __init__(
         self,
-        credential,  # type: AzureKeyCredential
         endpoint,  # type: str
+        credential,  # type: AzureKeyCredential
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        if credential is None:
-            raise ValueError("Parameter 'credential' must not be None.")
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
+        if credential is None:
+            raise ValueError("Parameter 'credential' must not be None.")
         super(ConversationAnalysisClientConfiguration, self).__init__(**kwargs)
 
-        self.credential = credential
         self.endpoint = endpoint
+        self.credential = credential
         self.api_version = "2021-07-15-preview"
         kwargs.setdefault('sdk_moniker', 'ai-language-conversations/{}'.format(VERSION))
         self._configure(**kwargs)
@@ -66,4 +66,4 @@ class ConversationAnalysisClientConfiguration(Configuration):
         self.redirect_policy = kwargs.get('redirect_policy') or policies.RedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get('authentication_policy')
         if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.AzureKeyCredentialPolicy(self.credential, 'Ocp-Apim-Subscription-Key', **kwargs)
+            self.authentication_policy = policies.AzureKeyCredentialPolicy(self.credential, "Ocp-Apim-Subscription-Key", **kwargs)

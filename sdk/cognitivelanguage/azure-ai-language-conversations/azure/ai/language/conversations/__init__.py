@@ -6,8 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._operations import ConversationAnalysisClientOperationsMixin
+from ._conversation_analysis_client import ConversationAnalysisClient
+from ._version import VERSION
 
-__all__ = [
-    'ConversationAnalysisClientOperationsMixin',
-]
+__version__ = VERSION
+__all__ = ['ConversationAnalysisClient']
+
+try:
+    from ._patch import patch_sdk  # type: ignore
+    patch_sdk()
+except ImportError:
+    pass
