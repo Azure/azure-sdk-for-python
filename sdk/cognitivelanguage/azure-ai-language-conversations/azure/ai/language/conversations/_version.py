@@ -6,8 +6,4 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._operations import ConversationAnalysisClientOperationsMixin
-
-__all__ = [
-    'ConversationAnalysisClientOperationsMixin',
-]
+VERSION = "1.0.0b1"
