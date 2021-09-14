@@ -11,7 +11,7 @@ This troubleshooting guide covers mitigation steps to resolve these exceptions t
 - [Troubleshooting Environment Credential Authentication Issues](#troubleshooting-environment-credential-authentication-issues)
 - [Troubleshooting Service Principal Authentication Issues](#troubleshooting-service-principal-authentication-issues)
 - [Troubleshooting Username Password Authentication Issues](#troubleshooting-username-password-authentication-issues)
-- [Troubleshooting Managed Identity Authentication Issues](#troubleshooting-mananged-identity-authentication-issues)
+- [Troubleshooting Managed Identity Authentication Issues](#troubleshooting-managed-identity-authentication-issues)
 - [Troubleshooting Visual Studio Code Authentication Issues](#troubleshooting-visual-studio-code-authentication-issues)
 - [Troubleshooting Azure CLI Authentication Issues](#troubleshooting-azure-cli-authentication-issues)
 - [Troubleshooting Azure Powershell Authentication Issues](#troubleshooting-azure-powershell-authentication-issues)
