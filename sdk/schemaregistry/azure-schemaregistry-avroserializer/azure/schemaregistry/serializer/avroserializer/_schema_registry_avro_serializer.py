@@ -129,7 +129,7 @@ class SchemaRegistryAvroSerializer(object):
         :param value: The data to be encoded.
         :type value: Dict[str, Any]
         :param schema: The schema used to encode the data.
-        :type schema: Union[str, bytes]
+        :type schema: str
         :rtype: bytes
         """
         raw_input_schema = schema

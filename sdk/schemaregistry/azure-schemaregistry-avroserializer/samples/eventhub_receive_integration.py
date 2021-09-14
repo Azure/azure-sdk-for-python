@@ -20,7 +20,7 @@ EVENTHUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
 SCHEMA_REGISTRY_ENDPOINT = os.environ['SCHEMA_REGISTRY_ENDPOINT']
-SCHEMA_GROUP = os.environ['SCHEMA_REGISTRY_GROUP']
+GROUP_NAME = os.environ['SCHEMA_REGISTRY_GROUP']
 
 
 def on_event(partition_context, event):
@@ -50,7 +50,7 @@ avro_serializer = SchemaRegistryAvroSerializer(
         endpoint=SCHEMA_REGISTRY_ENDPOINT,
         credential=DefaultAzureCredential()
     ),
-    group_name=SCHEMA_GROUP
+    group_name=GROUP_NAME
 )
 
 
