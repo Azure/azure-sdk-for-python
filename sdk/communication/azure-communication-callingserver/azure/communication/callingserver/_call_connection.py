@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any  # pylint: disable=unused-import
 
 from azure.core.tracing.decorator import distributed_trace
 
@@ -73,7 +73,7 @@ class CallConnection(object):
         if not play_audio_options:
             raise ValueError("options can not be None")
 
-        play_audio_request = PlayAudioRequestConverter._convert(audio_file_uri, play_audio_options)
+        play_audio_request = PlayAudioRequestConverter.convert(audio_file_uri, play_audio_options)
 
         return self._call_connection_client.play_audio(
             call_connection_id=self.call_connection_id,
@@ -97,7 +97,7 @@ class CallConnection(object):
             if alternate_caller_id is None
             else PhoneNumberIdentifierModel(value=alternate_caller_id))
 
-        add_participant_request = AddParticipantRequestConverter._convert(
+        add_participant_request = AddParticipantRequestConverter.convert(
             participant=serialize_identifier(participant),
             alternate_caller_id=alternate_caller_id,
             operation_context=operation_context

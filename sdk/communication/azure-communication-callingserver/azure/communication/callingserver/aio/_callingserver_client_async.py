@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Any, List
+from typing import TYPE_CHECKING, Any, List  # pylint: disable=unused-import
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 
@@ -198,7 +198,7 @@ class CallingServerClient(object):
         if not call_options:
             raise ValueError("call_options can not be None")
 
-        join_call_request = JoinCallRequestConverter._convert(serialize_identifier(source), call_options)
+        join_call_request = JoinCallRequestConverter.convert(serialize_identifier(source), call_options)
 
         join_call_response = await self._server_call_client.join_call(
             server_call_id=server_call_id,

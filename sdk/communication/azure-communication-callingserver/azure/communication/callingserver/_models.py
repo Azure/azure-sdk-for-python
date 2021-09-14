@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Any
+from typing import Any  # pylint: disable=unused-import
 
 from ._generated.models import EventSubscriptionType, MediaType
 from ._shared.models import PhoneNumberIdentifier

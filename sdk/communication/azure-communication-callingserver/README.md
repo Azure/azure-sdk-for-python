@@ -3,9 +3,6 @@
 This package contains a Python SDK for Azure Communication Services for CallingServer.
 Read more about Azure Communication Services [here](https://docs.microsoft.com/azure/communication-services/overview)
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-callingserver) | [Package (Pypi)](https://pypi.org/project/azure-communication-callingserver/) | [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-sms) | [Product documentation](https://docs.microsoft.com/azure/communication-services/quickstarts/telephony-sms/send?pivots=programming-language-python)
-
-
 
 ## Getting started
 
@@ -70,7 +67,7 @@ Running into issues? This section should contain details as to what to do there.
 
 ## Next steps
 
-More sample code should go [here](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/communication/azure-communication-callingserver/samples), along with links out to the appropriate example tests.
+More sample code should go here, along with links out to the appropriate example tests.
 
 ## Provide Feedback
 
