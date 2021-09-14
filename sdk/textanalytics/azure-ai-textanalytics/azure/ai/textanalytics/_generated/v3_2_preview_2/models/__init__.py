@@ -13,6 +13,19 @@ try:
     from ._models_py3 import AnalyzeJobErrorsAndStatistics
     from ._models_py3 import AnalyzeJobMetadata
     from ._models_py3 import AnalyzeJobState
+    from ._models_py3 import ClassificationResult
+    from ._models_py3 import CustomEntitiesResult
+    from ._models_py3 import CustomEntitiesTask
+    from ._models_py3 import CustomEntitiesTaskParameters
+    from ._models_py3 import CustomEntitiesTaskResult
+    from ._models_py3 import CustomMultiClassificationResult
+    from ._models_py3 import CustomMultiClassificationTask
+    from ._models_py3 import CustomMultiClassificationTaskParameters
+    from ._models_py3 import CustomMultiClassificationTaskResult
+    from ._models_py3 import CustomSingleClassificationResult
+    from ._models_py3 import CustomSingleClassificationTask
+    from ._models_py3 import CustomSingleClassificationTaskParameters
+    from ._models_py3 import CustomSingleClassificationTaskResult
     from ._models_py3 import DetectedLanguage
     from ._models_py3 import DocumentEntities
     from ._models_py3 import DocumentError
@@ -62,6 +75,7 @@ try:
     from ._models_py3 import LanguageResult
     from ._models_py3 import LinkedEntity
     from ._models_py3 import Match
+    from ._models_py3 import MultiClassificationDocument
     from ._models_py3 import MultiLanguageBatchInput
     from ._models_py3 import MultiLanguageInput
     from ._models_py3 import Pagination
@@ -79,11 +93,15 @@ try:
     from ._models_py3 import SentimentConfidenceScorePerLabel
     from ._models_py3 import SentimentResponse
     from ._models_py3 import SentimentTaskResult
+    from ._models_py3 import SingleClassificationDocument
     from ._models_py3 import TargetConfidenceScoreLabel
     from ._models_py3 import TargetRelation
     from ._models_py3 import TaskState
     from ._models_py3 import TasksState
     from ._models_py3 import TasksStateTasks
+    from ._models_py3 import TasksStateTasksCustomEntityRecognitionTasksItem
+    from ._models_py3 import TasksStateTasksCustomMultiClassificationTasksItem
+    from ._models_py3 import TasksStateTasksCustomSingleClassificationTasksItem
     from ._models_py3 import TasksStateTasksEntityLinkingTasksItem
     from ._models_py3 import TasksStateTasksEntityRecognitionPiiTasksItem
     from ._models_py3 import TasksStateTasksEntityRecognitionTasksItem
@@ -99,6 +117,19 @@ except (SyntaxError, ImportError):
     from ._models import AnalyzeJobErrorsAndStatistics  # type: ignore
     from ._models import AnalyzeJobMetadata  # type: ignore
     from ._models import AnalyzeJobState  # type: ignore
+    from ._models import ClassificationResult  # type: ignore
+    from ._models import CustomEntitiesResult  # type: ignore
+    from ._models import CustomEntitiesTask  # type: ignore
+    from ._models import CustomEntitiesTaskParameters  # type: ignore
+    from ._models import CustomEntitiesTaskResult  # type: ignore
+    from ._models import CustomMultiClassificationResult  # type: ignore
+    from ._models import CustomMultiClassificationTask  # type: ignore
+    from ._models import CustomMultiClassificationTaskParameters  # type: ignore
+    from ._models import CustomMultiClassificationTaskResult  # type: ignore
+    from ._models import CustomSingleClassificationResult  # type: ignore
+    from ._models import CustomSingleClassificationTask  # type: ignore
+    from ._models import CustomSingleClassificationTaskParameters  # type: ignore
+    from ._models import CustomSingleClassificationTaskResult  # type: ignore
     from ._models import DetectedLanguage  # type: ignore
     from ._models import DocumentEntities  # type: ignore
     from ._models import DocumentError  # type: ignore
@@ -148,6 +179,7 @@ except (SyntaxError, ImportError):
     from ._models import LanguageResult  # type: ignore
     from ._models import LinkedEntity  # type: ignore
     from ._models import Match  # type: ignore
+    from ._models import MultiClassificationDocument  # type: ignore
     from ._models import MultiLanguageBatchInput  # type: ignore
     from ._models import MultiLanguageInput  # type: ignore
     from ._models import Pagination  # type: ignore
@@ -165,11 +197,15 @@ except (SyntaxError, ImportError):
     from ._models import SentimentConfidenceScorePerLabel  # type: ignore
     from ._models import SentimentResponse  # type: ignore
     from ._models import SentimentTaskResult  # type: ignore
+    from ._models import SingleClassificationDocument  # type: ignore
     from ._models import TargetConfidenceScoreLabel  # type: ignore
     from ._models import TargetRelation  # type: ignore
     from ._models import TaskState  # type: ignore
     from ._models import TasksState  # type: ignore
     from ._models import TasksStateTasks  # type: ignore
+    from ._models import TasksStateTasksCustomEntityRecognitionTasksItem  # type: ignore
+    from ._models import TasksStateTasksCustomMultiClassificationTasksItem  # type: ignore
+    from ._models import TasksStateTasksCustomSingleClassificationTasksItem  # type: ignore
     from ._models import TasksStateTasksEntityLinkingTasksItem  # type: ignore
     from ._models import TasksStateTasksEntityRecognitionPiiTasksItem  # type: ignore
     from ._models import TasksStateTasksEntityRecognitionTasksItem  # type: ignore
@@ -206,6 +242,19 @@ __all__ = [
     'AnalyzeJobErrorsAndStatistics',
     'AnalyzeJobMetadata',
     'AnalyzeJobState',
+    'ClassificationResult',
+    'CustomEntitiesResult',
+    'CustomEntitiesTask',
+    'CustomEntitiesTaskParameters',
+    'CustomEntitiesTaskResult',
+    'CustomMultiClassificationResult',
+    'CustomMultiClassificationTask',
+    'CustomMultiClassificationTaskParameters',
+    'CustomMultiClassificationTaskResult',
+    'CustomSingleClassificationResult',
+    'CustomSingleClassificationTask',
+    'CustomSingleClassificationTaskParameters',
+    'CustomSingleClassificationTaskResult',
     'DetectedLanguage',
     'DocumentEntities',
     'DocumentError',
@@ -255,6 +304,7 @@ __all__ = [
     'LanguageResult',
     'LinkedEntity',
     'Match',
+    'MultiClassificationDocument',
     'MultiLanguageBatchInput',
     'MultiLanguageInput',
     'Pagination',
@@ -272,11 +322,15 @@ __all__ = [
     'SentimentConfidenceScorePerLabel',
     'SentimentResponse',
     'SentimentTaskResult',
+    'SingleClassificationDocument',
     'TargetConfidenceScoreLabel',
     'TargetRelation',
     'TaskState',
     'TasksState',
     'TasksStateTasks',
+    'TasksStateTasksCustomEntityRecognitionTasksItem',
+    'TasksStateTasksCustomMultiClassificationTasksItem',
+    'TasksStateTasksCustomSingleClassificationTasksItem',
     'TasksStateTasksEntityLinkingTasksItem',
     'TasksStateTasksEntityRecognitionPiiTasksItem',
     'TasksStateTasksEntityRecognitionTasksItem',
