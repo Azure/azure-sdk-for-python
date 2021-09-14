@@ -200,7 +200,6 @@ class TableCheckpointStore(CheckpointStore):
             )
             raise OwnershipLostError()
         except Exception as error:  # pylint:disable=broad-except
-            # includes ResourceModifiedError (no matching `etag`)
             logger.warning(
                 "An exception occurred when EventProcessor instance %r claim_ownership for "
                 "namespace %r eventhub %r consumer group %r partition %r. "
