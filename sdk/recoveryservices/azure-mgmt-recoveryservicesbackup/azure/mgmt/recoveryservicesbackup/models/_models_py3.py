@@ -756,6 +756,9 @@ class ProtectedItem(Model):
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
      moved into Pause state
     :type is_rehydrate: bool
+    :param resource_guard_operation_requests: ResourceGuardOperationRequests
+     on which LAC check will be performed
+    :type resource_guard_operation_requests: list[str]
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     """
@@ -778,6 +781,7 @@ class ProtectedItem(Model):
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
     }
 
@@ -785,7 +789,7 @@ class ProtectedItem(Model):
         'protected_item_type': {'AzureFileShareProtectedItem': 'AzureFileshareProtectedItem', 'AzureIaaSVMProtectedItem': 'AzureIaaSVMProtectedItem', 'Microsoft.Sql/servers/databases': 'AzureSqlProtectedItem', 'AzureVmWorkloadProtectedItem': 'AzureVmWorkloadProtectedItem', 'DPMProtectedItem': 'DPMProtectedItem', 'GenericProtectedItem': 'GenericProtectedItem', 'MabFileFolderProtectedItem': 'MabFileFolderProtectedItem'}
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, **kwargs) -> None:
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, resource_guard_operation_requests=None, **kwargs) -> None:
         super(ProtectedItem, self).__init__(**kwargs)
         self.backup_management_type = backup_management_type
         self.workload_type = workload_type
@@ -800,6 +804,7 @@ class ProtectedItem(Model):
         self.deferred_delete_time_remaining = deferred_delete_time_remaining
         self.is_deferred_delete_schedule_upcoming = is_deferred_delete_schedule_upcoming
         self.is_rehydrate = is_rehydrate
+        self.resource_guard_operation_requests = resource_guard_operation_requests
         self.protected_item_type = None
 
 
@@ -852,6 +857,9 @@ class AzureFileshareProtectedItem(ProtectedItem):
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
      moved into Pause state
     :type is_rehydrate: bool
+    :param resource_guard_operation_requests: ResourceGuardOperationRequests
+     on which LAC check will be performed
+    :type resource_guard_operation_requests: list[str]
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of the fileshare represented by this
@@ -901,6 +909,7 @@ class AzureFileshareProtectedItem(ProtectedItem):
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'protection_status': {'key': 'protectionStatus', 'type': 'str'},
@@ -912,8 +921,8 @@ class AzureFileshareProtectedItem(ProtectedItem):
         'health_status': {'key': 'healthStatus', 'type': 'str'},
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, protection_status: str=None, protection_state=None, last_backup_status: str=None, last_backup_time=None, kpis_healths=None, extended_info=None, health_status=None, **kwargs) -> None:
-        super(AzureFileshareProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, **kwargs)
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, resource_guard_operation_requests=None, friendly_name: str=None, protection_status: str=None, protection_state=None, last_backup_status: str=None, last_backup_time=None, kpis_healths=None, extended_info=None, health_status=None, **kwargs) -> None:
+        super(AzureFileshareProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, resource_guard_operation_requests=resource_guard_operation_requests, **kwargs)
         self.friendly_name = friendly_name
         self.protection_status = protection_status
         self.protection_state = protection_state
@@ -983,6 +992,8 @@ class ProtectionPolicy(Model):
 
     :param protected_items_count: Number of items associated with this policy.
     :type protected_items_count: int
+    :param resource_guard_operation_requests: ResourceGuard Operation Requests
+    :type resource_guard_operation_requests: list[str]
     :param backup_management_type: Required. Constant filled by server.
     :type backup_management_type: str
     """
@@ -993,6 +1004,7 @@ class ProtectionPolicy(Model):
 
     _attribute_map = {
         'protected_items_count': {'key': 'protectedItemsCount', 'type': 'int'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
     }
 
@@ -1000,9 +1012,10 @@ class ProtectionPolicy(Model):
         'backup_management_type': {'AzureWorkload': 'AzureVmWorkloadProtectionPolicy', 'AzureStorage': 'AzureFileShareProtectionPolicy', 'AzureIaasVM': 'AzureIaaSVMProtectionPolicy', 'AzureSql': 'AzureSqlProtectionPolicy', 'GenericProtectionPolicy': 'GenericProtectionPolicy', 'MAB': 'MabProtectionPolicy'}
     }
 
-    def __init__(self, *, protected_items_count: int=None, **kwargs) -> None:
+    def __init__(self, *, protected_items_count: int=None, resource_guard_operation_requests=None, **kwargs) -> None:
         super(ProtectionPolicy, self).__init__(**kwargs)
         self.protected_items_count = protected_items_count
+        self.resource_guard_operation_requests = resource_guard_operation_requests
         self.backup_management_type = None
 
 
@@ -1013,6 +1026,8 @@ class AzureFileShareProtectionPolicy(ProtectionPolicy):
 
     :param protected_items_count: Number of items associated with this policy.
     :type protected_items_count: int
+    :param resource_guard_operation_requests: ResourceGuard Operation Requests
+    :type resource_guard_operation_requests: list[str]
     :param backup_management_type: Required. Constant filled by server.
     :type backup_management_type: str
     :param work_load_type: Type of workload for the backup management.
@@ -1041,6 +1056,7 @@ class AzureFileShareProtectionPolicy(ProtectionPolicy):
 
     _attribute_map = {
         'protected_items_count': {'key': 'protectedItemsCount', 'type': 'int'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
         'work_load_type': {'key': 'workLoadType', 'type': 'str'},
         'schedule_policy': {'key': 'schedulePolicy', 'type': 'SchedulePolicy'},
@@ -1048,8 +1064,8 @@ class AzureFileShareProtectionPolicy(ProtectionPolicy):
         'time_zone': {'key': 'timeZone', 'type': 'str'},
     }
 
-    def __init__(self, *, protected_items_count: int=None, work_load_type=None, schedule_policy=None, retention_policy=None, time_zone: str=None, **kwargs) -> None:
-        super(AzureFileShareProtectionPolicy, self).__init__(protected_items_count=protected_items_count, **kwargs)
+    def __init__(self, *, protected_items_count: int=None, resource_guard_operation_requests=None, work_load_type=None, schedule_policy=None, retention_policy=None, time_zone: str=None, **kwargs) -> None:
+        super(AzureFileShareProtectionPolicy, self).__init__(protected_items_count=protected_items_count, resource_guard_operation_requests=resource_guard_operation_requests, **kwargs)
         self.work_load_type = work_load_type
         self.schedule_policy = schedule_policy
         self.retention_policy = retention_policy
@@ -1540,6 +1556,9 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
      moved into Pause state
     :type is_rehydrate: bool
+    :param resource_guard_operation_requests: ResourceGuardOperationRequests
+     on which LAC check will be performed
+    :type resource_guard_operation_requests: list[str]
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of the VM represented by this backup
@@ -1598,6 +1617,7 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'virtual_machine_id': {'key': 'virtualMachineId', 'type': 'str'},
@@ -1617,8 +1637,8 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
         'protected_item_type': {'Microsoft.ClassicCompute/virtualMachines': 'AzureIaaSClassicComputeVMProtectedItem', 'Microsoft.Compute/virtualMachines': 'AzureIaaSComputeVMProtectedItem'}
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, virtual_machine_id: str=None, protection_status: str=None, protection_state=None, health_status=None, health_details=None, kpis_healths=None, last_backup_status: str=None, last_backup_time=None, protected_item_data_id: str=None, extended_info=None, extended_properties=None, **kwargs) -> None:
-        super(AzureIaaSVMProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, **kwargs)
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, resource_guard_operation_requests=None, friendly_name: str=None, virtual_machine_id: str=None, protection_status: str=None, protection_state=None, health_status=None, health_details=None, kpis_healths=None, last_backup_status: str=None, last_backup_time=None, protected_item_data_id: str=None, extended_info=None, extended_properties=None, **kwargs) -> None:
+        super(AzureIaaSVMProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, resource_guard_operation_requests=resource_guard_operation_requests, **kwargs)
         self.friendly_name = friendly_name
         self.virtual_machine_id = virtual_machine_id
         self.protection_status = protection_status
@@ -1683,6 +1703,9 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
      moved into Pause state
     :type is_rehydrate: bool
+    :param resource_guard_operation_requests: ResourceGuardOperationRequests
+     on which LAC check will be performed
+    :type resource_guard_operation_requests: list[str]
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of the VM represented by this backup
@@ -1741,6 +1764,7 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'virtual_machine_id': {'key': 'virtualMachineId', 'type': 'str'},
@@ -1756,8 +1780,8 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):
         'extended_properties': {'key': 'extendedProperties', 'type': 'ExtendedProperties'},
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, virtual_machine_id: str=None, protection_status: str=None, protection_state=None, health_status=None, health_details=None, kpis_healths=None, last_backup_status: str=None, last_backup_time=None, protected_item_data_id: str=None, extended_info=None, extended_properties=None, **kwargs) -> None:
-        super(AzureIaaSClassicComputeVMProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, friendly_name=friendly_name, virtual_machine_id=virtual_machine_id, protection_status=protection_status, protection_state=protection_state, health_status=health_status, health_details=health_details, kpis_healths=kpis_healths, last_backup_status=last_backup_status, last_backup_time=last_backup_time, protected_item_data_id=protected_item_data_id, extended_info=extended_info, extended_properties=extended_properties, **kwargs)
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, resource_guard_operation_requests=None, friendly_name: str=None, virtual_machine_id: str=None, protection_status: str=None, protection_state=None, health_status=None, health_details=None, kpis_healths=None, last_backup_status: str=None, last_backup_time=None, protected_item_data_id: str=None, extended_info=None, extended_properties=None, **kwargs) -> None:
+        super(AzureIaaSClassicComputeVMProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, resource_guard_operation_requests=resource_guard_operation_requests, friendly_name=friendly_name, virtual_machine_id=virtual_machine_id, protection_status=protection_status, protection_state=protection_state, health_status=health_status, health_details=health_details, kpis_healths=kpis_healths, last_backup_status=last_backup_status, last_backup_time=last_backup_time, protected_item_data_id=protected_item_data_id, extended_info=extended_info, extended_properties=extended_properties, **kwargs)
         self.protected_item_type = 'Microsoft.ClassicCompute/virtualMachines'
 
 
@@ -1904,6 +1928,9 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
      moved into Pause state
     :type is_rehydrate: bool
+    :param resource_guard_operation_requests: ResourceGuardOperationRequests
+     on which LAC check will be performed
+    :type resource_guard_operation_requests: list[str]
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of the VM represented by this backup
@@ -1962,6 +1989,7 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'virtual_machine_id': {'key': 'virtualMachineId', 'type': 'str'},
@@ -1977,8 +2005,8 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):
         'extended_properties': {'key': 'extendedProperties', 'type': 'ExtendedProperties'},
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, virtual_machine_id: str=None, protection_status: str=None, protection_state=None, health_status=None, health_details=None, kpis_healths=None, last_backup_status: str=None, last_backup_time=None, protected_item_data_id: str=None, extended_info=None, extended_properties=None, **kwargs) -> None:
-        super(AzureIaaSComputeVMProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, friendly_name=friendly_name, virtual_machine_id=virtual_machine_id, protection_status=protection_status, protection_state=protection_state, health_status=health_status, health_details=health_details, kpis_healths=kpis_healths, last_backup_status=last_backup_status, last_backup_time=last_backup_time, protected_item_data_id=protected_item_data_id, extended_info=extended_info, extended_properties=extended_properties, **kwargs)
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, resource_guard_operation_requests=None, friendly_name: str=None, virtual_machine_id: str=None, protection_status: str=None, protection_state=None, health_status=None, health_details=None, kpis_healths=None, last_backup_status: str=None, last_backup_time=None, protected_item_data_id: str=None, extended_info=None, extended_properties=None, **kwargs) -> None:
+        super(AzureIaaSComputeVMProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, resource_guard_operation_requests=resource_guard_operation_requests, friendly_name=friendly_name, virtual_machine_id=virtual_machine_id, protection_status=protection_status, protection_state=protection_state, health_status=health_status, health_details=health_details, kpis_healths=kpis_healths, last_backup_status=last_backup_status, last_backup_time=last_backup_time, protected_item_data_id=protected_item_data_id, extended_info=extended_info, extended_properties=extended_properties, **kwargs)
         self.protected_item_type = 'Microsoft.Compute/virtualMachines'
 
 
@@ -2349,6 +2377,8 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
 
     :param protected_items_count: Number of items associated with this policy.
     :type protected_items_count: int
+    :param resource_guard_operation_requests: ResourceGuard Operation Requests
+    :type resource_guard_operation_requests: list[str]
     :param backup_management_type: Required. Constant filled by server.
     :type backup_management_type: str
     :param instant_rp_details:
@@ -2376,6 +2406,7 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
 
     _attribute_map = {
         'protected_items_count': {'key': 'protectedItemsCount', 'type': 'int'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
         'instant_rp_details': {'key': 'instantRPDetails', 'type': 'InstantRPAdditionalDetails'},
         'schedule_policy': {'key': 'schedulePolicy', 'type': 'SchedulePolicy'},
@@ -2384,8 +2415,8 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
         'time_zone': {'key': 'timeZone', 'type': 'str'},
     }
 
-    def __init__(self, *, protected_items_count: int=None, instant_rp_details=None, schedule_policy=None, retention_policy=None, instant_rp_retention_range_in_days: int=None, time_zone: str=None, **kwargs) -> None:
-        super(AzureIaaSVMProtectionPolicy, self).__init__(protected_items_count=protected_items_count, **kwargs)
+    def __init__(self, *, protected_items_count: int=None, resource_guard_operation_requests=None, instant_rp_details=None, schedule_policy=None, retention_policy=None, instant_rp_retention_range_in_days: int=None, time_zone: str=None, **kwargs) -> None:
+        super(AzureIaaSVMProtectionPolicy, self).__init__(protected_items_count=protected_items_count, resource_guard_operation_requests=resource_guard_operation_requests, **kwargs)
         self.instant_rp_details = instant_rp_details
         self.schedule_policy = schedule_policy
         self.retention_policy = retention_policy
@@ -2785,6 +2816,9 @@ class AzureSqlProtectedItem(ProtectedItem):
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
      moved into Pause state
     :type is_rehydrate: bool
+    :param resource_guard_operation_requests: ResourceGuardOperationRequests
+     on which LAC check will be performed
+    :type resource_guard_operation_requests: list[str]
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     :param protected_item_data_id: Internal ID of a backup item. Used by Azure
@@ -2818,14 +2852,15 @@ class AzureSqlProtectedItem(ProtectedItem):
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'protected_item_data_id': {'key': 'protectedItemDataId', 'type': 'str'},
         'protection_state': {'key': 'protectionState', 'type': 'str'},
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureSqlProtectedItemExtendedInfo'},
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, protected_item_data_id: str=None, protection_state=None, extended_info=None, **kwargs) -> None:
-        super(AzureSqlProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, **kwargs)
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, resource_guard_operation_requests=None, protected_item_data_id: str=None, protection_state=None, extended_info=None, **kwargs) -> None:
+        super(AzureSqlProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, resource_guard_operation_requests=resource_guard_operation_requests, **kwargs)
         self.protected_item_data_id = protected_item_data_id
         self.protection_state = protection_state
         self.extended_info = extended_info
@@ -2866,6 +2901,8 @@ class AzureSqlProtectionPolicy(ProtectionPolicy):
 
     :param protected_items_count: Number of items associated with this policy.
     :type protected_items_count: int
+    :param resource_guard_operation_requests: ResourceGuard Operation Requests
+    :type resource_guard_operation_requests: list[str]
     :param backup_management_type: Required. Constant filled by server.
     :type backup_management_type: str
     :param retention_policy: Retention policy details.
@@ -2879,12 +2916,13 @@ class AzureSqlProtectionPolicy(ProtectionPolicy):
 
     _attribute_map = {
         'protected_items_count': {'key': 'protectedItemsCount', 'type': 'int'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
         'retention_policy': {'key': 'retentionPolicy', 'type': 'RetentionPolicy'},
     }
 
-    def __init__(self, *, protected_items_count: int=None, retention_policy=None, **kwargs) -> None:
-        super(AzureSqlProtectionPolicy, self).__init__(protected_items_count=protected_items_count, **kwargs)
+    def __init__(self, *, protected_items_count: int=None, resource_guard_operation_requests=None, retention_policy=None, **kwargs) -> None:
+        super(AzureSqlProtectionPolicy, self).__init__(protected_items_count=protected_items_count, resource_guard_operation_requests=resource_guard_operation_requests, **kwargs)
         self.retention_policy = retention_policy
         self.backup_management_type = 'AzureSql'
 
@@ -3596,6 +3634,9 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
      moved into Pause state
     :type is_rehydrate: bool
+    :param resource_guard_operation_requests: ResourceGuardOperationRequests
+     on which LAC check will be performed
+    :type resource_guard_operation_requests: list[str]
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of the DB represented by this backup
@@ -3660,6 +3701,7 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'server_name': {'key': 'serverName', 'type': 'str'},
@@ -3680,8 +3722,8 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
         'protected_item_type': {'AzureVmWorkloadSAPAseDatabase': 'AzureVmWorkloadSAPAseDatabaseProtectedItem', 'AzureVmWorkloadSAPHanaDatabase': 'AzureVmWorkloadSAPHanaDatabaseProtectedItem', 'AzureVmWorkloadSQLDatabase': 'AzureVmWorkloadSQLDatabaseProtectedItem'}
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, server_name: str=None, parent_name: str=None, parent_type: str=None, protection_status: str=None, protection_state=None, last_backup_status=None, last_backup_time=None, last_backup_error_detail=None, protected_item_data_source_id: str=None, protected_item_health_status=None, extended_info=None, kpis_healths=None, **kwargs) -> None:
-        super(AzureVmWorkloadProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, **kwargs)
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, resource_guard_operation_requests=None, friendly_name: str=None, server_name: str=None, parent_name: str=None, parent_type: str=None, protection_status: str=None, protection_state=None, last_backup_status=None, last_backup_time=None, last_backup_error_detail=None, protected_item_data_source_id: str=None, protected_item_health_status=None, extended_info=None, kpis_healths=None, **kwargs) -> None:
+        super(AzureVmWorkloadProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, resource_guard_operation_requests=resource_guard_operation_requests, **kwargs)
         self.friendly_name = friendly_name
         self.server_name = server_name
         self.parent_name = parent_name
@@ -3732,6 +3774,8 @@ class AzureVmWorkloadProtectionPolicy(ProtectionPolicy):
 
     :param protected_items_count: Number of items associated with this policy.
     :type protected_items_count: int
+    :param resource_guard_operation_requests: ResourceGuard Operation Requests
+    :type resource_guard_operation_requests: list[str]
     :param backup_management_type: Required. Constant filled by server.
     :type backup_management_type: str
     :param work_load_type: Type of workload for the backup management.
@@ -3757,6 +3801,7 @@ class AzureVmWorkloadProtectionPolicy(ProtectionPolicy):
 
     _attribute_map = {
         'protected_items_count': {'key': 'protectedItemsCount', 'type': 'int'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
         'work_load_type': {'key': 'workLoadType', 'type': 'str'},
         'settings': {'key': 'settings', 'type': 'Settings'},
@@ -3764,8 +3809,8 @@ class AzureVmWorkloadProtectionPolicy(ProtectionPolicy):
         'make_policy_consistent': {'key': 'makePolicyConsistent', 'type': 'bool'},
     }
 
-    def __init__(self, *, protected_items_count: int=None, work_load_type=None, settings=None, sub_protection_policy=None, make_policy_consistent: bool=None, **kwargs) -> None:
-        super(AzureVmWorkloadProtectionPolicy, self).__init__(protected_items_count=protected_items_count, **kwargs)
+    def __init__(self, *, protected_items_count: int=None, resource_guard_operation_requests=None, work_load_type=None, settings=None, sub_protection_policy=None, make_policy_consistent: bool=None, **kwargs) -> None:
+        super(AzureVmWorkloadProtectionPolicy, self).__init__(protected_items_count=protected_items_count, resource_guard_operation_requests=resource_guard_operation_requests, **kwargs)
         self.work_load_type = work_load_type
         self.settings = settings
         self.sub_protection_policy = sub_protection_policy
@@ -3822,6 +3867,9 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
      moved into Pause state
     :type is_rehydrate: bool
+    :param resource_guard_operation_requests: ResourceGuardOperationRequests
+     on which LAC check will be performed
+    :type resource_guard_operation_requests: list[str]
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of the DB represented by this backup
@@ -3886,6 +3934,7 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'server_name': {'key': 'serverName', 'type': 'str'},
@@ -3902,8 +3951,8 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         'kpis_healths': {'key': 'kpisHealths', 'type': '{KPIResourceHealthDetails}'},
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, server_name: str=None, parent_name: str=None, parent_type: str=None, protection_status: str=None, protection_state=None, last_backup_status=None, last_backup_time=None, last_backup_error_detail=None, protected_item_data_source_id: str=None, protected_item_health_status=None, extended_info=None, kpis_healths=None, **kwargs) -> None:
-        super(AzureVmWorkloadSAPAseDatabaseProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, friendly_name=friendly_name, server_name=server_name, parent_name=parent_name, parent_type=parent_type, protection_status=protection_status, protection_state=protection_state, last_backup_status=last_backup_status, last_backup_time=last_backup_time, last_backup_error_detail=last_backup_error_detail, protected_item_data_source_id=protected_item_data_source_id, protected_item_health_status=protected_item_health_status, extended_info=extended_info, kpis_healths=kpis_healths, **kwargs)
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, resource_guard_operation_requests=None, friendly_name: str=None, server_name: str=None, parent_name: str=None, parent_type: str=None, protection_status: str=None, protection_state=None, last_backup_status=None, last_backup_time=None, last_backup_error_detail=None, protected_item_data_source_id: str=None, protected_item_health_status=None, extended_info=None, kpis_healths=None, **kwargs) -> None:
+        super(AzureVmWorkloadSAPAseDatabaseProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, resource_guard_operation_requests=resource_guard_operation_requests, friendly_name=friendly_name, server_name=server_name, parent_name=parent_name, parent_type=parent_type, protection_status=protection_status, protection_state=protection_state, last_backup_status=last_backup_status, last_backup_time=last_backup_time, last_backup_error_detail=last_backup_error_detail, protected_item_data_source_id=protected_item_data_source_id, protected_item_health_status=protected_item_health_status, extended_info=extended_info, kpis_healths=kpis_healths, **kwargs)
         self.protected_item_type = 'AzureVmWorkloadSAPAseDatabase'
 
 
@@ -4204,6 +4253,9 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
      moved into Pause state
     :type is_rehydrate: bool
+    :param resource_guard_operation_requests: ResourceGuardOperationRequests
+     on which LAC check will be performed
+    :type resource_guard_operation_requests: list[str]
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of the DB represented by this backup
@@ -4268,6 +4320,7 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'server_name': {'key': 'serverName', 'type': 'str'},
@@ -4284,8 +4337,8 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         'kpis_healths': {'key': 'kpisHealths', 'type': '{KPIResourceHealthDetails}'},
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, server_name: str=None, parent_name: str=None, parent_type: str=None, protection_status: str=None, protection_state=None, last_backup_status=None, last_backup_time=None, last_backup_error_detail=None, protected_item_data_source_id: str=None, protected_item_health_status=None, extended_info=None, kpis_healths=None, **kwargs) -> None:
-        super(AzureVmWorkloadSAPHanaDatabaseProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, friendly_name=friendly_name, server_name=server_name, parent_name=parent_name, parent_type=parent_type, protection_status=protection_status, protection_state=protection_state, last_backup_status=last_backup_status, last_backup_time=last_backup_time, last_backup_error_detail=last_backup_error_detail, protected_item_data_source_id=protected_item_data_source_id, protected_item_health_status=protected_item_health_status, extended_info=extended_info, kpis_healths=kpis_healths, **kwargs)
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, resource_guard_operation_requests=None, friendly_name: str=None, server_name: str=None, parent_name: str=None, parent_type: str=None, protection_status: str=None, protection_state=None, last_backup_status=None, last_backup_time=None, last_backup_error_detail=None, protected_item_data_source_id: str=None, protected_item_health_status=None, extended_info=None, kpis_healths=None, **kwargs) -> None:
+        super(AzureVmWorkloadSAPHanaDatabaseProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, resource_guard_operation_requests=resource_guard_operation_requests, friendly_name=friendly_name, server_name=server_name, parent_name=parent_name, parent_type=parent_type, protection_status=protection_status, protection_state=protection_state, last_backup_status=last_backup_status, last_backup_time=last_backup_time, last_backup_error_detail=last_backup_error_detail, protected_item_data_source_id=protected_item_data_source_id, protected_item_health_status=protected_item_health_status, extended_info=extended_info, kpis_healths=kpis_healths, **kwargs)
         self.protected_item_type = 'AzureVmWorkloadSAPHanaDatabase'
 
 
@@ -4656,6 +4709,9 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
      moved into Pause state
     :type is_rehydrate: bool
+    :param resource_guard_operation_requests: ResourceGuardOperationRequests
+     on which LAC check will be performed
+    :type resource_guard_operation_requests: list[str]
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of the DB represented by this backup
@@ -4720,6 +4776,7 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'server_name': {'key': 'serverName', 'type': 'str'},
@@ -4736,8 +4793,8 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         'kpis_healths': {'key': 'kpisHealths', 'type': '{KPIResourceHealthDetails}'},
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, server_name: str=None, parent_name: str=None, parent_type: str=None, protection_status: str=None, protection_state=None, last_backup_status=None, last_backup_time=None, last_backup_error_detail=None, protected_item_data_source_id: str=None, protected_item_health_status=None, extended_info=None, kpis_healths=None, **kwargs) -> None:
-        super(AzureVmWorkloadSQLDatabaseProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, friendly_name=friendly_name, server_name=server_name, parent_name=parent_name, parent_type=parent_type, protection_status=protection_status, protection_state=protection_state, last_backup_status=last_backup_status, last_backup_time=last_backup_time, last_backup_error_detail=last_backup_error_detail, protected_item_data_source_id=protected_item_data_source_id, protected_item_health_status=protected_item_health_status, extended_info=extended_info, kpis_healths=kpis_healths, **kwargs)
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, resource_guard_operation_requests=None, friendly_name: str=None, server_name: str=None, parent_name: str=None, parent_type: str=None, protection_status: str=None, protection_state=None, last_backup_status=None, last_backup_time=None, last_backup_error_detail=None, protected_item_data_source_id: str=None, protected_item_health_status=None, extended_info=None, kpis_healths=None, **kwargs) -> None:
+        super(AzureVmWorkloadSQLDatabaseProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, resource_guard_operation_requests=resource_guard_operation_requests, friendly_name=friendly_name, server_name=server_name, parent_name=parent_name, parent_type=parent_type, protection_status=protection_status, protection_state=protection_state, last_backup_status=last_backup_status, last_backup_time=last_backup_time, last_backup_error_detail=last_backup_error_detail, protected_item_data_source_id=protected_item_data_source_id, protected_item_health_status=protected_item_health_status, extended_info=extended_info, kpis_healths=kpis_healths, **kwargs)
         self.protected_item_type = 'AzureVmWorkloadSQLDatabase'
 
 
@@ -6717,6 +6774,8 @@ class BackupResourceVaultConfig(Model):
      values include: 'Invalid', 'Enabled', 'Disabled'
     :type soft_delete_feature_state: str or
      ~azure.mgmt.recoveryservicesbackup.models.SoftDeleteFeatureState
+    :param resource_guard_operation_requests: ResourceGuard Operation Requests
+    :type resource_guard_operation_requests: list[str]
     """
 
     _attribute_map = {
@@ -6725,15 +6784,17 @@ class BackupResourceVaultConfig(Model):
         'storage_type_state': {'key': 'storageTypeState', 'type': 'str'},
         'enhanced_security_state': {'key': 'enhancedSecurityState', 'type': 'str'},
         'soft_delete_feature_state': {'key': 'softDeleteFeatureState', 'type': 'str'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
     }
 
-    def __init__(self, *, storage_model_type=None, storage_type=None, storage_type_state=None, enhanced_security_state=None, soft_delete_feature_state=None, **kwargs) -> None:
+    def __init__(self, *, storage_model_type=None, storage_type=None, storage_type_state=None, enhanced_security_state=None, soft_delete_feature_state=None, resource_guard_operation_requests=None, **kwargs) -> None:
         super(BackupResourceVaultConfig, self).__init__(**kwargs)
         self.storage_model_type = storage_model_type
         self.storage_type = storage_type
         self.storage_type_state = storage_type_state
         self.enhanced_security_state = enhanced_security_state
         self.soft_delete_feature_state = soft_delete_feature_state
+        self.resource_guard_operation_requests = resource_guard_operation_requests
 
 
 class BackupResourceVaultConfigResource(Resource):
@@ -8187,6 +8248,9 @@ class DPMProtectedItem(ProtectedItem):
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
      moved into Pause state
     :type is_rehydrate: bool
+    :param resource_guard_operation_requests: ResourceGuardOperationRequests
+     on which LAC check will be performed
+    :type resource_guard_operation_requests: list[str]
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of the managed item
@@ -8222,6 +8286,7 @@ class DPMProtectedItem(ProtectedItem):
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'backup_engine_name': {'key': 'backupEngineName', 'type': 'str'},
@@ -8229,8 +8294,8 @@ class DPMProtectedItem(ProtectedItem):
         'extended_info': {'key': 'extendedInfo', 'type': 'DPMProtectedItemExtendedInfo'},
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, backup_engine_name: str=None, protection_state=None, extended_info=None, **kwargs) -> None:
-        super(DPMProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, **kwargs)
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, resource_guard_operation_requests=None, friendly_name: str=None, backup_engine_name: str=None, protection_state=None, extended_info=None, **kwargs) -> None:
+        super(DPMProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, resource_guard_operation_requests=resource_guard_operation_requests, **kwargs)
         self.friendly_name = friendly_name
         self.backup_engine_name = backup_engine_name
         self.protection_state = protection_state
@@ -8611,6 +8676,9 @@ class GenericProtectedItem(ProtectedItem):
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
      moved into Pause state
     :type is_rehydrate: bool
+    :param resource_guard_operation_requests: ResourceGuardOperationRequests
+     on which LAC check will be performed
+    :type resource_guard_operation_requests: list[str]
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of the container.
@@ -8650,6 +8718,7 @@ class GenericProtectedItem(ProtectedItem):
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'policy_state': {'key': 'policyState', 'type': 'str'},
@@ -8659,8 +8728,8 @@ class GenericProtectedItem(ProtectedItem):
         'fabric_name': {'key': 'fabricName', 'type': 'str'},
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, policy_state: str=None, protection_state=None, protected_item_id: int=None, source_associations=None, fabric_name: str=None, **kwargs) -> None:
-        super(GenericProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, **kwargs)
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, resource_guard_operation_requests=None, friendly_name: str=None, policy_state: str=None, protection_state=None, protected_item_id: int=None, source_associations=None, fabric_name: str=None, **kwargs) -> None:
+        super(GenericProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, resource_guard_operation_requests=resource_guard_operation_requests, **kwargs)
         self.friendly_name = friendly_name
         self.policy_state = policy_state
         self.protection_state = protection_state
@@ -8677,6 +8746,8 @@ class GenericProtectionPolicy(ProtectionPolicy):
 
     :param protected_items_count: Number of items associated with this policy.
     :type protected_items_count: int
+    :param resource_guard_operation_requests: ResourceGuard Operation Requests
+    :type resource_guard_operation_requests: list[str]
     :param backup_management_type: Required. Constant filled by server.
     :type backup_management_type: str
     :param sub_protection_policy: List of sub-protection policies which
@@ -8696,14 +8767,15 @@ class GenericProtectionPolicy(ProtectionPolicy):
 
     _attribute_map = {
         'protected_items_count': {'key': 'protectedItemsCount', 'type': 'int'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
         'sub_protection_policy': {'key': 'subProtectionPolicy', 'type': '[SubProtectionPolicy]'},
         'time_zone': {'key': 'timeZone', 'type': 'str'},
         'fabric_name': {'key': 'fabricName', 'type': 'str'},
     }
 
-    def __init__(self, *, protected_items_count: int=None, sub_protection_policy=None, time_zone: str=None, fabric_name: str=None, **kwargs) -> None:
-        super(GenericProtectionPolicy, self).__init__(protected_items_count=protected_items_count, **kwargs)
+    def __init__(self, *, protected_items_count: int=None, resource_guard_operation_requests=None, sub_protection_policy=None, time_zone: str=None, fabric_name: str=None, **kwargs) -> None:
+        super(GenericProtectionPolicy, self).__init__(protected_items_count=protected_items_count, resource_guard_operation_requests=resource_guard_operation_requests, **kwargs)
         self.sub_protection_policy = sub_protection_policy
         self.time_zone = time_zone
         self.fabric_name = fabric_name
@@ -9010,6 +9082,10 @@ class IaasVMRestoreRequest(RestoreRequest):
      customer storage account.
     :type identity_info:
      ~azure.mgmt.recoveryservicesbackup.models.IdentityInfo
+    :param identity_based_restore_details: IaaS VM workload specific restore
+     details for restores using managed identity.
+    :type identity_based_restore_details:
+     ~azure.mgmt.recoveryservicesbackup.models.IdentityBasedRestoreDetails
     """
 
     _validation = {
@@ -9037,13 +9113,14 @@ class IaasVMRestoreRequest(RestoreRequest):
         'disk_encryption_set_id': {'key': 'diskEncryptionSetId', 'type': 'str'},
         'zones': {'key': 'zones', 'type': '[str]'},
         'identity_info': {'key': 'identityInfo', 'type': 'IdentityInfo'},
+        'identity_based_restore_details': {'key': 'identityBasedRestoreDetails', 'type': 'IdentityBasedRestoreDetails'},
     }
 
     _subtype_map = {
         'object_type': {'IaasVMRestoreWithRehydrationRequest': 'IaasVMRestoreWithRehydrationRequest'}
     }
 
-    def __init__(self, *, recovery_point_id: str=None, recovery_type=None, source_resource_id: str=None, target_virtual_machine_id: str=None, target_resource_group_id: str=None, storage_account_id: str=None, virtual_network_id: str=None, subnet_id: str=None, target_domain_name_id: str=None, region: str=None, affinity_group: str=None, create_new_cloud_service: bool=None, original_storage_account_option: bool=None, encryption_details=None, restore_disk_lun_list=None, restore_with_managed_disks: bool=None, disk_encryption_set_id: str=None, zones=None, identity_info=None, **kwargs) -> None:
+    def __init__(self, *, recovery_point_id: str=None, recovery_type=None, source_resource_id: str=None, target_virtual_machine_id: str=None, target_resource_group_id: str=None, storage_account_id: str=None, virtual_network_id: str=None, subnet_id: str=None, target_domain_name_id: str=None, region: str=None, affinity_group: str=None, create_new_cloud_service: bool=None, original_storage_account_option: bool=None, encryption_details=None, restore_disk_lun_list=None, restore_with_managed_disks: bool=None, disk_encryption_set_id: str=None, zones=None, identity_info=None, identity_based_restore_details=None, **kwargs) -> None:
         super(IaasVMRestoreRequest, self).__init__(**kwargs)
         self.recovery_point_id = recovery_point_id
         self.recovery_type = recovery_type
@@ -9064,6 +9141,7 @@ class IaasVMRestoreRequest(RestoreRequest):
         self.disk_encryption_set_id = disk_encryption_set_id
         self.zones = zones
         self.identity_info = identity_info
+        self.identity_based_restore_details = identity_based_restore_details
         self.object_type = 'IaasVMRestoreRequest'
 
 
@@ -9140,6 +9218,10 @@ class IaasVMRestoreWithRehydrationRequest(IaasVMRestoreRequest):
      customer storage account.
     :type identity_info:
      ~azure.mgmt.recoveryservicesbackup.models.IdentityInfo
+    :param identity_based_restore_details: IaaS VM workload specific restore
+     details for restores using managed identity.
+    :type identity_based_restore_details:
+     ~azure.mgmt.recoveryservicesbackup.models.IdentityBasedRestoreDetails
     :param recovery_point_rehydration_info: RP Rehydration Info
     :type recovery_point_rehydration_info:
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointRehydrationInfo
@@ -9170,13 +9252,36 @@ class IaasVMRestoreWithRehydrationRequest(IaasVMRestoreRequest):
         'disk_encryption_set_id': {'key': 'diskEncryptionSetId', 'type': 'str'},
         'zones': {'key': 'zones', 'type': '[str]'},
         'identity_info': {'key': 'identityInfo', 'type': 'IdentityInfo'},
+        'identity_based_restore_details': {'key': 'identityBasedRestoreDetails', 'type': 'IdentityBasedRestoreDetails'},
         'recovery_point_rehydration_info': {'key': 'recoveryPointRehydrationInfo', 'type': 'RecoveryPointRehydrationInfo'},
     }
 
-    def __init__(self, *, recovery_point_id: str=None, recovery_type=None, source_resource_id: str=None, target_virtual_machine_id: str=None, target_resource_group_id: str=None, storage_account_id: str=None, virtual_network_id: str=None, subnet_id: str=None, target_domain_name_id: str=None, region: str=None, affinity_group: str=None, create_new_cloud_service: bool=None, original_storage_account_option: bool=None, encryption_details=None, restore_disk_lun_list=None, restore_with_managed_disks: bool=None, disk_encryption_set_id: str=None, zones=None, identity_info=None, recovery_point_rehydration_info=None, **kwargs) -> None:
-        super(IaasVMRestoreWithRehydrationRequest, self).__init__(recovery_point_id=recovery_point_id, recovery_type=recovery_type, source_resource_id=source_resource_id, target_virtual_machine_id=target_virtual_machine_id, target_resource_group_id=target_resource_group_id, storage_account_id=storage_account_id, virtual_network_id=virtual_network_id, subnet_id=subnet_id, target_domain_name_id=target_domain_name_id, region=region, affinity_group=affinity_group, create_new_cloud_service=create_new_cloud_service, original_storage_account_option=original_storage_account_option, encryption_details=encryption_details, restore_disk_lun_list=restore_disk_lun_list, restore_with_managed_disks=restore_with_managed_disks, disk_encryption_set_id=disk_encryption_set_id, zones=zones, identity_info=identity_info, **kwargs)
+    def __init__(self, *, recovery_point_id: str=None, recovery_type=None, source_resource_id: str=None, target_virtual_machine_id: str=None, target_resource_group_id: str=None, storage_account_id: str=None, virtual_network_id: str=None, subnet_id: str=None, target_domain_name_id: str=None, region: str=None, affinity_group: str=None, create_new_cloud_service: bool=None, original_storage_account_option: bool=None, encryption_details=None, restore_disk_lun_list=None, restore_with_managed_disks: bool=None, disk_encryption_set_id: str=None, zones=None, identity_info=None, identity_based_restore_details=None, recovery_point_rehydration_info=None, **kwargs) -> None:
+        super(IaasVMRestoreWithRehydrationRequest, self).__init__(recovery_point_id=recovery_point_id, recovery_type=recovery_type, source_resource_id=source_resource_id, target_virtual_machine_id=target_virtual_machine_id, target_resource_group_id=target_resource_group_id, storage_account_id=storage_account_id, virtual_network_id=virtual_network_id, subnet_id=subnet_id, target_domain_name_id=target_domain_name_id, region=region, affinity_group=affinity_group, create_new_cloud_service=create_new_cloud_service, original_storage_account_option=original_storage_account_option, encryption_details=encryption_details, restore_disk_lun_list=restore_disk_lun_list, restore_with_managed_disks=restore_with_managed_disks, disk_encryption_set_id=disk_encryption_set_id, zones=zones, identity_info=identity_info, identity_based_restore_details=identity_based_restore_details, **kwargs)
         self.recovery_point_rehydration_info = recovery_point_rehydration_info
         self.object_type = 'IaasVMRestoreWithRehydrationRequest'
+
+
+class IdentityBasedRestoreDetails(Model):
+    """IaaS VM workload specific restore details for restores using managed
+    identity.
+
+    :param object_type: Gets the class type.
+    :type object_type: str
+    :param target_storage_account_id: Fully qualified ARM ID of the target
+     storage account.
+    :type target_storage_account_id: str
+    """
+
+    _attribute_map = {
+        'object_type': {'key': 'objectType', 'type': 'str'},
+        'target_storage_account_id': {'key': 'targetStorageAccountId', 'type': 'str'},
+    }
+
+    def __init__(self, *, object_type: str=None, target_storage_account_id: str=None, **kwargs) -> None:
+        super(IdentityBasedRestoreDetails, self).__init__(**kwargs)
+        self.object_type = object_type
+        self.target_storage_account_id = target_storage_account_id
 
 
 class IdentityInfo(Model):
@@ -9896,6 +10001,9 @@ class MabFileFolderProtectedItem(ProtectedItem):
     :param is_rehydrate: Flag to identify that deferred deleted DS is to be
      moved into Pause state
     :type is_rehydrate: bool
+    :param resource_guard_operation_requests: ResourceGuardOperationRequests
+     on which LAC check will be performed
+    :type resource_guard_operation_requests: list[str]
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of this backup item.
@@ -9937,6 +10045,7 @@ class MabFileFolderProtectedItem(ProtectedItem):
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
         'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'computer_name': {'key': 'computerName', 'type': 'str'},
@@ -9947,8 +10056,8 @@ class MabFileFolderProtectedItem(ProtectedItem):
         'extended_info': {'key': 'extendedInfo', 'type': 'MabFileFolderProtectedItemExtendedInfo'},
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, computer_name: str=None, last_backup_status: str=None, last_backup_time=None, protection_state: str=None, deferred_delete_sync_time_in_utc: int=None, extended_info=None, **kwargs) -> None:
-        super(MabFileFolderProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, **kwargs)
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, resource_guard_operation_requests=None, friendly_name: str=None, computer_name: str=None, last_backup_status: str=None, last_backup_time=None, protection_state: str=None, deferred_delete_sync_time_in_utc: int=None, extended_info=None, **kwargs) -> None:
+        super(MabFileFolderProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, resource_guard_operation_requests=resource_guard_operation_requests, **kwargs)
         self.friendly_name = friendly_name
         self.computer_name = computer_name
         self.last_backup_status = last_backup_status
@@ -10139,6 +10248,8 @@ class MabProtectionPolicy(ProtectionPolicy):
 
     :param protected_items_count: Number of items associated with this policy.
     :type protected_items_count: int
+    :param resource_guard_operation_requests: ResourceGuard Operation Requests
+    :type resource_guard_operation_requests: list[str]
     :param backup_management_type: Required. Constant filled by server.
     :type backup_management_type: str
     :param schedule_policy: Backup schedule of backup policy.
@@ -10155,13 +10266,14 @@ class MabProtectionPolicy(ProtectionPolicy):
 
     _attribute_map = {
         'protected_items_count': {'key': 'protectedItemsCount', 'type': 'int'},
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
         'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
         'schedule_policy': {'key': 'schedulePolicy', 'type': 'SchedulePolicy'},
         'retention_policy': {'key': 'retentionPolicy', 'type': 'RetentionPolicy'},
     }
 
-    def __init__(self, *, protected_items_count: int=None, schedule_policy=None, retention_policy=None, **kwargs) -> None:
-        super(MabProtectionPolicy, self).__init__(protected_items_count=protected_items_count, **kwargs)
+    def __init__(self, *, protected_items_count: int=None, resource_guard_operation_requests=None, schedule_policy=None, retention_policy=None, **kwargs) -> None:
+        super(MabProtectionPolicy, self).__init__(protected_items_count=protected_items_count, resource_guard_operation_requests=resource_guard_operation_requests, **kwargs)
         self.schedule_policy = schedule_policy
         self.retention_policy = retention_policy
         self.backup_management_type = 'MAB'
@@ -11486,6 +11598,100 @@ class RecoveryPointTierInformation(Model):
         self.extended_info = extended_info
 
 
+class ResourceGuardOperationDetail(Model):
+    """ResourceGuardOperationDetail.
+
+    :param vault_critical_operation:
+    :type vault_critical_operation: str
+    :param default_resource_request:
+    :type default_resource_request: str
+    """
+
+    _attribute_map = {
+        'vault_critical_operation': {'key': 'vaultCriticalOperation', 'type': 'str'},
+        'default_resource_request': {'key': 'defaultResourceRequest', 'type': 'str'},
+    }
+
+    def __init__(self, *, vault_critical_operation: str=None, default_resource_request: str=None, **kwargs) -> None:
+        super(ResourceGuardOperationDetail, self).__init__(**kwargs)
+        self.vault_critical_operation = vault_critical_operation
+        self.default_resource_request = default_resource_request
+
+
+class ResourceGuardProxyBase(Model):
+    """ResourceGuardProxyBase.
+
+    :param resource_guard_resource_id:
+    :type resource_guard_resource_id: str
+    :param resource_guard_operation_details:
+    :type resource_guard_operation_details:
+     list[~azure.mgmt.recoveryservicesbackup.models.ResourceGuardOperationDetail]
+    :param last_updated_time:
+    :type last_updated_time: str
+    :param description:
+    :type description: str
+    """
+
+    _attribute_map = {
+        'resource_guard_resource_id': {'key': 'resourceGuardResourceId', 'type': 'str'},
+        'resource_guard_operation_details': {'key': 'resourceGuardOperationDetails', 'type': '[ResourceGuardOperationDetail]'},
+        'last_updated_time': {'key': 'lastUpdatedTime', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+    }
+
+    def __init__(self, *, resource_guard_resource_id: str=None, resource_guard_operation_details=None, last_updated_time: str=None, description: str=None, **kwargs) -> None:
+        super(ResourceGuardProxyBase, self).__init__(**kwargs)
+        self.resource_guard_resource_id = resource_guard_resource_id
+        self.resource_guard_operation_details = resource_guard_operation_details
+        self.last_updated_time = last_updated_time
+        self.description = description
+
+
+class ResourceGuardProxyBaseResource(Resource):
+    """ResourceGuardProxyBaseResource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id represents the complete path to the resource.
+    :vartype id: str
+    :ivar name: Resource name associated with the resource.
+    :vartype name: str
+    :ivar type: Resource type represents the complete path of the form
+     Namespace/ResourceType/ResourceType/...
+    :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param e_tag: Optional ETag.
+    :type e_tag: str
+    :param properties: ResourceGuardProxyBaseResource properties
+    :type properties:
+     ~azure.mgmt.recoveryservicesbackup.models.ResourceGuardProxyBase
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'ResourceGuardProxyBase'},
+    }
+
+    def __init__(self, *, location: str=None, tags=None, e_tag: str=None, properties=None, **kwargs) -> None:
+        super(ResourceGuardProxyBaseResource, self).__init__(location=location, tags=tags, e_tag=e_tag, **kwargs)
+        self.properties = properties
+
+
 class ResourceList(Model):
     """Base for all lists of resources.
 
@@ -11595,6 +11801,22 @@ class RetentionDuration(Model):
         super(RetentionDuration, self).__init__(**kwargs)
         self.count = count
         self.duration_type = duration_type
+
+
+class SecurityPinBase(Model):
+    """Base class for get security pin request body.
+
+    :param resource_guard_operation_requests: ResourceGuard Operation Requests
+    :type resource_guard_operation_requests: list[str]
+    """
+
+    _attribute_map = {
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
+    }
+
+    def __init__(self, *, resource_guard_operation_requests=None, **kwargs) -> None:
+        super(SecurityPinBase, self).__init__(**kwargs)
+        self.resource_guard_operation_requests = resource_guard_operation_requests
 
 
 class Settings(Model):
@@ -11903,6 +12125,43 @@ class TriggerDataMoveRequest(Model):
         self.correlation_id = correlation_id
         self.source_container_arm_ids = source_container_arm_ids
         self.pause_gc = pause_gc
+
+
+class UnlockDeleteRequest(Model):
+    """Request body of unlock delete API.
+
+    :param resource_guard_operation_requests:
+    :type resource_guard_operation_requests: list[str]
+    :param resource_to_be_deleted:
+    :type resource_to_be_deleted: str
+    """
+
+    _attribute_map = {
+        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
+        'resource_to_be_deleted': {'key': 'resourceToBeDeleted', 'type': 'str'},
+    }
+
+    def __init__(self, *, resource_guard_operation_requests=None, resource_to_be_deleted: str=None, **kwargs) -> None:
+        super(UnlockDeleteRequest, self).__init__(**kwargs)
+        self.resource_guard_operation_requests = resource_guard_operation_requests
+        self.resource_to_be_deleted = resource_to_be_deleted
+
+
+class UnlockDeleteResponse(Model):
+    """Response of Unlock Delete API.
+
+    :param unlock_delete_expiry_time: This is the time when unlock delete
+     privileges will get expired.
+    :type unlock_delete_expiry_time: str
+    """
+
+    _attribute_map = {
+        'unlock_delete_expiry_time': {'key': 'unlockDeleteExpiryTime', 'type': 'str'},
+    }
+
+    def __init__(self, *, unlock_delete_expiry_time: str=None, **kwargs) -> None:
+        super(UnlockDeleteResponse, self).__init__(**kwargs)
+        self.unlock_delete_expiry_time = unlock_delete_expiry_time
 
 
 class ValidateOperationRequest(Model):

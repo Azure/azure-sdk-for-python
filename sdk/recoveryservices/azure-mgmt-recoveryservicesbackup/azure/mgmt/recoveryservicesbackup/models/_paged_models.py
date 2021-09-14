@@ -168,3 +168,16 @@ class ProtectionContainerResourcePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ProtectionContainerResourcePaged, self).__init__(*args, **kwargs)
+class ResourceGuardProxyBaseResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ResourceGuardProxyBaseResource <azure.mgmt.recoveryservicesbackup.models.ResourceGuardProxyBaseResource>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ResourceGuardProxyBaseResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ResourceGuardProxyBaseResourcePaged, self).__init__(*args, **kwargs)

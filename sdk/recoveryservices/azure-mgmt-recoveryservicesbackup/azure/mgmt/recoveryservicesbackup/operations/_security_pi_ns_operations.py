@@ -25,7 +25,7 @@ class SecurityPINsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2021-06-01".
+    :ivar api_version: Client Api Version. Constant value: "2021-07-01".
     """
 
     models = models
@@ -35,12 +35,12 @@ class SecurityPINsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2021-06-01"
+        self.api_version = "2021-07-01"
 
         self.config = config
 
     def get(
-            self, vault_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, vault_name, resource_group_name, resource_guard_operation_requests=None, custom_headers=None, raw=False, **operation_config):
         """Get the security PIN.
 
         :param vault_name: The name of the recovery services vault.
@@ -48,6 +48,9 @@ class SecurityPINsOperations(object):
         :param resource_group_name: The name of the resource group where the
          recovery services vault is present.
         :type resource_group_name: str
+        :param resource_guard_operation_requests: ResourceGuard Operation
+         Requests
+        :type resource_guard_operation_requests: list[str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -58,6 +61,10 @@ class SecurityPINsOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        parameters = None
+        if resource_guard_operation_requests is not None:
+            parameters = models.SecurityPinBase(resource_guard_operation_requests=resource_guard_operation_requests)
+
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
@@ -74,6 +81,7 @@ class SecurityPINsOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -81,8 +89,14 @@ class SecurityPINsOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
+        # Construct body
+        if parameters is not None:
+            body_content = self._serialize.body(parameters, 'SecurityPinBase')
+        else:
+            body_content = None
+
         # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:

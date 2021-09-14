@@ -41,7 +41,7 @@ class RecoveryServicesBackupClientOperationsMixin(object):
         :raises:
          :class:`NewErrorResponseException<azure.mgmt.recoveryservicesbackup.models.NewErrorResponseException>`
         """
-        api_version = "2021-06-01"
+        api_version = "2021-07-01"
 
         # Construct URL
         url = self.get_operation_status.metadata['url']
@@ -88,7 +88,7 @@ class RecoveryServicesBackupClientOperationsMixin(object):
 
     def _bms_prepare_data_move_initial(
             self, vault_name, resource_group_name, parameters, custom_headers=None, raw=False, **operation_config):
-        api_version = "2021-06-01"
+        api_version = "2021-07-01"
 
         # Construct URL
         url = self.bms_prepare_data_move.metadata['url']
@@ -177,7 +177,7 @@ class RecoveryServicesBackupClientOperationsMixin(object):
 
     def _bms_trigger_data_move_initial(
             self, vault_name, resource_group_name, parameters, custom_headers=None, raw=False, **operation_config):
-        api_version = "2021-06-01"
+        api_version = "2021-07-01"
 
         # Construct URL
         url = self.bms_trigger_data_move.metadata['url']
@@ -266,7 +266,7 @@ class RecoveryServicesBackupClientOperationsMixin(object):
 
     def _move_recovery_point_initial(
             self, vault_name, resource_group_name, fabric_name, container_name, protected_item_name, recovery_point_id, parameters, custom_headers=None, raw=False, **operation_config):
-        api_version = "2021-06-01"
+        api_version = "2021-07-01"
 
         # Construct URL
         url = self.move_recovery_point.metadata['url']
