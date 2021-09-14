@@ -43,8 +43,8 @@ CLIENT_ID = os.environ['SCHEMA_REGISTRY_AZURE_CLIENT_ID']
 CLIENT_SECRET = os.environ['SCHEMA_REGISTRY_AZURE_CLIENT_SECRET']
 
 SCHEMA_REGISTRY_ENDPOINT = os.environ['SCHEMA_REGISTRY_ENDPOINT']
-SCHEMA_GROUP = os.environ['SCHEMA_REGISTRY_GROUP']
-SCHEMA_NAME = 'your-schema-name'
+GROUP_NAME = os.environ['SCHEMA_REGISTRY_GROUP']
+NAME = 'your-schema-name'
 SERIALIZATION_TYPE = SerializationType.AVRO
 
 SCHEMA_JSON = {
@@ -69,25 +69,25 @@ SCHEMA_JSON = {
 SCHEMA_STRING = json.dumps(SCHEMA_JSON, separators=(',', ':'))
 
 
-def register_schema(client, schema_group, schema_name, schema_string, serialization_type):
+def register_schema(client, group_name, name, schema_string, serialization_type):
     print("Registering schema...")
-    schema_properties = client.register_schema(schema_group, schema_name, schema_string, serialization_type)
+    schema_properties = client.register_schema(group_name, name, schema_string, serialization_type)
     print("Schema registered, returned schema id is {}".format(schema_properties.id))
     print("Schema properties are {}".format(schema_properties))
     return schema_properties.id
 
 
-def get_schema_by_id(client, schema_id):
+def get_schema_by_id(client, id):
     print("Getting schema by id...")
-    schema = client.get_schema(schema_id)
-    print("The schema string of schema id: {} string is {}".format(schema_id, schema.content))
-    print("Schema properties are {}".format(schema_id))
+    schema = client.get_schema(id)
+    print("The schema string of schema id: {} string is {}".format(id, schema.content))
+    print("Schema properties are {}".format(id))
     return schema.content
 
 
-def get_schema_id(client, schema_group, schema_name, schema_string, serialization_type):
+def get_schema_id(client, group_name, name, schema_string, serialization_type):
     print("Getting schema id...")
-    schema_properties = client.get_schema_properties(schema_group, schema_name, schema_string, serialization_type)
+    schema_properties = client.get_schema_properties(group_name, name, schema_string, serialization_type)
     print("The schema id is: {}".format(schema_properties.id))
     print("Schema properties are {}".format(schema_properties))
     return schema_properties.id
@@ -101,7 +101,6 @@ if __name__ == '__main__':
     )
     schema_registry_client = SchemaRegistryClient(endpoint=SCHEMA_REGISTRY_ENDPOINT, credential=token_credential)
     with schema_registry_client:
-        schema_id = register_schema(schema_registry_client, SCHEMA_GROUP, SCHEMA_NAME, SCHEMA_STRING, SERIALIZATION_TYPE)
-        schema_str = get_schema_by_id(schema_registry_client, schema_id=schema_id)
-        schema_id = get_schema_id(schema_registry_client, SCHEMA_GROUP, SCHEMA_NAME, SCHEMA_STRING, SERIALIZATION_TYPE)
-
+        schema_id = register_schema(schema_registry_client, GROUP_NAME, NAME, SCHEMA_STRING, SERIALIZATION_TYPE)
+        schema_str = get_schema_by_id(schema_registry_client, schema_id)
+        schema_id = get_schema_id(schema_registry_client, GROUP_NAME, NAME, SCHEMA_STRING, SERIALIZATION_TYPE)
