@@ -44,7 +44,7 @@ class PrivateLinkResourcesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateLinkResourceListResult":
         """Gets the private link resources that need to be created for a storage account.
 
