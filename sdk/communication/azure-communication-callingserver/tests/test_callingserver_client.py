@@ -10,8 +10,6 @@ import _test_constants
 
 from typing import List
 from parameterized import parameterized
-from azure.core.credentials import AccessToken
-from azure.communication.callingserver.aio import CallingServerClient
 from azure.communication.callingserver._shared.models import CommunicationIdentifier, CommunicationUserIdentifier, PhoneNumberIdentifier
 from azure.communication.callingserver._models import (CreateCallOptions, MediaType,
     EventSubscriptionType, JoinCallOptions)
@@ -87,7 +85,6 @@ class TestCallingServerClient(unittest.TestCase):
         calling_server_client = _test_utils.create_mock_calling_server_client(
             status_code=201,
             payload=_test_constants.CreateOrJoinCallPayload,
-            is_async=False,
             use_managed_identity = use_managed_identity
             )
 
@@ -105,7 +102,12 @@ class TestCallingServerClient(unittest.TestCase):
         use_managed_identity = False # type: bool
         ):
 
-        calling_server_client = _test_utils.create_mock_calling_server_client(status_code=404, payload=_test_constants.ErrorPayload, is_async=False, use_managed_identity = use_managed_identity)
+        calling_server_client = _test_utils.create_mock_calling_server_client(
+            status_code=404,
+            payload=_test_constants.ErrorPayload,
+            use_managed_identity = use_managed_identity
+            )
+
         raised = False
         try:
             calling_server_client.create_call_connection(source_user, target_users, options)
@@ -126,7 +128,6 @@ class TestCallingServerClient(unittest.TestCase):
         calling_server_client = _test_utils.create_mock_calling_server_client(
             status_code=202,
             payload=_test_constants.CreateOrJoinCallPayload,
-            is_async=False,
             use_managed_identity = use_managed_identity
             )
 
@@ -151,7 +152,6 @@ class TestCallingServerClient(unittest.TestCase):
         calling_server_client = _test_utils.create_mock_calling_server_client(
             status_code=404,
             payload=_test_constants.ErrorPayload,
-            is_async=False,
             use_managed_identity = use_managed_identity
             )
 

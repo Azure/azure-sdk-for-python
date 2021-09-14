@@ -23,9 +23,9 @@ if TYPE_CHECKING:
 class CallConnection(object):
     def __init__(
             self,
-            call_connection_id, # type: str
-            call_connection_client, # type: CallConnectionsOperations
-        ): # type: (...) -> None
+            call_connection_id,  # type: str
+            call_connection_client  # type: CallConnectionsOperations
+        ):  # type: (...) -> None
 
         self.call_connection_id = call_connection_id
         self._call_connection_client = call_connection_client
@@ -33,8 +33,8 @@ class CallConnection(object):
     @distributed_trace_async()
     async def hang_up(
             self,
-            **kwargs # type: Any
-        ): # type: (...) -> None
+            **kwargs  # type: Any
+        ):  # type: (...) -> None
 
         return await self._call_connection_client.hangup_call(
             call_connection_id=self.call_connection_id,
@@ -44,9 +44,9 @@ class CallConnection(object):
     @distributed_trace_async()
     async def cancel_all_media_operations(
             self,
-            operation_context, # type: Optional[str]
-            **kwargs # type: Any
-        ): # type: (...) -> CancelAllMediaOperationsResult
+            operation_context,  # type: Optional[str]
+            **kwargs  # type: Any
+        ):  # type: (...) -> CancelAllMediaOperationsResult
 
         if operation_context is not None:
             kwargs['operation_context'] = operation_context
@@ -61,10 +61,10 @@ class CallConnection(object):
     @distributed_trace_async()
     async def play_audio(
             self,
-            audio_file_uri, # type: str
-            play_audio_options, # type: PlayAudioOptions
-            **kwargs, # type: str: Any
-        ): # type: (...) -> PlayAudioResult
+            audio_file_uri,  # type: str
+            play_audio_options,  # type: PlayAudioOptions
+            **kwargs  # type: Any
+        ):  # type: (...) -> PlayAudioResult
 
         if not audio_file_uri:
             raise ValueError("audio_file_uri can not be None")
@@ -84,10 +84,10 @@ class CallConnection(object):
     async def add_participant(
             self,
             participant,  # type: CommunicationIdentifier
-            alternate_caller_id, # type: Optional[str]
-            operation_context, # type: Optional[str]
-            **kwargs # type: Any
-        ): # type: (...) -> AddParticipantResult
+            alternate_caller_id,  # type: Optional[str]
+            operation_context,  # type: Optional[str]
+            **kwargs  # type: Any
+        ):  # type: (...) -> AddParticipantResult
 
         if not participant:
             raise ValueError("participant can not be None")
@@ -112,8 +112,8 @@ class CallConnection(object):
     async def remove_participant(
             self,
             participant_id,  # type: str
-            **kwargs # type: Any
-        ): # type: (...) -> None
+            **kwargs  # type: Any
+        ):  # type: (...) -> None
 
         return await self._call_connection_client.remove_participant(
             call_connection_id=self.call_connection_id,

@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
-import _test_utils
+import _test_utils_async
 import _test_constants
 
 from typing import List
@@ -111,11 +111,10 @@ async def test_play_audio_succeed(
     use_managed_identity = False # type: bool
     ):
 
-    server_call = _test_utils.create_mock_server_call(
+    server_call = _test_utils_async.create_mock_server_call(
         server_call_id,
         status_code=202,
         payload=_test_constants.PlayAudioResponsePayload,
-        is_async=True,
         use_managed_identity=use_managed_identity
         )
 
@@ -132,11 +131,10 @@ async def test_play_audio_failed(
     use_managed_identity = False # type: bool
     ):
 
-    server_call = _test_utils.create_mock_server_call(
+    server_call = _test_utils_async.create_mock_server_call(
         server_call_id,
         status_code=404,
         payload=_test_constants.ErrorPayload,
-        is_async=True,
         use_managed_identity = use_managed_identity
         )
 
@@ -159,11 +157,10 @@ async def test_add_participant_succeed(
     use_managed_identity = False # type: bool
     ):
 
-    server_call = _test_utils.create_mock_server_call(
+    server_call = _test_utils_async.create_mock_server_call(
         server_call_id,
         status_code=202,
         payload=_test_constants.AddParticipantResultPayload,
-        is_async=True,
         use_managed_identity=use_managed_identity
         )
 
@@ -188,11 +185,10 @@ async def test_add_participant_failed(
     use_managed_identity = False # type: bool
     ):
 
-    server_call = _test_utils.create_mock_server_call(
+    server_call = _test_utils_async.create_mock_server_call(
         server_call_id,
         status_code=404,
         payload=_test_constants.ErrorPayload,
-        is_async=True,
         use_managed_identity = use_managed_identity
         )
 
@@ -217,11 +213,10 @@ async def test_remove_participant_succeed(
     use_managed_identity = False # type: bool
     ):
 
-    server_call = _test_utils.create_mock_server_call(
+    server_call = _test_utils_async.create_mock_server_call(
         server_call_id,
         status_code=202,
         payload=None,
-        is_async=True,
         use_managed_identity=use_managed_identity
         )
 
@@ -239,11 +234,10 @@ async def test_remove_participant_failed(
     use_managed_identity = False # type: bool
     ):
 
-    server_call = _test_utils.create_mock_server_call(
+    server_call = _test_utils_async.create_mock_server_call(
         server_call_id,
         status_code=404,
         payload=_test_constants.ErrorPayload,
-        is_async=True,
         use_managed_identity = use_managed_identity
         )
 

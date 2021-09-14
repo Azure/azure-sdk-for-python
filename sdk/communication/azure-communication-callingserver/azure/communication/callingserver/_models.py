@@ -31,8 +31,8 @@ class CreateCallOptions(object):
         self,
         callback_uri,  # type: str
         requested_media_types,  # type: List[MediaType]
-        requested_call_events,  # type: List[EventSubscriptionType]
-    ): # type: (...) -> None
+        requested_call_events  # type: List[EventSubscriptionType]
+    ):  # type: (...) -> None
         try:
             if not callback_uri.lower().startswith('http'):
                 callback_uri = "https://" + callback_uri
@@ -82,7 +82,7 @@ class CreateCallOptions(object):
         # type: () -> Optional[str]
         return self.__subject
     @subject.setter
-    def subject(self, subject: str):
+    def subject(self, subject):
         # type: (str) -> None
         self.__subject = subject
 
@@ -104,7 +104,7 @@ class JoinCallOptions(object):
         callback_uri,  # type: str
         requested_media_types,  # type: List[MediaType]
         requested_call_events  # type: List[EventSubscriptionType]
-    ): # type: (...) -> None
+    ):  # type: (...) -> None
         try:
             if not callback_uri.lower().startswith('http'):
                 callback_uri = "https://" + callback_uri
@@ -169,7 +169,7 @@ class PlayAudioOptions(object):
         operation_context,  # type: str
         audio_file_id,  # type: str
         callback_uri  # type: str
-    ): # type: (...) -> None
+    ):  # type: (...) -> None
         self.loop = loop
         self.operation_context = operation_context
         self.audio_file_id = audio_file_id

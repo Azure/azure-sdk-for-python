@@ -41,10 +41,10 @@ class CallingServerClient(object):
     """
     def __init__(
             self,
-            endpoint, # type: str
-            credential, # type: AsyncTokenCredential
-            **kwargs # type: Any
-        ): # type: (...) -> None
+            endpoint,  # type: str
+            credential,  # type: AsyncTokenCredential
+            **kwargs  # type: Any
+        ):  # type: (...) -> None
         try:
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
@@ -60,7 +60,8 @@ class CallingServerClient(object):
             self._endpoint,
             authentication_policy=get_authentication_policy(endpoint, credential, decode_url=True, is_async=True),
             sdk_moniker=SDK_MONIKER,
-            **kwargs)
+            **kwargs
+            )
 
         self._call_connection_client = self._callingserver_service_client.call_connections
         self._server_call_client = self._callingserver_service_client.server_calls
@@ -69,8 +70,8 @@ class CallingServerClient(object):
     def from_connection_string(
             cls,
             conn_str,  # type: str
-            **kwargs # type: Any
-        ): # type: (...) -> CallingServerClient
+            **kwargs  # type: Any
+        ):  # type: (...) -> CallingServerClient
         """Create CallingServerClient from a Connection String.
 
         :param str conn_str:
@@ -93,8 +94,8 @@ class CallingServerClient(object):
 
     def get_call_connection(
             self,
-            call_connection_id,  # type: str
-        ): # type: (...) -> CallConnection
+            call_connection_id  # type: str
+        ):  # type: (...) -> CallConnection
         """Initializes a new instance of CallConnection.
 
         :param str call_connection_id:
@@ -109,8 +110,8 @@ class CallingServerClient(object):
 
     def initialize_server_call(
             self,
-            server_call_id,  # type: str
-        ): # type: (...) -> ServerCall
+            server_call_id  # type: str
+        ):  # type: (...) -> ServerCall
         """Initializes a server call.
 
         :param str server_call_id:
@@ -129,8 +130,8 @@ class CallingServerClient(object):
         source,  # type: CommunicationIdentifier
         targets,  # type: List[CommunicationIdentifier]
         options,  # type: CreateCallOptions
-        **kwargs: Any
-    ): # type: (...) -> CallConnection
+        **kwargs  # type Any
+    ):  # type: (...) -> CallConnection
         """Create an outgoing call from source to target identities.
 
         :param CommunicationIdentifier source:
@@ -177,7 +178,7 @@ class CallingServerClient(object):
         source,  # type: CommunicationIdentifier
         call_options,  # type: JoinCallOptions
         **kwargs  # type: Any
-    ): # type: (...) -> CallConnection
+    ):  # type: (...) -> CallConnection
         """Join the call using server call id.
 
         :param str server_call_id:

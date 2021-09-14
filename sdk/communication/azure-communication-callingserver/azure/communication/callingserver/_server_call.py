@@ -25,19 +25,18 @@ class ServerCall(object):
     def __init__(
         self,
         server_call_id,  # type: str
-        server_call_client,  # type: ServerCallsOperations
-    ):
-        # type: (...) -> None
+        server_call_client  # type: ServerCallsOperations
+    ):  # type: (...) -> None
         self.server_call_id = server_call_id
         self._server_call_client = server_call_client
 
     @distributed_trace()
     def play_audio(
             self,
-            audio_file_uri, # type: str
-            play_audio_options, # type: PlayAudioOptions
-            **kwargs # type: Any
-        ): # type: (...) -> PlayAudioResult
+            audio_file_uri,  # type: str
+            play_audio_options,  # type: PlayAudioOptions
+            **kwargs  # type: Any
+        ):  # type: (...) -> PlayAudioResult
 
         if not audio_file_uri:
             raise ValueError("audio_file_uri can not be None")
@@ -58,10 +57,10 @@ class ServerCall(object):
             self,
             participant,  # type: CommunicationIdentifier
             callback_uri,  # type: str
-            alternate_caller_id, # type: Optional[str]
-            operation_context, # type: Optional[str]
-            **kwargs # type: Any
-        ): # type: (...) -> AddParticipantResult
+            alternate_caller_id,  # type: Optional[str]
+            operation_context,  # type: Optional[str]
+            **kwargs  # type: Any
+        ):  # type: (...) -> AddParticipantResult
 
         if not participant:
             raise ValueError("participant can not be None")
@@ -87,8 +86,8 @@ class ServerCall(object):
     def remove_participant(
             self,
             participant_id,  # type: str
-            **kwargs # type: Any
-        ): # type: (...) -> None
+            **kwargs  # type: Any
+        ):  # type: (...) -> None
 
         return self._server_call_client.remove_participant(
             server_call_id=self.server_call_id,

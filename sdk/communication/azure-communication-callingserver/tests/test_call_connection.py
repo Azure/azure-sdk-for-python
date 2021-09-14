@@ -159,7 +159,6 @@ class TestCallConnection(unittest.TestCase):
             call_connection_id,
             status_code=202,
             payload=None,
-            is_async=False,
             use_managed_identity=use_managed_identity
             )
 
@@ -178,7 +177,6 @@ class TestCallConnection(unittest.TestCase):
             call_connection_id,
             status_code=404,
             payload=_test_constants.ErrorPayload,
-            is_async=False,
             use_managed_identity = use_managed_identity
             )
 
@@ -202,7 +200,6 @@ class TestCallConnection(unittest.TestCase):
             call_connection_id,
             status_code=200,
             payload=_test_constants.CancelAllMediaOperaionsResponsePayload,
-            is_async=False,
             use_managed_identity=use_managed_identity
             )
 
@@ -222,7 +219,6 @@ class TestCallConnection(unittest.TestCase):
             call_connection_id,
             status_code=404,
             payload=_test_constants.ErrorPayload,
-            is_async=False,
             use_managed_identity = use_managed_identity
             )
 
@@ -247,7 +243,6 @@ class TestCallConnection(unittest.TestCase):
             call_connection_id,
             status_code=202,
             payload=_test_constants.PlayAudioResponsePayload,
-            is_async=False,
             use_managed_identity=use_managed_identity
             )
 
@@ -268,7 +263,6 @@ class TestCallConnection(unittest.TestCase):
             call_connection_id,
             status_code=404,
             payload=_test_constants.ErrorPayload,
-            is_async=False,
             use_managed_identity = use_managed_identity
             )
 
@@ -294,7 +288,6 @@ class TestCallConnection(unittest.TestCase):
             call_connection_id,
             status_code=202,
             payload=_test_constants.AddParticipantResultPayload,
-            is_async=False,
             use_managed_identity=use_managed_identity
             )
 
@@ -320,7 +313,6 @@ class TestCallConnection(unittest.TestCase):
             call_connection_id,
             status_code=404,
             payload=_test_constants.ErrorPayload,
-            is_async=False,
             use_managed_identity = use_managed_identity
             )
 
@@ -348,7 +340,6 @@ class TestCallConnection(unittest.TestCase):
             call_connection_id,
             status_code=202,
             payload=None,
-            is_async=False,
             use_managed_identity=use_managed_identity
             )
 
@@ -370,7 +361,6 @@ class TestCallConnection(unittest.TestCase):
             call_connection_id,
             status_code=404,
             payload=_test_constants.ErrorPayload,
-            is_async=False,
             use_managed_identity = use_managed_identity
             )
 

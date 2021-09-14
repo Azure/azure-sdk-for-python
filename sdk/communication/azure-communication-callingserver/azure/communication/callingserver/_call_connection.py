@@ -24,8 +24,8 @@ if TYPE_CHECKING:
 class CallConnection(object):
     def __init__(
             self,
-            call_connection_id, # type: str
-            call_connection_client, # type: CallConnectionsOperations
+            call_connection_id,  # type: str
+            call_connection_client  # type: CallConnectionsOperations
         ): # type: (...) -> None
 
         self.call_connection_id = call_connection_id
@@ -34,7 +34,7 @@ class CallConnection(object):
     @distributed_trace()
     def hang_up(
             self,
-            **kwargs # type: Any
+            **kwargs  # type: Any
         ): # type: (...) -> None
 
         return self._call_connection_client.hangup_call(
@@ -45,8 +45,8 @@ class CallConnection(object):
     @distributed_trace()
     def cancel_all_media_operations(
             self,
-            operation_context, # type: Optional[str]
-            **kwargs # type: Any
+            operation_context,  # type: Optional[str]
+            **kwargs  # type: Any
         ): # type: (...) -> CancelAllMediaOperationsResult
 
         if operation_context is not None:
@@ -62,9 +62,9 @@ class CallConnection(object):
     @distributed_trace()
     def play_audio(
             self,
-            audio_file_uri, # type: str
-            play_audio_options, # type: PlayAudioOptions
-            **kwargs, # type: str: Any
+            audio_file_uri,  # type: str
+            play_audio_options,  # type: PlayAudioOptions
+            **kwargs  # type: Any
         ): # type: (...) -> PlayAudioResult
 
         if not audio_file_uri:
@@ -85,9 +85,9 @@ class CallConnection(object):
     def add_participant(
             self,
             participant,  # type: CommunicationIdentifier
-            alternate_caller_id, # type: Optional[str]
-            operation_context, # type: Optional[str]
-            **kwargs # type: Any
+            alternate_caller_id,  # type: Optional[str]
+            operation_context,  # type: Optional[str]
+            **kwargs  # type: Any
         ): # type: (...) -> AddParticipantResult
 
         if not participant:
@@ -113,7 +113,7 @@ class CallConnection(object):
     def remove_participant(
             self,
             participant_id,  # type: str
-            **kwargs # type: Any
+            **kwargs  # type: Any
         ): # type: (...) -> None
 
         return self._call_connection_client.remove_participant(
