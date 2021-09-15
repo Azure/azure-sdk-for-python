@@ -203,9 +203,7 @@ to install the Azure Az PowerShell module.
 
 #### Azure account not logged in
 
-The `Azure Powershell Credential` utilizes the current logged in Azure user in Azure Powershell to fetch an access token.
-You need to login to your account in Azure Powershell via `Connect-AzAccount` command. You can further read instructions to [Sign in with Azure Powershell](https://docs.microsoft.com/powershell/azure/authenticate-azureps?view=azps-6.3.0).
-Once logged in try running the credential again.
+Log in via the `Connect-AzAccount` command. See [Sign in with Azure Powershell](https://docs.microsoft.com/powershell/azure/authenticate-azureps) for more information.
 
 #### Deserialization error
 
