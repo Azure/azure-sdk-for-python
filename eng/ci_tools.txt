@@ -29,12 +29,8 @@ ConfigArgParse==1.2.3
 six==1.14.0
 pyyaml==5.3.1
 pytest==4.6.9; python_version == '2.7'
-pytest==5.4.2; python_version == '3.5'
-pytest==5.4.2; python_version == '3.6'
-pytest==5.4.2; python_version == '3.7'
-pytest==5.4.2; python_version == '3.8'
-pytest==5.4.2; python_version == '3.9'
-pytest==6.2.4; python_version == '3.10'
+pytest==5.4.2; python_version >= '3.5' and python_version <= '3.9'
+pytest==6.2.4; python_version >= '3.10'
 pytest-cov==2.8.1
 
 # local dev packages
