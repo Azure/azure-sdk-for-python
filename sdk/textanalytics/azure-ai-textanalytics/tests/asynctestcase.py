@@ -5,10 +5,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import asyncio
+
 import os
-import functools
-from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
+import pytest
 from azure.core.credentials import AccessToken
 from testcase import TextAnalyticsTest
 
@@ -24,6 +23,7 @@ class AsyncFakeTokenCredential(object):
         return self.token
 
 
+@pytest.mark.skip("No active endpoints yet")
 class AsyncTextAnalyticsTest(TextAnalyticsTest):
 
     def generate_oauth_token(self):

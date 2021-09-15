@@ -70,6 +70,7 @@ class FakeTokenCredential(object):
         return self.token
 
 
+@pytest.mark.skip("No active endpoints yet")
 class TextAnalyticsTest(AzureTestCase):
     FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['Ocp-Apim-Subscription-Key']
 

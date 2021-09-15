@@ -2,6 +2,8 @@
 
 ## 5.2.0b2 (Unreleased)
 
+This version of the SDK defaults to the latest supported API version, which currently is `v3.2-preview.2`.
+
 ### Features Added
 
 ### Breaking Changes
