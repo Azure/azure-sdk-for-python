@@ -268,7 +268,7 @@ class ContentStreamDownloader():
         self._file_size = None
         self._non_empty_ranges = None
         self._response = None
-        self._first_get_size = self._config.max_single_get_size
+        self._first_get_size = 4 * 1024 * 1024
         initial_request_start = self._start_range if self._start_range is not None else 0
         if self._end_range is not None and self._end_range - self._start_range < self._first_get_size:
             initial_request_end = self._end_range
@@ -278,7 +278,9 @@ class ContentStreamDownloader():
         self._initial_range = (initial_request_start, initial_request_end)
 
     async def _setup(self):
+        print("about to call initial request")
         self._response = await self._initial_request()
+        print(f"This is the initial request response: {self._response.__dict__}")
         self.properties = self._response.properties
         self.properties.endpoint = self.endpoint
 
@@ -304,11 +306,13 @@ class ContentStreamDownloader():
             self._initial_range[1])
 
         try:
+            print("about to download")
             location_mode, response = await self._clients.download(
                 http_range=http_range,
-                content_url=self.endpoint
+                content_url=self.endpoint,
                 **self._request_options)
-
+            print(f"Location_mode: {location_mode}")
+            print(f"response: {response}")
             # Check the location we read from to ensure we use the same one
             # for subsequent requests.
             self._location_mode = location_mode

@@ -17,6 +17,8 @@ from .._generated.models import CreateCallRequest, PhoneNumberIdentifierModel
 from .._models import CreateCallOptions, JoinCallOptions
 from ._server_call_async import ServerCall
 from .._shared.models import CommunicationIdentifier
+from ._content_downloader_async import ContentDownloader
+from ._download_async import ContentStreamDownloader
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -209,6 +211,25 @@ class CallingServerClient(object):
         )
 
         return CallConnection(join_call_response.call_connection_id, self._call_connection_client)
+
+    @distributed_trace_async
+    async def download(self, content_url, start_range=None, end_range=None):
+        content_downloader = ContentDownloader(
+            self._callingserver_service_client._client,
+            self._callingserver_service_client._config,
+            self._callingserver_service_client._serialize,
+            self._callingserver_service_client._deserialize
+        )
+        stream_downloader = ContentStreamDownloader(
+            content_downloader,
+            self._callingserver_service_client._config,
+            start_range,
+            end_range,
+            endpoint=content_url
+        )
+        print("about to call setup")
+        await stream_downloader._setup()
+        return stream_downloader
 
     async def close(self) -> None:
         """Close the :class:
