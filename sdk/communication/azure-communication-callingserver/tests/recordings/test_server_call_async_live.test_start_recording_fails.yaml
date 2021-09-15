@@ -1,0 +1,32 @@
+interactions:
+- request:
+    body: '{"recordingStateCallbackUri": "https://host.app/api/callback/calling"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '70'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
+      x-ms-date:
+      - Wed, 15 Sep 2021 21:50:26 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.communication.azure.com/calling/serverCalls/aHR0cHM6Ly9jb252LXVzd2UtMDkuY29udi5za3lwZS5jb20vY29udi9EZVF2WEJGVVlFV1NNZkFXYno2azN3P2k9MTEmZT02Mzc1NzIyMjk0Mjc0NTI4Nzk=/recordings?api-version=2021-06-15-preview
+  response:
+    body: '{"error": {"code": "8501", "message": "Action is invalid when call is not
+      in Established state"}}'
+    headers:
+      content-length: '93'
+      content-type: application/json; charset=utf-8
+      date: Wed, 15 Sep 2021 21:50:26 GMT
+      x-cache: CONFIG_NOCACHE
+      x-microsoft-skype-chain-id: 45e8eb94-b64f-447f-a136-716f90109f1a
+    status:
+      code: 400
+      message: Bad Request
+    url: https://acstestbot1.communication.azure.com/calling/serverCalls/aHR0cHM6Ly9jb252LXVzd2UtMDkuY29udi5za3lwZS5jb20vY29udi9EZVF2WEJGVVlFV1NNZkFXYno2azN3P2k9MTEmZT02Mzc1NzIyMjk0Mjc0NTI4Nzk=/recordings?api-version=2021-06-15-preview
+version: 1

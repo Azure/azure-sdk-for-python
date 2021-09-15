@@ -1,0 +1,37 @@
+interactions:
+- request:
+    body: '{"recordingStateCallbackUri": "https://host.app/api/callback/calling"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '70'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
+      x-ms-date:
+      - Wed, 15 Sep 2021 21:50:39 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.communication.azure.com/calling/serverCalls/sanitized/recordings?api-version=2021-06-15-preview
+  response:
+    body: '{"error": {"code": "401", "message": "HMAC-SHA256 validation failed"}}'
+    headers:
+      content-length:
+      - '66'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 15 Sep 2021 21:50:39 GMT
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 401
+      message: Unauthorized
+version: 1

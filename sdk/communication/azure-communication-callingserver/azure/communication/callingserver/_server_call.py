@@ -8,13 +8,18 @@ from typing import TYPE_CHECKING, Any, Optional  # pylint: disable=unused-import
 from urllib.parse import urlparse
 
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.pipeline.transport import AsyncHttpResponse
 
 from ._communication_identifier_serializer import serialize_identifier
 from ._converters import (AddParticipantRequestConverter,
                           PlayAudioRequestConverter)
 from ._generated.models import (AddParticipantResult,
+                                CallRecordingProperties,
+                                CommunicationIdentifierModel,
                                 PhoneNumberIdentifierModel,
-                                PlayAudioResult)
+                                PlayAudioResult,
+                                StartCallRecordingRequest,
+                                StartCallRecordingResult)
 
 if TYPE_CHECKING:
     from ._generated.operations import ServerCallsOperations
@@ -71,13 +76,10 @@ class ServerCall(object):
             **kwargs
         )
 
-        start_recording_result = self.server_call_client.start_recording(
+        return self._server_call_client.start_recording(
             server_call_id=self.server_call_id,
             request=start_call_recording_request
         )
-
-        return StartCallRecordingResult._from_generated(start_recording_result)
-
 
     @distributed_trace()
     def pause_recording(
@@ -89,12 +91,10 @@ class ServerCall(object):
         if not recording_id:
             raise ValueError("recording_id cannot be None")
 
-        pause_recording_result = self.server_call_client.pause_recording(
+        return self._server_call_client.pause_recording(
             server_call_id=self.server_call_id,
             recording_id=recording_id,
         )
-
-        return pause_recording_result
 
     @distributed_trace()
     def resume_recording(
@@ -106,13 +106,10 @@ class ServerCall(object):
         if not recording_id:
             raise ValueError("recording_id cannot be None")
 
-        resume_recording_result = self.server_call_client.resume_recording(
+        return self._server_call_client.resume_recording(
             server_call_id=self.server_call_id,
             recording_id=recording_id,
         )
-
-        return resume_recording_result
-
 
     @distributed_trace()
     def stop_recording(
@@ -124,13 +121,10 @@ class ServerCall(object):
         if not recording_id:
             raise ValueError("recording_id cannot be None")
 
-        stop_recording_result = self.server_call_client.stop_recording(
+        return self._server_call_client.stop_recording(
             server_call_id=self.server_call_id,
             recording_id=recording_id,
         )
-
-        return stop_recording_result
-
 
     @distributed_trace()
     def get_recording_properities(
@@ -142,126 +136,15 @@ class ServerCall(object):
         if not recording_id:
             raise ValueError("recording_id cannot be None")
 
-        recording_status_result = self.server_call_client.get_recording_properties(
+        return self._server_call_client.get_recording_properties(
             server_call_id=self.server_call_id,
             recording_id=recording_id,
         )
 
-        return CallRecordingProperties._from_generated(recording_status_result)
-
-
     @distributed_trace()
-    def start_recording(
+    def add_participant(
             self,
-            server_call_id,  # type: str
-            recording_state_callback_uri,  # type: str
-            **kwargs,  # type: Any
-    ):  # type: (...) -> StartCallRecordingResult
-
-        if not server_call_id:
-            raise ValueError("server_call_id cannot be None")
-
-        start_call_recording_request = StartCallRecordingRequest(
-            recording_state_callback_uri=recording_state_callback_uri,
-            **kwargs
-        )
-
-        start_recording_result = self.server_call_client.start_recording(
-            server_call_id=self.server_call_id,
-            request=start_call_recording_request
-        )
-
-        return StartCallRecordingResult._from_generated(start_recording_result)
-
-    @distributed_trace()
-    def pause_recording(
-            self,
-            server_call_id,  # type: str
-            recording_id,  # type: str
-            **kwargs,  # type: Any
-    ):  # type: (...) -> AsyncHttpResponse
-
-        if not server_call_id:
-            raise ValueError("server_call_id cannot be None")
-
-        if not recording_id:
-            raise ValueError("recording_id cannot be None")
-
-        pause_recording_result = self.server_call_client.pause_recording(
-            server_call_id=self.server_call_id,
-            recording_id=recording_id,
-        )
-
-        return pause_recording_result
-
-    @distributed_trace()
-    def resume_recording(
-            self,
-            server_call_id,  # type: str
-            recording_id,  # type: str
-            **kwargs,  # type: Any
-    ):  # type: (...) -> AsyncHttpResponse
-
-        if not server_call_id:
-            raise ValueError("server_call_id cannot be None")
-
-        if not recording_id:
-            raise ValueError("recording_id cannot be None")
-
-        resume_recording_result = self.server_call_client.resume_recording(
-            server_call_id=self.server_call_id,
-            recording_id=recording_id,
-        )
-
-        return resume_recording_result
-
-    @distributed_trace()
-    def stop_recording(
-            self,
-            server_call_id,  # type: str
-            recording_id,  # type: str
-            **kwargs,  # type: Any
-    ):  # type: (...) -> AsyncHttpResponse
-
-        if not server_call_id:
-            raise ValueError("server_call_id cannot be None")
-
-        if not recording_id:
-            raise ValueError("recording_id cannot be None")
-
-        stop_recording_result = self.server_call_client.stop_recording(
-            server_call_id=self.server_call_id,
-            recording_id=recording_id,
-        )
-
-        return stop_recording_result
-
-    @distributed_trace()
-    def get_recording_properities(
-            self,
-            server_call_id,  # type: str
-            recording_id,  # type: str
-            **kwargs,  # type: Any
-    ):  # type: (...) -> CallRecordingProperties
-
-        if not server_call_id:
-            raise ValueError("server_call_id cannot be None")
-
-        if not recording_id:
-            raise ValueError("recording_id cannot be None")
-
-        recording_status_result = self.server_call_client.get_recording_properties(
-            server_call_id=self.server_call_id,
-            recording_id=recording_id,
-        )
-
-        return CallRecordingProperties._from_generated(recording_status_result)
-
-    @distributed_trace()
-    def join_call(
-            self,
-            source: CommunicationIdentifierModel,
-            subject,  # type: str
+            participant,  # type: CommunicationIdentifier
             callback_uri,  # type: str
             alternate_caller_id,  # type: Optional[str]
             operation_context,  # type: Optional[str]
