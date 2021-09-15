@@ -29,7 +29,7 @@ def update_issue_body(sdk_repo, rest_repo, issue_number):
         link = link.split(']')[0]
         link = link.replace('[', "").replace(']', "").replace('(', "").replace(')', "")
 
-    package_name, readme_link, output_folder = get_pkname_and_readme_link(rest_repo, link)
+    package_name, readme_link, output_folder = _get_pkname_and_readme_link(rest_repo, link)
     # Check readme tag format
     if 'package' not in readme_tag:
         readme_tag = 'package-{}'.format(readme_tag)
@@ -47,7 +47,7 @@ def update_issue_body(sdk_repo, rest_repo, issue_number):
     return package_name, readme_link, output_folder
 
 
-def get_pkname_and_readme_link(rest_repo, link):
+def _get_pkname_and_readme_link(rest_repo, link):
     # change commit link to pull json link(i.e. https://github.com/Azure/azure-rest-api-specs/commit/77f5d3b5d2fbae17621ea124485788f496786758#diff-708c2fb843b022cac4af8c6f996a527440c1e0d328abb81f54670747bf14ab1a)
     pk_name = ''
     if 'commit' in link:
@@ -98,11 +98,8 @@ def get_readme_and_output_folder(sdk_repo, rest_repo, issue_number):
         if 'resource-manager' in row:
             readme_link = '{}/readme.md'.format(row.strip("\r"))
             # Get output folder from readme.python.md
-            print(f'debug: readme_link: {readme_link}')
             readme_python_link = readme_link.split('/resource-manager')[0] + '/resource-manager/readme.python.md'
-            print(f'debug: readme_python_link: {readme_python_link}')
             _, output_folder = _find_package_name_and_output(rest_repo, readme_python_link)
-            print(f'debug: output_folder: {output_folder}')
             return readme_link, output_folder
     raise Exception('Not find readme link,please check')
 
