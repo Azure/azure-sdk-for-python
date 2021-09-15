@@ -44,7 +44,7 @@ az cognitiveservices account keys list --resource-group <resource-group-name> --
 
 
 #### Create ConversationAnalysisClient
-Once you've determined your **endpoint** and **API key** you can instantiate a `QuestionAnsweringClient`:
+Once you've determined your **endpoint** and **API key** you can instantiate a `ConversationAnalysisClient`:
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -60,9 +60,15 @@ client = ConversationAnalysisClient(endpoint, credential)
 ## Key concepts
 
 ### ConversationAnalysisClient
-
+The [ConversationAnalysisClient][conversationanalysis_client_class] is the primary interface used for extracting custom intents and entities from user utterance using your own CLU's pretrained models. For asynchronous operations, an async `ConversationAnalysisClient` is in the `azure.ai.language.conversation.aio` namespace.
 
 ## Examples
+The `azure-ai-language-conversation` client library provides both synchronous and asynchronous APIs.
+
+The following examples show common scenarios using the `client` [created above](#create-conversationanalysisclient).
+- [Test Deepstack](#ask-a-question)
+- [Test Workflow](#ask-a-follow-up-question)
+- [Test Workflow Direct](#asynchronous-operations)
 
 
 ## Optional Configuration
