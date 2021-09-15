@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/20.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-resource/0.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Authorization/locks/pylockrg?api-version=2016-09-01
@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 03 Sep 2021 01:44:30 GMT
+      - Wed, 15 Sep 2021 03:31:16 GMT
       expires:
       - '-1'
       pragma:
@@ -52,7 +52,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/20.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-resource/0.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Authorization/locks/pylockrg?api-version=2016-09-01
@@ -67,7 +67,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 03 Sep 2021 01:44:30 GMT
+      - Wed, 15 Sep 2021 03:31:16 GMT
       expires:
       - '-1'
       pragma:
@@ -93,7 +93,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/20.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-resource/0.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Authorization/locks?api-version=2016-09-01
@@ -108,7 +108,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 03 Sep 2021 01:44:30 GMT
+      - Wed, 15 Sep 2021 03:31:16 GMT
       expires:
       - '-1'
       pragma:
@@ -136,7 +136,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/20.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-resource/0.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Authorization/locks/pylockrg?api-version=2016-09-01
@@ -149,7 +149,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 03 Sep 2021 01:44:30 GMT
+      - Wed, 15 Sep 2021 03:31:16 GMT
       expires:
       - '-1'
       pragma:

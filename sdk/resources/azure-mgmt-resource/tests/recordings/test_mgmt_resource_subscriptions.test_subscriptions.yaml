@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/20.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-resource/0.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
     uri: https://management.azure.com/subscriptions?api-version=2021-01-01
@@ -24,7 +24,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 03 Sep 2021 01:44:46 GMT
+      - Wed, 15 Sep 2021 03:31:32 GMT
       expires:
       - '-1'
       pragma:
@@ -48,7 +48,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/20.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-resource/0.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/locations?api-version=2021-01-01
@@ -102,7 +102,9 @@ interactions:
         Central US (Stage)\",\"regionalDisplayName\":\"(US) South Central US (Stage)\",\"metadata\":{\"regionType\":\"Logical\",\"regionCategory\":\"Other\",\"geographyGroup\":\"US\"}},{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/locations/westusstage\",\"name\":\"westusstage\",\"type\":\"Region\",\"displayName\":\"West
         US (Stage)\",\"regionalDisplayName\":\"(US) West US (Stage)\",\"metadata\":{\"regionType\":\"Logical\",\"regionCategory\":\"Other\",\"geographyGroup\":\"US\"}},{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/locations/westus2stage\",\"name\":\"westus2stage\",\"type\":\"Region\",\"displayName\":\"West
         US 2 (Stage)\",\"regionalDisplayName\":\"(US) West US 2 (Stage)\",\"metadata\":{\"regionType\":\"Logical\",\"regionCategory\":\"Other\",\"geographyGroup\":\"US\"}},{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/locations/asia\",\"name\":\"asia\",\"type\":\"Region\",\"displayName\":\"Asia\",\"regionalDisplayName\":\"Asia\",\"metadata\":{\"regionType\":\"Logical\",\"regionCategory\":\"Other\"}},{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/locations/asiapacific\",\"name\":\"asiapacific\",\"type\":\"Region\",\"displayName\":\"Asia
-        Pacific\",\"regionalDisplayName\":\"Asia Pacific\",\"metadata\":{\"regionType\":\"Logical\",\"regionCategory\":\"Other\"}},{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/locations/australia\",\"name\":\"australia\",\"type\":\"Region\",\"displayName\":\"Australia\",\"regionalDisplayName\":\"Australia\",\"metadata\":{\"regionType\":\"Logical\",\"regionCategory\":\"Other\"}},{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/locations/brazil\",\"name\":\"brazil\",\"type\":\"Region\",\"displayName\":\"Brazil\",\"regionalDisplayName\":\"Brazil\",\"metadata\":{\"regionType\":\"Logical\",\"regionCategory\":\"Other\"}},{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/locations/canada\",\"name\":\"canada\",\"type\":\"Region\",\"displayName\":\"Canada\",\"regionalDisplayName\":\"Canada\",\"metadata\":{\"regionType\":\"Logical\",\"regionCategory\":\"Other\"}},{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/locations/europe\",\"name\":\"europe\",\"type\":\"Region\",\"displayName\":\"Europe\",\"regionalDisplayName\":\"Europe\",\"metadata\":{\"regionType\":\"Logical\",\"regionCategory\":\"Other\"}},{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/locations/global\",\"name\":\"global\",\"type\":\"Region\",\"displayName\":\"Global\",\"regionalDisplayName\":\"Global\",\"metadata\":{\"regionType\":\"Logical\",\"regionCategory\":\"Other\"}},{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/locations/india\",\"name\":\"india\",\"type\":\"Region\",\"displayName\":\"India\",\"regionalDisplayName\":\"India\",\"metadata\":{\"regionType\":\"Logical\",\"regionCategory\":\"Other\"}},{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/locations/japan\",\"name\":\"japan\",\"type\":\"Region\",\"displayName\":\"Japan\",\"regionalDisplayName\":\"Japan\",\"metadata\":{\"regionType\":\"Logical\",\"regionCategory\":\"Other\"}},{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/locations/uk\",\"name\":\"uk\",\"type\":\"Region\",\"displayName\":\"United
+        Pacific\",\"regionalDisplayName\":\"Asia Pacific\",\"metadata\":{\"regionType\":\"Logical\",\"regionCategory\":\"Other\"}},{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/locations/australia\",\"name\":\"australia\",\"type\":\"Region\",\"displayName\":\"Australia\",\"regionalDisplayName\":\"Australia\",\"metadata\":{\"regionType\":\"Logical\",\"regionCategory\":\"Other\"}},{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/locations/brazil\",\"name\":\"brazil\",\"type\":\"Region\",\"displayName\":\"Brazil\",\"regionalDisplayName\":\"Brazil\",\"metadata\":{\"regionType\":\"Logical\",\"regionCategory\":\"Other\"}},{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/locations/canada\",\"name\":\"canada\",\"type\":\"Region\",\"displayName\":\"Canada\",\"regionalDisplayName\":\"Canada\",\"metadata\":{\"regionType\":\"Logical\",\"regionCategory\":\"Other\"}},{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/locations/europe\",\"name\":\"europe\",\"type\":\"Region\",\"displayName\":\"Europe\",\"regionalDisplayName\":\"Europe\",\"metadata\":{\"regionType\":\"Logical\",\"regionCategory\":\"Other\"}},{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/locations/france\",\"name\":\"france\",\"type\":\"Region\",\"displayName\":\"France\",\"regionalDisplayName\":\"France\",\"metadata\":{\"regionType\":\"Logical\",\"regionCategory\":\"Other\"}},{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/locations/germany\",\"name\":\"germany\",\"type\":\"Region\",\"displayName\":\"Germany\",\"regionalDisplayName\":\"Germany\",\"metadata\":{\"regionType\":\"Logical\",\"regionCategory\":\"Other\"}},{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/locations/global\",\"name\":\"global\",\"type\":\"Region\",\"displayName\":\"Global\",\"regionalDisplayName\":\"Global\",\"metadata\":{\"regionType\":\"Logical\",\"regionCategory\":\"Other\"}},{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/locations/india\",\"name\":\"india\",\"type\":\"Region\",\"displayName\":\"India\",\"regionalDisplayName\":\"India\",\"metadata\":{\"regionType\":\"Logical\",\"regionCategory\":\"Other\"}},{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/locations/japan\",\"name\":\"japan\",\"type\":\"Region\",\"displayName\":\"Japan\",\"regionalDisplayName\":\"Japan\",\"metadata\":{\"regionType\":\"Logical\",\"regionCategory\":\"Other\"}},{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/locations/korea\",\"name\":\"korea\",\"type\":\"Region\",\"displayName\":\"Korea\",\"regionalDisplayName\":\"Korea\",\"metadata\":{\"regionType\":\"Logical\",\"regionCategory\":\"Other\"}},{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/locations/norway\",\"name\":\"norway\",\"type\":\"Region\",\"displayName\":\"Norway\",\"regionalDisplayName\":\"Norway\",\"metadata\":{\"regionType\":\"Logical\",\"regionCategory\":\"Other\"}},{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/locations/southafrica\",\"name\":\"southafrica\",\"type\":\"Region\",\"displayName\":\"South
+        Africa\",\"regionalDisplayName\":\"South Africa\",\"metadata\":{\"regionType\":\"Logical\",\"regionCategory\":\"Other\"}},{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/locations/switzerland\",\"name\":\"switzerland\",\"type\":\"Region\",\"displayName\":\"Switzerland\",\"regionalDisplayName\":\"Switzerland\",\"metadata\":{\"regionType\":\"Logical\",\"regionCategory\":\"Other\"}},{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/locations/uae\",\"name\":\"uae\",\"type\":\"Region\",\"displayName\":\"United
+        Arab Emirates\",\"regionalDisplayName\":\"United Arab Emirates\",\"metadata\":{\"regionType\":\"Logical\",\"regionCategory\":\"Other\"}},{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/locations/uk\",\"name\":\"uk\",\"type\":\"Region\",\"displayName\":\"United
         Kingdom\",\"regionalDisplayName\":\"United Kingdom\",\"metadata\":{\"regionType\":\"Logical\",\"regionCategory\":\"Other\"}},{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/locations/unitedstates\",\"name\":\"unitedstates\",\"type\":\"Region\",\"displayName\":\"United
         States\",\"regionalDisplayName\":\"United States\",\"metadata\":{\"regionType\":\"Logical\",\"regionCategory\":\"Other\"}},{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/locations/eastasiastage\",\"name\":\"eastasiastage\",\"type\":\"Region\",\"displayName\":\"East
         Asia (Stage)\",\"regionalDisplayName\":\"(Asia Pacific) East Asia (Stage)\",\"metadata\":{\"regionType\":\"Logical\",\"regionCategory\":\"Other\",\"geographyGroup\":\"Asia
@@ -149,11 +151,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '29519'
+      - '31158'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 03 Sep 2021 01:44:47 GMT
+      - Wed, 15 Sep 2021 03:31:33 GMT
       expires:
       - '-1'
       pragma:
@@ -177,7 +179,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/20.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-resource/0.0.0 Python/3.8.11 (Linux-5.8.0-1040-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000?api-version=2021-01-01
@@ -192,7 +194,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 03 Sep 2021 01:44:47 GMT
+      - Wed, 15 Sep 2021 03:31:33 GMT
       expires:
       - '-1'
       pragma:
