@@ -9,7 +9,7 @@ from github import Github
 from azure.storage.blob import BlobClient
 
 import reply_generator as rg
-from utils import update_issue_body, get_pkname_and_readme_link, \
+from utils import update_issue_body, get_readme_and_output_folder, \
                   get_python_pipelines, get_pipeline_url, auto_close_issue
 
 
