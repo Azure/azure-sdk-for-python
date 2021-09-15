@@ -12,5 +12,8 @@ __all__ = ['WebPubSubServiceClient']
 try:
     from ._patch import patch_sdk  # type: ignore
     patch_sdk()
+
+    from ._patch import AsyncWebPubSubServicePatchClient as WebPubSubServiceClient
+    __all__ = ['WebPubSubServiceClient']
 except ImportError:
     pass

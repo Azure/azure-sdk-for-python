@@ -1,3 +1,4 @@
+# coding=utf-8
 # --------------------------------------------------------------------------
 #
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -93,7 +94,7 @@ class WebPubSubServiceClientConfiguration(Configuration):
                 self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
 
 
-class AsyncWebPubSubServicePatchClient:
+class AsyncWebPubSubServicePatchClient(WebPubSubServiceClient):
     """WebPubSubServiceClient.
 
     :ivar health_api: HealthApiOperations operations
@@ -137,5 +138,4 @@ class AsyncWebPubSubServicePatchClient:
 
 
 def patch_sdk():
-    WebPubSubServiceClient.__init__ = AsyncWebPubSubServicePatchClient.__init__
-    WebPubSubServiceClient.from_connection_string = AsyncWebPubSubServicePatchClient.from_connection_string
+    pass
