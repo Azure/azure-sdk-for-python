@@ -4,6 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 
+# pylint: disable=unsubscriptable-object
+# disabled unsubscriptable-object because of pylint bug referenced here:
+# https://github.com/PyCQA/pylint/issues/3882
+
 from typing import TYPE_CHECKING, Any, Optional  # pylint: disable=unused-import
 
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -21,11 +25,11 @@ if TYPE_CHECKING:
     from .._generated.aio.operations import CallConnectionsOperations
     from .._models import PlayAudioOptions
 
-class CallConnection(object):
+class CallConnection:
     def __init__(
             self,
             call_connection_id: str,
-            call_connection_client: CallConnectionsOperations
+            call_connection_client: 'CallConnectionsOperations'
         ) -> None:
 
         self.call_connection_id = call_connection_id
@@ -63,7 +67,7 @@ class CallConnection(object):
     async def play_audio(
             self,
             audio_file_uri: str,
-            play_audio_options: PlayAudioOptions,
+            play_audio_options: 'PlayAudioOptions',
             **kwargs: Any
         ) -> PlayAudioResult:
 

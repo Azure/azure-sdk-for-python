@@ -4,6 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 
+# pylint: disable=unsubscriptable-object
+# disabled unsubscriptable-object because of pylint bug referenced here:
+# https://github.com/PyCQA/pylint/issues/3882
+
 from typing import TYPE_CHECKING, Any, List  # pylint: disable=unused-import
 
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -23,7 +27,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
     from .._models import CreateCallOptions, JoinCallOptions
 
-class CallingServerClient(object):
+class CallingServerClient:
     """A client to interact with the AzureCommunicationService Calling Server.
 
     This client provides calling operations.
@@ -42,7 +46,7 @@ class CallingServerClient(object):
     def __init__(
             self,
             endpoint: str,
-            credential: AsyncTokenCredential,
+            credential: 'AsyncTokenCredential',
             **kwargs: Any
         ) -> None:
         try:
@@ -71,7 +75,7 @@ class CallingServerClient(object):
             cls,
             conn_str: str,
             **kwargs: Any
-        ) -> CallingServerClient:
+        ) -> 'CallingServerClient':
         """Create CallingServerClient from a Connection String.
 
         :param str conn_str:
@@ -129,7 +133,7 @@ class CallingServerClient(object):
         self,
         source: CommunicationIdentifier,
         targets: List[CommunicationIdentifier],
-        options: CreateCallOptions,
+        options: 'CreateCallOptions',
         **kwargs: Any
     ) -> CallConnection:
         """Create an outgoing call from source to target identities.
@@ -176,7 +180,7 @@ class CallingServerClient(object):
         self,
         server_call_id: str,
         source: CommunicationIdentifier,
-        call_options: JoinCallOptions,
+        call_options: 'JoinCallOptions',
         **kwargs: Any
     ) -> CallConnection:
         """Join the call using server call id.
