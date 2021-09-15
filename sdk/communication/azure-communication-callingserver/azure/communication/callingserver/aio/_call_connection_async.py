@@ -4,35 +4,44 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, overload
+# pylint: disable=unsubscriptable-object
+# disabled unsubscriptable-object because of pylint bug referenced here:
+# https://github.com/PyCQA/pylint/issues/3882
+
+from typing import TYPE_CHECKING, Any, Optional  # pylint: disable=unused-import
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from .._generated.aio.operations import CallConnectionsOperations
-from .._generated.models import CancelAllMediaOperationsRequest, PlayAudioRequest, PhoneNumberIdentifierModel
-from .._converters import PlayAudioRequestConverter, AddParticipantRequestConverter
-from .._models import PlayAudioOptions, PlayAudioResult, CancelAllMediaOperationsResult, AddParticipantResult
-from .._communication_identifier_serializer import (deserialize_identifier,
-                                                   serialize_identifier)
+from .._communication_identifier_serializer import serialize_identifier
+from .._converters import (AddParticipantRequestConverter,
+                           PlayAudioRequestConverter)
+from .._generated.models import (AddParticipantResult,
+                                 CancelAllMediaOperationsRequest,
+                                 CancelAllMediaOperationsResult,
+                                 PhoneNumberIdentifierModel, PlayAudioResult)
+from .._shared.models import CommunicationIdentifier
 
-class CallConnection(object):
+if TYPE_CHECKING:
+    from .._generated.aio.operations import CallConnectionsOperations
+    from .._models import PlayAudioOptions
+
+class CallConnection:
     def __init__(
             self,
-            call_connection_id, # type: str
-            call_connection_client, # type: CallConnectionsOperations
-            **kwargs  # type: Any
-        ): # type: (...) -> None
+            call_connection_id: str,
+            call_connection_client: 'CallConnectionsOperations'
+        ) -> None:
 
         self.call_connection_id = call_connection_id
-        self.call_connection_client = call_connection_client
+        self._call_connection_client = call_connection_client
 
     @distributed_trace_async()
     async def hang_up(
             self,
-            **kwargs # type: Any
-        ): # type: (...) -> None
+            **kwargs: Any
+        ) -> None:
 
-        return await self.call_connection_client.hangup_call(
+        return await self._call_connection_client.hangup_call(
             call_connection_id=self.call_connection_id,
             **kwargs
         )
@@ -40,29 +49,27 @@ class CallConnection(object):
     @distributed_trace_async()
     async def cancel_all_media_operations(
             self,
-            operation_context = None, # type: Optional[str]
-            **kwargs # type: Any
-        ): # type: (...) -> CancelAllMediaOperationsResult
+            operation_context: Optional[str],
+            **kwargs: Any
+        ) -> CancelAllMediaOperationsResult:
 
         if operation_context is not None:
             kwargs['operation_context'] = operation_context
         request = CancelAllMediaOperationsRequest(**kwargs)
 
-        cancel_all_media_operations_result = await self.call_connection_client.cancel_all_media_operations(
+        return await self._call_connection_client.cancel_all_media_operations(
             call_connection_id=self.call_connection_id,
             cancel_all_media_operation_request=request,
             **kwargs
         )
 
-        return CancelAllMediaOperationsResult._from_generated(cancel_all_media_operations_result)
-
     @distributed_trace_async()
     async def play_audio(
             self,
-            audio_file_uri, # type: str
-            play_audio_options, # type: PlayAudioOptions
-            **kwargs, # type: str: Any
-        ): # type: (...) -> PlayAudioResult
+            audio_file_uri: str,
+            play_audio_options: 'PlayAudioOptions',
+            **kwargs: Any
+        ) -> PlayAudioResult:
 
         if not audio_file_uri:
             raise ValueError("audio_file_uri can not be None")
@@ -72,51 +79,48 @@ class CallConnection(object):
 
         play_audio_request = PlayAudioRequestConverter.convert(audio_file_uri, play_audio_options)
 
-        play_audio_result = await self.call_connection_client.play_audio(
+        return await self._call_connection_client.play_audio(
             call_connection_id=self.call_connection_id,
             request=play_audio_request,
             **kwargs
         )
 
-        return PlayAudioResult._from_generated(play_audio_result)
-
-
     @distributed_trace_async()
     async def add_participant(
             self,
-            participant,  # type: CommunicationIdentifier
-            alternate_caller_id, # type: Optional[str]
-            operation_context, # type: Optional[str]
-            **kwargs # type: Any
-        ): # type: (...) -> AddParticipantResult
+            participant: CommunicationIdentifier,
+            alternate_caller_id: Optional[str],
+            operation_context: Optional[str],
+            **kwargs: Any
+        ) -> AddParticipantResult:
 
         if not participant:
             raise ValueError("participant can not be None")
 
-        alternate_caller_id = None if alternate_caller_id == None else PhoneNumberIdentifierModel(value=alternate_caller_id)
+        alternate_caller_id = (None
+            if alternate_caller_id is None
+            else PhoneNumberIdentifierModel(value=alternate_caller_id))
 
         add_participant_request = AddParticipantRequestConverter.convert(
-            serialize_identifier(participant),
-            alternate_caller_id,
-            operation_context
+            participant=serialize_identifier(participant),
+            alternate_caller_id=alternate_caller_id,
+            operation_context=operation_context
             )
 
-        add_participant_result = await self.call_connection_client.add_participant(
+        return await self._call_connection_client.add_participant(
             call_connection_id=self.call_connection_id,
             add_participant_request=add_participant_request,
             **kwargs
         )
 
-        return AddParticipantResult._from_generated(add_participant_result)
-
     @distributed_trace_async()
     async def remove_participant(
             self,
-            participant_id,  # type: str
-            **kwargs # type: Any
-        ): # type: (...) -> None
+            participant_id: str,
+            **kwargs: Any
+        ) -> None:
 
-        return await self.call_connection_client.remove_participant(
+        return await self._call_connection_client.remove_participant(
             call_connection_id=self.call_connection_id,
             participant_id=participant_id,
             **kwargs
@@ -126,11 +130,11 @@ class CallConnection(object):
         """Close the :class:
         `~azure.communication.callingserver.aio.CallConnection` session.
         """
-        await self.call_connection_client.close()
+        await self._call_connection_client.close()
 
     async def __aenter__(self) -> "CallConnection":
-        await self.call_connection_client.__aenter__()
+        await self._call_connection_client.__aenter__()
         return self
 
     async def __aexit__(self, *args: "Any") -> None:
-        await self.call_connection_client.__aexit__(*args)
+        await self._call_connection_client.__aexit__(*args)

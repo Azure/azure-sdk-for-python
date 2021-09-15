@@ -4,35 +4,25 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Any, List
+from typing import TYPE_CHECKING, Any, List  # pylint: disable=unused-import
 
 from azure.core.tracing.decorator import distributed_trace
 
 from ._call_connection import CallConnection
-from ._communication_identifier_serializer import (deserialize_identifier,
-                                                   serialize_identifier)
+from ._communication_identifier_serializer import serialize_identifier
+from ._converters import JoinCallRequestConverter
 from ._generated._azure_communication_calling_server_service import \
     AzureCommunicationCallingServerService
 from ._generated.models import CreateCallRequest, PhoneNumberIdentifierModel
-from ._models import CreateCallOptions, JoinCallOptions
 from ._server_call import ServerCall
 from ._shared.models import CommunicationIdentifier
+from ._shared.utils import get_authentication_policy, parse_connection_str
+from ._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
-from ._shared.utils import (get_authentication_policy, get_current_utc_time,
-                            parse_connection_str)
-from ._converters import JoinCallRequestConverter
-
-from ._version import SDK_MONIKER
-from ._converters import JoinCallRequestConverter
-from ._content_downloader import ContentDownloader
-from ._generated import models as _models
-from msrest import Deserializer, Serializer
-from azure.core import PipelineClient
-from azure.core.pipeline.transport import HttpResponse
-from ._generated._configuration import AzureCommunicationCallingServerServiceConfiguration
+    from ._models import CreateCallOptions, JoinCallOptions
 
 class CallingServerClient(object):
     """A client to interact with the AzureCommunicationService Calling Server.
@@ -52,10 +42,10 @@ class CallingServerClient(object):
     """
     def __init__(
             self,
-            endpoint, # type: str
-            credential, # type: TokenCredential
-            **kwargs # type: Any
-        ): # type: (...) -> None
+            endpoint,  # type: str
+            credential,  # type: TokenCredential
+            **kwargs  # type: Any
+        ):  # type: (...) -> None
         try:
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
@@ -80,8 +70,8 @@ class CallingServerClient(object):
     def from_connection_string(
             cls,
             conn_str,  # type: str
-            **kwargs # type: Any
-        ): # type: (...) -> CallingServerClient
+            **kwargs  # type: Any
+        ):  # type: (...) -> CallingServerClient
         """Create CallingServerClient from a Connection String.
 
         :param str conn_str:
@@ -104,8 +94,8 @@ class CallingServerClient(object):
 
     def get_call_connection(
             self,
-            call_connection_id,  # type: str
-        ): # type: (...) -> CallConnection
+            call_connection_id  # type: str
+        ):  # type: (...) -> CallConnection
         """Initializes a new instance of CallConnection.
 
         :param str call_connection_id:
@@ -120,8 +110,8 @@ class CallingServerClient(object):
 
     def initialize_server_call(
             self,
-            server_call_id,  # type: str
-        ): # type: (...) -> ServerCall
+            server_call_id  # type: str
+        ):  # type: (...) -> ServerCall
         """Initializes a server call.
 
         :param str server_call_id:
@@ -140,8 +130,8 @@ class CallingServerClient(object):
         source,  # type: CommunicationIdentifier
         targets,  # type: List[CommunicationIdentifier]
         options,  # type: CreateCallOptions
-        **kwargs: Any
-    ): # type: (...) -> CallConnection
+        **kwargs  # type: Any
+    ):  # type: (...) -> CallConnection
         """Create an outgoing call from source to target identities.
 
         :param CommunicationIdentifier source:
@@ -168,7 +158,9 @@ class CallingServerClient(object):
             callback_uri=options.callback_uri,
             requested_media_types=options.requested_media_types,
             requested_call_events=options.requested_call_events,
-            alternate_caller_id=None if options.alternate_Caller_Id == None else PhoneNumberIdentifierModel(value=options.alternate_Caller_Id.properties['value']),
+            alternate_caller_id=(None
+                if options.alternate_Caller_Id is None
+                else PhoneNumberIdentifierModel(value=options.alternate_Caller_Id.properties['value'])),
             subject=options.subject,
             **kwargs
         )
@@ -187,7 +179,7 @@ class CallingServerClient(object):
         source,  # type: CommunicationIdentifier
         call_options,  # type: JoinCallOptions
         **kwargs  # type: Any
-    ): # type: (...) -> CallConnection
+    ):  # type: (...) -> CallConnection
         """Join the call using server call id.
 
         :param str server_call_id:

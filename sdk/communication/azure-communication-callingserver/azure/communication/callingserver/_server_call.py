@@ -4,78 +4,53 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from urllib.parse import urlparse
-from typing import Any, List, Optional
+from typing import TYPE_CHECKING, Any, Optional  # pylint: disable=unused-import
 
 from azure.core.tracing.decorator import distributed_trace
 
-from ._generated.operations import ServerCallsOperations
-from ._generated.models import PlayAudioRequest, StartCallRecordingRequest, \
-    AddParticipantRequest, PhoneNumberIdentifierModel, \
-    CommunicationIdentifierModel, JoinCallRequest
-from ._models import PlayAudioResult, JoinCallResult, AddParticipantResult, \
-    StartCallRecordingResult, MediaType, EventSubscriptionType, CallRecordingProperties
-from ._communication_identifier_serializer import (deserialize_identifier,
-                                                   serialize_identifier)
-from ._shared.models import CommunicationIdentifier
-from azure.core.pipeline.transport import AsyncHttpResponse
+from ._communication_identifier_serializer import serialize_identifier
+from ._converters import (AddParticipantRequestConverter,
+                          PlayAudioRequestConverter)
+from ._generated.models import (AddParticipantResult,
+                                PhoneNumberIdentifierModel,
+                                PlayAudioResult)
+
+if TYPE_CHECKING:
+    from ._generated.operations import ServerCallsOperations
+    from ._models import PlayAudioOptions
+    from ._shared.models import CommunicationIdentifier
 
 class ServerCall(object):
 
     def __init__(
         self,
-        server_call_id: str,  # type: str
-        server_call_client: ServerCallsOperations,  # type: AsyncTokenCredential
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        server_call_id,  # type: str
+        server_call_client  # type: ServerCallsOperations
+    ):  # type: (...) -> None
         self.server_call_id = server_call_id
-        self.server_call_client = server_call_client
+        self._server_call_client = server_call_client
 
     @distributed_trace()
     def play_audio(
-        self,
-        audio_file_uri, # type: str
-        loop, # type: bool
-        audio_file_id, # type: str
-        callback_uri, # type: str
-        operation_context = None, # type: Optional[str]
-        **kwargs, # type: Any
-    ): # type: (...) -> PlayAudioResult
+            self,
+            audio_file_uri,  # type: str
+            play_audio_options,  # type: PlayAudioOptions
+            **kwargs  # type: Any
+        ):  # type: (...) -> PlayAudioResult
 
-        try:
-            if not audio_file_uri.lower().startswith('http'):
-                audio_file_uri = "https://" + audio_file_uri
-        except AttributeError:
-            raise ValueError("URL must be a string.")
+        if not audio_file_uri:
+            raise ValueError("audio_file_uri can not be None")
 
-        if not audio_file_id:
-            raise ValueError("audio_File_id can not be None")
+        if not play_audio_options:
+            raise ValueError("options can not be None")
 
-        try:
-            if not callback_uri.lower().startswith('http'):
-                callback_uri = "https://" + callback_uri
-        except AttributeError as ex:
-            raise ValueError("URL must be a string.") from ex
+        play_audio_request = PlayAudioRequestConverter.convert(audio_file_uri, play_audio_options)
 
-        if not operation_context:
-            raise ValueError("operation_context can not be None")
-
-        request = PlayAudioRequest(
-            audio_file_uri=audio_file_uri,
-            loop = loop,
-            operation_context=operation_context,
-            audio_file_id=audio_file_id,
-            callback_uri=callback_uri
-        )
-
-        play_audio_result = self.server_call_client.play_audio(
+        return self._server_call_client.play_audio(
             server_call_id=self.server_call_id,
-            request=request,
+            request=play_audio_request,
             **kwargs
         )
-
-        return PlayAudioResult._from_generated(play_audio_result)
 
     @distributed_trace()
     def start_recording(
@@ -202,37 +177,41 @@ class ServerCall(object):
     @distributed_trace()
     def add_participant(
             self,
-            participant, # type: CommunicationIdentifier
-            alternate_caller_id, # type: Optional[str]
-            operation_context, # type: Optional[str]
-            **kwargs # type: Any
-        ): # type: (...) -> AddParticipantResult
+            participant,  # type: CommunicationIdentifier
+            callback_uri,  # type: str
+            alternate_caller_id,  # type: Optional[str]
+            operation_context,  # type: Optional[str]
+            **kwargs  # type: Any
+        ):  # type: (...) -> AddParticipantResult
 
         if not participant:
             raise ValueError("participant can not be None")
 
-        request = AddParticipantRequest(participant=serialize_identifier(participant),
-        alternate_caller_id=None if alternate_caller_id == None else PhoneNumberIdentifierModel(value=alternate_caller_id.properties['value']),
-        operation_context=operation_context,
-        callback_uri=None,
-        **kwargs)
+        alternate_caller_id = (None
+            if alternate_caller_id is None
+            else PhoneNumberIdentifierModel(value=alternate_caller_id))
 
-        add_participant_result = self.server_call_client.add_participant(
+        add_participant_request = AddParticipantRequestConverter.convert(
+            participant=serialize_identifier(participant),
+            alternate_caller_id=alternate_caller_id,
+            operation_context=operation_context,
+            callback_uri=callback_uri
+            )
+
+        return self._server_call_client.add_participant(
             server_call_id=self.server_call_id,
-            add_participant_request=request,
+            add_participant_request=add_participant_request,
             **kwargs
         )
-
-        return AddParticipantResult._from_generated(add_participant_result)
 
     @distributed_trace()
     def remove_participant(
             self,
-            participant_id, # type: str
-            **kwargs # type: Any
-        ): # type: (...) -> None
+            participant_id,  # type: str
+            **kwargs  # type: Any
+        ):  # type: (...) -> None
 
-        return self.server_call_client.remove_participant(
+        return self._server_call_client.remove_participant(
             server_call_id=self.server_call_id,
             participant_id=participant_id,
             **kwargs

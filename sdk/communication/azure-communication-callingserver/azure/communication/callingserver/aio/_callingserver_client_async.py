@@ -4,32 +4,32 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Any, List
+# pylint: disable=unsubscriptable-object
+# disabled unsubscriptable-object because of pylint bug referenced here:
+# https://github.com/PyCQA/pylint/issues/3882
+
+from typing import TYPE_CHECKING, Any, List  # pylint: disable=unused-import
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from ._call_connection_async import CallConnection
-from .._communication_identifier_serializer import (deserialize_identifier,
-                                                   serialize_identifier)
+from .._communication_identifier_serializer import serialize_identifier
 from .._generated.aio._azure_communication_calling_server_service import \
     AzureCommunicationCallingServerService
 from .._generated.models import CreateCallRequest, PhoneNumberIdentifierModel
-from .._models import CreateCallOptions, JoinCallOptions
-from ._server_call_async import ServerCall
 from .._shared.models import CommunicationIdentifier
 from ._content_downloader_async import ContentDownloader
 from ._download_async import ContentStreamDownloader
+from ._call_connection_async import CallConnection
+from ._server_call_async import ServerCall
+from .._converters import JoinCallRequestConverter
+from .._shared.utils import get_authentication_policy, parse_connection_str
+from .._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
+    from .._models import CreateCallOptions, JoinCallOptions
 
-from .._shared.utils import (get_authentication_policy, get_current_utc_time,
-                            parse_connection_str)
-from .._converters._converter import JoinCallRequestConverter
-
-from .._version import SDK_MONIKER
-
-class CallingServerClient(object):
+class CallingServerClient:
     """A client to interact with the AzureCommunicationService Calling Server.
 
     This client provides calling operations.
@@ -47,10 +47,10 @@ class CallingServerClient(object):
     """
     def __init__(
             self,
-            endpoint, # type: str
-            credential, # type: AsyncTokenCredential
-            **kwargs # type: Any
-        ): # type: (...) -> None
+            endpoint: str,
+            credential: 'AsyncTokenCredential',
+            **kwargs: Any
+        ) -> None:
         try:
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
@@ -66,7 +66,8 @@ class CallingServerClient(object):
             self._endpoint,
             authentication_policy=get_authentication_policy(endpoint, credential, decode_url=True, is_async=True),
             sdk_moniker=SDK_MONIKER,
-            **kwargs)
+            **kwargs
+            )
 
         self._call_connection_client = self._callingserver_service_client.call_connections
         self._server_call_client = self._callingserver_service_client.server_calls
@@ -74,9 +75,9 @@ class CallingServerClient(object):
     @classmethod
     def from_connection_string(
             cls,
-            conn_str,  # type: str
-            **kwargs # type: Any
-        ): # type: (...) -> CallingServerClient
+            conn_str: str,
+            **kwargs: Any
+        ) -> 'CallingServerClient':
         """Create CallingServerClient from a Connection String.
 
         :param str conn_str:
@@ -99,8 +100,8 @@ class CallingServerClient(object):
 
     def get_call_connection(
             self,
-            call_connection_id,  # type: str
-        ): # type: (...) -> CallConnection
+            call_connection_id: str,
+        ) -> CallConnection:
         """Initializes a new instance of CallConnection.
 
         :param str call_connection_id:
@@ -115,8 +116,8 @@ class CallingServerClient(object):
 
     def initialize_server_call(
             self,
-            server_call_id,  # type: str
-        ): # type: (...) -> ServerCall
+            server_call_id: str
+        ) -> ServerCall:
         """Initializes a server call.
 
         :param str server_call_id:
@@ -132,11 +133,11 @@ class CallingServerClient(object):
     @distributed_trace_async()
     async def create_call_connection(
         self,
-        source,  # type: CommunicationIdentifier
-        targets,  # type: List[CommunicationIdentifier]
-        options,  # type: CreateCallOptions
+        source: CommunicationIdentifier,
+        targets: List[CommunicationIdentifier],
+        options: 'CreateCallOptions',
         **kwargs: Any
-    ): # type: (...) -> CallConnection
+    ) -> CallConnection:
         """Create an outgoing call from source to target identities.
 
         :param CommunicationIdentifier source:
@@ -163,7 +164,9 @@ class CallingServerClient(object):
             callback_uri=options.callback_uri,
             requested_media_types=options.requested_media_types,
             requested_call_events=options.requested_call_events,
-            alternate_caller_id=None if options.alternate_Caller_Id == None else PhoneNumberIdentifierModel(value=options.alternate_Caller_Id.properties['value']),
+            alternate_caller_id=(None
+                if options.alternate_Caller_Id is None
+                else PhoneNumberIdentifierModel(value=options.alternate_Caller_Id.properties['value'])),
             subject=options.subject,
             **kwargs
         )
@@ -177,11 +180,11 @@ class CallingServerClient(object):
     @distributed_trace_async()
     async def join_call(
         self,
-        server_call_id,  # type: str
-        source,  # type: CommunicationIdentifier
-        call_options,  # type: JoinCallOptions
-        **kwargs  # type: Any
-    ): # type: (...) -> CallConnection
+        server_call_id: str,
+        source: CommunicationIdentifier,
+        call_options: 'JoinCallOptions',
+        **kwargs: Any
+    ) -> CallConnection:
         """Join the call using server call id.
 
         :param str server_call_id:
