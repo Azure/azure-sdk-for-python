@@ -48,6 +48,10 @@ class TestExample(AzureRecordedTestCase):
 For async tests, import the RecordedByProxyAsync decorator from `devtools_testutils.aio` and use it in the same
 way as RecordedByProxy.
 
+> **Note:** since AzureRecordedTestCase doesn't inherit from `unittest.TestCase`, test class names need to start
+> with "Test" in order to be properly collected by pytest by default. For more information, please refer to
+> [pytest's documentation][pytest_collection].
+
 ## Run the tests
 
 ### Perform one-time setup
@@ -165,5 +169,6 @@ case.
 [detailed_docs]: https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md
 [general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/README.md
 [proxy_cert_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/trusting-cert-per-language.md
+[pytest_collection]: https://docs.pytest.org/en/latest/explanation/goodpractices.html#test-discovery
 [sanitizers]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md#session-and-test-level-transforms-sanitiziers-and-matchers
 [vcrpy]: https://vcrpy.readthedocs.io/en/latest/
