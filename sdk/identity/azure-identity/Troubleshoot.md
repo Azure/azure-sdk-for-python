@@ -198,9 +198,8 @@ Please ensure PowerShell is installed on your platform by following the instruct
 
 #### Azure Az Module Not Installed
 
-The `Azure Powershell Credential` failed to execute as Azure az module is not installed.
-To use Azure Powershell credential, the Azure az module needs to be installed, please follow the instructions [here](https://docs.microsoft.com/powershell/azure/install-az-ps?view=azps-6.3.0)
-to install it for your platform and then try running the credential again.
+Please follow the instructions [here](https://docs.microsoft.com/powershell/azure/install-az-ps)
+to install the Azure Az PowerShell module.
 
 #### Azure account not logged in
 
