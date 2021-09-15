@@ -3,8 +3,8 @@ trigger:
 
 jobs:
 
-  - job: Validate_RC_Python_Build
-    displayName: Validate Release Candidate Python
+  - job: Validate_RC_Python_Build_Windows
+    displayName: Validate Release Candidate Python - Windows
     variables:
       skipComponentGovernanceDetection: true
       targetRC: "3.10.0-rc.2"
@@ -17,8 +17,43 @@ jobs:
     steps:
       - template: /eng/pipelines/templates/steps/use-python-version.yml
         parameters:
-          versionSpec: $(targetRC)
+          versionSpec: 3.10.0-rc.2
         
+      - script: |
+          python -m pip freeze
+          python -m pip --version
+          pip install setuptools==56.0.0 wheel==0.37.0 tox==3.24.3 tox-monorepo==0.1.2 packaging==21.0
+        displayName: Install Dependencies
+
+      - script: |
+          python ./scripts/devops_tasks/setup_execute_tests.py "$(BuildTargetingString)" --junitxml="junit/test_results.xml" --toxenv="whl"
+        displayName: 'Setup - Run Filtered Tests For Python $(targetRC)'
+        env:
+          YARL_NO_EXTENSIONS: 1
+        continueOnError: true
+
+      - task: PublishTestResults@2
+        condition: always()
+        inputs:
+          testResultsFiles: '**/*test*.xml'
+          testRunTitle: 'Python $(targetRC)'
+          failTaskOnFailedTests: true
+
+  - job: Validate_RC_Python_Build_Linux
+    displayName: Validate Release Candidate Python - Linux
+    variables:
+      skipComponentGovernanceDetection: true
+
+    timeoutInMinutes: 90
+
+    pool:
+      vmImage: 'ubuntu-20.04'
+
+    steps:
+      - template: /eng/pipelines/templates/steps/use-python-version.yml
+        parameters:
+          versionSpec: '3.10.0-rc.2'
+
       - script: |
           python -m pip freeze
           python -m pip --version
