@@ -33,7 +33,7 @@ except HttpResponseError as e:
 try:
     # Raise an exception if the service rejected the call
     client.web_pub_sub.send_to_all('Hub', message='hello, text!', content_type='text/plain')
-    print('Successfully sent a JSON message')
+    print('Successfully sent a text message')
 except HttpResponseError as e:
     print('Failed to send JSON message: {}'.format(e.response.json()))
 
