@@ -7,7 +7,7 @@ jobs:
     displayName: Validate Release Candidate Python - Windows
     variables:
       skipComponentGovernanceDetection: true
-      targetRC: "3.10.0-rc.2"
+      PythonVersion: '3.10.0-rc.2'
 
     timeoutInMinutes: 90
 
@@ -17,7 +17,7 @@ jobs:
     steps:
       - template: /eng/pipelines/templates/steps/use-python-version.yml
         parameters:
-          versionSpec: 3.10.0-rc.2
+          versionSpec: $(PythonVersion)
         
       - script: |
           python -m pip freeze
@@ -27,7 +27,7 @@ jobs:
 
       - script: |
           python ./scripts/devops_tasks/setup_execute_tests.py "$(BuildTargetingString)" --junitxml="junit/test_results.xml" --toxenv="whl"
-        displayName: 'Setup - Run Filtered Tests For Python $(targetRC)'
+        displayName: 'Setup - Run Filtered Tests For Python $(PythonVersion)'
         env:
           YARL_NO_EXTENSIONS: 1
         continueOnError: true
@@ -36,13 +36,14 @@ jobs:
         condition: always()
         inputs:
           testResultsFiles: '**/*test*.xml'
-          testRunTitle: 'Python $(targetRC)'
+          testRunTitle: 'Python $(PythonVersion)'
           failTaskOnFailedTests: true
 
   - job: Validate_RC_Python_Build_Linux
     displayName: Validate Release Candidate Python - Linux
     variables:
       skipComponentGovernanceDetection: true
+      PythonVersion: '3.10.0-rc.2'
 
     timeoutInMinutes: 90
 
@@ -52,7 +53,7 @@ jobs:
     steps:
       - template: /eng/pipelines/templates/steps/use-python-version.yml
         parameters:
-          versionSpec: '3.10.0-rc.2'
+          versionSpec: $(PythonVersion)
 
       - script: |
           python -m pip freeze
@@ -61,8 +62,10 @@ jobs:
         displayName: Install Dependencies
 
       - script: |
+          $find /usr/lib -name "libffi.so.6"
+          
           python ./scripts/devops_tasks/setup_execute_tests.py "$(BuildTargetingString)" --junitxml="junit/test_results.xml" --toxenv="whl"
-        displayName: 'Setup - Run Filtered Tests For Python $(targetRC)'
+        displayName: 'Setup - Run Filtered Tests For Python $(PythonVersion)'
         env:
           YARL_NO_EXTENSIONS: 1
         continueOnError: true
@@ -71,7 +74,7 @@ jobs:
         condition: always()
         inputs:
           testResultsFiles: '**/*test*.xml'
-          testRunTitle: 'Python $(targetRC)'
+          testRunTitle: 'Python $(PythonVersion)'
           failTaskOnFailedTests: true
 
   - job: Validate_Nightly_Python_Build
