@@ -614,9 +614,9 @@ def _validate_skillset(skillset):
 
     error_strings = []
     for skill in skills:
-        if isinstance(skill, dict):
+        try:
             skill_version = skill.get('skill_version')
-        else:
+        except AttributeError:
             skill_version = getattr(skill, 'skill_version', None)
         if not skill_version:
             continue
@@ -632,10 +632,10 @@ def _validate_skillset(skillset):
 
         errors = []
         for item in unsupported:
-            if isinstance(skill, dict):
+            try:
                 if skill.get(item, None):
                     errors.append(item)
-            else:
+            except AttributeError:
                 if skill.__dict__.get(item, None):
                     errors.append(item)
         if errors:
