@@ -157,7 +157,7 @@ Similarly, `logging_enable` can enable detailed logging for a single call,
 even when it isn't enabled for the client:
 
 ```python
-result = client.web_pub_sub.send_to_all(logging_enable=True)
+result = client.web_pub_sub.send_to_all(..., logging_enable=True)
 ```
 
 Http request and response details are printed to stdout with this logging config.
