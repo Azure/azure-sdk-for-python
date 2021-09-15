@@ -1,6 +1,15 @@
 [![Build Status](https://dev.azure.com/azure-sdk/public/_apis/build/status/azure-sdk-for-python.client?branchName=main)](https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=46?branchName=main)
 
-# Azure Cognitive Language Services Conversations client library for Python
+# Azure Cognitive Language Services Conversational Language Understanding client library for Python
+Conversational Language Understanding, aka LUIS vNext and **CLU** for short, is a cloud-based conversational AI service that applies custom machine-learning intelligence to a user's conversational, natural language text to predict overall meaning, and pull out relevant, detailed information (namely intents and entities).
+
+ Using CLU, you'll get the chance to train conversational language models with new transformer-based model with the following expectations:
+-   **State-of-the-art** natural language understanding technology using advanced **neural networks**.
+-   **Robust and semantically aware** classification and extraction models.
+-   **Fewer** options and dials providing a **simpler** model building experience.
+-   **Natively multilingual models** that enables you to train in one language and test in others.
+
+[Source code][conversationallanguage_client_src] | [Package (PyPI)][conversationallanguage_pypi_package] | [API reference documentation][conversationallanguage_refdocs] | [Product documentation][conversationallanguage_docs] | [Samples][conversationallanguage_samples]
 
 
 ## Getting started
@@ -9,7 +18,7 @@
 
 * Python 2.7, or 3.6 or later is required to use this package.
 * An [Azure subscription][azure_subscription]
-
+* An existing CLU resource
 
 > Note: the new unified Cognitive Language Services are not currently available for deployment.
 
@@ -22,13 +31,30 @@ pip install azure-ai-language-conversations
 ```
 
 ### Authenticate the client
-
+In order to interact with the CLU service, you'll need to create an instance of the [ConversationAnalysisClient][conversationanalysis_client_class] class. You will need an **endpoint**, and an **API key** to instantiate a client object. For more information regarding authenticating with Cognitive Services, see [Authenticate requests to Azure Cognitive Services][cognitive_auth].
 
 #### Get an API key
+You can get the **endpoint** and an **API key** from the Cognitive Services resource or CLU resource in the [Azure Portal][azure_portal].
 
+Alternatively, use the [Azure CLI][azure_cli] command shown below to get the API key from the Question Answering resource.
+
+```powershell
+az cognitiveservices account keys list --resource-group <resource-group-name> --name <resource-name>
+```
 
 
 #### Create ConversationAnalysisClient
+Once you've determined your **endpoint** and **API key** you can instantiate a `QuestionAnsweringClient`:
+
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.language.conversations import ConversationAnalysisClient
+
+endpoint = "https://{myaccount}.api.cognitive.microsoft.com"
+credential = AzureKeyCredential("{api-key}")
+
+client = ConversationAnalysisClient(endpoint, credential)
+```
 
 
 ## Key concepts
@@ -85,5 +111,14 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_core_ref_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html
 [azure_core_readme]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
 [pip_link]:https://pypi.org/project/pip/
+
+[conversationallanguage_client_src]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations
+[conversationallanguage_pypi_package]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations
+[conversationallanguage_refdocs]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations
+[conversationallanguage_docs]: https://azure.microsoft.com/en-us/services/cognitive-services/language-understanding-intelligent-service/
+[conversationallanguage_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/README.md
+
+
+[conversationanalysis_client_class]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/azure/ai/language/conversations/_conversation_analysis_client.py
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Ftemplate%2Fazure-template%2FREADME.png)
