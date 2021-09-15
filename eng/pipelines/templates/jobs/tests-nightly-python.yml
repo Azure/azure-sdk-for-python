@@ -62,7 +62,7 @@ jobs:
         displayName: Install Dependencies
 
       - script: |
-          find /usr/lib -name "libffi.so.6"
+          find /usr/lib -name "libffi.so*"
           
           python ./scripts/devops_tasks/setup_execute_tests.py "$(BuildTargetingString)" --junitxml="junit/test_results.xml" --toxenv="whl"
         displayName: 'Setup - Run Filtered Tests For Python $(PythonVersion)'
