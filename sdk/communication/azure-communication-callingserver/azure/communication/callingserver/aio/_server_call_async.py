@@ -9,6 +9,7 @@
 # https://github.com/PyCQA/pylint/issues/3882
 
 from typing import TYPE_CHECKING, Any, Optional  # pylint: disable=unused-import
+from urllib.parse import urlparse
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 

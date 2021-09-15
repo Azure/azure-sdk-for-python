@@ -33,33 +33,6 @@ class CallConnection(object):
         self._call_connection_client = call_connection_client
 
     @distributed_trace()
-    def create_call(self,
-            source: CommunicationIdentifierModel, 
-            targets: List[CommunicationIdentifierModel],
-            alternate_caller_id: PhoneNumberIdentifierModel,
-            subject: str, 
-            callback_uri: str, 
-            requested_media_types: List[MediaType],
-            requested_call_events: List[EventSubscriptionType],
-            **kwargs: Any
-    ):
-        # type: (...) -> CreateCallResult
-
-        request = CreateCallRequest(
-            alternate_caller_id = alternate_caller_id,
-            targets = targets,
-            source = source,
-            subject = subject,
-            callback_uri = callback_uri,
-            requested_media_types = requested_media_types,
-            requested_call_events = requested_call_events,
-            **kwargs)
-
-        create_call_result = self.call_connection_client.create_call(call_request=request)
-        
-        return CreateCallResult._from_generated(create_call_result)
-
-    @distributed_trace()
     def hang_up(
             self,
             **kwargs  # type: Any

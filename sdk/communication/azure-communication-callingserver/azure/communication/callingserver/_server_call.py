@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 from typing import TYPE_CHECKING, Any, Optional  # pylint: disable=unused-import
+from urllib.parse import urlparse
 
 from azure.core.tracing.decorator import distributed_trace
 
@@ -148,31 +149,6 @@ class ServerCall(object):
 
         return CallRecordingProperties._from_generated(recording_status_result)
 
-
-    @distributed_trace()
-    def join_call(
-            self,
-            source: CommunicationIdentifierModel, 
-            subject, # type: str 
-            callback_uri, # type: str 
-            requested_media_types: List[MediaType],
-            requested_call_events: List[EventSubscriptionType],
-            **kwargs, # type: Any
-    ): # type: (...) -> JoinCallResult
-
-        request = JoinCallRequest(
-            source = source,
-            subject = subject,
-            callback_uri = callback_uri,
-            requested_media_types = requested_media_types,
-            requested_call_events = requested_call_events,
-            **kwargs
-        )
-
-        join_call_result = self.server_call_client.join_call(server_call_id=self.server_call_id,
-        call_request=request)
-
-        return JoinCallResult._from_generated(join_call_result)
 
     @distributed_trace()
     def add_participant(

@@ -9,6 +9,7 @@ from azure.communication.callingserver import CallingServerClient as CallingServ
 from io import BytesIO
 
 @pytest.mark.asyncio
+@pytest.mark.skip
 async def test_download_content():
     metadata_url = "https://storage.asm.skype.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata"
     connection_string = "endpoint=https://acstelephonyportaltesting.communication.azure.com/;accesskey=/cJGRzQtFVNneQVqbUlRvsvOLwEgQwsWDQxjLnWPWcTSg3RwAfnYY4v9Ce/mN4iAZ50znB8B0UMmQ/cDHLnEtw=="
@@ -19,6 +20,7 @@ async def test_download_content():
     await downloader.readinto(stream)
     print(stream)
 
+@pytest.mark.skip
 def test_download():
     metadata_url = "https://storage.asm.skype.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata"
     connection_string = "endpoint=https://acstelephonyportaltesting.communication.azure.com/;accesskey=/cJGRzQtFVNneQVqbUlRvsvOLwEgQwsWDQxjLnWPWcTSg3RwAfnYY4v9Ce/mN4iAZ50znB8B0UMmQ/cDHLnEtw=="
