@@ -153,6 +153,7 @@ def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python
             item.bot_advice = 'failed to find Readme link and output folder. Please check !!'
             item.labels.append('attention')
             item.issue_object.set_labels(*item.labels)
+            print(e)
             raise
     try:
         print("*********************")
