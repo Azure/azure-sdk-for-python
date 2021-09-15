@@ -147,7 +147,7 @@ def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python
             raise
     else:
         try:
-            readme_link, output_folder = get_pkname_and_readme_link(request_repo, rest_repo, item.issue_object.number)
+            readme_link, output_folder = get_readme_and_output_folder(request_repo, rest_repo, item.issue_object.number)
         except Exception as e:
             print('Issue: {}  get pkname and output folder failed'.format(item.issue_object.number))
             item.bot_advice = 'failed to find Readme link and output folder. Please check !!'
