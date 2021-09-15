@@ -56,28 +56,26 @@ way as RecordedByProxy.
 
 ### Perform one-time setup
 
-The test proxy is made available for your tests via a Docker container. Run the following command to build this
-container, providing the full path to the root of your local `azure-sdk-for-python` repo in place of `{path}`:
-
-```cmd
-docker container create -v C:\\{path}\\azure-sdk-for-python:/etc/testproxy -p 5001:5001 -p 5000:5000 --name ambitious_azsdk_test_proxy azsdkengsys.azurecr.io/engsys/testproxy-lin
-```
-
-Some tests require an SSL connection to work, so the Docker image used for the container has a certificate imported
-that you need to trust on your machine. Instructions on how to do so can be found [here][proxy_cert_docs].
+The test proxy is made available for your tests via a Docker container. Some tests require an SSL connection to work, so
+the Docker image used for the container has a certificate imported that you need to trust on your machine. Instructions
+on how to do so can be found [here][proxy_cert_docs].
 
 ### Start the proxy server
 
-Run the following command to start the container whenever you want to make the test proxy available:
+There is a [PowerShell script][docker_start_proxy] in `eng/common/testproxy` that will fetch the proxy Docker image if
+you don't already have it, and will start or stop a container running the image for you. You can run the following
+command from the root of the `azure-sdk-for-python` directory to start the container whenever you want to make the test
+proxy available for running tests:
 
-```cmd
-docker container start ambitious_azsdk_test_proxy
+```powershell
+.\eng\common\testproxy\docker-start-proxy.ps1 "start"
 ```
 
 Note that the proxy is available as long as the container is running. In other words, you don't need to start and
 stop the container for each test run or between tests for different SDKs. You can run the above command in the morning
-and just stop the container whenever you'd like. In the future, the proxy container will be set up and started
-automatically when tests are run, and starting it manually will be optional.
+and just stop the container whenever you'd like. To stop the container, run the same command but with `"stop"` in place
+of `"start"`. In the future, the proxy container will be set up and started automatically when tests are run, and
+starting it manually will be optional.
 
 For more details on proxy startup, please refer to the [proxy documentation][detailed_docs].
 
@@ -167,6 +165,7 @@ The RecordedByProxy and RecordedByProxyAsync decorators send the appropriate req
 case.
 
 [detailed_docs]: https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md
+[docker_start_proxy]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/common/testproxy/docker-start-proxy.ps1
 [general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/README.md
 [proxy_cert_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/trusting-cert-per-language.md
 [pytest_collection]: https://docs.pytest.org/en/latest/explanation/goodpractices.html#test-discovery
