@@ -1797,7 +1797,7 @@ class RecognizeEntitiesAction(DictMixin):
 
     def _to_generated(self, api_version):
         if api_version == DEFAULT_API_VERSION:
-            from ._generated.v3_2_preview_1 import models
+            from ._generated.v3_2_preview_2 import models
         else:
             from ._generated.v3_1 import models
         return models.EntitiesTask(
@@ -1874,7 +1874,7 @@ class AnalyzeSentimentAction(DictMixin):
 
     def _to_generated(self, api_version):
         if api_version == DEFAULT_API_VERSION:
-            from ._generated.v3_2_preview_1 import models
+            from ._generated.v3_2_preview_2 import models
         else:
             from ._generated.v3_1 import models
         return models.SentimentAnalysisTask(
@@ -1956,7 +1956,7 @@ class RecognizePiiEntitiesAction(DictMixin):
 
     def _to_generated(self, api_version):
         if api_version == DEFAULT_API_VERSION:
-            from ._generated.v3_2_preview_1 import models
+            from ._generated.v3_2_preview_2 import models
         else:
             from ._generated.v3_1 import models
         return models.PiiTask(
@@ -2011,7 +2011,7 @@ class ExtractKeyPhrasesAction(DictMixin):
 
     def _to_generated(self, api_version):
         if api_version == DEFAULT_API_VERSION:
-            from ._generated.v3_2_preview_1 import models
+            from ._generated.v3_2_preview_2 import models
         else:
             from ._generated.v3_1 import models
         return models.KeyPhrasesTask(
@@ -2073,7 +2073,7 @@ class RecognizeLinkedEntitiesAction(DictMixin):
 
     def _to_generated(self, api_version):
         if api_version == DEFAULT_API_VERSION:
-            from ._generated.v3_2_preview_1 import models
+            from ._generated.v3_2_preview_2 import models
         else:
             from ._generated.v3_1 import models
         return models.EntityLinkingTask(
