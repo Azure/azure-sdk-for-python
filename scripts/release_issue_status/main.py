@@ -149,7 +149,7 @@ def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python
         try:
             readme_link, output_folder = get_pkname_and_readme_link(request_repo, rest_repo, item.issue_object.number)
         except Exception as e:
-            print('Issue: {}  updates body failed'.format(item.issue_object.number))
+            print('Issue: {}  get pkname and readme link failed'.format(item.issue_object.number))
             item.bot_advice = 'failed to find Readme link, Please check !!'
             item.labels.append('attention')
             item.issue_object.set_labels(*item.labels)
