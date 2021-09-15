@@ -98,8 +98,11 @@ def get_readme_and_output_folder(sdk_repo, rest_repo, issue_number):
         if 'resource-manager' in row:
             readme_link = '{}/readme.md'.format(row.strip("\r"))
             # Get output folder from readme.python.md
+            print(f'debug: readme_link: {readme_link}')
             readme_python_link = readme_link.split('/resource-manager')[0] + '/resource-manager/readme.python.md'
+            print(f'debug: readme_python_link: {readme_python_link}')
             _, output_folder = _find_package_name_and_output(rest_repo, readme_python_link)
+            print(f'debug: output_folder: {output_folder}')
             return readme_link, output_folder
     raise Exception('Not find readme link,please check')
 
