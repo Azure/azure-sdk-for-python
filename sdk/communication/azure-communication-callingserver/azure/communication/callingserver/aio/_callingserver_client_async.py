@@ -41,10 +41,10 @@ class CallingServerClient(object):
     """
     def __init__(
             self,
-            endpoint,  # type: str
-            credential,  # type: AsyncTokenCredential
-            **kwargs  # type: Any
-        ):  # type: (...) -> None
+            endpoint: str,
+            credential: AsyncTokenCredential,
+            **kwargs: Any
+        ) -> None:
         try:
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
@@ -69,9 +69,9 @@ class CallingServerClient(object):
     @classmethod
     def from_connection_string(
             cls,
-            conn_str,  # type: str
-            **kwargs  # type: Any
-        ):  # type: (...) -> CallingServerClient
+            conn_str: str,
+            **kwargs: Any
+        ) -> CallingServerClient:
         """Create CallingServerClient from a Connection String.
 
         :param str conn_str:
@@ -94,8 +94,8 @@ class CallingServerClient(object):
 
     def get_call_connection(
             self,
-            call_connection_id  # type: str
-        ):  # type: (...) -> CallConnection
+            call_connection_id: str,
+        ) -> CallConnection:
         """Initializes a new instance of CallConnection.
 
         :param str call_connection_id:
@@ -110,8 +110,8 @@ class CallingServerClient(object):
 
     def initialize_server_call(
             self,
-            server_call_id  # type: str
-        ):  # type: (...) -> ServerCall
+            server_call_id: str
+        ) -> ServerCall:
         """Initializes a server call.
 
         :param str server_call_id:
@@ -127,11 +127,11 @@ class CallingServerClient(object):
     @distributed_trace_async()
     async def create_call_connection(
         self,
-        source,  # type: CommunicationIdentifier
-        targets,  # type: List[CommunicationIdentifier]
-        options,  # type: CreateCallOptions
-        **kwargs  # type Any
-    ):  # type: (...) -> CallConnection
+        source: CommunicationIdentifier,
+        targets: List[CommunicationIdentifier],
+        options: CreateCallOptions,
+        **kwargs: Any
+    ) -> CallConnection:
         """Create an outgoing call from source to target identities.
 
         :param CommunicationIdentifier source:
@@ -174,11 +174,11 @@ class CallingServerClient(object):
     @distributed_trace_async()
     async def join_call(
         self,
-        server_call_id,  # type: str
-        source,  # type: CommunicationIdentifier
-        call_options,  # type: JoinCallOptions
-        **kwargs  # type: Any
-    ):  # type: (...) -> CallConnection
+        server_call_id: str,
+        source: CommunicationIdentifier,
+        call_options: JoinCallOptions,
+        **kwargs: Any
+    ) -> CallConnection:
         """Join the call using server call id.
 
         :param str server_call_id:

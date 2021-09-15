@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Any  # pylint: disable=unused-import
+from typing import TYPE_CHECKING, Any, Optional  # pylint: disable=unused-import
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 
@@ -15,6 +15,7 @@ from .._generated.models import (AddParticipantResult,
                                  CancelAllMediaOperationsRequest,
                                  CancelAllMediaOperationsResult,
                                  PhoneNumberIdentifierModel, PlayAudioResult)
+from .._shared.models import CommunicationIdentifier
 
 if TYPE_CHECKING:
     from .._generated.aio.operations import CallConnectionsOperations
@@ -23,9 +24,9 @@ if TYPE_CHECKING:
 class CallConnection(object):
     def __init__(
             self,
-            call_connection_id,  # type: str
-            call_connection_client  # type: CallConnectionsOperations
-        ):  # type: (...) -> None
+            call_connection_id: str,
+            call_connection_client: CallConnectionsOperations
+        ) -> None:
 
         self.call_connection_id = call_connection_id
         self._call_connection_client = call_connection_client
@@ -33,8 +34,8 @@ class CallConnection(object):
     @distributed_trace_async()
     async def hang_up(
             self,
-            **kwargs  # type: Any
-        ):  # type: (...) -> None
+            **kwargs: Any
+        ) -> None:
 
         return await self._call_connection_client.hangup_call(
             call_connection_id=self.call_connection_id,
@@ -44,9 +45,9 @@ class CallConnection(object):
     @distributed_trace_async()
     async def cancel_all_media_operations(
             self,
-            operation_context,  # type: Optional[str]
-            **kwargs  # type: Any
-        ):  # type: (...) -> CancelAllMediaOperationsResult
+            operation_context: Optional[str],
+            **kwargs: Any
+        ) -> CancelAllMediaOperationsResult:
 
         if operation_context is not None:
             kwargs['operation_context'] = operation_context
@@ -61,10 +62,10 @@ class CallConnection(object):
     @distributed_trace_async()
     async def play_audio(
             self,
-            audio_file_uri,  # type: str
-            play_audio_options,  # type: PlayAudioOptions
-            **kwargs  # type: Any
-        ):  # type: (...) -> PlayAudioResult
+            audio_file_uri: str,
+            play_audio_options: PlayAudioOptions,
+            **kwargs: Any
+        ) -> PlayAudioResult:
 
         if not audio_file_uri:
             raise ValueError("audio_file_uri can not be None")
@@ -83,11 +84,11 @@ class CallConnection(object):
     @distributed_trace_async()
     async def add_participant(
             self,
-            participant,  # type: CommunicationIdentifier
-            alternate_caller_id,  # type: Optional[str]
-            operation_context,  # type: Optional[str]
-            **kwargs  # type: Any
-        ):  # type: (...) -> AddParticipantResult
+            participant: CommunicationIdentifier,
+            alternate_caller_id: Optional[str],
+            operation_context: Optional[str],
+            **kwargs: Any
+        ) -> AddParticipantResult:
 
         if not participant:
             raise ValueError("participant can not be None")
@@ -111,9 +112,9 @@ class CallConnection(object):
     @distributed_trace_async()
     async def remove_participant(
             self,
-            participant_id,  # type: str
-            **kwargs  # type: Any
-        ):  # type: (...) -> None
+            participant_id: str,
+            **kwargs: Any
+        ) -> None:
 
         return await self._call_connection_client.remove_participant(
             call_connection_id=self.call_connection_id,

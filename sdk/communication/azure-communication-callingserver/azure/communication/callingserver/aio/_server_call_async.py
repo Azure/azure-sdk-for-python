@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Any  # pylint: disable=unused-import
+from typing import TYPE_CHECKING, Any, Optional  # pylint: disable=unused-import
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 
@@ -24,20 +24,19 @@ class ServerCall(object):
 
     def __init__(
         self,
-        server_call_id: str,  # type: str
-        server_call_client,  # type: ServerCallsOperations
-    ):
-        # type: (...) -> None
+        server_call_id: str,
+        server_call_client: ServerCallsOperations
+    ) -> None:
         self.server_call_id = server_call_id
         self._server_call_client = server_call_client
 
     @distributed_trace_async()
     async def play_audio(
             self,
-            audio_file_uri, # type: str
-            play_audio_options, # type: PlayAudioOptions
-            **kwargs  # type: Any
-        ): # type: (...) -> PlayAudioResult
+            audio_file_uri: str,
+            play_audio_options: PlayAudioOptions,
+            **kwargs: Any
+        ) -> PlayAudioResult:
 
         if not audio_file_uri:
             raise ValueError("audio_file_uri can not be None")
@@ -56,12 +55,12 @@ class ServerCall(object):
     @distributed_trace_async()
     async def add_participant(
             self,
-            participant,  # type: CommunicationIdentifier
-            callback_uri,  # type: str
-            alternate_caller_id, # type: Optional[str]
-            operation_context, # type: Optional[str]
-            **kwargs # type: Any
-        ): # type: (...) -> AddParticipantResult
+            participant: CommunicationIdentifier,
+            callback_uri: str,
+            alternate_caller_id: Optional[str],
+            operation_context: Optional[str],
+            **kwargs: Any
+        ) -> AddParticipantResult:
 
         if not participant:
             raise ValueError("participant can not be None")
@@ -86,9 +85,9 @@ class ServerCall(object):
     @distributed_trace_async()
     async def remove_participant(
             self,
-            participant_id,  # type: str
-            **kwargs # type: Any
-        ): # type: (...) -> None
+            participant_id: str,
+            **kwargs: Any
+        ) -> None:
 
         return await self._server_call_client.remove_participant(
             server_call_id=self.server_call_id,

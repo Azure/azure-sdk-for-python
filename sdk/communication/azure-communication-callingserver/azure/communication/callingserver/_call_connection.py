@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Any  # pylint: disable=unused-import
+from typing import TYPE_CHECKING, Any, Optional  # pylint: disable=unused-import
 
 from azure.core.tracing.decorator import distributed_trace
 
@@ -16,6 +16,7 @@ from ._generated.models import (AddParticipantResult,
                                 CancelAllMediaOperationsResult,
                                 PhoneNumberIdentifierModel,
                                 PlayAudioResult)
+from ._shared.models import CommunicationIdentifier
 
 if TYPE_CHECKING:
     from ._generated.operations import CallConnectionsOperations
