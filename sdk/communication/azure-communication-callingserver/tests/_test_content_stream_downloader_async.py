@@ -13,9 +13,12 @@ async def test_content_stream_downloader_setup():
         start_range=None,
         end_range=None,
         max_concurrency=1,
-        endpoint=None
+        endpoint="https://localhost/documentId"
     )
+
+    response = b"0123456789"
 
     content_stream_downloader._setup()
 
     assert content_stream_downloader.properties is not None
+    assert content_stream_downloader.properties.size == 10
