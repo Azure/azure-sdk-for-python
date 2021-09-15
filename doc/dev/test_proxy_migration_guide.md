@@ -60,7 +60,7 @@ The test proxy is made available for your tests via a Docker container. Run the 
 container, providing the full path to the root of your local `azure-sdk-for-python` repo in place of `{path}`:
 
 ```cmd
-docker container create -v C:\\{path}\\azure-sdk-for-python:/etc/testproxy -p 5001:5001 -p 5000:5000 --name ambitious_azsdk_test_proxy azsdkengsys.azurecr.io/engsys/testproxy-lin:1035186
+docker container create -v C:\\{path}\\azure-sdk-for-python:/etc/testproxy -p 5001:5001 -p 5000:5000 --name ambitious_azsdk_test_proxy azsdkengsys.azurecr.io/engsys/testproxy-lin
 ```
 
 Some tests require an SSL connection to work, so the Docker image used for the container has a certificate imported
@@ -90,7 +90,7 @@ not set at all, tests will run in playback mode and attempt to match existing re
 Recordings for a given package will end up in that package's `/tests/recordings` directory, just like they currently
 do.
 
-> **Note:** At this time, support for configuring live or playback tests with a `testsettings_local.cfg` file has been
+> **Note:** at this time, support for configuring live or playback tests with a `testsettings_local.cfg` file has been
 > deprecated in favor of using just `AZURE_TEST_RUN_LIVE`.
 
 ### Register sanitizers
