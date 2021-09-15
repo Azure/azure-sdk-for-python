@@ -194,7 +194,7 @@ Please ensure the `SystemRoot` environment variable is configured to a safe work
 
 #### Powershell not installed
 
-The `Azure Powershell Credential` utilizes the locally installed `Powershell` command line tool to fetch an access token. Please ensure it is installed on your platform by following the instructions [here](https://docs.microsoft.com/powershell/scripting/install/installing-powershell?view=powershell-7.1) and then run the credential again.
+Please ensure PowerShell is installed on your platform by following the instructions [here](https://docs.microsoft.com/powershell/scripting/install/installing-powershell?view=powershell-7.1).
 
 #### Azure Az Module Not Installed
 
