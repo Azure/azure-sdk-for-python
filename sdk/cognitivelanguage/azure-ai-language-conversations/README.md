@@ -124,7 +124,6 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [conversationallanguage_docs]: https://azure.microsoft.com/en-us/services/cognitive-services/language-understanding-intelligent-service/
 [conversationallanguage_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/README.md
 
-
 [conversationanalysis_client_class]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/azure/ai/language/conversations/_conversation_analysis_client.py
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Ftemplate%2Fazure-template%2FREADME.png)
