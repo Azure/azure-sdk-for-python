@@ -177,7 +177,7 @@ to install it for your platform and then try running the credential again.
 
 #### Azure account not logged in
 
-The `Azure CLI Credential` utilizes the current logged in Azure user in Azure CLI to fetch an access token.
+`AzureCliCredential` authenticates as the identity currently logged in to Azure CLI.
 You need to login to your account in Azure CLI via `az login` command. You can further read instructions to [Sign in with Azure CLI](https://docs.microsoft.com/cli/azure/authenticate-azure-cli).
 Once logged in try running the credential again.
 
