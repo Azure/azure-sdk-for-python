@@ -10,6 +10,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._call_connection import CallConnection
 from ._communication_identifier_serializer import serialize_identifier
+from ._content_downloader import ContentDownloader
 from ._converters import JoinCallRequestConverter
 from ._generated._azure_communication_calling_server_service import \
     AzureCommunicationCallingServerService
@@ -19,9 +20,14 @@ from ._shared.models import CommunicationIdentifier
 from ._shared.utils import get_authentication_policy, parse_connection_str
 from ._version import SDK_MONIKER
 
+from msrest import Deserializer, Serializer
+from azure.core import PipelineClient
+from azure.core.pipeline.transport import HttpResponse
+from ._generated import models as _models
+from ._generated._configuration import AzureCommunicationCallingServerServiceConfiguration
+
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-
     from ._models import CreateCallOptions, JoinCallOptions
 
 class CallingServerClient(object):
@@ -40,6 +46,7 @@ class CallingServerClient(object):
             :language: python
             :dedent: 8
     """
+
     def __init__(
             self,
             endpoint,  # type: str
@@ -57,9 +64,11 @@ class CallingServerClient(object):
                 "You need to provide account shared key to authenticate.")
 
         self._endpoint = endpoint
+        self._authentication_policy = get_authentication_policy(
+            endpoint, credential)
         self._callingserver_service_client = AzureCommunicationCallingServerService(
             self._endpoint,
-            authentication_policy=get_authentication_policy(endpoint, credential),
+            authentication_policy=self._authentication_policy,
             sdk_moniker=SDK_MONIKER,
             **kwargs)
 
@@ -225,16 +234,20 @@ class CallingServerClient(object):
         """
         if not content_url:
             raise ValueError("content_url can not be None")
-        client_models = {k: v for k, v in  _models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k,
+                         v in _models.__dict__.items() if isinstance(v, type)}
 
         self._serialize = Serializer(client_models)
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
-        self._config = AzureCommunicationCallingServerServiceConfiguration(self._endpoint, authentication_policy=self._authentication_policy)
-        
+        self._config = AzureCommunicationCallingServerServiceConfiguration(
+            self._endpoint, authentication_policy=self._authentication_policy)
+
         base_url = '{endpoint}'
-        self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
-        downloader = ContentDownloader(self._client, self._serialize, self._deserialize,self._config)
+        self._client = PipelineClient(
+            base_url=base_url, config=self._config, **kwargs)
+        downloader = ContentDownloader(
+            self._client, self._serialize, self._deserialize, self._config)
         content_url_result = downloader.start_download(
             content_url=content_url,
         )

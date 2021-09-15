@@ -15,7 +15,7 @@ import msrest.serialization
 try:
     from urllib.parse import urlparse
 except ImportError:
-    from urlparse import urlparse # type: ignore
+    from urlparse import urlparse  # type: ignore
 
 class CreateCallOptions(object):
     """The options for creating a call.
@@ -89,6 +89,7 @@ class CreateCallOptions(object):
         # type: (str) -> None
         self.__subject = subject
 
+
 class JoinCallOptions(object):
     """The options for joining a call.
 
@@ -148,10 +149,12 @@ class JoinCallOptions(object):
     def subject(self):
         # type: () -> Optional[str]
         return self._subject
+
     @subject.setter
     def subject(self, value):
         # type: (str) -> None
         self._subject = value
+
 
 class PlayAudioOptions(object):
     """The options for playing audio.
@@ -183,6 +186,7 @@ class PlayAudioOptions(object):
     def subject(self):
         # type: () -> Optional[str]
         return self._subject
+
     @subject.setter
     def subject(self, value):
         # type: (str) -> None

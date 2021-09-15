@@ -55,7 +55,9 @@ class CommunicationErrorResponseConverter(object):
 
         if chat_errors is not None:
             for chat_error in chat_errors:
-                _thread_participant = _thread_participants_dict.get(chat_error.target)
-                failed_chat_thread_participants.append((_thread_participant, chat_error))
+                _thread_participant = _thread_participants_dict.get(
+                    chat_error.target)
+                failed_chat_thread_participants.append(
+                    (_thread_participant, chat_error))
 
         return failed_chat_thread_participants
