@@ -20,7 +20,7 @@ This troubleshooting guide covers mitigation steps to resolve these exceptions t
 
 ### Credential Unavailable Error
 
-The `DefaultAzureCredential` attempts to retrieve an access token by sequentially invoking a chain of credentials. The `CredentialUnavailableError` in this scenario signifies that all the credentials in the chain failed to retrieve the token in the current environment setup/configuration. You need to follow the configuration instructions for the respective credential you're looking to use via `DefaultAzureCredential` chain, so that the credential can work in your environment.
+The `DefaultAzureCredential` attempts to retrieve an access token by sequentially invoking a chain of credentials. The `ClientAuthenticationError` in this scenario signifies that all the credentials in the chain failed to retrieve the token in the current environment setup/configuration. You need to follow the configuration instructions for the respective credential you're looking to use via `DefaultAzureCredential` chain, so that the credential can work in your environment.
 
 Please follow the configuration instructions in the `Credential Unavailable Error` section of the troubleshooting guidelines below for the respective credential/authentication type you want to use via `DefaultAzureCredential`:
 
