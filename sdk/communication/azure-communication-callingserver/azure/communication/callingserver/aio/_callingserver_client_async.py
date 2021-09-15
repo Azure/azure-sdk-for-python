@@ -230,7 +230,6 @@ class CallingServerClient:
             end_range,
             endpoint=content_url
         )
-        print("about to call setup")
         await stream_downloader._setup()
         return stream_downloader
 

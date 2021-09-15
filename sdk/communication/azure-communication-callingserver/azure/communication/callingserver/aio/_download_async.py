@@ -278,27 +278,11 @@ class ContentStreamDownloader():
         self._initial_range = (initial_request_start, initial_request_end)
 
     async def _setup(self):
-        print("about to call initial request")
         self._response = await self._initial_request()
-        print(f"This is the initial request response: {self._response.__dict__}")
-        self.properties = self._response.properties
-        self.properties.endpoint = self.endpoint
-
-        # Set the content length to the download size instead of the size of
-        # the last range
-        self.properties.size = self.size
-
-        # Overwrite the content range to the user requested range
-        self.properties.content_range = 'bytes {0}-{1}/{2}'.format(
-            self._start_range,
-            self._end_range,
-            self._file_size
-        )
-
         if self.size == 0:
             self._current_content = b""
         else:
-            self._current_content = self._response.body()
+            self._current_content = self._response.response.internal_response.content
 
     async def _initial_request(self):
         http_range = validate_and_format_range_headers(
@@ -306,20 +290,14 @@ class ContentStreamDownloader():
             self._initial_range[1])
 
         try:
-            print("about to download")
-            location_mode, response = await self._clients.download(
+            response = await self._clients.download(
                 http_range=http_range,
                 content_url=self.endpoint,
                 **self._request_options)
-            print(f"Location_mode: {location_mode}")
-            print(f"response: {response}")
-            # Check the location we read from to ensure we use the same one
-            # for subsequent requests.
-            self._location_mode = location_mode
 
             # Parse the total file size and adjust the download size if ranges
             # were specified
-            self._file_size = parse_length_from_content_range(response.properties.content_range)
+            self._file_size = parse_length_from_content_range(response.response.headers["Content-Range"])
             if self._end_range is not None:
                 # Use the length unless it is over the end of the file
                 self.size = min(self._file_size, self._end_range - self._start_range + 1)
@@ -344,7 +322,7 @@ class ContentStreamDownloader():
 
         # If the file is small, the download is complete at this point.
         # If file size is large, download the rest of the file in chunks.
-        if response.properties.size <= self.size:
+        if int(response.response.headers["Content-Length"]) <= self.size:
             self._download_complete = True
         return response
 
@@ -408,7 +386,9 @@ class ContentStreamDownloader():
                 raise ValueError(error_message) from ex
 
         # Write the content to the user stream
-        stream.write(self._current_content)
+        current_content = await self._current_content.read()
+        print(current_content)
+        stream.write(current_content)
         if self._download_complete:
             return self.size
 

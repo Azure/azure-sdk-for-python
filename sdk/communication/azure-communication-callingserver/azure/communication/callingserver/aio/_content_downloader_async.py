@@ -11,7 +11,6 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.core.exceptions import (ClientAuthenticationError, HttpResponseError,
     ResourceExistsError, ResourceNotFoundError, map_error)
-import pdb
 
 from .._generated import models as _models
 
@@ -47,54 +46,42 @@ class ContentDownloader():
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[IO]
-        # error_map = {
-        #     409: ResourceExistsError,
-        #     400: lambda response: HttpResponseError(response=response,
-        #                                             model=self._deserialize(_models.CommunicationErrorResponse,
-        #                                                                     response)),
-        #     401: lambda response: ClientAuthenticationError(response=response,
-        #                                                     model=self._deserialize(_models.CommunicationErrorResponse,
-        #                                                                             response)),
-        #     403: lambda response: HttpResponseError(response=response,
-        #                                             model=self._deserialize(_models.CommunicationErrorResponse,
-        #                                                                     response)),
-        #     404: lambda response: ResourceNotFoundError(response=response,
-        #                                                 model=self._deserialize(_models.CommunicationErrorResponse,
-        #                                                                         response)),
-        #     500: lambda response: HttpResponseError(response=response,
-        #                                             model=self._deserialize(_models.CommunicationErrorResponse,
-        #                                                                     response)),
-        # }
         error_map = {
-            401: _models.CommunicationErrorResponse, 404: ResourceNotFoundError, 409: ResourceExistsError
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response,
+                                                    model=self._deserialize(_models.CommunicationErrorResponse,
+                                                                            response)),
+            401: lambda response: ClientAuthenticationError(response=response,
+                                                            model=self._deserialize(_models.CommunicationErrorResponse,
+                                                                                    response)),
+            403: lambda response: HttpResponseError(response=response,
+                                                    model=self._deserialize(_models.CommunicationErrorResponse,
+                                                                            response)),
+            404: lambda response: ResourceNotFoundError(response=response,
+                                                        model=self._deserialize(_models.CommunicationErrorResponse,
+                                                                                response)),
+            500: lambda response: HttpResponseError(response=response,
+                                                    model=self._deserialize(_models.CommunicationErrorResponse,
+                                                                            response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
         
         # Construct URL
         uri_to_sign_with = self._get_url_to_sign_request_with(content_url)
-
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['UriToSignWith'] = self._serialize.header("uri_to_sign_with", uri_to_sign_with, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
         if http_range is not None:
-            header_parameters['x-ms-range'] = self._serialize.header("range", http_range, 'str')
+            header_parameters['Range'] = self._serialize.header("range", http_range, 'str')
 
         request = self._client.get(content_url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=True, **kwargs)
         response = pipeline_response.http_response
-        print(f"response: {response.status_code}")
 
         if response.status_code not in [200, 206]:
-            print("before map error")
-            #pdb.set_trace()
-            self._deserialize(_models.CommunicationErrorResponse, response)
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            print("after map error")
             raise HttpResponseError(response=response)
 
         deserialized = response.stream_download(self._client._pipeline)
