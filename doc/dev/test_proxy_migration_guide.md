@@ -94,17 +94,16 @@ do.
 Since the test proxy doesn't use [`vcrpy`][vcrpy], tests don't use a scrubber to sanitize values in recordings.
 Instead, sanitizers (as well as matchers and transforms) can be registered on the proxy as detailed in
 [this][sanitizers] section of the proxy documentation. At the time of writing, sanitizers can be registered via
-AzureRecordedTestCase's `add_sanitizer` method. For example, at the start of a test case, you can set up a URI
-sanitizer by doing something like the following:
+the `add_sanitizer` method in `devtools_testutils`. For example, at the start of a test file, you can set up a URI
+sanitizer for all tests by doing something like the following:
 
 ```python
-from devtools_testutils import AzureRecordedTestCase, ProxyRecordingSanitizer, RecordedByProxy
+from devtools_testutils import add_sanitizer, AzureRecordedTestCase, ProxyRecordingSanitizer
+
+add_sanitizer(ProxyRecordingSanitizer.URI, value="fakeendpoint")
 
 class TestExample(AzureRecordedTestCase):
-
-    @RecordedByProxy
-    def test_example(self):
-        self.add_sanitizer(ProxyRecordingSanitizer.URI, value="fakeendpoint")
+    ...
 ```
 
 `add_sanitizer` accepts a sanitizer type from the ProxyRecordingSanitizer enum as a required parameter. A regular
@@ -113,11 +112,8 @@ respectively. In the above example, any request URIs that match the default regu
 domain name replaced with "fakeendpoint". A request made to `https://tableaccount.table.core.windows.net` will be
 recorded as being made to `https://fakeendpoint.table.core.windows.net`.
 
-The process for adding sanitizers will be updated in the near future to make it easier to set session-level
-sanitizers and account for complex recording scenarios.
-
 Sanitizers, matchers, and transforms remain registered until the proxy container is stopped, so adding a sanitizer
-during the setup of your test case will make that sanitizer available for all test cases in the class.
+at the top of a test file (like in the example) will make that sanitizer available for all test cases in the file.
 
 ## Implementation details
 
