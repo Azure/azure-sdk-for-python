@@ -119,7 +119,6 @@ Please follow the instructions [here](https://docs.microsoft.com/cli/azure/creat
 
 #### Connection Timed Out / Connection could not be established / Target Environment could not be determined
 
-The Managed Identity credential works only on Azure Hosted machines/servers.
 Currently the Azure Identity SDK supports [Managed Identity Authentication](https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview)
 in the below listed Azure services; ensure you're running your application on one of these resources and have enabled the Managed Identity on
 them by following the instructions at their configuration links below.
