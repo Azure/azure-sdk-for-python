@@ -15,6 +15,9 @@ from ._models import (
     RecognizeLinkedEntitiesAction,
     AnalyzeSentimentAction,
     ExtractSummaryAction,
+    RecognizeCustomEntitiesAction,
+    ClassifyCustomCategoryAction,
+    ClassifyCustomCategoriesAction,
     _AnalyzeActionsType,
 )
 
@@ -88,7 +91,7 @@ def _validate_input(documents, hint, whole_input_hint):
     return request_batch
 
 
-def _determine_action_type(action):
+def _determine_action_type(action):  # pylint: disable=too-many-return-statements
     if isinstance(action, RecognizeEntitiesAction):
         return _AnalyzeActionsType.RECOGNIZE_ENTITIES
     if isinstance(action, RecognizePiiEntitiesAction):
@@ -99,6 +102,12 @@ def _determine_action_type(action):
         return _AnalyzeActionsType.ANALYZE_SENTIMENT
     if isinstance(action, ExtractSummaryAction):
         return _AnalyzeActionsType.EXTRACT_SUMMARY
+    if isinstance(action, RecognizeCustomEntitiesAction):
+        return _AnalyzeActionsType.RECOGNIZE_CUSTOM_ENTITIES
+    if isinstance(action, ClassifyCustomCategoryAction):
+        return _AnalyzeActionsType.CLASSIFY_CUSTOM_CATEGORY
+    if isinstance(action, ClassifyCustomCategoriesAction):
+        return _AnalyzeActionsType.CLASSIFY_CUSTOM_CATEGORIES
     return _AnalyzeActionsType.EXTRACT_KEY_PHRASES
 
 
