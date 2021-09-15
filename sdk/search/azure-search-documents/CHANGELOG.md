@@ -11,6 +11,7 @@
 
 - Renamed `SearchClient.speller` to `SearchClient.query_speller`.
 - Removed keyword arguments from `SearchClient`: `answers` and `captions`.
+- `SentimentSkill`, `EntityRecognitionSkill`: added client-side validation to prevent sending unsupported parameters.
 
 ### Bugs Fixed
 
