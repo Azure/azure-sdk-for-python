@@ -219,6 +219,8 @@ def main():
     # rule6: if delay from created date is over 30 days and owner never reply, close it.
     # rule7: if delay from created date is over 15 days and owner never reply, remind owner to handle it.
     for item in issue_status:
+        if item.language == 'Python':
+            issue_status_python.append(item)  
         if item.status == 'release':
             item.bot_advice = 'better to release asap.'
         elif (item.comment_num == 0 or 'Configured' in item.labels) and 'Python' in item.labels:
@@ -259,9 +261,6 @@ def main():
         # judge whether there is duplicated issue for same package
         if item.package != _NULL and duplicated_issue.get((item.language, item.package)) > 1:
             item.bot_advice = f'Warning:There is duplicated issue for {item.package}. ' + item.bot_advice
-            
-        if item.language == 'Python':
-            issue_status_python.append(item)
 
     # output result
     output_python_md(issue_status_python)
