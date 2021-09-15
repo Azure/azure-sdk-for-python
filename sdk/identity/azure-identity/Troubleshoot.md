@@ -172,7 +172,6 @@ AZURE GOVERNMENT | https://login.microsoftonline.us/
 
 #### Azure CLI Not Installed
 
-THe `Azure CLI Credential` failed to execute as Azure CLI command line tool is not installed.
 To use Azure CLI credential, the Azure CLI needs to be installed, please follow the instructions [here](https://docs.microsoft.com/cli/azure/install-azure-cli)
 to install it for your platform and then try running the credential again.
 
