@@ -37,6 +37,19 @@ if TYPE_CHECKING:
 load_dotenv(find_dotenv())
 
 
+def add_sanitizer(sanitizer, regex=None, value=None):
+    # type: (ProxyRecordingSanitizer, Optional[str], Optional[str]) -> None
+    if sanitizer == ProxyRecordingSanitizer.URI:
+        requests.post(
+            "{}/Admin/AddSanitizer".format(PROXY_URL),
+            headers={"x-abstraction-identifier": ProxyRecordingSanitizer.URI.value},
+            json={
+                "regex": regex or "[a-z]+(?=(?:-secondary)\\.(?:table|blob|queue)\\.core\\.windows\\.net)",
+                "value": value or "fakevalue"
+            },
+        )
+
+
 def is_live():
     """A module version of is_live, that could be used in pytest marker."""
     if not hasattr(is_live, "_cache"):
@@ -80,18 +93,6 @@ class AzureRecordedTestCase(object):
     @property
     def recording_processors(self):
         return []
-
-    def add_sanitizer(self, sanitizer, regex=None, value=None):
-        # type: (ProxyRecordingSanitizer, Optional[str], Optional[str]) -> None
-        if sanitizer == ProxyRecordingSanitizer.URI:
-            requests.post(
-                "{}/Admin/AddSanitizer".format(PROXY_URL),
-                headers={"x-abstraction-identifier": ProxyRecordingSanitizer.URI.value},
-                json={
-                    "regex": regex or "[a-z]+(?=(?:-secondary)\\.(?:table|blob|queue)\\.core\\.windows\\.net)",
-                    "value": value or "fakevalue"
-                },
-            )
 
     def is_playback(self):
         return not self.is_live
