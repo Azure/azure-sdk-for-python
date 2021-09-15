@@ -127,8 +127,6 @@ def _latest_comment_time(comments, delay_from_create_date):
 
 def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python_piplines):
     print("==========new issue number: {}".format(item.issue_object.number))
-    if 'Configured' in item.labels:
-        item.labels.remove('Configured')
 
     if 'auto-link' not in item.labels:
         item.labels.append('auto-link')
@@ -161,6 +159,9 @@ def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python
         pipeline_url = get_pipeline_url(python_piplines, output_folder)
         rg.begin_reply_generate(item=item, rest_repo=rest_repo, readme_link=readme_link,
                                 sdk_repo=sdk_repo, pipeline_url=pipeline_url)
+        if 'Configured' in item.labels:
+            item.labels.remove('Configured')
+            item.issue_object.set_labels(*item.labels)
     except Exception as e:
         item.bot_advice = 'auto reply failed, Please intervene manually !!'
         print('Error from auto reply ========================')
