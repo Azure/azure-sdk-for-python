@@ -13,6 +13,8 @@ def weather_change_readme(rest_repo, link_dict, labels):
     whether_multi_api = 'multi-api' in readme_python_contents
     whether_same_tag = link_dict['readme_tag'] in package_tag
     whether_change_readme = not whether_same_tag or whether_multi_api and not 'MultiAPI' in labels
+    if 'Configured' in labels:
+        whether_change_readme = False
     return whether_change_readme
 
 
