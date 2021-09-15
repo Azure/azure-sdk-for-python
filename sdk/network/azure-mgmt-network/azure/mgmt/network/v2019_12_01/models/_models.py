@@ -3823,7 +3823,7 @@ class BastionActiveSession(msrest.serialization.Model):
     :ivar session_id: A unique id for the session.
     :vartype session_id: str
     :ivar start_time: The time when the session started.
-    :vartype start_time: str
+    :vartype start_time: any
     :ivar target_subscription_id: The subscription id for the target virtual machine.
     :vartype target_subscription_id: str
     :ivar resource_type: The type of the resource.
@@ -3861,7 +3861,7 @@ class BastionActiveSession(msrest.serialization.Model):
 
     _attribute_map = {
         'session_id': {'key': 'sessionId', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'object'},
         'target_subscription_id': {'key': 'targetSubscriptionId', 'type': 'str'},
         'resource_type': {'key': 'resourceType', 'type': 'str'},
         'target_host_name': {'key': 'targetHostName', 'type': 'str'},

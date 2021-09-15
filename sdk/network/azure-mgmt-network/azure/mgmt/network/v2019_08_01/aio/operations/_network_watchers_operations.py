@@ -48,7 +48,7 @@ class NetworkWatchersOperations:
         resource_group_name: str,
         network_watcher_name: str,
         parameters: "_models.NetworkWatcher",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NetworkWatcher":
         """Creates or updates a network watcher in the specified resource group.
 
@@ -118,7 +118,7 @@ class NetworkWatchersOperations:
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NetworkWatcher":
         """Gets the specified network watcher by resource group.
 
@@ -177,7 +177,7 @@ class NetworkWatchersOperations:
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -222,7 +222,7 @@ class NetworkWatchersOperations:
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified network watcher resource.
 
@@ -232,8 +232,8 @@ class NetworkWatchersOperations:
         :type network_watcher_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -287,7 +287,7 @@ class NetworkWatchersOperations:
         resource_group_name: str,
         network_watcher_name: str,
         parameters: "_models.TagsObject",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NetworkWatcher":
         """Updates a network watcher tags.
 
@@ -352,7 +352,7 @@ class NetworkWatchersOperations:
     def list(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.NetworkWatcherListResult"]:
         """Gets all network watchers by resource group.
 
@@ -422,7 +422,7 @@ class NetworkWatchersOperations:
 
     def list_all(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.NetworkWatcherListResult"]:
         """Gets all network watchers by subscription.
 
@@ -492,7 +492,7 @@ class NetworkWatchersOperations:
         resource_group_name: str,
         network_watcher_name: str,
         parameters: "_models.TopologyParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Topology":
         """Gets the current network topology by resource group.
 
@@ -559,7 +559,7 @@ class NetworkWatchersOperations:
         resource_group_name: str,
         network_watcher_name: str,
         parameters: "_models.VerificationIPFlowParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VerificationIPFlowResult":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.VerificationIPFlowResult"]
         error_map = {
@@ -617,7 +617,7 @@ class NetworkWatchersOperations:
         resource_group_name: str,
         network_watcher_name: str,
         parameters: "_models.VerificationIPFlowParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.VerificationIPFlowResult"]:
         """Verify IP flow from the specified VM to a location given the currently configured NSG rules.
 
@@ -629,8 +629,8 @@ class NetworkWatchersOperations:
         :type parameters: ~azure.mgmt.network.v2019_08_01.models.VerificationIPFlowParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VerificationIPFlowResult or the result of cls(response)
@@ -688,7 +688,7 @@ class NetworkWatchersOperations:
         resource_group_name: str,
         network_watcher_name: str,
         parameters: "_models.NextHopParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NextHopResult":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.NextHopResult"]
         error_map = {
@@ -746,7 +746,7 @@ class NetworkWatchersOperations:
         resource_group_name: str,
         network_watcher_name: str,
         parameters: "_models.NextHopParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.NextHopResult"]:
         """Gets the next hop from the specified VM.
 
@@ -758,8 +758,8 @@ class NetworkWatchersOperations:
         :type parameters: ~azure.mgmt.network.v2019_08_01.models.NextHopParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either NextHopResult or the result of cls(response)
@@ -817,7 +817,7 @@ class NetworkWatchersOperations:
         resource_group_name: str,
         network_watcher_name: str,
         parameters: "_models.SecurityGroupViewParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SecurityGroupViewResult":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityGroupViewResult"]
         error_map = {
@@ -875,7 +875,7 @@ class NetworkWatchersOperations:
         resource_group_name: str,
         network_watcher_name: str,
         parameters: "_models.SecurityGroupViewParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.SecurityGroupViewResult"]:
         """Gets the configured and effective security group rules on the specified VM.
 
@@ -887,8 +887,8 @@ class NetworkWatchersOperations:
         :type parameters: ~azure.mgmt.network.v2019_08_01.models.SecurityGroupViewParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either SecurityGroupViewResult or the result of cls(response)
@@ -946,7 +946,7 @@ class NetworkWatchersOperations:
         resource_group_name: str,
         network_watcher_name: str,
         parameters: "_models.TroubleshootingParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TroubleshootingResult":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.TroubleshootingResult"]
         error_map = {
@@ -1004,7 +1004,7 @@ class NetworkWatchersOperations:
         resource_group_name: str,
         network_watcher_name: str,
         parameters: "_models.TroubleshootingParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.TroubleshootingResult"]:
         """Initiate troubleshooting on a specified resource.
 
@@ -1016,8 +1016,8 @@ class NetworkWatchersOperations:
         :type parameters: ~azure.mgmt.network.v2019_08_01.models.TroubleshootingParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either TroubleshootingResult or the result of cls(response)
@@ -1075,7 +1075,7 @@ class NetworkWatchersOperations:
         resource_group_name: str,
         network_watcher_name: str,
         parameters: "_models.QueryTroubleshootingParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TroubleshootingResult":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.TroubleshootingResult"]
         error_map = {
@@ -1133,7 +1133,7 @@ class NetworkWatchersOperations:
         resource_group_name: str,
         network_watcher_name: str,
         parameters: "_models.QueryTroubleshootingParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.TroubleshootingResult"]:
         """Get the last completed troubleshooting result on a specified resource.
 
@@ -1145,8 +1145,8 @@ class NetworkWatchersOperations:
         :type parameters: ~azure.mgmt.network.v2019_08_01.models.QueryTroubleshootingParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either TroubleshootingResult or the result of cls(response)
@@ -1204,7 +1204,7 @@ class NetworkWatchersOperations:
         resource_group_name: str,
         network_watcher_name: str,
         parameters: "_models.FlowLogInformation",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FlowLogInformation":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.FlowLogInformation"]
         error_map = {
@@ -1262,7 +1262,7 @@ class NetworkWatchersOperations:
         resource_group_name: str,
         network_watcher_name: str,
         parameters: "_models.FlowLogInformation",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.FlowLogInformation"]:
         """Configures flow log and traffic analytics (optional) on a specified resource.
 
@@ -1274,8 +1274,8 @@ class NetworkWatchersOperations:
         :type parameters: ~azure.mgmt.network.v2019_08_01.models.FlowLogInformation
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either FlowLogInformation or the result of cls(response)
@@ -1333,7 +1333,7 @@ class NetworkWatchersOperations:
         resource_group_name: str,
         network_watcher_name: str,
         parameters: "_models.FlowLogStatusParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FlowLogInformation":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.FlowLogInformation"]
         error_map = {
@@ -1391,7 +1391,7 @@ class NetworkWatchersOperations:
         resource_group_name: str,
         network_watcher_name: str,
         parameters: "_models.FlowLogStatusParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.FlowLogInformation"]:
         """Queries status of flow log and traffic analytics (optional) on a specified resource.
 
@@ -1404,8 +1404,8 @@ class NetworkWatchersOperations:
         :type parameters: ~azure.mgmt.network.v2019_08_01.models.FlowLogStatusParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either FlowLogInformation or the result of cls(response)
@@ -1463,7 +1463,7 @@ class NetworkWatchersOperations:
         resource_group_name: str,
         network_watcher_name: str,
         parameters: "_models.ConnectivityParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ConnectivityInformation":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConnectivityInformation"]
         error_map = {
@@ -1521,7 +1521,7 @@ class NetworkWatchersOperations:
         resource_group_name: str,
         network_watcher_name: str,
         parameters: "_models.ConnectivityParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ConnectivityInformation"]:
         """Verifies the possibility of establishing a direct TCP connection from a virtual machine to a
         given endpoint including another VM or an arbitrary remote server.
@@ -1534,8 +1534,8 @@ class NetworkWatchersOperations:
         :type parameters: ~azure.mgmt.network.v2019_08_01.models.ConnectivityParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ConnectivityInformation or the result of cls(response)
@@ -1593,7 +1593,7 @@ class NetworkWatchersOperations:
         resource_group_name: str,
         network_watcher_name: str,
         parameters: "_models.AzureReachabilityReportParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AzureReachabilityReport":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AzureReachabilityReport"]
         error_map = {
@@ -1651,7 +1651,7 @@ class NetworkWatchersOperations:
         resource_group_name: str,
         network_watcher_name: str,
         parameters: "_models.AzureReachabilityReportParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.AzureReachabilityReport"]:
         """Gets the relative latency score for internet service providers from a specified location to
         Azure regions.
@@ -1664,8 +1664,8 @@ class NetworkWatchersOperations:
         :type parameters: ~azure.mgmt.network.v2019_08_01.models.AzureReachabilityReportParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either AzureReachabilityReport or the result of cls(response)
@@ -1723,7 +1723,7 @@ class NetworkWatchersOperations:
         resource_group_name: str,
         network_watcher_name: str,
         parameters: "_models.AvailableProvidersListParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AvailableProvidersList":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AvailableProvidersList"]
         error_map = {
@@ -1781,7 +1781,7 @@ class NetworkWatchersOperations:
         resource_group_name: str,
         network_watcher_name: str,
         parameters: "_models.AvailableProvidersListParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.AvailableProvidersList"]:
         """Lists all available internet service providers for a specified Azure region.
 
@@ -1793,8 +1793,8 @@ class NetworkWatchersOperations:
         :type parameters: ~azure.mgmt.network.v2019_08_01.models.AvailableProvidersListParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either AvailableProvidersList or the result of cls(response)
@@ -1852,7 +1852,7 @@ class NetworkWatchersOperations:
         resource_group_name: str,
         network_watcher_name: str,
         parameters: "_models.NetworkConfigurationDiagnosticParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NetworkConfigurationDiagnosticResponse":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkConfigurationDiagnosticResponse"]
         error_map = {
@@ -1910,7 +1910,7 @@ class NetworkWatchersOperations:
         resource_group_name: str,
         network_watcher_name: str,
         parameters: "_models.NetworkConfigurationDiagnosticParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.NetworkConfigurationDiagnosticResponse"]:
         """Gets Network Configuration Diagnostic data to help customers understand and debug network
         behavior. It provides detailed information on what security rules were applied to a specified
@@ -1926,8 +1926,8 @@ class NetworkWatchersOperations:
         :type parameters: ~azure.mgmt.network.v2019_08_01.models.NetworkConfigurationDiagnosticParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either NetworkConfigurationDiagnosticResponse or the result of cls(response)
