@@ -122,13 +122,13 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
             chunk_end
         )
 
-        _, response = self.client.download(
+        response = self.client.download(
             content_url=self.endpoint,
-            range=range_header,
+            http_range=range_header,
             **self.request_options
         )
 
-        return response.body
+        return response.response.internal_response._body
 
 class _AsyncChunkDownloader(_ChunkDownloader):
     def __init__(self, **kwargs):
@@ -169,13 +169,13 @@ class _AsyncChunkDownloader(_ChunkDownloader):
             chunk_end
         )
         
-        _, response = await self.client.download(
+        response = await self.client.download(
             content_url=self.endpoint,
-            range=range_header,
+            http_range=range_header,
             **self.request_options
         )
 
-        return response.body
+        return response.response.internal_response._body
 
 class _AsyncChunkIterator(object):
     """Async iterator for chunks in content download stream."""
@@ -268,12 +268,12 @@ class ContentStreamDownloader():
         self._file_size = None
         self._non_empty_ranges = None
         self._response = None
-        self._first_get_size = 4 * 1024 * 1024
+        self._block_size = kwargs.pop("block_size", 4 * 1024 * 1024)
         initial_request_start = self._start_range if self._start_range is not None else 0
-        if self._end_range is not None and self._end_range - self._start_range < self._first_get_size:
+        if self._end_range is not None and self._end_range - self._start_range < self._block_size:
             initial_request_end = self._end_range
         else:
-            initial_request_end = initial_request_start + self._first_get_size - 1
+            initial_request_end = initial_request_start + self._block_size - 1
 
         self._initial_range = (initial_request_start, initial_request_end)
 
@@ -282,7 +282,7 @@ class ContentStreamDownloader():
         if self.size == 0:
             self._current_content = b""
         else:
-            self._current_content = self._response.response.internal_response.content
+            self._current_content = self._response.response.internal_response._body
 
     async def _initial_request(self):
         http_range = validate_and_format_range_headers(
@@ -311,7 +311,7 @@ class ContentStreamDownloader():
                 # Get range will fail on an empty file. If the user did not
                 # request a range, do a regular get request in order to get
                 # any properties.
-                _, response = await self._clients.download(
+                response = await self._clients.download(
                     **self._request_options)
 
                 # Set the download size to empty
@@ -322,7 +322,7 @@ class ContentStreamDownloader():
 
         # If the file is small, the download is complete at this point.
         # If file size is large, download the rest of the file in chunks.
-        if int(response.response.headers["Content-Length"]) <= self.size:
+        if int(response.response.headers["Content-Length"]) >= self.size:
             self._download_complete = True
         return response
 
@@ -343,7 +343,7 @@ class ContentStreamDownloader():
                 endpoint=self.endpoint,
                 total_size=self.size,
                 chunk_size=self._config.max_chunk_get_size,
-                current_progress=self._first_get_size,
+                current_progress=self._block_size,
                 start_range=self._initial_range[1] + 1,  # Start where the first download ended
                 end_range=data_end,
                 stream=None,
@@ -386,9 +386,8 @@ class ContentStreamDownloader():
                 raise ValueError(error_message) from ex
 
         # Write the content to the user stream
-        current_content = await self._current_content.read()
-        print(current_content)
-        stream.write(current_content)
+        # current_content = await self._current_content.read()
+        stream.write(self._current_content)
         if self._download_complete:
             return self.size
 
@@ -401,8 +400,8 @@ class ContentStreamDownloader():
             client=self._clients,
             endpoint=self.endpoint,
             total_size=self.size,
-            chunk_size=self._config.max_chunk_get_size,
-            current_progress=self._first_get_size,
+            chunk_size=self._block_size,
+            current_progress=self._block_size,
             start_range=self._initial_range[1] + 1,  # start where the first download ended
             end_range=data_end,
             stream=stream,

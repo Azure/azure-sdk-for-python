@@ -216,7 +216,7 @@ class CallingServerClient:
         return CallConnection(join_call_response.call_connection_id, self._call_connection_client)
 
     @distributed_trace_async
-    async def download(self, content_url, start_range=None, end_range=None):
+    async def download(self, content_url, start_range=None, end_range=None, **kwargs):
         content_downloader = ContentDownloader(
             self._callingserver_service_client._client,
             self._callingserver_service_client._config,
@@ -228,7 +228,8 @@ class CallingServerClient:
             self._callingserver_service_client._config,
             start_range,
             end_range,
-            endpoint=content_url
+            endpoint=content_url,
+            **kwargs
         )
         await stream_downloader._setup()
         return stream_downloader

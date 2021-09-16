@@ -1,0 +1,56 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      Range:
+      - bytes=0-99
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
+      host:
+      - acs-recording-runner-africa.communication.azure.com
+      x-ms-date:
+      - Thu, 16 Sep 2021 21:22:48 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://storage.asm.skype.com/v1/objects/0-weu-d18-f71ce6295ef910657759449422ebb5f4/content/acsmetadata
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 16 Sep 2021 21:22:48 GMT
+      server: Microsoft-HTTPAPI/2.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+    status:
+      code: 302
+      message: Found
+    url: https://storage.asm.skype.com/v1/objects/0-weu-d18-f71ce6295ef910657759449422ebb5f4/content/acsmetadata
+- request:
+    body: ''
+    headers:
+      Range:
+      - bytes=0-99
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
+      host:
+      - acs-recording-runner-africa.communication.azure.com
+      x-ms-date:
+      - Thu, 16 Sep 2021 21:22:49 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://weu1-storage.asm.skype.com/v1/objects/0-weu-d18-f71ce6295ef910657759449422ebb5f4/content/acsmetadata
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 16 Sep 2021 21:22:50 GMT
+      server: Microsoft-HTTPAPI/2.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+    status:
+      code: 401
+      message: Unauthorized
+    url: https://weu1-storage.asm.skype.com/v1/objects/0-weu-d18-f71ce6295ef910657759449422ebb5f4/content/acsmetadata
+version: 1

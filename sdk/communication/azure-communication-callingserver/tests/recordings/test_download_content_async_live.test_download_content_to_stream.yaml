@@ -9,7 +9,7 @@ interactions:
       host:
       - acstelephonyportaltesting.communication.azure.com
       x-ms-date:
-      - Wed, 15 Sep 2021 23:42:09 GMT
+      - Thu, 16 Sep 2021 17:40:06 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -33,7 +33,7 @@ interactions:
       content-length: '837'
       content-range: bytes 0-836/837
       content-type: application/octet-stream
-      date: Wed, 15 Sep 2021 23:42:09 GMT
+      date: Thu, 16 Sep 2021 17:40:05 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000; includeSubDomains
     status:
