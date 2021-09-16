@@ -30,7 +30,7 @@ def test_request_id_policy(auto_request_id, request_id_init, request_id_set, req
     request_id_policy = RequestIdPolicy(**kwargs)
     if request_id_set != "_unset":
         request_id_policy.set_request_id(request_id_set)
-    request = HttpRequest('GET', 'http://127.0.0.1/')
+    request = HttpRequest('GET', 'http://localhost/')
     pipeline_request = PipelineRequest(request, PipelineContext(None))
     if request_id_req != "_unset":
         pipeline_request.context.options['request_id'] = request_id_req
@@ -58,7 +58,7 @@ def test_request_id_policy(auto_request_id, request_id_init, request_id_set, req
 def test_request_id_already_exists():
     """Test policy with no other policy and happy path"""
     request_id_policy = RequestIdPolicy()
-    request = HttpRequest('GET', 'http://127.0.0.1/')
+    request = HttpRequest('GET', 'http://localhost/')
     request.headers["x-ms-client-request-id"] = "VALUE"
     pipeline_request = PipelineRequest(request, PipelineContext(None))
     request_id_policy.on_request(pipeline_request)

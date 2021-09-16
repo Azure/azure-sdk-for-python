@@ -36,6 +36,9 @@ jobs:
         export CONN_STR=$(ENV_CONN_STR)
         export FILE=$(ENV_FILE)
         export TOKEN=$(USR_TOKEN)
+        export HEADERS=$(PIPELINE_HEADERS)
+        export URL=$(PIPELINE_URL)
+        export PIPELINE_TOKEN = $(PIPELINE_TOKEN)
 
         # create virtual env
         python -m venv venv-sdk

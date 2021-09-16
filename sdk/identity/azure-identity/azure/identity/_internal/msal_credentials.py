@@ -50,6 +50,17 @@ class MsalCredential(object):
 
         super(MsalCredential, self).__init__()
 
+    def __enter__(self):
+        self._client.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        self._client.__exit__(*args)
+
+    def close(self):
+        # type: () -> None
+        self.__exit__()
+
     def _get_app(self, **kwargs):
         # type: (**Any) -> msal.ClientApplication
         tenant_id = resolve_tenant(self._tenant_id, self._allow_multitenant, **kwargs)

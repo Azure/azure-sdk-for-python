@@ -26,7 +26,7 @@
 /sdk/storage/                                                        @amishra-dev @zezha-msft @annatisch @xiafu-msft @tasherif-msft @kasobol-msft
 
 # PRLabel: %App Configuration
-/sdk/appconfiguration/                                               @xiangyan99 @seankane-msft
+/sdk/appconfiguration/                                               @xiangyan99 @YalinLi0312
 
 /sdk/applicationinsights/azure-applicationinsights/                  @divyajay @geneh @alongafni
 /sdk/loganalytics/azure-loganalytics/                                @divyajay @geneh @alongafni
@@ -41,7 +41,7 @@
 /sdk/communication/                                                  @acsdevx-msft
 
 # PRLabel: %KeyVault
-/sdk/keyvault/                                                       @schaabs @chlowell @mccoyp
+/sdk/keyvault/                                                       @schaabs @chlowell @mccoyp @YalinLi0312
 
 # PRLabel: %Monitor - LogAnalytics
 /sdk/loganalytics/                                                   @alexeldeib
@@ -89,7 +89,7 @@
 /sdk/schemaregistry/                                                 @yunhaoling
 
 # PRLabel: %Search
-/sdk/search/                                                         @xiangyan99
+/sdk/search/                                                         @tjprescott
 
 # PRLabel: %Service Fabric
 /sdk/servicefabric/                                                  @QingChenmsft @samedder
@@ -119,13 +119,13 @@
 /sdk/translation/                                                    @kristapratico @mohamedshabanofficial
 
 # PRLabel: %Tables
-/sdk/tables/                                                         @seankane-msft
+/sdk/tables/                                                         @annatisch @YalinLi0312
 
 # PRLabel: %Media
 /sdk/media/                                                          @naiteeks @bennage @giakas
 
 # PRLabel: %Container Registry
-/sdk/containerregistry/                                              @seankane-msft
+/sdk/containerregistry/                                              @YalinLi0312
 
 # Smoke Tests
 /common/smoketest/                                                   @lmazuel @chlowell @annatisch @rakshith91 @shurd @southpolesteve
@@ -143,4 +143,4 @@
 
 # Add owners for notifications for specific pipelines
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
-/eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp
+/eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp @YalinLi0312

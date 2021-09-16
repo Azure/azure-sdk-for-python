@@ -42,7 +42,7 @@ class EnvironmentCredential(object):
     Service principal with certificate:
       - **AZURE_TENANT_ID**: ID of the service principal's tenant. Also called its 'directory' ID.
       - **AZURE_CLIENT_ID**: the service principal's client ID
-      - **AZURE_CLIENT_CERTIFICATE_PATH**: path to a PEM-encoded certificate file including the private key. The
+      - **AZURE_CLIENT_CERTIFICATE_PATH**: path to a PEM or PKCS12 certificate file including the private key. The
         certificate must not be password-protected.
 
     User with username and password:
@@ -101,6 +101,20 @@ class EnvironmentCredential(object):
             else:
                 _LOGGER.info("No environment configuration found.")
 
+    def __enter__(self):
+        if self._credential:
+            self._credential.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        if self._credential:
+            self._credential.__exit__(*args)
+
+    def close(self):
+        # type: () -> None
+        """Close the credential's transport session."""
+        self.__exit__()
+
     @log_get_token("EnvironmentCredential")
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (*str, **Any) -> AccessToken
@@ -118,7 +132,9 @@ class EnvironmentCredential(object):
         """
         if not self._credential:
             message = (
-                "EnvironmentCredential authentication unavailable. Environment variables are not fully configured."
+                "EnvironmentCredential authentication unavailable. Environment variables are not fully configured.\n"
+                "Visit https://aka.ms/azsdk/python/identity/environmentcredential/troubleshoot to troubleshoot."
+                "this issue."
             )
             raise CredentialUnavailableError(message=message)
         return self._credential.get_token(*scopes, **kwargs)

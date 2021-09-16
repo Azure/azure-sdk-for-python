@@ -61,6 +61,16 @@ class AzurePowerShellCredential(object):
         # type: (**Any) -> None
         self._allow_multitenant = kwargs.get("allow_multitenant_authentication", False)
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        pass
+
+    def close(self):
+        # type: () -> None
+        """Calling this method is unnecessary."""
+
     @log_get_token("AzurePowerShellCredential")
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
@@ -109,7 +119,10 @@ def run_command_line(command_line):
         # (handling Exception here because subprocess.SubprocessError and .TimeoutExpired were added in 3.3)
         if proc and not proc.returncode:
             proc.kill()
-        error = CredentialUnavailableError(message="Failed to invoke PowerShell")
+        error = CredentialUnavailableError(
+            message="Failed to invoke PowerShell.\n"
+                    "To mitigate this issue, please refer to the troubleshooting guidelines here at "
+                    "https://aka.ms/azsdk/python/identity/powershellcredential/troubleshoot.")
         six.raise_from(error, ex)
 
     raise_for_error(proc.returncode, stdout, stderr)

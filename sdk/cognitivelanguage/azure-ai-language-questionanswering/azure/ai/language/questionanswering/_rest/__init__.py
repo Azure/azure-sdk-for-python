@@ -7,13 +7,13 @@
 # --------------------------------------------------------------------------
 
 try:
-    from ._request_builders_py3 import build_query_knowledgebase_request
+    from ._request_builders_py3 import build_query_knowledge_base_request
     from ._request_builders_py3 import build_query_text_request
 except (SyntaxError, ImportError):
-    from ._request_builders import build_query_knowledgebase_request  # type: ignore
+    from ._request_builders import build_query_knowledge_base_request  # type: ignore
     from ._request_builders import build_query_text_request  # type: ignore
 
 __all__ = [
-    "build_query_knowledgebase_request",
+    "build_query_knowledge_base_request",
     "build_query_text_request",
 ]

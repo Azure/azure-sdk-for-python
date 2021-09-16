@@ -907,7 +907,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skip("Bad Request: Cosmos cannot handle single quotes in a PK/RK (confirm)")
     @cosmos_decorator_async
     async def test_operations_on_entity_with_partition_key_having_single_quote(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -1855,5 +1854,57 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             assert result['content']['PartitionKey'] == partition
             assert result['content']['Value'] == 'foobar'
             assert result['content']['Answer'] == 42
+        finally:
+            await self._tear_down()
+
+    @cosmos_decorator_async
+    async def test_keys_with_specialchar(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        try:
+            table2_name = self._get_table_reference('table2')
+            table2 = self.ts.get_table_client(table2_name)
+            await table2.create_table()
+
+            # Act
+            entity1 = {
+                'PartitionKey': "A'aaa\"_bbbb2",
+                'RowKey': '"A\'aaa"_bbbb2',
+                'test': '"A\'aaa"_bbbb2'
+            }
+
+            await self.table.create_entity(entity1.copy())
+            get_entity = await self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
+            await self.table.upsert_entity(entity1.copy(), mode='merge')
+            get_entity = await self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
+            await self.table.upsert_entity(entity1.copy(), mode='replace')
+            get_entity = await self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
+            await self.table.update_entity(entity1.copy(), mode='merge')
+            get_entity = await self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
+            await self.table.update_entity(entity1.copy(), mode='replace')
+            get_entity = await self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
+
+            entity_results = self.table.list_entities()
+            async for entity in entity_results:
+                assert entity == entity1
+                get_entity = await self.table.get_entity(
+                    partition_key=entity['PartitionKey'],
+                    row_key=entity['RowKey'])
+                assert get_entity == entity1
+
         finally:
             await self._tear_down()

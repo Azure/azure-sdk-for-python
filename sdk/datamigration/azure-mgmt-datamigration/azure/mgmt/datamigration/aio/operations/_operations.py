@@ -43,7 +43,7 @@ class Operations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ServiceOperationList"]:
         """Get available resource provider actions (operations).
 
@@ -59,7 +59,7 @@ class Operations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         accept = "application/json"
 
         def prepare_request(next_link=None):

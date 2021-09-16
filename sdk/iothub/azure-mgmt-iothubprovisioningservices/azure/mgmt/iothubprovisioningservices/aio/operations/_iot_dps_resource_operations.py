@@ -47,7 +47,7 @@ class IotDpsResourceOperations:
         self,
         provisioning_service_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProvisioningServiceDescription":
         """Get the non-security related metadata of the provisioning service.
 
@@ -109,7 +109,7 @@ class IotDpsResourceOperations:
         resource_group_name: str,
         provisioning_service_name: str,
         iot_dps_description: "_models.ProvisioningServiceDescription",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProvisioningServiceDescription":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProvisioningServiceDescription"]
         error_map = {
@@ -167,7 +167,7 @@ class IotDpsResourceOperations:
         resource_group_name: str,
         provisioning_service_name: str,
         iot_dps_description: "_models.ProvisioningServiceDescription",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ProvisioningServiceDescription"]:
         """Create or update the metadata of the provisioning service.
 
@@ -183,8 +183,8 @@ class IotDpsResourceOperations:
         :type iot_dps_description: ~azure.mgmt.iothubprovisioningservices.models.ProvisioningServiceDescription
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ProvisioningServiceDescription or the result of cls(response)
@@ -242,7 +242,7 @@ class IotDpsResourceOperations:
         resource_group_name: str,
         provisioning_service_name: str,
         provisioning_service_tags: "_models.TagsResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProvisioningServiceDescription":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProvisioningServiceDescription"]
         error_map = {
@@ -295,7 +295,7 @@ class IotDpsResourceOperations:
         resource_group_name: str,
         provisioning_service_name: str,
         provisioning_service_tags: "_models.TagsResource",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ProvisioningServiceDescription"]:
         """Update an existing provisioning service's tags.
 
@@ -311,8 +311,8 @@ class IotDpsResourceOperations:
         :type provisioning_service_tags: ~azure.mgmt.iothubprovisioningservices.models.TagsResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ProvisioningServiceDescription or the result of cls(response)
@@ -369,7 +369,7 @@ class IotDpsResourceOperations:
         self,
         provisioning_service_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -414,7 +414,7 @@ class IotDpsResourceOperations:
         self,
         provisioning_service_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete the Provisioning Service.
 
@@ -426,8 +426,8 @@ class IotDpsResourceOperations:
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -478,7 +478,7 @@ class IotDpsResourceOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProvisioningServiceDescriptionListResult"]:
         """Get all the provisioning services in a subscription.
 
@@ -548,7 +548,7 @@ class IotDpsResourceOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProvisioningServiceDescriptionListResult"]:
         """Get a list of all provisioning services in the given resource group.
 
@@ -622,7 +622,7 @@ class IotDpsResourceOperations:
         resource_group_name: str,
         provisioning_service_name: str,
         asyncinfo: str = "true",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AsyncOperationResult":
         """Gets the status of a long running operation, such as create, update or delete a provisioning
         service.
@@ -691,7 +691,7 @@ class IotDpsResourceOperations:
         self,
         provisioning_service_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.IotDpsSkuDefinitionListResult"]:
         """Get the list of valid SKUs for a provisioning service.
 
@@ -767,7 +767,7 @@ class IotDpsResourceOperations:
     async def check_provisioning_service_name_availability(
         self,
         arguments: "_models.OperationInputs",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NameAvailabilityInfo":
         """Check if a provisioning service name is available.
 
@@ -831,7 +831,7 @@ class IotDpsResourceOperations:
         self,
         provisioning_service_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SharedAccessSignatureAuthorizationRuleListResult"]:
         """Get the security metadata for a provisioning service.
 
@@ -910,7 +910,7 @@ class IotDpsResourceOperations:
         provisioning_service_name: str,
         key_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SharedAccessSignatureAuthorizationRuleAccessRightsDescription":
         """Get a shared access policy by name from a provisioning service.
 
@@ -975,7 +975,7 @@ class IotDpsResourceOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateLinkResources":
         """List private link resources.
 
@@ -1038,7 +1038,7 @@ class IotDpsResourceOperations:
         resource_group_name: str,
         resource_name: str,
         group_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GroupIdInformation":
         """Get the specified private link resource.
 
@@ -1103,7 +1103,7 @@ class IotDpsResourceOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.PrivateEndpointConnection"]:
         """List private endpoint connections.
 
@@ -1166,7 +1166,7 @@ class IotDpsResourceOperations:
         resource_group_name: str,
         resource_name: str,
         private_endpoint_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateEndpointConnection":
         """Get private endpoint connection.
 
@@ -1233,7 +1233,7 @@ class IotDpsResourceOperations:
         resource_name: str,
         private_endpoint_connection_name: str,
         private_endpoint_connection: "_models.PrivateEndpointConnection",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateEndpointConnection":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
         error_map = {
@@ -1293,7 +1293,7 @@ class IotDpsResourceOperations:
         resource_name: str,
         private_endpoint_connection_name: str,
         private_endpoint_connection: "_models.PrivateEndpointConnection",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.PrivateEndpointConnection"]:
         """Create or update private endpoint connection.
 
@@ -1310,8 +1310,8 @@ class IotDpsResourceOperations:
         :type private_endpoint_connection: ~azure.mgmt.iothubprovisioningservices.models.PrivateEndpointConnection
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either PrivateEndpointConnection or the result of cls(response)
@@ -1371,7 +1371,7 @@ class IotDpsResourceOperations:
         resource_group_name: str,
         resource_name: str,
         private_endpoint_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.PrivateEndpointConnection"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.PrivateEndpointConnection"]]
         error_map = {
@@ -1426,7 +1426,7 @@ class IotDpsResourceOperations:
         resource_group_name: str,
         resource_name: str,
         private_endpoint_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.PrivateEndpointConnection"]:
         """Delete private endpoint connection.
 
@@ -1441,8 +1441,8 @@ class IotDpsResourceOperations:
         :type private_endpoint_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either PrivateEndpointConnection or the result of cls(response)

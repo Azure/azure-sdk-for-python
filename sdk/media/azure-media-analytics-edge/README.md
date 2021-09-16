@@ -47,7 +47,7 @@ The second parameter, `payload`, sends the entire serialization of the media gra
 
 ### Creating a graph topology
 To create a graph topology you need to define parameters, sources, and sinks.
-```
+```python
 from azure.media.analyticsedge import *
 
 #Parameters
@@ -69,7 +69,7 @@ graph_topology = MediaGraphTopology(name=graph_topology_name,properties=graph_pr
 
 ### Creating a graph instance
 To create a graph instance, you need to have an existing graph topology.
-```
+```python
 from azure.media.analyticsedge import *
 
 #Parameters
@@ -86,13 +86,13 @@ graph_instance = MediaGraphInstance(name=graph_instance_name, properties=graph_i
 
 ### Invoking a graph method request
 To invoke a graph method on your device you need to first define the request using the lva sdk. Then send that method request using the iot sdk's `CloudToDeviceMethod`
-```
+```python
 from azure.media.analyticsedge import *
 from azure.iot.hub import IoTHubRegistryManager
 from azure.iot.hub.models import CloudToDeviceMethod
 
 module_d = "mediaedge"
-connection_string = "HostName=lvasamplehubcx5a4jgbixyvg.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=/53Qw6ifN0ka4so72a1gVEhmyiz5fLb9iw+oWoyoQxk="
+connection_string = "test"
 set_method_request = MediaGraphTopologySetRequest(graph=graph_topology)
 direct_method = CloudToDeviceMethod(method_name=set_method_request.method_name, payload=set_method_request.serialize())
 registry_manager = IoTHubRegistryManager(connection_string)

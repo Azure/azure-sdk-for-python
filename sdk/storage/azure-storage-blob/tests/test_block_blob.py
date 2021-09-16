@@ -477,7 +477,7 @@ class StorageBlockBlobTest(StorageTestCase):
         # Act
         block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
         immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
-                                                 policy_mode=BlobImmutabilityPolicyMode.UNLOCKED)
+                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
         put_block_list_resp = blob.commit_block_list(block_list,
                                                      immutability_policy=immutability_policy,
                                                      legal_hold=True,
@@ -496,7 +496,7 @@ class StorageBlockBlobTest(StorageTestCase):
             blob.delete_immutability_policy()
             blob.set_legal_hold(False)
             blob.delete_blob()
-            mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, self.container_name)
+            mgmt_client.blob_containers.delete(resource_group.name, storage_account.name, container_name)
 
     @GlobalStorageAccountPreparer()
     def test_put_block_list_invalid_block_id(self, resource_group, location, storage_account, storage_account_key):

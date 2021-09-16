@@ -13,7 +13,7 @@ from msrest import Serializer
 _SERIALIZER = Serializer()
 
 
-def build_query_knowledgebase_request(
+def build_query_knowledge_base_request(
     *, project_name: str, json: Any = None, content: Any = None, deployment_name: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     """Answers the specified question using your knowledge base.

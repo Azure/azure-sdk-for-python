@@ -14,7 +14,7 @@ pr:
     - sdk/core/
 
 variables:
-  NodeVersion: '10.x'
+  NodeVersion: '12.x'
   PythonVersion: '3.6'
   auto_rest_clone_url: 'https://github.com/Azure/autorest.python.git'
   repo_branch: 'autorestv3'

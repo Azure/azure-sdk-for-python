@@ -52,7 +52,7 @@ from azure.purview.scanning import PurviewScanningClient
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
-client = PurviewScanningClient(endpoint="https://<my-account-name>.scanning.purview.azure.com", credential=credential)
+client = PurviewScanningClient(endpoint="https://<my-account-name>.scan.purview.azure.com", credential=credential)
 ```
 
 ## Key concepts
@@ -77,7 +77,7 @@ from azure.purview.scanning.rest import data_sources
 from azure.core.exceptions import HttpResponseError
 
 credential = DefaultAzureCredential()
-client = PurviewScanningClient(endpoint="https://<my-account-name>.scanning.purview.azure.com", credential=credential)
+client = PurviewScanningClient(endpoint="https://<my-account-name>.scan.purview.azure.com", credential=credential)
 
 request = data_sources.build_list_all_request()
 
@@ -124,7 +124,7 @@ logger.setLevel(logging.DEBUG)
 handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
-endpoint = "https://<my-account-name>.scanning.purview.azure.com"
+endpoint = "https://<my-account-name>.scan.purview.azure.com"
 credential = DefaultAzureCredential()
 
 # This client will log detailed information about its HTTP sessions, at DEBUG level
