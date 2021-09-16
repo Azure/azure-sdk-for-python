@@ -483,18 +483,6 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
                 self.account_url(storage_account, "queue"), credential=storage_account_key, queue_name='queue')
             await service.close()
 
-    @GlobalStorageAccountPreparer()
-    def test_queue_client_api_version(self, resource_group, location, storage_account, storage_account_key):
-        newest_api_version = _SUPPORTED_API_VERSIONS[-1]
-        queue_client = QueueClient("https://abc.queue.core.windows.net", "myqueue", "fake_key")
-        queue_service_client = QueueServiceClient("https://abc.queue.core.windows.net", "fake_key")
-        self.assertEqual(queue_client.api_version, newest_api_version)
-        self.assertEqual(queue_service_client.api_version, newest_api_version)
-
-        queue_client2 = QueueClient("https://abc.queue.core.windows.net", "myqueue", "fake_key", api_version="2019-02-02")
-        queue_service_client2 = QueueServiceClient("https://abc.queue.core.windows.net", "fake_key")
-        self.assertEqual(queue_client2.api_version, "2019-02-02")
-        self.assertEqual(queue_service_client2.api_version, "2019-02-02")
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
