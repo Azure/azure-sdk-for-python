@@ -13,7 +13,7 @@ HTTP_REQUESTS = [PipelineTransportHttpRequest, RestHttpRequest]
 
 ############################## HELPER FUNCTIONS ##############################
 
-def is_rest_http_request(http_request):
+def is_rest(http_request):
     return hasattr(http_request, "content")
 
 def create_http_request(http_request, *args, **kwargs):

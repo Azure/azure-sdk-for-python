@@ -53,7 +53,7 @@ from azure.core.pipeline.transport import (
     HttpTransport,
     RequestsTransport,
 )
-from utils import HTTP_REQUESTS, is_rest_http_request
+from utils import HTTP_REQUESTS, is_rest
 
 from azure.core.exceptions import AzureError
 
@@ -419,7 +419,7 @@ def test_basic_requests_separate_session(port, http_request):
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_request_text(port, http_request):
     client = PipelineClientBase("http://localhost:{}".format(port))
-    if is_rest_http_request(http_request):
+    if is_rest(http_request):
         request = http_request("GET", "/", json="foo")
     else:
         request = client.get(
@@ -430,7 +430,7 @@ def test_request_text(port, http_request):
     # In absence of information, everything is JSON (double quote added)
     assert request.data == json.dumps("foo")
 
-    if is_rest_http_request(http_request):
+    if is_rest(http_request):
         request = http_request("POST", "/", headers={'content-type': 'text/whatever'}, content="foo")
     else:
         request = client.post(

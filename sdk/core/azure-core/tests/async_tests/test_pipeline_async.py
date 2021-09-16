@@ -54,7 +54,7 @@ import aiohttp
 import trio
 
 import pytest
-from utils import HTTP_REQUESTS, is_rest_http_request
+from utils import HTTP_REQUESTS
 
 
 @pytest.mark.asyncio

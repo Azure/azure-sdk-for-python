@@ -52,8 +52,7 @@ def test_response_hook_policy_in_both(http_request):
     def test_callback(response):
         raise ValueError()
 
-    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-    def test_callback_request(responsehttp_request):
+    def test_callback_request(response):
         raise TypeError()
 
     transport = mock.MagicMock(spec=HttpTransport)
@@ -107,8 +106,7 @@ def test_request_hook_policy_in_both(http_request):
     def test_callback(response):
         raise ValueError()
 
-    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-    def test_callback_request(responsehttp_request):
+    def test_callback_request(response):
         raise TypeError()
 
     transport = mock.MagicMock(spec=HttpTransport)

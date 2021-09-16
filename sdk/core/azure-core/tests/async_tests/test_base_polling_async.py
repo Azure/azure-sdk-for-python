@@ -27,7 +27,7 @@ import base64
 import json
 import pickle
 import re
-from utils import HTTP_REQUESTS, is_rest_http_request
+from utils import HTTP_REQUESTS, is_rest
 import types
 import unittest
 try:
@@ -314,7 +314,7 @@ class TestBasePolling(object):
         response.headers.update({"content-type": "application/json; charset=utf8"})
         response.reason = "OK"
 
-        if is_rest_http_request(http_request):
+        if is_rest(http_request):
             request = http_request(
                 response.request.method,
                 response.request.url,

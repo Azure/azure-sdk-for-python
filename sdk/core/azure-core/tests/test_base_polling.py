@@ -48,7 +48,7 @@ from azure.core.pipeline.transport import RequestsTransportResponse, HttpTranspo
 
 from azure.core.polling.base_polling import LROBasePolling
 from azure.core.pipeline.policies._utils import _FixedOffset
-from utils import HTTP_REQUESTS, is_rest_http_request
+from utils import HTTP_REQUESTS, is_rest
 
 class SimpleResource:
     """An implementation of Python 3 SimpleNamespace.
@@ -333,7 +333,7 @@ class TestBasePolling(object):
         response.headers.update({"content-type": "application/json; charset=utf8"})
         response.reason = "OK"
 
-        if is_rest_http_request(http_request):
+        if is_rest(http_request):
             request = http_request(
                 response.request.method,
                 response.request.url,
