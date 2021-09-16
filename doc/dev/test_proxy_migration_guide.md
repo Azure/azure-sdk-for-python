@@ -170,7 +170,7 @@ case.
 [docker_start_proxy]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/common/testproxy/docker-start-proxy.ps1
 [general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/README.md
 [proxy_cert_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/trusting-cert-per-language.md
-[pytest_collection]: https://docs.pytest.org/en/latest/explanation/goodpractices.html#test-discovery
-[pytest_fixtures]: https://docs.pytest.org/en/6.2.x/fixture.html#scope-sharing-fixtures-across-classes-modules-packages-or-session
+[pytest_collection]: https://docs.pytest.org/latest/goodpractices.html#test-discovery
+[pytest_fixtures]: https://docs.pytest.org/latest/fixture.html#scope-sharing-fixtures-across-classes-modules-packages-or-session
 [sanitizers]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md#session-and-test-level-transforms-sanitiziers-and-matchers
-[vcrpy]: https://vcrpy.readthedocs.io/en/latest/
+[vcrpy]: https://vcrpy.readthedocs.io
