@@ -346,3 +346,5 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-mgmt-relay msrest>=0.6.21
 #override azure-mgmt-authorization msrest>=0.6.21
 #override azure-mgmt-azurearcdata msrest>=0.6.21
+#override azure-ai-language-conversations azure-core<2.0.0,>=1.18.0
+#override azure-ai-language-conversations msrest>=0.6.21
