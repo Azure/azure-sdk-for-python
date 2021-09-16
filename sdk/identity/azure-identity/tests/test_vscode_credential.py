@@ -225,6 +225,15 @@ def test_adfs():
     assert "adfs" in ex.value.message.lower()
 
 
+def test_custom_cloud_no_authority():
+    """The credential is unavailable when VS Code is configured to use a custom cloud with no known authority"""
+
+    cloud_name = "AzureCustomCloud"
+    credential = get_credential({"azure.cloud": cloud_name})
+    with pytest.raises(CredentialUnavailableError, match="authority.*" + cloud_name):
+        credential.get_token("scope")
+
+
 @pytest.mark.parametrize(
     "cloud,authority",
     (

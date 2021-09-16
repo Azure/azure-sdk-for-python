@@ -16,8 +16,8 @@ class MockReceiver:
 
 
 class MockReceivedMessage(ServiceBusReceivedMessage):
-    def __init__(self, prevent_renew_lock=False, exception_on_renew_lock=False):
-        self._lock_duration = 2
+    def __init__(self, prevent_renew_lock=False, exception_on_renew_lock=False, **kwargs):
+        self._lock_duration = kwargs.get("lock_duration", 2)
         self._raw_amqp_message = None
         self._received_timestamp_utc = utc_now()
         self.locked_until_utc = self._received_timestamp_utc + timedelta(seconds=self._lock_duration)

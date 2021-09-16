@@ -44,7 +44,7 @@ class TableServicesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ListTableServices":
         """List all table services for the storage account.
 
@@ -107,7 +107,7 @@ class TableServicesOperations:
         resource_group_name: str,
         account_name: str,
         parameters: "_models.TableServiceProperties",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TableServiceProperties":
         """Sets the properties of a storage account’s Table service, including properties for Storage
         Analytics and CORS (Cross-Origin Resource Sharing) rules.
@@ -180,7 +180,7 @@ class TableServicesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TableServiceProperties":
         """Gets the properties of a storage account’s Table service, including properties for Storage
         Analytics and CORS (Cross-Origin Resource Sharing) rules.

@@ -80,7 +80,7 @@ To create a live pipeline, you need to have an existing pipeline topology.
 
 ```python
 url_param = ParameterDefinition(name="rtspUrl", value=pipeline_url)
-pass_param = ParameterDefinition(name="rtspPassword", value='testpass')
+pass_param = ParameterDefinition(name="rtspPassword", value="secret_password")
 live_pipeline_properties = LivePipelineProperties(description="Sample pipeline description", topology_name=pipeline_topology_name, parameters=[url_param])
 
 live_pipeline = LivePipeline(name=live_pipeline_name, properties=live_pipeline_properties)

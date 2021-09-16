@@ -21,6 +21,7 @@ from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 
 from ... import models as _models, _rest as rest
+from ..._patch import _validate_text_records
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -28,7 +29,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 
 class QuestionAnsweringClientOperationsMixin:
     @overload
-    async def query_knowledgebase(
+    async def query_knowledge_base(
         self,
         knowledge_base_query_options: "_models.KnowledgeBaseQueryOptions",
         *,
@@ -53,7 +54,7 @@ class QuestionAnsweringClientOperationsMixin:
         ...
 
     @overload
-    async def query_knowledgebase(
+    async def query_knowledge_base(
         self,
         *,
         project_name: str,
@@ -106,7 +107,7 @@ class QuestionAnsweringClientOperationsMixin:
         """
         ...
 
-    async def query_knowledgebase(
+    async def query_knowledge_base(
         self,
         *args,
         **kwargs: Any
@@ -172,12 +173,12 @@ class QuestionAnsweringClientOperationsMixin:
 
         json = self._serialize.body(knowledge_base_query_options, "KnowledgeBaseQueryOptions")
 
-        request = rest.build_query_knowledgebase_request(
+        request = rest.build_query_knowledge_base_request(
             content_type=content_type,
             project_name=project_name,
             deployment_name=deployment_name,
             json=json,
-            template_url=self.query_knowledgebase.metadata["url"],
+            template_url=self.query_knowledge_base.metadata["url"],
         )._to_pipeline_transport_request()
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -201,7 +202,7 @@ class QuestionAnsweringClientOperationsMixin:
 
         return deserialized
 
-    query_knowledgebase.metadata = {"url": "/:query-knowledgebases"}  # type: ignore
+    query_knowledge_base.metadata = {"url": "/:query-knowledgebases"}  # type: ignore
 
     @overload
     async def query_text(
@@ -286,6 +287,11 @@ class QuestionAnsweringClientOperationsMixin:
                 language=kwargs.pop("language", None),
                 string_index_type=kwargs.pop("string_index_type", "TextElements_v8")
             )
+        try:
+            text_query_options['records'] = _validate_text_records(text_query_options['records'])
+        except TypeError:
+            text_query_options.records = _validate_text_records(text_query_options.records)
+
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.TextAnswers"]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))

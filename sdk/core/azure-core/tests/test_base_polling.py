@@ -30,7 +30,6 @@ import re
 import types
 import pickle
 import platform
-import unittest
 import six
 try:
     from unittest import mock
@@ -40,8 +39,6 @@ except ImportError:
 import pytest
 
 from requests import Request, Response
-
-from msrest import Deserializer
 
 from azure.core.polling import LROPoller
 from azure.core.exceptions import DecodeError, HttpResponseError

@@ -16,23 +16,13 @@ if TYPE_CHECKING:
     from typing import Any, Optional
 
     from azure.core.credentials import TokenCredential
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 from ._configuration import SynapseManagementClientConfiguration
-from .operations import BigDataPoolsOperations
+from .operations import AzureADOnlyAuthenticationsOperations
 from .operations import Operations
 from .operations import IpFirewallRulesOperations
-from .operations import IntegrationRuntimesOperations
-from .operations import IntegrationRuntimeNodeIpAddressOperations
-from .operations import IntegrationRuntimeObjectMetadataOperations
-from .operations import IntegrationRuntimeNodesOperations
-from .operations import IntegrationRuntimeCredentialsOperations
-from .operations import IntegrationRuntimeConnectionInfosOperations
-from .operations import IntegrationRuntimeAuthKeysOperations
-from .operations import IntegrationRuntimeMonitoringDataOperations
-from .operations import IntegrationRuntimeStatusOperations
 from .operations import KeysOperations
-from .operations import LibraryOperations
-from .operations import LibrariesOperations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import PrivateLinkResourcesOperations
 from .operations import PrivateLinkHubPrivateLinkResourcesOperations
@@ -79,42 +69,34 @@ from .operations import WorkspaceAadAdminsOperations
 from .operations import WorkspaceSqlAadAdminsOperations
 from .operations import WorkspaceManagedIdentitySqlControlSettingsOperations
 from .operations import RestorableDroppedSqlPoolsOperations
+from .operations import BigDataPoolsOperations
+from .operations import LibraryOperations
+from .operations import LibrariesOperations
+from .operations import IntegrationRuntimesOperations
+from .operations import IntegrationRuntimeNodeIpAddressOperations
+from .operations import IntegrationRuntimeObjectMetadataOperations
+from .operations import IntegrationRuntimeNodesOperations
+from .operations import IntegrationRuntimeCredentialsOperations
+from .operations import IntegrationRuntimeConnectionInfosOperations
+from .operations import IntegrationRuntimeAuthKeysOperations
+from .operations import IntegrationRuntimeMonitoringDataOperations
+from .operations import IntegrationRuntimeStatusOperations
+from .operations import SparkConfigurationOperations
+from .operations import SparkConfigurationsOperations
 from . import models
 
 
 class SynapseManagementClient(object):
     """Azure Synapse Analytics Management Client.
 
-    :ivar big_data_pools: BigDataPoolsOperations operations
-    :vartype big_data_pools: azure.mgmt.synapse.operations.BigDataPoolsOperations
+    :ivar azure_ad_only_authentications: AzureADOnlyAuthenticationsOperations operations
+    :vartype azure_ad_only_authentications: azure.mgmt.synapse.operations.AzureADOnlyAuthenticationsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.synapse.operations.Operations
     :ivar ip_firewall_rules: IpFirewallRulesOperations operations
     :vartype ip_firewall_rules: azure.mgmt.synapse.operations.IpFirewallRulesOperations
-    :ivar integration_runtimes: IntegrationRuntimesOperations operations
-    :vartype integration_runtimes: azure.mgmt.synapse.operations.IntegrationRuntimesOperations
-    :ivar integration_runtime_node_ip_address: IntegrationRuntimeNodeIpAddressOperations operations
-    :vartype integration_runtime_node_ip_address: azure.mgmt.synapse.operations.IntegrationRuntimeNodeIpAddressOperations
-    :ivar integration_runtime_object_metadata: IntegrationRuntimeObjectMetadataOperations operations
-    :vartype integration_runtime_object_metadata: azure.mgmt.synapse.operations.IntegrationRuntimeObjectMetadataOperations
-    :ivar integration_runtime_nodes: IntegrationRuntimeNodesOperations operations
-    :vartype integration_runtime_nodes: azure.mgmt.synapse.operations.IntegrationRuntimeNodesOperations
-    :ivar integration_runtime_credentials: IntegrationRuntimeCredentialsOperations operations
-    :vartype integration_runtime_credentials: azure.mgmt.synapse.operations.IntegrationRuntimeCredentialsOperations
-    :ivar integration_runtime_connection_infos: IntegrationRuntimeConnectionInfosOperations operations
-    :vartype integration_runtime_connection_infos: azure.mgmt.synapse.operations.IntegrationRuntimeConnectionInfosOperations
-    :ivar integration_runtime_auth_keys: IntegrationRuntimeAuthKeysOperations operations
-    :vartype integration_runtime_auth_keys: azure.mgmt.synapse.operations.IntegrationRuntimeAuthKeysOperations
-    :ivar integration_runtime_monitoring_data: IntegrationRuntimeMonitoringDataOperations operations
-    :vartype integration_runtime_monitoring_data: azure.mgmt.synapse.operations.IntegrationRuntimeMonitoringDataOperations
-    :ivar integration_runtime_status: IntegrationRuntimeStatusOperations operations
-    :vartype integration_runtime_status: azure.mgmt.synapse.operations.IntegrationRuntimeStatusOperations
     :ivar keys: KeysOperations operations
     :vartype keys: azure.mgmt.synapse.operations.KeysOperations
-    :ivar library: LibraryOperations operations
-    :vartype library: azure.mgmt.synapse.operations.LibraryOperations
-    :ivar libraries: LibrariesOperations operations
-    :vartype libraries: azure.mgmt.synapse.operations.LibrariesOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
     :vartype private_endpoint_connections: azure.mgmt.synapse.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
@@ -207,6 +189,34 @@ class SynapseManagementClient(object):
     :vartype workspace_managed_identity_sql_control_settings: azure.mgmt.synapse.operations.WorkspaceManagedIdentitySqlControlSettingsOperations
     :ivar restorable_dropped_sql_pools: RestorableDroppedSqlPoolsOperations operations
     :vartype restorable_dropped_sql_pools: azure.mgmt.synapse.operations.RestorableDroppedSqlPoolsOperations
+    :ivar big_data_pools: BigDataPoolsOperations operations
+    :vartype big_data_pools: azure.mgmt.synapse.operations.BigDataPoolsOperations
+    :ivar library: LibraryOperations operations
+    :vartype library: azure.mgmt.synapse.operations.LibraryOperations
+    :ivar libraries: LibrariesOperations operations
+    :vartype libraries: azure.mgmt.synapse.operations.LibrariesOperations
+    :ivar integration_runtimes: IntegrationRuntimesOperations operations
+    :vartype integration_runtimes: azure.mgmt.synapse.operations.IntegrationRuntimesOperations
+    :ivar integration_runtime_node_ip_address: IntegrationRuntimeNodeIpAddressOperations operations
+    :vartype integration_runtime_node_ip_address: azure.mgmt.synapse.operations.IntegrationRuntimeNodeIpAddressOperations
+    :ivar integration_runtime_object_metadata: IntegrationRuntimeObjectMetadataOperations operations
+    :vartype integration_runtime_object_metadata: azure.mgmt.synapse.operations.IntegrationRuntimeObjectMetadataOperations
+    :ivar integration_runtime_nodes: IntegrationRuntimeNodesOperations operations
+    :vartype integration_runtime_nodes: azure.mgmt.synapse.operations.IntegrationRuntimeNodesOperations
+    :ivar integration_runtime_credentials: IntegrationRuntimeCredentialsOperations operations
+    :vartype integration_runtime_credentials: azure.mgmt.synapse.operations.IntegrationRuntimeCredentialsOperations
+    :ivar integration_runtime_connection_infos: IntegrationRuntimeConnectionInfosOperations operations
+    :vartype integration_runtime_connection_infos: azure.mgmt.synapse.operations.IntegrationRuntimeConnectionInfosOperations
+    :ivar integration_runtime_auth_keys: IntegrationRuntimeAuthKeysOperations operations
+    :vartype integration_runtime_auth_keys: azure.mgmt.synapse.operations.IntegrationRuntimeAuthKeysOperations
+    :ivar integration_runtime_monitoring_data: IntegrationRuntimeMonitoringDataOperations operations
+    :vartype integration_runtime_monitoring_data: azure.mgmt.synapse.operations.IntegrationRuntimeMonitoringDataOperations
+    :ivar integration_runtime_status: IntegrationRuntimeStatusOperations operations
+    :vartype integration_runtime_status: azure.mgmt.synapse.operations.IntegrationRuntimeStatusOperations
+    :ivar spark_configuration: SparkConfigurationOperations operations
+    :vartype spark_configuration: azure.mgmt.synapse.operations.SparkConfigurationOperations
+    :ivar spark_configurations: SparkConfigurationsOperations operations
+    :vartype spark_configurations: azure.mgmt.synapse.operations.SparkConfigurationsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription.
@@ -233,35 +243,13 @@ class SynapseManagementClient(object):
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
-        self.big_data_pools = BigDataPoolsOperations(
+        self.azure_ad_only_authentications = AzureADOnlyAuthenticationsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self._config, self._serialize, self._deserialize)
         self.ip_firewall_rules = IpFirewallRulesOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.integration_runtimes = IntegrationRuntimesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.integration_runtime_node_ip_address = IntegrationRuntimeNodeIpAddressOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.integration_runtime_object_metadata = IntegrationRuntimeObjectMetadataOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.integration_runtime_nodes = IntegrationRuntimeNodesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.integration_runtime_credentials = IntegrationRuntimeCredentialsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.integration_runtime_connection_infos = IntegrationRuntimeConnectionInfosOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.integration_runtime_auth_keys = IntegrationRuntimeAuthKeysOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.integration_runtime_monitoring_data = IntegrationRuntimeMonitoringDataOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.integration_runtime_status = IntegrationRuntimeStatusOperations(
-            self._client, self._config, self._serialize, self._deserialize)
         self.keys = KeysOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.library = LibraryOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.libraries = LibrariesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize)
@@ -355,6 +343,52 @@ class SynapseManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.restorable_dropped_sql_pools = RestorableDroppedSqlPoolsOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.big_data_pools = BigDataPoolsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.library = LibraryOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.libraries = LibrariesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.integration_runtimes = IntegrationRuntimesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.integration_runtime_node_ip_address = IntegrationRuntimeNodeIpAddressOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.integration_runtime_object_metadata = IntegrationRuntimeObjectMetadataOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.integration_runtime_nodes = IntegrationRuntimeNodesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.integration_runtime_credentials = IntegrationRuntimeCredentialsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.integration_runtime_connection_infos = IntegrationRuntimeConnectionInfosOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.integration_runtime_auth_keys = IntegrationRuntimeAuthKeysOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.integration_runtime_monitoring_data = IntegrationRuntimeMonitoringDataOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.integration_runtime_status = IntegrationRuntimeStatusOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.spark_configuration = SparkConfigurationOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.spark_configurations = SparkConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+
+    def _send_request(self, http_request, **kwargs):
+        # type: (HttpRequest, Any) -> HttpResponse
+        """Runs the network request through the client's chained policies.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        """
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+        }
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
 
     def close(self):
         # type: () -> None

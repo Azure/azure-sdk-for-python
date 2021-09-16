@@ -6,30 +6,28 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from copy import deepcopy
 from typing import TYPE_CHECKING
 
 from azure.core import PipelineClient
 from msrest import Deserializer, Serializer
 
+from ._configuration import AzureSchemaRegistryConfiguration
+
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
+    from typing import Any, Dict
 
     from azure.core.credentials import TokenCredential
-
-from ._configuration import AzureSchemaRegistryConfiguration
-from .operations import SchemaOperations
-from . import models
-
+    from azure.core.rest import HttpRequest, HttpResponse
 
 class AzureSchemaRegistry(object):
-    """Azure Schema Registry is as a central schema repository for enterprise-level data infrastructure, complete with support for versioning and management.
+    """Azure Schema Registry is as a central schema repository, complete with support for versioning, management, compatibility checking, and RBAC.
 
-    :ivar schema: SchemaOperations operations
-    :vartype schema: azure.schemaregistry._generated.operations.SchemaOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param endpoint: The Schema Registry service endpoint, for example my-namespace.servicebus.windows.net.
+    :param endpoint: The Schema Registry service endpoint, for example
+         my-namespace.servicebus.windows.net.
     :type endpoint: str
     """
 
@@ -44,12 +42,47 @@ class AzureSchemaRegistry(object):
         self._config = AzureSchemaRegistryConfiguration(credential, endpoint, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {}  # type: Dict[str, Any]
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
+        self._serialize.client_side_validation = False
 
-        self.schema = SchemaOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+
+    def send_request(
+        self,
+        request,  # type: HttpRequest
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> HttpResponse
+        """Runs the network request through the client's chained policies.
+
+        We have helper methods to create requests specific to this service in `azure.schemaregistry._generated.rest`.
+        Use these helper methods to create the request you pass to this method.
+
+        >>> from azure.schemaregistry._generated.rest import schema
+        >>> request = schema.build_get_by_id_request(schema_id, **kwargs)
+        <HttpRequest [GET], url: '/$schemagroups/getSchemaById/{schema-id}'>
+        >>> response = client.send_request(request)
+        <HttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+
+        For advanced cases, you can also create your own :class:`~azure.core.rest.HttpRequest`
+        and pass it in.
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.HttpResponse
+        """
+
+        request_copy = deepcopy(request)
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        return self._client.send_request(request_copy, **kwargs)
 
     def close(self):
         # type: () -> None

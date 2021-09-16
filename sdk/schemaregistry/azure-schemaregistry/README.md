@@ -20,7 +20,7 @@ pip install azure-schemaregistry azure-identity
 To use this package, you must have:
 * Azure subscription - [Create a free account][azure_sub]
 * [Azure Schema Registry][schemaregistry_service]
-* Python 2.7, 3.5 or later - [Install Python][python]
+* Python 2.7, 3.6 or later - [Install Python][python]
 
 ### Authenticate the client
 Interaction with Schema Registry starts with an instance of SchemaRegistryClient class. You need the endpoint and AAD credential to instantiate the client object.
@@ -40,7 +40,7 @@ schema_registry_client = SchemaRegistryClient(endpoint, credential)
 
 - Schema: Schema is the organization or structure for data.
 
-- SchemaRegistryClient: `SchemaRegistryClient ` provides the API for storing and retrieving schemas in schema registry.
+- SchemaRegistryClient: `SchemaRegistryClient` provides the API for storing and retrieving schemas in schema registry.
 
 ## Examples
 
@@ -53,6 +53,7 @@ The following sections provide several code snippets covering some of the most c
 ### Register a schema
 
 Use `SchemaRegistryClient.register_schema` method to register a schema.
+When registering a schema, the `Schema` and `SchemaProperties` will be cached in the `SchemaRegistryClient` instance, so that any subsequent calls to `get_schema_id` and `get_schema` corresponding to the same schema can use the cached value rather than going to the service.
 
 ```python
 import os
@@ -86,6 +87,7 @@ with schema_registry_client:
 ### Get the schema by id
 
 Get the schema content and its properties by schema id.
+When looking up the schema content by schema id, the `Schema` will be cached in the `SchemaRegistryClient` instance so that subsequent requests for this schema id do not need to go the service.
 
 ```python
 import os
@@ -106,6 +108,7 @@ with schema_registry_client:
 ### Get the id of a schema
 
 Get the schema id of a schema by schema content and its properties.
+When looking up the schema id, the `Schema` and `SchemaProperties` will be cached in the `SchemaRegistryClient` instance, so that subsequent requests for this schema do not need to go the service.
 
 ```python
 import os

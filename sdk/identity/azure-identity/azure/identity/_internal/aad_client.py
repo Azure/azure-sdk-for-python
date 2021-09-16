@@ -10,13 +10,24 @@ from .._internal.pipeline import build_pipeline
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Iterable, Optional
+    from typing import Any, Iterable, Optional, Union
     from azure.core.credentials import AccessToken
     from azure.core.pipeline import Pipeline
     from .._internal import AadClientCertificate
 
 
 class AadClient(AadClientBase):
+    def __enter__(self):
+        self._pipeline.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        self._pipeline.__exit__(*args)
+
+    def close(self):
+        # type: () -> None
+        self.__exit__()
+
     def obtain_token_by_authorization_code(self, scopes, code, redirect_uri, client_secret=None, **kwargs):
         # type: (Iterable[str], str, str, Optional[str], **Any) -> AccessToken
         request = self._get_auth_code_request(
@@ -53,6 +64,11 @@ class AadClient(AadClientBase):
         now = int(time.time())
         response = self._pipeline.run(request, stream=False, retry_on_methods=self._POST, **kwargs)
         return self._process_response(response, now)
+
+    def obtain_token_on_behalf_of(self, scopes, client_credential, user_assertion, **kwargs):
+        # type: (Iterable[str], Union[str, AadClientCertificate], str, **Any) -> AccessToken
+        # no need for an implementation, non-async OnBehalfOfCredential acquires tokens through MSAL
+        raise NotImplementedError()
 
     # pylint:disable=no-self-use
     def _build_pipeline(self, **kwargs):

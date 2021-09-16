@@ -38,49 +38,41 @@ async def run_sample():
     VAULT_URL = os.environ["VAULT_URL"]
     credential = DefaultAzureCredential()
     client = KeyClient(vault_url=VAULT_URL, credential=credential)
-    try:
-        # Let's create a Key of type RSA.
-        # if the key already exists in the Key Vault, then a new version of the key is created.
-        print("\n.. Create Key")
-        key = await client.create_key("keyName", "RSA")
-        print("Key with name '{0}' created with key type '{1}'".format(key.name, key.key_type))
+    
+    # Let's create a Key of type RSA.
+    # if the key already exists in the Key Vault, then a new version of the key is created.
+    print("\n.. Create Key")
+    key = await client.create_key("keyName", "RSA")
+    print("Key with name '{0}' created with key type '{1}'".format(key.name, key.key_type))
 
-        # Backups are good to have, if in case keys gets deleted accidentally.
-        # For long term storage, it is ideal to write the backup to a file.
-        print("\n.. Create a backup for an existing Key")
-        key_backup = await client.backup_key(key.name)
-        print("Backup created for key with name '{0}'.".format(key.name))
+    # Backups are good to have, if in case keys gets deleted accidentally.
+    # For long term storage, it is ideal to write the backup to a file.
+    print("\n.. Create a backup for an existing Key")
+    key_backup = await client.backup_key(key.name)
+    print("Backup created for key with name '{0}'.".format(key.name))
 
-        # The rsa key is no longer in use, so you delete it.
-        deleted_key = await client.delete_key(key.name)
-        print("Deleted key with name '{0}'".format(deleted_key.name))
+    # The rsa key is no longer in use, so you delete it.
+    deleted_key = await client.delete_key(key.name)
+    print("Deleted key with name '{0}'".format(deleted_key.name))
 
-        # Purge the deleted key.
-        # The purge will take some time, so wait before restoring the backup to avoid a conflict.
-        print("\n.. Purge the key")
-        await client.purge_deleted_key(key.name)
-        await asyncio.sleep(60)
-        print("Purged key with name '{0}'".format(deleted_key.name))
+    # Purge the deleted key.
+    # The purge will take some time, so wait before restoring the backup to avoid a conflict.
+    print("\n.. Purge the key")
+    await client.purge_deleted_key(key.name)
+    await asyncio.sleep(60)
+    print("Purged key with name '{0}'".format(deleted_key.name))
 
-        # In the future, if the key is required again, we can use the backup value to restore it in the Key Vault.
-        print("\n.. Restore the key using the backed up key bytes")
-        key = await client.restore_key_backup(key_backup)
-        print("Restored key with name '{0}'".format(key.name))
+    # In the future, if the key is required again, we can use the backup value to restore it in the Key Vault.
+    print("\n.. Restore the key using the backed up key bytes")
+    key = await client.restore_key_backup(key_backup)
+    print("Restored key with name '{0}'".format(key.name))
 
-    except HttpResponseError as e:
-        print("\nrun_sample has caught an error. {0}".format(e.message))
-
-    finally:
-        print("\nrun_sample done")
-        await credential.close()
-        await client.close()
+    print("\nrun_sample done")
+    await credential.close()
+    await client.close()
 
 
 if __name__ == "__main__":
-    try:
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(run_sample())
-        loop.close()
-
-    except Exception as e:
-        print("Top level Error: {0}".format(str(e)))
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(run_sample())
+    loop.close()

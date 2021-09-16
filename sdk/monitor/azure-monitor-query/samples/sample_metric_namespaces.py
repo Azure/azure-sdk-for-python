@@ -13,5 +13,5 @@ metrics_uri = os.environ['METRICS_RESOURCE_URI']
 response = client.list_metric_namespaces(metrics_uri)
 
 for item in response:
-    print(item.metric_namespace_name)
+    print(item.fully_qualified_namespace)
     print(item.type)

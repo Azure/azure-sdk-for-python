@@ -21,6 +21,7 @@ from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
 
 from .. import models as _models, _rest as rest
+from .._patch import _validate_text_records
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -32,7 +33,7 @@ if TYPE_CHECKING:
 
 class QuestionAnsweringClientOperationsMixin(object):
     @overload
-    def query_knowledgebase(
+    def query_knowledge_base(
         self,
         knowledge_base_query_options,  # type: "_models.KnowledgeBaseQueryOptions"
         **kwargs  # type: Any
@@ -55,7 +56,7 @@ class QuestionAnsweringClientOperationsMixin(object):
         pass
 
     @overload
-    def query_knowledgebase(
+    def query_knowledge_base(
         self,
         **kwargs  # type: Any
     ):
@@ -96,7 +97,7 @@ class QuestionAnsweringClientOperationsMixin(object):
         """
         pass
 
-    def query_knowledgebase(
+    def query_knowledge_base(
         self,
         *args,  # type: "_models.KnowledgeBaseQueryOptions"
         **kwargs  # type: Any
@@ -163,12 +164,12 @@ class QuestionAnsweringClientOperationsMixin(object):
 
         json = self._serialize.body(knowledge_base_query_options, "KnowledgeBaseQueryOptions")
 
-        request = rest.build_query_knowledgebase_request(
+        request = rest.build_query_knowledge_base_request(
             content_type=content_type,
             project_name=project_name,
             deployment_name=deployment_name,
             json=json,
-            template_url=self.query_knowledgebase.metadata["url"],
+            template_url=self.query_knowledge_base.metadata["url"],
         )._to_pipeline_transport_request()
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -190,7 +191,7 @@ class QuestionAnsweringClientOperationsMixin(object):
 
         return deserialized
 
-    query_knowledgebase.metadata = {"url": "/:query-knowledgebases"}  # type: ignore
+    query_knowledge_base.metadata = {"url": "/:query-knowledgebases"}  # type: ignore
 
     @overload
     def query_text(
@@ -221,7 +222,7 @@ class QuestionAnsweringClientOperationsMixin(object):
         :keyword question: Required. User question to query against the given text records.
         :paramtype question: str
         :keyword records: Required. Text records to be searched for given question.
-        :paramtype records: list[~azure.ai.language.questionanswering.models.TextInput]
+        :paramtype records: list[str or ~azure.ai.language.questionanswering.models.TextRecord]
         :keyword language: Language of the text records. This is BCP-47 representation of a language. For
         example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as
         default.
@@ -254,7 +255,7 @@ class QuestionAnsweringClientOperationsMixin(object):
         :paramtype question: str
         :keyword records: Text records to be searched for given question. Provide either `text_query_options`, OR
          individual keyword arguments. If both are provided, only the options object will be used.
-        :paramtype records: list[~azure.ai.language.questionanswering.models.TextInput]
+        :paramtype records: list[str or ~azure.ai.language.questionanswering.models.TextRecord]
         :keyword language: Language of the text records. This is BCP-47 representation of a language. For
          example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as default.
         :paramtype language: str
@@ -277,6 +278,11 @@ class QuestionAnsweringClientOperationsMixin(object):
                 language=kwargs.pop("language", None),
                 string_index_type=kwargs.pop("string_index_type", "TextElements_v8")
             )
+        try:
+            text_query_options['records'] = _validate_text_records(text_query_options['records'])
+        except TypeError:
+            text_query_options.records = _validate_text_records(text_query_options.records)
+
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.TextAnswers"]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))

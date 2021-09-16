@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b1 (2021-08-11)
+## 1.0.0b1 (2021-08-16)
 - Preview release of `azure-communication-networktraversal`.
 
 The first preview of the Azure Communication Relay Client has the following features:

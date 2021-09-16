@@ -68,11 +68,10 @@ setup(
     install_requires=[
         'azure-core<2.0.0,>=1.16.0',
         'msrest>=0.6.21',
-        'chardet>=3.0.2,<5'
     ],
     extras_require={
         ":python_version<'3.0'": ['futures', 'azure-ai-language-nspkg'],
-        ":python_version<'3.5'": ["typing"]
+        ":python_version<'3.5'": ["typing"],
     },
     project_urls={
         'Bug Reports': 'https://github.com/Azure/azure-sdk-for-python/issues',
