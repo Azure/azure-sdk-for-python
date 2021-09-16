@@ -1,7 +1,10 @@
 from utils import run_pipeline
 import re
+import logging
 
 issue_object_rg = None
+logging.basicConfig(level=logging.DEBUG,
+                    format='[auto-reply  log]%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s')
 
 
 def weather_change_readme(rest_repo, link_dict, labels):
@@ -69,7 +72,7 @@ def swagger_generator_parse(context, latest_pr_number):
             track1_info_model = '<details open><summary><b> python-track1</b></summary>{} </details>'.format(
                 python_track1_info)
     except Exception as e:
-        print('track1 generate error')
+        logging.error('track1 generate error')
     pattern_python = re.compile('<b> azure-sdk-for-python-track2</b>.+?</details>', re.DOTALL)
     python = re.search(pattern_python, context).group()
     # the way that reply not contains [Release SDK Changes]
@@ -115,10 +118,10 @@ def begin_reply_generate(item, rest_repo, readme_link, sdk_repo, pipeline_url):
                                         pipeline_url=pipeline_url
                                         )
         if res_run:
-            print(f'{issue_object_rg.number} run pipeline successfully')
+            logging.info(f'{issue_object_rg.number} run pipeline successfully')
         else:
-            print(f'{issue_object_rg.number} run pipeline fail')
+            logging.info(f'{issue_object_rg.number} run pipeline fail')
         reply_owner(reply_content)
         add_label('auto-ask-check', labels)
     else:
-        print('issue {} need config readme***********'.format(issue_object_rg.number))
+        logging.info('issue {} need config readme'.format(issue_object_rg.number))
