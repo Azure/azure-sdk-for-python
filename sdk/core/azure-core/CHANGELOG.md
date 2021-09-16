@@ -1,10 +1,12 @@
 # Release History
 
-## 1.18.1 (Unreleased)
+## 1.19.0 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
+
+- Do not honor `policy.on_exception` returning `True` to stop raising any longer.
 
 ### Bugs Fixed
 
