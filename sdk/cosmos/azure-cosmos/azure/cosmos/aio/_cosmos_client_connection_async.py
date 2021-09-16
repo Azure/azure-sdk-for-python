@@ -370,7 +370,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         return result
 
     async def __Post(self, path, request_params, body, req_headers, **kwargs):
-        """Azure Cosmos 'POST' http request.
+        """Azure Cosmos 'POST' async http request.
 
         :params str url:
         :params str path:
@@ -483,7 +483,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         return result
 
     async def __Get(self, path, request_params, req_headers, **kwargs):
-        """Azure Cosmos 'GET' async http request.
+        """Azure Cosmos 'GET' async async http request.
 
         :params str url:
         :params str path:
@@ -504,6 +504,121 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             pipeline_client=self.pipeline_client,
             request=request,
             request_data=None,
+            **kwargs
+        )
+
+    async def ReplaceContainer(self, collection_link, collection, options=None, **kwargs):
+        """Replaces a collection and return it.
+
+        :param str collection_link:
+            The link to the collection entity.
+        :param dict collection:
+            The collection to be used.
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The new Collection.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        CosmosClientConnection.__ValidateResource(collection)
+        path = base.GetPathFromLink(collection_link)
+        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
+        return await self.Replace(collection, path, "colls", collection_id, None, options, **kwargs)
+
+    async def ReplaceItem(self, document_link, new_document, options=None, **kwargs):
+        """Replaces a document and returns it.
+
+        :param str document_link:
+            The link to the document.
+        :param dict new_document:
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The new Document.
+        :rtype:
+            dict
+
+        """
+        CosmosClientConnection.__ValidateResource(new_document)
+        path = base.GetPathFromLink(document_link)
+        document_id = base.GetResourceIdOrFullNameFromLink(document_link)
+
+        # Python's default arguments are evaluated once when the function is defined,
+        # not each time the function is called (like it is in say, Ruby). This means
+        # that if you use a mutable default argument and mutate it, you will and have
+        # mutated that object for all future calls to the function as well. So, using
+        # a non-mutable deafult in this case(None) and assigning an empty dict(mutable)
+        # inside the function so that it remains local For more details on this gotcha,
+        # please refer http://docs.python-guide.org/en/latest/writing/gotchas/
+        if options is None:
+            options = {}
+
+        # Extract the document collection link and add the partition key to options
+        collection_link = base.GetItemContainerLink(document_link)
+        options = await self._AddPartitionKey(collection_link, new_document, options)
+
+        return await self.Replace(new_document, path, "docs", document_id, None, options, **kwargs)
+
+    async def Replace(self, resource, path, typ, id, initial_headers, options=None, **kwargs):  # pylint: disable=redefined-builtin
+        """Replaces a Azure Cosmos resource and returns it.
+
+        :param dict resource:
+        :param str path:
+        :param str typ:
+        :param str id:
+        :param dict initial_headers:
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The new Azure Cosmos resource.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        initial_headers = initial_headers or self.default_headers
+        headers = base.GetHeaders(self, initial_headers, "put", path, id, typ, options)
+        # Replace will use WriteEndpoint since it uses PUT operation
+        request_params = _request_object.RequestObject(typ, documents._OperationType.Replace)
+        result, self.last_response_headers = await self.__Put(path, request_params, resource, headers, **kwargs)
+
+        # update session for request mutates data on server side
+        self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
+        return result
+
+    async def __Put(self, path, request_params, body, req_headers, **kwargs):
+        """Azure Cosmos 'PUT' async http request.
+
+        :params str url:
+        :params str path:
+        :params (str, unicode, dict) body:
+        :params dict req_headers:
+
+        :return:
+            Tuple of (result, headers).
+        :rtype:
+            tuple of (dict, dict)
+
+        """
+        request = self.pipeline_client.put(url=path, headers=req_headers)
+        return await asynchronous_request.AsynchronousRequest(
+            client=self,
+            request_params=request_params,
+            global_endpoint_manager=self._global_endpoint_manager,
+            connection_policy=self.connection_policy,
+            pipeline_client=self.pipeline_client,
+            request=request,
+            request_data=body,
             **kwargs
         )
 
@@ -602,7 +717,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         return result
 
     async def __Delete(self, path, request_params, req_headers, **kwargs):
-        """Azure Cosmos 'DELETE' http request.
+        """Azure Cosmos 'DELETE' async http request.
 
         :params str url:
         :params str path:

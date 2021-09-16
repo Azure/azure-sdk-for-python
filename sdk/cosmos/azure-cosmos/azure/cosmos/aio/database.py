@@ -99,6 +99,36 @@ class DatabaseProxy(object):
         return u"{}/colls/{}".format(self.database_link, self._get_container_id(container_or_id))
 
     @distributed_trace_async
+    async def read(self, populate_query_metrics=None, **kwargs):
+        # type: (Optional[bool], Any) -> Dict[str, Any]
+        """Read the database properties.
+
+        :param bool populate_query_metrics: Enable returning query metrics in response headers.
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :rtype: Dict[Str, Any]
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given database couldn't be retrieved.
+        """
+        # TODO this helper function should be extracted from CosmosClient
+        from .cosmos_client import CosmosClient
+
+        database_link = CosmosClient._get_database_link(self)
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
+        if populate_query_metrics is not None:
+            request_options["populateQueryMetrics"] = populate_query_metrics
+
+        self._properties = await self.client_connection.ReadDatabase(
+            database_link, options=request_options, **kwargs
+        )
+
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers, self._properties)
+
+        return cast('Dict[str, Any]', self._properties)
+
+    @distributed_trace_async
     async def create_container(
         self,
         id,  # type: str  # pylint: disable=redefined-builtin
@@ -255,36 +285,6 @@ class DatabaseProxy(object):
                 analytical_storage_ttl=analytical_storage_ttl
             )
 
-    @distributed_trace_async
-    async def read(self, populate_query_metrics=None, **kwargs):
-        # type: (Optional[bool], Any) -> Dict[str, Any]
-        """Read the database properties.
-
-        :param bool populate_query_metrics: Enable returning query metrics in response headers.
-        :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
-        :rtype: Dict[Str, Any]
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given database couldn't be retrieved.
-        """
-        # TODO this helper function should be extracted from CosmosClient
-        from .cosmos_client import CosmosClient
-
-        database_link = CosmosClient._get_database_link(self)
-        request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
-        if populate_query_metrics is not None:
-            request_options["populateQueryMetrics"] = populate_query_metrics
-
-        self._properties = await self.client_connection.ReadDatabase(
-            database_link, options=request_options, **kwargs
-        )
-
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, self._properties)
-
-        return cast('Dict[str, Any]', self._properties)
-
     def get_container_client(self, container):
         # type: (Union[str, ContainerProxy, Dict[str, Any]]) -> ContainerProxy
         """Get a `ContainerProxy` for a container with specified ID (name).
@@ -312,6 +312,82 @@ class DatabaseProxy(object):
                 id_value = container
 
         return ContainerProxy(self.client_connection, self.database_link, id_value)
+
+    @distributed_trace_async
+    async def replace_container(
+        self,
+        container,  # type: Union[str, ContainerProxy, Dict[str, Any]]
+        partition_key,  # type: Any
+        indexing_policy=None,  # type: Optional[Dict[str, Any]]
+        default_ttl=None,  # type: Optional[int]
+        conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
+        populate_query_metrics=None,  # type: Optional[bool]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> ContainerProxy
+        """Reset the properties of the container.
+
+        Property changes are persisted immediately. Any properties not specified
+        will be reset to their default values.
+
+        :param container: The ID (name), dict representing the properties or
+            :class:`ContainerProxy` instance of the container to be replaced.
+        :param partition_key: The partition key to use for the container.
+        :param indexing_policy: The indexing policy to apply to the container.
+        :param default_ttl: Default time to live (TTL) for items in the container.
+            If unspecified, items do not expire.
+        :param conflict_resolution_policy: The conflict resolution policy to apply to the container.
+        :param populate_query_metrics: Enable returning query metrics in response headers.
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
+            has changed, and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
+        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
+            This includes if the container with given id does not exist.
+        :returns: A `ContainerProxy` instance representing the container after replace completed.
+        :rtype: ~azure.cosmos.ContainerProxy
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/examples.py
+                :start-after: [START reset_container_properties]
+                :end-before: [END reset_container_properties]
+                :language: python
+                :dedent: 0
+                :caption: Reset the TTL property on a container, and display the updated properties:
+                :name: reset_container_properties
+        """
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
+        if populate_query_metrics is not None:
+            request_options["populateQueryMetrics"] = populate_query_metrics
+
+        container_id = self._get_container_id(container)
+        container_link = self._get_container_link(container_id)
+        parameters = {
+            key: value
+            for key, value in {
+                "id": container_id,
+                "partitionKey": partition_key,
+                "indexingPolicy": indexing_policy,
+                "defaultTtl": default_ttl,
+                "conflictResolutionPolicy": conflict_resolution_policy,
+            }.items()
+            if value is not None
+        }
+
+        container_properties = await self.client_connection.ReplaceContainer(
+            container_link, collection=parameters, options=request_options, **kwargs
+        )
+
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers, container_properties)
+
+        return ContainerProxy(
+            self.client_connection, self.database_link, container_properties["id"], properties=container_properties
+        )
 
     @distributed_trace_async
     async def delete_container(

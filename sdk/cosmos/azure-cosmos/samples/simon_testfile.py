@@ -23,17 +23,19 @@ def get_test_item():
         'city': 'Redmond',
         'street': '1 Microsoft Way'
     },
-    'test_object': True
+    'test_object': True,
+    'lastName': 'Smith'
     }
     return async_item
 
 async def async_crud_test():
-    db_name = "asyncccc"
-    cont_name = "contttt"
+    db_name = "crudAsync"
+    cont_name = "cont"
+    ttl = 200
     async with AsyncClient(endpoint, key) as client:
         db = await client.create_database(db_name)
         print("Created DB, now reading and attempting create_if_not_exist")
-        print(await db.read())
+        await db.read()
         db = await client.create_database_if_not_exists(db_name)
         print("Create if not exist had no problems, deleting DB now")
         await client.delete_database(db_name)
@@ -42,32 +44,48 @@ async def async_crud_test():
             await db.read()
         except:
             print("Error returned successfully for reading DB")
-        print("Re-creating DB for testing container")
-        db = await client.create_database(db_name)
-        cont = await db.create_container(id=cont_name, partition_key=PartitionKey(path="/id"))
+        print("Re-creating DB for testing container methods")
+        db = await client.create_database_if_not_exists(db_name)
+        cont = await db.create_container(id=cont_name, partition_key=PartitionKey(path="/lastName"))
         print("Created CONT, now reading and attempting create_if_not_exists")
-        await cont.read()
-        cont = await db.create_container_if_not_exists(id=cont_name, partition_key=PartitionKey(path="/id"))
-        print("Create if not exist had no problems, deleting CONT now")
+        c = await cont.read()
+        cont = await db.create_container_if_not_exists(id=cont_name, partition_key=PartitionKey(path="/lastName"))
+        print("Create if not exist had no problems, replacing and deleting CONT now")
+        assert c.get('defaultTtl') is None
+        await db.replace_container(container=cont_name, partition_key=PartitionKey(path='/lastName'), default_ttl=ttl)
+        c = await cont.read()
+        assert c.get('defaultTtl') == 200
+        print("CONT properties changed, now deleting")
         await db.delete_container(cont_name)
         print("CONT deleted, now attempting read")
         try:
             await cont.read()
         except:
             print("Error returned succesfully")
-        print("Re-creating CONT for testing items")
-        cont = await db.create_container_if_not_exists(id=cont_name, partition_key=PartitionKey(path="/id"))
-        body = get_test_item()
-        await cont.create_item(body=body)
-        print("created item, now reading")
-        await cont.read_item(item=body.get("id"), partition_key=body.get("id"))
-        print("now deleting item and attempting to read")
-        await cont.delete_item(item=body.get("id"), partition_key=body.get("id"))
+        print("Re-creating CONT for testing item methods")
+        cont = await db.create_container_if_not_exists(id=cont_name, partition_key=PartitionKey(path="/lastName"))
+        body1 = get_test_item()
+        await cont.create_item(body=body1)
+        print("Created item, now reading and then replacing")
+        body2 = get_test_item()
+        await cont.replace_item(item=body1["id"], body=body2)
+        print("Item replaced, now attempting read")
         try:
-            await cont.read_item(item=body.get("id"), partition_key=body.get("id"))
+            await cont.read_item(item=body1.get("id"), partition_key=body1.get("lastName"))
         except:
-            print("item delete failed successfully, now cleaning up")
+            print("Error returned succesfully, reading and deleting replaced item now")
+        await cont.read_item(item=body2.get("id"), partition_key=body2.get("lastName"))
+        await cont.delete_item(item=body2.get("id"), partition_key=body2.get("lastName"))
+        print("Item deleted, now attempting read")
+        try:
+            await cont.read_item(item=body2.get("id"), partition_key=body2.get("lastName"))
+        except:
+            print("Error returned succesfully, cleaning up account now")
         await client.delete_database(db_name)
+        try:
+            await db.read()
+        except:
+            print("All cleaned up")
 
 def create_test(db_name, cont_name, num):
     client = SyncClient(endpoint, key)
@@ -154,18 +172,21 @@ async def create_tests():
 def user_test():
     client = SyncClient(endpoint, key)
     db = client.get_database_client("xusud")
-    use = db.get_user_client(user="testid")
-    data = use.read()
+    u = db.get_user_client(user="testid")
+    data = u.read()
     print(data)
-    perms = use.list_permissions()
+    perms = u.list_permissions()
     print(list(perms))
 
 def wrong_test():
-    client = SyncClient(endpoint, key)
-    db = client.get_database_client("db01")
-    cont = db.get_container_client("c01")
-    cont.read()
-    cont.read_item(item="Async_c7997ca0-69c8-46f3-a9a3-5d85f50bafdf")
+    # client = SyncClient(endpoint, key)
+    # db = client.get_database_client("db111")
+    # cont = db.get_container_client("c111")
+    # cont.read()
+    # id = "Async_cc4b235e-ce8e-4b4f-835d-3c29182f0639"
+    # cont.read_item(item="wow", partition_key=id)
+    client = SyncClient.from_connection_string("")
+    print(list(client.list_databases()))
 
 async def main():
     # await read_tests()
