@@ -6,13 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import datetime
-from typing import Dict, List, Optional, Union
-
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
-
-from ._event_hub_management_client_enums import *
 
 
 class AccessKeys(msrest.serialization.Model):
@@ -123,12 +118,12 @@ class ArmDisasterRecovery(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar system_data: The system meta data relating to this resource.
-    :vartype system_data: ~azure.mgmt.eventhub.v2021_01_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.eventhub.v2021_06_01_preview.models.SystemData
     :ivar provisioning_state: Provisioning state of the Alias(Disaster Recovery configuration) -
      possible values 'Accepted' or 'Succeeded' or 'Failed'. Possible values include: "Accepted",
      "Succeeded", "Failed".
     :vartype provisioning_state: str or
-     ~azure.mgmt.eventhub.v2021_01_01_preview.models.ProvisioningStateDR
+     ~azure.mgmt.eventhub.v2021_06_01_preview.models.ProvisioningStateDR
     :param partner_namespace: ARM Id of the Primary/Secondary eventhub namespace name, which is
      part of GEO DR pairing.
     :type partner_namespace: str
@@ -136,7 +131,7 @@ class ArmDisasterRecovery(Resource):
     :type alternate_name: str
     :ivar role: role of namespace in GEO DR - possible values 'Primary' or 'PrimaryNotReplicating'
      or 'Secondary'. Possible values include: "Primary", "PrimaryNotReplicating", "Secondary".
-    :vartype role: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.RoleDisasterRecovery
+    :vartype role: str or ~azure.mgmt.eventhub.v2021_06_01_preview.models.RoleDisasterRecovery
     :ivar pending_replication_operations_count: Number of entities pending to be replicated.
     :vartype pending_replication_operations_count: long
     """
@@ -165,16 +160,13 @@ class ArmDisasterRecovery(Resource):
 
     def __init__(
         self,
-        *,
-        partner_namespace: Optional[str] = None,
-        alternate_name: Optional[str] = None,
         **kwargs
     ):
         super(ArmDisasterRecovery, self).__init__(**kwargs)
         self.system_data = None
         self.provisioning_state = None
-        self.partner_namespace = partner_namespace
-        self.alternate_name = alternate_name
+        self.partner_namespace = kwargs.get('partner_namespace', None)
+        self.alternate_name = kwargs.get('alternate_name', None)
         self.role = None
         self.pending_replication_operations_count = None
 
@@ -185,7 +177,7 @@ class ArmDisasterRecoveryListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :param value: List of Alias(Disaster Recovery configurations).
-    :type value: list[~azure.mgmt.eventhub.v2021_01_01_preview.models.ArmDisasterRecovery]
+    :type value: list[~azure.mgmt.eventhub.v2021_06_01_preview.models.ArmDisasterRecovery]
     :ivar next_link: Link to the next set of results. Not empty if Value contains incomplete list
      of Alias(Disaster Recovery configuration).
     :vartype next_link: str
@@ -202,12 +194,10 @@ class ArmDisasterRecoveryListResult(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        value: Optional[List["ArmDisasterRecovery"]] = None,
         **kwargs
     ):
         super(ArmDisasterRecoveryListResult, self).__init__(**kwargs)
-        self.value = value
+        self.value = kwargs.get('value', None)
         self.next_link = None
 
 
@@ -223,9 +213,9 @@ class AuthorizationRule(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar system_data: The system meta data relating to this resource.
-    :vartype system_data: ~azure.mgmt.eventhub.v2021_01_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.eventhub.v2021_06_01_preview.models.SystemData
     :param rights: The rights associated with the rule.
-    :type rights: list[str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.AccessRights]
+    :type rights: list[str or ~azure.mgmt.eventhub.v2021_06_01_preview.models.AccessRights]
     """
 
     _validation = {
@@ -245,20 +235,18 @@ class AuthorizationRule(Resource):
 
     def __init__(
         self,
-        *,
-        rights: Optional[List[Union[str, "AccessRights"]]] = None,
         **kwargs
     ):
         super(AuthorizationRule, self).__init__(**kwargs)
         self.system_data = None
-        self.rights = rights
+        self.rights = kwargs.get('rights', None)
 
 
 class AuthorizationRuleListResult(msrest.serialization.Model):
     """The response from the List namespace operation.
 
     :param value: Result of the List Authorization Rules operation.
-    :type value: list[~azure.mgmt.eventhub.v2021_01_01_preview.models.AuthorizationRule]
+    :type value: list[~azure.mgmt.eventhub.v2021_06_01_preview.models.AuthorizationRule]
     :param next_link: Link to the next set of results. Not empty if Value contains an incomplete
      list of Authorization Rules.
     :type next_link: str
@@ -271,14 +259,50 @@ class AuthorizationRuleListResult(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        value: Optional[List["AuthorizationRule"]] = None,
-        next_link: Optional[str] = None,
         **kwargs
     ):
         super(AuthorizationRuleListResult, self).__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
+
+
+class AvailableCluster(msrest.serialization.Model):
+    """Pre-provisioned and readily available Event Hubs Cluster count per region.
+
+    :param location: Location fo the Available Cluster.
+    :type location: str
+    """
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AvailableCluster, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+
+
+class AvailableClustersList(msrest.serialization.Model):
+    """The response of the List Available Clusters operation.
+
+    :param value: The count of readily available and pre-provisioned Event Hubs Clusters per
+     region.
+    :type value: list[~azure.mgmt.eventhub.v2021_06_01_preview.models.AvailableCluster]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[AvailableCluster]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AvailableClustersList, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
 
 
 class CaptureDescription(msrest.serialization.Model):
@@ -290,7 +314,7 @@ class CaptureDescription(msrest.serialization.Model):
      Note: 'AvroDeflate' will be deprecated in New API Version. Possible values include: "Avro",
      "AvroDeflate".
     :type encoding: str or
-     ~azure.mgmt.eventhub.v2021_01_01_preview.models.EncodingCaptureDescription
+     ~azure.mgmt.eventhub.v2021_06_01_preview.models.EncodingCaptureDescription
     :param interval_in_seconds: The time window allows you to set the frequency with which the
      capture to Azure Blobs will happen, value should between 60 to 900 seconds.
     :type interval_in_seconds: int
@@ -299,15 +323,10 @@ class CaptureDescription(msrest.serialization.Model):
     :type size_limit_in_bytes: int
     :param destination: Properties of Destination where capture will be stored. (Storage Account,
      Blob Names).
-    :type destination: ~azure.mgmt.eventhub.v2021_01_01_preview.models.Destination
+    :type destination: ~azure.mgmt.eventhub.v2021_06_01_preview.models.Destination
     :param skip_empty_archives: A value that indicates whether to Skip Empty Archives.
     :type skip_empty_archives: bool
     """
-
-    _validation = {
-        'interval_in_seconds': {'maximum': 900, 'minimum': 60},
-        'size_limit_in_bytes': {'maximum': 524288000, 'minimum': 10485760},
-    }
 
     _attribute_map = {
         'enabled': {'key': 'enabled', 'type': 'bool'},
@@ -320,22 +339,15 @@ class CaptureDescription(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        enabled: Optional[bool] = None,
-        encoding: Optional[Union[str, "EncodingCaptureDescription"]] = None,
-        interval_in_seconds: Optional[int] = None,
-        size_limit_in_bytes: Optional[int] = None,
-        destination: Optional["Destination"] = None,
-        skip_empty_archives: Optional[bool] = None,
         **kwargs
     ):
         super(CaptureDescription, self).__init__(**kwargs)
-        self.enabled = enabled
-        self.encoding = encoding
-        self.interval_in_seconds = interval_in_seconds
-        self.size_limit_in_bytes = size_limit_in_bytes
-        self.destination = destination
-        self.skip_empty_archives = skip_empty_archives
+        self.enabled = kwargs.get('enabled', None)
+        self.encoding = kwargs.get('encoding', None)
+        self.interval_in_seconds = kwargs.get('interval_in_seconds', None)
+        self.size_limit_in_bytes = kwargs.get('size_limit_in_bytes', None)
+        self.destination = kwargs.get('destination', None)
+        self.skip_empty_archives = kwargs.get('skip_empty_archives', None)
 
 
 class CheckNameAvailabilityParameter(msrest.serialization.Model):
@@ -357,12 +369,10 @@ class CheckNameAvailabilityParameter(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        name: str,
         **kwargs
     ):
         super(CheckNameAvailabilityParameter, self).__init__(**kwargs)
-        self.name = name
+        self.name = kwargs['name']
 
 
 class CheckNameAvailabilityResult(msrest.serialization.Model):
@@ -378,7 +388,7 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
     :param reason: The reason for unavailability of a Namespace. Possible values include: "None",
      "InvalidName", "SubscriptionIsDisabled", "NameInUse", "NameInLockdown",
      "TooManyNamespaceInCurrentSubscription".
-    :type reason: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.UnavailableReason
+    :type reason: str or ~azure.mgmt.eventhub.v2021_06_01_preview.models.UnavailableReason
     """
 
     _validation = {
@@ -393,194 +403,12 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        name_available: Optional[bool] = None,
-        reason: Optional[Union[str, "UnavailableReason"]] = None,
         **kwargs
     ):
         super(CheckNameAvailabilityResult, self).__init__(**kwargs)
         self.message = None
-        self.name_available = name_available
-        self.reason = reason
-
-
-class ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties(msrest.serialization.Model):
-    """ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar principal_id: Principal Id of user assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: Client Id of user assigned identity.
-    :vartype client_id: str
-    """
-
-    _validation = {
-        'principal_id': {'readonly': True},
-        'client_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties, self).__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
-
-
-class ConnectionState(msrest.serialization.Model):
-    """ConnectionState information.
-
-    :param status: Status of the connection. Possible values include: "Pending", "Approved",
-     "Rejected", "Disconnected".
-    :type status: str or
-     ~azure.mgmt.eventhub.v2021_01_01_preview.models.PrivateLinkConnectionStatus
-    :param description: Description of the connection state.
-    :type description: str
-    """
-
-    _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        status: Optional[Union[str, "PrivateLinkConnectionStatus"]] = None,
-        description: Optional[str] = None,
-        **kwargs
-    ):
-        super(ConnectionState, self).__init__(**kwargs)
-        self.status = status
-        self.description = description
-
-
-class ConsumerGroup(Resource):
-    """Single item in List or Get Consumer group operation.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar system_data: The system meta data relating to this resource.
-    :vartype system_data: ~azure.mgmt.eventhub.v2021_01_01_preview.models.SystemData
-    :ivar created_at: Exact time the message was created.
-    :vartype created_at: ~datetime.datetime
-    :ivar updated_at: The exact time the message was updated.
-    :vartype updated_at: ~datetime.datetime
-    :param user_metadata: User Metadata is a placeholder to store user-defined string data with
-     maximum length 1024. e.g. it can be used to store descriptive data, such as list of teams and
-     their contact information also user-defined configuration settings can be stored.
-    :type user_metadata: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'created_at': {'readonly': True},
-        'updated_at': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
-        'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
-        'user_metadata': {'key': 'properties.userMetadata', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        user_metadata: Optional[str] = None,
-        **kwargs
-    ):
-        super(ConsumerGroup, self).__init__(**kwargs)
-        self.system_data = None
-        self.created_at = None
-        self.updated_at = None
-        self.user_metadata = user_metadata
-
-
-class ConsumerGroupListResult(msrest.serialization.Model):
-    """The result to the List Consumer Group operation.
-
-    :param value: Result of the List Consumer Group operation.
-    :type value: list[~azure.mgmt.eventhub.v2021_01_01_preview.models.ConsumerGroup]
-    :param next_link: Link to the next set of results. Not empty if Value contains incomplete list
-     of Consumer Group.
-    :type next_link: str
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[ConsumerGroup]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[List["ConsumerGroup"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(ConsumerGroupListResult, self).__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class Destination(msrest.serialization.Model):
-    """Capture storage details for capture description.
-
-    :param name: Name for capture destination.
-    :type name: str
-    :param storage_account_resource_id: Resource id of the storage account to be used to create the
-     blobs.
-    :type storage_account_resource_id: str
-    :param blob_container: Blob container Name.
-    :type blob_container: str
-    :param archive_name_format: Blob naming convention for archive, e.g.
-     {Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}. Here all
-     the parameters (Namespace,EventHub .. etc) are mandatory irrespective of order.
-    :type archive_name_format: str
-    """
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'storage_account_resource_id': {'key': 'properties.storageAccountResourceId', 'type': 'str'},
-        'blob_container': {'key': 'properties.blobContainer', 'type': 'str'},
-        'archive_name_format': {'key': 'properties.archiveNameFormat', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        storage_account_resource_id: Optional[str] = None,
-        blob_container: Optional[str] = None,
-        archive_name_format: Optional[str] = None,
-        **kwargs
-    ):
-        super(Destination, self).__init__(**kwargs)
-        self.name = name
-        self.storage_account_resource_id = storage_account_resource_id
-        self.blob_container = blob_container
-        self.archive_name_format = archive_name_format
+        self.name_available = kwargs.get('name_available', None)
+        self.reason = kwargs.get('reason', None)
 
 
 class TrackedResource(Resource):
@@ -616,14 +444,289 @@ class TrackedResource(Resource):
 
     def __init__(
         self,
-        *,
-        location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
         super(TrackedResource, self).__init__(**kwargs)
-        self.location = location
-        self.tags = tags
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
+
+
+class Cluster(TrackedResource):
+    """Single Event Hubs Cluster resource in List or Get operations.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :param tags: A set of tags. Resource tags.
+    :type tags: dict[str, str]
+    :param sku: Properties of the cluster SKU.
+    :type sku: ~azure.mgmt.eventhub.v2021_06_01_preview.models.ClusterSku
+    :ivar system_data: The system meta data relating to this resource.
+    :vartype system_data: ~azure.mgmt.eventhub.v2021_06_01_preview.models.SystemData
+    :ivar created_at: The UTC time when the Event Hubs Cluster was created.
+    :vartype created_at: str
+    :ivar updated_at: The UTC time when the Event Hubs Cluster was last updated.
+    :vartype updated_at: str
+    :ivar metric_id: The metric ID of the cluster resource. Provided by the service and not
+     modifiable by the user.
+    :vartype metric_id: str
+    :ivar status: Status of the Cluster resource.
+    :vartype status: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'created_at': {'readonly': True},
+        'updated_at': {'readonly': True},
+        'metric_id': {'readonly': True},
+        'status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'ClusterSku'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'created_at': {'key': 'properties.createdAt', 'type': 'str'},
+        'updated_at': {'key': 'properties.updatedAt', 'type': 'str'},
+        'metric_id': {'key': 'properties.metricId', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Cluster, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
+        self.system_data = None
+        self.created_at = None
+        self.updated_at = None
+        self.metric_id = None
+        self.status = None
+
+
+class ClusterListResult(msrest.serialization.Model):
+    """The response of the List Event Hubs Clusters operation.
+
+    :param value: The Event Hubs Clusters present in the List Event Hubs operation results.
+    :type value: list[~azure.mgmt.eventhub.v2021_06_01_preview.models.Cluster]
+    :param next_link: Link to the next set of results. Empty unless the value parameter contains an
+     incomplete list of Event Hubs Clusters.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Cluster]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ClusterListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
+
+
+class ClusterQuotaConfigurationProperties(msrest.serialization.Model):
+    """Contains all settings for the cluster.
+
+    :param settings: All possible Cluster settings - a collection of key/value paired settings
+     which apply to quotas and configurations imposed on the cluster.
+    :type settings: dict[str, str]
+    """
+
+    _attribute_map = {
+        'settings': {'key': 'settings', 'type': '{str}'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ClusterQuotaConfigurationProperties, self).__init__(**kwargs)
+        self.settings = kwargs.get('settings', None)
+
+
+class ClusterSku(msrest.serialization.Model):
+    """SKU parameters particular to a cluster instance.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Name of this SKU. Possible values include: "Dedicated".
+    :type name: str or ~azure.mgmt.eventhub.v2021_06_01_preview.models.ClusterSkuName
+    :param capacity: The quantity of Event Hubs Cluster Capacity Units contained in this cluster.
+    :type capacity: int
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'capacity': {'minimum': 1},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'capacity': {'key': 'capacity', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ClusterSku, self).__init__(**kwargs)
+        self.name = kwargs['name']
+        self.capacity = kwargs.get('capacity', None)
+
+
+class ConnectionState(msrest.serialization.Model):
+    """ConnectionState information.
+
+    :param status: Status of the connection. Possible values include: "Pending", "Approved",
+     "Rejected", "Disconnected".
+    :type status: str or
+     ~azure.mgmt.eventhub.v2021_06_01_preview.models.PrivateLinkConnectionStatus
+    :param description: Description of the connection state.
+    :type description: str
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ConnectionState, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.description = kwargs.get('description', None)
+
+
+class ConsumerGroup(Resource):
+    """Single item in List or Get Consumer group operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar system_data: The system meta data relating to this resource.
+    :vartype system_data: ~azure.mgmt.eventhub.v2021_06_01_preview.models.SystemData
+    :ivar created_at: Exact time the message was created.
+    :vartype created_at: ~datetime.datetime
+    :ivar updated_at: The exact time the message was updated.
+    :vartype updated_at: ~datetime.datetime
+    :param user_metadata: User Metadata is a placeholder to store user-defined string data with
+     maximum length 1024. e.g. it can be used to store descriptive data, such as list of teams and
+     their contact information also user-defined configuration settings can be stored.
+    :type user_metadata: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'created_at': {'readonly': True},
+        'updated_at': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
+        'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
+        'user_metadata': {'key': 'properties.userMetadata', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ConsumerGroup, self).__init__(**kwargs)
+        self.system_data = None
+        self.created_at = None
+        self.updated_at = None
+        self.user_metadata = kwargs.get('user_metadata', None)
+
+
+class ConsumerGroupListResult(msrest.serialization.Model):
+    """The result to the List Consumer Group operation.
+
+    :param value: Result of the List Consumer Group operation.
+    :type value: list[~azure.mgmt.eventhub.v2021_06_01_preview.models.ConsumerGroup]
+    :param next_link: Link to the next set of results. Not empty if Value contains incomplete list
+     of Consumer Group.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ConsumerGroup]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ConsumerGroupListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
+
+
+class Destination(msrest.serialization.Model):
+    """Capture storage details for capture description.
+
+    :param name: Name for capture destination.
+    :type name: str
+    :param storage_account_resource_id: Resource id of the storage account to be used to create the
+     blobs.
+    :type storage_account_resource_id: str
+    :param blob_container: Blob container Name.
+    :type blob_container: str
+    :param archive_name_format: Blob naming convention for archive, e.g.
+     {Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}. Here all
+     the parameters (Namespace,EventHub .. etc) are mandatory irrespective of order.
+    :type archive_name_format: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'storage_account_resource_id': {'key': 'properties.storageAccountResourceId', 'type': 'str'},
+        'blob_container': {'key': 'properties.blobContainer', 'type': 'str'},
+        'archive_name_format': {'key': 'properties.archiveNameFormat', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Destination, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.storage_account_resource_id = kwargs.get('storage_account_resource_id', None)
+        self.blob_container = kwargs.get('blob_container', None)
+        self.archive_name_format = kwargs.get('archive_name_format', None)
 
 
 class EHNamespace(TrackedResource):
@@ -642,11 +745,11 @@ class EHNamespace(TrackedResource):
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :param sku: Properties of sku resource.
-    :type sku: ~azure.mgmt.eventhub.v2021_01_01_preview.models.Sku
+    :type sku: ~azure.mgmt.eventhub.v2021_06_01_preview.models.Sku
     :param identity: Properties of BYOK Identity description.
-    :type identity: ~azure.mgmt.eventhub.v2021_01_01_preview.models.Identity
+    :type identity: ~azure.mgmt.eventhub.v2021_06_01_preview.models.Identity
     :ivar system_data: The system meta data relating to this resource.
-    :vartype system_data: ~azure.mgmt.eventhub.v2021_01_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.eventhub.v2021_06_01_preview.models.SystemData
     :ivar provisioning_state: Provisioning state of the Namespace.
     :vartype provisioning_state: str
     :ivar status: Status of the Namespace.
@@ -673,10 +776,13 @@ class EHNamespace(TrackedResource):
      regions supported availability zones.
     :type zone_redundant: bool
     :param encryption: Properties of BYOK Encryption description.
-    :type encryption: ~azure.mgmt.eventhub.v2021_01_01_preview.models.Encryption
+    :type encryption: ~azure.mgmt.eventhub.v2021_06_01_preview.models.Encryption
     :param private_endpoint_connections: List of private endpoint connections.
     :type private_endpoint_connections:
-     list[~azure.mgmt.eventhub.v2021_01_01_preview.models.PrivateEndpointConnection]
+     list[~azure.mgmt.eventhub.v2021_06_01_preview.models.PrivateEndpointConnection]
+    :param disable_local_auth: This property disables SAS authentication for the Event Hubs
+     namespace.
+    :type disable_local_auth: bool
     """
 
     _validation = {
@@ -690,7 +796,6 @@ class EHNamespace(TrackedResource):
         'updated_at': {'readonly': True},
         'service_bus_endpoint': {'readonly': True},
         'metric_id': {'readonly': True},
-        'maximum_throughput_units': {'maximum': 20, 'minimum': 0},
     }
 
     _attribute_map = {
@@ -715,48 +820,76 @@ class EHNamespace(TrackedResource):
         'zone_redundant': {'key': 'properties.zoneRedundant', 'type': 'bool'},
         'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
         'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
+        'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
     }
 
     def __init__(
         self,
-        *,
-        location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
-        identity: Optional["Identity"] = None,
-        cluster_arm_id: Optional[str] = None,
-        is_auto_inflate_enabled: Optional[bool] = None,
-        maximum_throughput_units: Optional[int] = None,
-        kafka_enabled: Optional[bool] = None,
-        zone_redundant: Optional[bool] = None,
-        encryption: Optional["Encryption"] = None,
-        private_endpoint_connections: Optional[List["PrivateEndpointConnection"]] = None,
         **kwargs
     ):
-        super(EHNamespace, self).__init__(location=location, tags=tags, **kwargs)
-        self.sku = sku
-        self.identity = identity
+        super(EHNamespace, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
+        self.identity = kwargs.get('identity', None)
         self.system_data = None
         self.provisioning_state = None
         self.status = None
         self.created_at = None
         self.updated_at = None
         self.service_bus_endpoint = None
-        self.cluster_arm_id = cluster_arm_id
+        self.cluster_arm_id = kwargs.get('cluster_arm_id', None)
         self.metric_id = None
-        self.is_auto_inflate_enabled = is_auto_inflate_enabled
-        self.maximum_throughput_units = maximum_throughput_units
-        self.kafka_enabled = kafka_enabled
-        self.zone_redundant = zone_redundant
-        self.encryption = encryption
-        self.private_endpoint_connections = private_endpoint_connections
+        self.is_auto_inflate_enabled = kwargs.get('is_auto_inflate_enabled', None)
+        self.maximum_throughput_units = kwargs.get('maximum_throughput_units', None)
+        self.kafka_enabled = kwargs.get('kafka_enabled', None)
+        self.zone_redundant = kwargs.get('zone_redundant', None)
+        self.encryption = kwargs.get('encryption', None)
+        self.private_endpoint_connections = kwargs.get('private_endpoint_connections', None)
+        self.disable_local_auth = kwargs.get('disable_local_auth', None)
+
+
+class EHNamespaceIdContainer(msrest.serialization.Model):
+    """The full ARM ID of an Event Hubs Namespace.
+
+    :param id: id parameter.
+    :type id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(EHNamespaceIdContainer, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+
+
+class EHNamespaceIdListResult(msrest.serialization.Model):
+    """The response of the List Namespace IDs operation.
+
+    :param value: Result of the List Namespace IDs operation.
+    :type value: list[~azure.mgmt.eventhub.v2021_06_01_preview.models.EHNamespaceIdContainer]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[EHNamespaceIdContainer]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(EHNamespaceIdListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
 
 
 class EHNamespaceListResult(msrest.serialization.Model):
     """The response of the List Namespace operation.
 
     :param value: Result of the List Namespace operation.
-    :type value: list[~azure.mgmt.eventhub.v2021_01_01_preview.models.EHNamespace]
+    :type value: list[~azure.mgmt.eventhub.v2021_06_01_preview.models.EHNamespace]
     :param next_link: Link to the next set of results. Not empty if Value contains incomplete list
      of namespaces.
     :type next_link: str
@@ -769,14 +902,11 @@ class EHNamespaceListResult(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        value: Optional[List["EHNamespace"]] = None,
-        next_link: Optional[str] = None,
         **kwargs
     ):
         super(EHNamespaceListResult, self).__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
 
 
 class Encryption(msrest.serialization.Model):
@@ -784,7 +914,7 @@ class Encryption(msrest.serialization.Model):
 
     :param key_vault_properties: Properties of KeyVault.
     :type key_vault_properties:
-     list[~azure.mgmt.eventhub.v2021_01_01_preview.models.KeyVaultProperties]
+     list[~azure.mgmt.eventhub.v2021_06_01_preview.models.KeyVaultProperties]
     :param key_source: Enumerates the possible value of keySource for Encryption. The only
      acceptable values to pass in are None and "Microsoft.KeyVault". The default value is
      "Microsoft.KeyVault".
@@ -801,16 +931,12 @@ class Encryption(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        key_vault_properties: Optional[List["KeyVaultProperties"]] = None,
-        key_source: Optional[str] = "Microsoft.KeyVault",
-        require_infrastructure_encryption: Optional[bool] = None,
         **kwargs
     ):
         super(Encryption, self).__init__(**kwargs)
-        self.key_vault_properties = key_vault_properties
-        self.key_source = key_source
-        self.require_infrastructure_encryption = require_infrastructure_encryption
+        self.key_vault_properties = kwargs.get('key_vault_properties', None)
+        self.key_source = kwargs.get('key_source', "Microsoft.KeyVault")
+        self.require_infrastructure_encryption = kwargs.get('require_infrastructure_encryption', None)
 
 
 class ErrorResponse(msrest.serialization.Model):
@@ -829,14 +955,11 @@ class ErrorResponse(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
         **kwargs
     ):
         super(ErrorResponse, self).__init__(**kwargs)
-        self.code = code
-        self.message = message
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
 
 
 class Eventhub(Resource):
@@ -851,7 +974,7 @@ class Eventhub(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar system_data: The system meta data relating to this resource.
-    :vartype system_data: ~azure.mgmt.eventhub.v2021_01_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.eventhub.v2021_06_01_preview.models.SystemData
     :ivar partition_ids: Current number of shards on the Event Hub.
     :vartype partition_ids: list[str]
     :ivar created_at: Exact time the Event Hub was created.
@@ -867,9 +990,9 @@ class Eventhub(Resource):
     :param status: Enumerates the possible values for the status of the Event Hub. Possible values
      include: "Active", "Disabled", "Restoring", "SendDisabled", "ReceiveDisabled", "Creating",
      "Deleting", "Renaming", "Unknown".
-    :type status: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.EntityStatus
+    :type status: str or ~azure.mgmt.eventhub.v2021_06_01_preview.models.EntityStatus
     :param capture_description: Properties of capture description.
-    :type capture_description: ~azure.mgmt.eventhub.v2021_01_01_preview.models.CaptureDescription
+    :type capture_description: ~azure.mgmt.eventhub.v2021_06_01_preview.models.CaptureDescription
     """
 
     _validation = {
@@ -900,11 +1023,6 @@ class Eventhub(Resource):
 
     def __init__(
         self,
-        *,
-        message_retention_in_days: Optional[int] = None,
-        partition_count: Optional[int] = None,
-        status: Optional[Union[str, "EntityStatus"]] = None,
-        capture_description: Optional["CaptureDescription"] = None,
         **kwargs
     ):
         super(Eventhub, self).__init__(**kwargs)
@@ -912,17 +1030,17 @@ class Eventhub(Resource):
         self.partition_ids = None
         self.created_at = None
         self.updated_at = None
-        self.message_retention_in_days = message_retention_in_days
-        self.partition_count = partition_count
-        self.status = status
-        self.capture_description = capture_description
+        self.message_retention_in_days = kwargs.get('message_retention_in_days', None)
+        self.partition_count = kwargs.get('partition_count', None)
+        self.status = kwargs.get('status', None)
+        self.capture_description = kwargs.get('capture_description', None)
 
 
 class EventHubListResult(msrest.serialization.Model):
     """The result of the List EventHubs operation.
 
     :param value: Result of the List EventHubs operation.
-    :type value: list[~azure.mgmt.eventhub.v2021_01_01_preview.models.Eventhub]
+    :type value: list[~azure.mgmt.eventhub.v2021_06_01_preview.models.Eventhub]
     :param next_link: Link to the next set of results. Not empty if Value contains incomplete list
      of EventHubs.
     :type next_link: str
@@ -935,14 +1053,11 @@ class EventHubListResult(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        value: Optional[List["Eventhub"]] = None,
-        next_link: Optional[str] = None,
         **kwargs
     ):
         super(EventHubListResult, self).__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
 
 
 class Identity(msrest.serialization.Model):
@@ -956,10 +1071,10 @@ class Identity(msrest.serialization.Model):
     :vartype tenant_id: str
     :param type: Type of managed service identity. Possible values include: "SystemAssigned",
      "UserAssigned", "SystemAssigned, UserAssigned", "None".
-    :type type: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.ManagedServiceIdentityType
+    :type type: str or ~azure.mgmt.eventhub.v2021_06_01_preview.models.ManagedServiceIdentityType
     :param user_assigned_identities: Properties for User Assigned Identities.
     :type user_assigned_identities: dict[str,
-     ~azure.mgmt.eventhub.v2021_01_01_preview.models.ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties]
+     ~azure.mgmt.eventhub.v2021_06_01_preview.models.UserAssignedIdentity]
     """
 
     _validation = {
@@ -971,21 +1086,18 @@ class Identity(msrest.serialization.Model):
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties}'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentity}'},
     }
 
     def __init__(
         self,
-        *,
-        type: Optional[Union[str, "ManagedServiceIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties"]] = None,
         **kwargs
     ):
         super(Identity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
-        self.type = type
-        self.user_assigned_identities = user_assigned_identities
+        self.type = kwargs.get('type', None)
+        self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
 
 
 class KeyVaultProperties(msrest.serialization.Model):
@@ -998,7 +1110,7 @@ class KeyVaultProperties(msrest.serialization.Model):
     :param key_version: Key Version.
     :type key_version: str
     :param identity:
-    :type identity: ~azure.mgmt.eventhub.v2021_01_01_preview.models.UserAssignedIdentityProperties
+    :type identity: ~azure.mgmt.eventhub.v2021_06_01_preview.models.UserAssignedIdentityProperties
     """
 
     _attribute_map = {
@@ -1010,18 +1122,13 @@ class KeyVaultProperties(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        key_name: Optional[str] = None,
-        key_vault_uri: Optional[str] = None,
-        key_version: Optional[str] = None,
-        identity: Optional["UserAssignedIdentityProperties"] = None,
         **kwargs
     ):
         super(KeyVaultProperties, self).__init__(**kwargs)
-        self.key_name = key_name
-        self.key_vault_uri = key_vault_uri
-        self.key_version = key_version
-        self.identity = identity
+        self.key_name = kwargs.get('key_name', None)
+        self.key_vault_uri = kwargs.get('key_vault_uri', None)
+        self.key_version = kwargs.get('key_version', None)
+        self.identity = kwargs.get('identity', None)
 
 
 class NetworkRuleSet(Resource):
@@ -1036,18 +1143,23 @@ class NetworkRuleSet(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar system_data: The system meta data relating to this resource.
-    :vartype system_data: ~azure.mgmt.eventhub.v2021_01_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.eventhub.v2021_06_01_preview.models.SystemData
     :param trusted_service_access_enabled: Value that indicates whether Trusted Service Access is
      Enabled or not.
     :type trusted_service_access_enabled: bool
     :param default_action: Default Action for Network Rule Set. Possible values include: "Allow",
      "Deny".
-    :type default_action: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.DefaultAction
+    :type default_action: str or ~azure.mgmt.eventhub.v2021_06_01_preview.models.DefaultAction
     :param virtual_network_rules: List VirtualNetwork Rules.
     :type virtual_network_rules:
-     list[~azure.mgmt.eventhub.v2021_01_01_preview.models.NWRuleSetVirtualNetworkRules]
+     list[~azure.mgmt.eventhub.v2021_06_01_preview.models.NWRuleSetVirtualNetworkRules]
     :param ip_rules: List of IpRules.
-    :type ip_rules: list[~azure.mgmt.eventhub.v2021_01_01_preview.models.NWRuleSetIpRules]
+    :type ip_rules: list[~azure.mgmt.eventhub.v2021_06_01_preview.models.NWRuleSetIpRules]
+    :param public_network_access: This determines if traffic is allowed over public network. By
+     default it is enabled. Possible values include: "Enabled", "Disabled". Default value:
+     "Enabled".
+    :type public_network_access: str or
+     ~azure.mgmt.eventhub.v2021_06_01_preview.models.PublicNetworkAccessFlag
     """
 
     _validation = {
@@ -1066,23 +1178,20 @@ class NetworkRuleSet(Resource):
         'default_action': {'key': 'properties.defaultAction', 'type': 'str'},
         'virtual_network_rules': {'key': 'properties.virtualNetworkRules', 'type': '[NWRuleSetVirtualNetworkRules]'},
         'ip_rules': {'key': 'properties.ipRules', 'type': '[NWRuleSetIpRules]'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
     }
 
     def __init__(
         self,
-        *,
-        trusted_service_access_enabled: Optional[bool] = None,
-        default_action: Optional[Union[str, "DefaultAction"]] = None,
-        virtual_network_rules: Optional[List["NWRuleSetVirtualNetworkRules"]] = None,
-        ip_rules: Optional[List["NWRuleSetIpRules"]] = None,
         **kwargs
     ):
         super(NetworkRuleSet, self).__init__(**kwargs)
         self.system_data = None
-        self.trusted_service_access_enabled = trusted_service_access_enabled
-        self.default_action = default_action
-        self.virtual_network_rules = virtual_network_rules
-        self.ip_rules = ip_rules
+        self.trusted_service_access_enabled = kwargs.get('trusted_service_access_enabled', None)
+        self.default_action = kwargs.get('default_action', None)
+        self.virtual_network_rules = kwargs.get('virtual_network_rules', None)
+        self.ip_rules = kwargs.get('ip_rules', None)
+        self.public_network_access = kwargs.get('public_network_access', "Enabled")
 
 
 class NWRuleSetIpRules(msrest.serialization.Model):
@@ -1091,7 +1200,7 @@ class NWRuleSetIpRules(msrest.serialization.Model):
     :param ip_mask: IP Mask.
     :type ip_mask: str
     :param action: The IP Filter Action. Possible values include: "Allow".
-    :type action: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.NetworkRuleIPAction
+    :type action: str or ~azure.mgmt.eventhub.v2021_06_01_preview.models.NetworkRuleIPAction
     """
 
     _attribute_map = {
@@ -1101,21 +1210,18 @@ class NWRuleSetIpRules(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        ip_mask: Optional[str] = None,
-        action: Optional[Union[str, "NetworkRuleIPAction"]] = None,
         **kwargs
     ):
         super(NWRuleSetIpRules, self).__init__(**kwargs)
-        self.ip_mask = ip_mask
-        self.action = action
+        self.ip_mask = kwargs.get('ip_mask', None)
+        self.action = kwargs.get('action', None)
 
 
 class NWRuleSetVirtualNetworkRules(msrest.serialization.Model):
     """The response from the List namespace operation.
 
     :param subnet: Subnet properties.
-    :type subnet: ~azure.mgmt.eventhub.v2021_01_01_preview.models.Subnet
+    :type subnet: ~azure.mgmt.eventhub.v2021_06_01_preview.models.Subnet
     :param ignore_missing_vnet_service_endpoint: Value that indicates whether to ignore missing
      Vnet Service Endpoint.
     :type ignore_missing_vnet_service_endpoint: bool
@@ -1128,14 +1234,11 @@ class NWRuleSetVirtualNetworkRules(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        subnet: Optional["Subnet"] = None,
-        ignore_missing_vnet_service_endpoint: Optional[bool] = None,
         **kwargs
     ):
         super(NWRuleSetVirtualNetworkRules, self).__init__(**kwargs)
-        self.subnet = subnet
-        self.ignore_missing_vnet_service_endpoint = ignore_missing_vnet_service_endpoint
+        self.subnet = kwargs.get('subnet', None)
+        self.ignore_missing_vnet_service_endpoint = kwargs.get('ignore_missing_vnet_service_endpoint', None)
 
 
 class Operation(msrest.serialization.Model):
@@ -1146,7 +1249,7 @@ class Operation(msrest.serialization.Model):
     :ivar name: Operation name: {provider}/{resource}/{operation}.
     :vartype name: str
     :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.eventhub.v2021_01_01_preview.models.OperationDisplay
+    :type display: ~azure.mgmt.eventhub.v2021_06_01_preview.models.OperationDisplay
     """
 
     _validation = {
@@ -1160,13 +1263,11 @@ class Operation(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        display: Optional["OperationDisplay"] = None,
         **kwargs
     ):
         super(Operation, self).__init__(**kwargs)
         self.name = None
-        self.display = display
+        self.display = kwargs.get('display', None)
 
 
 class OperationDisplay(msrest.serialization.Model):
@@ -1211,7 +1312,7 @@ class OperationListResult(msrest.serialization.Model):
 
     :ivar value: List of Event Hub operations supported by the Microsoft.EventHub resource
      provider.
-    :vartype value: list[~azure.mgmt.eventhub.v2021_01_01_preview.models.Operation]
+    :vartype value: list[~azure.mgmt.eventhub.v2021_06_01_preview.models.Operation]
     :ivar next_link: URL to get the next set of operation list results if there are any.
     :vartype next_link: str
     """
@@ -1248,12 +1349,10 @@ class PrivateEndpoint(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        id: Optional[str] = None,
         **kwargs
     ):
         super(PrivateEndpoint, self).__init__(**kwargs)
-        self.id = id
+        self.id = kwargs.get('id', None)
 
 
 class PrivateEndpointConnection(Resource):
@@ -1268,16 +1367,16 @@ class PrivateEndpointConnection(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar system_data: The system meta data relating to this resource.
-    :vartype system_data: ~azure.mgmt.eventhub.v2021_01_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.eventhub.v2021_06_01_preview.models.SystemData
     :param private_endpoint: The Private Endpoint resource for this Connection.
-    :type private_endpoint: ~azure.mgmt.eventhub.v2021_01_01_preview.models.PrivateEndpoint
+    :type private_endpoint: ~azure.mgmt.eventhub.v2021_06_01_preview.models.PrivateEndpoint
     :param private_link_service_connection_state: Details about the state of the connection.
     :type private_link_service_connection_state:
-     ~azure.mgmt.eventhub.v2021_01_01_preview.models.ConnectionState
+     ~azure.mgmt.eventhub.v2021_06_01_preview.models.ConnectionState
     :param provisioning_state: Provisioning state of the Private Endpoint Connection. Possible
      values include: "Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed".
     :type provisioning_state: str or
-     ~azure.mgmt.eventhub.v2021_01_01_preview.models.EndPointProvisioningState
+     ~azure.mgmt.eventhub.v2021_06_01_preview.models.EndPointProvisioningState
     """
 
     _validation = {
@@ -1299,24 +1398,20 @@ class PrivateEndpointConnection(Resource):
 
     def __init__(
         self,
-        *,
-        private_endpoint: Optional["PrivateEndpoint"] = None,
-        private_link_service_connection_state: Optional["ConnectionState"] = None,
-        provisioning_state: Optional[Union[str, "EndPointProvisioningState"]] = None,
         **kwargs
     ):
         super(PrivateEndpointConnection, self).__init__(**kwargs)
         self.system_data = None
-        self.private_endpoint = private_endpoint
-        self.private_link_service_connection_state = private_link_service_connection_state
-        self.provisioning_state = provisioning_state
+        self.private_endpoint = kwargs.get('private_endpoint', None)
+        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
 
 
 class PrivateEndpointConnectionListResult(msrest.serialization.Model):
     """Result of the list of all private endpoint connections operation.
 
     :param value: A collection of private endpoint connection resources.
-    :type value: list[~azure.mgmt.eventhub.v2021_01_01_preview.models.PrivateEndpointConnection]
+    :type value: list[~azure.mgmt.eventhub.v2021_06_01_preview.models.PrivateEndpointConnection]
     :param next_link: A link for the next page of private endpoint connection resources.
     :type next_link: str
     """
@@ -1328,14 +1423,11 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        value: Optional[List["PrivateEndpointConnection"]] = None,
-        next_link: Optional[str] = None,
         **kwargs
     ):
         super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
 
 
 class PrivateLinkResource(msrest.serialization.Model):
@@ -1366,29 +1458,22 @@ class PrivateLinkResource(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        id: Optional[str] = None,
-        name: Optional[str] = None,
-        type: Optional[str] = None,
-        group_id: Optional[str] = None,
-        required_members: Optional[List[str]] = None,
-        required_zone_names: Optional[List[str]] = None,
         **kwargs
     ):
         super(PrivateLinkResource, self).__init__(**kwargs)
-        self.id = id
-        self.name = name
-        self.type = type
-        self.group_id = group_id
-        self.required_members = required_members
-        self.required_zone_names = required_zone_names
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
+        self.group_id = kwargs.get('group_id', None)
+        self.required_members = kwargs.get('required_members', None)
+        self.required_zone_names = kwargs.get('required_zone_names', None)
 
 
 class PrivateLinkResourcesListResult(msrest.serialization.Model):
     """Result of the List private link resources operation.
 
     :param value: A collection of private link resources.
-    :type value: list[~azure.mgmt.eventhub.v2021_01_01_preview.models.PrivateLinkResource]
+    :type value: list[~azure.mgmt.eventhub.v2021_06_01_preview.models.PrivateLinkResource]
     :param next_link: A link for the next page of private link resources.
     :type next_link: str
     """
@@ -1400,14 +1485,11 @@ class PrivateLinkResourcesListResult(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        value: Optional[List["PrivateLinkResource"]] = None,
-        next_link: Optional[str] = None,
         **kwargs
     ):
         super(PrivateLinkResourcesListResult, self).__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
 
 
 class RegenerateAccessKeyParameters(msrest.serialization.Model):
@@ -1417,7 +1499,7 @@ class RegenerateAccessKeyParameters(msrest.serialization.Model):
 
     :param key_type: Required. The access key to regenerate. Possible values include: "PrimaryKey",
      "SecondaryKey".
-    :type key_type: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.KeyType
+    :type key_type: str or ~azure.mgmt.eventhub.v2021_06_01_preview.models.KeyType
     :param key: Optional, if the key value provided, is set for KeyType or autogenerated Key value
      set for keyType.
     :type key: str
@@ -1434,14 +1516,11 @@ class RegenerateAccessKeyParameters(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        key_type: Union[str, "KeyType"],
-        key: Optional[str] = None,
         **kwargs
     ):
         super(RegenerateAccessKeyParameters, self).__init__(**kwargs)
-        self.key_type = key_type
-        self.key = key
+        self.key_type = kwargs['key_type']
+        self.key = kwargs.get('key', None)
 
 
 class Sku(msrest.serialization.Model):
@@ -1451,10 +1530,10 @@ class Sku(msrest.serialization.Model):
 
     :param name: Required. Name of this SKU. Possible values include: "Basic", "Standard",
      "Premium".
-    :type name: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.SkuName
+    :type name: str or ~azure.mgmt.eventhub.v2021_06_01_preview.models.SkuName
     :param tier: The billing tier of this particular SKU. Possible values include: "Basic",
      "Standard", "Premium".
-    :type tier: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.SkuTier
+    :type tier: str or ~azure.mgmt.eventhub.v2021_06_01_preview.models.SkuTier
     :param capacity: The Event Hubs throughput units for Basic or Standard tiers, where value
      should be 0 to 20 throughput units. The Event Hubs premium units for Premium tier, where value
      should be 0 to 10 premium units.
@@ -1474,16 +1553,12 @@ class Sku(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        name: Union[str, "SkuName"],
-        tier: Optional[Union[str, "SkuTier"]] = None,
-        capacity: Optional[int] = None,
         **kwargs
     ):
         super(Sku, self).__init__(**kwargs)
-        self.name = name
-        self.tier = tier
-        self.capacity = capacity
+        self.name = kwargs['name']
+        self.tier = kwargs.get('tier', None)
+        self.capacity = kwargs.get('capacity', None)
 
 
 class Subnet(msrest.serialization.Model):
@@ -1499,12 +1574,10 @@ class Subnet(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        id: Optional[str] = None,
         **kwargs
     ):
         super(Subnet, self).__init__(**kwargs)
-        self.id = id
+        self.id = kwargs.get('id', None)
 
 
 class SystemData(msrest.serialization.Model):
@@ -1514,7 +1587,7 @@ class SystemData(msrest.serialization.Model):
     :type created_by: str
     :param created_by_type: The type of identity that created the resource. Possible values
      include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.CreatedByType
+    :type created_by_type: str or ~azure.mgmt.eventhub.v2021_06_01_preview.models.CreatedByType
     :param created_at: The timestamp of resource creation (UTC).
     :type created_at: ~datetime.datetime
     :param last_modified_by: The identity that last modified the resource.
@@ -1522,7 +1595,7 @@ class SystemData(msrest.serialization.Model):
     :param last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
     :type last_modified_by_type: str or
-     ~azure.mgmt.eventhub.v2021_01_01_preview.models.CreatedByType
+     ~azure.mgmt.eventhub.v2021_06_01_preview.models.CreatedByType
     :param last_modified_at: The type of identity that last modified the resource.
     :type last_modified_at: ~datetime.datetime
     """
@@ -1538,22 +1611,45 @@ class SystemData(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
-        created_at: Optional[datetime.datetime] = None,
-        last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
-        last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
         super(SystemData, self).__init__(**kwargs)
-        self.created_by = created_by
-        self.created_by_type = created_by_type
-        self.created_at = created_at
-        self.last_modified_by = last_modified_by
-        self.last_modified_by_type = last_modified_by_type
-        self.last_modified_at = last_modified_at
+        self.created_by = kwargs.get('created_by', None)
+        self.created_by_type = kwargs.get('created_by_type', None)
+        self.created_at = kwargs.get('created_at', None)
+        self.last_modified_by = kwargs.get('last_modified_by', None)
+        self.last_modified_by_type = kwargs.get('last_modified_by_type', None)
+        self.last_modified_at = kwargs.get('last_modified_at', None)
+
+
+class UserAssignedIdentity(msrest.serialization.Model):
+    """Recognized Dictionary value.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: Principal Id of user assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: Client Id of user assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(UserAssignedIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
 
 
 class UserAssignedIdentityProperties(msrest.serialization.Model):
@@ -1569,9 +1665,7 @@ class UserAssignedIdentityProperties(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        user_assigned_identity: Optional[str] = None,
         **kwargs
     ):
         super(UserAssignedIdentityProperties, self).__init__(**kwargs)
-        self.user_assigned_identity = user_assigned_identity
+        self.user_assigned_identity = kwargs.get('user_assigned_identity', None)
