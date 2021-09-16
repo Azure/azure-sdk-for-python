@@ -2,12 +2,16 @@ import datetime
 import json
 import os
 import re
+import logging
 
 from azure.devops.v6_0.pipelines.pipelines_client import PipelinesClient
 from azure.devops.v6_0.pipelines import models
 from bs4 import BeautifulSoup
 from msrest.authentication import BasicAuthentication
 import requests
+
+logging.basicConfig(level=logging.DEBUG,
+                    format='[auto-reply  log]%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s')
 
 # Add readme link and package name to the user's issue
 def update_issue_body(sdk_repo, rest_repo, issue_number):
@@ -71,7 +75,7 @@ def _get_pkname_and_readme_link(rest_repo, link):
                 except Exception as e:
                     continue
                 if len(pk_url_name) > 1:
-                    print("\nexists multiple package names: {} \n".format(pk_url_name))
+                    logging.info("\nexists multiple package names: {} \n".format(pk_url_name))
                     raise Exception('Not find readme link, because it exists multiple package names')
 
         readme_link = 'https://github.com/Azure/azure-rest-api-specs/blob/main/specification/{}/' \
@@ -131,7 +135,7 @@ def get_pipeline_url(python_piplines, output_folder):
     if definitionId:
         pipeline_url = 'https://dev.azure.com/azure-sdk/internal/_build?definitionId={}'.format(definitionId)
     else:
-        print('Cannot find definitionId, Do not display pipeline_url')
+        logging.info('Cannot find definitionId, Do not display pipeline_url')
         pipeline_url = ''
     return pipeline_url
 
@@ -191,7 +195,7 @@ def auto_close_issue(sdk_repo, item):
         issue_info.edit(state='closed')
         item.labels.append('auto-closed')
         item.issue_object.set_labels(*item.labels)
-        print(f"issue number：{issue_number} has been closed!")
+        logging.info(f"issue number：{issue_number} has been closed!")
 
 
 def _get_last_released_date(package_name):
