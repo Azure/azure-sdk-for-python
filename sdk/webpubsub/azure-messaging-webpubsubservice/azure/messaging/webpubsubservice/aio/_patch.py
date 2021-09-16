@@ -34,7 +34,7 @@ from msrest import Deserializer, Serializer
 from .._version import VERSION
 from .operations import HealthApiOperations, WebPubSubOperations
 from .._patch import JwtCredentialPolicy, ApiManagementProxy, _parse_connection_string
-from ._web_pub_sub_service_client import WebPubSubServiceClient
+from ._web_pub_sub_service_client import WebPubSubServiceClient as GeneratedWebPubSubServiceClient
 
 
 from azure.core.configuration import Configuration
@@ -94,7 +94,7 @@ class WebPubSubServiceClientConfiguration(Configuration):
                 self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
 
 
-class AsyncWebPubSubServicePatchClient(WebPubSubServiceClient):
+class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
     """WebPubSubServiceClient.
 
     :ivar health_api: HealthApiOperations operations

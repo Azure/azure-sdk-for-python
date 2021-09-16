@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"hello": "test_webpubsub_send_to_all"}'
+    body: test_webpubsub_send_request
     headers:
       Accept:
       - '*/*'
@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '39'
+      - '27'
       Content-Type:
       - text/plain
       User-Agent:
@@ -25,7 +25,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 16 Sep 2021 07:22:33 GMT
+      - Thu, 16 Sep 2021 07:22:31 GMT
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:

@@ -1,3 +1,29 @@
+# coding=utf-8
+# --------------------------------------------------------------------------
+#
+# Copyright (c) Microsoft Corporation. All rights reserved.
+#
+# The MIT License (MIT)
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the ""Software""), to
+# deal in the Software without restriction, including without limitation the
+# rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+# sell copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+# IN THE SOFTWARE.
+#
+# --------------------------------------------------------------------------
 import io
 import logging
 import os
@@ -12,19 +38,18 @@ LOG = logging.getLogger()
 # Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
 # AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, WEBPUBSUB_ENDPOINT
 try:
-    endpoint = os.environ.get("WEBPUBSUB_ENDPOINT")
+    endpoint = os.environ["WEBPUBSUB_ENDPOINT"]
 except KeyError:
     LOG.error("Missing environment variable 'WEBPUBSUB_ENDPOINT' - please set if before running the example")
     exit()
 
-# Build a client from the connection string. And for this example, we have enabled debug
-# tracing. For production code, this should be turned off.
+# Build a client through AAD
 client = WebPubSubServiceClient(credential=DefaultAzureCredential(), endpoint=endpoint)
 
 # Send a json message to everybody on the given hub...
 try:
     # Raise an exception if the service rejected the call
-    client.web_pub_sub.send_to_all('Hub', message={'Hello': 'all!'})
+    client.web_pub_sub.send_to_all('Hub', message={'Hello': 'all'})
     print('Successfully sent a JSON message')
 except HttpResponseError as e:
     print('Failed to send JSON message: {}'.format(e.response.json()))
@@ -45,4 +70,3 @@ try:
     print('Successfully sent a JSON message')
 except HttpResponseError as e:
     print('Failed to send JSON message: {}'.format(e.response.json()))
-

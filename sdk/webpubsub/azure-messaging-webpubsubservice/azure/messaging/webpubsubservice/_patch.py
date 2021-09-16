@@ -32,7 +32,7 @@ from typing import TYPE_CHECKING
 
 from ._version import VERSION
 from .operations import HealthApiOperations, WebPubSubOperations
-from ._web_pub_sub_service_client import WebPubSubServiceClient
+from ._web_pub_sub_service_client import WebPubSubServiceClient as GeneratedWebPubSubServiceClient
 
 from msrest import Deserializer, Serializer
 from azure.core.pipeline import policies
@@ -276,8 +276,8 @@ class WebPubSubServiceClientConfiguration(Configuration):
                 self.authentication_policy = policies.BearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
 
 
-class WebPubSubServicePatchClient(WebPubSubServiceClient):
-    """PatchClient.
+class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
+    """WebPubSubServiceClient.
 
     :ivar health_api: HealthApiOperations operations
     :vartype health_api: azure.messaging.webpubsubservice.operations.HealthApiOperations

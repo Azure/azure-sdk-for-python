@@ -9,17 +9,16 @@ interactions:
       User-Agent:
       - azsdk-python-messaging-webpubsubservice/1.0.0b2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://myservice.webpubsub.azure.com/api/hubs/Hub/:send?api-version=2021-08-01-preview
+    uri: https://myservice.azure-api.net/api/hubs/Hub/:send?api-version=2021-08-01-preview
   response:
     body:
       string: ''
     headers:
-      connection: keep-alive
       content-length: '0'
-      date: Wed, 15 Sep 2021 02:45:13 GMT
+      date: Thu, 16 Sep 2021 07:22:45 GMT
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 202
       message: Accepted
-    url: https://webpubsub-yyc.webpubsub.azure.com/api/hubs/Hub/:send?api-version=2021-08-01-preview
+    url: https://apimanagement-yyc.azure-api.net/api/hubs/Hub/:send?api-version=2021-08-01-preview
 version: 1
