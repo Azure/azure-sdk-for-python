@@ -29,22 +29,22 @@ class WebPubSubServiceClient(object):
     :vartype health_api: azure.messaging.webpubsubservice.operations.HealthApiOperations
     :ivar web_pub_sub: WebPubSubOperations operations
     :vartype web_pub_sub: azure.messaging.webpubsubservice.operations.WebPubSubOperations
+    :param endpoint: HTTP or HTTPS endpoint for the Web PubSub service instance.
+    :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword endpoint: Service URL. Default value is ''.
-    :paramtype endpoint: str
     """
 
     def __init__(
         self,
+        endpoint,  # type: str
         credential,  # type: "TokenCredential"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        endpoint = kwargs.pop('endpoint', "")  # type: str
-
-        self._config = WebPubSubServiceClientConfiguration(credential, **kwargs)
-        self._client = PipelineClient(base_url=endpoint, config=self._config, **kwargs)
+        _endpoint = '{Endpoint}'
+        self._config = WebPubSubServiceClientConfiguration(endpoint, credential, **kwargs)
+        self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
@@ -77,7 +77,11 @@ class WebPubSubServiceClient(object):
         """
 
         request_copy = deepcopy(request)
-        request_copy.url = self._client.format_url(request_copy.url)
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, **kwargs)
 
     def close(self):

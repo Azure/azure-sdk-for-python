@@ -677,7 +677,10 @@ class HealthApiOperations(object):
             api_version=api_version,
             template_url=self.get_service_status.metadata['url'],
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
         response = pipeline_response.http_response
@@ -763,7 +766,10 @@ class WebPubSubOperations(object):
             api_version=api_version,
             template_url=self.generate_client_token.metadata['url'],
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
         response = pipeline_response.http_response
@@ -844,7 +850,10 @@ class WebPubSubOperations(object):
             content=content,
             template_url=self.send_to_all.metadata['url'],
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
         response = pipeline_response.http_response
@@ -897,7 +906,10 @@ class WebPubSubOperations(object):
             api_version=api_version,
             template_url=self.connection_exists.metadata['url'],
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
         response = pipeline_response.http_response
@@ -954,7 +966,10 @@ class WebPubSubOperations(object):
             api_version=api_version,
             template_url=self.close_connection.metadata['url'],
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
         response = pipeline_response.http_response
@@ -1028,7 +1043,10 @@ class WebPubSubOperations(object):
             content=content,
             template_url=self.send_to_connection.metadata['url'],
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
         response = pipeline_response.http_response
@@ -1081,7 +1099,10 @@ class WebPubSubOperations(object):
             api_version=api_version,
             template_url=self.group_exists.metadata['url'],
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
         response = pipeline_response.http_response
@@ -1159,7 +1180,10 @@ class WebPubSubOperations(object):
             content=content,
             template_url=self.send_to_group.metadata['url'],
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
         response = pipeline_response.http_response
@@ -1216,7 +1240,10 @@ class WebPubSubOperations(object):
             api_version=api_version,
             template_url=self.add_connection_to_group.metadata['url'],
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
         response = pipeline_response.http_response
@@ -1273,7 +1300,10 @@ class WebPubSubOperations(object):
             api_version=api_version,
             template_url=self.remove_connection_from_group.metadata['url'],
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
         response = pipeline_response.http_response
@@ -1326,7 +1356,10 @@ class WebPubSubOperations(object):
             api_version=api_version,
             template_url=self.user_exists.metadata['url'],
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
         response = pipeline_response.http_response
@@ -1400,7 +1433,10 @@ class WebPubSubOperations(object):
             content=content,
             template_url=self.send_to_user.metadata['url'],
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
         response = pipeline_response.http_response
@@ -1457,7 +1493,10 @@ class WebPubSubOperations(object):
             api_version=api_version,
             template_url=self.add_user_to_group.metadata['url'],
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
         response = pipeline_response.http_response
@@ -1514,7 +1553,10 @@ class WebPubSubOperations(object):
             api_version=api_version,
             template_url=self.remove_user_from_group.metadata['url'],
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
         response = pipeline_response.http_response
@@ -1567,7 +1609,10 @@ class WebPubSubOperations(object):
             api_version=api_version,
             template_url=self.remove_user_from_all_groups.metadata['url'],
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
         response = pipeline_response.http_response
@@ -1630,7 +1675,10 @@ class WebPubSubOperations(object):
             api_version=api_version,
             template_url=self.grant_permission.metadata['url'],
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
         response = pipeline_response.http_response
@@ -1693,7 +1741,10 @@ class WebPubSubOperations(object):
             api_version=api_version,
             template_url=self.revoke_permission.metadata['url'],
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
         response = pipeline_response.http_response
@@ -1756,7 +1807,10 @@ class WebPubSubOperations(object):
             api_version=api_version,
             template_url=self.check_permission.metadata['url'],
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
         response = pipeline_response.http_response

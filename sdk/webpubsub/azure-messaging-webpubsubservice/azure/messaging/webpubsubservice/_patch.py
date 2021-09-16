@@ -238,18 +238,26 @@ class WebPubSubServiceClientConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
+    :param endpoint: HTTP or HTTPS endpoint for the Web PubSub service instance.
+    :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: Union[~azure.core.credentials.TokenCredential, ~azure.core.credentials.AzureKeyCredential]
     """
 
     def __init__(
         self,
+        endpoint,  # type: str
         credential,  # type: Union[TokenCredential, AzureKeyCredential]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
+        if endpoint is None:
+            raise ValueError("Parameter 'endpoint' must not be None.")
+        if credential is None:
+            raise ValueError("Parameter 'credential' must not be None.")
         super(WebPubSubServiceClientConfiguration, self).__init__(**kwargs)
 
+        self.endpoint = endpoint
         self.credential = credential
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://webpubsub.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'messaging-webpubsubservice/{}'.format(VERSION))
@@ -283,24 +291,23 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
     :vartype health_api: azure.messaging.webpubsubservice.operations.HealthApiOperations
     :ivar web_pub_sub: WebPubSubOperations operations
     :vartype web_pub_sub: azure.messaging.webpubsubservice.operations.WebPubSubOperations
-    :keyword connection_string: connection string needed for the client to connect to Azure.
-    :paramtype connection_string： str
+    :param endpoint: HTTP or HTTPS endpoint for the Web PubSub service instance.
+    :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: Union[~azure.core.credentials.TokenCredential, ~azure.core.credentials.AzureKeyCredential]
-    :keyword endpoint: Service URL. Default value is ''.
-    :paramtype endpoint: str
+    :type credential: ~azure.core.credentials.TokenCredential
     """
 
     def __init__(
         self,
+        endpoint,  # type: str
         credential,  # type: Union[TokenCredential, AzureKeyCredential]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        endpoint = kwargs.pop('endpoint', "")  # type: str
         kwargs['origin_endpoint'] = endpoint
-        self._config = WebPubSubServiceClientConfiguration(credential, **kwargs)
-        self._client = PipelineClient(base_url=endpoint, config=self._config, **kwargs)
+        _endpoint = '{Endpoint}'
+        self._config = WebPubSubServiceClientConfiguration(endpoint, credential, **kwargs)
+        self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()

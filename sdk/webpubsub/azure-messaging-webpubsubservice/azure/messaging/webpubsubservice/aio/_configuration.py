@@ -24,19 +24,25 @@ class WebPubSubServiceClientConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
+    :param endpoint: HTTP or HTTPS endpoint for the Web PubSub service instance.
+    :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     """
 
     def __init__(
         self,
+        endpoint: str,
         credential: "AsyncTokenCredential",
         **kwargs: Any
     ) -> None:
+        if endpoint is None:
+            raise ValueError("Parameter 'endpoint' must not be None.")
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         super(WebPubSubServiceClientConfiguration, self).__init__(**kwargs)
 
+        self.endpoint = endpoint
         self.credential = credential
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://webpubsub.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'messaging-webpubsubservice/{}'.format(VERSION))
