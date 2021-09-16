@@ -130,4 +130,3 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
     def on_exception(self, request):
         # type: (PipelineRequest) -> None
         self.end_span(request, exc_info=sys.exc_info())
-        return
