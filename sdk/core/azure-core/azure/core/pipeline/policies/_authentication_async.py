@@ -124,7 +124,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
         :type request: ~azure.core.pipeline.PipelineRequest
         """
         # pylint: disable=no-self-use,unused-argument
-        return False
+        return
 
     def _need_new_token(self) -> bool:
         return not self._token or self._token.expires_on - time.time() < 300
