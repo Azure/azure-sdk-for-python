@@ -126,13 +126,15 @@ class RemoteRenderingClient(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+        polling_interval = kwargs.pop("polling_interval", self.polling_interval)
+
         initial_state = self._client.remote_rendering.create_conversion(
             account_id=self._account_id,
             conversion_id=conversion_id,
             body=CreateAssetConversionSettings(settings=AssetConversionSettings(
                 input_settings=input_settings, output_settings=output_settings)),
             **kwargs)
-        polling_interval = kwargs.pop("polling_interval", self.polling_interval)
+
         polling_method = ConversionPolling(account_id=self._account_id, polling_interval=polling_interval)
         return LROPoller(client=self._client,
                          initial_response=initial_state,
