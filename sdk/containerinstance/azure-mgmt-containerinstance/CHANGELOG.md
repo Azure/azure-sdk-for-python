@@ -1,5 +1,18 @@
 # Release History
 
+## 9.0.0 (2021-09-16)
+
+**Features**
+
+  - Model ContainerGroup has a new parameter subnet_ids
+  - Model ImageRegistryCredential has a new parameter identity
+  - Model ImageRegistryCredential has a new parameter identity_url
+  - Added operation ContainerGroupsOperations.get_outbound_network_dependencies_endpoints
+
+**Breaking changes**
+
+  - Model ContainerGroup no longer has parameter network_profile
+
 ## 8.0.0 (2021-07-20)
 
 **Features**
