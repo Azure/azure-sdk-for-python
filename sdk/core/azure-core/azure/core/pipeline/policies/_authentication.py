@@ -114,15 +114,13 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
         :param request: The pipeline request object
         :type request: ~azure.core.pipeline.PipelineRequest
         """
-        response = None
         self.on_request(request)
         try:
             response = self.next.send(request)
             self.on_response(request, response)
         except Exception:  # pylint:disable=broad-except
-            handled = self.on_exception(request)
-            if not handled:
-                raise
+            self.on_exception(request)
+            raise
         else:
             if response.http_response.status_code == 401:
                 self._token = None  # any cached token is invalid
@@ -133,11 +131,10 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
                             response = self.next.send(request)
                             self.on_response(request, response)
                         except Exception:  # pylint:disable=broad-except
-                            handled = self.on_exception(request)
-                            if not handled:
-                                raise
+                            self.on_exception(request)
+                            raise
 
-        return response # type: ignore
+        return response
 
     def on_challenge(self, request, response):
         # type: (PipelineRequest, PipelineResponse) -> bool

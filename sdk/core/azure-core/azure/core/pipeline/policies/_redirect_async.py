@@ -58,7 +58,6 @@ class AsyncRedirectPolicy(RedirectPolicyBase, AsyncHTTPPolicy):
         :rtype: ~azure.core.pipeline.PipelineResponse
         :raises: ~azure.core.exceptions.TooManyRedirectsError if maximum redirects exceeded.
         """
-        response = None
         redirects_remaining = True
         redirect_settings = self.configure_redirects(request.context.options)
         while redirects_remaining:

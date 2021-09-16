@@ -439,12 +439,6 @@ class TestClientRequest(unittest.TestCase):
             def on_exception(self, request):
                 return True
 
-        class ErrorPolicy(HTTPPolicy):
-            def send(self, request):
-                raise Exception("oops")
-
-        pipeline = Pipeline(transport=object(), policies=[ReproPolicy(), ErrorPolicy()])
-        pipeline.run(HttpRequest("GET", "..."))
 
 if __name__ == "__main__":
     unittest.main()

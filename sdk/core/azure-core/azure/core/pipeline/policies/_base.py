@@ -109,7 +109,7 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
 
     # pylint: disable=no-self-use
     def on_exception(self, request):  # pylint: disable=unused-argument
-        # type: (PipelineRequest) -> Union[bool, Awaitable[bool]]
+        # type: (PipelineRequest) -> None
         """Is executed if an exception is raised while executing the next policy.
 
         Developer can optionally implement this method to return True
@@ -119,8 +119,6 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
 
         :param request: The Pipeline request object
         :type request: ~azure.core.pipeline.PipelineRequest
-        :return: False by default, override with True to stop the exception.
-        :rtype: bool
 
         .. admonition:: Example:
 

@@ -152,7 +152,6 @@ class RedirectPolicy(RedirectPolicyBase, HTTPPolicy):
         :rtype: ~azure.core.pipeline.PipelineResponse
         :raises: ~azure.core.exceptions.TooManyRedirectsError if maximum redirects exceeded.
         """
-        response = None
         retryable = True
         redirect_settings = self.configure_redirects(request.context.options)
         while retryable:
