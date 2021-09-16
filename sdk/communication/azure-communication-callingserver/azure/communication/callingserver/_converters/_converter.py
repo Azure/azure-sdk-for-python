@@ -2,16 +2,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-# --------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 
 from .._models import JoinCallOptions, PlayAudioOptions
-from .._shared.models import CommunicationIdentifier
 from .._generated.models import (
     JoinCallRequest,
     PlayAudioRequest,
     CommunicationIdentifierModel,
     AddParticipantRequest,
-    PhoneNumberIdentifierModel
+    PhoneNumberIdentifierModel,
+    CancelAllMediaOperationsRequest
     )
 
 class JoinCallRequestConverter(object):
@@ -72,4 +72,14 @@ class AddParticipantRequestConverter(object):
             participant=participant,
             operation_context=operation_context,
             callback_uri=callback_uri
+            )
+
+class CancelAllMediaOperationsConverter(object):
+    @staticmethod
+    def convert(
+        operation_context=None, # type: str
+        ): # type: (...) -> CancelAllMediaOperationsRequest
+
+        return CancelAllMediaOperationsRequest(
+            operation_context=operation_context
             )

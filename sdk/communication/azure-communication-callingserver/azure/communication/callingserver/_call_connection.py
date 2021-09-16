@@ -10,9 +10,9 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._communication_identifier_serializer import serialize_identifier
 from ._converters import (AddParticipantRequestConverter,
-                          PlayAudioRequestConverter)
+                          PlayAudioRequestConverter,
+                          CancelAllMediaOperationsConverter)
 from ._generated.models import (AddParticipantResult,
-                                CancelAllMediaOperationsRequest,
                                 CancelAllMediaOperationsResult,
                                 PhoneNumberIdentifierModel,
                                 PlayAudioResult)
@@ -52,11 +52,11 @@ class CallConnection(object):
 
         if operation_context is not None:
             kwargs['operation_context'] = operation_context
-        request = CancelAllMediaOperationsRequest(**kwargs)
+        cancel_all_media_operations_request = CancelAllMediaOperationsConverter.convert(operation_context)
 
         return self._call_connection_client.cancel_all_media_operations(
             call_connection_id=self.call_connection_id,
-            cancel_all_media_operation_request=request,
+            cancel_all_media_operation_request=cancel_all_media_operations_request,
             **kwargs
         )
 

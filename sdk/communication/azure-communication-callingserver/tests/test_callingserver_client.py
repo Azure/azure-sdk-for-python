@@ -5,8 +5,8 @@
 # --------------------------------------------------------------------------
 import unittest
 import pytest
-import _test_utils
-import _test_constants
+import utils._test_utils as _test_utils
+import utils._test_constants as _test_constants
 
 from typing import List
 from parameterized import parameterized

@@ -110,7 +110,7 @@ class CallingServerClient:
         if not call_connection_id:
             raise ValueError("call_connection_id can not be None")
 
-        return CallConnection(call_connection_id, self._call_connection_client)
+        return CallConnection(call_connection_id, self._call_connection_client, self._callingserver_service_client)
 
     def initialize_server_call(
             self,
@@ -126,7 +126,7 @@ class CallingServerClient:
         if not server_call_id:
             raise ValueError("call_connection_id can not be None")
 
-        return ServerCall(server_call_id, self._server_call_client)
+        return ServerCall(server_call_id, self._server_call_client, self._callingserver_service_client)
 
     @distributed_trace_async()
     async def create_call_connection(
@@ -173,7 +173,11 @@ class CallingServerClient:
             call_request=request,
             **kwargs
         )
-        return CallConnection(create_call_response.call_connection_id, self._call_connection_client)  # pylint:disable=protected-access
+        return CallConnection(
+            create_call_response.call_connection_id,
+            self._call_connection_client,
+            self._callingserver_service_client
+            )  # pylint:disable=protected-access
 
     @distributed_trace_async()
     async def join_call(
@@ -211,7 +215,11 @@ class CallingServerClient:
             **kwargs
         )
 
-        return CallConnection(join_call_response.call_connection_id, self._call_connection_client)
+        return CallConnection(
+            join_call_response.call_connection_id,
+            self._call_connection_client,
+            self._callingserver_service_client
+            )
 
     async def close(self) -> None:
         """Close the :class:

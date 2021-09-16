@@ -14,12 +14,14 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._communication_identifier_serializer import serialize_identifier
 from .._converters import (AddParticipantRequestConverter,
-                           PlayAudioRequestConverter)
+                           PlayAudioRequestConverter,
+                           CancelAllMediaOperationsConverter)
 from .._generated.models import (AddParticipantResult,
-                                 CancelAllMediaOperationsRequest,
                                  CancelAllMediaOperationsResult,
                                  PhoneNumberIdentifierModel, PlayAudioResult)
 from .._shared.models import CommunicationIdentifier
+from .._generated.aio._azure_communication_calling_server_service import \
+    AzureCommunicationCallingServerService  # pylint: disable=unused-import
 
 if TYPE_CHECKING:
     from .._generated.aio.operations import CallConnectionsOperations
@@ -29,11 +31,13 @@ class CallConnection:
     def __init__(
             self,
             call_connection_id: str,
-            call_connection_client: 'CallConnectionsOperations'
+            call_connection_client: 'CallConnectionsOperations',
+            callingserver_service_client: 'AzureCommunicationCallingServerService'
         ) -> None:
 
         self.call_connection_id = call_connection_id
         self._call_connection_client = call_connection_client
+        self._callingserver_service_client = callingserver_service_client
 
     @distributed_trace_async()
     async def hang_up(
@@ -53,13 +57,11 @@ class CallConnection:
             **kwargs: Any
         ) -> CancelAllMediaOperationsResult:
 
-        if operation_context is not None:
-            kwargs['operation_context'] = operation_context
-        request = CancelAllMediaOperationsRequest(**kwargs)
+        cancel_all_media_operations_request = CancelAllMediaOperationsConverter.convert(operation_context)
 
         return await self._call_connection_client.cancel_all_media_operations(
             call_connection_id=self.call_connection_id,
-            cancel_all_media_operation_request=request,
+            cancel_all_media_operation_request=cancel_all_media_operations_request,
             **kwargs
         )
 
@@ -127,14 +129,11 @@ class CallConnection:
         )
 
     async def close(self) -> None:
-        """Close the :class:
-        `~azure.communication.callingserver.aio.CallConnection` session.
-        """
-        await self._call_connection_client.close()
+        await self._callingserver_service_client.close()
 
-    async def __aenter__(self) -> "CallConnection":
-        await self._call_connection_client.__aenter__()
+    async def __aenter__(self) -> 'CallConnection':
+        await self._callingserver_service_client.__aenter__()
         return self
 
     async def __aexit__(self, *args: "Any") -> None:
-        await self._call_connection_client.__aexit__(*args)
+        await self._callingserver_service_client.__aexit__(*args)

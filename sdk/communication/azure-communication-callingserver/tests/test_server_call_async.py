@@ -4,8 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
-import _test_utils_async
-import _test_constants
+import utils._test_utils_async as _test_utils_async
+import utils._test_constants as _test_constants
 
 from typing import List
 from parameterized import parameterized

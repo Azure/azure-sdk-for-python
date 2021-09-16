@@ -12,10 +12,11 @@ from ._generated.models import (AddParticipantResult,
                                 CancelAllMediaOperationsRequest,
                                 CancelAllMediaOperationsResult,
                                 CreateCallRequest, PhoneNumberIdentifierModel,
-                                PlayAudioRequest, PlayAudioResult)
+                                PlayAudioRequest, PlayAudioResult,
+                                MediaType, EventSubscriptionType)
 from ._models import CreateCallOptions, JoinCallOptions, PlayAudioOptions
 from ._server_call import ServerCall
-from ._shared.models import CommunicationIdentifier
+from ._shared.models import CommunicationIdentifier, PhoneNumberIdentifier
 
 __all__ = [
     'AddParticipantResult',
@@ -26,7 +27,10 @@ __all__ = [
     'CommunicationIdentifier',
     'CreateCallOptions',
     'CreateCallRequest',
+    'EventSubscriptionType',
     'JoinCallOptions',
+    'MediaType',
+    'PhoneNumberIdentifier',
     'PhoneNumberIdentifierModel',
     'PlayAudioOptions',
     'PlayAudioRequest',
