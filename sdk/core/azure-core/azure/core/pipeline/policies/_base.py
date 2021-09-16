@@ -112,9 +112,6 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
         # type: (PipelineRequest) -> None
         """Is executed if an exception is raised while executing the next policy.
 
-        Developer can optionally implement this method to return True
-        if the exception has been handled and should not be forwarded to the caller.
-
         This method is executed inside the exception handler.
 
         :param request: The Pipeline request object
@@ -128,7 +125,7 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
                 :language: python
                 :dedent: 4
         """
-        return False
+        return
 
 
 class RequestHistory(object):

@@ -175,8 +175,7 @@ def example_on_exception():
     try:
         response = policy.on_request(request)
     except Exception:
-        if not policy.on_exception(request):
-            raise
+        policy.on_exception(request)
 
     # or use
     exc_type, exc_value, exc_traceback = sys.exc_info()

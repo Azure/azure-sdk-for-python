@@ -434,11 +434,6 @@ class TestClientRequest(unittest.TestCase):
         with pytest.raises(ValueError):
             client = PipelineClient(base_url="test", policies=policies, per_retry_policies=[foo_policy])
 
-    def test_sansiohttppolicy_exception(self):
-        class ReproPolicy(SansIOHTTPPolicy):
-            def on_exception(self, request):
-                return True
-
 
 if __name__ == "__main__":
     unittest.main()
