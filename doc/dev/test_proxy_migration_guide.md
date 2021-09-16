@@ -95,27 +95,29 @@ do.
 
 Since the test proxy doesn't use [`vcrpy`][vcrpy], tests don't use a scrubber to sanitize values in recordings.
 Instead, sanitizers (as well as matchers and transforms) can be registered on the proxy as detailed in
-[this][sanitizers] section of the proxy documentation. At the time of writing, sanitizers can be registered via
-the `add_sanitizer` method in `devtools_testutils`. For example, at the start of a test file, you can set up a URI
-sanitizer for all tests by doing something like the following:
+[this][sanitizers] section of the proxy documentation. At the time of writing, sanitizers can be registered via the
+`add_sanitizer` method in `devtools_testutils`.
+
+Sanitizers, matchers, and transforms remain registered until the proxy container is stopped, so for any sanitizers that
+are shared by different tests, using a session fixture declared in a `conftest.py` file is recommended. Please refer to
+[pytest's scoped fixture documentation][pytest_fixtures] for more details.
+
+For example, to sanitize URIs in recordings, you can set up a URI sanitizer for all tests in the pytest session by
+adding something like the following in the package's `conftest.py` file:
 
 ```python
-from devtools_testutils import add_sanitizer, AzureRecordedTestCase, ProxyRecordingSanitizer
+from devtools_testutils import add_sanitizer
 
-add_sanitizer(ProxyRecordingSanitizer.URI, value="fakeendpoint")
-
-class TestExample(AzureRecordedTestCase):
-    ...
+@pytest.fixture(scope="session")
+def sanitize_uris():
+    add_sanitizer(ProxyRecordingSanitizer.URI, value="fakeendpoint")
 ```
 
-`add_sanitizer` accepts a sanitizer type from the ProxyRecordingSanitizer enum as a required parameter. A regular
-expression to match and a value to use in recordings can be optionally provided as `regex` and `value` arguments,
-respectively. In the above example, any request URIs that match the default regular expression will have their
-domain name replaced with "fakeendpoint". A request made to `https://tableaccount.table.core.windows.net` will be
-recorded as being made to `https://fakeendpoint.table.core.windows.net`.
-
-Sanitizers, matchers, and transforms remain registered until the proxy container is stopped, so adding a sanitizer
-at the top of a test file (like in the example) will make that sanitizer available for all test cases in the file.
+`add_sanitizer` accepts a sanitizer, matcher, or transform type from the ProxyRecordingSanitizer enum as a required
+parameter. Keyword-only arguments can be provided to customize the sanitizer; for example, in the snippet above, any
+request URIs that match the default URI regular expression will have their domain name replaced with "fakeendpoint". A
+request made to `https://tableaccount.table.core.windows.net` will be recorded as being made to
+`https://fakeendpoint.table.core.windows.net`.
 
 ## Implementation details
 
@@ -169,5 +171,6 @@ case.
 [general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/README.md
 [proxy_cert_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/trusting-cert-per-language.md
 [pytest_collection]: https://docs.pytest.org/en/latest/explanation/goodpractices.html#test-discovery
+[pytest_fixtures]: https://docs.pytest.org/en/6.2.x/fixture.html#scope-sharing-fixtures-across-classes-modules-packages-or-session
 [sanitizers]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md#session-and-test-level-transforms-sanitiziers-and-matchers
 [vcrpy]: https://vcrpy.readthedocs.io/en/latest/
