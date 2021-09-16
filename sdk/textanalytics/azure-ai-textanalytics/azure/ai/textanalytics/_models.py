@@ -2316,8 +2316,6 @@ class RecognizeCustomEntitiesResult(DictMixin):
     :ivar statistics: If `show_stats=True` was specified in the request this
         field will contain information about the document payload.
     :vartype statistics: ~azure.ai.textanalytics.TextDocumentStatistics
-    :ivar str project_name: This field indicates the project name for the model.
-    :ivar str deployment_name: This field indicates the deployment name for the model.
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a RecognizeCustomEntitiesResult.
     """
@@ -2327,19 +2325,14 @@ class RecognizeCustomEntitiesResult(DictMixin):
         self.entities = kwargs.get("entities", None)
         self.warnings = kwargs.get("warnings", [])
         self.statistics = kwargs.get("statistics", None)
-        self.project_name = kwargs.get("project_name", None)
-        self.deployment_name = kwargs.get("deployment_name", None)
         self.is_error = False
 
     def __repr__(self):
-        return "RecognizeCustomEntitiesResult(id={}, entities={}, warnings={}, statistics={}, " \
-               "project_name={}, deployment_name={}, is_error={})".format(
+        return "RecognizeCustomEntitiesResult(id={}, entities={}, warnings={}, statistics={}, is_error={})".format(
                 self.id,
                 repr(self.entities),
                 repr(self.warnings),
                 repr(self.statistics),
-                self.project_name,
-                self.deployment_name,
                 self.is_error,
             )[
                 :1024
@@ -2362,8 +2355,6 @@ class RecognizeCustomEntitiesResult(DictMixin):
             statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
                 result.statistics
             ),
-            project_name=result.project_name,
-            deployment_name=result.deployment_name
         )
 
 
@@ -2422,8 +2413,6 @@ class ClassifyCustomCategoriesResult(DictMixin):
     :ivar statistics: If `show_stats=True` was specified in the request this
         field will contain information about the document payload.
     :vartype statistics: ~azure.ai.textanalytics.TextDocumentStatistics
-    :ivar str project_name: Required. This field indicates the project name for the model.
-    :ivar str deployment_name: Required. This field indicates the deployment name for the model.
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a ClassifyCustomCategoriesResult.
     """
@@ -2436,19 +2425,15 @@ class ClassifyCustomCategoriesResult(DictMixin):
         self.classifications = kwargs.get('classifications', None)
         self.warnings = kwargs.get('warnings', [])
         self.statistics = kwargs.get('statistics', None)
-        self.project_name = kwargs.get('project_name', None)
-        self.deployment_name = kwargs.get('deployment_name', None)
         self.is_error = False
 
     def __repr__(self):
         return "ClassifyCustomCategoriesResult(id={}, classifications={}, warnings={}, statistics={}, " \
-               "project_name={}, deployment_name={}, is_error={})".format(
+               "is_error={})".format(
                 self.id,
                 repr(self.classifications),
                 repr(self.warnings),
                 repr(self.statistics),
-                self.project_name,
-                self.deployment_name,
                 self.is_error,
             )[
                 :1024
@@ -2471,8 +2456,6 @@ class ClassifyCustomCategoriesResult(DictMixin):
             statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
                 result.statistics
             ),
-            project_name=result.project_name,
-            deployment_name=result.deployment_name
         )
 
 
@@ -2531,8 +2514,6 @@ class ClassifyCustomCategoryResult(DictMixin):
     :ivar statistics: If `show_stats=True` was specified in the request this
         field will contain information about the document payload.
     :vartype statistics: ~azure.ai.textanalytics.TextDocumentStatistics
-    :ivar str project_name: Required. This field indicates the project name for the model.
-    :ivar str deployment_name: Required. This field indicates the deployment name for the model.
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a ClassifyCustomCategoryResult.
     """
@@ -2545,19 +2526,15 @@ class ClassifyCustomCategoryResult(DictMixin):
         self.classification = kwargs.get('classification', None)
         self.warnings = kwargs.get('warnings', [])
         self.statistics = kwargs.get('statistics', None)
-        self.project_name = kwargs.get('project_name', None)
-        self.deployment_name = kwargs.get('deployment_name', None)
         self.is_error = False
 
     def __repr__(self):
         return "ClassifyCustomCategoryResult(id={}, classification={}, warnings={}, statistics={}, " \
-               "project_name={}, deployment_name={}, is_error={})".format(
+               "is_error={})".format(
                 self.id,
                 repr(self.classification),
                 repr(self.warnings),
                 repr(self.statistics),
-                self.project_name,
-                self.deployment_name,
                 self.is_error,
             )[
                 :1024
@@ -2578,8 +2555,6 @@ class ClassifyCustomCategoryResult(DictMixin):
             statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
                 result.statistics
             ),
-            project_name=result.project_name,
-            deployment_name=result.deployment_name
         )
 
 
