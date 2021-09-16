@@ -41,13 +41,21 @@ def get_metrics_authentication_policy(
 
     raise TypeError("Unsupported credential")
 
-def process_error(exception):
-    raise_error = HttpResponseError
-    raise raise_error(message=exception.message, response=exception.response)
-
-def order_results(request_order, mapping, obj):
+def order_results(request_order, mapping, obj, err, allow_partial_errors=False):
     ordered = [mapping[id] for id in request_order]
-    return [obj._from_generated(rsp) for rsp in ordered] # pylint: disable=protected-access
+    results = []
+    for item in ordered:
+        if not item.body.error:
+            results.append(obj._from_generated(item.body)) # pylint: disable=protected-access
+        else:
+            error = item.body.error
+            if allow_partial_errors and error.code == 'PartialError':
+                res = obj._from_generated(item.body) # pylint: disable=protected-access
+                res.partial_error = err._from_generated(error) # pylint: disable=protected-access
+                results.append(res)
+            else:
+                results.append(err._from_generated(error)) # pylint: disable=protected-access
+    return results
 
 def construct_iso8601(timespan=None):
     if not timespan:
@@ -90,3 +98,23 @@ def native_col_type(col_type, value):
 
 def process_row(col_types, row):
     return [native_col_type(col_types[ind], val) for ind, val in enumerate(row)]
+
+def process_error(error, model):
+    try:
+        model = model._from_generated(error.model.error) # pylint: disable=protected-access
+    except AttributeError: # model can be none
+        pass
+    raise HttpResponseError(
+        message=error.message,
+        response=error.response,
+        model=model)
+
+def process_prefer(server_timeout, include_statistics, include_visualization):
+    prefer = ""
+    if server_timeout:
+        prefer += "wait=" + str(server_timeout) + ","
+    if include_statistics:
+        prefer += "include-statistics=true,"
+    if include_visualization:
+        prefer += "include-render=true"
+    return prefer.rstrip(",")
