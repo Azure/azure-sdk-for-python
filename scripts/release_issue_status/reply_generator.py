@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.INFO,
                     format='[auto-reply  log]%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s')
 
 
-def weather_change_readme(rest_repo, link_dict, labels):
+def whether_change_readme_(rest_repo, link_dict, labels):
     # to see whether need change readme
     contents = str(rest_repo.get_contents(link_dict['readme_path']).decoded_content)
     pattern_tag = re.compile(r'tag: package-[\w+-.]+')
@@ -138,7 +138,7 @@ def begin_reply_generate(item, rest_repo, readme_link, sdk_repo, pipeline_url):
     issue_object_rg = item.issue_object
     link_dict = get_links(readme_link)
     labels = item.labels
-    whether_change_readme = weather_change_readme(rest_repo, link_dict, labels)
+    whether_change_readme = whether_change_readme_(rest_repo, link_dict, labels)
 
     if not whether_change_readme:
         latest_pr_number = get_latest_pr_from_readme(rest_repo, link_dict)
