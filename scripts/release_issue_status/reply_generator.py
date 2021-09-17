@@ -6,7 +6,7 @@ import requests
 from bs4 import BeautifulSoup
 
 issue_object_rg = None
-logging.basicConfig(level=logging.DEBUG,
+logging.basicConfig(level=logging.INFO,
                     format='[auto-reply  log]%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s')
 
 
