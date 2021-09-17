@@ -16,6 +16,7 @@ from azure.core.pipeline.transport import AsyncHttpResponse
 
 from .._communication_identifier_serializer import serialize_identifier
 from .._converters import (AddParticipantRequestConverter,
+                          CancelMediaOperationRequestConverter,
                            PlayAudioRequestConverter)
 from .._generated.models import (AddParticipantResult,
                                  CallRecordingProperties,
@@ -124,7 +125,8 @@ class ServerCall:
 
         return await self._server_call_client.start_recording(
             server_call_id=self.server_call_id,
-            request=start_call_recording_request
+            request=start_call_recording_request,
+            **kwargs
         )
 
     @distributed_trace_async()
@@ -140,6 +142,7 @@ class ServerCall:
         return await self._server_call_client.pause_recording(
             server_call_id=self.server_call_id,
             recording_id=recording_id,
+            **kwargs
         )
 
     @distributed_trace_async()
@@ -155,6 +158,7 @@ class ServerCall:
         return await self._server_call_client.resume_recording(
             server_call_id=self.server_call_id,
             recording_id=recording_id,
+            **kwargs
         )
 
 
@@ -171,6 +175,7 @@ class ServerCall:
         return await self._server_call_client.stop_recording(
             server_call_id=self.server_call_id,
             recording_id=recording_id,
+            **kwargs
         )
 
     @distributed_trace_async()
@@ -186,6 +191,52 @@ class ServerCall:
         return await self._server_call_client.get_recording_properties(
             server_call_id=self.server_call_id,
             recording_id=recording_id,
+            **kwargs
+        )
+    
+    @distributed_trace_async()
+    async def cancel_media_operation(
+            self,
+            media_operation_id,  # type: str
+            **kwargs  # type: Any
+        ) -> None:
+
+        if not media_operation_id:
+            raise ValueError("media_operation_id can not be None")
+
+        cancel_media_operation_request = CancelMediaOperationRequestConverter.convert(
+            media_operation_id=media_operation_id
+            )
+
+        return await self._server_call_client.cancel_media_operation(
+            server_call_id=self.server_call_id,
+            cancel_media_operation_request=cancel_media_operation_request,
+            **kwargs
+        )
+
+    @distributed_trace_async()
+    async def cancel_participant_media_operation(
+            self,
+            participant_id,  # type: str
+            media_operation_id,  # type: str
+            **kwargs  # type: Any
+        ) -> None:
+
+        if not participant_id:
+            raise ValueError("participant_id can not be None")
+
+        if not media_operation_id:
+            raise ValueError("media_operation_id can not be None")
+
+        cancel_media_operation_request = CancelMediaOperationRequestConverter.convert(
+            media_operation_id=media_operation_id
+            )
+
+        return await self._server_call_client.cancel_participant_media_operation(
+            server_call_id=self.server_call_id,
+            participant_id=participant_id,
+            cancel_media_operation_request=cancel_media_operation_request,
+            **kwargs
         )
 
     async def close(self) -> None:

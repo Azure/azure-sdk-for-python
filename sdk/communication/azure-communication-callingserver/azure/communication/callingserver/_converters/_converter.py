@@ -11,8 +11,8 @@ from .._generated.models import (
     PlayAudioRequest,
     CommunicationIdentifierModel,
     AddParticipantRequest,
-    PhoneNumberIdentifierModel,
-    MicrosoftTeamsUserIdentifierModel
+    CancelMediaOperationRequest,
+    PhoneNumberIdentifierModel
     )
 from .._generated.models._azure_communication_calling_server_service_enums import CommunicationCloudEnvironmentModel
 
@@ -75,3 +75,17 @@ class AddParticipantRequestConverter(object):
             operation_context=operation_context,
             callback_uri=callback_uri
             )
+
+class CancelMediaOperationRequestConverter(object):
+    @staticmethod
+    def convert(
+        media_operation_id, # type: str
+        ): # type: (...) -> CancelMediaOperationRequest
+
+        if not media_operation_id:
+            raise ValueError("media_operation_id can not be None")
+
+        return CancelMediaOperationRequest(
+            media_operation_id=media_operation_id
+        )
+        

@@ -89,6 +89,44 @@ def data_source_test_remove_participant():
 
     return parameters
 
+def data_source_test_cancel_media_operation():
+
+    parameters = []
+    parameters.append((
+        _test_constants.ClientType_ConnectionString,
+        _test_constants.SERVER_CALL_ID,
+        _test_constants.MEDIA_OPERATION_ID,
+        ))
+
+    parameters.append((
+        _test_constants.ClientType_ManagedIdentity,
+        _test_constants.SERVER_CALL_ID,
+        _test_constants.MEDIA_OPERATION_ID,
+        True,
+        ))
+
+    return parameters
+
+def data_source_test_cancel_participant_media_operation():
+
+    parameters = []
+    parameters.append((
+        _test_constants.ClientType_ConnectionString,
+        _test_constants.SERVER_CALL_ID,
+        _test_constants.PARTICIPANT_ID,
+        _test_constants.MEDIA_OPERATION_ID,
+        ))
+
+    parameters.append((
+        _test_constants.ClientType_ManagedIdentity,
+        _test_constants.SERVER_CALL_ID,
+        _test_constants.PARTICIPANT_ID,
+        _test_constants.MEDIA_OPERATION_ID,
+        True,
+        ))
+
+    return parameters
+
 def verify_play_audio_result(result):
     # type: (CancelAllMediaOperationsResult) -> None
     assert "dummyId" == result.operation_id
@@ -256,3 +294,99 @@ async def test_start_recording_relative_uri_fails():
     server_call = _test_utils_async.create_calling_server_client_async().initialize_server_call(server_call_id)
     with pytest.raises(ValueError):
         await server_call.start_recording("/not/absolute/uri")
+
+@parameterized.expand(data_source_test_cancel_media_operation())
+@pytest.mark.asyncio
+async def test_cancel_media_operation_succeed(
+    test_name, # type: str
+    server_call_id, # type: str
+    media_operation_id, # type: str
+    use_managed_identity = False # type: bool
+    ):
+
+    server_call = _test_utils_async.create_mock_server_call(
+        server_call_id,
+        status_code=200,
+        payload=None,
+        use_managed_identity=use_managed_identity
+        )
+
+    await server_call.cancel_media_operation(
+        media_operation_id = media_operation_id
+        )
+    assert server_call.server_call_id == _test_constants.SERVER_CALL_ID
+
+@parameterized.expand(data_source_test_cancel_media_operation())
+@pytest.mark.asyncio
+async def test_cancel_media_operation_failed(
+    test_name, # type: str
+    server_call_id, # type: str
+    media_operation_id, # type: str
+    use_managed_identity = False # type: bool
+    ):
+
+    server_call = _test_utils_async.create_mock_server_call(
+        server_call_id,
+        status_code=404,
+        payload=_test_constants.ErrorPayload,
+        use_managed_identity = use_managed_identity
+        )
+
+    raised = False
+    try:
+            await server_call.cancel_media_operation(
+            media_operation_id = media_operation_id
+            )
+    except:
+        raised = True
+    assert raised == True
+
+@parameterized.expand(data_source_test_cancel_participant_media_operation())
+@pytest.mark.asyncio
+async def test_cancel_participant_media_operation(
+    test_name, # type: str
+    server_call_id, # type: str
+    participant_id, # type: str
+    media_operation_id, # type: str
+    use_managed_identity = False # type: bool
+    ):
+
+    server_call = _test_utils_async.create_mock_server_call(
+        server_call_id,
+        status_code=200,
+        payload=None,
+        use_managed_identity=use_managed_identity
+        )
+
+    await server_call.cancel_participant_media_operation(
+        participant_id = participant_id,
+        media_operation_id = media_operation_id
+        )
+    assert server_call.server_call_id == _test_constants.SERVER_CALL_ID
+
+@parameterized.expand(data_source_test_cancel_participant_media_operation())
+@pytest.mark.asyncio
+async def test_cancel_participant_media_operation_failed(
+    test_name, # type: str
+    server_call_id, # type: str
+    participant_id, # type: str
+    media_operation_id, # type: str
+    use_managed_identity = False # type: bool
+    ):
+
+    server_call = _test_utils_async.create_mock_server_call(
+        server_call_id,
+        status_code=404,
+        payload=_test_constants.ErrorPayload,
+        use_managed_identity = use_managed_identity
+        )
+
+    raised = False
+    try:
+            await server_call.cancel_participant_media_operation(
+            participant_id = participant_id,
+            media_operation_id = media_operation_id
+            )
+    except:
+        raised = True
+    assert raised == True

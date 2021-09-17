@@ -38,7 +38,7 @@ class AzureCommunicationCallingServerServiceConfiguration(Configuration):
         super(AzureCommunicationCallingServerServiceConfiguration, self).__init__(**kwargs)
 
         self.endpoint = endpoint
-        self.api_version = "2021-06-15-preview"
+        self.api_version = "2021-09-15-preview"
         kwargs.setdefault('sdk_moniker', 'azurecommunicationcallingserverservice/{}'.format(VERSION))
         self._configure(**kwargs)
 
