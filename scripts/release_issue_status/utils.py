@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 from msrest.authentication import BasicAuthentication
 import requests
 
-logging.basicConfig(level=logging.DEBUG,
+logging.basicConfig(level=logging.INFO,
                     format='[auto-reply  log]%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s')
 
 # Add readme link and package name to the user's issue
