@@ -103,8 +103,8 @@ class ServerCall:
     @distributed_trace_async()
     async def cancel_media_operation(
             self,
-            media_operation_id,  # type: str
-            **kwargs  # type: Any
+            media_operation_id: str,
+            **kwargs: Any
         ) -> None:
 
         if not media_operation_id:
@@ -123,9 +123,9 @@ class ServerCall:
     @distributed_trace_async()
     async def cancel_participant_media_operation(
             self,
-            participant_id,  # type: str
-            media_operation_id,  # type: str
-            **kwargs  # type: Any
+            participant_id: str,
+            media_operation_id: str,
+            **kwargs: Any
         ) -> None:
 
         if not participant_id:
