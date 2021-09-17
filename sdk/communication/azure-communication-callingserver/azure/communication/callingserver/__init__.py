@@ -33,3 +33,4 @@ __all__ = [
     'PlayAudioResult',
     'ServerCall',
 ]
+__version__ = VERSION

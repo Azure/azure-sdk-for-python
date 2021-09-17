@@ -30,7 +30,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from ._models import CreateCallOptions, JoinCallOptions
 
-class CallingServerClient(object):
+class CallingServerClient():
     """A client to interact with the AzureCommunicationService Calling Server.
 
     This client provides calling operations.
@@ -212,8 +212,8 @@ class CallingServerClient(object):
         join_call_request = JoinCallRequestConverter.convert(serialize_identifier(source), call_options)
 
         join_call_response = self._server_call_client.join_call(
-            server_call_id,
-            join_call_request,
+            server_call_id=server_call_id,
+            call_request=join_call_request,
             **kwargs
         )
 
