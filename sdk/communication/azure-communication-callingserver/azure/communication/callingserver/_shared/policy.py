@@ -66,7 +66,6 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
 
             request.http_request.headers["host"] = host
             
-            del request.http_request.headers["UriToSignWith"]
         else:
             host = self._host
 

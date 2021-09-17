@@ -3,13 +3,15 @@ interactions:
     body: ''
     headers:
       Range:
-      - bytes=0-99
+      - bytes=0-4194303
+      UriToSignWith:
+      - https://acs-recording-runner-africa.communication.azure.com/v1/objects/0-weu-d18-f71ce6295ef910657759449422ebb5f4/content/acsmetadata
       User-Agent:
       - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
       host:
       - acs-recording-runner-africa.communication.azure.com
       x-ms-date:
-      - Thu, 16 Sep 2021 21:22:48 GMT
+      - Fri, 17 Sep 2021 00:02:36 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -19,7 +21,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 16 Sep 2021 21:22:48 GMT
+      date: Fri, 17 Sep 2021 00:02:37 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000; includeSubDomains
     status:
@@ -30,27 +32,44 @@ interactions:
     body: ''
     headers:
       Range:
-      - bytes=0-99
+      - bytes=0-4194303
+      UriToSignWith:
+      - https://acs-recording-runner-africa.communication.azure.com/v1/objects/0-weu-d18-f71ce6295ef910657759449422ebb5f4/content/acsmetadata
       User-Agent:
       - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
       host:
       - acs-recording-runner-africa.communication.azure.com
       x-ms-date:
-      - Thu, 16 Sep 2021 21:22:49 GMT
+      - Fri, 17 Sep 2021 00:02:37 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
     uri: https://weu1-storage.asm.skype.com/v1/objects/0-weu-d18-f71ce6295ef910657759449422ebb5f4/content/acsmetadata
   response:
     body:
-      string: ''
+      string: "{\r\n  \"resourceId\": \"5853ec36-df3a-40bb-8ae3-03ed97837272\",\r\n
+        \ \"callId\": \"175282cd-c509-4a72-bc2e-f4aca3cc74e7\",\r\n  \"chunkDocumentId\":
+        \"0-weu-d18-f71ce6295ef910657759449422ebb5f4\",\r\n  \"chunkIndex\": 0,\r\n
+        \ \"chunkStartTime\": \"2021-09-16T21:21:19.9130946Z\",\r\n  \"chunkDuration\":
+        3860.0,\r\n  \"pauseResumeIntervals\": [],\r\n  \"recordingInfo\": {\r\n    \"contentType\":
+        \"mixed\",\r\n    \"channelType\": \"audioVideo\",\r\n    \"format\": \"mp4\",\r\n
+        \   \"audioConfiguration\": {\r\n      \"sampleRate\": 16000,\r\n      \"bitRate\":
+        128000,\r\n      \"channels\": 1\r\n    },\r\n    \"videoConfiguration\":
+        {\r\n      \"longerSideLength\": 1920,\r\n      \"shorterSideLength\": 1080,\r\n
+        \     \"framerate\": 8,\r\n      \"bitRate\": 1000000\r\n    }\r\n  },\r\n
+        \ \"participants\": [\r\n    {\r\n      \"participantId\": \"8:acs:5853ec36-df3a-40bb-8ae3-03ed97837272_0000000c-905d-8d54-b365-da3a0d00977d\"\r\n
+        \   },\r\n    {\r\n      \"participantId\": \"8:acs:5853ec36-df3a-40bb-8ae3-03ed97837272_0000000c-905d-2823-b365-da3a0d009776\"\r\n
+        \   }\r\n  ]\r\n}"
     headers:
-      content-length: '0'
-      date: Thu, 16 Sep 2021 21:22:50 GMT
+      cache-control: no-cache, max-age=0, s-maxage=0, private
+      content-length: '958'
+      content-range: bytes 0-957/958
+      content-type: application/octet-stream
+      date: Fri, 17 Sep 2021 00:02:37 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000; includeSubDomains
     status:
-      code: 401
-      message: Unauthorized
+      code: 206
+      message: Partial Content
     url: https://weu1-storage.asm.skype.com/v1/objects/0-weu-d18-f71ce6295ef910657759449422ebb5f4/content/acsmetadata
 version: 1

@@ -13,6 +13,7 @@ from azure.core.exceptions import (ClientAuthenticationError, HttpResponseError,
     ResourceExistsError, ResourceNotFoundError, map_error)
 
 from .._generated import models as _models
+import pdb
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -77,6 +78,7 @@ class ContentDownloader():
             header_parameters['Range'] = self._serialize.header("range", http_range, 'str')
 
         request = self._client.get(content_url, query_parameters, header_parameters)
+        # pdb.set_trace()
         pipeline_response = await self._client._pipeline.run(request, stream=True, **kwargs)
         response = pipeline_response.http_response
 

@@ -11,6 +11,7 @@
 from typing import TYPE_CHECKING, Any, List  # pylint: disable=unused-import
 
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.pipeline import policies
 
 from .._communication_identifier_serializer import serialize_identifier
 from .._generated.aio._azure_communication_calling_server_service import \
@@ -23,6 +24,7 @@ from ._call_connection_async import CallConnection
 from ._server_call_async import ServerCall
 from .._converters import JoinCallRequestConverter
 from .._shared.utils import get_authentication_policy, parse_connection_str
+from .._shared.redirection_policy import RedirectPolicy
 from .._version import SDK_MONIKER
 
 if TYPE_CHECKING:
