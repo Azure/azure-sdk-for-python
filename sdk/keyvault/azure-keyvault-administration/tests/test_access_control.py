@@ -4,41 +4,19 @@
 # ------------------------------------
 import os
 import uuid
-import time
 
-from azure.core.credentials import AccessToken
-from azure.identity import DefaultAzureCredential
-from azure.keyvault.administration import KeyVaultAccessControlClient, KeyVaultRoleScope, KeyVaultPermission, KeyVaultDataAction
-from azure.keyvault.administration._internal import HttpChallengeCache
-import pytest
-from six.moves.urllib_parse import urlparse
+from azure.keyvault.administration import KeyVaultRoleScope, KeyVaultPermission, KeyVaultDataAction
 
-from _shared.helpers import mock
 from _shared.test_case import KeyVaultTestCase
+from _test_case import AdministrationTestCase, access_control_client_setup, get_decorator
 
 
-@pytest.mark.usefixtures("managed_hsm")
-class AccessControlTests(KeyVaultTestCase):
+all_api_versions = get_decorator()
+
+
+class AccessControlTests(AdministrationTestCase, KeyVaultTestCase):
     def __init__(self, *args, **kwargs):
         super(AccessControlTests, self).__init__(*args, match_body=False, **kwargs)
-
-    def setUp(self, *args, **kwargs):
-        if self.is_live:
-            real = urlparse(self.managed_hsm["url"])
-            playback = urlparse(self.managed_hsm["playback_url"])
-            self.scrubber.register_name_pair(real.netloc, playback.netloc)
-        super(AccessControlTests, self).setUp(*args, **kwargs)
-
-    def tearDown(self):
-        HttpChallengeCache.clear()
-        assert len(HttpChallengeCache._cache) == 0
-        super(AccessControlTests, self).tearDown()
-
-    @property
-    def credential(self):
-        if self.is_live:
-            return DefaultAzureCredential()
-        return mock.Mock(get_token=lambda *_, **__: AccessToken("secret", time.time() + 3600))
 
     def get_replayable_uuid(self, replay_value):
         if self.is_live:
@@ -55,9 +33,9 @@ class AccessControlTests(KeyVaultTestCase):
             return value
         return replay_value
 
-    def test_role_definitions(self):
-        client = KeyVaultAccessControlClient(self.managed_hsm["url"], self.credential)
-
+    @all_api_versions()
+    @access_control_client_setup
+    def test_role_definitions(self, client):
         # list initial role definitions
         scope = KeyVaultRoleScope.GLOBAL
         original_definitions = [d for d in client.list_role_definitions(scope)]
@@ -109,9 +87,9 @@ class AccessControlTests(KeyVaultTestCase):
 
         assert not any(d.id == definition.id for d in client.list_role_definitions(scope))
 
-    def test_role_assignment(self):
-        client = KeyVaultAccessControlClient(self.managed_hsm["url"], self.credential)
-
+    @all_api_versions()
+    @access_control_client_setup
+    def test_role_assignment(self, client):
         scope = KeyVaultRoleScope.GLOBAL
         definitions = [d for d in client.list_role_definitions(scope)]
 
