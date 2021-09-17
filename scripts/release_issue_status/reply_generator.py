@@ -52,47 +52,6 @@ def get_latest_pr_from_readme(rest_repo, link_dict):
     return latest_pr_number_int[-1]
 
 
-# def latest_pr_parse(rest_repo, latest_pr_number):
-#     latest_pr = rest_repo.get_issue(latest_pr_number)
-#     latest_pr_comments = latest_pr.get_comments()
-#     b = [i for i in latest_pr_comments]
-#     for comment in latest_pr_comments:
-#         if '<h3>Swagger Generation Artifacts</h3>' in comment.body:
-#             return swagger_generator_parse(comment.body, latest_pr_number)
-#
-#
-# def swagger_generator_parse(context, latest_pr_number):
-#     track1_info_model = ''
-#     try:
-#         if '<b> azure-sdk-for-python</b>' in context:
-#             pattern_python_t1 = re.compile('<b> azure-sdk-for-python</b>.+?</details>', re.DOTALL)
-#             python_t1 = re.search(pattern_python_t1, context).group()
-#             prttern_python_track1 = re.compile('<ul>\s+?<li>\s+?<a.+</ul>', re.DOTALL)
-#             python_track1_info = re.search(prttern_python_track1, python_t1).group()
-#             track1_info_model = '<details open><summary><b> python-track1</b></summary>{} </details>'.format(
-#                 python_track1_info)
-#     except Exception as e:
-#         logging.error('track1 generate error')
-#     pattern_python = re.compile('<b> azure-sdk-for-python-track2</b>.+?</details>', re.DOTALL)
-#     python = re.search(pattern_python, context).group()
-#     # the way that reply not contains [Release SDK Changes]
-#     # pattern_python_track2 = re.compile('<ul>\s*?<li>\s*?<a.*</ul>', re.DOTALL)
-#     pattern_python_track2 = re.compile('<b>track2_.*</ul>', re.DOTALL)
-#     python_track2_info = re.search(pattern_python_track2, python).group()
-#     track2_info_model = '<details open><summary><b> python-track2</b></summary>{} </details>'.format(
-#         python_track2_info)
-#     pattern_sdk_changes = re.compile('/azure-sdk-for-python/pull/\d*">Release SDK Changes</a>', re.DOTALL)
-#     sdk_link = re.search(pattern_sdk_changes, python_track2_info).group()
-#     sdk_link_number = re.search(re.compile('[0-9]+'), sdk_link).group()
-#     info_model = 'hi @{} Please check the package whether works well and the changelog info is as below:\n' \
-#                  '{}\n{}\n' \
-#                  '\n* (The version of the package is only a temporary version for testing)\n' \
-#                  '\nhttps://github.com/Azure/azure-rest-api-specs/pull/{}\n' \
-#         .format(issue_object_rg.user.login, track1_info_model, track2_info_model, str(latest_pr_number))
-#
-#     return info_model, sdk_link_number
-
-
 def reply_owner(reply_content):
     issue_object_rg.create_comment(reply_content)
 
