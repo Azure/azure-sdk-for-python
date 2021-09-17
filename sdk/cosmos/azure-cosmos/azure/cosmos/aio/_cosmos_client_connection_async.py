@@ -369,6 +369,77 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
         return result
 
+    async def UpsertItem(self, database_or_container_link, document, options=None, **kwargs):
+        """Upserts a document in a collection.
+
+        :param str database_or_container_link:
+            The link to the database when using partitioning, otherwise link to the document collection.
+        :param dict document:
+            The Azure Cosmos document to upsert.
+        :param dict options:
+            The request options for the request.
+        :param bool options['disableAutomaticIdGeneration']:
+            Disables the automatic id generation. If id is missing in the body and this
+            option is true, an error will be returned.
+
+        :return:
+            The upserted Document.
+        :rtype:
+            dict
+
+        """
+        # Python's default arguments are evaluated once when the function is defined,
+        # not each time the function is called (like it is in say, Ruby). This means
+        # that if you use a mutable default argument and mutate it, you will and have
+        # mutated that object for all future calls to the function as well. So, using
+        # a non-mutable deafult in this case(None) and assigning an empty dict(mutable)
+        # inside the method For more details on this gotcha, please refer
+        # http://docs.python-guide.org/en/latest/writing/gotchas/
+        if options is None:
+            options = {}
+
+        # We check the link to be document collection link since it can be database
+        # link in case of client side partitioning
+        if base.IsItemContainerLink(database_or_container_link):
+            options = await self._AddPartitionKey(database_or_container_link, document, options)
+
+        collection_id, document, path = self._GetContainerIdWithPathForItem(
+            database_or_container_link, document, options
+        )
+        return await self.Upsert(document, path, "docs", collection_id, None, options, **kwargs)
+
+    async def Upsert(self, body, path, typ, id, initial_headers, options=None, **kwargs):  # pylint: disable=redefined-builtin
+        """Upserts a Azure Cosmos resource and returns it.
+
+        :param dict body:
+        :param str path:
+        :param str typ:
+        :param str id:
+        :param dict initial_headers:
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The upserted Azure Cosmos resource.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        initial_headers = initial_headers or self.default_headers
+        headers = base.GetHeaders(self, initial_headers, "post", path, id, typ, options)
+
+        headers[http_constants.HttpHeaders.IsUpsert] = True
+
+        # Upsert will use WriteEndpoint since it uses POST operation
+        request_params = _request_object.RequestObject(typ, documents._OperationType.Upsert)
+        result, self.last_response_headers = await self.__Post(path, request_params, body, headers, **kwargs)
+        # update session for write request
+        self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
+        return result
+
     async def __Post(self, path, request_params, body, req_headers, **kwargs):
         """Azure Cosmos 'POST' async http request.
 

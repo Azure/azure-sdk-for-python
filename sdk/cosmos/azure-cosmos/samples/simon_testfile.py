@@ -66,8 +66,10 @@ async def async_crud_test():
         cont = await db.create_container_if_not_exists(id=cont_name, partition_key=PartitionKey(path="/lastName"))
         body1 = get_test_item()
         await cont.create_item(body=body1)
-        print("Created item, now reading and then replacing")
+        print("Created item, now reading and then upserting/replacing")
         body2 = get_test_item()
+        await cont.upsert_item(body=body1)
+        # Check here for read all items and verify there is still only 1 left after upsert
         await cont.replace_item(item=body1["id"], body=body2)
         print("Item replaced, now attempting read")
         try:
@@ -166,7 +168,7 @@ async def create_tests():
     cont1, cont2 = "c01", "c02"
     num = 10
     ids1 = timed_sync_create(db1,cont1,num)
-    ids2 = await timed_async_create(db1,cont1,num)
+    ids2 = await timed_async_create(db2,cont2,num)
     print(len(ids1) == len(ids2))
 
 def user_test():
@@ -187,6 +189,16 @@ def wrong_test():
     # cont.read_item(item="wow", partition_key=id)
     client = SyncClient.from_connection_string("")
     print(list(client.list_databases()))
+
+# async def read_all():
+#     async with AsyncClient(endpoint, key) as client:
+#         db = await client.create_database_if_not_exists("readall")
+#         cont = await db.create_container_if_not_exists("cont", PartitionKey(path='/lastName'))
+#         for i in range(5):
+#             await cont.create_item(body=get_test_item())
+#         c = await cont.read_all_items()
+#         print(await c.__anext__())
+#         print(type(c))
 
 async def main():
     # await read_tests()

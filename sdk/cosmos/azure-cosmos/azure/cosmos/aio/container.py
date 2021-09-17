@@ -228,7 +228,6 @@ class ContainerProxy(object):
         doc_link = self._get_document_link(item)
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        
         if partition_key is not None:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
         if populate_query_metrics is not None:
@@ -237,6 +236,55 @@ class ContainerProxy(object):
             request_options["postTriggerInclude"] = post_trigger_include
 
         result = await self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers, result)
+        return result
+
+    @distributed_trace_async
+    async def upsert_item(
+        self,
+        body,  # type: Dict[str, Any]
+        populate_query_metrics=None,  # type: Optional[bool]
+        pre_trigger_include=None,  # type: Optional[str]
+        post_trigger_include=None,  # type: Optional[str]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Dict[str, str]
+        """Insert or update the specified item.
+
+        If the item already exists in the container, it is replaced. If the item
+        does not already exist, it is inserted.
+
+        :param body: A dict-like object representing the item to update or insert.
+        :param populate_query_metrics: Enable returning query metrics in response headers.
+        :param pre_trigger_include: trigger id to be used as pre operation trigger.
+        :param post_trigger_include: trigger id to be used as post operation trigger.
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
+            has changed, and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: A dict representing the upserted item.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
+        :rtype: dict[str, Any]
+        """
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
+        request_options["disableIdGeneration"] = True
+        if populate_query_metrics is not None:
+            request_options["populateQueryMetrics"] = populate_query_metrics
+        if pre_trigger_include is not None:
+            request_options["preTriggerInclude"] = pre_trigger_include
+        if post_trigger_include is not None:
+            request_options["postTriggerInclude"] = post_trigger_include
+
+        result = await self.client_connection.UpsertItem(
+            database_or_container_link=self.container_link,
+            document=body,
+            options=request_options,
+            **kwargs
+        )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
