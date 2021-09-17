@@ -4,6 +4,7 @@ import re
 from datetime import date, datetime
 import subprocess as sp
 import traceback
+import logging
 
 from github import Github
 from azure.storage.blob import BlobClient
@@ -17,6 +18,8 @@ _NULL = ' '
 _FILE_OUT = 'release_issue_status.csv'
 _FILE_OUT_PYTHON = 'release_python_status.md'
 _PYTHON_SDK_ADMINISTRATORS = {'msyyc', 'RAY-316', 'BigCat20196'}
+logging.basicConfig(level=logging.INFO,
+                    format='[auto-reply  log]%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s')
 
 def my_print(cmd):
     print('==' + cmd + ' ==\n')
@@ -126,14 +129,14 @@ def _latest_comment_time(comments, delay_from_create_date):
 
 
 def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python_piplines):
-    print("==========new issue number: {}".format(item.issue_object.number))
+    logging.info("new issue number: {}".format(item.issue_object.number))
 
     if 'auto-link' not in item.labels:
         item.labels.append('auto-link')
         item.issue_object.set_labels(*item.labels)
         try:
             package_name, readme_link, output_folder = update_issue_body(request_repo, rest_repo, item.issue_object.number)
-            print("pkname, readme", package_name, readme_link)
+            logging.info("pkname, readme", package_name, readme_link)
             item.package = package_name
             key = ('Python', item.package)
             duplicated_issue[key] = duplicated_issue.get(key, 0) + 1
@@ -141,21 +144,20 @@ def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python
             item.bot_advice = 'failed to modify the body of the new issue. Please modify manually'
             item.labels.append('attention')
             item.issue_object.set_labels(*item.labels)
-            print(e)
+            logging.info(e)
             raise
     else:
         try:
             readme_link, output_folder = get_readme_and_output_folder(request_repo, rest_repo, item.issue_object.number)
         except Exception as e:
-            print('Issue: {}  get pkname and output folder failed'.format(item.issue_object.number))
+            logging.info('Issue: {}  get pkname and output folder failed'.format(item.issue_object.number))
             item.bot_advice = 'failed to find Readme link and output folder. Please check !!'
             item.labels.append('attention')
             item.issue_object.set_labels(*item.labels)
-            print(e)
+            logging.info(e)
             raise
     try:
-        print("*********************")
-        print(python_piplines)
+        logging.info(python_piplines)
         pipeline_url = get_pipeline_url(python_piplines, output_folder)
         rg.begin_reply_generate(item=item, rest_repo=rest_repo, readme_link=readme_link,
                                 sdk_repo=sdk_repo, pipeline_url=pipeline_url)
@@ -164,10 +166,9 @@ def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python
             item.issue_object.set_labels(*item.labels)
     except Exception as e:
         item.bot_advice = 'auto reply failed, Please intervene manually !!'
-        print('Error from auto reply ========================')
-        print('Issue:{}'.format(item.issue_object.number))
-        print(traceback.format_exc())
-        print('==============================================')
+        logging.info('Error from auto reply')
+        logging.info('Issue:{}'.format(item.issue_object.number))
+        logging.info(traceback.format_exc())
 
 
 def main():
@@ -247,7 +248,7 @@ def main():
                 auto_close_issue(request_repo, item)
             except Exception as e:
                 item.bot_advice = 'auto-close failed, please check!'
-                print(f"=====issue: {item.issue_object.number}, {e}")
+                logging.info(f"=====issue: {item.issue_object.number}, {e}")
 
         if item.days_from_latest_commit >= 30 and item.language == 'Python' and '30days attention' not in item.labels:
             item.labels.append('30days attention')
