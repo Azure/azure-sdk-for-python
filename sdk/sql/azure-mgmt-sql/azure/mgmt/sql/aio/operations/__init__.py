@@ -18,8 +18,6 @@ from ._server_communication_links_operations import ServerCommunicationLinksOper
 from ._service_objectives_operations import ServiceObjectivesOperations
 from ._elastic_pool_activities_operations import ElasticPoolActivitiesOperations
 from ._elastic_pool_database_activities_operations import ElasticPoolDatabaseActivitiesOperations
-from ._transparent_data_encryptions_operations import TransparentDataEncryptionsOperations
-from ._transparent_data_encryption_activities_operations import TransparentDataEncryptionActivitiesOperations
 from ._server_usages_operations import ServerUsagesOperations
 from ._extended_database_blob_auditing_policies_operations import ExtendedDatabaseBlobAuditingPoliciesOperations
 from ._extended_server_blob_auditing_policies_operations import ExtendedServerBlobAuditingPoliciesOperations
@@ -116,6 +114,7 @@ from ._virtual_clusters_operations import VirtualClustersOperations
 from ._virtual_network_rules_operations import VirtualNetworkRulesOperations
 from ._workload_classifiers_operations import WorkloadClassifiersOperations
 from ._workload_groups_operations import WorkloadGroupsOperations
+from ._transparent_data_encryptions_operations import TransparentDataEncryptionsOperations
 from ._backup_short_term_retention_policies_operations import BackupShortTermRetentionPoliciesOperations
 from ._database_extensions_operations import DatabaseExtensionsOperations
 from ._database_operations_operations import DatabaseOperationsOperations
@@ -140,8 +139,6 @@ __all__ = [
     'ServiceObjectivesOperations',
     'ElasticPoolActivitiesOperations',
     'ElasticPoolDatabaseActivitiesOperations',
-    'TransparentDataEncryptionsOperations',
-    'TransparentDataEncryptionActivitiesOperations',
     'ServerUsagesOperations',
     'ExtendedDatabaseBlobAuditingPoliciesOperations',
     'ExtendedServerBlobAuditingPoliciesOperations',
@@ -238,6 +235,7 @@ __all__ = [
     'VirtualNetworkRulesOperations',
     'WorkloadClassifiersOperations',
     'WorkloadGroupsOperations',
+    'TransparentDataEncryptionsOperations',
     'BackupShortTermRetentionPoliciesOperations',
     'DatabaseExtensionsOperations',
     'DatabaseOperationsOperations',

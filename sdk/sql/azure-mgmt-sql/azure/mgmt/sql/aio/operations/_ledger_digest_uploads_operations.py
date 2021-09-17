@@ -12,7 +12,9 @@ from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
+from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 
@@ -108,7 +110,7 @@ class LedgerDigestUploadsOperations:
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/ledgerDigestUploads/{ledgerDigestUploads}'}  # type: ignore
 
-    async def create_or_update(
+    async def _create_or_update_initial(
         self,
         resource_group_name: str,
         server_name: str,
@@ -117,25 +119,6 @@ class LedgerDigestUploadsOperations:
         parameters: "_models.LedgerDigestUploads",
         **kwargs: Any
     ) -> Optional["_models.LedgerDigestUploads"]:
-        """Enables upload ledger digests to an Azure Storage account or an Azure Confidential Ledger
-        instance.
-
-        :param resource_group_name: The name of the resource group that contains the resource. You can
-         obtain this value from the Azure Resource Manager API or the portal.
-        :type resource_group_name: str
-        :param server_name: The name of the server.
-        :type server_name: str
-        :param database_name: The name of the database.
-        :type database_name: str
-        :param ledger_digest_uploads:
-        :type ledger_digest_uploads: str or ~azure.mgmt.sql.models.LedgerDigestUploadsName
-        :param parameters:
-        :type parameters: ~azure.mgmt.sql.models.LedgerDigestUploads
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: LedgerDigestUploads, or the result of cls(response)
-        :rtype: ~azure.mgmt.sql.models.LedgerDigestUploads or None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.LedgerDigestUploads"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -146,7 +129,7 @@ class LedgerDigestUploadsOperations:
         accept = "application/json"
 
         # Construct URL
-        url = self.create_or_update.metadata['url']  # type: ignore
+        url = self._create_or_update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
@@ -184,7 +167,90 @@ class LedgerDigestUploadsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/ledgerDigestUploads/{ledgerDigestUploads}'}  # type: ignore
+    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/ledgerDigestUploads/{ledgerDigestUploads}'}  # type: ignore
+
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        server_name: str,
+        database_name: str,
+        ledger_digest_uploads: Union[str, "_models.LedgerDigestUploadsName"],
+        parameters: "_models.LedgerDigestUploads",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.LedgerDigestUploads"]:
+        """Enables upload ledger digests to an Azure Storage account or an Azure Confidential Ledger
+        instance.
+
+        :param resource_group_name: The name of the resource group that contains the resource. You can
+         obtain this value from the Azure Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :param database_name: The name of the database.
+        :type database_name: str
+        :param ledger_digest_uploads:
+        :type ledger_digest_uploads: str or ~azure.mgmt.sql.models.LedgerDigestUploadsName
+        :param parameters:
+        :type parameters: ~azure.mgmt.sql.models.LedgerDigestUploads
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either LedgerDigestUploads or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.LedgerDigestUploads]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LedgerDigestUploads"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                server_name=server_name,
+                database_name=database_name,
+                ledger_digest_uploads=ledger_digest_uploads,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('LedgerDigestUploads', pipeline_response)
+
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'ledgerDigestUploads': self._serialize.url("ledger_digest_uploads", ledger_digest_uploads, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/ledgerDigestUploads/{ledgerDigestUploads}'}  # type: ignore
 
     def list_by_database(
         self,
@@ -265,7 +331,7 @@ class LedgerDigestUploadsOperations:
         )
     list_by_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/ledgerDigestUploads'}  # type: ignore
 
-    async def disable(
+    async def _disable_initial(
         self,
         resource_group_name: str,
         server_name: str,
@@ -273,23 +339,6 @@ class LedgerDigestUploadsOperations:
         ledger_digest_uploads: Union[str, "_models.LedgerDigestUploadsName"],
         **kwargs: Any
     ) -> Optional["_models.LedgerDigestUploads"]:
-        """Disables uploading ledger digests to an Azure Storage account or an Azure Confidential Ledger
-        instance.
-
-        :param resource_group_name: The name of the resource group that contains the resource. You can
-         obtain this value from the Azure Resource Manager API or the portal.
-        :type resource_group_name: str
-        :param server_name: The name of the server.
-        :type server_name: str
-        :param database_name: The name of the database.
-        :type database_name: str
-        :param ledger_digest_uploads:
-        :type ledger_digest_uploads: str or ~azure.mgmt.sql.models.LedgerDigestUploadsName
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: LedgerDigestUploads, or the result of cls(response)
-        :rtype: ~azure.mgmt.sql.models.LedgerDigestUploads or None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.LedgerDigestUploads"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -299,7 +348,7 @@ class LedgerDigestUploadsOperations:
         accept = "application/json"
 
         # Construct URL
-        url = self.disable.metadata['url']  # type: ignore
+        url = self._disable_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
@@ -333,4 +382,83 @@ class LedgerDigestUploadsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    disable.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/ledgerDigestUploads/{ledgerDigestUploads}/disable'}  # type: ignore
+    _disable_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/ledgerDigestUploads/{ledgerDigestUploads}/disable'}  # type: ignore
+
+    async def begin_disable(
+        self,
+        resource_group_name: str,
+        server_name: str,
+        database_name: str,
+        ledger_digest_uploads: Union[str, "_models.LedgerDigestUploadsName"],
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.LedgerDigestUploads"]:
+        """Disables uploading ledger digests to an Azure Storage account or an Azure Confidential Ledger
+        instance.
+
+        :param resource_group_name: The name of the resource group that contains the resource. You can
+         obtain this value from the Azure Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :param database_name: The name of the database.
+        :type database_name: str
+        :param ledger_digest_uploads:
+        :type ledger_digest_uploads: str or ~azure.mgmt.sql.models.LedgerDigestUploadsName
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either LedgerDigestUploads or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.LedgerDigestUploads]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LedgerDigestUploads"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._disable_initial(
+                resource_group_name=resource_group_name,
+                server_name=server_name,
+                database_name=database_name,
+                ledger_digest_uploads=ledger_digest_uploads,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('LedgerDigestUploads', pipeline_response)
+
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'ledgerDigestUploads': self._serialize.url("ledger_digest_uploads", ledger_digest_uploads, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_disable.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/ledgerDigestUploads/{ledgerDigestUploads}/disable'}  # type: ignore

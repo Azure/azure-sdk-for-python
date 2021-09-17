@@ -325,7 +325,7 @@ class SyncGroupsOperations:
         sync_group_name: str,
         start_time: str,
         end_time: str,
-        type: Union[str, "_models.Enum77"],
+        type: Union[str, "_models.Enum75"],
         continuation_token_parameter: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.SyncGroupLogListResult"]:
@@ -345,7 +345,7 @@ class SyncGroupsOperations:
         :param end_time: Get logs generated before this time.
         :type end_time: str
         :param type: The types of logs to retrieve.
-        :type type: str or ~azure.mgmt.sql.models.Enum77
+        :type type: str or ~azure.mgmt.sql.models.Enum75
         :param continuation_token_parameter: The continuation token for this operation.
         :type continuation_token_parameter: str
         :keyword callable cls: A custom type or function that will be passed the direct response

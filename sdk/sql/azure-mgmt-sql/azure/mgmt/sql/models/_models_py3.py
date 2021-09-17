@@ -6504,6 +6504,75 @@ class LocationCapabilities(msrest.serialization.Model):
         self.reason = reason
 
 
+class LogicalDatabaseTransparentDataEncryption(ProxyResource):
+    """A logical database transparent data encryption state.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param state: Specifies the state of the transparent data encryption. Possible values include:
+     "Enabled", "Disabled".
+    :type state: str or ~azure.mgmt.sql.models.TransparentDataEncryptionState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'state': {'key': 'properties.state', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        state: Optional[Union[str, "TransparentDataEncryptionState"]] = None,
+        **kwargs
+    ):
+        super(LogicalDatabaseTransparentDataEncryption, self).__init__(**kwargs)
+        self.state = state
+
+
+class LogicalDatabaseTransparentDataEncryptionListResult(msrest.serialization.Model):
+    """A list of transparent data encryptions.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of results.
+    :vartype value: list[~azure.mgmt.sql.models.LogicalDatabaseTransparentDataEncryption]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[LogicalDatabaseTransparentDataEncryption]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LogicalDatabaseTransparentDataEncryptionListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
 class LogicalServerSecurityAlertPolicyListResult(msrest.serialization.Model):
     """A list of the server's security alert policies.
 
@@ -15864,125 +15933,6 @@ class TopQueriesListResult(msrest.serialization.Model):
         super(TopQueriesListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
-
-
-class TransparentDataEncryption(ProxyResource):
-    """Represents a database transparent data encryption configuration.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar location: Resource location.
-    :vartype location: str
-    :param status: The status of the database transparent data encryption. Possible values include:
-     "Enabled", "Disabled".
-    :type status: str or ~azure.mgmt.sql.models.TransparentDataEncryptionStatus
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        status: Optional[Union[str, "TransparentDataEncryptionStatus"]] = None,
-        **kwargs
-    ):
-        super(TransparentDataEncryption, self).__init__(**kwargs)
-        self.location = None
-        self.status = status
-
-
-class TransparentDataEncryptionActivity(ProxyResource):
-    """Represents a database transparent data encryption Scan.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar location: Resource location.
-    :vartype location: str
-    :ivar status: The status of the database. Possible values include: "Encrypting", "Decrypting".
-    :vartype status: str or ~azure.mgmt.sql.models.TransparentDataEncryptionActivityStatus
-    :ivar percent_complete: The percent complete of the transparent data encryption scan for a
-     database.
-    :vartype percent_complete: float
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
-        'status': {'readonly': True},
-        'percent_complete': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'percent_complete': {'key': 'properties.percentComplete', 'type': 'float'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(TransparentDataEncryptionActivity, self).__init__(**kwargs)
-        self.location = None
-        self.status = None
-        self.percent_complete = None
-
-
-class TransparentDataEncryptionActivityListResult(msrest.serialization.Model):
-    """Represents the response to a list database transparent data encryption activity request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param value: Required. The list of database transparent data encryption activities.
-    :type value: list[~azure.mgmt.sql.models.TransparentDataEncryptionActivity]
-    """
-
-    _validation = {
-        'value': {'required': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[TransparentDataEncryptionActivity]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: List["TransparentDataEncryptionActivity"],
-        **kwargs
-    ):
-        super(TransparentDataEncryptionActivityListResult, self).__init__(**kwargs)
-        self.value = value
 
 
 class UnlinkParameters(msrest.serialization.Model):

@@ -333,7 +333,7 @@ class SyncGroupsOperations(object):
         sync_group_name,  # type: str
         start_time,  # type: str
         end_time,  # type: str
-        type,  # type: Union[str, "_models.Enum77"]
+        type,  # type: Union[str, "_models.Enum75"]
         continuation_token_parameter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
@@ -354,7 +354,7 @@ class SyncGroupsOperations(object):
         :param end_time: Get logs generated before this time.
         :type end_time: str
         :param type: The types of logs to retrieve.
-        :type type: str or ~azure.mgmt.sql.models.Enum77
+        :type type: str or ~azure.mgmt.sql.models.Enum75
         :param continuation_token_parameter: The continuation token for this operation.
         :type continuation_token_parameter: str
         :keyword callable cls: A custom type or function that will be passed the direct response

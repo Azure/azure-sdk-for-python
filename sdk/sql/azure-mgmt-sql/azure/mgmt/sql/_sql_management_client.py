@@ -31,8 +31,6 @@ from .operations import ServerCommunicationLinksOperations
 from .operations import ServiceObjectivesOperations
 from .operations import ElasticPoolActivitiesOperations
 from .operations import ElasticPoolDatabaseActivitiesOperations
-from .operations import TransparentDataEncryptionsOperations
-from .operations import TransparentDataEncryptionActivitiesOperations
 from .operations import ServerUsagesOperations
 from .operations import ExtendedDatabaseBlobAuditingPoliciesOperations
 from .operations import ExtendedServerBlobAuditingPoliciesOperations
@@ -129,6 +127,7 @@ from .operations import VirtualClustersOperations
 from .operations import VirtualNetworkRulesOperations
 from .operations import WorkloadClassifiersOperations
 from .operations import WorkloadGroupsOperations
+from .operations import TransparentDataEncryptionsOperations
 from .operations import BackupShortTermRetentionPoliciesOperations
 from .operations import DatabaseExtensionsOperations
 from .operations import DatabaseOperationsOperations
@@ -169,10 +168,6 @@ class SqlManagementClient(object):
     :vartype elastic_pool_activities: azure.mgmt.sql.operations.ElasticPoolActivitiesOperations
     :ivar elastic_pool_database_activities: ElasticPoolDatabaseActivitiesOperations operations
     :vartype elastic_pool_database_activities: azure.mgmt.sql.operations.ElasticPoolDatabaseActivitiesOperations
-    :ivar transparent_data_encryptions: TransparentDataEncryptionsOperations operations
-    :vartype transparent_data_encryptions: azure.mgmt.sql.operations.TransparentDataEncryptionsOperations
-    :ivar transparent_data_encryption_activities: TransparentDataEncryptionActivitiesOperations operations
-    :vartype transparent_data_encryption_activities: azure.mgmt.sql.operations.TransparentDataEncryptionActivitiesOperations
     :ivar server_usages: ServerUsagesOperations operations
     :vartype server_usages: azure.mgmt.sql.operations.ServerUsagesOperations
     :ivar extended_database_blob_auditing_policies: ExtendedDatabaseBlobAuditingPoliciesOperations operations
@@ -365,6 +360,8 @@ class SqlManagementClient(object):
     :vartype workload_classifiers: azure.mgmt.sql.operations.WorkloadClassifiersOperations
     :ivar workload_groups: WorkloadGroupsOperations operations
     :vartype workload_groups: azure.mgmt.sql.operations.WorkloadGroupsOperations
+    :ivar transparent_data_encryptions: TransparentDataEncryptionsOperations operations
+    :vartype transparent_data_encryptions: azure.mgmt.sql.operations.TransparentDataEncryptionsOperations
     :ivar backup_short_term_retention_policies: BackupShortTermRetentionPoliciesOperations operations
     :vartype backup_short_term_retention_policies: azure.mgmt.sql.operations.BackupShortTermRetentionPoliciesOperations
     :ivar database_extensions: DatabaseExtensionsOperations operations
@@ -434,10 +431,6 @@ class SqlManagementClient(object):
         self.elastic_pool_activities = ElasticPoolActivitiesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.elastic_pool_database_activities = ElasticPoolDatabaseActivitiesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.transparent_data_encryptions = TransparentDataEncryptionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.transparent_data_encryption_activities = TransparentDataEncryptionActivitiesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.server_usages = ServerUsagesOperations(
             self._client, self._config, self._serialize, self._deserialize)
@@ -630,6 +623,8 @@ class SqlManagementClient(object):
         self.workload_classifiers = WorkloadClassifiersOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.workload_groups = WorkloadGroupsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.transparent_data_encryptions = TransparentDataEncryptionsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.backup_short_term_retention_policies = BackupShortTermRetentionPoliciesOperations(
             self._client, self._config, self._serialize, self._deserialize)
