@@ -13,13 +13,13 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
       x-ms-date:
-      - Fri, 17 Sep 2021 17:05:52 GMT
+      - Fri, 17 Sep 2021 23:35:01 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/calling/serverCalls/sanitized/recordings?api-version=2021-06-15-preview
+    uri: https://sanitized.communication.azure.com/calling/serverCalls/sanitized/recordings?api-version=2021-09-15-preview
   response:
     body: '{"error": {"code": "401", "message": "HMAC-SHA256 validation failed"}}'
     headers:
@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 17 Sep 2021 17:05:51 GMT
+      - Fri, 17 Sep 2021 23:35:01 GMT
       x-cache:
       - CONFIG_NOCACHE
     status:

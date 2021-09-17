@@ -111,18 +111,18 @@ class CallConnectionLiveTest(CommunicationTestCase):
             assert server_call is not None
             assert server_call.server_call_id is not None
             assert recording_id is not None
-            sleep(6)
+            sleep(7)
 
             recording_state = await server_call.get_recording_properities(recording_id)
             assert recording_state.recording_state == "active"
 
             await server_call.pause_recording(recording_id)
-            sleep(6)
+            sleep(7)
             recording_state = await server_call.get_recording_properities(recording_id)
             assert recording_state.recording_state == "inactive"
 
             await server_call.resume_recording(recording_id)
-            sleep(6)
+            sleep(7)
             recording_state = await server_call.get_recording_properities(recording_id)
             assert recording_state.recording_state == "active"
 
