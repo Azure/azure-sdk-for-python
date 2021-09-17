@@ -1,5 +1,15 @@
 # Release History
 
+## 9.1.0 (2021-09-17)
+
+**Features**
+
+  - Model EHNamespace has a new parameter disable_local_auth
+  - Model EHNamespace has a new parameter status
+  - Model NetworkRuleSet has a new parameter public_network_access
+  - Model Cluster has a new parameter system_data
+  - Added operation ClustersOperations.list_by_subscription
+
 ## 9.0.0 (2021-05-25)
 
 **Features**
