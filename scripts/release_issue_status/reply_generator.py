@@ -2,6 +2,9 @@ from utils import run_pipeline
 import re
 import logging
 
+import requests
+from bs4 import BeautifulSoup
+
 issue_object_rg = None
 logging.basicConfig(level=logging.DEBUG,
                     format='[auto-reply  log]%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s')
@@ -103,6 +106,33 @@ def add_label(label_name, labels):
     issue_object_rg.set_labels(*labels)
 
 
+# Get SDK changelog by the latest PR's Checks
+def get_chanelog_and_sdk_number(rest_repo, latest_pr_number):
+
+    # latest_pr = rest_repo.get_pull(latest_pr_number)
+    url = f'https://github.com/Azure/azure-rest-api-specs/pull/{latest_pr_number}'
+    res = requests.get(url=url)
+    soup = BeautifulSoup(res.text, 'html.parser')
+    # checks = soup.select('strong[class="text-emphasized"]')
+    checks = soup.select('div[class="d-flex flex-items-baseline Box-row"]')
+    for check in checks:
+        if 'SDK azure-sdk-for-python-track2' in check.text:
+            for content in check.contents:
+                if content.name == 'a' and '/Azure/azure-rest-api-specs/runs' in content.get('href'):
+                    check_run_id = int(content.get('href').replace('/Azure/azure-rest-api-specs/runs/', ''))
+                    details = rest_repo.get_check_run(check_run_id).output.text
+                    # print(details)
+                    sdk_link_number = re.findall(r'/azure-sdk-for-python/pull/(\d*)">Preview SDK Changes</a>', details)[0]
+                    changelog = '<details open><summary><b> python-track2</b></summary> track2_azure-mgmt-{} </details>'.format(details.split('</code><b>track2_azure-mgmt-')[-1])
+                    info_model = 'hi @{} Please check the package whether works well and the changelog info ' \
+                                 'is as below:\n{}\n' \
+                                 '\n* (The version of the package is only a temporary version for testing)\n' \
+                                 '\nhttps://github.com/Azure/azure-rest-api-specs/pull/{}\n' \
+                        .format(issue_object_rg.user.login, changelog, str(latest_pr_number))
+                    return info_model, sdk_link_number
+    raise Exception('cannot get info_model or sdk_link_number')
+
+
 def begin_reply_generate(item, rest_repo, readme_link, sdk_repo, pipeline_url):
     global issue_object_rg
     issue_object_rg = item.issue_object
@@ -112,7 +142,7 @@ def begin_reply_generate(item, rest_repo, readme_link, sdk_repo, pipeline_url):
 
     if not whether_change_readme:
         latest_pr_number = get_latest_pr_from_readme(rest_repo, link_dict)
-        reply_content, sdk_link_number = latest_pr_parse(rest_repo, latest_pr_number)
+        reply_content, sdk_link_number = get_chanelog_and_sdk_number(rest_repo, latest_pr_number)
         res_run = run_pipeline(issue_link=issue_object_rg.html_url,
                                         sdk_issue_object=sdk_repo.get_pull(int(sdk_link_number)),
                                         pipeline_url=pipeline_url
