@@ -5,28 +5,24 @@
 # license information.
 # -------------------------------------------------------------------------
 from testcase import WebpubsubTest, WebpubsubPowerShellPreparer
-from azure.messaging.webpubsubservice.operations._operations import build_web_pub_sub_send_to_all_request
+from azure.messaging.webpubsubservice.operations._operations import build_send_to_all_request
 
 class WebpubsubSmokeTest(WebpubsubTest):
 
-    @WebpubsubPowerShellPreparer()
-    def test_health_api_status(self, webpubsub_endpoint):
-        client = self.create_client(endpoint=webpubsub_endpoint)
-        client.health_api.get_service_status()
 
     @WebpubsubPowerShellPreparer()
     def test_webpubsub_send_to_all(self, webpubsub_endpoint):
         client = self.create_client(endpoint=webpubsub_endpoint)
-        client.web_pub_sub.send_to_all('Hub', {'hello': 'test_webpubsub_send_to_all'})
+        client.send_to_all('Hub', {'hello': 'test_webpubsub_send_to_all'})
 
     @WebpubsubPowerShellPreparer()
     def test_webpubsub_send_to_all_api_management_proxy(self, webpubsub_endpoint, webpubsub_reverse_proxy_endpoint=None):
         client = self.create_client(endpoint=webpubsub_endpoint, reverse_proxy_endpoint=webpubsub_reverse_proxy_endpoint)
-        client.web_pub_sub.send_to_all('Hub', {'hello': 'test_webpubsub_send_to_all_api_management_proxy'})
+        client.send_to_all('Hub', {'hello': 'test_webpubsub_send_to_all_api_management_proxy'})
 
     @WebpubsubPowerShellPreparer()
     def test_webpubsub_send_request(self, webpubsub_endpoint):
         client = self.create_client(endpoint=webpubsub_endpoint)
-        request = build_web_pub_sub_send_to_all_request('Hub', content='test_webpubsub_send_request', content_type='text/plain')
+        request = build_send_to_all_request('Hub', content='test_webpubsub_send_request', content_type='text/plain')
         response = client.send_request(request)
         assert response.status_code == 202

@@ -50,7 +50,7 @@ client = WebPubSubServiceClient(credential=DefaultAzureCredential(), endpoint=en
 # Send a json message to everybody on the given hub...
 try:
     # Raise an exception if the service rejected the call
-    client.web_pub_sub.send_to_all('Hub', message={'Hello': 'reverse_proxy_endpoint!'})
+    client.send_to_all('Hub', message={'Hello': 'reverse_proxy_endpoint!'})
     print('Successfully sent a JSON message')
 except HttpResponseError as e:
     print('Failed to send JSON message: {}'.format(e.response.json()))
@@ -58,7 +58,7 @@ except HttpResponseError as e:
 # Send a text message to everybody on the given hub...
 try:
     # Raise an exception if the service rejected the call
-    client.web_pub_sub.send_to_all('Hub', message='hello, reverse_proxy_endpoint!', content_type='text/plain')
+    client.send_to_all('Hub', message='hello, reverse_proxy_endpoint!', content_type='text/plain')
     print('Successfully sent a JSON message')
 except HttpResponseError as e:
     print('Failed to send JSON message: {}'.format(e.response.json()))
@@ -67,7 +67,7 @@ except HttpResponseError as e:
 # Send a json message from a stream to everybody on the given hub...
 try:
     # Raise an exception if the service rejected the call
-    client.web_pub_sub.send_to_all('Hub', message=io.BytesIO(b'{ "hello": "reverse_proxy_endpoint" }'), content_type='application/json')
+    client.send_to_all('Hub', message=io.BytesIO(b'{ "hello": "reverse_proxy_endpoint" }'), content_type='application/json')
     print('Successfully sent a JSON message')
 except HttpResponseError as e:
     print('Failed to send JSON message: {}'.format(e.response.json()))

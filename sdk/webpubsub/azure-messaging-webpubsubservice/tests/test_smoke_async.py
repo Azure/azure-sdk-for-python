@@ -11,16 +11,11 @@ from testcase_async import WebpubsubTestAsync
 class WebpubsubSmokeTestAsync(WebpubsubTestAsync):
 
     @WebpubsubPowerShellPreparer()
-    async def test_health_api_status(self, webpubsub_endpoint):
-        client = self.create_client(endpoint=webpubsub_endpoint)
-        await client.health_api.get_service_status()
-
-    @WebpubsubPowerShellPreparer()
     async def test_webpubsub_send_to_all(self, webpubsub_endpoint):
         client = self.create_client(endpoint=webpubsub_endpoint)
-        await client.web_pub_sub.send_to_all('Hub', {'hello': 'test_webpubsub_send_to_all'})
+        await client.send_to_all('Hub', {'hello': 'test_webpubsub_send_to_all'})
 
     @WebpubsubPowerShellPreparer()
     async def test_webpubsub_send_to_all_apim_proxy(self, webpubsub_endpoint, webpubsub_reverse_proxy_endpoint=None):
         client = self.create_client(endpoint=webpubsub_endpoint, reverse_proxy_endpoint=webpubsub_reverse_proxy_endpoint)
-        await client.web_pub_sub.send_to_all('Hub', {'hello': 'test_webpubsub_send_to_all_apim_proxy'})
+        await client.send_to_all('Hub', {'hello': 'test_webpubsub_send_to_all_apim_proxy'})

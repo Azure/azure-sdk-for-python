@@ -6,10 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._operations import HealthApiOperations
-from ._operations import WebPubSubOperations
+from ._operations import WebPubSubServiceClientOperationsMixin
 
 __all__ = [
-    'HealthApiOperations',
-    'WebPubSubOperations',
+    'WebPubSubServiceClientOperationsMixin',
 ]

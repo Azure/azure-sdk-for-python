@@ -31,7 +31,6 @@ from datetime import datetime, timedelta, tzinfo
 from typing import TYPE_CHECKING
 
 from ._version import VERSION
-from .operations import HealthApiOperations, WebPubSubOperations
 from ._web_pub_sub_service_client import WebPubSubServiceClient as GeneratedWebPubSubServiceClient
 
 from msrest import Deserializer, Serializer
@@ -287,10 +286,6 @@ class WebPubSubServiceClientConfiguration(Configuration):
 class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
     """WebPubSubServiceClient.
 
-    :ivar health_api: HealthApiOperations operations
-    :vartype health_api: azure.messaging.webpubsubservice.operations.HealthApiOperations
-    :ivar web_pub_sub: WebPubSubOperations operations
-    :vartype web_pub_sub: azure.messaging.webpubsubservice.operations.WebPubSubOperations
     :param endpoint: HTTP or HTTPS endpoint for the Web PubSub service instance.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
@@ -312,8 +307,6 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.health_api = HealthApiOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.web_pub_sub = WebPubSubOperations(self._client, self._config, self._serialize, self._deserialize)
 
     @classmethod
     def from_connection_string(cls, connection_string, **kwargs):

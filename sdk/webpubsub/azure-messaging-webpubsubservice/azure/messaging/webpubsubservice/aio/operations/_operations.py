@@ -15,91 +15,12 @@ from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from ...operations._operations import build_health_api_get_service_status_request, build_web_pub_sub_add_connection_to_group_request, build_web_pub_sub_add_user_to_group_request, build_web_pub_sub_check_permission_request, build_web_pub_sub_close_connection_request, build_web_pub_sub_connection_exists_request, build_web_pub_sub_generate_client_token_request, build_web_pub_sub_grant_permission_request, build_web_pub_sub_group_exists_request, build_web_pub_sub_remove_connection_from_group_request, build_web_pub_sub_remove_user_from_all_groups_request, build_web_pub_sub_remove_user_from_group_request, build_web_pub_sub_revoke_permission_request, build_web_pub_sub_send_to_all_request, build_web_pub_sub_send_to_connection_request, build_web_pub_sub_send_to_group_request, build_web_pub_sub_send_to_user_request, build_web_pub_sub_user_exists_request
+from ...operations._operations import build_add_connection_to_group_request, build_add_user_to_group_request, build_check_permission_request, build_close_connection_request, build_connection_exists_request, build_generate_client_token_request, build_grant_permission_request, build_group_exists_request, build_remove_connection_from_group_request, build_remove_user_from_all_groups_request, build_remove_user_from_group_request, build_revoke_permission_request, build_send_to_all_request, build_send_to_connection_request, build_send_to_group_request, build_send_to_user_request, build_user_exists_request
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class HealthApiOperations:
-    """HealthApiOperations async operations.
-
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
-    """
-
-    def __init__(self, client, config, serializer, deserializer) -> None:
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
-
-    @distributed_trace_async
-    async def get_service_status(
-        self,
-        *,
-        api_version: Optional[str] = "2021-08-01-preview",
-        **kwargs: Any
-    ) -> None:
-        """Get service health status.
-
-        Get service health status.
-
-        :keyword api_version: Api Version.
-        :paramtype api_version: str
-        :return: None
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        
-        request = build_health_api_get_service_status_request(
-            api_version=api_version,
-            template_url=self.get_service_status.metadata['url'],
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    get_service_status.metadata = {'url': '/api/health'}  # type: ignore
-
-class WebPubSubOperations:
-    """WebPubSubOperations async operations.
-
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
-    """
-
-    def __init__(self, client, config, serializer, deserializer) -> None:
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+class WebPubSubServiceClientOperationsMixin:
 
     @distributed_trace_async
     async def generate_client_token(
@@ -146,7 +67,7 @@ class WebPubSubOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         
-        request = build_web_pub_sub_generate_client_token_request(
+        request = build_generate_client_token_request(
             hub=hub,
             user_id=user_id,
             role=role,
@@ -229,7 +150,7 @@ class WebPubSubOperations:
                 "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
             )
 
-        request = build_web_pub_sub_send_to_all_request(
+        request = build_send_to_all_request(
             hub=hub,
             content_type=content_type,
             excluded=excluded,
@@ -287,7 +208,7 @@ class WebPubSubOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         
-        request = build_web_pub_sub_connection_exists_request(
+        request = build_connection_exists_request(
             hub=hub,
             connection_id=connection_id,
             api_version=api_version,
@@ -345,7 +266,7 @@ class WebPubSubOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         
-        request = build_web_pub_sub_close_connection_request(
+        request = build_close_connection_request(
             hub=hub,
             connection_id=connection_id,
             reason=reason,
@@ -420,7 +341,7 @@ class WebPubSubOperations:
                 "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
             )
 
-        request = build_web_pub_sub_send_to_connection_request(
+        request = build_send_to_connection_request(
             hub=hub,
             connection_id=connection_id,
             content_type=content_type,
@@ -478,7 +399,7 @@ class WebPubSubOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         
-        request = build_web_pub_sub_group_exists_request(
+        request = build_group_exists_request(
             hub=hub,
             group=group,
             api_version=api_version,
@@ -555,7 +476,7 @@ class WebPubSubOperations:
                 "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
             )
 
-        request = build_web_pub_sub_send_to_group_request(
+        request = build_send_to_group_request(
             hub=hub,
             group=group,
             content_type=content_type,
@@ -617,7 +538,7 @@ class WebPubSubOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         
-        request = build_web_pub_sub_add_connection_to_group_request(
+        request = build_add_connection_to_group_request(
             hub=hub,
             group=group,
             connection_id=connection_id,
@@ -676,7 +597,7 @@ class WebPubSubOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         
-        request = build_web_pub_sub_remove_connection_from_group_request(
+        request = build_remove_connection_from_group_request(
             hub=hub,
             group=group,
             connection_id=connection_id,
@@ -732,7 +653,7 @@ class WebPubSubOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         
-        request = build_web_pub_sub_user_exists_request(
+        request = build_user_exists_request(
             hub=hub,
             user_id=user_id,
             api_version=api_version,
@@ -806,7 +727,7 @@ class WebPubSubOperations:
                 "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
             )
 
-        request = build_web_pub_sub_send_to_user_request(
+        request = build_send_to_user_request(
             hub=hub,
             user_id=user_id,
             content_type=content_type,
@@ -867,7 +788,7 @@ class WebPubSubOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         
-        request = build_web_pub_sub_add_user_to_group_request(
+        request = build_add_user_to_group_request(
             hub=hub,
             group=group,
             user_id=user_id,
@@ -926,7 +847,7 @@ class WebPubSubOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         
-        request = build_web_pub_sub_remove_user_from_group_request(
+        request = build_remove_user_from_group_request(
             hub=hub,
             group=group,
             user_id=user_id,
@@ -982,7 +903,7 @@ class WebPubSubOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         
-        request = build_web_pub_sub_remove_user_from_all_groups_request(
+        request = build_remove_user_from_all_groups_request(
             hub=hub,
             user_id=user_id,
             api_version=api_version,
@@ -1045,7 +966,7 @@ class WebPubSubOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         
-        request = build_web_pub_sub_grant_permission_request(
+        request = build_grant_permission_request(
             hub=hub,
             permission=permission,
             connection_id=connection_id,
@@ -1110,7 +1031,7 @@ class WebPubSubOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         
-        request = build_web_pub_sub_revoke_permission_request(
+        request = build_revoke_permission_request(
             hub=hub,
             permission=permission,
             connection_id=connection_id,
@@ -1175,7 +1096,7 @@ class WebPubSubOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         
-        request = build_web_pub_sub_check_permission_request(
+        request = build_check_permission_request(
             hub=hub,
             permission=permission,
             connection_id=connection_id,

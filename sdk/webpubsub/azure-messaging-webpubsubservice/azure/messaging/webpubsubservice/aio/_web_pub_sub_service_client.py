@@ -14,7 +14,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from msrest import Deserializer, Serializer
 
 from ._configuration import WebPubSubServiceClientConfiguration
-from .operations import HealthApiOperations, WebPubSubOperations
+from .operations import WebPubSubServiceClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -22,13 +22,9 @@ if TYPE_CHECKING:
 
     from azure.core.credentials_async import AsyncTokenCredential
 
-class WebPubSubServiceClient:
+class WebPubSubServiceClient(WebPubSubServiceClientOperationsMixin):
     """WebPubSubServiceClient.
 
-    :ivar health_api: HealthApiOperations operations
-    :vartype health_api: azure.messaging.webpubsubservice.aio.operations.HealthApiOperations
-    :ivar web_pub_sub: WebPubSubOperations operations
-    :vartype web_pub_sub: azure.messaging.webpubsubservice.aio.operations.WebPubSubOperations
     :param endpoint: HTTP or HTTPS endpoint for the Web PubSub service instance.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
@@ -48,8 +44,6 @@ class WebPubSubServiceClient:
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.health_api = HealthApiOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.web_pub_sub = WebPubSubOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
     def send_request(
