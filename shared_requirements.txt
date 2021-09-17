@@ -344,3 +344,4 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-mgmt-security msrest>=0.6.21
 #override azure-mgmt-apimanagement msrest>=0.6.21
 #override azure-mgmt-relay msrest>=0.6.21
+#override azure-mgmt-azurearcdata msrest>=0.6.21
