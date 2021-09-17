@@ -31,6 +31,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from azure.core.async_paging import AsyncItemPaged
 
+from .._serialize import get_api_version
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.request_handlers import add_metadata_headers, serialize_iso
 from .._shared.response_handlers import (
@@ -111,8 +112,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             account_url, queue_name=queue_name, credential=credential, loop=loop, **kwargs
         )
         self._client = AzureQueueStorage(self.url, pipeline=self._pipeline, loop=loop)  # type: ignore
-        default_api_version = self._client._config.version  # pylint: disable=protected-access
-        self._client._config.version = kwargs.get('api_version', default_api_version)  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
         self._loop = loop
 
     @distributed_trace_async
