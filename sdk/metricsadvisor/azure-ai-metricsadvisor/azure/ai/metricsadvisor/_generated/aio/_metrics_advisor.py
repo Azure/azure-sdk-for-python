@@ -16,12 +16,12 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-from ._configuration import MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2Configuration
-from .operations import MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin
+from ._configuration import MetricsAdvisorConfiguration
+from .operations import MetricsAdvisorOperationsMixin
 from .. import models
 
 
-class MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2(MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin):
+class MetricsAdvisor(MetricsAdvisorOperationsMixin):
     """Microsoft Azure Metrics Advisor REST API (OpenAPI v2).
 
     :param credential: Credential needed for the client to connect to Azure.
@@ -37,7 +37,7 @@ class MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2(MicrosoftAzureMetricsAdvisorR
         **kwargs: Any
     ) -> None:
         base_url = '{endpoint}/metricsadvisor/v1.0'
-        self._config = MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2Configuration(credential, endpoint, **kwargs)
+        self._config = MetricsAdvisorConfiguration(credential, endpoint, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -66,7 +66,7 @@ class MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2(MicrosoftAzureMetricsAdvisorR
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2":
+    async def __aenter__(self) -> "MetricsAdvisor":
         await self._client.__aenter__()
         return self
 

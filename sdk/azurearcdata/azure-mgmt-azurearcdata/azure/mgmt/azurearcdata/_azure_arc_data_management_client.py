@@ -8,46 +8,69 @@
 
 from typing import TYPE_CHECKING
 
-from azure.core import PipelineClient
+from azure.mgmt.core import ARMPipelineClient
 from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
+    from typing import Any, Optional
 
     from azure.core.credentials import TokenCredential
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from ._configuration import MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2Configuration
-from .operations import MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin
+from ._configuration import AzureArcDataManagementClientConfiguration
+from .operations import Operations
+from .operations import SqlManagedInstancesOperations
+from .operations import SqlServerInstancesOperations
+from .operations import DataControllersOperations
 from . import models
 
 
-class MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2(MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin):
-    """Microsoft Azure Metrics Advisor REST API (OpenAPI v2).
+class AzureArcDataManagementClient(object):
+    """The AzureArcData management API provides a RESTful set of web APIs to manage Azure Data Services on Azure Arc Resources.
 
+    :ivar operations: Operations operations
+    :vartype operations: azure_arc_data_management_client.operations.Operations
+    :ivar sql_managed_instances: SqlManagedInstancesOperations operations
+    :vartype sql_managed_instances: azure_arc_data_management_client.operations.SqlManagedInstancesOperations
+    :ivar sql_server_instances: SqlServerInstancesOperations operations
+    :vartype sql_server_instances: azure_arc_data_management_client.operations.SqlServerInstancesOperations
+    :ivar data_controllers: DataControllersOperations operations
+    :vartype data_controllers: azure_arc_data_management_client.operations.DataControllersOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example: https://:code:`<resource-name>`.cognitiveservices.azure.com).
-    :type endpoint: str
+    :param subscription_id: The ID of the Azure subscription.
+    :type subscription_id: str
+    :param str base_url: Service URL
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     def __init__(
         self,
         credential,  # type: "TokenCredential"
-        endpoint,  # type: str
+        subscription_id,  # type: str
+        base_url=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        base_url = '{endpoint}/metricsadvisor/v1.0'
-        self._config = MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2Configuration(credential, endpoint, **kwargs)
-        self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
+        if not base_url:
+            base_url = 'https://management.azure.com'
+        self._config = AzureArcDataManagementClientConfiguration(credential, subscription_id, **kwargs)
+        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.sql_managed_instances = SqlManagedInstancesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.sql_server_instances = SqlServerInstancesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.data_controllers = DataControllersOperations(
+            self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, http_request, **kwargs):
         # type: (HttpRequest, Any) -> HttpResponse
@@ -60,7 +83,7 @@ class MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2(MicrosoftAzureMetricsAdvisorR
         :rtype: ~azure.core.pipeline.transport.HttpResponse
         """
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
         stream = kwargs.pop("stream", True)
@@ -72,7 +95,7 @@ class MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2(MicrosoftAzureMetricsAdvisorR
         self._client.close()
 
     def __enter__(self):
-        # type: () -> MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2
+        # type: () -> AzureArcDataManagementClient
         self._client.__enter__()
         return self
 

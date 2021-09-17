@@ -34,7 +34,7 @@ CLIENT_ID=os.environ['SCHEMA_REGISTRY_AZURE_CLIENT_ID']
 CLIENT_SECRET=os.environ['SCHEMA_REGISTRY_AZURE_CLIENT_SECRET']
 
 SCHEMA_REGISTRY_ENDPOINT=os.environ['SCHEMA_REGISTRY_ENDPOINT']
-SCHEMA_GROUP=os.environ['SCHEMA_REGISTRY_GROUP']
+GROUP_NAME=os.environ['SCHEMA_REGISTRY_GROUP']
 SCHEMA_STRING = """
 {"namespace": "example.avro",
  "type": "record",
@@ -80,7 +80,7 @@ def deserialize(serializer, bytes_payload):
 
 if __name__ == '__main__':
     schema_registry = SchemaRegistryClient(endpoint=SCHEMA_REGISTRY_ENDPOINT, credential=token_credential)
-    serializer = SchemaRegistryAvroSerializer(schema_registry, SCHEMA_GROUP)
+    serializer = SchemaRegistryAvroSerializer(schema_registry, GROUP_NAME)
     bytes_data_ben, bytes_data_alice = serialize(serializer)
     dict_data_ben = deserialize(serializer, bytes_data_ben)
     dict_data_alice = deserialize(serializer, bytes_data_alice)
