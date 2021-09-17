@@ -7,7 +7,7 @@ Azure Remote Rendering (ARR) is a service that enables you to render high-qualit
 This SDK offers functionality to convert assets to the format expected by the runtime, and also to manage
 the lifetime of remote rendering sessions.
 
-This SDK supports version "2021-01-01" of the [Remote Rendering REST API](https://docs.microsoft.com/en-us/rest/api/mixedreality/2021-01-01/remote-rendering).
+This SDK supports version "2021-01-01" of the [Remote Rendering REST API](https://docs.microsoft.com/rest/api/mixedreality/2021-01-01/remote-rendering).
 
 > NOTE: Once a session is running, a client application will connect to it using one of the "runtime SDKs".
 > These SDKs are designed to best support the needs of an interactive application doing 3d rendering.
