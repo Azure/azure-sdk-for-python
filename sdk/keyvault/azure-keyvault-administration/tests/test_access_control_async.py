@@ -4,48 +4,20 @@
 # ------------------------------------
 import os
 import uuid
-import time
 
-from azure.core.credentials import AccessToken
-from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.administration import KeyVaultRoleScope, KeyVaultPermission, KeyVaultDataAction
-from azure.keyvault.administration.aio import KeyVaultAccessControlClient
-from azure.keyvault.administration._internal import HttpChallengeCache
-import pytest
-from six.moves.urllib_parse import urlparse
-from devtools_testutils import AzureTestCase
 
-from _shared.helpers_async import mock
 from _shared.test_case_async import KeyVaultTestCase
 from test_access_control import assert_role_definitions_equal
+from _test_case import AdministrationTestCase, access_control_client_setup, get_decorator
 
 
-@pytest.mark.usefixtures("managed_hsm")
-class AccessControlTests(KeyVaultTestCase):
+all_api_versions = get_decorator(is_async=True)
+
+
+class AccessControlTests(AdministrationTestCase, KeyVaultTestCase):
     def __init__(self, *args, **kwargs):
         super(AccessControlTests, self).__init__(*args, match_body=False, **kwargs)
-
-    def setUp(self, *args, **kwargs):
-        if self.is_live:
-            real = urlparse(self.managed_hsm["url"])
-            playback = urlparse(self.managed_hsm["playback_url"])
-            self.scrubber.register_name_pair(real.netloc, playback.netloc)
-        super(AccessControlTests, self).setUp(*args, **kwargs)
-
-    def tearDown(self):
-        HttpChallengeCache.clear()
-        assert len(HttpChallengeCache._cache) == 0
-        super(AccessControlTests, self).tearDown()
-
-    @property
-    def credential(self):
-        if self.is_live:
-            return DefaultAzureCredential()
-
-        async def get_token(*_, **__):
-            return AccessToken("secret", time.time() + 3600)
-
-        return mock.Mock(get_token=get_token)
 
     def get_replayable_uuid(self, replay_value):
         if self.is_live:
@@ -62,10 +34,9 @@ class AccessControlTests(KeyVaultTestCase):
             return value
         return replay_value
 
-    @AzureTestCase.await_prepared_test
-    async def test_role_definitions(self):
-        client = KeyVaultAccessControlClient(self.managed_hsm["url"], self.credential)
-
+    @all_api_versions()
+    @access_control_client_setup
+    async def test_role_definitions(self, client):
         # list initial role definitions
         scope = KeyVaultRoleScope.GLOBAL
         original_definitions = []
@@ -123,10 +94,9 @@ class AccessControlTests(KeyVaultTestCase):
         async for d in client.list_role_definitions(scope):
             assert (d.id != definition.id), "the role definition should have been deleted"
 
-    @AzureTestCase.await_prepared_test
-    async def test_role_assignment(self):
-        client = KeyVaultAccessControlClient(self.managed_hsm["url"], self.credential)
-
+    @all_api_versions()
+    @access_control_client_setup
+    async def test_role_assignment(self, client):
         scope = KeyVaultRoleScope.GLOBAL
         definitions = []
         async for definition in client.list_role_definitions(scope):
