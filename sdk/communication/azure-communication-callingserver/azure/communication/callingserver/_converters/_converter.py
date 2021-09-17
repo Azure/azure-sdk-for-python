@@ -9,6 +9,7 @@ from .._shared.models import CommunicationIdentifier
 from .._generated.models import (
     JoinCallRequest,
     PlayAudioRequest,
+    TransferCallRequest,
     CommunicationIdentifierModel,
     AddParticipantRequest,
     CancelMediaOperationRequest,
@@ -87,4 +88,18 @@ class CancelMediaOperationRequestConverter(object):
         return CancelMediaOperationRequest(
             media_operation_id=media_operation_id
         )
-        
+
+class TransferCallRequestConverter(object):
+    @staticmethod
+    def convert(
+        target_participant, # type: CommunicationIdentifierModel
+        user_to_user_information=None, # type: str
+        ): # type: (...) -> TransferCallRequest
+
+        if not target_participant:
+            raise ValueError("target_participant can not be None")
+
+        return TransferCallRequest(
+            target_participant=target_participant,
+            user_to_user_information=user_to_user_information
+        )
