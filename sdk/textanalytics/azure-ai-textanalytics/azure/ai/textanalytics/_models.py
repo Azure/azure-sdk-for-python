@@ -2358,8 +2358,8 @@ class RecognizeCustomEntitiesResult(DictMixin):
         )
 
 
-class ClassifyCustomCategoriesAction(DictMixin):
-    """ClassifyCustomCategoriesAction.
+class ClassifyDocumentCategoriesAction(DictMixin):
+    """ClassifyDocumentCategoriesAction.
 
     :param project_name: Required.
     :type project_name: str
@@ -2386,7 +2386,7 @@ class ClassifyCustomCategoriesAction(DictMixin):
         self.disable_service_logs = kwargs.get('disable_service_logs', None)
 
     def __repr__(self):
-        return "ClassifyCustomCategoriesAction(project_name={}, deployment_name={}, disable_service_logs={})".format(
+        return "ClassifyDocumentCategoriesAction(project_name={}, deployment_name={}, disable_service_logs={})".format(
             self.project_name,
             self.deployment_name,
             self.disable_service_logs,
@@ -2402,8 +2402,8 @@ class ClassifyCustomCategoriesAction(DictMixin):
         )
 
 
-class ClassifyCustomCategoriesResult(DictMixin):
-    """ClassifyCustomCategoriesResult.
+class ClassifyDocumentCategoriesResult(DictMixin):
+    """ClassifyDocumentCategoriesResult.
 
     :ivar str id: Required. Unique, non-empty document identifier.
     :ivar classifications: Required. Recognized classification results in the document.
@@ -2414,7 +2414,7 @@ class ClassifyCustomCategoriesResult(DictMixin):
         field will contain information about the document payload.
     :vartype statistics: ~azure.ai.textanalytics.TextDocumentStatistics
     :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always False for an instance of a ClassifyCustomCategoriesResult.
+        results. Always False for an instance of a ClassifyDocumentCategoriesResult.
     """
 
     def __init__(
@@ -2428,7 +2428,7 @@ class ClassifyCustomCategoriesResult(DictMixin):
         self.is_error = False
 
     def __repr__(self):
-        return "ClassifyCustomCategoriesResult(id={}, classifications={}, warnings={}, statistics={}, " \
+        return "ClassifyDocumentCategoriesResult(id={}, classifications={}, warnings={}, statistics={}, " \
                "is_error={})".format(
                 self.id,
                 repr(self.classifications),
@@ -2459,8 +2459,8 @@ class ClassifyCustomCategoriesResult(DictMixin):
         )
 
 
-class ClassifyCustomCategoryAction(DictMixin):
-    """ClassifyCustomCategoriesAction.
+class ClassifyDocumentCategoryAction(DictMixin):
+    """ClassifyDocumentCategoriesAction.
 
     :param project_name: Required.
     :type project_name: str
@@ -2487,7 +2487,7 @@ class ClassifyCustomCategoryAction(DictMixin):
         self.disable_service_logs = kwargs.get('disable_service_logs', None)
 
     def __repr__(self):
-        return "ClassifyCustomCategoryAction(project_name={}, deployment_name={}, disable_service_logs={})".format(
+        return "ClassifyDocumentCategoryAction(project_name={}, deployment_name={}, disable_service_logs={})".format(
             self.project_name,
             self.deployment_name,
             self.disable_service_logs,
@@ -2503,8 +2503,8 @@ class ClassifyCustomCategoryAction(DictMixin):
         )
 
 
-class ClassifyCustomCategoryResult(DictMixin):
-    """ClassifyCustomCategoriesResult.
+class ClassifyDocumentCategoryResult(DictMixin):
+    """ClassifyDocumentCategoriesResult.
 
     :ivar str id: Required. Unique, non-empty document identifier.
     :ivar classification: Required. Recognized classification results in the document.
@@ -2515,7 +2515,7 @@ class ClassifyCustomCategoryResult(DictMixin):
         field will contain information about the document payload.
     :vartype statistics: ~azure.ai.textanalytics.TextDocumentStatistics
     :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always False for an instance of a ClassifyCustomCategoryResult.
+        results. Always False for an instance of a ClassifyDocumentCategoryResult.
     """
 
     def __init__(
@@ -2529,7 +2529,7 @@ class ClassifyCustomCategoryResult(DictMixin):
         self.is_error = False
 
     def __repr__(self):
-        return "ClassifyCustomCategoryResult(id={}, classification={}, warnings={}, statistics={}, " \
+        return "ClassifyDocumentCategoryResult(id={}, classification={}, warnings={}, statistics={}, " \
                "is_error={})".format(
                 self.id,
                 repr(self.classification),
