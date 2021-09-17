@@ -4,18 +4,16 @@ interactions:
     headers:
       Range:
       - bytes=0-399
-      UriToSignWith:
-      - https://acstelephonyportaltesting.communication.azure.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
       User-Agent:
       - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
       host:
-      - acstelephonyportaltesting.communication.azure.com
+      - sanitized.communication.azure.com
       x-ms-date:
-      - Fri, 17 Sep 2021 22:07:03 GMT
+      - Fri, 17 Sep 2021 23:02:21 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://storage.asm.skype.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
+    uri: https://storagehost.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
   response:
     body:
       string: "{\r\n  \"resourceId\": \"ab12b0ea-85ea-4f83-b0b6-84d90209c7c4\",\r\n
@@ -30,30 +28,28 @@ interactions:
       content-length: '400'
       content-range: bytes 0-399/837
       content-type: application/octet-stream
-      date: Fri, 17 Sep 2021 22:07:03 GMT
+      date: Fri, 17 Sep 2021 23:02:20 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000; includeSubDomains
     status:
       code: 206
       message: Partial Content
-    url: https://storage.asm.skype.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
+    url: https://storagehost.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
 - request:
     body: ''
     headers:
       Range:
       - bytes=400-799
-      UriToSignWith:
-      - https://acstelephonyportaltesting.communication.azure.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
       User-Agent:
       - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
       host:
-      - acstelephonyportaltesting.communication.azure.com
+      - sanitized.communication.azure.com
       x-ms-date:
-      - Fri, 17 Sep 2021 22:07:04 GMT
+      - Fri, 17 Sep 2021 23:02:21 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://storage.asm.skype.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
+    uri: https://storagehost.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
   response:
     body:
       string: "  \"format\": \"mp4\",\r\n    \"audioConfiguration\": {\r\n      \"sampleRate\":
@@ -66,30 +62,28 @@ interactions:
       content-length: '400'
       content-range: bytes 400-799/837
       content-type: application/octet-stream
-      date: Fri, 17 Sep 2021 22:07:03 GMT
+      date: Fri, 17 Sep 2021 23:02:20 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000; includeSubDomains
     status:
       code: 206
       message: Partial Content
-    url: https://storage.asm.skype.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
+    url: https://storagehost.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
 - request:
     body: ''
     headers:
       Range:
       - bytes=800-836
-      UriToSignWith:
-      - https://acstelephonyportaltesting.communication.azure.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
       User-Agent:
       - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
       host:
-      - acstelephonyportaltesting.communication.azure.com
+      - sanitized.communication.azure.com
       x-ms-date:
-      - Fri, 17 Sep 2021 22:07:04 GMT
+      - Fri, 17 Sep 2021 23:02:21 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://storage.asm.skype.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
+    uri: https://storagehost.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
   response:
     body:
       string: "76f-ba73-254822000c19\"\r\n    }\r\n  ]\r\n}"
@@ -98,11 +92,11 @@ interactions:
       content-length: '37'
       content-range: bytes 800-836/837
       content-type: application/octet-stream
-      date: Fri, 17 Sep 2021 22:07:03 GMT
+      date: Fri, 17 Sep 2021 23:02:20 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000; includeSubDomains
     status:
       code: 206
       message: Partial Content
-    url: https://storage.asm.skype.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
+    url: https://storagehost.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
 version: 1

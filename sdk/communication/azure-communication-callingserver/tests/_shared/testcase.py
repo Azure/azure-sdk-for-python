@@ -64,7 +64,7 @@ class BodyReplacerProcessor(RecordingProcessor):
         return json.dumps(body)
 
 class CommunicationTestCase(AzureTestCase):
-    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['x-azure-ref', 'x-ms-content-sha256']
+    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['x-azure-ref', 'x-ms-content-sha256', 'location']
 
     def __init__(self, method_name, *args, **kwargs):
         super(CommunicationTestCase, self).__init__(method_name, *args, **kwargs)
