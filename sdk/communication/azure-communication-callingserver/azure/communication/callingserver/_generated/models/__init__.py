@@ -10,18 +10,21 @@ try:
     from ._models_py3 import AddParticipantRequest
     from ._models_py3 import AddParticipantResult
     from ._models_py3 import AddParticipantResultEvent
+    from ._models_py3 import CallConnectionProperties
     from ._models_py3 import CallConnectionStateChangedEvent
     from ._models_py3 import CallParticipant
     from ._models_py3 import CallRecordingProperties
     from ._models_py3 import CallRecordingStateChangeEvent
     from ._models_py3 import CancelAllMediaOperationsRequest
     from ._models_py3 import CancelAllMediaOperationsResult
+    from ._models_py3 import CancelMediaOperationRequest
     from ._models_py3 import CommunicationError
     from ._models_py3 import CommunicationErrorResponse
     from ._models_py3 import CommunicationIdentifierModel
     from ._models_py3 import CommunicationUserIdentifierModel
     from ._models_py3 import CreateCallRequest
     from ._models_py3 import CreateCallResult
+    from ._models_py3 import GetParticipantByIdRequest
     from ._models_py3 import JoinCallRequest
     from ._models_py3 import JoinCallResult
     from ._models_py3 import MicrosoftTeamsUserIdentifierModel
@@ -30,27 +33,36 @@ try:
     from ._models_py3 import PlayAudioRequest
     from ._models_py3 import PlayAudioResult
     from ._models_py3 import PlayAudioResultEvent
+    from ._models_py3 import RemoveParticipantByIdRequest
     from ._models_py3 import ResultInfo
     from ._models_py3 import StartCallRecordingRequest
     from ._models_py3 import StartCallRecordingResult
+    from ._models_py3 import StartHoldMusicRequest
+    from ._models_py3 import StartHoldMusicResult
+    from ._models_py3 import StopHoldMusicRequest
+    from ._models_py3 import StopHoldMusicResult
     from ._models_py3 import ToneInfo
     from ._models_py3 import ToneReceivedEvent
+    from ._models_py3 import TransferCallRequest
 except (SyntaxError, ImportError):
     from ._models import AddParticipantRequest  # type: ignore
     from ._models import AddParticipantResult  # type: ignore
     from ._models import AddParticipantResultEvent  # type: ignore
+    from ._models import CallConnectionProperties  # type: ignore
     from ._models import CallConnectionStateChangedEvent  # type: ignore
     from ._models import CallParticipant  # type: ignore
     from ._models import CallRecordingProperties  # type: ignore
     from ._models import CallRecordingStateChangeEvent  # type: ignore
     from ._models import CancelAllMediaOperationsRequest  # type: ignore
     from ._models import CancelAllMediaOperationsResult  # type: ignore
+    from ._models import CancelMediaOperationRequest  # type: ignore
     from ._models import CommunicationError  # type: ignore
     from ._models import CommunicationErrorResponse  # type: ignore
     from ._models import CommunicationIdentifierModel  # type: ignore
     from ._models import CommunicationUserIdentifierModel  # type: ignore
     from ._models import CreateCallRequest  # type: ignore
     from ._models import CreateCallResult  # type: ignore
+    from ._models import GetParticipantByIdRequest  # type: ignore
     from ._models import JoinCallRequest  # type: ignore
     from ._models import JoinCallResult  # type: ignore
     from ._models import MicrosoftTeamsUserIdentifierModel  # type: ignore
@@ -59,11 +71,17 @@ except (SyntaxError, ImportError):
     from ._models import PlayAudioRequest  # type: ignore
     from ._models import PlayAudioResult  # type: ignore
     from ._models import PlayAudioResultEvent  # type: ignore
+    from ._models import RemoveParticipantByIdRequest  # type: ignore
     from ._models import ResultInfo  # type: ignore
     from ._models import StartCallRecordingRequest  # type: ignore
     from ._models import StartCallRecordingResult  # type: ignore
+    from ._models import StartHoldMusicRequest  # type: ignore
+    from ._models import StartHoldMusicResult  # type: ignore
+    from ._models import StopHoldMusicRequest  # type: ignore
+    from ._models import StopHoldMusicResult  # type: ignore
     from ._models import ToneInfo  # type: ignore
     from ._models import ToneReceivedEvent  # type: ignore
+    from ._models import TransferCallRequest  # type: ignore
 
 from ._azure_communication_calling_server_service_enums import (
     CallConnectionState,
@@ -72,6 +90,9 @@ from ._azure_communication_calling_server_service_enums import (
     EventSubscriptionType,
     MediaType,
     OperationStatus,
+    RecordingChannelType,
+    RecordingContentType,
+    RecordingFormatType,
     ToneValue,
 )
 
@@ -79,18 +100,21 @@ __all__ = [
     'AddParticipantRequest',
     'AddParticipantResult',
     'AddParticipantResultEvent',
+    'CallConnectionProperties',
     'CallConnectionStateChangedEvent',
     'CallParticipant',
     'CallRecordingProperties',
     'CallRecordingStateChangeEvent',
     'CancelAllMediaOperationsRequest',
     'CancelAllMediaOperationsResult',
+    'CancelMediaOperationRequest',
     'CommunicationError',
     'CommunicationErrorResponse',
     'CommunicationIdentifierModel',
     'CommunicationUserIdentifierModel',
     'CreateCallRequest',
     'CreateCallResult',
+    'GetParticipantByIdRequest',
     'JoinCallRequest',
     'JoinCallResult',
     'MicrosoftTeamsUserIdentifierModel',
@@ -99,16 +123,25 @@ __all__ = [
     'PlayAudioRequest',
     'PlayAudioResult',
     'PlayAudioResultEvent',
+    'RemoveParticipantByIdRequest',
     'ResultInfo',
     'StartCallRecordingRequest',
     'StartCallRecordingResult',
+    'StartHoldMusicRequest',
+    'StartHoldMusicResult',
+    'StopHoldMusicRequest',
+    'StopHoldMusicResult',
     'ToneInfo',
     'ToneReceivedEvent',
+    'TransferCallRequest',
     'CallConnectionState',
     'CallRecordingState',
     'CommunicationCloudEnvironmentModel',
     'EventSubscriptionType',
     'MediaType',
     'OperationStatus',
+    'RecordingChannelType',
+    'RecordingContentType',
+    'RecordingFormatType',
     'ToneValue',
 ]

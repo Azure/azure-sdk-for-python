@@ -125,6 +125,26 @@ def data_source_test_remove_participant():
 
     return parameters
 
+def data_source_test_cancel_participant_media_operation():
+
+    parameters = []
+    parameters.append((
+        _test_constants.ClientType_ConnectionString,
+        _test_constants.CALL_ID,
+        _test_constants.PARTICIPANT_ID,
+        _test_constants.MEDIA_OPERATION_ID,
+        ))
+
+    parameters.append((
+        _test_constants.ClientType_ManagedIdentity,
+        _test_constants.CALL_ID,
+        _test_constants.PARTICIPANT_ID,
+        _test_constants.MEDIA_OPERATION_ID,
+        True,
+        ))
+
+    return parameters
+
 def verify_cancel_all_media_operations_result(result):
     # type: (CancelAllMediaOperationsResult) -> None
     assert "dummyId" == result.operation_id
@@ -368,6 +388,56 @@ class TestCallConnection(unittest.TestCase):
         try:
             call_connection.remove_participant(
                 participant_id = participant_id
+                )
+        except:
+            raised = True
+        assert raised == True
+
+    @parameterized.expand(data_source_test_cancel_participant_media_operation())
+    def test_cancel_participant_media_operation(
+        self,
+        test_name, # type: str
+        call_connection_id, # type: str
+        participant_id, # type: str
+        media_operation_id, # type: str
+        use_managed_identity = False # type: bool
+        ):
+
+        call_connection = _test_utils.create_mock_call_connection(
+            call_connection_id,
+            status_code=200,
+            payload=None,
+            use_managed_identity=use_managed_identity
+            )
+
+        call_connection.cancel_participant_media_operation(
+            participant_id = participant_id,
+            media_operation_id = media_operation_id
+            )
+        assert call_connection.call_connection_id == _test_constants.CALL_ID
+
+    @parameterized.expand(data_source_test_cancel_participant_media_operation())
+    def test_cancel_participant_media_operation_failed(
+        self,
+        test_name, # type: str
+        call_connection_id, # type: str
+        participant_id, # type: str
+        media_operation_id, # type: str
+        use_managed_identity = False # type: bool
+        ):
+
+        call_connection = _test_utils.create_mock_call_connection(
+            call_connection_id,
+            status_code=404,
+            payload=None,
+            use_managed_identity=use_managed_identity
+            )
+
+        raised = False
+        try:
+             call_connection.cancel_participant_media_operation(
+                participant_id = participant_id,
+                media_operation_id = media_operation_id
                 )
         except:
             raised = True
