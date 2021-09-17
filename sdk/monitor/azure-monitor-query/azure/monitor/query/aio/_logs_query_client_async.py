@@ -116,7 +116,7 @@ class LogsQueryClient(object):
         self,
         queries: Union[Sequence[Dict], Sequence[LogsBatchQuery]],
         **kwargs: Any
-        ) -> List[LogsQueryResult]:
+        ) -> List[Union[LogsQueryResult, LogsQueryError]]:
         """Execute a list of analytics queries. Each request can be either a LogQueryRequest
         object or an equivalent serialized model.
 
@@ -128,12 +128,12 @@ class LogsQueryClient(object):
          when a partial error occurs. The error can be accessed using the `partial_error`
          attribute in the object.
         :return: list of LogsQueryResult objects, or the result of cls(response)
-        :rtype: list[~azure.monitor.query.LogsQueryResult]
+        :rtype: list[~azure.monitor.query.LogsQueryResult or ~azure.monitor.query.LogsQueryError]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         allow_partial_errors = kwargs.pop('allow_partial_errors', False)
         try:
-            queries = [LogsBatchQuery(**q) for q in queries]
+            queries = [LogsBatchQuery(**q) for q in queries] # type: ignore
         except (KeyError, TypeError):
             pass
         queries = [q._to_generated() for q in queries] # pylint: disable=protected-access

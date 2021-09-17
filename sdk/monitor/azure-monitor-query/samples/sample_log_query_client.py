@@ -17,11 +17,14 @@ client = LogsQueryClient(credential)
 # Response time trend 
 # request duration over the last 12 hours. 
 # [START send_logs_query]
-query = """AppRequests | take 5"""
+query = """let Weight = 92233720368547758;
+AppRequests | take 5;
+range x from 1 to 3 step 1
+| summarize percentilesw(x, Weight * 100, 50)"""
 
 # returns LogsQueryResult 
 try:
-    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=timedelta(days=1))
+    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=timedelta(days=1), allow_partial_errors=True)
     for table in response:
         df = pd.DataFrame(data=table.rows, columns=table.columns)
         print(df)

@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Any, Union, Sequence, Dict, List
+from typing import TYPE_CHECKING, Any, Union, Sequence, Dict, List, cast
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 
@@ -131,7 +131,7 @@ class LogsQueryClient(object):
 
     @distributed_trace
     def query_batch(self, queries, **kwargs):
-        # type: (Union[Sequence[Dict], Sequence[LogsBatchQuery]], Any) -> List[LogsQueryResult]
+        # type: (Union[Sequence[Dict], Sequence[LogsBatchQuery]], Any) -> List[Union[LogsQueryResult, LogsQueryError]]
         """Execute a list of analytics queries. Each request can be either a LogQueryRequest
         object or an equivalent serialized model.
 
@@ -143,7 +143,7 @@ class LogsQueryClient(object):
          when a partial error occurs. The error can be accessed using the `partial_error`
          attribute in the object.
         :return: List of LogsQueryResult, or the result of cls(response)
-        :rtype: list[~azure.monitor.query.LogsQueryResult]
+        :rtype: list[~azure.monitor.query.LogsQueryResult or ~azure.monitor.query.LogsQueryError]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -160,7 +160,7 @@ class LogsQueryClient(object):
             queries = [LogsBatchQuery(**q) for q in queries]
         except (KeyError, TypeError):
             pass
-        queries = [q._to_generated() for q in queries] # pylint: disable=protected-access
+        queries = [cast(LogsBatchQuery, q)._to_generated() for q in queries] # pylint: disable=protected-access
         try:
             request_order = [req.id for req in queries]
         except AttributeError:

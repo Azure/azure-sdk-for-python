@@ -32,15 +32,15 @@ def query():
     query = """AppRequests |
     summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
 
-    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, 
-    timespan=timedelta(days=1))
-
-    if not response.tables:
-        return None
-
-    primary_table = response.tables[0]
-    df = pd.DataFrame(table.rows, columns=table.columns)
-    return df
+    try:
+        response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=timedelta(days=1))
+        for table in response:
+            df = pd.DataFrame(data=table.rows, columns=table.columns)
+            print(df)
+    except QueryPartialErrorException as err:
+        print("this is a partial error")
+    except HttpResponseError as err:
+        print("something fatal happened")
 
 if __name__ == '__main__':
     print(query())
@@ -54,7 +54,7 @@ if __name__ == '__main__':
 
 ```
 
-#### Results in Key Value form
+#### Results in tabular form with partial_error
 
 ```python
 import os
@@ -64,44 +64,35 @@ from azure.monitor.query import LogsQueryClient
 from azure.identity import DefaultAzureCredential
 
 def query():
-    query = """AppRequests |
-    summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
-
-    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, 
-    timespan=timedelta(days=1))
-
-    if not response.tables:
-        return None
-
-    primary_table = response.tables[0]
-    df = pd.DataFrame(table.rows, columns=table.columns)
-    return df.to_dict(orient='records')
+    query = """let Weight = 92233720368547758; range x from 1 to 3 step 1
+               | summarize percentilesw(x, Weight * 100, 50)"""
+    try:
+        response = client.query(
+            os.environ['LOG_WORKSPACE_ID'],
+            query,
+            timespan=timedelta(days=1),
+            allow_partial_errors=True
+        )
+        if response.partial_error:
+            # handle LogsQuery Error
+        for table in response:
+            df = pd.DataFrame(data=table.rows, columns=table.columns)
+            print(df)
+    except HttpResponseError as err:
+        print("something fatal happened")
 
 if __name__ == '__main__':
     print(query())
 
-
 """
-[
-    {
-        'TimeGenerated': Timestamp('2021-08-24 01:10:00+0000'),
-        '_ResourceId': '/subscriptions/faa080af....',
-        'avgRequestDuration': 19.7987
-    },
-    {
-        'TimeGenerated': Timestamp('2021-08-24 01:10:00+0000'),
-        '_ResourceId': '/subscriptions/faa08....',
-        'avgRequestDuration': 33.9654
-    },
-    {
-        'TimeGenerated': Timestamp('2021-08-24 01:10:00+0000'),
-        '_ResourceId': '/subscriptions/faa080....',
-        'avgRequestDuration': 44.13115
-    }
-]
+    TimeGenerated                                        _ResourceId          avgRequestDuration
+0   2021-05-27T08:40:00Z  /subscriptions/<subscription id>...  27.307699999999997
+1   2021-05-27T08:50:00Z  /subscriptions/<subscription id>...            18.11655
+2   2021-05-27T09:00:00Z  /subscriptions/<subscription id>...             24.5271
 """
 
 ```
+
 
 ### Run multiple queries in 1 api call
 
@@ -129,79 +120,87 @@ requests = [
         workspace_id= os.environ['LOG_WORKSPACE_ID']
     ),
     LogsBatchQuery(
-        query= """AppRequests | take 5  |
-            summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId""",
+        query= """let Weight = 92233720368547758; range x from 1 to 3 step 1 | summarize percentilesw(x, Weight * 100, 50)""",
         timespan=(datetime(2021, 6, 2), timedelta(hours=1)),
         workspace_id= os.environ['LOG_WORKSPACE_ID']
     ),
     LogsBatchQuery(
-        query= """AppRequests | take 5  |
-            summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId""",
+        query= """This is a bad query""",
         workspace_id= os.environ['LOG_WORKSPACE_ID'],
         timespan=(datetime(2021, 6, 2), datetime(2021, 6, 3)),
-        include_statistics=True
     ),
 ]
 results = client.query_batch(requests)
 
-for response in results:
-    if response.error is not None:
-        error = response.error.innererror
-        print(error)
-    
-    table = response.tables[0]
-    df = pd.DataFrame(table.rows, columns=table.columns)
-    print(df)
-    print("\n\n-------------------------\n\n")
-
-"""
-   count_
-0       2
-
-
--------------------------
+for ind, res in enumerate(results):
+    if res.is_error:
+        print(ind) # prints 2, 3
+        # handle LogsQueryError
+        return
+    elif not response.is_error:
+        print(ind) # prints 1
+        # handle table LogsQueryTable
+        for table in res: # directly iterates over tables
+            for item in table.row: # iterates directly over row type
+                print(item)
+        print(res.statistics)
+        print(res.visualization)
+        return
 
 
-              TimeGenerated                                        _ResourceId  avgRequestDuration
-0 2021-06-02 00:20:00+00:00  /subscriptions/<subscription id>...            18.12380
-1 2021-06-02 00:00:00+00:00  /subscriptions/<subscription id>...            20.84805
-2 2021-06-02 00:10:00+00:00  /subscriptions/<subscription id>...            19.72410
-3 2021-06-02 00:30:00+00:00  /subscriptions/<subscription id>...            19.41265
-4 2021-06-02 00:40:00+00:00  /subscriptions/<subscription id>...            19.17145
-
-
--------------------------
-
-
-
-              TimeGenerated                                        _ResourceId  avgRequestDuration
-0 2021-06-02 00:20:00+00:00  /subscriptions/<subscription id>...            18.12380
-1 2021-06-02 00:00:00+00:00  /subscriptions/<subscription id>...            20.84805
-2 2021-06-02 00:10:00+00:00  /subscriptions/<subscription id>...            19.72410
-3 2021-06-02 00:30:00+00:00  /subscriptions/<subscription id>...            19.41265
-4 2021-06-02 00:40:00+00:00  /subscriptions/<subscription id>...            19.17145
-
-
-
--------------------------
-"""
 ```
-
-#### Results in Key Value form
-
-
-Very Simlar to above:
+#### Results in tabular form with partial_error
 
 ```python
-for response in results:
-    if response.error is not None:
-        error = response.error.innererror
-        print(error)
-    
-    table = response.tables[0]
-    df = pd.DataFrame(table.rows, columns=table.columns)
-    print(df.to_dict(orient='records'))
-    print("\n\n-------------------------\n\n")
+from datetime import datetime, timedelta
+import os
+import pandas as pd
+from azure.monitor.query import LogsQueryClient, LogsBatchQuery
+from azure.identity import DefaultAzureCredential
+
+
+credential  = DefaultAzureCredential()
+
+client = LogsQueryClient(credential)
+
+requests = [
+    LogsBatchQuery(
+        query="AzureActivity | summarize count()",
+        timespan=timedelta(hours=1),
+        workspace_id= os.environ['LOG_WORKSPACE_ID'],
+    ),
+    LogsBatchQuery(
+        query= """let Weight = 92233720368547758; range x from 1 to 3 step 1 | summarize percentilesw(x, Weight * 100, 50)""",
+        timespan=(datetime(2021, 6, 2), timedelta(hours=1)),
+        workspace_id= os.environ['LOG_WORKSPACE_ID']
+    ),
+    LogsBatchQuery(
+        query= """This is a bad query""",
+        workspace_id= os.environ['LOG_WORKSPACE_ID'],
+        timespan=(datetime(2021, 6, 2), datetime(2021, 6, 3)),
+    ),
+]
+results = client.query_batch(requests, allow_partial_errors=True)
+
+for ind, res in enumerate(results):
+    if res.is_error:
+        print(ind) # prints 3
+        # handle LogsQueryError
+        return
+    elif not res.is_error:
+        print(ind) # prints 1, 2
+        if res.partial_error:
+            # handle partial error
+            print(res.partial_error)
+        # handle table LogsQueryTable
+        for table in res: # directly iterates over tables
+            for item in table.row: # iterates directly over row type
+                print(item)
+        print(res.statistics)
+        print(res.visualization)
+        return
+
+
 ```
 
 ### Run a complex query to set server timeout for more than 3 minutes.
