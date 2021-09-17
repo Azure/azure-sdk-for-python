@@ -28,6 +28,7 @@ CALLBACK_URI = "https://bot.contoso.io/callback"
 CONNECTION_STRING = "endpoint=https://REDACTED.communication.azure.com/;accesskey=eyJhbG=="
 PARTICIPANT_ID = "dummyParticipantId"
 MEDIA_OPERATION_ID = "dummyMediaOperationId"
+USER_TO_USER_INFORMATION = "dummyUserToUserInformation"
 
 # CancelAllMediaOperaions
 CancelAllMediaOperaionsResponsePayload = {
@@ -61,3 +62,4 @@ PlayAudioResponsePayload = {
 AddParticipantResultPayload = {
     "participantId": PARTICIPANT_ID
     }
+

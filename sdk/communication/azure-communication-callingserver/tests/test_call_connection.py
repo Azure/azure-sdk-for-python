@@ -107,6 +107,26 @@ def data_source_test_add_participant():
 
     return parameters
 
+def data_source_test_transfer_call():
+
+    parameters = []
+    parameters.append((
+        _test_constants.ClientType_ConnectionString,
+        _test_constants.CALL_ID,
+        CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
+        _test_constants.USER_TO_USER_INFORMATION,
+        ))
+
+    parameters.append((
+        _test_constants.ClientType_ManagedIdentity,
+        _test_constants.CALL_ID,
+        CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
+        _test_constants.USER_TO_USER_INFORMATION,
+        True,
+        ))
+
+    return parameters
+
 def data_source_test_remove_participant():
 
     parameters = []
@@ -438,6 +458,56 @@ class TestCallConnection(unittest.TestCase):
              call_connection.cancel_participant_media_operation(
                 participant_id = participant_id,
                 media_operation_id = media_operation_id
+                )
+        except:
+            raised = True
+        assert raised == True
+
+    @parameterized.expand(data_source_test_transfer_call())
+    def test_transfer_call_succeed(
+        self,
+        test_name, # type: str
+        call_connection_id, # type: str
+        participant, # type: CommunicationIdentifier
+        user_to_user_information, # type: str
+        use_managed_identity = False # type: bool
+        ):
+
+        call_connection = _test_utils.create_mock_call_connection(
+            call_connection_id,
+            status_code=202,
+            payload=None,
+            use_managed_identity=use_managed_identity
+            )
+
+        call_connection.transfer_call(
+            target_participant = participant,
+            user_to_user_information = user_to_user_information
+            )
+        assert call_connection.call_connection_id == _test_constants.CALL_ID
+
+    @parameterized.expand(data_source_test_transfer_call())
+    def test_transfer_call_failed(
+        self,
+        test_name, # type: str
+        call_connection_id, # type: str
+        participant, # type: CommunicationIdentifier
+        user_to_user_information, # type: str
+        use_managed_identity = False # type: bool
+        ):
+
+        call_connection = _test_utils.create_mock_call_connection(
+            call_connection_id,
+            status_code=404,
+            payload=None,
+            use_managed_identity = use_managed_identity
+            )
+
+        raised = False
+        try:
+            call_connection.transfer_call(
+                target_participant = participant,
+                user_to_user_information = user_to_user_information
                 )
         except:
             raised = True

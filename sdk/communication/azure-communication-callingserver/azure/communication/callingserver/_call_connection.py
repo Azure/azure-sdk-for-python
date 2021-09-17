@@ -10,6 +10,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._communication_identifier_serializer import serialize_identifier
 from ._converters import (AddParticipantRequestConverter,
+                          TransferCallRequestConverter,
                           CancelMediaOperationRequestConverter,
                           PlayAudioRequestConverter)
 from ._generated.models import (AddParticipantResult,
@@ -146,5 +147,27 @@ class CallConnection(object):
             call_connection_id=self.call_connection_id,
             participant_id=participant_id,
             cancel_media_operation_request=cancel_media_operation_request,
+            **kwargs
+        )
+
+    @distributed_trace()
+    def transfer_call(
+            self,
+            target_participant,  # type: CommunicationIdentifier
+            user_to_user_information: Optional[str],
+            **kwargs  # type: Any
+        ):  # type: (...) -> None
+
+        if not target_participant:
+            raise ValueError("target_participant can not be None")
+
+        transfer_call_request = TransferCallRequestConverter.convert(
+            target_participant=serialize_identifier(target_participant),
+            user_to_user_information=user_to_user_information
+            )
+
+        return self._call_connection_client.transfer(
+            call_connection_id=self.call_connection_id,
+            transfer_call_request=transfer_call_request,
             **kwargs
         )
