@@ -7,11 +7,11 @@ interactions:
       UriToSignWith:
       - https://acstelephonyportaltesting.communication.azure.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
       User-Agent:
-      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
       host:
       - acstelephonyportaltesting.communication.azure.com
       x-ms-date:
-      - Fri, 17 Sep 2021 17:57:31 GMT
+      - Fri, 17 Sep 2021 22:07:04 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -25,7 +25,7 @@ interactions:
       content-length: '100'
       content-range: bytes 0-99/837
       content-type: application/octet-stream
-      date: Fri, 17 Sep 2021 17:57:30 GMT
+      date: Fri, 17 Sep 2021 22:07:03 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000; includeSubDomains
     status:
@@ -40,11 +40,11 @@ interactions:
       UriToSignWith:
       - https://acstelephonyportaltesting.communication.azure.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
       User-Agent:
-      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
       host:
       - acstelephonyportaltesting.communication.azure.com
       x-ms-date:
-      - Fri, 17 Sep 2021 17:57:31 GMT
+      - Fri, 17 Sep 2021 22:07:04 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -58,7 +58,7 @@ interactions:
       content-length: '100'
       content-range: bytes 100-199/837
       content-type: application/octet-stream
-      date: Fri, 17 Sep 2021 17:57:30 GMT
+      date: Fri, 17 Sep 2021 22:07:03 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000; includeSubDomains
     status:
@@ -73,11 +73,11 @@ interactions:
       UriToSignWith:
       - https://acstelephonyportaltesting.communication.azure.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
       User-Agent:
-      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
       host:
       - acstelephonyportaltesting.communication.azure.com
       x-ms-date:
-      - Fri, 17 Sep 2021 17:57:31 GMT
+      - Fri, 17 Sep 2021 22:07:04 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -91,40 +91,7 @@ interactions:
       content-length: '100'
       content-range: bytes 400-499/837
       content-type: application/octet-stream
-      date: Fri, 17 Sep 2021 17:57:30 GMT
-      server: Microsoft-HTTPAPI/2.0
-      strict-transport-security: max-age=31536000; includeSubDomains
-    status:
-      code: 206
-      message: Partial Content
-    url: https://storage.asm.skype.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
-- request:
-    body: ''
-    headers:
-      Range:
-      - bytes=300-399
-      UriToSignWith:
-      - https://acstelephonyportaltesting.communication.azure.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
-      User-Agent:
-      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.7.9 (Windows-10-10.0.19041-SP0)
-      host:
-      - acstelephonyportaltesting.communication.azure.com
-      x-ms-date:
-      - Fri, 17 Sep 2021 17:57:31 GMT
-      x-ms-return-client-request-id:
-      - 'true'
-    method: GET
-    uri: https://storage.asm.skype.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
-  response:
-    body:
-      string: "rvals\": [],\r\n  \"recordingInfo\": {\r\n    \"contentType\": \"mixed\",\r\n
-        \   \"channelType\": \"audioVideo\",\r\n  "
-    headers:
-      cache-control: no-cache, max-age=0, s-maxage=0, private
-      content-length: '100'
-      content-range: bytes 300-399/837
-      content-type: application/octet-stream
-      date: Fri, 17 Sep 2021 17:57:30 GMT
+      date: Fri, 17 Sep 2021 22:07:03 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000; includeSubDomains
     status:
@@ -139,11 +106,11 @@ interactions:
       UriToSignWith:
       - https://acstelephonyportaltesting.communication.azure.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
       User-Agent:
-      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
       host:
       - acstelephonyportaltesting.communication.azure.com
       x-ms-date:
-      - Fri, 17 Sep 2021 17:57:31 GMT
+      - Fri, 17 Sep 2021 22:07:04 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -157,7 +124,40 @@ interactions:
       content-length: '100'
       content-range: bytes 500-599/837
       content-type: application/octet-stream
-      date: Fri, 17 Sep 2021 17:57:30 GMT
+      date: Fri, 17 Sep 2021 22:07:04 GMT
+      server: Microsoft-HTTPAPI/2.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+    status:
+      code: 206
+      message: Partial Content
+    url: https://storage.asm.skype.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
+- request:
+    body: ''
+    headers:
+      Range:
+      - bytes=300-399
+      UriToSignWith:
+      - https://acstelephonyportaltesting.communication.azure.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
+      host:
+      - acstelephonyportaltesting.communication.azure.com
+      x-ms-date:
+      - Fri, 17 Sep 2021 22:07:04 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://storage.asm.skype.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
+  response:
+    body:
+      string: "rvals\": [],\r\n  \"recordingInfo\": {\r\n    \"contentType\": \"mixed\",\r\n
+        \   \"channelType\": \"audioVideo\",\r\n  "
+    headers:
+      cache-control: no-cache, max-age=0, s-maxage=0, private
+      content-length: '100'
+      content-range: bytes 300-399/837
+      content-type: application/octet-stream
+      date: Fri, 17 Sep 2021 22:07:03 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000; includeSubDomains
     status:
@@ -172,11 +172,11 @@ interactions:
       UriToSignWith:
       - https://acstelephonyportaltesting.communication.azure.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
       User-Agent:
-      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
       host:
       - acstelephonyportaltesting.communication.azure.com
       x-ms-date:
-      - Fri, 17 Sep 2021 17:57:31 GMT
+      - Fri, 17 Sep 2021 22:07:04 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -190,7 +190,7 @@ interactions:
       content-length: '100'
       content-range: bytes 200-299/837
       content-type: application/octet-stream
-      date: Fri, 17 Sep 2021 17:57:30 GMT
+      date: Fri, 17 Sep 2021 22:07:04 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000; includeSubDomains
     status:
@@ -205,11 +205,11 @@ interactions:
       UriToSignWith:
       - https://acstelephonyportaltesting.communication.azure.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
       User-Agent:
-      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
       host:
       - acstelephonyportaltesting.communication.azure.com
       x-ms-date:
-      - Fri, 17 Sep 2021 17:57:31 GMT
+      - Fri, 17 Sep 2021 22:07:04 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -223,7 +223,7 @@ interactions:
       content-length: '100'
       content-range: bytes 600-699/837
       content-type: application/octet-stream
-      date: Fri, 17 Sep 2021 17:57:30 GMT
+      date: Fri, 17 Sep 2021 22:07:04 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000; includeSubDomains
     status:
@@ -238,11 +238,11 @@ interactions:
       UriToSignWith:
       - https://acstelephonyportaltesting.communication.azure.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
       User-Agent:
-      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
       host:
       - acstelephonyportaltesting.communication.azure.com
       x-ms-date:
-      - Fri, 17 Sep 2021 17:57:31 GMT
+      - Fri, 17 Sep 2021 22:07:04 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -255,7 +255,7 @@ interactions:
       content-length: '100'
       content-range: bytes 700-799/837
       content-type: application/octet-stream
-      date: Fri, 17 Sep 2021 17:57:30 GMT
+      date: Fri, 17 Sep 2021 22:07:03 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000; includeSubDomains
     status:
@@ -270,11 +270,11 @@ interactions:
       UriToSignWith:
       - https://acstelephonyportaltesting.communication.azure.com/v1/objects/0-wus-d4-6afafe78b9e313d77933b87578eabc9e/content/acsmetadata
       User-Agent:
-      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
       host:
       - acstelephonyportaltesting.communication.azure.com
       x-ms-date:
-      - Fri, 17 Sep 2021 17:57:31 GMT
+      - Fri, 17 Sep 2021 22:07:04 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -287,7 +287,7 @@ interactions:
       content-length: '37'
       content-range: bytes 800-836/837
       content-type: application/octet-stream
-      date: Fri, 17 Sep 2021 17:57:30 GMT
+      date: Fri, 17 Sep 2021 22:07:04 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000; includeSubDomains
     status:
