@@ -16,7 +16,7 @@ from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar
+    from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -42,6 +42,68 @@ class ServerCallsOperations(object):
         self._serialize = serializer
         self._deserialize = deserializer
         self._config = config
+
+    def get_participants(
+        self,
+        server_call_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> List["_models.CallParticipant"]
+        """Get participants from a server call.
+
+        Get participants from a server call.
+
+        :param server_call_id: The server call id.
+        :type server_call_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: list of CallParticipant, or the result of cls(response)
+        :rtype: list[~azure.communication.callingserver.models.CallParticipant]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.CallParticipant"]]
+        error_map = {
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-09-15-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_participants.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'serverCallId': self._serialize.url("server_call_id", server_call_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        deserialized = self._deserialize('[CallParticipant]', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get_participants.metadata = {'url': '/calling/serverCalls/{serverCallId}/participants'}  # type: ignore
 
     def add_participant(
         self,
@@ -73,7 +135,7 @@ class ServerCallsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-06-15-preview"
+        api_version = "2021-09-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -113,6 +175,210 @@ class ServerCallsOperations(object):
         return deserialized
     add_participant.metadata = {'url': '/calling/serverCalls/{serverCallId}/participants'}  # type: ignore
 
+    def remove_participant_by_id(
+        self,
+        server_call_id,  # type: str
+        remove_participant_by_id_request,  # type: "_models.RemoveParticipantByIdRequest"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Remove participant from the call using identifier.
+
+        Remove participant from the call using identifier.
+
+        :param server_call_id: The server call id.
+        :type server_call_id: str
+        :param remove_participant_by_id_request: The identifier of the participant to be removed from
+         the call.
+        :type remove_participant_by_id_request: ~azure.communication.callingserver.models.RemoveParticipantByIdRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-09-15-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.remove_participant_by_id.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'serverCallId': self._serialize.url("server_call_id", server_call_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(remove_participant_by_id_request, 'RemoveParticipantByIdRequest')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    remove_participant_by_id.metadata = {'url': '/calling/serverCalls/{serverCallId}/participants/:removeUser'}  # type: ignore
+
+    def get_participant_by_id(
+        self,
+        server_call_id,  # type: str
+        get_participant_by_id_request,  # type: "_models.GetParticipantByIdRequest"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> List["_models.CallParticipant"]
+        """Get participant from the call using identifier.
+
+        Get participant from the call using identifier.
+
+        :param server_call_id: The server call id.
+        :type server_call_id: str
+        :param get_participant_by_id_request: The identifier of the participant to get from the call.
+        :type get_participant_by_id_request: ~azure.communication.callingserver.models.GetParticipantByIdRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: list of CallParticipant, or the result of cls(response)
+        :rtype: list[~azure.communication.callingserver.models.CallParticipant]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.CallParticipant"]]
+        error_map = {
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-09-15-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_participant_by_id.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'serverCallId': self._serialize.url("server_call_id", server_call_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(get_participant_by_id_request, 'GetParticipantByIdRequest')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        deserialized = self._deserialize('[CallParticipant]', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get_participant_by_id.metadata = {'url': '/calling/serverCalls/{serverCallId}/participants/:getUser'}  # type: ignore
+
+    def get_participant(
+        self,
+        server_call_id,  # type: str
+        participant_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.CallParticipant"
+        """Get participant by participant id from a call.
+
+        Get participant by participant id from a call.
+
+        :param server_call_id: The server call id.
+        :type server_call_id: str
+        :param participant_id: The participant id.
+        :type participant_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: CallParticipant, or the result of cls(response)
+        :rtype: ~azure.communication.callingserver.models.CallParticipant
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CallParticipant"]
+        error_map = {
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-09-15-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_participant.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'serverCallId': self._serialize.url("server_call_id", server_call_id, 'str'),
+            'participantId': self._serialize.url("participant_id", participant_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        deserialized = self._deserialize('CallParticipant', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get_participant.metadata = {'url': '/calling/serverCalls/{serverCallId}/participants/{participantId}'}  # type: ignore
+
     def remove_participant(
         self,
         server_call_id,  # type: str
@@ -124,9 +390,9 @@ class ServerCallsOperations(object):
 
         Remove participant from the call.
 
-        :param server_call_id: Server call id.
+        :param server_call_id: The server call id.
         :type server_call_id: str
-        :param participant_id: Participant id.
+        :param participant_id: The participant id.
         :type participant_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -143,7 +409,7 @@ class ServerCallsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-06-15-preview"
+        api_version = "2021-09-15-preview"
         accept = "application/json"
 
         # Construct URL
@@ -176,6 +442,299 @@ class ServerCallsOperations(object):
 
     remove_participant.metadata = {'url': '/calling/serverCalls/{serverCallId}/participants/{participantId}'}  # type: ignore
 
+    def start_hold_music(
+        self,
+        server_call_id,  # type: str
+        participant_id,  # type: str
+        request,  # type: "_models.StartHoldMusicRequest"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.StartHoldMusicResult"
+        """Play hold music to a participant.
+
+        Play hold music to a participant.
+
+        :param server_call_id: The server call id.
+        :type server_call_id: str
+        :param participant_id: The participant id.
+        :type participant_id: str
+        :param request: The start hold music request.
+        :type request: ~azure.communication.callingserver.models.StartHoldMusicRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: StartHoldMusicResult, or the result of cls(response)
+        :rtype: ~azure.communication.callingserver.models.StartHoldMusicResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StartHoldMusicResult"]
+        error_map = {
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-09-15-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.start_hold_music.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'serverCallId': self._serialize.url("server_call_id", server_call_id, 'str'),
+            'participantId': self._serialize.url("participant_id", participant_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(request, 'StartHoldMusicRequest')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        deserialized = self._deserialize('StartHoldMusicResult', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    start_hold_music.metadata = {'url': '/calling/serverCalls/{serverCallId}/participants/{participantId}/:startHoldMusic'}  # type: ignore
+
+    def stop_hold_music(
+        self,
+        server_call_id,  # type: str
+        participant_id,  # type: str
+        stop_hold_music_request,  # type: "_models.StopHoldMusicRequest"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.StopHoldMusicResult"
+        """Stop hold music to a participant.
+
+        Stop hold music to a participant.
+
+        :param server_call_id: The server call id.
+        :type server_call_id: str
+        :param participant_id: The participant id.
+        :type participant_id: str
+        :param stop_hold_music_request: The stop hold music request.
+        :type stop_hold_music_request: ~azure.communication.callingserver.models.StopHoldMusicRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: StopHoldMusicResult, or the result of cls(response)
+        :rtype: ~azure.communication.callingserver.models.StopHoldMusicResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StopHoldMusicResult"]
+        error_map = {
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-09-15-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.stop_hold_music.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'serverCallId': self._serialize.url("server_call_id", server_call_id, 'str'),
+            'participantId': self._serialize.url("participant_id", participant_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(stop_hold_music_request, 'StopHoldMusicRequest')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        deserialized = self._deserialize('StopHoldMusicResult', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    stop_hold_music.metadata = {'url': '/calling/serverCalls/{serverCallId}/participants/{participantId}/:stopHoldMusic'}  # type: ignore
+
+    def participant_play_audio(
+        self,
+        server_call_id,  # type: str
+        participant_id,  # type: str
+        play_audio_request,  # type: "_models.PlayAudioRequest"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.PlayAudioResult"
+        """Play audio to a participant.
+
+        Play audio to a participant.
+
+        :param server_call_id: Server call id.
+        :type server_call_id: str
+        :param participant_id: Participant id.
+        :type participant_id: str
+        :param play_audio_request: PlayAudioRequest body.
+        :type play_audio_request: ~azure.communication.callingserver.models.PlayAudioRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: PlayAudioResult, or the result of cls(response)
+        :rtype: ~azure.communication.callingserver.models.PlayAudioResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PlayAudioResult"]
+        error_map = {
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-09-15-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.participant_play_audio.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'serverCallId': self._serialize.url("server_call_id", server_call_id, 'str'),
+            'participantId': self._serialize.url("participant_id", participant_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(play_audio_request, 'PlayAudioRequest')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        deserialized = self._deserialize('PlayAudioResult', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    participant_play_audio.metadata = {'url': '/calling/serverCalls/{serverCallId}/participants/{participantId}/:playAudio'}  # type: ignore
+
+    def cancel_participant_media_operation(
+        self,
+        server_call_id,  # type: str
+        participant_id,  # type: str
+        cancel_media_operation_request,  # type: "_models.CancelMediaOperationRequest"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """cancel media operation for a participant.
+
+        cancel media operation for a participant.
+
+        :param server_call_id: The server call id.
+        :type server_call_id: str
+        :param participant_id: The participant id.
+        :type participant_id: str
+        :param cancel_media_operation_request: The cancel media operation request.
+        :type cancel_media_operation_request: ~azure.communication.callingserver.models.CancelMediaOperationRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-09-15-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.cancel_participant_media_operation.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'serverCallId': self._serialize.url("server_call_id", server_call_id, 'str'),
+            'participantId': self._serialize.url("participant_id", participant_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(cancel_media_operation_request, 'CancelMediaOperationRequest')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    cancel_participant_media_operation.metadata = {'url': '/calling/serverCalls/{serverCallId}/participants/{participantId}/:cancelMediaOperation'}  # type: ignore
+
     def start_recording(
         self,
         server_call_id,  # type: str
@@ -183,9 +742,9 @@ class ServerCallsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.StartCallRecordingResult"
-        """Start recording of the call.
+        """Start recording the call.
 
-        Start recording of the call.
+        Start recording the call.
 
         :param server_call_id: The server call id.
         :type server_call_id: str
@@ -206,7 +765,7 @@ class ServerCallsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-06-15-preview"
+        api_version = "2021-09-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -276,7 +835,7 @@ class ServerCallsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-06-15-preview"
+        api_version = "2021-09-15-preview"
         accept = "application/json"
 
         # Construct URL
@@ -342,7 +901,7 @@ class ServerCallsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-06-15-preview"
+        api_version = "2021-09-15-preview"
         accept = "application/json"
 
         # Construct URL
@@ -405,7 +964,7 @@ class ServerCallsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-06-15-preview"
+        api_version = "2021-09-15-preview"
         accept = "application/json"
 
         # Construct URL
@@ -468,7 +1027,7 @@ class ServerCallsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-06-15-preview"
+        api_version = "2021-09-15-preview"
         accept = "application/json"
 
         # Construct URL
@@ -531,7 +1090,7 @@ class ServerCallsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-06-15-preview"
+        api_version = "2021-09-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -601,7 +1160,7 @@ class ServerCallsOperations(object):
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-06-15-preview"
+        api_version = "2021-09-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -640,3 +1199,70 @@ class ServerCallsOperations(object):
 
         return deserialized
     play_audio.metadata = {'url': '/calling/serverCalls/{serverCallId}/:playAudio'}  # type: ignore
+
+    def cancel_media_operation(
+        self,
+        server_call_id,  # type: str
+        cancel_media_operation_request,  # type: "_models.CancelMediaOperationRequest"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """cancel media operation.
+
+        cancel media operation.
+
+        :param server_call_id: The server call id.
+        :type server_call_id: str
+        :param cancel_media_operation_request: The cancel media operation request.
+        :type cancel_media_operation_request: ~azure.communication.callingserver.models.CancelMediaOperationRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-09-15-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.cancel_media_operation.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'serverCallId': self._serialize.url("server_call_id", server_call_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(cancel_media_operation_request, 'CancelMediaOperationRequest')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    cancel_media_operation.metadata = {'url': '/calling/serverCalls/{serverCallId}/:cancelMediaOperation'}  # type: ignore

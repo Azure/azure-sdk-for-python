@@ -110,6 +110,76 @@ class AddParticipantResultEvent(msrest.serialization.Model):
         self.status = status
 
 
+class CallConnectionProperties(msrest.serialization.Model):
+    """CallConnectionProperties.
+
+    :param call_connection_id: The call connection id.
+    :type call_connection_id: str
+    :param source: The source of the call.
+    :type source: ~azure.communication.callingserver.models.CommunicationIdentifierModel
+    :param alternate_caller_id: The alternate identity of the source of the call if dialing out to
+     a pstn number.
+    :type alternate_caller_id: ~azure.communication.callingserver.models.PhoneNumberIdentifierModel
+    :param targets: The targets of the call.
+    :type targets: list[~azure.communication.callingserver.models.CommunicationIdentifierModel]
+    :param call_connection_state: The state of the call connection. Possible values include:
+     "connecting", "connected", "transferring", "transferAccepted", "disconnecting", "disconnected".
+    :type call_connection_state: str or
+     ~azure.communication.callingserver.models.CallConnectionState
+    :param subject: The subject.
+    :type subject: str
+    :param callback_uri: The callback URI.
+    :type callback_uri: str
+    :param requested_media_types: The requested modalities.
+    :type requested_media_types: list[str or ~azure.communication.callingserver.models.MediaType]
+    :param requested_call_events: The requested call events to subscribe to.
+    :type requested_call_events: list[str or
+     ~azure.communication.callingserver.models.EventSubscriptionType]
+    :param server_call_id: The server call id.
+    :type server_call_id: str
+    """
+
+    _attribute_map = {
+        'call_connection_id': {'key': 'callConnectionId', 'type': 'str'},
+        'source': {'key': 'source', 'type': 'CommunicationIdentifierModel'},
+        'alternate_caller_id': {'key': 'alternateCallerId', 'type': 'PhoneNumberIdentifierModel'},
+        'targets': {'key': 'targets', 'type': '[CommunicationIdentifierModel]'},
+        'call_connection_state': {'key': 'callConnectionState', 'type': 'str'},
+        'subject': {'key': 'subject', 'type': 'str'},
+        'callback_uri': {'key': 'callbackUri', 'type': 'str'},
+        'requested_media_types': {'key': 'requestedMediaTypes', 'type': '[str]'},
+        'requested_call_events': {'key': 'requestedCallEvents', 'type': '[str]'},
+        'server_call_id': {'key': 'serverCallId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        call_connection_id: Optional[str] = None,
+        source: Optional["CommunicationIdentifierModel"] = None,
+        alternate_caller_id: Optional["PhoneNumberIdentifierModel"] = None,
+        targets: Optional[List["CommunicationIdentifierModel"]] = None,
+        call_connection_state: Optional[Union[str, "CallConnectionState"]] = None,
+        subject: Optional[str] = None,
+        callback_uri: Optional[str] = None,
+        requested_media_types: Optional[List[Union[str, "MediaType"]]] = None,
+        requested_call_events: Optional[List[Union[str, "EventSubscriptionType"]]] = None,
+        server_call_id: Optional[str] = None,
+        **kwargs
+    ):
+        super(CallConnectionProperties, self).__init__(**kwargs)
+        self.call_connection_id = call_connection_id
+        self.source = source
+        self.alternate_caller_id = alternate_caller_id
+        self.targets = targets
+        self.call_connection_state = call_connection_state
+        self.subject = subject
+        self.callback_uri = callback_uri
+        self.requested_media_types = requested_media_types
+        self.requested_call_events = requested_call_events
+        self.server_call_id = server_call_id
+
+
 class CallConnectionStateChangedEvent(msrest.serialization.Model):
     """The call connection state changed event.
 
@@ -119,8 +189,9 @@ class CallConnectionStateChangedEvent(msrest.serialization.Model):
     :type server_call_id: str
     :param call_connection_id: The call connection id.
     :type call_connection_id: str
-    :param call_connection_state: Required. The call connection state. Possible values include:
-     "incoming", "connecting", "connected", "disconnecting", "disconnected".
+    :param call_connection_state: Required. The state of the call connection. Possible values
+     include: "connecting", "connected", "transferring", "transferAccepted", "disconnecting",
+     "disconnected".
     :type call_connection_state: str or
      ~azure.communication.callingserver.models.CallConnectionState
     """
@@ -154,7 +225,7 @@ class CallParticipant(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param identifier: Communication identifier of the participant.
+    :param identifier: Required. Communication identifier of the participant.
     :type identifier: ~azure.communication.callingserver.models.CommunicationIdentifierModel
     :param participant_id: Participant id.
     :type participant_id: str
@@ -163,6 +234,7 @@ class CallParticipant(msrest.serialization.Model):
     """
 
     _validation = {
+        'identifier': {'required': True},
         'is_muted': {'required': True},
     }
 
@@ -175,8 +247,8 @@ class CallParticipant(msrest.serialization.Model):
     def __init__(
         self,
         *,
+        identifier: "CommunicationIdentifierModel",
         is_muted: bool,
-        identifier: Optional["CommunicationIdentifierModel"] = None,
         participant_id: Optional[str] = None,
         **kwargs
     ):
@@ -320,6 +392,33 @@ class CancelAllMediaOperationsResult(msrest.serialization.Model):
         self.status = status
         self.operation_context = operation_context
         self.result_info = result_info
+
+
+class CancelMediaOperationRequest(msrest.serialization.Model):
+    """The request payload for stopping a media operation for a participant.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param media_operation_id: Required. The operationId of the media operation to cancel.
+    :type media_operation_id: str
+    """
+
+    _validation = {
+        'media_operation_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'media_operation_id': {'key': 'mediaOperationId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        media_operation_id: str,
+        **kwargs
+    ):
+        super(CancelMediaOperationRequest, self).__init__(**kwargs)
+        self.media_operation_id = media_operation_id
 
 
 class CommunicationError(msrest.serialization.Model):
@@ -546,6 +645,33 @@ class CreateCallResult(msrest.serialization.Model):
         self.call_connection_id = call_connection_id
 
 
+class GetParticipantByIdRequest(msrest.serialization.Model):
+    """The get participant by identifier request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param identifier: Required. The identifier of the participant.
+    :type identifier: ~azure.communication.callingserver.models.CommunicationIdentifierModel
+    """
+
+    _validation = {
+        'identifier': {'required': True},
+    }
+
+    _attribute_map = {
+        'identifier': {'key': 'identifier', 'type': 'CommunicationIdentifierModel'},
+    }
+
+    def __init__(
+        self,
+        *,
+        identifier: "CommunicationIdentifierModel",
+        **kwargs
+    ):
+        super(GetParticipantByIdRequest, self).__init__(**kwargs)
+        self.identifier = identifier
+
+
 class JoinCallRequest(msrest.serialization.Model):
     """The request payload for join call.
 
@@ -713,12 +839,15 @@ class PhoneNumberIdentifierModel(msrest.serialization.Model):
 class PlayAudioRequest(msrest.serialization.Model):
     """The request payload for playing audio.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param audio_file_uri: The media resource uri of the play audio request.
      Currently only Wave file (.wav) format audio prompts are supported.
      More specifically, the audio content in the wave file must be mono (single-channel),
      16-bit samples with a 16,000 (16KHz) sampling rate.
     :type audio_file_uri: str
-    :param loop: The flag indicating whether audio file needs to be played in loop or not.
+    :param loop: Required. The flag indicating whether audio file needs to be played in loop or
+     not.
     :type loop: bool
     :param operation_context: The value to identify context of the operation.
     :type operation_context: str
@@ -728,6 +857,10 @@ class PlayAudioRequest(msrest.serialization.Model):
     :param callback_uri: The callback Uri to receive PlayAudio status notifications.
     :type callback_uri: str
     """
+
+    _validation = {
+        'loop': {'required': True},
+    }
 
     _attribute_map = {
         'audio_file_uri': {'key': 'audioFileUri', 'type': 'str'},
@@ -740,8 +873,8 @@ class PlayAudioRequest(msrest.serialization.Model):
     def __init__(
         self,
         *,
+        loop: bool,
         audio_file_uri: Optional[str] = None,
-        loop: Optional[bool] = None,
         operation_context: Optional[str] = None,
         audio_file_id: Optional[str] = None,
         callback_uri: Optional[str] = None,
@@ -836,6 +969,33 @@ class PlayAudioResultEvent(msrest.serialization.Model):
         self.status = status
 
 
+class RemoveParticipantByIdRequest(msrest.serialization.Model):
+    """The remove participant by identifier request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param identifier: Required. The identifier of the participant to be removed from the call.
+    :type identifier: ~azure.communication.callingserver.models.CommunicationIdentifierModel
+    """
+
+    _validation = {
+        'identifier': {'required': True},
+    }
+
+    _attribute_map = {
+        'identifier': {'key': 'identifier', 'type': 'CommunicationIdentifierModel'},
+    }
+
+    def __init__(
+        self,
+        *,
+        identifier: "CommunicationIdentifierModel",
+        **kwargs
+    ):
+        super(RemoveParticipantByIdRequest, self).__init__(**kwargs)
+        self.identifier = identifier
+
+
 class ResultInfo(msrest.serialization.Model):
     """Result info class to be used to report result status for actions/operations.
 
@@ -844,6 +1004,7 @@ class ResultInfo(msrest.serialization.Model):
     :param code: Required. The result code associated with the operation.
     :type code: int
     :param subcode: Required. The subcode that further classifies the result.
+     The subcode further classifies a failure. For example.
     :type subcode: int
     :param message: The message is a detail explanation of subcode.
     :type message: str
@@ -879,20 +1040,41 @@ class StartCallRecordingRequest(msrest.serialization.Model):
 
     :param recording_state_callback_uri: The uri to send notifications to.
     :type recording_state_callback_uri: str
+    :param recording_content_type: Content type of call recording. Possible values include:
+     "audio", "audioVideo".
+    :type recording_content_type: str or
+     ~azure.communication.callingserver.models.RecordingContentType
+    :param recording_channel_type: Channel type of call recording. Possible values include:
+     "mixed", "unmixed".
+    :type recording_channel_type: str or
+     ~azure.communication.callingserver.models.RecordingChannelType
+    :param recording_format_type: Format type of call recording. Possible values include: "wav",
+     "mp3", "mp4".
+    :type recording_format_type: str or
+     ~azure.communication.callingserver.models.RecordingFormatType
     """
 
     _attribute_map = {
         'recording_state_callback_uri': {'key': 'recordingStateCallbackUri', 'type': 'str'},
+        'recording_content_type': {'key': 'recordingContentType', 'type': 'str'},
+        'recording_channel_type': {'key': 'recordingChannelType', 'type': 'str'},
+        'recording_format_type': {'key': 'recordingFormatType', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
         recording_state_callback_uri: Optional[str] = None,
+        recording_content_type: Optional[Union[str, "RecordingContentType"]] = None,
+        recording_channel_type: Optional[Union[str, "RecordingChannelType"]] = None,
+        recording_format_type: Optional[Union[str, "RecordingFormatType"]] = None,
         **kwargs
     ):
         super(StartCallRecordingRequest, self).__init__(**kwargs)
         self.recording_state_callback_uri = recording_state_callback_uri
+        self.recording_content_type = recording_content_type
+        self.recording_channel_type = recording_channel_type
+        self.recording_format_type = recording_format_type
 
 
 class StartCallRecordingResult(msrest.serialization.Model):
@@ -914,6 +1096,155 @@ class StartCallRecordingResult(msrest.serialization.Model):
     ):
         super(StartCallRecordingResult, self).__init__(**kwargs)
         self.recording_id = recording_id
+
+
+class StartHoldMusicRequest(msrest.serialization.Model):
+    """The request payload for playing hold music for a participant.
+
+    :param audio_file_uri: The media resource uri of the hold music request.
+     Currently only Wave file (.wav) format audio prompts are supported.
+     More specifically, the audio content in the wave file must be mono (single-channel),
+     16-bit samples with a 16,000 (16KHz) sampling rate.
+    :type audio_file_uri: str
+    :param audio_file_id: An id for the media in the AudioFileUri, using which we cache the media
+     resource.
+    :type audio_file_id: str
+    :param callback_uri: The callback URI.
+    :type callback_uri: str
+    """
+
+    _attribute_map = {
+        'audio_file_uri': {'key': 'audioFileUri', 'type': 'str'},
+        'audio_file_id': {'key': 'audioFileId', 'type': 'str'},
+        'callback_uri': {'key': 'callbackUri', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        audio_file_uri: Optional[str] = None,
+        audio_file_id: Optional[str] = None,
+        callback_uri: Optional[str] = None,
+        **kwargs
+    ):
+        super(StartHoldMusicRequest, self).__init__(**kwargs)
+        self.audio_file_uri = audio_file_uri
+        self.audio_file_id = audio_file_id
+        self.callback_uri = callback_uri
+
+
+class StartHoldMusicResult(msrest.serialization.Model):
+    """The response payload for start hold music operation.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param operation_id: The operation id.
+    :type operation_id: str
+    :param status: Required. The status of the operation. Possible values include: "notStarted",
+     "running", "completed", "failed".
+    :type status: str or ~azure.communication.callingserver.models.OperationStatus
+    :param operation_context: The operation context provided by client.
+    :type operation_context: str
+    :param result_info: The result info for the operation.
+    :type result_info: ~azure.communication.callingserver.models.ResultInfo
+    """
+
+    _validation = {
+        'status': {'required': True},
+    }
+
+    _attribute_map = {
+        'operation_id': {'key': 'operationId', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'operation_context': {'key': 'operationContext', 'type': 'str'},
+        'result_info': {'key': 'resultInfo', 'type': 'ResultInfo'},
+    }
+
+    def __init__(
+        self,
+        *,
+        status: Union[str, "OperationStatus"],
+        operation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_info: Optional["ResultInfo"] = None,
+        **kwargs
+    ):
+        super(StartHoldMusicResult, self).__init__(**kwargs)
+        self.operation_id = operation_id
+        self.status = status
+        self.operation_context = operation_context
+        self.result_info = result_info
+
+
+class StopHoldMusicRequest(msrest.serialization.Model):
+    """The request payload for playing hold music for a participant.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param start_hold_music_operation_id: Required. The operationId of the StartHoldMusicOperation
+     to stop.
+    :type start_hold_music_operation_id: str
+    """
+
+    _validation = {
+        'start_hold_music_operation_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'start_hold_music_operation_id': {'key': 'startHoldMusicOperationId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        start_hold_music_operation_id: str,
+        **kwargs
+    ):
+        super(StopHoldMusicRequest, self).__init__(**kwargs)
+        self.start_hold_music_operation_id = start_hold_music_operation_id
+
+
+class StopHoldMusicResult(msrest.serialization.Model):
+    """The response payload for start hold music operation.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param operation_id: The operation id.
+    :type operation_id: str
+    :param status: Required. The status of the operation. Possible values include: "notStarted",
+     "running", "completed", "failed".
+    :type status: str or ~azure.communication.callingserver.models.OperationStatus
+    :param operation_context: The operation context provided by client.
+    :type operation_context: str
+    :param result_info: The result info for the operation.
+    :type result_info: ~azure.communication.callingserver.models.ResultInfo
+    """
+
+    _validation = {
+        'status': {'required': True},
+    }
+
+    _attribute_map = {
+        'operation_id': {'key': 'operationId', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'operation_context': {'key': 'operationContext', 'type': 'str'},
+        'result_info': {'key': 'resultInfo', 'type': 'ResultInfo'},
+    }
+
+    def __init__(
+        self,
+        *,
+        status: Union[str, "OperationStatus"],
+        operation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_info: Optional["ResultInfo"] = None,
+        **kwargs
+    ):
+        super(StopHoldMusicResult, self).__init__(**kwargs)
+        self.operation_id = operation_id
+        self.status = status
+        self.operation_context = operation_context
+        self.result_info = result_info
 
 
 class ToneInfo(msrest.serialization.Model):
@@ -982,3 +1313,37 @@ class ToneReceivedEvent(msrest.serialization.Model):
         super(ToneReceivedEvent, self).__init__(**kwargs)
         self.tone_info = tone_info
         self.call_connection_id = call_connection_id
+
+
+class TransferCallRequest(msrest.serialization.Model):
+    """The transfer call request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param target_participant: Required. The identity of the target where call should be transfer
+     to.
+    :type target_participant:
+     ~azure.communication.callingserver.models.CommunicationIdentifierModel
+    :param user_to_user_information: The user to user information.
+    :type user_to_user_information: str
+    """
+
+    _validation = {
+        'target_participant': {'required': True},
+    }
+
+    _attribute_map = {
+        'target_participant': {'key': 'targetParticipant', 'type': 'CommunicationIdentifierModel'},
+        'user_to_user_information': {'key': 'userToUserInformation', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        target_participant: "CommunicationIdentifierModel",
+        user_to_user_information: Optional[str] = None,
+        **kwargs
+    ):
+        super(TransferCallRequest, self).__init__(**kwargs)
+        self.target_participant = target_participant
+        self.user_to_user_information = user_to_user_information
