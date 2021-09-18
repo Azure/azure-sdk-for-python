@@ -29,7 +29,7 @@ class SourceControlConfigurationClientConfiguration(Configuration):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The Azure subscription ID. This is a GUID-formatted string (e.g. 00000000-0000-0000-0000-000000000000).
+    :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
     """
 
@@ -48,7 +48,7 @@ class SourceControlConfigurationClientConfiguration(Configuration):
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.api_version = "2020-10-01-preview"
+        self.api_version = "2021-09-01"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-kubernetesconfiguration/{}'.format(VERSION))
         self._configure(**kwargs)

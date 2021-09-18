@@ -26,22 +26,14 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
-class ComplianceStateType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The compliance state of the configuration.
+class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
     """
 
-    PENDING = "Pending"
-    COMPLIANT = "Compliant"
-    NONCOMPLIANT = "Noncompliant"
-    INSTALLED = "Installed"
-    FAILED = "Failed"
-
-class EnableHelmOperatorType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Option to enable Helm Operator for this git configuration.
-    """
-
-    TRUE = "true"
-    FALSE = "false"
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
 
 class Enum0(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -53,33 +45,21 @@ class Enum1(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MANAGED_CLUSTERS = "managedClusters"
     CONNECTED_CLUSTERS = "connectedClusters"
 
-class MessageLevelType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Level of the message.
+class LevelType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Level of the status.
     """
 
     ERROR = "Error"
     WARNING = "Warning"
     INFORMATION = "Information"
 
-class OperatorScopeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Scope at which the operator will be installed.
+class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The provisioning state of the extension resource.
     """
 
-    CLUSTER = "cluster"
-    NAMESPACE = "namespace"
-
-class OperatorType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of the operator
-    """
-
-    FLUX = "Flux"
-
-class ProvisioningStateType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The provisioning state of the resource provider.
-    """
-
-    ACCEPTED = "Accepted"
-    DELETING = "Deleting"
-    RUNNING = "Running"
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
+    CANCELED = "Canceled"
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"

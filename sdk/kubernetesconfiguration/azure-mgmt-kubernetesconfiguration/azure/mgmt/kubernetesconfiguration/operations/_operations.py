@@ -50,7 +50,8 @@ class Operations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.ResourceProviderOperationList"]
-        """List all the available operations the KubernetesConfiguration resource provider supports.
+        """List all the available operations the KubernetesConfiguration resource provider supports, in
+        this api-version.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ResourceProviderOperationList or the result of cls(response)
@@ -62,7 +63,7 @@ class Operations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-01-preview"
+        api_version = "2021-09-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -98,8 +99,9 @@ class Operations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
