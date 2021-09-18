@@ -26,7 +26,8 @@ from _shared.testcase import (
 )
 from devtools_testutils import is_live
 from _shared.utils import get_http_logging_policy
-from utils._live_test_utils_async import CallingServerLiveTestUtils
+from utils._live_test_utils_async import CallingServerLiveTestUtilsAsync
+from utils._live_test_utils import CallingServerLiveTestUtils
 from utils._test_mock_utils_async import FakeTokenCredential_Async
 from utils._test_utils import TestUtils
 
@@ -54,9 +55,6 @@ class CallConnectionTestAsync(AsyncCommunicationTestCase):
                 BodyReplacerProcessor(keys=["alternateCallerId", "targets", "source", "callbackUri"]),
                 ResponseReplacerProcessor(keys=[self._resource_name])])
         
-    @AsyncCommunicationTestCase.await_prepared_test
-    async def test_create_play_cancel_hangup_scenario_async(self):
-
         # create CallingServerClient
         endpoint, _ = parse_connection_str(self.connection_str)
         self.endpoint = endpoint
@@ -67,28 +65,30 @@ class CallConnectionTestAsync(AsyncCommunicationTestCase):
             credential = DefaultAzureCredential()
 
         self.callingserver_client = CallingServerClient(
-            self.endpoint,
+            endpoint,
             credential,
             http_logging_policy=get_http_logging_policy()
         )
 
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_create_play_cancel_hangup_scenario_async(self):
         # create option
-        self.options = CreateCallOptions(
+        options = CreateCallOptions(
             callback_uri=CONST.AppCallbackUrl,
             requested_media_types=[MediaType.AUDIO],
             requested_call_events=[EventSubscriptionType.PARTICIPANTS_UPDATED, EventSubscriptionType.DTMF_RECEIVED]
         )
-        self.options.alternate_Caller_Id = PhoneNumberIdentifier(self.from_phone_number)
+        options.alternate_Caller_Id = PhoneNumberIdentifier(self.from_phone_number)
 
         # Establish a call
         async with self.callingserver_client:
             call_connection_async = await self.callingserver_client.create_call_connection(
                         source=CommunicationUserIdentifier(self.from_user),
                         targets=[PhoneNumberIdentifier(self.to_phone_number)],
-                        options=self.options,
+                        options=options,
                         )
 
-            CallingServerLiveTestUtils.validate_callconnection_Async(call_connection_async)
+            CallingServerLiveTestUtilsAsync.validate_callconnection_Async(call_connection_async)
 
             if is_live():
                 time.sleep(10)
@@ -109,56 +109,40 @@ class CallConnectionTestAsync(AsyncCommunicationTestCase):
                     options
                     )
 
-                CallingServerLiveTestUtils.validate_play_audio_result_Async(play_audio_result)
+                CallingServerLiveTestUtils.validate_play_audio_result(play_audio_result)
 
                 # Cancel All Media Operations
                 CancelMediaOperationContext = str(uuid.uuid4())
                 cancel_all_media_operations_result = await call_connection_async.cancel_all_media_operations(
                     CancelMediaOperationContext
-                    )   
+                    )
 
-                CallingServerLiveTestUtils.validate_cancel_all_media_operations_Async(cancel_all_media_operations_result)
+                CallingServerLiveTestUtils.validate_cancel_all_media_operations(cancel_all_media_operations_result)
                 if is_live():
                     time.sleep(5)
 
                 # Hang up
                 await call_connection_async.hang_up()
-
+    
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_add_remove_hangup_scenario_async(self):
-
-        # create CallingServerClient
-        endpoint, _ = parse_connection_str(self.connection_str)
-        self.endpoint = endpoint
-
-        if not is_live():
-            credential = FakeTokenCredential_Async()
-        else:
-            credential = DefaultAzureCredential()
-
-        self.callingserver_client = CallingServerClient(
-            self.endpoint,
-            credential,
-            http_logging_policy=get_http_logging_policy()
-        )
-
         # create option
-        self.options = CreateCallOptions(
+        options = CreateCallOptions(
             callback_uri=CONST.AppCallbackUrl,
             requested_media_types=[MediaType.AUDIO],
             requested_call_events=[EventSubscriptionType.PARTICIPANTS_UPDATED, EventSubscriptionType.DTMF_RECEIVED]
         )
-        self.options.alternate_Caller_Id = PhoneNumberIdentifier(self.from_phone_number)
+        options.alternate_Caller_Id = PhoneNumberIdentifier(self.from_phone_number)
 
         # Establish a call
         async with self.callingserver_client:
             call_connection_async = await self.callingserver_client.create_call_connection(
                         source=CommunicationUserIdentifier(self.from_user),
                         targets=[PhoneNumberIdentifier(self.to_phone_number)],
-                        options=self.options,
+                        options=options,
                         )
 
-            CallingServerLiveTestUtils.validate_callconnection_Async(call_connection_async)
+            CallingServerLiveTestUtils.validate_callconnection(call_connection_async)
 
             if is_live():
                 time.sleep(10)
@@ -173,7 +157,7 @@ class CallConnectionTestAsync(AsyncCommunicationTestCase):
                     operation_context=OperationContext
                     )
 
-                CallingServerLiveTestUtils.validate_add_participant_Async(add_participant_result)
+                CallingServerLiveTestUtils.validate_add_participant(add_participant_result)
 
                 participant_id=add_participant_result.participant_id
 

@@ -15,21 +15,24 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.0.1 Python/3.9.7 (Windows-10-10.0.19043-SP0)
       x-ms-date:
-      - Sat, 18 Sep 2021 03:38:08 GMT
+      - Sat, 18 Sep 2021 05:57:48 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
     uri: https://sanitized.communication.azure.com/identities?api-version=2021-03-07
   response:
     body:
-      string: '{"error":{"code":"Denied","message":"Denied by the resource provider."}}'
+      string: '{"identity":{"id":"8:acs:016a7064-0581-40b9-be73-6dde64d69d72_0000000c-975d-1a73-1000-343a0d0019f1"}}'
     headers:
+      api-supported-versions:
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
+        2021-10-31-preview
       content-type:
-      - application/json
+      - application/json; charset=utf-8
       date:
-      - Sat, 18 Sep 2021 03:38:08 GMT
+      - Sat, 18 Sep 2021 05:57:48 GMT
       ms-cv:
-      - nK1CrWlgj0Co7WJwE6m5Tw.0
+      - ID7LC5xphkmjM/HyQ2cXzw.0
       request-context:
       - appId=
       strict-transport-security:
@@ -39,8 +42,195 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 10ms
+      - 132ms
     status:
-      code: 401
-      message: Unauthorized
+      code: 201
+      message: Created
+- request:
+    body: '{}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-identity/1.0.1 Python/3.9.7 (Windows-10-10.0.19043-SP0)
+      x-ms-date:
+      - Sat, 18 Sep 2021 05:57:48 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.communication.azure.com/identities?api-version=2021-03-07
+  response:
+    body:
+      string: '{"identity":{"id":"8:acs:016a7064-0581-40b9-be73-6dde64d69d72_0000000c-975d-1bd7-33fc-343a0d002346"}}'
+    headers:
+      api-supported-versions:
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
+        2021-10-31-preview
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 18 Sep 2021 05:57:48 GMT
+      ms-cv:
+      - eHdv9Ooka0WqtZvq7iwckA.0
+      request-context:
+      - appId=
+      strict-transport-security:
+      - max-age=2592000
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+      x-processing-time:
+      - 113ms
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{"alternateCallerId": "sanitized", "targets": "sanitized", "source": "sanitized",
+      "callbackUri": "sanitized", "requestedMediaTypes": ["audio"], "requestedCallEvents":
+      ["participantsUpdated", "dtmfReceived"]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '411'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.9.7 (Windows-10-10.0.19043-SP0)
+    method: POST
+    uri: https://sanitized.communication.azure.com/calling/callConnections?api-version=2021-06-15-preview
+  response:
+    body:
+      string: '{"callConnectionId": "02000480-2e69-4665-89a6-bc23eb1654a9"}'
+    headers:
+      content-length:
+      - '59'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 18 Sep 2021 05:57:49 GMT
+      x-cache:
+      - CONFIG_NOCACHE
+      x-microsoft-skype-chain-id:
+      - 17c12b11-55ca-4a0a-b38a-a43946696b50
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{"audioFileUri": "https://dummy.ngrok.io/audio/sample-message.wav", "loop":
+      true, "operationContext": "<azure.communication.callingserver._models.PlayAudioOptions
+      object at 0x000001DB4E358610>", "audioFileId": "d91d6bd6-fcc5-4b4d-8b66-d7b050ad3f57",
+      "callbackUri": "sanitized"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '333'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.9.7 (Windows-10-10.0.19043-SP0)
+    method: POST
+    uri: https://sanitized.communication.azure.com/calling/callConnections/02000480-2e69-4665-89a6-bc23eb1654a9/:playAudio?api-version=2021-06-15-preview
+  response:
+    body:
+      string: '{"operationId": "6574ba15-0c7b-4c25-9119-0f423e333e4e", "status": "running",
+        "operationContext": "<azure.communication.callingserver._models.PlayAudioOptions
+        object at 0x000001DB4E358610>"}'
+    headers:
+      content-length:
+      - '184'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 18 Sep 2021 05:58:00 GMT
+      x-cache:
+      - CONFIG_NOCACHE
+      x-microsoft-skype-chain-id:
+      - a72b88de-4202-46c3-98cc-903fb1d323d2
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: '{"operationContext": "d9fa766f-bd33-47d4-9068-edc3cff702db"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '60'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.9.7 (Windows-10-10.0.19043-SP0)
+    method: POST
+    uri: https://sanitized.communication.azure.com/calling/callConnections/02000480-2e69-4665-89a6-bc23eb1654a9/:cancelAllMediaOperations?api-version=2021-06-15-preview
+  response:
+    body:
+      string: '{"operationId": "25f93ea6-6511-4a31-b19f-284b57f1f806", "status": "completed",
+        "operationContext": "d9fa766f-bd33-47d4-9068-edc3cff702db"}'
+    headers:
+      content-length:
+      - '133'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 18 Sep 2021 05:58:00 GMT
+      x-cache:
+      - CONFIG_NOCACHE
+      x-microsoft-skype-chain-id:
+      - e777b42d-1a19-4f25-94ef-4bbd6831d52e
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.9.7 (Windows-10-10.0.19043-SP0)
+    method: POST
+    uri: https://sanitized.communication.azure.com/calling/callConnections/02000480-2e69-4665-89a6-bc23eb1654a9/:hangup?api-version=2021-06-15-preview
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Sat, 18 Sep 2021 05:58:05 GMT
+      x-cache:
+      - CONFIG_NOCACHE
+      x-microsoft-skype-chain-id:
+      - 9185aa75-2b1b-4f3b-92af-9f2807249eb2
+    status:
+      code: 202
+      message: Accepted
 version: 1

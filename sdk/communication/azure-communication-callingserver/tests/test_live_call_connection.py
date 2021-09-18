@@ -55,11 +55,9 @@ class CallConnectionTest(CommunicationTestCase):
                 BodyReplacerProcessor(keys=["alternateCallerId", "targets", "source", "callbackUri"]),
                 ResponseReplacerProcessor(keys=[self._resource_name])])
         
-    def test_create_play_cancel_hangup_scenario(self):
-
         # create CallingServerClient
         endpoint, _ = parse_connection_str(self.connection_str)
-        self.endpoint = endpoint
+        endpoint = endpoint
 
         if not is_live():
             credential = FakeTokenCredential()
@@ -67,24 +65,25 @@ class CallConnectionTest(CommunicationTestCase):
             credential = DefaultAzureCredential()
 
         self.callingserver_client = CallingServerClient(
-            self.endpoint,
+            endpoint,
             credential,
             http_logging_policy=get_http_logging_policy()
         )
 
+    def test_create_play_cancel_hangup_scenario(self):
         # create option
-        self.options = CreateCallOptions(
+        options = CreateCallOptions(
             callback_uri=CONST.AppCallbackUrl,
             requested_media_types=[MediaType.AUDIO],
             requested_call_events=[EventSubscriptionType.PARTICIPANTS_UPDATED, EventSubscriptionType.DTMF_RECEIVED]
         )
-        self.options.alternate_Caller_Id = PhoneNumberIdentifier(self.from_phone_number)
+        options.alternate_Caller_Id = PhoneNumberIdentifier(self.from_phone_number)
 
         # Establish a call
         call_connection = self.callingserver_client.create_call_connection(
                     source=CommunicationUserIdentifier(self.from_user),
                     targets=[PhoneNumberIdentifier(self.to_phone_number)],
-                    options=self.options,
+                    options=options,
                     )
 
         CallingServerLiveTestUtils.validate_callconnection(call_connection)
@@ -107,13 +106,13 @@ class CallConnectionTest(CommunicationTestCase):
             options
             )
 
-        CallingServerLiveTestUtils.validate_play_audio_result_Async(play_audio_result)
+        CallingServerLiveTestUtils.validate_play_audio_result(play_audio_result)
 
         # Cancel All Media Operations
         CancelMediaOperationContext = str(uuid.uuid4())
         cancel_all_media_operations_result = call_connection.cancel_all_media_operations(
             CancelMediaOperationContext
-            )   
+            )
 
         CallingServerLiveTestUtils.validate_cancel_all_media_operations(cancel_all_media_operations_result)
         if is_live():
@@ -123,35 +122,19 @@ class CallConnectionTest(CommunicationTestCase):
         call_connection.hang_up()
 
     def test_create_add_remove_hangup_scenario(self):
-
-        # create CallingServerClient
-        endpoint, _ = parse_connection_str(self.connection_str)
-        self.endpoint = endpoint
-
-        if not is_live():
-            credential = FakeTokenCredential()
-        else:
-            credential = DefaultAzureCredential()
-
-        self.callingserver_client = CallingServerClient(
-            self.endpoint,
-            credential,
-            http_logging_policy=get_http_logging_policy()
-        )
-
         # create option
-        self.options = CreateCallOptions(
+        options = CreateCallOptions(
             callback_uri=CONST.AppCallbackUrl,
             requested_media_types=[MediaType.AUDIO],
             requested_call_events=[EventSubscriptionType.PARTICIPANTS_UPDATED, EventSubscriptionType.DTMF_RECEIVED]
         )
-        self.options.alternate_Caller_Id = PhoneNumberIdentifier(self.from_phone_number)
+        options.alternate_Caller_Id = PhoneNumberIdentifier(self.from_phone_number)
 
         # Establish a call
         call_connection = self.callingserver_client.create_call_connection(
                     source=CommunicationUserIdentifier(self.from_user),
                     targets=[PhoneNumberIdentifier(self.to_phone_number)],
-                    options=self.options,
+                    options=options,
                     )
 
         CallingServerLiveTestUtils.validate_callconnection(call_connection)

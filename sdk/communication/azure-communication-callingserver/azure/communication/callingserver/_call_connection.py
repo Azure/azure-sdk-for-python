@@ -50,8 +50,6 @@ class CallConnection(object):
             **kwargs  # type: Any
         ): # type: (...) -> CancelAllMediaOperationsResult
 
-        if operation_context is not None:
-            kwargs['operation_context'] = operation_context
         cancel_all_media_operations_request = CancelAllMediaOperationsConverter.convert(operation_context)
 
         return self._call_connection_client.cancel_all_media_operations(

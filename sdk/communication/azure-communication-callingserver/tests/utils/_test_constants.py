@@ -15,10 +15,12 @@ FAKE_TOKEN = "Fake Token"
 CALL_SUBJECT = "testsubject"
 
 # System Environment Variables
-AZURE_TENANT_ID = os.getenv(
+# Live Test Variables
+RESOURCE_IDENTIFIER = os.getenv(
     "COMMUNICATION_LIVETEST_STATIC_RESOURCE_IDENTIFIER",
-    "016a7064-0581-40b9-be73-6dde64d69d72"
+    "016a7064-0581-40b9-be73-6dde64d69d72" # From ACS Resource "immutableResourceId".
     )
+AZURE_TENANT_ID = RESOURCE_IDENTIFIER
 
 IncomingRequestSecret = "helloworld"
 AppBaseUrl = "https://dummy.ngrok.io"

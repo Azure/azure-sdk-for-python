@@ -18,3 +18,14 @@ class TestUtils:
             return user.properties['id']
 
         return "8:acs:" + AZURE_TENANT_ID + "_" + str(uuid.uuid4())
+
+    def get_group_id(test_name):
+        # If tests are running in live mode, we want them to all
+        # have unique groupId's so they do not conflict with other
+        # recording tests running in live mode.
+        if is_live:
+            return str(uuid.uuid4())
+
+        # For recording tests we need to make sure the groupId
+        # matches the recorded groupId, or the call will fail.
+        return str(uuid.uuid3(uuid.NAMESPACE_OID, test_name))
