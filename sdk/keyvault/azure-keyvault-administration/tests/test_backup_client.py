@@ -15,7 +15,6 @@ from _test_case import AdministrationTestCase, backup_client_setup, get_decorato
 all_api_versions = get_decorator()
 
 
-@pytest.mark.usefixtures("managed_hsm")
 class BackupClientTests(AdministrationTestCase, KeyVaultTestCase):
     def __init__(self, *args, **kwargs):
         super(BackupClientTests, self).__init__(*args, match_body=False, **kwargs)
