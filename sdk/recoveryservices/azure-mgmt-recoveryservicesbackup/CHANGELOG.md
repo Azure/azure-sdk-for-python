@@ -1,5 +1,40 @@
 # Release History
 
+## 0.15.0 (2021-09-18)
+
+**Features**
+
+  - Model AzureVmWorkloadProtectionPolicy has a new parameter resource_guard_operation_requests
+  - Model ProtectedItem has a new parameter resource_guard_operation_requests
+  - Model AzureVmWorkloadProtectedItem has a new parameter resource_guard_operation_requests
+  - Model GenericProtectionPolicy has a new parameter resource_guard_operation_requests
+  - Model AzureIaaSClassicComputeVMProtectedItem has a new parameter resource_guard_operation_requests
+  - Model AzureVmWorkloadSAPAseDatabaseProtectedItem has a new parameter resource_guard_operation_requests
+  - Model MabFileFolderProtectedItem has a new parameter resource_guard_operation_requests
+  - Model AzureFileshareProtectedItem has a new parameter resource_guard_operation_requests
+  - Model GenericProtectedItem has a new parameter resource_guard_operation_requests
+  - Model AzureVmWorkloadSQLDatabaseProtectedItem has a new parameter resource_guard_operation_requests
+  - Model ProtectionPolicy has a new parameter resource_guard_operation_requests
+  - Model AzureFileShareProtectionPolicy has a new parameter resource_guard_operation_requests
+  - Model AzureSqlProtectionPolicy has a new parameter resource_guard_operation_requests
+  - Model BackupResourceVaultConfig has a new parameter resource_guard_operation_requests
+  - Model AzureSqlProtectedItem has a new parameter resource_guard_operation_requests
+  - Model AzureIaaSVMProtectedItem has a new parameter resource_guard_operation_requests
+  - Model AzureIaaSVMProtectionPolicy has a new parameter resource_guard_operation_requests
+  - Model IaasVMRestoreWithRehydrationRequest has a new parameter identity_based_restore_details
+  - Model AzureVmWorkloadSAPHanaDatabaseProtectedItem has a new parameter resource_guard_operation_requests
+  - Model DPMProtectedItem has a new parameter resource_guard_operation_requests
+  - Model AzureIaaSComputeVMProtectedItem has a new parameter resource_guard_operation_requests
+  - Model IaasVMRestoreRequest has a new parameter identity_based_restore_details
+  - Model MabProtectionPolicy has a new parameter resource_guard_operation_requests
+  - Added operation group BackupResourceStorageConfigsNonCRROperations
+  - Added operation group ResourceGuardProxyOperations
+  - Added operation group ResourceGuardProxiesOperations
+
+**Breaking changes**
+
+  - Operation SecurityPINsOperations.get has a new signature
+
 ## 0.14.0 (2021-07-26)
 
 **Breaking changes**
