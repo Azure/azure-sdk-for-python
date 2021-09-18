@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, TYPE_CHECKING
+from typing import IO, TYPE_CHECKING
 from urllib.parse import urlparse
 
 from azure.core.pipeline import PipelineResponse
@@ -13,7 +13,6 @@ from azure.core.exceptions import (ClientAuthenticationError, HttpResponseError,
     ResourceExistsError, ResourceNotFoundError, map_error)
 
 from .._generated import models as _models
-import pdb
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -66,7 +65,7 @@ class ContentDownloader():
                                                                             response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         # Construct URL
         uri_to_sign_with = self._get_url_to_sign_request_with(content_url)
         # Construct parameters
@@ -79,14 +78,14 @@ class ContentDownloader():
 
         request = self._client.get(content_url, query_parameters, header_parameters)
         # pdb.set_trace()
-        pipeline_response = await self._client._pipeline.run(request, stream=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=True, **kwargs) # pylint: disable=protected-access
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 206]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = response.stream_download(self._client._pipeline)
+        deserialized = response.stream_download(self._client._pipeline) # pylint: disable=protected-access
 
         if cls:
             return cls(pipeline_response, deserialized, {})

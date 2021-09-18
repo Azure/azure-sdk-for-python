@@ -61,10 +61,8 @@ class CallConnection(object):
             requested_call_events=requested_call_events,
             **kwargs)
 
-        create_call_result = self.call_connection_client.create_call(
+        return self._call_connection_client.create_call(
             call_request=request)
-
-        return CreateCallResult._from_generated(create_call_result)
 
     @distributed_trace()
     def hang_up(

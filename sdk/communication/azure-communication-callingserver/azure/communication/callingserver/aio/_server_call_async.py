@@ -193,7 +193,7 @@ class ServerCall:
             recording_id=recording_id,
             **kwargs
         )
-    
+
     @distributed_trace_async()
     async def cancel_media_operation(
             self,

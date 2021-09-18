@@ -6,7 +6,10 @@
 
 from typing import TYPE_CHECKING, Any, List  # pylint: disable=unused-import
 
+from msrest import Deserializer, Serializer
 from azure.core.tracing.decorator import distributed_trace
+from azure.core import PipelineClient
+from azure.core.pipeline.transport import HttpResponse
 
 from ._call_connection import CallConnection
 from ._communication_identifier_serializer import serialize_identifier
@@ -19,10 +22,6 @@ from ._server_call import ServerCall
 from ._shared.models import CommunicationIdentifier
 from ._shared.utils import get_authentication_policy, parse_connection_str
 from ._version import SDK_MONIKER
-
-from msrest import Deserializer, Serializer
-from azure.core import PipelineClient
-from azure.core.pipeline.transport import HttpResponse
 from ._generated import models as _models
 from ._generated._configuration import AzureCommunicationCallingServerServiceConfiguration
 
@@ -56,8 +55,8 @@ class CallingServerClient():
         try:
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
+        except AttributeError as ex:
+            raise ValueError("Account URL must be a string.") from ex
 
         if not credential:
             raise ValueError(
@@ -237,17 +236,17 @@ class CallingServerClient():
         client_models = {k: v for k,
                          v in _models.__dict__.items() if isinstance(v, type)}
 
-        self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
-        self._deserialize = Deserializer(client_models)
-        self._config = AzureCommunicationCallingServerServiceConfiguration(
+        serialize = Serializer(client_models)
+        serialize.client_side_validation = False
+        deserialize = Deserializer(client_models)
+        config = AzureCommunicationCallingServerServiceConfiguration(
             self._endpoint, authentication_policy=self._authentication_policy)
 
         base_url = '{endpoint}'
-        self._client = PipelineClient(
-            base_url=base_url, config=self._config, **kwargs)
+        client = PipelineClient(
+            base_url=base_url, config=config, **kwargs)
         downloader = ContentDownloader(
-            self._client, self._serialize, self._deserialize, self._config)
+            client, serialize, deserialize, config)
         content_url_result = downloader.start_download(
             content_url=content_url,
         )

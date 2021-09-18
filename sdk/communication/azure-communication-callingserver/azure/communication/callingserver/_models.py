@@ -8,9 +8,6 @@ from typing import Any  # pylint: disable=unused-import
 
 from ._generated.models import EventSubscriptionType, MediaType
 from ._shared.models import PhoneNumberIdentifier
-from enum import Enum, EnumMeta
-from six import with_metaclass
-import msrest.serialization
 
 try:
     from urllib.parse import urlparse
@@ -39,8 +36,8 @@ class CreateCallOptions(object):
         try:
             if not callback_uri.lower().startswith('http'):
                 callback_uri = "https://" + callback_uri
-        except AttributeError:
-            raise ValueError("Host URL must be a string")
+        except AttributeError as ex:
+            raise ValueError("Host URL must be a string") from ex
 
         parsed_url = urlparse(callback_uri.rstrip('/'))
         if not parsed_url.netloc:
@@ -112,8 +109,8 @@ class JoinCallOptions(object):
         try:
             if not callback_uri.lower().startswith('http'):
                 callback_uri = "https://" + callback_uri
-        except AttributeError:
-            raise ValueError("Host URL must be a string")
+        except AttributeError as ex:
+            raise ValueError("Host URL must be a string") from ex
 
         parsed_url = urlparse(callback_uri.rstrip('/'))
         if not parsed_url.netloc:

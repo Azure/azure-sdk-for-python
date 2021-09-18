@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 
 from .._models import JoinCallOptions, PlayAudioOptions
-from .._shared.models import CommunicationIdentifier
 from .._generated.models import (
     JoinCallRequest,
     PlayAudioRequest,
@@ -14,7 +13,6 @@ from .._generated.models import (
     CancelMediaOperationRequest,
     PhoneNumberIdentifierModel
     )
-from .._generated.models._azure_communication_calling_server_service_enums import CommunicationCloudEnvironmentModel
 
 class JoinCallRequestConverter(object):
     @staticmethod

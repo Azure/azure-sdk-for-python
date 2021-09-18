@@ -8,22 +8,23 @@
 import asyncio
 import sys
 import threading
-from azure.core.exceptions import HttpResponseError
 from typing import AsyncIterator
 from io import BytesIO
 from itertools import islice
 
-def parse_length_from_content_range(content_range):
-        '''
-        Parses the content length from the content range header: bytes 1-3/65537
-        '''
-        if content_range is None:
-            return None
+from azure.core.exceptions import HttpResponseError
 
-        # First, split in space and take the second half: '1-3/65537'
-        # Next, split on slash and take the second half: '65537'
-        # Finally, convert to an int: 65537
-        return int(content_range.split(' ', 1)[1].split('/', 1)[1])
+def parse_length_from_content_range(content_range):
+    '''
+    Parses the content length from the content range header: bytes 1-3/65537
+    '''
+    if content_range is None:
+        return None
+
+    # First, split in space and take the second half: '1-3/65537'
+    # Next, split on slash and take the second half: '65537'
+    # Finally, convert to an int: 65537
+    return int(content_range.split(' ', 1)[1].split('/', 1)[1])
 
 def validate_and_format_range_headers(start_range, end_range):
     # If end range is provided, start range must be provided
@@ -128,6 +129,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
             **self.request_options
         )
 
+        #pylint: disable=protected-access
         return response.response.internal_response._body
 
 class _AsyncChunkDownloader(_ChunkDownloader):
@@ -168,13 +170,14 @@ class _AsyncChunkDownloader(_ChunkDownloader):
             chunk_start,
             chunk_end
         )
-        
+
         response = await self.client.download(
             content_url=self.endpoint,
             http_range=range_header,
             **self.request_options
         )
 
+        #pylint: disable=protected-access
         return response.response.internal_response._body
 
 class _AsyncChunkIterator(object):
@@ -218,12 +221,12 @@ class _AsyncChunkIterator(object):
         try:
             chunk = next(self._iter_chunks)
             self._current_content += await self._iter_downloader.yield_chunk(chunk)
-        except StopIteration:
+        except StopIteration as ex:
             self._complete = True
             # it's likely that there some data left in self._current_content
             if self._current_content:
                 return self._current_content
-            raise StopAsyncIteration("Download complete")
+            raise StopAsyncIteration("Download complete") from ex
 
         return self._get_chunk_data()
 
@@ -232,7 +235,7 @@ class _AsyncChunkIterator(object):
         self._current_content = self._current_content[self._chunk_size:]
         return chunk_data
 
-class ContentStreamDownloader():
+class ContentStreamDownloader(): # pylint: disable=too-many-instance-attributes
     """A streaming object to download recording content.
     :ivar str endpoint:
         The url where the content is located.
@@ -282,7 +285,7 @@ class ContentStreamDownloader():
         if self.size == 0:
             self._current_content = b""
         else:
-            self._current_content = self._response.response.internal_response._body
+            self._current_content = self._response.response.internal_response._body #pylint: disable=protected-access
 
     async def _initial_request(self):
         http_range = validate_and_format_range_headers(

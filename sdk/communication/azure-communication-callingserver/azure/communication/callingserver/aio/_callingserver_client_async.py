@@ -11,7 +11,6 @@
 from typing import TYPE_CHECKING, Any, List  # pylint: disable=unused-import
 
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.pipeline import policies
 
 from .._communication_identifier_serializer import serialize_identifier
 from .._generated.aio._azure_communication_calling_server_service import \
@@ -24,7 +23,6 @@ from ._call_connection_async import CallConnection
 from ._server_call_async import ServerCall
 from .._converters import JoinCallRequestConverter
 from .._shared.utils import get_authentication_policy, parse_connection_str
-from .._shared.redirection_policy import RedirectPolicy
 from .._version import SDK_MONIKER
 
 if TYPE_CHECKING:
@@ -56,8 +54,8 @@ class CallingServerClient:
         try:
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
+        except AttributeError as ex:
+            raise ValueError("Account URL must be a string.") from ex
 
         if not credential:
             raise ValueError(
@@ -218,7 +216,15 @@ class CallingServerClient:
         return CallConnection(join_call_response.call_connection_id, self._call_connection_client)
 
     @distributed_trace_async
-    async def download(self, content_url, start_range=None, end_range=None, **kwargs):
+    async def download(
+            self,
+            content_url: str,
+            start_range: int = None,
+            end_range: int = None,
+            **kwargs: Any
+        ) -> ContentStreamDownloader:
+
+        #pylint: disable=protected-access
         content_downloader = ContentDownloader(
             self._callingserver_service_client._client,
             self._callingserver_service_client._config,

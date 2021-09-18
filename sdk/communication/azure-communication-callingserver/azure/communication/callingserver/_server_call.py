@@ -79,7 +79,8 @@ class ServerCall(object):
 
         return self._server_call_client.start_recording(
             server_call_id=self.server_call_id,
-            request=start_call_recording_request
+            request=start_call_recording_request,
+            **kwargs
         )
 
     @distributed_trace()
@@ -95,6 +96,7 @@ class ServerCall(object):
         return self._server_call_client.pause_recording(
             server_call_id=self.server_call_id,
             recording_id=recording_id,
+            **kwargs
         )
 
     @distributed_trace()
@@ -110,6 +112,7 @@ class ServerCall(object):
         return self._server_call_client.resume_recording(
             server_call_id=self.server_call_id,
             recording_id=recording_id,
+            **kwargs
         )
 
     @distributed_trace()
@@ -125,6 +128,7 @@ class ServerCall(object):
         return self._server_call_client.stop_recording(
             server_call_id=self.server_call_id,
             recording_id=recording_id,
+            **kwargs
         )
 
     @distributed_trace()
@@ -140,6 +144,7 @@ class ServerCall(object):
         return self._server_call_client.get_recording_properties(
             server_call_id=self.server_call_id,
             recording_id=recording_id,
+            **kwargs
         )
 
     @distributed_trace()
