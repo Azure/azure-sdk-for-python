@@ -95,6 +95,7 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
            * 2017-04-01: :mod:`v2017_04_01.models<azure.mgmt.eventhub.v2017_04_01.models>`
            * 2018-01-01-preview: :mod:`v2018_01_01_preview.models<azure.mgmt.eventhub.v2018_01_01_preview.models>`
            * 2021-01-01-preview: :mod:`v2021_01_01_preview.models<azure.mgmt.eventhub.v2021_01_01_preview.models>`
+           * 2021-06-01-preview: :mod:`v2021_06_01_preview.models<azure.mgmt.eventhub.v2021_06_01_preview.models>`
         """
         if api_version == '2015-08-01':
             from .v2015_08_01 import models
@@ -108,6 +109,9 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2021-01-01-preview':
             from .v2021_01_01_preview import models
             return models
+        elif api_version == '2021-06-01-preview':
+            from .v2021_06_01_preview import models
+            return models
         raise ValueError("API version {} is not available".format(api_version))
 
     @property
@@ -115,10 +119,13 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2018-01-01-preview: :class:`ClustersOperations<azure.mgmt.eventhub.v2018_01_01_preview.operations.ClustersOperations>`
+           * 2021-06-01-preview: :class:`ClustersOperations<azure.mgmt.eventhub.v2021_06_01_preview.operations.ClustersOperations>`
         """
         api_version = self._get_api_version('clusters')
         if api_version == '2018-01-01-preview':
             from .v2018_01_01_preview.operations import ClustersOperations as OperationClass
+        elif api_version == '2021-06-01-preview':
+            from .v2021_06_01_preview.operations import ClustersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'clusters'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -128,10 +135,13 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2018-01-01-preview: :class:`ConfigurationOperations<azure.mgmt.eventhub.v2018_01_01_preview.operations.ConfigurationOperations>`
+           * 2021-06-01-preview: :class:`ConfigurationOperations<azure.mgmt.eventhub.v2021_06_01_preview.operations.ConfigurationOperations>`
         """
         api_version = self._get_api_version('configuration')
         if api_version == '2018-01-01-preview':
             from .v2018_01_01_preview.operations import ConfigurationOperations as OperationClass
+        elif api_version == '2021-06-01-preview':
+            from .v2021_06_01_preview.operations import ConfigurationOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'configuration'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -144,6 +154,7 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
            * 2017-04-01: :class:`ConsumerGroupsOperations<azure.mgmt.eventhub.v2017_04_01.operations.ConsumerGroupsOperations>`
            * 2018-01-01-preview: :class:`ConsumerGroupsOperations<azure.mgmt.eventhub.v2018_01_01_preview.operations.ConsumerGroupsOperations>`
            * 2021-01-01-preview: :class:`ConsumerGroupsOperations<azure.mgmt.eventhub.v2021_01_01_preview.operations.ConsumerGroupsOperations>`
+           * 2021-06-01-preview: :class:`ConsumerGroupsOperations<azure.mgmt.eventhub.v2021_06_01_preview.operations.ConsumerGroupsOperations>`
         """
         api_version = self._get_api_version('consumer_groups')
         if api_version == '2015-08-01':
@@ -154,6 +165,8 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2018_01_01_preview.operations import ConsumerGroupsOperations as OperationClass
         elif api_version == '2021-01-01-preview':
             from .v2021_01_01_preview.operations import ConsumerGroupsOperations as OperationClass
+        elif api_version == '2021-06-01-preview':
+            from .v2021_06_01_preview.operations import ConsumerGroupsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'consumer_groups'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -165,6 +178,7 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
            * 2017-04-01: :class:`DisasterRecoveryConfigsOperations<azure.mgmt.eventhub.v2017_04_01.operations.DisasterRecoveryConfigsOperations>`
            * 2018-01-01-preview: :class:`DisasterRecoveryConfigsOperations<azure.mgmt.eventhub.v2018_01_01_preview.operations.DisasterRecoveryConfigsOperations>`
            * 2021-01-01-preview: :class:`DisasterRecoveryConfigsOperations<azure.mgmt.eventhub.v2021_01_01_preview.operations.DisasterRecoveryConfigsOperations>`
+           * 2021-06-01-preview: :class:`DisasterRecoveryConfigsOperations<azure.mgmt.eventhub.v2021_06_01_preview.operations.DisasterRecoveryConfigsOperations>`
         """
         api_version = self._get_api_version('disaster_recovery_configs')
         if api_version == '2017-04-01':
@@ -173,6 +187,8 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2018_01_01_preview.operations import DisasterRecoveryConfigsOperations as OperationClass
         elif api_version == '2021-01-01-preview':
             from .v2021_01_01_preview.operations import DisasterRecoveryConfigsOperations as OperationClass
+        elif api_version == '2021-06-01-preview':
+            from .v2021_06_01_preview.operations import DisasterRecoveryConfigsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'disaster_recovery_configs'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -185,6 +201,7 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
            * 2017-04-01: :class:`EventHubsOperations<azure.mgmt.eventhub.v2017_04_01.operations.EventHubsOperations>`
            * 2018-01-01-preview: :class:`EventHubsOperations<azure.mgmt.eventhub.v2018_01_01_preview.operations.EventHubsOperations>`
            * 2021-01-01-preview: :class:`EventHubsOperations<azure.mgmt.eventhub.v2021_01_01_preview.operations.EventHubsOperations>`
+           * 2021-06-01-preview: :class:`EventHubsOperations<azure.mgmt.eventhub.v2021_06_01_preview.operations.EventHubsOperations>`
         """
         api_version = self._get_api_version('event_hubs')
         if api_version == '2015-08-01':
@@ -195,6 +212,8 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2018_01_01_preview.operations import EventHubsOperations as OperationClass
         elif api_version == '2021-01-01-preview':
             from .v2021_01_01_preview.operations import EventHubsOperations as OperationClass
+        elif api_version == '2021-06-01-preview':
+            from .v2021_06_01_preview.operations import EventHubsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'event_hubs'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -207,6 +226,7 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
            * 2017-04-01: :class:`NamespacesOperations<azure.mgmt.eventhub.v2017_04_01.operations.NamespacesOperations>`
            * 2018-01-01-preview: :class:`NamespacesOperations<azure.mgmt.eventhub.v2018_01_01_preview.operations.NamespacesOperations>`
            * 2021-01-01-preview: :class:`NamespacesOperations<azure.mgmt.eventhub.v2021_01_01_preview.operations.NamespacesOperations>`
+           * 2021-06-01-preview: :class:`NamespacesOperations<azure.mgmt.eventhub.v2021_06_01_preview.operations.NamespacesOperations>`
         """
         api_version = self._get_api_version('namespaces')
         if api_version == '2015-08-01':
@@ -217,6 +237,8 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2018_01_01_preview.operations import NamespacesOperations as OperationClass
         elif api_version == '2021-01-01-preview':
             from .v2021_01_01_preview.operations import NamespacesOperations as OperationClass
+        elif api_version == '2021-06-01-preview':
+            from .v2021_06_01_preview.operations import NamespacesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'namespaces'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -229,6 +251,7 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
            * 2017-04-01: :class:`Operations<azure.mgmt.eventhub.v2017_04_01.operations.Operations>`
            * 2018-01-01-preview: :class:`Operations<azure.mgmt.eventhub.v2018_01_01_preview.operations.Operations>`
            * 2021-01-01-preview: :class:`Operations<azure.mgmt.eventhub.v2021_01_01_preview.operations.Operations>`
+           * 2021-06-01-preview: :class:`Operations<azure.mgmt.eventhub.v2021_06_01_preview.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2015-08-01':
@@ -239,6 +262,8 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2018_01_01_preview.operations import Operations as OperationClass
         elif api_version == '2021-01-01-preview':
             from .v2021_01_01_preview.operations import Operations as OperationClass
+        elif api_version == '2021-06-01-preview':
+            from .v2021_06_01_preview.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -249,12 +274,15 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2018-01-01-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.eventhub.v2018_01_01_preview.operations.PrivateEndpointConnectionsOperations>`
            * 2021-01-01-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.eventhub.v2021_01_01_preview.operations.PrivateEndpointConnectionsOperations>`
+           * 2021-06-01-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.eventhub.v2021_06_01_preview.operations.PrivateEndpointConnectionsOperations>`
         """
         api_version = self._get_api_version('private_endpoint_connections')
         if api_version == '2018-01-01-preview':
             from .v2018_01_01_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
         elif api_version == '2021-01-01-preview':
             from .v2021_01_01_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
+        elif api_version == '2021-06-01-preview':
+            from .v2021_06_01_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_endpoint_connections'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -265,12 +293,15 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2018-01-01-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.eventhub.v2018_01_01_preview.operations.PrivateLinkResourcesOperations>`
            * 2021-01-01-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.eventhub.v2021_01_01_preview.operations.PrivateLinkResourcesOperations>`
+           * 2021-06-01-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.eventhub.v2021_06_01_preview.operations.PrivateLinkResourcesOperations>`
         """
         api_version = self._get_api_version('private_link_resources')
         if api_version == '2018-01-01-preview':
             from .v2018_01_01_preview.operations import PrivateLinkResourcesOperations as OperationClass
         elif api_version == '2021-01-01-preview':
             from .v2021_01_01_preview.operations import PrivateLinkResourcesOperations as OperationClass
+        elif api_version == '2021-06-01-preview':
+            from .v2021_06_01_preview.operations import PrivateLinkResourcesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_link_resources'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
