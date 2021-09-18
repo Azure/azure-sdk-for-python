@@ -58,15 +58,14 @@ class LogsTable(object):
 class LogsTableRow(object):
     """Represents a single row in logs table.
 
-    ivar list row: The collection of values in the row.
-    ivar int row_index: The index of the row in the table
+    :ivar index: The index of the row in the table
     """
     def __init__(self, **kwargs):
         # type: (Any) -> None
         _col_types = kwargs['col_types']
         row = kwargs['row']
-        self.row = process_row(_col_types, row)
-        self.row_index = kwargs['row_index']
+        self._row = process_row(_col_types, row)
+        self.index = kwargs['row_index']
         _columns = kwargs['columns']
         self._row_dict = {
             _columns[i]: self.row[i] for i in range(len(self.row))
@@ -75,18 +74,21 @@ class LogsTableRow(object):
     def __iter__(self):
         """This will iterate over the row directly.
         """
-        return iter(self.row)
+        return iter(self._row)
 
     def __getitem__(self, column):
         """This type must be subscriptable directly to row.
         Must be gettableby both column name and row index
         Example: row[0] -> returns the first element of row and
         row[column_name] -> returns the row element against the given column name.
+
+        :param column: The name of the column or the index of the element in a row.
+        :type column: str or int
         """
         try:
             return self._row_dict[column]
         except KeyError:
-            return self.row[column]
+            return self._row[column]
 
 
 class MetricsResult(object):
