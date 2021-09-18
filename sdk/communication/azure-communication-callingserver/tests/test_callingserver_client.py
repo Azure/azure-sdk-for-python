@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 import unittest
 import pytest
-import utils._test_utils as _test_utils
+import utils._test_mock_utils as _mock_utils
 import utils._test_constants as _test_constants
 
 from typing import List
@@ -77,11 +77,11 @@ class TestCallingServerClient(unittest.TestCase):
         test_name, # type: str
         source_user, # type: CommunicationIdentifier
         target_users, # type: List[CommunicationIdentifier]
-        options, # type: CreateCallOptions,
+        options, # type: CreateCallOptions
         use_managed_identity = False # type: bool
         ):
 
-        calling_server_client = _test_utils.create_mock_calling_server_client(
+        calling_server_client = _mock_utils.create_mock_calling_server_client(
             status_code=201,
             payload=_test_constants.CreateOrJoinCallPayload,
             use_managed_identity = use_managed_identity
@@ -97,11 +97,11 @@ class TestCallingServerClient(unittest.TestCase):
         test_name, # type: str
         source_user, # type: CommunicationIdentifier
         target_users, # type: List[CommunicationIdentifier]
-        options, # type: CreateCallOptions,
+        options, # type: CreateCallOptions
         use_managed_identity = False # type: bool
         ):
 
-        calling_server_client = _test_utils.create_mock_calling_server_client(
+        calling_server_client = _mock_utils.create_mock_calling_server_client(
             status_code=404,
             payload=_test_constants.ErrorPayload,
             use_managed_identity = use_managed_identity
@@ -120,11 +120,11 @@ class TestCallingServerClient(unittest.TestCase):
         test_name, # type: str
         servercall_id, # type: str
         source_user, # type: CommunicationIdentifier
-        options, # type: JoinCallOptions,
+        options, # type: JoinCallOptions
         use_managed_identity = False # type: bool
         ):
 
-        calling_server_client = _test_utils.create_mock_calling_server_client(
+        calling_server_client = _mock_utils.create_mock_calling_server_client(
             status_code=202,
             payload=_test_constants.CreateOrJoinCallPayload,
             use_managed_identity = use_managed_identity
@@ -148,7 +148,7 @@ class TestCallingServerClient(unittest.TestCase):
         use_managed_identity = False # type: bool
         ):
 
-        calling_server_client = _test_utils.create_mock_calling_server_client(
+        calling_server_client = _mock_utils.create_mock_calling_server_client(
             status_code=404,
             payload=_test_constants.ErrorPayload,
             use_managed_identity = use_managed_identity

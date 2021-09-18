@@ -7,9 +7,9 @@ import time
 import uuid
 import os
 import pytest
-import urllib.parse
-from azure.core.credentials import AccessToken
-from azure.communication.callingserver.aio import CallingServerClient, CallConnection
+import utils._test_constants as CONST
+
+from azure.communication.callingserver.aio import CallingServerClient
 from azure.communication.callingserver import (
     PlayAudioOptions,
     PhoneNumberIdentifier,
@@ -19,8 +19,6 @@ from azure.communication.callingserver import (
     CommunicationUserIdentifier
     )
 from azure.communication.callingserver._shared.utils import parse_connection_str
-from azure.communication.identity.aio import CommunicationIdentityClient
-from live_test_utils._test_utils_async import CallingServerLiveTestUtils, Helper
 from azure.identity.aio import DefaultAzureCredential
 from _shared.asynctestcase  import AsyncCommunicationTestCase
 from _shared.testcase import (
@@ -28,22 +26,12 @@ from _shared.testcase import (
 )
 from devtools_testutils import is_live
 from _shared.utils import get_http_logging_policy
+from utils._live_test_utils_async import CallingServerLiveTestUtils
+from utils._test_mock_utils_async import FakeTokenCredential_Async
+from utils._test_utils import TestUtils
 
 SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS = is_live and os.getenv("SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS", "false") == "true"
 CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON = "SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS skips certain callingserver tests that required human interaction"
-
-IncomingRequestSecret = "helloworld"
-AppBaseUrl = "https://dummy.ngrok.io"
-AppCallbackUrl = f"{AppBaseUrl}/api/incident/callback?SecretKey={urllib.parse.quote(IncomingRequestSecret)}"
-AudioFileName = "sample-message.wav"
-AudioFileUrl = f"{AppBaseUrl}/audio/{AudioFileName}"
-
-class FakeTokenCredential(object):
-    def __init__(self):
-        self.token = AccessToken("Fake Token", 0)
-
-    async def get_token(self, *args):
-        return self.token
 
 @pytest.mark.skipif(SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
 class CallConnectionTestAsync(AsyncCommunicationTestCase):
@@ -51,8 +39,8 @@ class CallConnectionTestAsync(AsyncCommunicationTestCase):
     def setUp(self):
         super(CallConnectionTestAsync, self).setUp()
 
-        self.from_user = Helper.get_new_user_id(self.connection_str)
-        self.to_user = Helper.get_new_user_id(self.connection_str)
+        self.from_user = TestUtils.get_new_user_id(self.connection_str)
+        self.to_user = TestUtils.get_new_user_id(self.connection_str)
 
         if self.is_playback():
             self.from_phone_number = "+15551234567"
@@ -74,7 +62,7 @@ class CallConnectionTestAsync(AsyncCommunicationTestCase):
         self.endpoint = endpoint
 
         if not is_live():
-            credential = FakeTokenCredential()
+            credential = FakeTokenCredential_Async()
         else:
             credential = DefaultAzureCredential()
 
@@ -86,7 +74,7 @@ class CallConnectionTestAsync(AsyncCommunicationTestCase):
 
         # create option
         self.options = CreateCallOptions(
-            callback_uri=AppCallbackUrl,
+            callback_uri=CONST.AppCallbackUrl,
             requested_media_types=[MediaType.AUDIO],
             requested_call_events=[EventSubscriptionType.PARTICIPANTS_UPDATED, EventSubscriptionType.DTMF_RECEIVED]
         )
@@ -112,12 +100,12 @@ class CallConnectionTestAsync(AsyncCommunicationTestCase):
                 options = PlayAudioOptions(
                     loop = True,
                     audio_file_id = AudioFileId,
-                    callback_uri = AppCallbackUrl,
+                    callback_uri = CONST.AppCallbackUrl,
                     operation_context = OperationContext
                     )
 
                 play_audio_result = await call_connection_async.play_audio(
-                    AudioFileUrl,
+                    CONST.AudioFileUrl,
                     options
                     )
 
@@ -144,7 +132,7 @@ class CallConnectionTestAsync(AsyncCommunicationTestCase):
         self.endpoint = endpoint
 
         if not is_live():
-            credential = FakeTokenCredential()
+            credential = FakeTokenCredential_Async()
         else:
             credential = DefaultAzureCredential()
 
@@ -156,7 +144,7 @@ class CallConnectionTestAsync(AsyncCommunicationTestCase):
 
         # create option
         self.options = CreateCallOptions(
-            callback_uri=AppCallbackUrl,
+            callback_uri=CONST.AppCallbackUrl,
             requested_media_types=[MediaType.AUDIO],
             requested_call_events=[EventSubscriptionType.PARTICIPANTS_UPDATED, EventSubscriptionType.DTMF_RECEIVED]
         )

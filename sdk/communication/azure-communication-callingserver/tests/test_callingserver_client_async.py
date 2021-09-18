@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
-import utils._test_utils_async as _test_utils_async
+import utils._test_mock_utils_async as _mock_utils_async
 import utils._test_constants as _test_constants
 
 from typing import List
@@ -79,7 +79,7 @@ async def test_create_connection_succeed(
     use_managed_identity = False # type: bool
     ):
 
-    calling_server_client = _test_utils_async.create_mock_calling_server_client(
+    calling_server_client = _mock_utils_async.create_mock_calling_server_client(
         status_code=201,
         payload=_test_constants.CreateOrJoinCallPayload,
         use_managed_identity = use_managed_identity
@@ -100,7 +100,7 @@ async def test_create_connection_failed(
     use_managed_identity = False # type: bool
     ):
 
-    calling_server_client = _test_utils_async.create_mock_calling_server_client(
+    calling_server_client = _mock_utils_async.create_mock_calling_server_client(
         status_code=404,
         payload=_test_constants.ErrorPayload,
         use_managed_identity = use_managed_identity
@@ -123,7 +123,7 @@ async def test_join_call_succeed(
     use_managed_identity = False # type: bool
     ):
 
-    calling_server_client = _test_utils_async.create_mock_calling_server_client(
+    calling_server_client = _mock_utils_async.create_mock_calling_server_client(
         status_code=202,
         payload=_test_constants.CreateOrJoinCallPayload,
         use_managed_identity = use_managed_identity
@@ -147,7 +147,7 @@ async def test_join_call_failed(
     use_managed_identity = False # type: bool
     ):
 
-    calling_server_client = _test_utils_async.create_mock_calling_server_client(
+    calling_server_client = _mock_utils_async.create_mock_calling_server_client(
         status_code=404,
         payload=_test_constants.ErrorPayload,
         use_managed_identity = use_managed_identity

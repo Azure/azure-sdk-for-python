@@ -4,6 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import os, urllib.parse
+
 RESOURCE_SOURCE = "8:acs:resource_source"
 RESOURCE_TARGET = "8:acs:resource_target"
 CALL_ID = "cad9df7b-f3ac-4c53-96f7-c76e7437b3c1"
@@ -11,6 +13,18 @@ SERVER_CALL_ID = "0d11d342-297f-4584-bb92-13fcbb3ae3bd"
 FAKE_ENDPOINT = "https://endpoint"
 FAKE_TOKEN = "Fake Token"
 CALL_SUBJECT = "testsubject"
+
+# System Environment Variables
+AZURE_TENANT_ID = os.getenv(
+    "COMMUNICATION_LIVETEST_STATIC_RESOURCE_IDENTIFIER",
+    "016a7064-0581-40b9-be73-6dde64d69d72"
+    )
+
+IncomingRequestSecret = "helloworld"
+AppBaseUrl = "https://dummy.ngrok.io"
+AppCallbackUrl = f"{AppBaseUrl}/api/incident/callback?SecretKey={urllib.parse.quote(IncomingRequestSecret)}"
+AudioFileName = "sample-message.wav"
+AudioFileUrl = f"{AppBaseUrl}/audio/{AudioFileName}"
 
 # CreateOrJoinCall
 CreateOrJoinCallPayload={
