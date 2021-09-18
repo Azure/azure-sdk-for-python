@@ -11,7 +11,7 @@ from msrest.authentication import BasicAuthentication
 import requests
 
 logging.basicConfig(level=logging.INFO,
-                    format='[auto-reply  log]%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s')
+                    format='[auto-reply  log] - %(funcName)s[line:%(lineno)d] - %(levelname)s: %(message)s')
 
 # Add readme link and package name to the user's issue
 def update_issue_body(sdk_repo, rest_repo, issue_number):
