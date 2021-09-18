@@ -4,7 +4,7 @@ import logging
 
 issue_object_rg = None
 logging.basicConfig(level=logging.INFO,
-                    format='[auto-reply  log]%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s')
+                    format='[auto-reply  log] - %(funcName)s[line:%(lineno)d] - %(levelname)s: %(message)s')
 
 
 def whether_change_readme_(rest_repo, link_dict, labels):
