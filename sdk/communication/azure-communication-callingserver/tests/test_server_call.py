@@ -9,13 +9,13 @@ import utils._test_constants as _test_constants
 
 from typing import List
 from parameterized import parameterized
-from azure.communication.callingserver._shared.models import CommunicationIdentifier, CommunicationUserIdentifier
-from azure.communication.callingserver._generated.models import (
+
+from azure.communication.callingserver import (
+    AddParticipantResult,
     CancelAllMediaOperationsResult,
-    AddParticipantResult
-    )
-from azure.communication.callingserver._models import (
-    PlayAudioOptions
+    CommunicationIdentifier,
+    CommunicationUserIdentifier,
+    PlayAudioOptions,
     )
 
 try:

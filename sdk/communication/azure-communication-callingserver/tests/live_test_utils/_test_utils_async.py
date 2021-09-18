@@ -4,10 +4,26 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from azure.communication.callingserver import PlayAudioResult, CallConnection, PhoneNumberIdentifier, CreateCallOptions, MediaType, EventSubscriptionType, CancelAllMediaOperationsResult
-from azure.communication.callingserver import aio
-
+import os, uuid
+from azure.communication.callingserver import (
+    PlayAudioResult,
+    CallConnection,
+    PhoneNumberIdentifier,
+    CreateCallOptions,
+    MediaType,
+    EventSubscriptionType,
+    CancelAllMediaOperationsResult,
+    AddParticipantResult
+    )
+from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.callingserver.aio import CallConnection as CallConnectionAsync
+from devtools_testutils import is_live
+
+
+AZURE_TENANT_ID = os.getenv(
+    "COMMUNICATION_LIVETEST_STATIC_RESOURCE_IDENTIFIER",
+    "016a7064-0581-40b9-be73-6dde64d69d72"
+    )
 
 class CallingServerLiveTestUtils:
 
@@ -30,6 +46,11 @@ class CallingServerLiveTestUtils:
         assert cancel_all_media_operations_result.status is not None
         assert cancel_all_media_operations_result.status == OperationStatus.CONST_COMPLETED
 
+    def validate_add_participant_Async(add_participant_result: AddParticipantResult):
+        assert add_participant_result is not None
+        assert add_participant_result.participant_id is not None
+        assert len(add_participant_result.participant_id) != 0
+
 class OperationStatus:
     # Static value notStarted for OperationStatus.
     CONST_NOT_STARTED = "notStarted"
@@ -42,6 +63,16 @@ class OperationStatus:
 
     # Static value failed for OperationStatus.
     CONST_FAILED = "failed"
+
+class Helper:
+    def get_new_user_id(connection_str):
+        if is_live:
+            identity_client = CommunicationIdentityClient.from_connection_string(connection_str)
+            user = identity_client.create_user()
+            return user.properties['id']
+
+        return "8:acs:" + AZURE_TENANT_ID + "_" + str(uuid.uuid4())
+
 
     # // Random Gen Guid
     # protected const string FROM_USER_IDENTIFIER = "e3560385-776f-41d1-bf04-07ef738f2f23";

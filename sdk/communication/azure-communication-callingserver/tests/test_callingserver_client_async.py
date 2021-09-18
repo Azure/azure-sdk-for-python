@@ -9,9 +9,8 @@ import utils._test_constants as _test_constants
 
 from typing import List
 from parameterized import parameterized
-from azure.communication.callingserver._shared.models import CommunicationIdentifier, CommunicationUserIdentifier, PhoneNumberIdentifier
-from azure.communication.callingserver._models import (CreateCallOptions, MediaType,
-    EventSubscriptionType, JoinCallOptions)
+from azure.communication.callingserver import (CreateCallOptions, MediaType,
+    EventSubscriptionType, JoinCallOptions, CommunicationIdentifier, CommunicationUserIdentifier, PhoneNumberIdentifier)
 try:
     from unittest.mock import Mock, patch
 except ImportError:  # python < 3.3
