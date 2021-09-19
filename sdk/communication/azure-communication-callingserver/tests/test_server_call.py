@@ -90,6 +90,44 @@ def data_source_test_remove_participant():
 
     return parameters
 
+def data_source_test_cancel_media_operation():
+
+    parameters = []
+    parameters.append((
+        _test_constants.ClientType_ConnectionString,
+        _test_constants.SERVER_CALL_ID,
+        _test_constants.MEDIA_OPERATION_ID,
+        ))
+
+    parameters.append((
+        _test_constants.ClientType_ManagedIdentity,
+        _test_constants.SERVER_CALL_ID,
+        _test_constants.MEDIA_OPERATION_ID,
+        True,
+        ))
+
+    return parameters
+
+def data_source_test_cancel_participant_media_operation():
+
+    parameters = []
+    parameters.append((
+        _test_constants.ClientType_ConnectionString,
+        _test_constants.SERVER_CALL_ID,
+        _test_constants.PARTICIPANT_ID,
+        _test_constants.MEDIA_OPERATION_ID,
+        ))
+
+    parameters.append((
+        _test_constants.ClientType_ManagedIdentity,
+        _test_constants.SERVER_CALL_ID,
+        _test_constants.PARTICIPANT_ID,
+        _test_constants.MEDIA_OPERATION_ID,
+        True,
+        ))
+
+    return parameters
+
 def verify_play_audio_result(result):
     # type: (CancelAllMediaOperationsResult) -> None
     assert "dummyId" == result.operation_id
@@ -248,6 +286,102 @@ class TestServerCall(unittest.TestCase):
         try:
             server_call.remove_participant(
                 participant_id = participant_id
+                )
+        except:
+            raised = True
+        assert raised == True
+
+    @parameterized.expand(data_source_test_cancel_media_operation())
+    def test_cancel_media_operation_succeed(
+        self,
+        test_name, # type: str
+        server_call_id, # type: str
+        media_operation_id, # type: str
+        use_managed_identity = False # type: bool
+        ):
+
+        server_call = _test_utils.create_mock_server_call(
+            server_call_id,
+            status_code=200,
+            payload=None,
+            use_managed_identity=use_managed_identity
+            )
+
+        server_call.cancel_media_operation(
+            media_operation_id = media_operation_id
+            )
+        assert server_call.server_call_id == _test_constants.SERVER_CALL_ID
+
+    @parameterized.expand(data_source_test_cancel_media_operation())
+    def test_cancel_media_operation_failed(
+        self,
+        test_name, # type: str
+        server_call_id, # type: str
+        media_operation_id, # type: str
+        use_managed_identity = False # type: bool
+        ):
+
+        server_call = _test_utils.create_mock_server_call(
+            server_call_id,
+            status_code=404,
+            payload=_test_constants.ErrorPayload,
+            use_managed_identity = use_managed_identity
+            )
+
+        raised = False
+        try:
+             server_call.cancel_media_operation(
+                media_operation_id = media_operation_id
+                )
+        except:
+            raised = True
+        assert raised == True
+
+    @parameterized.expand(data_source_test_cancel_participant_media_operation())
+    def test_cancel_participant_media_operation(
+        self,
+        test_name, # type: str
+        server_call_id, # type: str
+        participant_id, # type: str
+        media_operation_id, # type: str
+        use_managed_identity = False # type: bool
+        ):
+
+        server_call = _test_utils.create_mock_server_call(
+            server_call_id,
+            status_code=200,
+            payload=None,
+            use_managed_identity=use_managed_identity
+            )
+
+        server_call.cancel_participant_media_operation(
+            participant_id = participant_id,
+            media_operation_id = media_operation_id
+            )
+        assert server_call.server_call_id == _test_constants.SERVER_CALL_ID
+
+    @parameterized.expand(data_source_test_cancel_participant_media_operation())
+    def test_cancel_media_operation_failed(
+        self,
+        test_name, # type: str
+        server_call_id, # type: str
+        participant_id, # type: str
+        media_operation_id, # type: str
+        use_managed_identity = False # type: bool
+        ):
+
+        server_call = _test_utils.create_mock_server_call(
+            server_call_id,
+            status_code=404,
+            payload=_test_constants.ErrorPayload,
+            use_managed_identity = use_managed_identity
+            )
+
+        raised = False
+        try:
+             server_call.cancel_participant_media_operation(
+                participant_id = participant_id,
+                media_operation_id = media_operation_id
                 )
         except:
             raised = True

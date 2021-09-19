@@ -8,10 +8,12 @@ from .._models import JoinCallOptions, PlayAudioOptions
 from .._generated.models import (
     JoinCallRequest,
     PlayAudioRequest,
+    TransferCallRequest,
     CommunicationIdentifierModel,
     AddParticipantRequest,
-    PhoneNumberIdentifierModel,
-    CancelAllMediaOperationsRequest
+    CancelAllMediaOperationsRequest,
+    CancelMediaOperationRequest,
+    PhoneNumberIdentifierModel
     )
 
 class JoinCallRequestConverter(object):
@@ -77,9 +79,37 @@ class AddParticipantRequestConverter(object):
 class CancelAllMediaOperationsConverter(object):
     @staticmethod
     def convert(
-        operation_context=None, # type: str
+        operation_context=None # type: str
         ): # type: (...) -> CancelAllMediaOperationsRequest
 
         return CancelAllMediaOperationsRequest(
             operation_context=operation_context
             )
+
+class CancelMediaOperationRequestConverter(object):
+    @staticmethod
+    def convert(
+        media_operation_id # type: str
+        ): # type: (...) -> CancelMediaOperationRequest
+
+        if not media_operation_id:
+            raise ValueError("media_operation_id can not be None")
+
+        return CancelMediaOperationRequest(
+            media_operation_id=media_operation_id
+        )
+
+class TransferCallRequestConverter(object):
+    @staticmethod
+    def convert(
+        target_participant, # type: CommunicationIdentifierModel
+        user_to_user_information=None # type: str
+        ): # type: (...) -> TransferCallRequest
+
+        if not target_participant:
+            raise ValueError("target_participant can not be None")
+
+        return TransferCallRequest(
+            target_participant=target_participant,
+            user_to_user_information=user_to_user_information
+        )

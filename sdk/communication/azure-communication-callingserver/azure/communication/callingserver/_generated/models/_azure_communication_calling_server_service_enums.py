@@ -27,12 +27,13 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
 
 
 class CallConnectionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The call connection state.
+    """The state of the call connection.
     """
 
-    INCOMING = "incoming"
     CONNECTING = "connecting"
     CONNECTED = "connected"
+    TRANSFERRING = "transferring"
+    TRANSFER_ACCEPTED = "transferAccepted"
     DISCONNECTING = "disconnecting"
     DISCONNECTED = "disconnected"
 
@@ -69,6 +70,28 @@ class OperationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     RUNNING = "running"
     COMPLETED = "completed"
     FAILED = "failed"
+
+class RecordingChannelType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Channel type of call recording.
+    """
+
+    MIXED = "mixed"
+    UNMIXED = "unmixed"
+
+class RecordingContentType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Content type of call recording.
+    """
+
+    AUDIO = "audio"
+    AUDIO_VIDEO = "audioVideo"
+
+class RecordingFormatType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Format type of call recording.
+    """
+
+    WAV = "wav"
+    MP3 = "mp3"
+    MP4 = "mp4"
 
 class ToneValue(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The tone value.
