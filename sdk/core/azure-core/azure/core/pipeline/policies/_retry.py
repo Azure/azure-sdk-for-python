@@ -73,7 +73,7 @@ class RetryPolicyBase(object):
         retry_codes = self._RETRY_CODES
         status_codes = kwargs.pop('retry_on_status_codes', [])
         self._retry_on_status_codes = set(status_codes) | retry_codes
-        self._method_whitelist = frozenset(['HEAD', 'GET', 'PUT', 'DELETE', 'OPTIONS', 'TRACE'])
+        self._method_allowlist = frozenset(['HEAD', 'GET', 'PUT', 'DELETE', 'OPTIONS', 'TRACE'])
         self._respect_retry_after_header = True
         super(RetryPolicyBase, self).__init__()
 
@@ -97,7 +97,7 @@ class RetryPolicyBase(object):
             'status': options.pop("retry_status", self.status_retries),
             'backoff': options.pop("retry_backoff_factor", self.backoff_factor),
             'max_backoff': options.pop("retry_backoff_max", self.BACKOFF_MAX),
-            'methods': options.pop("retry_on_methods", self._method_whitelist),
+            'methods': options.pop("retry_on_methods", self._method_allowlist),
             'timeout': options.pop("timeout", self.timeout),
             'history': []
         }
@@ -152,14 +152,14 @@ class RetryPolicyBase(object):
 
     def _is_method_retryable(self, settings, request, response=None):
         """Checks if a given HTTP method should be retried upon, depending if
-        it is included on the method whitelist.
+        it is included on the method allowlist.
 
         :param dict settings: The retry settings.
         :param request: The PipelineRequest object.
         :type request: ~azure.core.pipeline.PipelineRequest
         :param response: The PipelineResponse object.
         :type response: ~azure.core.pipeline.PipelineResponse
-        :return: True if method should be retried upon. False if not in method whitelist.
+        :return: True if method should be retried upon. False if not in method allowlist.
         :rtype: bool
         """
         if response and request.method.upper() in ['POST', 'PATCH'] and \
@@ -173,7 +173,7 @@ class RetryPolicyBase(object):
     def is_retry(self, settings, response):
         """Checks if method/status code is retryable.
 
-        Based on whitelists and control variables such as the number of
+        Based on allowlists and control variables such as the number of
         total retries to allow, whether to respect the Retry-After header,
         whether this header is present, and whether the returned status
         code is on the list of status codes to be retried upon on the
@@ -244,7 +244,7 @@ class RetryPolicyBase(object):
 
         else:
             # Incrementing because of a server error like a 500 in
-            # status_forcelist and a the given method is in the whitelist
+            # status_forcelist and a the given method is in the allowlist
             if response:
                 settings['status'] -= 1
                 if hasattr(response, 'http_request') and hasattr(response, 'http_response'):
