@@ -10,21 +10,21 @@
         "Content-Length": "37",
         "Content-Type": "application/json;odata=nometadata",
         "DataServiceVersion": "3.0",
-        "Date": "Thu, 16 Sep 2021 21:51:07 GMT",
+        "Date": "Tue, 21 Sep 2021 01:02:07 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "325799fd-1738-11ec-a3fe-5cf37093a909",
-        "x-ms-date": "Thu, 16 Sep 2021 21:51:07 GMT",
+        "x-ms-client-request-id": "8ae3960b-1a77-11ec-a971-5cf37093a909",
+        "x-ms-date": "Tue, 21 Sep 2021 01:02:07 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": "{\u0022TableName\u0022: \u0022pytableasyncc0bd3225\u0022}",
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
-        "Date": "Thu, 16 Sep 2021 21:51:05 GMT",
-        "ETag": "W/\u0022datetime\u00272021-09-16T21%3A51%3A06.0435976Z\u0027\u0022",
+        "Date": "Tue, 21 Sep 2021 01:02:07 GMT",
+        "ETag": "W/\u0022datetime\u00272021-09-21T01%3A02%3A07.7834248Z\u0027\u0022",
         "Location": "https://yalltbtestsprim.table.cosmos.azure.com/Tables(\u0027pytableasyncc0bd3225\u0027)",
         "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "f5a06d6f-9a06-4eb9-b44c-8e772cbb2424"
+        "x-ms-request-id": "32095206-590d-4c3a-8717-26171574698c"
       },
       "ResponseBody": {
         "TableName": "pytableasyncc0bd3225",
@@ -39,17 +39,17 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Content-Length": "0",
-        "Date": "Thu, 16 Sep 2021 21:51:07 GMT",
+        "Date": "Tue, 21 Sep 2021 01:02:07 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "329d0e1f-1738-11ec-9651-5cf37093a909",
-        "x-ms-date": "Thu, 16 Sep 2021 21:51:07 GMT",
+        "x-ms-client-request-id": "8b1c9c26-1a77-11ec-a758-5cf37093a909",
+        "x-ms-date": "Tue, 21 Sep 2021 01:02:07 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
-        "Date": "Thu, 16 Sep 2021 21:51:05 GMT",
-        "x-ms-request-id": "770d4727-3b7e-4dc7-af44-1c55652aafc9"
+        "Date": "Tue, 21 Sep 2021 01:02:07 GMT",
+        "x-ms-request-id": "87183c31-232d-4821-9159-b4973d16bba5"
       },
       "ResponseBody": null
     }

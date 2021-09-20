@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://yalltablestestsprim.table.core.windows.net/Tables",
+      "RequestUri": "https://yalltbtestsprim.table.core.windows.net/Tables",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata=minimalmetadata",
@@ -10,10 +10,10 @@
         "Content-Length": "32",
         "Content-Type": "application/json;odata=nometadata",
         "DataServiceVersion": "3.0",
-        "Date": "Thu, 16 Sep 2021 09:49:46 GMT",
+        "Date": "Mon, 20 Sep 2021 22:03:45 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "6d31a00d-16d3-11ec-9fc4-5cf37093a909",
-        "x-ms-date": "Thu, 16 Sep 2021 09:49:46 GMT",
+        "x-ms-client-request-id": "9fbbcad1-1a5e-11ec-b1c4-5cf37093a909",
+        "x-ms-date": "Mon, 20 Sep 2021 22:03:45 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": "{\u0022TableName\u0022: \u0022uttable66f43199\u0022}",
@@ -21,25 +21,25 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Type": "application/json; odata=minimalmetadata; streaming=true; charset=utf-8",
-        "Date": "Thu, 16 Sep 2021 09:49:44 GMT",
-        "Location": "https://yalltablestestsprim.table.core.windows.net/Tables(\u0027uttable66f43199\u0027)",
+        "Date": "Mon, 20 Sep 2021 22:03:44 GMT",
+        "Location": "https://yalltbtestsprim.table.core.windows.net/Tables(\u0027uttable66f43199\u0027)",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "6d31a00d-16d3-11ec-9fc4-5cf37093a909",
-        "x-ms-request-id": "b1cfec90-c002-00db-05e0-aa45fd000000",
+        "x-ms-client-request-id": "9fbbcad1-1a5e-11ec-b1c4-5cf37093a909",
+        "x-ms-request-id": "41382a54-2002-004e-656b-ae8313000000",
         "x-ms-version": "2019-02-02"
       },
       "ResponseBody": {
-        "odata.metadata": "https://yalltablestestsprim.table.core.windows.net/$metadata#Tables/@Element",
+        "odata.metadata": "https://yalltbtestsprim.table.core.windows.net/$metadata#Tables/@Element",
         "TableName": "uttable66f43199"
       }
     },
     {
-      "RequestUri": "https://yalltablestestsprim.table.core.windows.net/uttable66f43199",
+      "RequestUri": "https://yalltbtestsprim.table.core.windows.net/uttable66f43199",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata=nometadata",
@@ -48,10 +48,10 @@
         "Content-Length": "711",
         "Content-Type": "application/json;odata=nometadata",
         "DataServiceVersion": "3.0",
-        "Date": "Thu, 16 Sep 2021 09:49:46 GMT",
+        "Date": "Mon, 20 Sep 2021 22:03:45 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "6d37ca24-16d3-11ec-89bd-5cf37093a909",
-        "x-ms-date": "Thu, 16 Sep 2021 09:49:46 GMT",
+        "x-ms-client-request-id": "9fc07583-1a5e-11ec-b76a-5cf37093a909",
+        "x-ms-date": "Mon, 20 Sep 2021 22:03:45 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": "{\u0022PartitionKey\u0022: \u0022pk66f43199\u0022, \u0022PartitionKey@odata.type\u0022: \u0022Edm.String\u0022, \u0022RowKey\u0022: \u0022rk66f43199\u0022, \u0022RowKey@odata.type\u0022: \u0022Edm.String\u0022, \u0022age\u0022: 39, \u0022sex\u0022: \u0022male\u0022, \u0022sex@odata.type\u0022: \u0022Edm.String\u0022, \u0022married\u0022: true, \u0022deceased\u0022: false, \u0022ratio\u0022: 3.1, \u0022ratio@odata.type\u0022: \u0022Edm.Double\u0022, \u0022evenratio\u0022: 3.0, \u0022evenratio@odata.type\u0022: \u0022Edm.Double\u0022, \u0022double\u0022: 5, \u0022double@odata.type\u0022: \u0022Edm.Double\u0022, \u0022large\u0022: 933311100, \u0022Birthday\u0022: \u00221973-10-04T00:00:00.000000Z\u0022, \u0022Birthday@odata.type\u0022: \u0022Edm.DateTime\u0022, \u0022birthday\u0022: \u00221970-10-04T00:00:00.000000Z\u0022, \u0022birthday@odata.type\u0022: \u0022Edm.DateTime\u0022, \u0022binary\u0022: \u0022YmluYXJ5\u0022, \u0022binary@odata.type\u0022: \u0022Edm.Binary\u0022, \u0022other\u0022: 20, \u0022clsid\u0022: \u0022c9da6455-213d-42c9-9a79-3e9149a57833\u0022, \u0022clsid@odata.type\u0022: \u0022Edm.Guid\u0022}",
@@ -59,23 +59,23 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Type": "application/json; odata=nometadata; streaming=true; charset=utf-8",
-        "Date": "Thu, 16 Sep 2021 09:49:44 GMT",
-        "ETag": "W/\u0022datetime\u00272021-09-16T09%3A49%3A45.7534349Z\u0027\u0022",
-        "Location": "https://yalltablestestsprim.table.core.windows.net/uttable66f43199(PartitionKey=\u0027pk66f43199\u0027,RowKey=\u0027rk66f43199\u0027)",
+        "Date": "Mon, 20 Sep 2021 22:03:44 GMT",
+        "ETag": "W/\u0022datetime\u00272021-09-20T22%3A03%3A45.0554056Z\u0027\u0022",
+        "Location": "https://yalltbtestsprim.table.core.windows.net/uttable66f43199(PartitionKey=\u0027pk66f43199\u0027,RowKey=\u0027rk66f43199\u0027)",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "6d37ca24-16d3-11ec-89bd-5cf37093a909",
-        "x-ms-request-id": "b1cfec99-c002-00db-0de0-aa45fd000000",
+        "x-ms-client-request-id": "9fc07583-1a5e-11ec-b76a-5cf37093a909",
+        "x-ms-request-id": "41382a57-2002-004e-676b-ae8313000000",
         "x-ms-version": "2019-02-02"
       },
       "ResponseBody": {
         "PartitionKey": "pk66f43199",
         "RowKey": "rk66f43199",
-        "Timestamp": "2021-09-16T09:49:45.7534349Z",
+        "Timestamp": "2021-09-20T22:03:45.0554056Z",
         "age": 39,
         "sex": "male",
         "married": true,
@@ -92,17 +92,17 @@
       }
     },
     {
-      "RequestUri": "https://yalltablestestsprim.table.core.windows.net/uttable66f43199(PartitionKey=\u0027pk66f43199\u0027,RowKey=\u0027rk66f43199\u0027)",
+      "RequestUri": "https://yalltbtestsprim.table.core.windows.net/uttable66f43199(PartitionKey=\u0027pk66f43199\u0027,RowKey=\u0027rk66f43199\u0027)",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata=nometadata",
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "DataServiceVersion": "3.0",
-        "Date": "Thu, 16 Sep 2021 09:49:46 GMT",
+        "Date": "Mon, 20 Sep 2021 22:03:45 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "6d3c60e8-16d3-11ec-8a4b-5cf37093a909",
-        "x-ms-date": "Thu, 16 Sep 2021 09:49:46 GMT",
+        "x-ms-client-request-id": "9fc46d50-1a5e-11ec-8318-5cf37093a909",
+        "x-ms-date": "Mon, 20 Sep 2021 22:03:45 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
@@ -110,22 +110,23 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Type": "application/json; odata=nometadata; streaming=true; charset=utf-8",
-        "Date": "Thu, 16 Sep 2021 09:49:44 GMT",
-        "ETag": "W/\u0022datetime\u00272021-09-16T09%3A49%3A45.7534349Z\u0027\u0022",
+        "Date": "Mon, 20 Sep 2021 22:03:44 GMT",
+        "ETag": "W/\u0022datetime\u00272021-09-20T22%3A03%3A45.0554056Z\u0027\u0022",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "Transfer-Encoding": "chunked",
+        "Vary": "Origin",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "6d3c60e8-16d3-11ec-8a4b-5cf37093a909",
-        "x-ms-request-id": "b1cfec9e-c002-00db-12e0-aa45fd000000",
+        "x-ms-client-request-id": "9fc46d50-1a5e-11ec-8318-5cf37093a909",
+        "x-ms-request-id": "41382a5b-2002-004e-6b6b-ae8313000000",
         "x-ms-version": "2019-02-02"
       },
       "ResponseBody": {
         "PartitionKey": "pk66f43199",
         "RowKey": "rk66f43199",
-        "Timestamp": "2021-09-16T09:49:45.7534349Z",
+        "Timestamp": "2021-09-20T22:03:45.0554056Z",
         "age": 39,
         "sex": "male",
         "married": true,
@@ -142,17 +143,17 @@
       }
     },
     {
-      "RequestUri": "https://yalltablestestsprim.table.core.windows.net/Tables",
+      "RequestUri": "https://yalltbtestsprim.table.core.windows.net/Tables",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata=minimalmetadata",
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "DataServiceVersion": "3.0",
-        "Date": "Thu, 16 Sep 2021 09:49:46 GMT",
+        "Date": "Mon, 20 Sep 2021 22:03:45 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "6d3f260e-16d3-11ec-ad50-5cf37093a909",
-        "x-ms-date": "Thu, 16 Sep 2021 09:49:46 GMT",
+        "x-ms-client-request-id": "9fc754b4-1a5e-11ec-aa8a-5cf37093a909",
+        "x-ms-date": "Mon, 20 Sep 2021 22:03:45 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
@@ -160,19 +161,20 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Type": "application/json; odata=minimalmetadata; streaming=true; charset=utf-8",
-        "Date": "Thu, 16 Sep 2021 09:49:44 GMT",
+        "Date": "Mon, 20 Sep 2021 22:03:44 GMT",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "Transfer-Encoding": "chunked",
+        "Vary": "Origin",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "6d3f260e-16d3-11ec-ad50-5cf37093a909",
-        "x-ms-request-id": "b1cfeca2-c002-00db-16e0-aa45fd000000",
+        "x-ms-client-request-id": "9fc754b4-1a5e-11ec-aa8a-5cf37093a909",
+        "x-ms-request-id": "41382a61-2002-004e-6f6b-ae8313000000",
         "x-ms-version": "2019-02-02"
       },
       "ResponseBody": {
-        "odata.metadata": "https://yalltablestestsprim.table.core.windows.net/$metadata#Tables",
+        "odata.metadata": "https://yalltbtestsprim.table.core.windows.net/$metadata#Tables",
         "value": [
           {
             "TableName": "uttable66f43199"
@@ -181,17 +183,17 @@
       }
     },
     {
-      "RequestUri": "https://yalltablestestsprim.table.core.windows.net/Tables(\u0027uttable66f43199\u0027)",
+      "RequestUri": "https://yalltbtestsprim.table.core.windows.net/Tables(\u0027uttable66f43199\u0027)",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Content-Length": "0",
-        "Date": "Thu, 16 Sep 2021 09:49:46 GMT",
+        "Date": "Mon, 20 Sep 2021 22:03:45 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "6d420c6f-16d3-11ec-bd99-5cf37093a909",
-        "x-ms-date": "Thu, 16 Sep 2021 09:49:46 GMT",
+        "x-ms-client-request-id": "9fca9bb6-1a5e-11ec-9814-5cf37093a909",
+        "x-ms-date": "Mon, 20 Sep 2021 22:03:45 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
@@ -199,14 +201,14 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Thu, 16 Sep 2021 09:49:44 GMT",
+        "Date": "Mon, 20 Sep 2021 22:03:44 GMT",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "6d420c6f-16d3-11ec-bd99-5cf37093a909",
-        "x-ms-request-id": "b1cfeca5-c002-00db-19e0-aa45fd000000",
+        "x-ms-client-request-id": "9fca9bb6-1a5e-11ec-9814-5cf37093a909",
+        "x-ms-request-id": "41382a62-2002-004e-706b-ae8313000000",
         "x-ms-version": "2019-02-02"
       },
       "ResponseBody": null

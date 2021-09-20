@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://yalltablestestsprim.table.core.windows.net/Tables(\u0027pytablesyncb3653024\u0027)",
+      "RequestUri": "https://fakeendpoint.table.core.windows.net/Tables(\u0027pytablesyncb3653024\u0027)",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,10 +9,10 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "Date": "Thu, 16 Sep 2021 09:38:33 GMT",
+        "Date": "Tue, 21 Sep 2021 00:50:20 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "dbc1e0b8-16d1-11ec-9500-5cf37093a909",
-        "x-ms-date": "Thu, 16 Sep 2021 09:38:33 GMT",
+        "x-ms-client-request-id": "e5ac202f-1a75-11ec-86a1-5cf37093a909",
+        "x-ms-date": "Tue, 21 Sep 2021 00:50:20 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
@@ -20,15 +20,15 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Type": "application/json; odata=minimalmetadata; streaming=true; charset=utf-8",
-        "Date": "Thu, 16 Sep 2021 09:38:32 GMT",
+        "Date": "Tue, 21 Sep 2021 00:50:20 GMT",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "dbc1e0b8-16d1-11ec-9500-5cf37093a909",
-        "x-ms-request-id": "5d897ee5-7002-00a4-74de-aadbcf000000",
+        "x-ms-client-request-id": "e5ac202f-1a75-11ec-86a1-5cf37093a909",
+        "x-ms-request-id": "f60fc35a-b002-003e-4e82-ae3ae4000000",
         "x-ms-version": "2019-02-02"
       },
       "ResponseBody": {
@@ -36,7 +36,7 @@
           "code": "ResourceNotFound",
           "message": {
             "lang": "en-US",
-            "value": "The specified resource does not exist.\nRequestId:5d897ee5-7002-00a4-74de-aadbcf000000\nTime:2021-09-16T09:38:32.2452777Z"
+            "value": "The specified resource does not exist.\nRequestId:f60fc35a-b002-003e-4e82-ae3ae4000000\nTime:2021-09-21T00:50:21.0781298Z"
           }
         }
       }

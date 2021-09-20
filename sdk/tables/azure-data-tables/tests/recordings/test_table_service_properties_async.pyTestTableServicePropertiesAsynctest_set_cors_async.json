@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://yalltablestestsprim.table.core.windows.net/?restype=service\u0026comp=properties",
+      "RequestUri": "https://yalltbtestsprim.table.core.windows.net/?restype=service\u0026comp=properties",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -9,10 +9,10 @@
         "Authorization": "Sanitized",
         "Content-Length": "631",
         "Content-Type": "application/xml",
-        "Date": "Thu, 16 Sep 2021 10:19:23 GMT",
+        "Date": "Mon, 20 Sep 2021 23:08:54 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "90719c5d-16d7-11ec-b717-5cf37093a909",
-        "x-ms-date": "Thu, 16 Sep 2021 10:19:23 GMT",
+        "x-ms-client-request-id": "b9b06975-1a67-11ec-ac1d-5cf37093a909",
+        "x-ms-date": "Mon, 20 Sep 2021 23:08:54 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": [
@@ -21,44 +21,44 @@
       ],
       "StatusCode": 202,
       "ResponseHeaders": {
-        "Date": "Thu, 16 Sep 2021 10:19:22 GMT",
+        "Date": "Mon, 20 Sep 2021 23:08:54 GMT",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "Transfer-Encoding": "chunked",
-        "x-ms-client-request-id": "90719c5d-16d7-11ec-b717-5cf37093a909",
-        "x-ms-request-id": "b53267c8-0002-000a-63e4-aaf8a2000000",
+        "x-ms-client-request-id": "b9b06975-1a67-11ec-ac1d-5cf37093a909",
+        "x-ms-request-id": "eea94f7a-f002-0072-3c74-aeaad4000000",
         "x-ms-version": "2019-02-02"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://yalltablestestsprim.table.core.windows.net/?restype=service\u0026comp=properties",
+      "RequestUri": "https://yalltbtestsprim.table.core.windows.net/?restype=service\u0026comp=properties",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
-        "Date": "Thu, 16 Sep 2021 10:20:08 GMT",
+        "Date": "Mon, 20 Sep 2021 23:09:39 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "ab4c0746-16d7-11ec-8840-5cf37093a909",
-        "x-ms-date": "Thu, 16 Sep 2021 10:20:08 GMT",
+        "x-ms-client-request-id": "d48a160d-1a67-11ec-af7a-5cf37093a909",
+        "x-ms-date": "Mon, 20 Sep 2021 23:09:39 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/xml",
-        "Date": "Thu, 16 Sep 2021 10:20:07 GMT",
+        "Date": "Mon, 20 Sep 2021 23:09:39 GMT",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "Transfer-Encoding": "chunked",
         "Vary": "Origin",
-        "x-ms-client-request-id": "ab4c0746-16d7-11ec-8840-5cf37093a909",
-        "x-ms-request-id": "b5328ae8-0002-000a-7ae4-aaf8a2000000",
+        "x-ms-client-request-id": "d48a160d-1a67-11ec-af7a-5cf37093a909",
+        "x-ms-request-id": "eea95ee4-f002-0072-3974-aeaad4000000",
         "x-ms-version": "2019-02-02"
       },
       "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CStorageServiceProperties\u003E\u003CLogging\u003E\u003CVersion\u003E1.0\u003C/Version\u003E\u003CRead\u003Etrue\u003C/Read\u003E\u003CWrite\u003Etrue\u003C/Write\u003E\u003CDelete\u003Etrue\u003C/Delete\u003E\u003CRetentionPolicy\u003E\u003CEnabled\u003Etrue\u003C/Enabled\u003E\u003CDays\u003E5\u003C/Days\u003E\u003C/RetentionPolicy\u003E\u003C/Logging\u003E\u003CHourMetrics\u003E\u003CVersion\u003E1.0\u003C/Version\u003E\u003CEnabled\u003Etrue\u003C/Enabled\u003E\u003CIncludeAPIs\u003Etrue\u003C/IncludeAPIs\u003E\u003CRetentionPolicy\u003E\u003CEnabled\u003Etrue\u003C/Enabled\u003E\u003CDays\u003E5\u003C/Days\u003E\u003C/RetentionPolicy\u003E\u003C/HourMetrics\u003E\u003CMinuteMetrics\u003E\u003CVersion\u003E1.0\u003C/Version\u003E\u003CEnabled\u003Etrue\u003C/Enabled\u003E\u003CIncludeAPIs\u003Etrue\u003C/IncludeAPIs\u003E\u003CRetentionPolicy\u003E\u003CEnabled\u003Etrue\u003C/Enabled\u003E\u003CDays\u003E5\u003C/Days\u003E\u003C/RetentionPolicy\u003E\u003C/MinuteMetrics\u003E\u003CCors\u003E\u003CCorsRule\u003E\u003CAllowedMethods\u003EGET\u003C/AllowedMethods\u003E\u003CAllowedOrigins\u003Ewww.xyz.com\u003C/AllowedOrigins\u003E\u003CAllowedHeaders /\u003E\u003CExposedHeaders /\u003E\u003CMaxAgeInSeconds\u003E0\u003C/MaxAgeInSeconds\u003E\u003C/CorsRule\u003E\u003CCorsRule\u003E\u003CAllowedMethods\u003EGET,PUT\u003C/AllowedMethods\u003E\u003CAllowedOrigins\u003Ewww.xyz.com,www.ab.com,www.bc.com\u003C/AllowedOrigins\u003E\u003CAllowedHeaders\u003Ex-ms-meta-xyz,x-ms-meta-foo,x-ms-meta-data*,x-ms-meta-target*\u003C/AllowedHeaders\u003E\u003CExposedHeaders\u003Ex-ms-meta-abc,x-ms-meta-bcd,x-ms-meta-data*,x-ms-meta-source*\u003C/ExposedHeaders\u003E\u003CMaxAgeInSeconds\u003E500\u003C/MaxAgeInSeconds\u003E\u003C/CorsRule\u003E\u003C/Cors\u003E\u003C/StorageServiceProperties\u003E"

@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://yalltablestestsprim.table.core.windows.net/Tables",
+      "RequestUri": "https://fakeendpoint.table.core.windows.net/Tables",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata=minimalmetadata",
@@ -9,10 +9,10 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "DataServiceVersion": "3.0",
-        "Date": "Thu, 16 Sep 2021 09:49:24 GMT",
+        "Date": "Tue, 21 Sep 2021 01:00:40 GMT",
         "User-Agent": "TestApp/v1.0 azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "5fbec8f9-16d3-11ec-8f0f-5cf37093a909",
-        "x-ms-date": "Thu, 16 Sep 2021 09:49:24 GMT",
+        "x-ms-client-request-id": "56d61412-1a77-11ec-826f-5cf37093a909",
+        "x-ms-date": "Tue, 21 Sep 2021 01:00:40 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
@@ -20,24 +20,25 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Type": "application/json; odata=minimalmetadata; streaming=true; charset=utf-8",
-        "Date": "Thu, 16 Sep 2021 09:49:22 GMT",
+        "Date": "Tue, 21 Sep 2021 01:00:39 GMT",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "Transfer-Encoding": "chunked",
+        "Vary": "Origin",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "5fbec8f9-16d3-11ec-8f0f-5cf37093a909",
-        "x-ms-request-id": "b1cfe006-c002-00db-22e0-aa45fd000000",
+        "x-ms-client-request-id": "56d61412-1a77-11ec-826f-5cf37093a909",
+        "x-ms-request-id": "3e312c85-0002-0066-1484-aee2bb000000",
         "x-ms-version": "2019-02-02"
       },
       "ResponseBody": {
-        "odata.metadata": "https://yalltablestestsprim.table.core.windows.net/$metadata#Tables",
+        "odata.metadata": "https://yalltbtestsprim.table.core.windows.net/$metadata#Tables",
         "value": []
       }
     },
     {
-      "RequestUri": "https://yalltablestestsprim.table.core.windows.net/Tables",
+      "RequestUri": "https://fakeendpoint.table.core.windows.net/Tables",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata=minimalmetadata",
@@ -45,10 +46,10 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "DataServiceVersion": "3.0",
-        "Date": "Thu, 16 Sep 2021 09:49:24 GMT",
+        "Date": "Tue, 21 Sep 2021 01:00:40 GMT",
         "User-Agent": "TestApp/v2.0 TestApp/v1.0 azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "5febec52-16d3-11ec-9fd3-5cf37093a909",
-        "x-ms-date": "Thu, 16 Sep 2021 09:49:24 GMT",
+        "x-ms-client-request-id": "5712b01f-1a77-11ec-b955-5cf37093a909",
+        "x-ms-date": "Tue, 21 Sep 2021 01:00:40 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
@@ -56,19 +57,20 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Type": "application/json; odata=minimalmetadata; streaming=true; charset=utf-8",
-        "Date": "Thu, 16 Sep 2021 09:49:22 GMT",
+        "Date": "Tue, 21 Sep 2021 01:00:39 GMT",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "Transfer-Encoding": "chunked",
+        "Vary": "Origin",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "5febec52-16d3-11ec-9fd3-5cf37093a909",
-        "x-ms-request-id": "b1cfe011-c002-00db-2ce0-aa45fd000000",
+        "x-ms-client-request-id": "5712b01f-1a77-11ec-b955-5cf37093a909",
+        "x-ms-request-id": "3e312c87-0002-0066-1584-aee2bb000000",
         "x-ms-version": "2019-02-02"
       },
       "ResponseBody": {
-        "odata.metadata": "https://yalltablestestsprim.table.core.windows.net/$metadata#Tables",
+        "odata.metadata": "https://yalltbtestsprim.table.core.windows.net/$metadata#Tables",
         "value": []
       }
     }

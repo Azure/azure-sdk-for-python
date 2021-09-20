@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://yalltablestestsprim.table.core.windows.net/Tables",
+      "RequestUri": "https://fakeendpoint.table.core.windows.net/Tables",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata=minimalmetadata",
@@ -11,10 +11,10 @@
         "Content-Length": "36",
         "Content-Type": "application/json;odata=nometadata",
         "DataServiceVersion": "3.0",
-        "Date": "Thu, 16 Sep 2021 09:37:51 GMT",
+        "Date": "Tue, 21 Sep 2021 00:49:38 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "c2b94308-16d1-11ec-95d6-5cf37093a909",
-        "x-ms-date": "Thu, 16 Sep 2021 09:37:51 GMT",
+        "x-ms-client-request-id": "cc9c84fb-1a75-11ec-a30c-5cf37093a909",
+        "x-ms-date": "Tue, 21 Sep 2021 00:49:38 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": "{\u0022TableName\u0022: \u0022pytablesync56be2835\u0022}",
@@ -22,25 +22,25 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Type": "application/json; odata=minimalmetadata; streaming=true; charset=utf-8",
-        "Date": "Thu, 16 Sep 2021 09:37:50 GMT",
-        "Location": "https://yalltablestestsprim.table.core.windows.net/Tables(\u0027pytablesync56be2835\u0027)",
+        "Date": "Tue, 21 Sep 2021 00:49:38 GMT",
+        "Location": "https://yalltbtestsprim.table.core.windows.net/Tables(\u0027pytablesync56be2835\u0027)",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "c2b94308-16d1-11ec-95d6-5cf37093a909",
-        "x-ms-request-id": "5d896099-7002-00a4-80de-aadbcf000000",
+        "x-ms-client-request-id": "cc9c84fb-1a75-11ec-a30c-5cf37093a909",
+        "x-ms-request-id": "f60fbab4-b002-003e-3a82-ae3ae4000000",
         "x-ms-version": "2019-02-02"
       },
       "ResponseBody": {
-        "odata.metadata": "https://yalltablestestsprim.table.core.windows.net/$metadata#Tables/@Element",
+        "odata.metadata": "https://yalltbtestsprim.table.core.windows.net/$metadata#Tables/@Element",
         "TableName": "pytablesync56be2835"
       }
     },
     {
-      "RequestUri": "https://yalltablestestsprim.table.core.windows.net/Tables(\u0027pytablesync56be2835\u0027)",
+      "RequestUri": "https://fakeendpoint.table.core.windows.net/Tables(\u0027pytablesync56be2835\u0027)",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -48,10 +48,10 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "Date": "Thu, 16 Sep 2021 09:37:51 GMT",
+        "Date": "Tue, 21 Sep 2021 00:49:38 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "c2c4203c-16d1-11ec-b8ab-5cf37093a909",
-        "x-ms-date": "Thu, 16 Sep 2021 09:37:51 GMT",
+        "x-ms-client-request-id": "cca59bd1-1a75-11ec-a427-5cf37093a909",
+        "x-ms-date": "Tue, 21 Sep 2021 00:49:38 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
@@ -59,14 +59,14 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Thu, 16 Sep 2021 09:37:50 GMT",
+        "Date": "Tue, 21 Sep 2021 00:49:38 GMT",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "c2c4203c-16d1-11ec-b8ab-5cf37093a909",
-        "x-ms-request-id": "5d8960a3-7002-00a4-08de-aadbcf000000",
+        "x-ms-client-request-id": "cca59bd1-1a75-11ec-a427-5cf37093a909",
+        "x-ms-request-id": "f60fbab6-b002-003e-3b82-ae3ae4000000",
         "x-ms-version": "2019-02-02"
       },
       "ResponseBody": null

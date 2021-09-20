@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://yalltablestestsprim.table.core.windows.net/?restype=service\u0026comp=properties",
+      "RequestUri": "https://yalltbtestsprim.table.core.windows.net/?restype=service\u0026comp=properties",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -10,10 +10,10 @@
         "Connection": "keep-alive",
         "Content-Length": "273",
         "Content-Type": "application/xml",
-        "Date": "Thu, 16 Sep 2021 10:26:18 GMT",
+        "Date": "Mon, 20 Sep 2021 23:05:52 GMT",
         "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "8758d5ea-16d8-11ec-8e36-5cf37093a909",
-        "x-ms-date": "Thu, 16 Sep 2021 10:26:18 GMT",
+        "x-ms-client-request-id": "4dada2eb-1a67-11ec-9695-5cf37093a909",
+        "x-ms-date": "Mon, 20 Sep 2021 23:05:52 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": [
@@ -24,20 +24,20 @@
       "ResponseHeaders": {
         "Content-Length": "327",
         "Content-Type": "application/xml",
-        "Date": "Thu, 16 Sep 2021 10:26:16 GMT",
+        "Date": "Mon, 20 Sep 2021 23:05:53 GMT",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-client-request-id": "8758d5ea-16d8-11ec-8e36-5cf37093a909",
+        "x-ms-client-request-id": "4dada2eb-1a67-11ec-9695-5cf37093a909",
         "x-ms-error-code": "InvalidXmlDocument",
-        "x-ms-request-id": "5214fc18-6002-0092-10e5-aa769d000000",
+        "x-ms-request-id": "eea936cc-f002-0072-3e74-aeaad4000000",
         "x-ms-version": "2019-02-02"
       },
       "ResponseBody": [
         "\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003Cm:error xmlns:m=\u0022http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\u0022\u003E\u003Cm:code\u003EInvalidXmlDocument\u003C/m:code\u003E\u003Cm:message xml:lang=\u0022en-US\u0022\u003EXML specified is not syntactically valid.\n",
-        "RequestId:5214fc18-6002-0092-10e5-aa769d000000\n",
-        "Time:2021-09-16T10:26:17.1035766Z\u003C/m:message\u003E\u003C/m:error\u003E"
+        "RequestId:eea936cc-f002-0072-3e74-aeaad4000000\n",
+        "Time:2021-09-20T23:05:53.1311720Z\u003C/m:message\u003E\u003C/m:error\u003E"
       ]
     }
   ],
