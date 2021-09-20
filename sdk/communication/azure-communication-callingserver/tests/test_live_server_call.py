@@ -27,7 +27,6 @@ from devtools_testutils import is_live
 from _shared.utils import get_http_logging_policy
 from utils._live_test_utils import CallingServerLiveTestUtils
 from utils._test_mock_utils import FakeTokenCredential
-from utils._test_utils import TestUtils
 
 from azure.core.exceptions import HttpResponseError
 
@@ -36,8 +35,8 @@ class ServerCallTest(CommunicationTestCase):
     def setUp(self):
         super(ServerCallTest, self).setUp()
 
-        self.from_user = TestUtils.get_new_user_id(self.connection_str)
-        self.to_user = TestUtils.get_new_user_id(self.connection_str)
+        self.from_user = CallingServerLiveTestUtils.get_new_user_id(self.connection_str)
+        self.to_user = CallingServerLiveTestUtils.get_new_user_id(self.connection_str)
 
         if self.is_playback():
             self.from_phone_number = "+15551234567"
@@ -68,7 +67,7 @@ class ServerCallTest(CommunicationTestCase):
 
     def test_join_play_cancel_hangup_scenario(self):
         # create GroupCalls
-        group_id = TestUtils.get_group_id("test_join_play_cancel_hangup_scenario")
+        group_id = CallingServerLiveTestUtils.get_group_id("test_join_play_cancel_hangup_scenario")
         call_connections = CallingServerLiveTestUtils.create_group_calls(
             self.callingserver_client,
             group_id,
@@ -106,7 +105,7 @@ class ServerCallTest(CommunicationTestCase):
 
     def test_create_add_remove_hangup_scenario(self):
         # create GroupCalls
-        group_id = TestUtils.get_group_id("test_create_add_remove_hangup_scenario")
+        group_id = CallingServerLiveTestUtils.get_group_id("test_create_add_remove_hangup_scenario")
         call_connections = CallingServerLiveTestUtils.create_group_calls(
             self.callingserver_client,
             group_id,
