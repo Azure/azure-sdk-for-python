@@ -315,6 +315,7 @@ class ContentStreamDownloader(): # pylint: disable=too-many-instance-attributes
                 # request a range, do a regular get request in order to get
                 # any properties.
                 response = await self._clients.download(
+                    content_url=self.endpoint,
                     **self._request_options)
 
                 # Set the download size to empty

@@ -1,27 +1,123 @@
 interactions:
 - request:
-    body: '{"recordingStateCallbackUri": "https://host.app/api/callback/calling"}'
+    body: '{}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-identity/1.0.1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
+      x-ms-date:
+      - Mon, 20 Sep 2021 22:10:32 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.communication.azure.com/identities?api-version=2021-03-07
+  response:
+    body:
+      string: '{"identity":{"id":"8:acs:016a7064-0581-40b9-be73-6dde64d69d72_0000000c-a524-62c5-28df-44482200454d"}}'
+    headers:
+      api-supported-versions:
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
+        2021-10-31-preview
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 20 Sep 2021 22:10:32 GMT
+      ms-cv:
+      - 0o7Fai+Tkka/MYlJcZn6RQ.0
+      request-context:
+      - appId=
+      strict-transport-security:
+      - max-age=2592000
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+      x-processing-time:
+      - 64ms
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-identity/1.0.1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
+      x-ms-date:
+      - Mon, 20 Sep 2021 22:10:32 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.communication.azure.com/identities?api-version=2021-03-07
+  response:
+    body:
+      string: '{"identity":{"id":"8:acs:016a7064-0581-40b9-be73-6dde64d69d72_0000000c-a524-63c4-2303-454822001f07"}}'
+    headers:
+      api-supported-versions:
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
+        2021-10-31-preview
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 20 Sep 2021 22:10:32 GMT
+      ms-cv:
+      - 3q+uwb6XoE6472W2TVPo7g.0
+      request-context:
+      - appId=
+      strict-transport-security:
+      - max-age=2592000
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+      x-processing-time:
+      - 152ms
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{"recordingStateCallbackUri": "https://bot.contoso.io/callback"}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '70'
+      - '64'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
     method: POST
     uri: https://sanitized.communication.azure.com/calling/serverCalls/aHR0cHM6Ly9jb252LXVzd2UtMDkuY29udi5za3lwZS5jb20vY29udi9EZVF2WEJGVVlFV1NNZkFXYno2azN3P2k9MTEmZT02Mzc1NzIyMjk0Mjc0NTI4Nzk=/recordings?api-version=2021-09-15-preview
   response:
     body:
-      string: '{"error": {"code": "401", "message": "Denied by the resource provider."}}'
+      string: '{"error": {"code": "8501", "message": "Action is invalid when call
+        is not in Established state"}}'
     headers:
-      content-length: '69'
+      content-length: '93'
       content-type: application/json; charset=utf-8
-      date: Mon, 20 Sep 2021 17:23:34 GMT
+      date: Mon, 20 Sep 2021 22:10:33 GMT
       x-cache: CONFIG_NOCACHE
+      x-microsoft-skype-chain-id: 60e4d9f7-db6a-40fa-b928-d39aa6991d2f
     status:
-      code: 401
-      message: Unauthorized
+      code: 400
+      message: Bad Request
     url: https://sanitized.communication.azure.com/calling/serverCalls/aHR0cHM6Ly9jb252LXVzd2UtMDkuY29udi5za3lwZS5jb20vY29udi9EZVF2WEJGVVlFV1NNZkFXYno2azN3P2k9MTEmZT02Mzc1NzIyMjk0Mjc0NTI4Nzk=/recordings?api-version=2021-09-15-preview
 version: 1

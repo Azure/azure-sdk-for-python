@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import os, uuid
+import pytest
 from time import sleep
 
 import utils._test_constants as CONST
@@ -12,11 +13,7 @@ from azure.communication.callingserver import (
     PlayAudioOptions,
     CommunicationUserIdentifier
     )
-from azure.communication.callingserver._models import (
-    EventSubscriptionType,
-    JoinCallOptions,
-    MediaType
-)
+
 from azure.communication.callingserver._shared.utils import parse_connection_str
 from azure.identity.aio import DefaultAzureCredential
 from _shared.asynctestcase  import AsyncCommunicationTestCase
@@ -26,7 +23,7 @@ from _shared.testcase import (
 from devtools_testutils import is_live
 from _shared.utils import get_http_logging_policy
 from utils._live_test_utils_async import CallingServerLiveTestUtilsAsync
-from utils._live_test_utils import CallingServerLiveTestUtils
+from utils._live_test_utils import CallingServerLiveTestUtils, RequestReplacerProcessor
 from utils._test_mock_utils_async import FakeTokenCredential_Async
 
 from azure.core.exceptions import HttpResponseError
@@ -71,6 +68,12 @@ class ServerCallTestAsync(AsyncCommunicationTestCase):
         async with self.callingserver_client:
             # create GroupCalls
             group_id = CallingServerLiveTestUtils.get_group_id("test_join_play_cancel_hangup_scenario_async")
+
+            if self.is_live:
+                self.recording_processors.extend([
+                RequestReplacerProcessor(keys=group_id,
+                    replacement=CallingServerLiveTestUtils.get_playback_group_id("test_join_play_cancel_hangup_scenario_async"))])
+
             call_connections = await CallingServerLiveTestUtilsAsync.create_group_calls_async(
                 self.callingserver_client,
                 group_id,
@@ -113,6 +116,12 @@ class ServerCallTestAsync(AsyncCommunicationTestCase):
         async with self.callingserver_client:
             # create GroupCalls
             group_id = CallingServerLiveTestUtils.get_group_id("test_create_add_remove_hangup_scenario_async")
+
+            if self.is_live:
+                self.recording_processors.extend([
+                RequestReplacerProcessor(keys=group_id,
+                    replacement=CallingServerLiveTestUtils.get_playback_group_id("test_create_add_remove_hangup_scenario_async"))])
+
             call_connections = await CallingServerLiveTestUtilsAsync.create_group_calls_async(
                 self.callingserver_client,
                 group_id,
@@ -149,64 +158,54 @@ class ServerCallTestAsync(AsyncCommunicationTestCase):
     # @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_run_all_client_functions(self):
-        if self.is_playback():
-            group_id = "sanitized"
-        else:
-            group_id = str(uuid.uuid4())
+        async with self.callingserver_client:
+            # create GroupCalls
+            group_id = CallingServerLiveTestUtils.get_group_id("test_run_all_client_functions")
 
-        from_user = "8:acs:" + self.variables_map["AZURE_TENANT_ID"] + "_" + str(uuid.uuid4())
-        to_user = "8:acs:" + self.variables_map["AZURE_TENANT_ID"] + "_" + str(uuid.uuid4())
-        from_participant = CommunicationUserIdentifier(from_user, raw_id=from_user)
-        to_participant = CommunicationUserIdentifier(to_user, raw_id=from_user)
+            if self.is_live:
+                self.recording_processors.extend([
+                RequestReplacerProcessor(keys=group_id,
+                    replacement=CallingServerLiveTestUtils.get_playback_group_id("test_run_all_client_functions"))])
 
-        call_options = JoinCallOptions(
-            callback_uri=self.variables_map["CALLBACK_URI"],
-            requested_media_types=[MediaType.AUDIO],
-            requested_call_events=[EventSubscriptionType.PARTICIPANTS_UPDATED]
-        )
-        from_call_connection = await self.callingserver_client.join_call(group_id, from_participant,
-            call_options)
-        sleep(1)
-        assert from_call_connection is not None
-        assert from_call_connection.call_connection_id is not None
-        assert from_call_connection.call_connection_id
+            call_connections = await CallingServerLiveTestUtilsAsync.create_group_calls_async(
+                self.callingserver_client,
+                group_id,
+                self.from_user,
+                self.to_user,
+                CONST.CALLBACK_URI
+                )
 
-        to_call_connection = await self.callingserver_client.join_call(group_id, to_participant,
-            call_options)
-        sleep(1)
-        assert to_call_connection is not None
-        assert to_call_connection.call_connection_id is not None
-        assert to_call_connection.call_connection_id
+            # initialize a Server Call
+            server_call_async = self.callingserver_client.initialize_server_call(group_id)
 
-        try:
-            server_call = self.callingserver_client.initialize_server_call(group_id)
-            start_call_recording_result = await server_call.start_recording(self.variables_map["CALLBACK_URI"])
-            recording_id = start_call_recording_result.recording_id
+            async with server_call_async:
+                try:
+                    start_call_recording_result = await server_call_async.start_recording(CONST.CALLBACK_URI)
+                    recording_id = start_call_recording_result.recording_id
 
-            assert server_call is not None
-            assert server_call.server_call_id is not None
-            assert recording_id is not None
-            sleep(7)
+                    assert server_call_async is not None
+                    assert server_call_async.server_call_id is not None
+                    assert recording_id is not None
+                    CallingServerLiveTestUtils.sleep_if_in_live_mode()
 
-            recording_state = await server_call.get_recording_properities(recording_id)
-            assert recording_state.recording_state == "active"
+                    recording_state = await server_call_async.get_recording_properities(recording_id)
+                    assert recording_state.recording_state == "active"
 
-            await server_call.pause_recording(recording_id)
-            sleep(7)
-            recording_state = await server_call.get_recording_properities(recording_id)
-            assert recording_state.recording_state == "inactive"
+                    await server_call_async.pause_recording(recording_id)
+                    CallingServerLiveTestUtils.sleep_if_in_live_mode()
+                    recording_state = await server_call_async.get_recording_properities(recording_id)
+                    assert recording_state.recording_state == "inactive"
 
-            await server_call.resume_recording(recording_id)
-            sleep(7)
-            recording_state = await server_call.get_recording_properities(recording_id)
-            assert recording_state.recording_state == "active"
+                    await server_call_async.resume_recording(recording_id)
+                    CallingServerLiveTestUtils.sleep_if_in_live_mode()
+                    recording_state = await server_call_async.get_recording_properities(recording_id)
+                    assert recording_state.recording_state == "active"
 
-            await server_call.stop_recording(recording_id)
-        except Exception:
-            raise
-        finally:
-            await from_call_connection.hang_up()
-            await to_call_connection.hang_up()
+                    await server_call_async.stop_recording(recording_id)
+                finally:
+                    # Clean up/Hang up
+                    CallingServerLiveTestUtils.sleep_if_in_live_mode()
+                    await CallingServerLiveTestUtilsAsync.clean_up_connections_async(call_connections)
 
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_start_recording_fails(self):
@@ -214,4 +213,4 @@ class ServerCallTestAsync(AsyncCommunicationTestCase):
         server_call = self.callingserver_client.initialize_server_call(invalid_server_call_id)
 
         with self.assertRaises(HttpResponseError):
-            await server_call.start_recording(self.variables_map["CALLBACK_URI"])
+            await server_call.start_recording(CONST.CALLBACK_URI)

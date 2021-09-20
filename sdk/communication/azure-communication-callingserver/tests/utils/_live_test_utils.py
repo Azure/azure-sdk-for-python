@@ -5,9 +5,11 @@
 # --------------------------------------------------------------------------
 
 import time, uuid
+import re
 from typing import List
 from devtools_testutils import is_live
 from ._test_constants import RESOURCE_IDENTIFIER, AZURE_TENANT_ID
+from azure_devtools.scenario_tests import RecordingProcessor
 from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.callingserver import (
     CommunicationUserIdentifier,
@@ -22,6 +24,16 @@ from azure.communication.callingserver import (
     MediaType,
     EventSubscriptionType
     )
+
+class RequestReplacerProcessor(RecordingProcessor):
+    def __init__(self, keys=None, replacement="sanitized"):
+        self._keys = keys if keys else []
+        self._replacement = replacement
+
+    def process_request(self, request):
+        request.uri = re.sub('/calling/serverCalls/([^/?]+)',
+            f"/calling/serverCalls/{self._replacement}", request.uri)
+        return request
 
 class CallingServerLiveTestUtils:
 
@@ -152,6 +164,12 @@ class CallingServerLiveTestUtils:
         if is_live():
             return str(uuid.uuid4())
 
+        # For recording tests we need to make sure the groupId
+        # matches the recorded groupId, or the call will fail.
+        return CallingServerLiveTestUtils.get_playback_group_id(test_name)
+    
+    @staticmethod
+    def get_playback_group_id(test_name):
         # For recording tests we need to make sure the groupId
         # matches the recorded groupId, or the call will fail.
         return str(uuid.uuid3(uuid.NAMESPACE_OID, test_name))

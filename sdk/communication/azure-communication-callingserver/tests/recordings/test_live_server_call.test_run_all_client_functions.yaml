@@ -13,16 +13,16 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.0.1 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.0.1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
       x-ms-date:
-      - Mon, 20 Sep 2021 18:28:06 GMT
+      - Mon, 20 Sep 2021 22:01:05 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
     uri: https://sanitized.communication.azure.com/identities?api-version=2021-03-07
   response:
     body:
-      string: '{"identity":{"id":"8:acs:016a7064-0581-40b9-be73-6dde64d69d72_0000000c-a458-bde5-a4f5-343a0d00272d"}}'
+      string: '{"identity":{"id":"8:acs:016a7064-0581-40b9-be73-6dde64d69d72_0000000c-a51b-bc48-f604-454822002105"}}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
@@ -30,9 +30,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 20 Sep 2021 18:28:06 GMT
+      - Mon, 20 Sep 2021 22:01:05 GMT
       ms-cv:
-      - pFn4sXCAWUaPNDWPyeGYsg.0
+      - edon19QwoU2Jx3+KydVCag.0
       request-context:
       - appId=
       strict-transport-security:
@@ -42,7 +42,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 45ms
+      - 84ms
     status:
       code: 201
       message: Created
@@ -60,16 +60,16 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.0.1 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.0.1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
       x-ms-date:
-      - Mon, 20 Sep 2021 18:28:07 GMT
+      - Mon, 20 Sep 2021 22:01:05 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
     uri: https://sanitized.communication.azure.com/identities?api-version=2021-03-07
   response:
     body:
-      string: '{"identity":{"id":"8:acs:016a7064-0581-40b9-be73-6dde64d69d72_0000000c-a458-bee0-d172-254822001c6d"}}'
+      string: '{"identity":{"id":"8:acs:016a7064-0581-40b9-be73-6dde64d69d72_0000000c-a51b-bd14-dbdb-444822002802"}}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
@@ -77,9 +77,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 20 Sep 2021 18:28:06 GMT
+      - Mon, 20 Sep 2021 22:01:05 GMT
       ms-cv:
-      - HWjtC4DxFkS9tX6ihEAkJQ.0
+      - z6vIcmnLqUSiM3Qc+wfEeg.0
       request-context:
       - appId=
       strict-transport-security:
@@ -89,8 +89,352 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 89ms
+      - 84ms
     status:
       code: 201
       message: Created
+- request:
+    body: '{"source": "sanitized", "callbackUri": "sanitized", "requestedMediaTypes":
+      ["audio"], "requestedCallEvents": ["participantsUpdated"]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '256'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
+    method: POST
+    uri: https://sanitized.communication.azure.com/calling/serverCalls/acf699bc-47c8-4007-8a45-f3c37144b834/:join?api-version=2021-09-15-preview
+  response:
+    body:
+      string: '{"callConnectionId": "04000b80-8bf2-4a06-a698-c4e26d4ba6c1"}'
+    headers:
+      content-length:
+      - '59'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 20 Sep 2021 22:01:06 GMT
+      x-cache:
+      - CONFIG_NOCACHE
+      x-microsoft-skype-chain-id:
+      - 706cf31f-8c88-4846-83c2-7d4ce05be973
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: '{"source": "sanitized", "callbackUri": "sanitized", "requestedMediaTypes":
+      ["audio"], "requestedCallEvents": ["participantsUpdated"]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '256'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
+    method: POST
+    uri: https://sanitized.communication.azure.com/calling/serverCalls/acf699bc-47c8-4007-8a45-f3c37144b834/:join?api-version=2021-09-15-preview
+  response:
+    body:
+      string: '{"callConnectionId": "04000b80-b099-4e12-a549-75f9cab1ef77"}'
+    headers:
+      content-length:
+      - '59'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 20 Sep 2021 22:01:17 GMT
+      x-cache:
+      - CONFIG_NOCACHE
+      x-microsoft-skype-chain-id:
+      - f44fb8d1-1ca7-40e1-88ab-528a85ddf259
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: '{"recordingStateCallbackUri": "https://bot.contoso.io/callback"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '64'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
+    method: POST
+    uri: https://sanitized.communication.azure.com/calling/serverCalls/acf699bc-47c8-4007-8a45-f3c37144b834/recordings?api-version=2021-09-15-preview
+  response:
+    body:
+      string: '{"recordingId": "eyJQbGF0Zm9ybUVuZHBvaW50SWQiOiIwNDAwMGI4MC1jMmVlLTRhYTQtYjNjYS1hZTA1YTc4NGViNzMiLCJSZXNvdXJjZVNwZWNpZmljSWQiOiIwNWE0NDZiNy1lMWViLTQ0YjQtYTlhNS04YjU5ZjY5YWQxYTEifQ"}'
+    headers:
+      content-length:
+      - '180'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 20 Sep 2021 22:01:29 GMT
+      x-cache:
+      - CONFIG_NOCACHE
+      x-microsoft-skype-chain-id:
+      - 1a758c4f-0918-4287-8287-9129e5ae19e4
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
+    method: GET
+    uri: https://sanitized.communication.azure.com/calling/serverCalls/acf699bc-47c8-4007-8a45-f3c37144b834/recordings/eyJQbGF0Zm9ybUVuZHBvaW50SWQiOiIwNDAwMGI4MC1jMmVlLTRhYTQtYjNjYS1hZTA1YTc4NGViNzMiLCJSZXNvdXJjZVNwZWNpZmljSWQiOiIwNWE0NDZiNy1lMWViLTQ0YjQtYTlhNS04YjU5ZjY5YWQxYTEifQ?api-version=2021-09-15-preview
+  response:
+    body:
+      string: '{"recordingState": "active"}'
+    headers:
+      content-length:
+      - '27'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 20 Sep 2021 22:01:39 GMT
+      x-cache:
+      - CONFIG_NOCACHE
+      x-microsoft-skype-chain-id:
+      - 7a54e652-3086-4600-94fd-107b4bf8f2e1
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
+    method: POST
+    uri: https://sanitized.communication.azure.com/calling/serverCalls/acf699bc-47c8-4007-8a45-f3c37144b834/recordings/eyJQbGF0Zm9ybUVuZHBvaW50SWQiOiIwNDAwMGI4MC1jMmVlLTRhYTQtYjNjYS1hZTA1YTc4NGViNzMiLCJSZXNvdXJjZVNwZWNpZmljSWQiOiIwNWE0NDZiNy1lMWViLTQ0YjQtYTlhNS04YjU5ZjY5YWQxYTEifQ/:pause?api-version=2021-09-15-preview
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Mon, 20 Sep 2021 22:01:40 GMT
+      x-cache:
+      - CONFIG_NOCACHE
+      x-microsoft-skype-chain-id:
+      - e1150fad-aa05-484b-83b0-53a02816caaf
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
+    method: GET
+    uri: https://sanitized.communication.azure.com/calling/serverCalls/acf699bc-47c8-4007-8a45-f3c37144b834/recordings/eyJQbGF0Zm9ybUVuZHBvaW50SWQiOiIwNDAwMGI4MC1jMmVlLTRhYTQtYjNjYS1hZTA1YTc4NGViNzMiLCJSZXNvdXJjZVNwZWNpZmljSWQiOiIwNWE0NDZiNy1lMWViLTQ0YjQtYTlhNS04YjU5ZjY5YWQxYTEifQ?api-version=2021-09-15-preview
+  response:
+    body:
+      string: '{"recordingState": "inactive"}'
+    headers:
+      content-length:
+      - '29'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 20 Sep 2021 22:01:50 GMT
+      x-cache:
+      - CONFIG_NOCACHE
+      x-microsoft-skype-chain-id:
+      - 250fba80-3964-4f9b-873a-1591a6ea4358
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
+    method: POST
+    uri: https://sanitized.communication.azure.com/calling/serverCalls/acf699bc-47c8-4007-8a45-f3c37144b834/recordings/eyJQbGF0Zm9ybUVuZHBvaW50SWQiOiIwNDAwMGI4MC1jMmVlLTRhYTQtYjNjYS1hZTA1YTc4NGViNzMiLCJSZXNvdXJjZVNwZWNpZmljSWQiOiIwNWE0NDZiNy1lMWViLTQ0YjQtYTlhNS04YjU5ZjY5YWQxYTEifQ/:resume?api-version=2021-09-15-preview
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Mon, 20 Sep 2021 22:01:50 GMT
+      x-cache:
+      - CONFIG_NOCACHE
+      x-microsoft-skype-chain-id:
+      - d16447eb-d670-4903-b97b-f4b5bf63efc0
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
+    method: GET
+    uri: https://sanitized.communication.azure.com/calling/serverCalls/acf699bc-47c8-4007-8a45-f3c37144b834/recordings/eyJQbGF0Zm9ybUVuZHBvaW50SWQiOiIwNDAwMGI4MC1jMmVlLTRhYTQtYjNjYS1hZTA1YTc4NGViNzMiLCJSZXNvdXJjZVNwZWNpZmljSWQiOiIwNWE0NDZiNy1lMWViLTQ0YjQtYTlhNS04YjU5ZjY5YWQxYTEifQ?api-version=2021-09-15-preview
+  response:
+    body:
+      string: '{"recordingState": "active"}'
+    headers:
+      content-length:
+      - '27'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 20 Sep 2021 22:02:00 GMT
+      x-cache:
+      - CONFIG_NOCACHE
+      x-microsoft-skype-chain-id:
+      - d1d929e0-4f27-41c2-a4cd-861269268223
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
+    method: DELETE
+    uri: https://sanitized.communication.azure.com/calling/serverCalls/acf699bc-47c8-4007-8a45-f3c37144b834/recordings/eyJQbGF0Zm9ybUVuZHBvaW50SWQiOiIwNDAwMGI4MC1jMmVlLTRhYTQtYjNjYS1hZTA1YTc4NGViNzMiLCJSZXNvdXJjZVNwZWNpZmljSWQiOiIwNWE0NDZiNy1lMWViLTQ0YjQtYTlhNS04YjU5ZjY5YWQxYTEifQ?api-version=2021-09-15-preview
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Mon, 20 Sep 2021 22:02:00 GMT
+      x-cache:
+      - CONFIG_NOCACHE
+      x-microsoft-skype-chain-id:
+      - db930490-9f91-4ddc-9f20-53c43e7e88c8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
+    method: POST
+    uri: https://sanitized.communication.azure.com/calling/callConnections/04000b80-8bf2-4a06-a698-c4e26d4ba6c1/:hangup?api-version=2021-09-15-preview
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Mon, 20 Sep 2021 22:02:11 GMT
+      x-cache:
+      - CONFIG_NOCACHE
+      x-microsoft-skype-chain-id:
+      - d52d1052-170e-4489-9dfe-00900abc2f96
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
+    method: POST
+    uri: https://sanitized.communication.azure.com/calling/callConnections/04000b80-b099-4e12-a549-75f9cab1ef77/:hangup?api-version=2021-09-15-preview
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Mon, 20 Sep 2021 22:02:11 GMT
+      x-cache:
+      - CONFIG_NOCACHE
+      x-microsoft-skype-chain-id:
+      - 2a287aa7-7c64-470f-be82-2510b1ad617f
+    status:
+      code: 202
+      message: Accepted
 version: 1
