@@ -10,6 +10,7 @@ from azure.core.paging import ItemPaged
 from azure.core.pipeline import AsyncPipeline
 
 from azure.storage.blob.aio import BlobServiceClient
+from .._serialize import get_api_version
 from .._generated.aio import AzureDataLakeStorageRESTAPI
 from .._deserialize import get_datalake_service_properties
 from .._shared.base_client_async import AsyncTransportWrapper, AsyncStorageAccountHostsMixin
@@ -80,6 +81,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         self._blob_service_client = BlobServiceClient(self._blob_account_url, credential, **kwargs)
         self._blob_service_client._hosts[LocationMode.SECONDARY] = ""  #pylint: disable=protected-access
         self._client = AzureDataLakeStorageRESTAPI(self.url, pipeline=self._pipeline)
+        self._client._config.version = get_api_version(kwargs)  #pylint: disable=protected-access
         self._loop = kwargs.get('loop', None)
 
     async def __aenter__(self):
@@ -337,6 +339,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
         return FileSystemClient(self.url, file_system_name, credential=self._raw_credential,
+                                api_version=self.api_version,
                                 _configuration=self._config,
                                 _pipeline=self._pipeline, _hosts=self._hosts,
                                 require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
@@ -385,6 +388,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         )
         return DataLakeDirectoryClient(self.url, file_system_name, directory_name=directory_name,
                                        credential=self._raw_credential,
+                                       api_version=self.api_version,
                                        _configuration=self._config, _pipeline=self._pipeline,
                                        _hosts=self._hosts,
                                        require_encryption=self.require_encryption,
@@ -435,6 +439,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         )
         return DataLakeFileClient(
             self.url, file_system_name, file_path=file_path, credential=self._raw_credential,
+            api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,

@@ -28,7 +28,7 @@ class LogsTable(object):
     :ivar column_types: The types of columns in this table.
     :vartype columns: list[object]
     :ivar rows: Required. The resulting rows from this query.
-    :vartype rows: list[list[object]]
+    :vartype rows: list[~azure.monitor.query.LogsTableRow]
     """
     def __init__(self, **kwargs):
         # type: (Any) -> None
@@ -36,7 +36,14 @@ class LogsTable(object):
         self.columns = kwargs.pop('columns', None) # type: Optional[str]
         self.columns_types = kwargs.pop('column_types', None) # type: Optional[Any]
         _rows = kwargs.pop('rows', None)
-        self.rows = [process_row(self.columns_types, row) for row in _rows]
+        self.rows = [
+            LogsTableRow(
+                row=row,
+                row_index=ind,
+                col_types=self.columns_types,
+                columns=self.columns
+                ) for ind, row in enumerate(_rows)
+            ]
 
     @classmethod
     def _from_generated(cls, generated):
@@ -46,6 +53,40 @@ class LogsTable(object):
             column_types=[col.type for col in generated.columns],
             rows=generated.rows
         )
+
+
+class LogsTableRow(object):
+    """Represents a single row in logs table.
+
+    ivar list row: The collection of values in the row.
+    ivar int row_index: The index of the row in the table
+    """
+    def __init__(self, **kwargs):
+        # type: (Any) -> None
+        _col_types = kwargs['col_types']
+        row = kwargs['row']
+        self.row = process_row(_col_types, row)
+        self.row_index = kwargs['row_index']
+        _columns = kwargs['columns']
+        self._row_dict = {
+            _columns[i]: self.row[i] for i in range(len(self.row))
+        }
+
+    def __iter__(self):
+        """This will iterate over the row directly.
+        """
+        return iter(self.row)
+
+    def __getitem__(self, column):
+        """This type must be subscriptable directly to row.
+        Must be gettableby both column name and row index
+        Example: row[0] -> returns the first element of row and
+        row[column_name] -> returns the row element against the given column name.
+        """
+        try:
+            return self._row_dict[column]
+        except KeyError:
+            return self.row[column]
 
 
 class MetricsResult(object):
@@ -165,21 +206,27 @@ class LogsQueryResult(object):
     :ivar visualization: This will include a visualization property in the response that specifies the type of
      visualization selected by the query and any properties for that visualization.
     :vartype visualization: object
-    :ivar error: Any error info.
-    :vartype error: ~azure.core.exceptions.HttpResponseError
+    :ivar partial_error: Any error info. This is none except in the case where `allow_partial_errors`
+     is explicitly set to True.
+    :vartype partial_error: ~azure.core.exceptions.HttpResponseError
+    :ivar bool is_error: Boolean check for error item when iterating over list of
+        results. Always False for an instance of a LogsQueryResult.
     """
     def __init__(
         self,
         **kwargs
     ):
         self.tables = kwargs.get('tables', None)
-        self.error = kwargs.get('error', None)
+        self.partial_error = None
         self.statistics = kwargs.get('statistics', None)
         self.visualization = kwargs.get('visualization', None)
+        self.is_error = False
+
+    def __iter__(self):
+        return iter(self.tables)
 
     @classmethod
     def _from_generated(cls, generated):
-
         if not generated:
             return cls()
         tables = None
@@ -195,7 +242,6 @@ class LogsQueryResult(object):
             tables=tables,
             statistics=generated.statistics,
             visualization=generated.render,
-            error=generated.error
         )
 
 
