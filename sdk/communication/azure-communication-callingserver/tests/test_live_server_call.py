@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import os, uuid
+import os, uuid, pytest
 from time import sleep
 import utils._test_constants as CONST
 from azure.communication.callingserver import CallingServerClient
@@ -25,7 +25,7 @@ from _shared.testcase import (
 )
 from devtools_testutils import is_live
 from _shared.utils import get_http_logging_policy
-from utils._live_test_utils import CallingServerLiveTestUtils
+from utils._live_test_utils import CallingServerLiveTestUtils, RequestReplacerProcessor
 from utils._test_mock_utils import FakeTokenCredential
 
 from azure.core.exceptions import HttpResponseError
@@ -43,14 +43,12 @@ class ServerCallTest(CommunicationTestCase):
             self.to_phone_number = "+15551234567"
             self.recording_processors.extend([
                 BodyReplacerProcessor(keys=["alternateCallerId", "targets", "source", "callbackUri"])])
-            self.tenant_id = "016a7064-0581-40b9-be73-6dde64d69d72"
         else:
             self.to_phone_number = os.getenv("AZURE_PHONE_NUMBER")
             self.from_phone_number = os.getenv("ALTERNATE_CALLERID")
             self.recording_processors.extend([
                 BodyReplacerProcessor(keys=["alternateCallerId", "targets", "source", "callbackUri"]),
                 ResponseReplacerProcessor(keys=[self._resource_name])])
-            self.tenant_id = os.getenv("AZURE_TENANT_ID")
 
         # create CallingServerClient
         endpoint, _ = parse_connection_str(self.connection_str)
@@ -70,6 +68,12 @@ class ServerCallTest(CommunicationTestCase):
     def test_join_play_cancel_hangup_scenario(self):
         # create GroupCalls
         group_id = CallingServerLiveTestUtils.get_group_id("test_join_play_cancel_hangup_scenario")
+
+        if self.is_live:
+            self.recording_processors.extend([
+            RequestReplacerProcessor(keys=group_id,
+                replacement=CallingServerLiveTestUtils.get_playback_group_id("test_join_play_cancel_hangup_scenario"))])
+
         call_connections = CallingServerLiveTestUtils.create_group_calls(
             self.callingserver_client,
             group_id,
@@ -105,9 +109,16 @@ class ServerCallTest(CommunicationTestCase):
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
             CallingServerLiveTestUtils.clean_up_connections(call_connections)
 
+    @pytest.mark.skipif(CONST.SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
     def test_create_add_remove_hangup_scenario(self):
         # create GroupCalls
         group_id = CallingServerLiveTestUtils.get_group_id("test_create_add_remove_hangup_scenario")
+
+        if self.is_live:
+            self.recording_processors.extend([
+            RequestReplacerProcessor(keys=group_id,
+                replacement=CallingServerLiveTestUtils.get_playback_group_id("test_create_add_remove_hangup_scenario"))])
+
         call_connections = CallingServerLiveTestUtils.create_group_calls(
             self.callingserver_client,
             group_id,
@@ -143,6 +154,11 @@ class ServerCallTest(CommunicationTestCase):
     # @pytest.mark.live_test_only
     def test_run_all_client_functions(self):
         group_id = CallingServerLiveTestUtils.get_group_id("test_run_all_client_functions")
+
+        if self.is_live:
+            self.recording_processors.extend([
+            RequestReplacerProcessor(keys=group_id,
+                replacement=CallingServerLiveTestUtils.get_playback_group_id("test_run_all_client_functions"))])
         
         call_connections = CallingServerLiveTestUtils.create_group_calls(
             self.callingserver_client,
