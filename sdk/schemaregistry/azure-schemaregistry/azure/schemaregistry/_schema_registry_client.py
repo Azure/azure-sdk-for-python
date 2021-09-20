@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 from typing import Any, TYPE_CHECKING, Union
 
-from ._common._constants import SerializationType
+from ._common._constants import SchemaFormat
 from ._common._schema import Schema, SchemaProperties
 from ._common._response_handlers import (
     _parse_response_schema,
@@ -84,9 +84,9 @@ class SchemaRegistryClient(object):
         self._generated_client.close()
 
     def register_schema(
-        self, group_name, name, content, serialization_type, **kwargs
+        self, group_name, name, content, format, **kwargs
     ):
-        # type: (str, str, str, Union[str, SerializationType], Any) -> SchemaProperties
+        # type: (str, str, str, Union[str, SchemaFormat], Any) -> SchemaProperties
         """
         Register new schema. If schema of specified name does not exist in specified group,
         schema is created at version 1. If schema of specified name exists already in specified group,
@@ -95,9 +95,9 @@ class SchemaRegistryClient(object):
         :param str group_name: Schema group under which schema should be registered.
         :param str name: Name of schema being registered.
         :param str content: String representation of the schema being registered.
-        :param serialization_type: Serialization type for the schema being registered.
-         For now Avro is the only supported serialization type by the service.
-        :type serialization_type: Union[str, SerializationType]
+        :param format: Format for the schema being registered.
+         For now Avro is the only supported schema format by the service.
+        :type format: Union[str, SchemaFormat]
         :keyword content_type: The content type of the request. Default value is 'application/json'.
         :paramtype content_type: str
         :rtype: SchemaProperties
@@ -113,7 +113,7 @@ class SchemaRegistryClient(object):
 
         """
         try:
-            serialization_type = serialization_type.value
+            format = format.value
         except AttributeError:
             pass
 
@@ -121,7 +121,7 @@ class SchemaRegistryClient(object):
             group_name=group_name,
             schema_name=name,
             content=content,
-            serialization_type=serialization_type,
+            serialization_type=format,
             content_type=kwargs.pop("content_type", "application/json"),
             **kwargs
         )
@@ -134,7 +134,7 @@ class SchemaRegistryClient(object):
             group_name,
             name,
             content,
-            serialization_type,
+            format,
         )
         self._id_to_schema[schema_properties.id] = Schema(
             content, schema_properties
@@ -173,9 +173,9 @@ class SchemaRegistryClient(object):
             return schema
 
     def get_schema_properties(
-        self, group_name, name, content, serialization_type, **kwargs
+        self, group_name, name, content, format, **kwargs
     ):
-        # type: (str, str, str, Union[str, SerializationType], Any) -> SchemaProperties
+        # type: (str, str, str, Union[str, SchemaFormat], Any) -> SchemaProperties
         """
         Gets the ID referencing an existing schema within the specified schema group,
         as matched by schema content comparison.
@@ -183,8 +183,8 @@ class SchemaRegistryClient(object):
         :param str group_name: Schema group under which schema should be registered.
         :param str name: Name of schema being registered.
         :param str content: String representation of the schema being registered.
-        :param serialization_type: Serialization type for the schema being registered.
-        :type serialization_type: Union[str, SerializationType]
+        :param format: Format for the schema being registered.
+        :type format: Union[str, SchemaFormat]
         :keyword content_type: The content type of the request. Default value is 'application/json'.
         :paramtype content_type: str
         :rtype: SchemaProperties
@@ -200,13 +200,13 @@ class SchemaRegistryClient(object):
 
         """
         try:
-            serialization_type = serialization_type.value
+            format = format.value
         except AttributeError:
             pass
 
         try:
             properties = self._description_to_properties[
-                (group_name, name, content, serialization_type)
+                (group_name, name, content, format)
             ]
             return properties
         except KeyError:
@@ -214,7 +214,7 @@ class SchemaRegistryClient(object):
                 group_name=group_name,
                 schema_name=name,
                 content=content,
-                serialization_type=serialization_type,
+                serialization_type=format,
                 content_type=kwargs.pop("content_type", "application/json"),
                 **kwargs
             )
@@ -228,6 +228,6 @@ class SchemaRegistryClient(object):
             else:
                 schema_properties = self._id_to_schema[schema_properties.id].properties
             self._description_to_properties[
-                (group_name, name, content, serialization_type)
+                (group_name, name, content, format)
             ] = schema_properties
             return schema_properties

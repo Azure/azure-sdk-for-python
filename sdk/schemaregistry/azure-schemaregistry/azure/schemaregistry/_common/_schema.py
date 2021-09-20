@@ -32,10 +32,8 @@ class SchemaProperties(object):
 
     :ivar id: References specific schema in registry namespace.
     :type id: str
-    :ivar location: URL location of schema, identified by schema group, schema name, and version.
-    :type location: str
-    :ivar serialization_type: Serialization type for the schema being stored.
-    :type serialization_type: str
+    :ivar format: Format for the schema being stored.
+    :type format: str
     :ivar version: Version of the returned schema.
     :type version: int
 
@@ -57,8 +55,7 @@ class SchemaProperties(object):
     ):
         # type: (Optional[str], Any) -> None
         self.id = id
-        self.location = kwargs.get('location')
-        self.serialization_type = kwargs.get('serialization_type')
+        self.format = kwargs.get('format')
         self.version = kwargs.get('version')
 
 

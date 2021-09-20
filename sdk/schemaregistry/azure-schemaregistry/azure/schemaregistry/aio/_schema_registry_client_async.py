@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 from typing import Any, TYPE_CHECKING, Union
 
-from .._common._constants import SerializationType
+from .._common._constants import SchemaFormat
 from .._common._schema import Schema, SchemaProperties
 from .._common._response_handlers import (
     _parse_response_schema,
@@ -86,7 +86,7 @@ class SchemaRegistryClient(object):
         group_name: str,
         name: str,
         content: str,
-        serialization_type: Union[str, SerializationType],
+        format: Union[str, SchemaFormat],
         **kwargs: Any
     ) -> SchemaProperties:
         """
@@ -97,9 +97,9 @@ class SchemaRegistryClient(object):
         :param str group_name: Schema group under which schema should be registered.
         :param str name: Name of schema being registered.
         :param str content: String representation of the schema being registered.
-        :param serialization_type: Serialization type for the schema being registered.
-         For now Avro is the only supported serialization type by the service.
-        :type serialization_type: Union[str, SerializationType]
+        :param format: Format for the schema being registered.
+         For now Avro is the only supported schema format by the service.
+        :type format: Union[str, SchemaFormat]
         :rtype: SchemaProperties
 
         .. admonition:: Example:
@@ -113,7 +113,7 @@ class SchemaRegistryClient(object):
 
         """
         try:
-            serialization_type = serialization_type.value
+            format = format.value
         except AttributeError:
             pass
 
@@ -121,7 +121,7 @@ class SchemaRegistryClient(object):
             group_name=group_name,
             schema_name=name,
             content=content,
-            serialization_type=serialization_type,
+            serialization_type=format,
             content_type=kwargs.pop("content_type", "application/json"),
             **kwargs
         )
@@ -134,7 +134,7 @@ class SchemaRegistryClient(object):
             group_name,
             name,
             content,
-            serialization_type,
+            format,
         )
         self._id_to_schema[schema_properties.id] = Schema(
             content, schema_properties
@@ -180,7 +180,7 @@ class SchemaRegistryClient(object):
         group_name: str,
         name: str,
         content: str,
-        serialization_type: Union[str, SerializationType],
+        format: Union[str, SchemaFormat],
         **kwargs: Any
     ) -> SchemaProperties:
         """
@@ -190,8 +190,8 @@ class SchemaRegistryClient(object):
         :param str group_name: Schema group under which schema should be registered.
         :param str name: Name of schema being registered.
         :param str content: String representation of the schema being registered.
-        :param serialization_type: Serialization type for the schema being registered.
-        :type serialization_type: Union[str, SerializationType]
+        :param format: Format for the schema being registered.
+        :type format: Union[str, SchemaFormat]
         :rtype: SchemaProperties
 
         .. admonition:: Example:
@@ -205,13 +205,13 @@ class SchemaRegistryClient(object):
 
         """
         try:
-            serialization_type = serialization_type.value
+            format = format.value
         except AttributeError:
             pass
 
         try:
             properties = self._description_to_properties[
-                (group_name, name, content, serialization_type)
+                (group_name, name, content, format)
             ]
             return properties
         except KeyError:
@@ -219,7 +219,7 @@ class SchemaRegistryClient(object):
                 group_name=group_name,
                 schema_name=name,
                 content=content,
-                serialization_type=serialization_type,
+                serialization_type=format,
                 content_type=kwargs.pop("content_type", "application/json"),
                 **kwargs
             )
@@ -233,6 +233,6 @@ class SchemaRegistryClient(object):
             else:
                 schema_properties = self._id_to_schema[schema_properties.id].properties
             self._description_to_properties[
-                (group_name, name, content, serialization_type)
+                (group_name, name, content, format)
             ] = schema_properties
             return schema_properties
