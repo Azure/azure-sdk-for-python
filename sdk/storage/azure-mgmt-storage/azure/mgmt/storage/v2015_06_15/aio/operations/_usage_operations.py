@@ -43,7 +43,7 @@ class UsageOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.UsageListResult"]:
         """Lists the current usage count and the limit for the resources under the subscription.
 

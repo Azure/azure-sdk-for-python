@@ -1,0 +1,28 @@
+{
+    "@id": "dtmi:mymodels:area;1",
+    "@type": "Interface",
+    "displayName": "area",
+    "contents": [
+        {
+            "@type": "Property",
+            "name": "capacity",
+            "displayName": "capacity",
+            "schema": "double",
+            "comment": "How many people can safely be in this area."
+        },
+        {
+            "@type": "Property",
+            "name": "status",
+            "displayName": "status",
+            "schema": "string",
+            "comment": "open, closed, etc."
+        },
+        {
+            "@type": "Relationship",
+            "name": "occupiedBy"
+        }
+    ],
+    "@context": "dtmi:dtdl:context;2",
+    "comment": "A number of people in a room",
+    "description": "a room"
+}

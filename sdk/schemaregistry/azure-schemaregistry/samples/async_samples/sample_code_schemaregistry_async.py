@@ -47,32 +47,32 @@ def create_client():
 
 async def register_schema(schema_registry_client):
     # [START register_schema_async]
-    SCHEMA_GROUP = os.environ['SCHEMA_REGISTRY_GROUP']
-    SCHEMA_NAME = 'your-schema-name'
+    GROUP_NAME = os.environ['SCHEMA_REGISTRY_GROUP']
+    NAME = 'your-schema-name'
     SERIALIZATION_TYPE = SerializationType.AVRO
-    SCHEMA_CONTENT = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
-    schema_properties = await schema_registry_client.register_schema(SCHEMA_GROUP, SCHEMA_NAME, SCHEMA_CONTENT, SERIALIZATION_TYPE)
+    CONTENT = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
+    schema_properties = await schema_registry_client.register_schema(GROUP_NAME, NAME, CONTENT, SERIALIZATION_TYPE)
     schema_id = schema_properties.id
     # [END register_schema_async]
     return schema_id
 
 
-async def get_schema(schema_registry_client, schema_id):
+async def get_schema(schema_registry_client, id):
     # [START get_schema_async]
-    schema = await schema_registry_client.get_schema(schema_id)
+    schema = await schema_registry_client.get_schema(id)
     schema_content = schema.content
     # [END get_schema_async]
     return schema_content
 
 
 async def get_schema_id(schema_registry_client):
-    schema_group = os.environ['SCHEMA_REGISTRY_GROUP']
-    schema_name = 'your-schema-name'
+    group_name = os.environ['SCHEMA_REGISTRY_GROUP']
+    name = 'your-schema-name'
     serialization_type = SerializationType.AVRO
-    schema_content = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
+    content = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
 
     # [START get_schema_id_async]
-    schema_properties = await schema_registry_client.get_schema_properties(schema_group, schema_name, schema_content, serialization_type)
+    schema_properties = await schema_registry_client.get_schema_properties(group_name, name, content, serialization_type)
     schema_id = schema_properties.id
     # [END get_schema_id_async]
     return schema_id
