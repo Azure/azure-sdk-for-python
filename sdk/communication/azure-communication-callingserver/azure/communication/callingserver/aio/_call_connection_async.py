@@ -23,18 +23,14 @@ from .._converters import (
 from .._generated.models import (AddParticipantResult,
                                  CancelAllMediaOperationsResult,
                                  PhoneNumberIdentifierModel,
-                                 PlayAudioResult,
-                                 CancelAllMediaOperationsRequest)
+                                 PlayAudioResult)
 from .._shared.models import CommunicationIdentifier
 from .._generated.aio._azure_communication_calling_server_service import \
     AzureCommunicationCallingServerService  # pylint: disable=unused-import
 
 if TYPE_CHECKING:
     from .._generated.aio.operations import CallConnectionsOperations
-    from .._models import (PlayAudioOptions, 
-                           CancelAllMediaOperationsResult, 
-                           PlayAudioResult, 
-                           AddParticipantResult)
+    from .._models import PlayAudioOptions
 
 class CallConnection:
     def __init__(
@@ -68,13 +64,11 @@ class CallConnection:
 
         cancel_all_media_operations_request = CancelAllMediaOperationsConverter.convert(operation_context)
 
-        cancel_all_media_operations_result = await self._call_connection_client.cancel_all_media_operations(
+        return await self._call_connection_client.cancel_all_media_operations(
             call_connection_id=self.call_connection_id,
             cancel_all_media_operation_request=cancel_all_media_operations_request,
             **kwargs
         )
-
-        return CancelAllMediaOperationsResult._from_generated(cancel_all_media_operations_result)
 
     @distributed_trace_async()
     async def play_audio(
@@ -108,13 +102,11 @@ class CallConnection:
 
         play_audio_request = PlayAudioRequestConverter.convert(audio_file_uri, play_audio_options)
 
-        play_audio_result = self._call_connection_client.play_audio(
+        return self._call_connection_client.play_audio(
             call_connection_id=self.call_connection_id,
             request=play_audio_request,
             **kwargs
         )
-
-        return PlayAudioResult._from_generated(play_audio_result)
 
     @distributed_trace_async()
     async def add_participant(
@@ -138,13 +130,11 @@ class CallConnection:
             operation_context=operation_context
             )
 
-        add_participant_result = await self._call_connection_client.add_participant(
+        return await self._call_connection_client.add_participant(
             call_connection_id=self.call_connection_id,
             add_participant_request=add_participant_request,
             **kwargs
         )
-
-        return AddParticipantResult._from_generated(add_participant_result)
 
     @distributed_trace_async()
     async def remove_participant(

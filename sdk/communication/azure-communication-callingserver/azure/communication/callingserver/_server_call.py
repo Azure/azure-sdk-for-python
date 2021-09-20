@@ -11,25 +11,19 @@ from azure.core.tracing.decorator import distributed_trace
 from ._communication_identifier_serializer import serialize_identifier
 from ._converters import (AddParticipantRequestConverter,
                           CancelMediaOperationRequestConverter,
-                          PlayAudioRequestConverter,
-                          JoinCallRequestConverter)
+                          PlayAudioRequestConverter)
 from ._generated.models import (AddParticipantResult,
                                 PhoneNumberIdentifierModel,
                                 PlayAudioResult,
-                                StartCallRecordingRequest,
-                                CommunicationIdentifierModel)
+                                StartCallRecordingRequest)
 
 from azure.core.pipeline.transport import AsyncHttpResponse
 
 if TYPE_CHECKING:
     from ._generated.operations import ServerCallsOperations
     from ._models import (PlayAudioOptions,
-                          PlayAudioResult,
-                          JoinCallResult,
-                          AddParticipantResult,
                           StartCallRecordingResult,
-                          CallRecordingProperties,
-                          JoinCallOptions)
+                          CallRecordingProperties)
     from ._shared.models import CommunicationIdentifier
 
 class ServerCall(object):
@@ -78,13 +72,11 @@ class ServerCall(object):
         play_audio_request = PlayAudioRequestConverter.convert(
             audio_file_uri, play_audio_options)
 
-        play_audio_result = self._server_call_client.play_audio(
+        return self._server_call_client.play_audio(
             server_call_id=self.server_call_id,
             request=play_audio_request,
             **kwargs
         )
-
-        return PlayAudioResult._from_generated(play_audio_result)
 
     @distributed_trace()
     def start_recording(
@@ -194,22 +186,6 @@ class ServerCall(object):
         return CallRecordingProperties._from_generated(recording_status_result)
 
     @distributed_trace()
-    def join_call(
-        self,
-        source: CommunicationIdentifierModel,
-        join_call_option,  # type: JoinCallOptions
-        **kwargs  # type: Any
-    ):  # type: (...) -> JoinCallResult
-
-        join_call_request = JoinCallRequestConverter.convert(source=source,
-                                                             join_call_options=join_call_option)
-
-        join_call_result = self._server_call_client.join_call(server_call_id=self.server_call_id,
-                                                              call_request=join_call_request)
-
-        return JoinCallResult._from_generated(join_call_result)
-
-    @distributed_trace()
     def add_participant(
         self,
         participant,  # type: CommunicationIdentifier
@@ -233,13 +209,11 @@ class ServerCall(object):
             callback_uri=callback_uri
         )
 
-        add_participant_result = self._server_call_client.add_participant(
+        return self._server_call_client.add_participant(
             server_call_id=self.server_call_id,
             add_participant_request=add_participant_request,
             **kwargs
         )
-
-        return AddParticipantResult._from_generated(add_participant_result)
 
     @distributed_trace()
     def remove_participant(

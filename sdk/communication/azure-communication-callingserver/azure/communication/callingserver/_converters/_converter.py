@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 
 from typing import List
-from .._models import JoinCallOptions, PlayAudioOptions, CreateCallOptions
+from .._models import JoinCallOptions, PlayAudioOptions
 from .._generated.models import (
     JoinCallRequest,
     PlayAudioRequest,
@@ -14,8 +14,7 @@ from .._generated.models import (
     AddParticipantRequest,
     CancelAllMediaOperationsRequest,
     CancelMediaOperationRequest,
-    PhoneNumberIdentifierModel,
-    CreateCallRequest
+    PhoneNumberIdentifierModel
     )
 
 class JoinCallRequestConverter(object):
@@ -36,26 +35,6 @@ class JoinCallRequestConverter(object):
             requested_media_types=join_call_options.requested_media_types,
             requested_call_events=join_call_options.requested_call_events,
             subject=join_call_options.subject
-            )
-
-class CreateCallRequestConverter(object):
-    @staticmethod
-    def convert(
-        source, # type: CommunicationIdentifierModel
-        targets, # type: List[CommunicationIdentifierModel]
-        alternate_caller_id, # type: PhoneNumberIdentifierModel
-        subject, # type: str
-        create_call_options, # type: CreateCallOptions
-        ): # type: (...) -> CreateCallRequest
-
-        return CreateCallRequest(
-            alternate_caller_id=alternate_caller_id,
-            targets=targets,
-            source=source,
-            subject=subject,
-            callback_uri=create_call_options.callback_uri,
-            requested_media_types=create_call_options.requested_media_types,
-            requested_call_events=create_call_options.requested_call_events
             )
 
 class PlayAudioRequestConverter(object):
