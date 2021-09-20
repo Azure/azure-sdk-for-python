@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 import pytest
 
-from devtools_testutils import AzureRecordedTestCase, ProxyRecordingSanitizer, RecordedByProxy, ResponseCallback
+from devtools_testutils import AzureRecordedTestCase, RecordedByProxy, ResponseCallback
 
 from azure.core.exceptions import (
     HttpResponseError,
@@ -34,9 +34,6 @@ class RetryRequestTransport(RequestsTransport):
 
 # --Test Class -----------------------------------------------------------------
 class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
-    def setup_method(self):
-        self.add_sanitizer(ProxyRecordingSanitizer.URI, value="fakeendpoint")
-
     def _set_up(self, tables_storage_account_name, tables_primary_storage_account_key, url='table', default_table=True, **kwargs):
         self.table_name = self.get_resource_name('uttable')
         self.ts = TableServiceClient(

@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 import pytest
 
-from devtools_testutils import AzureRecordedTestCase, ProxyRecordingSanitizer, RecordedByProxy
+from devtools_testutils import AzureRecordedTestCase, RecordedByProxy
 
 from azure.data.tables import TableServiceClient
 from _shared.testcase import TableTestCase, SLEEP_DELAY
@@ -22,9 +22,6 @@ SERVICE_LIVE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceS
 
 # --Test Class -----------------------------------------------------------------
 class TestTableServiceStatsCosmos(AzureRecordedTestCase, TableTestCase):
-    def setup_method(self):
-        self.add_sanitizer(ProxyRecordingSanitizer.URI, value="fakeendpoint")
-
     @staticmethod
     def override_response_body_with_unavailable_status(response):
         response.http_response.text = lambda _: SERVICE_UNAVAILABLE_RESP_BODY

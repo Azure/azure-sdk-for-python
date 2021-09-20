@@ -6,7 +6,7 @@
 import pytest
 import platform
 
-from devtools_testutils import AzureRecordedTestCase, ProxyRecordingSanitizer, RecordedByProxy
+from devtools_testutils import AzureRecordedTestCase, RecordedByProxy
 
 from azure.data.tables import TableServiceClient, TableClient
 from azure.data.tables import __version__ as VERSION
@@ -30,9 +30,6 @@ _CONNECTION_ENDPOINTS = {'table': 'TableEndpoint', 'cosmos': 'TableEndpoint'}
 _CONNECTION_ENDPOINTS_SECONDARY = {'table': 'TableSecondaryEndpoint', 'cosmos': 'TableSecondaryEndpoint'}
 
 class TestTableClient(AzureRecordedTestCase, TableTestCase):
-    def setup_method(self):
-        self.add_sanitizer(ProxyRecordingSanitizer.URI, value="fakeendpoint")
-
     @tables_decorator
     @RecordedByProxy
     def test_user_agent_custom(self, tables_storage_account_name, tables_primary_storage_account_key):

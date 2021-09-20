@@ -11,7 +11,7 @@ import sys
 
 import pytest
 
-from devtools_testutils import AzureRecordedTestCase, ProxyRecordingSanitizer, RecordedByProxy
+from devtools_testutils import AzureRecordedTestCase, RecordedByProxy
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureSasCredential
@@ -37,9 +37,6 @@ from preparers import cosmos_decorator
 
 
 class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
-    def setup_method(self):
-            self.add_sanitizer(ProxyRecordingSanitizer.URI, value="fakeendpoint")
-
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @cosmos_decorator
     @RecordedByProxy

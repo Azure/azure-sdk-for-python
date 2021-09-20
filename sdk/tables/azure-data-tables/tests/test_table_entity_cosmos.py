@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 from dateutil.tz import tzutc, tzoffset
 from math import isnan
 
-from devtools_testutils import AzureRecordedTestCase, ProxyRecordingSanitizer, RecordedByProxy
+from devtools_testutils import AzureRecordedTestCase, RecordedByProxy
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureSasCredential
@@ -38,9 +38,6 @@ from preparers import cosmos_decorator
 # ------------------------------------------------------------------------------
 
 class TestTableEntityCosmos(AzureRecordedTestCase, TableTestCase):
-    def setup_method(self):
-        self.add_sanitizer(ProxyRecordingSanitizer.URI, value="fakeendpoint")
-
     @cosmos_decorator
     @RecordedByProxy
     def test_url_encoding_at_symbol(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):

@@ -12,7 +12,7 @@ from dateutil.tz import tzutc, tzoffset
 from enum import Enum
 from math import isnan
 
-from devtools_testutils import AzureRecordedTestCase, ProxyRecordingSanitizer, RecordedByProxy
+from devtools_testutils import AzureRecordedTestCase, RecordedByProxy
 
 from azure.data.tables import (
     TableServiceClient,
@@ -40,9 +40,6 @@ from preparers import tables_decorator
 # ------------------------------------------------------------------------------
 
 class TestTableEntity(AzureRecordedTestCase, TableTestCase):
-    def setup_method(self):
-        self.add_sanitizer(ProxyRecordingSanitizer.URI, value="fakeendpoint")
-
     @tables_decorator
     @RecordedByProxy
     def test_url_encoding_at_symbol(self, tables_storage_account_name, tables_primary_storage_account_key):

@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 import os
 import sys
 
-from devtools_testutils import AzureRecordedTestCase, ProxyRecordingSanitizer, RecordedByProxy
+from devtools_testutils import AzureRecordedTestCase, RecordedByProxy
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
@@ -44,9 +44,6 @@ TEST_TABLE_PREFIX = 'table'
 #------------------------------------------------------------------------------
 
 class TestTableBatch(AzureRecordedTestCase, TableTestCase):
-    def setup_method(self):
-        self.add_sanitizer(ProxyRecordingSanitizer.URI, value="fakeendpoint")
-
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @tables_decorator
     @RecordedByProxy

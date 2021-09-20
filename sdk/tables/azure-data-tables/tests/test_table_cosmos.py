@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 import pytest
 
-from devtools_testutils import AzureRecordedTestCase, ProxyRecordingSanitizer, RecordedByProxy
+from devtools_testutils import AzureRecordedTestCase, RecordedByProxy
 
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.core.exceptions import ResourceExistsError
@@ -20,9 +20,6 @@ TEST_TABLE_PREFIX = 'pytablesync'
 # ------------------------------------------------------------------------------
 
 class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
-    def setup_method(self):
-        self.add_sanitizer(ProxyRecordingSanitizer.URI, value="fakeendpoint")
-
     @cosmos_decorator
     @RecordedByProxy
     def test_create_table(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):

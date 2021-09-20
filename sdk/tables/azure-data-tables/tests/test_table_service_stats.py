@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from devtools_testutils import AzureRecordedTestCase, ProxyRecordingSanitizer, RecordedByProxy
+from devtools_testutils import AzureRecordedTestCase, RecordedByProxy
 
 from azure.data.tables import TableServiceClient
 from _shared.testcase import TableTestCase
@@ -11,9 +11,6 @@ from preparers import tables_decorator
 
 # --Test Class -----------------------------------------------------------------
 class TestTableServiceStats(AzureRecordedTestCase, TableTestCase):
-    def setup_method(self):
-        self.add_sanitizer(ProxyRecordingSanitizer.URI, value="fakeendpoint")
-
     # --Test cases per service ---------------------------------------
     @tables_decorator
     @RecordedByProxy

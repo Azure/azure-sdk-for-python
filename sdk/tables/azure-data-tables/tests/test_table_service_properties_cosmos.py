@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 import pytest
 
-from devtools_testutils import AzureRecordedTestCase, ProxyRecordingSanitizer, RecordedByProxy
+from devtools_testutils import AzureRecordedTestCase, RecordedByProxy
 
 from azure.core.exceptions import HttpResponseError
 
@@ -23,9 +23,6 @@ from preparers import cosmos_decorator
 # ------------------------------------------------------------------------------
 
 class TestTableServicePropertiesCosmos(AzureRecordedTestCase, TableTestCase):
-    def setup_method(self):
-        self.add_sanitizer(ProxyRecordingSanitizer.URI, value="fakeendpoint")
-
     @cosmos_decorator
     @RecordedByProxy
     def test_too_many_cors_rules(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):

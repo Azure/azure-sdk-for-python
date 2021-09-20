@@ -8,7 +8,7 @@
 import pytest
 from datetime import datetime, timedelta
 
-from devtools_testutils import AzureRecordedTestCase, ProxyRecordingSanitizer, RecordedByProxy
+from devtools_testutils import AzureRecordedTestCase, RecordedByProxy
 
 from azure.data.tables import (
     ResourceTypes,
@@ -32,9 +32,6 @@ from preparers import tables_decorator, tables_decorator
 # ------------------------------------------------------------------------------
 
 class TestTable(AzureRecordedTestCase, TableTestCase):
-    def setup_method(self):
-        self.add_sanitizer(ProxyRecordingSanitizer.URI, value="fakeendpoint")
-
     @tables_decorator
     @RecordedByProxy
     def test_create_properties(self, tables_storage_account_name, tables_primary_storage_account_key):

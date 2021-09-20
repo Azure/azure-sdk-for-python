@@ -9,7 +9,7 @@ import pytest
 from datetime import datetime
 import sys
 
-from devtools_testutils import AzureRecordedTestCase, ProxyRecordingSanitizer, RecordedByProxy
+from devtools_testutils import AzureRecordedTestCase, RecordedByProxy
 
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.data.tables import (
@@ -32,9 +32,6 @@ from preparers import tables_decorator, tables_decorator
 
 
 class TestTableAAD(AzureRecordedTestCase, TableTestCase):
-    def setup_method(self):
-        self.add_sanitizer(ProxyRecordingSanitizer.URI, value="fakeendpoint")
-
     @tables_decorator
     @RecordedByProxy
     def test_aad_create_table(self, tables_storage_account_name):
