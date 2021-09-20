@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Any, List, Optional  # pylint: disable=unused-import
+from typing import TYPE_CHECKING, Any, Optional  # pylint: disable=unused-import
 
 from azure.core.tracing.decorator import distributed_trace
 
@@ -124,8 +124,10 @@ class CallConnection(object):
             )
 
         return self._call_connection_client.add_participant(
-                call_connection_id=self.call_connection_id,
-                add_participant_request=add_participant_request)
+            call_connection_id=self.call_connection_id,
+            add_participant_request=add_participant_request,
+            **kwargs
+        )
 
     @distributed_trace()
     def remove_participant(
