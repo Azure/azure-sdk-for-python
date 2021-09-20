@@ -41,20 +41,21 @@ def get_metrics_authentication_policy(
 
     raise TypeError("Unsupported credential")
 
-def order_results(request_order, mapping, obj, err, allow_partial_errors=False):
+def order_results(request_order, mapping, **kwargs):
     ordered = [mapping[id] for id in request_order]
     results = []
     for item in ordered:
         if not item.body.error:
-            results.append(obj._from_generated(item.body)) # pylint: disable=protected-access
+            results.append(kwargs.get('obj')._from_generated(item.body)) # pylint: disable=protected-access
         else:
             error = item.body.error
-            if allow_partial_errors and error.code == 'PartialError':
-                res = obj._from_generated(item.body) # pylint: disable=protected-access
-                res.partial_error = err._from_generated(error) # pylint: disable=protected-access
+            if error.code == 'PartialError':
+                res = kwargs.get('partial_err')._from_generated( # pylint: disable=protected-access
+                    item.body, kwargs.get('raise_with')
+                    )
                 results.append(res)
             else:
-                results.append(err._from_generated(error)) # pylint: disable=protected-access
+                results.append(kwargs.get('err')._from_generated(error)) # pylint: disable=protected-access
     return results
 
 def construct_iso8601(timespan=None):

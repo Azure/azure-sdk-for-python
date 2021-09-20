@@ -8,14 +8,15 @@ from ._logs_query_client import LogsQueryClient
 from ._metrics_query_client import MetricsQueryClient
 
 from ._exceptions import (
-    LogsQueryError,
-    QueryPartialErrorException
+    LogsQueryError
 )
 
 from ._models import (
     MetricAggregationType,
     LogsQueryResult,
     LogsTable,
+    LogsQueryPartialResult,
+    LogsQueryStatus,
     LogsTableRow,
     MetricsResult,
     LogsBatchQuery,
@@ -36,8 +37,9 @@ __all__ = [
     "MetricAggregationType",
     "LogsQueryClient",
     "LogsQueryResult",
+    "LogsQueryPartialResult",
+    "LogsQueryStatus",
     "LogsQueryError",
-    "QueryPartialErrorException",
     "LogsTable",
     "LogsTableRow",
     "LogsBatchQuery",

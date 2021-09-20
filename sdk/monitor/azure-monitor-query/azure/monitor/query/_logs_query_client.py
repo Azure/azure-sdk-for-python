@@ -12,9 +12,19 @@ from azure.core.tracing.decorator import distributed_trace
 from ._generated._monitor_query_client import MonitorQueryClient
 
 from ._generated.models import BatchRequest, QueryBody as LogsQueryBody
-from ._helpers import get_authentication_policy, construct_iso8601, order_results, process_error, process_prefer
-from ._models import LogsBatchQuery, LogsQueryResult
-from ._exceptions import  LogsQueryError, QueryPartialErrorException
+from ._helpers import (
+    get_authentication_policy,
+    construct_iso8601,
+    order_results,
+    process_error,
+    process_prefer
+)
+from ._models import (
+    LogsBatchQuery,
+    LogsQueryResult,
+    LogsQueryPartialResult
+)
+from ._exceptions import  LogsQueryError
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -77,8 +87,6 @@ class LogsQueryClient(object):
         :keyword additional_workspaces: A list of workspaces that are included in the query.
          These can be qualified workspace names, workspace Ids, or Azure resource Ids.
         :paramtype additional_workspaces: list[str]
-        :keyword allow_partial_errors: Defaults to False. If set to true, partial errors are not thrown.
-        :paramtype allow_partial_errors: bool
         :return: LogsQueryResult, or the result of cls(response)
         :rtype: ~azure.monitor.query.LogsQueryResult
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -92,7 +100,6 @@ class LogsQueryClient(object):
             :dedent: 0
             :caption: Get a response for a single Log Query
         """
-        allow_partial_errors = kwargs.pop('allow_partial_errors', False)
         if 'timespan' not in kwargs:
             raise TypeError("query() missing 1 required keyword-only argument: 'timespan'")
         timespan = construct_iso8601(kwargs.pop('timespan'))
@@ -119,19 +126,23 @@ class LogsQueryClient(object):
             )
         except HttpResponseError as err:
             process_error(err, LogsQueryError)
-        response = LogsQueryResult._from_generated(generated_response) # pylint: disable=protected-access
+        response = None
         if not generated_response.error:
-            return response
-        if not allow_partial_errors:
-            raise QueryPartialErrorException(error=generated_response.error)
-        response.partial_error = LogsQueryError._from_generated( # pylint: disable=protected-access
-            generated_response.error
-            )
+            response = LogsQueryResult._from_generated(generated_response) # pylint: disable=protected-access
+        else:
+            response = LogsQueryPartialResult._from_generated(
+                generated_response,
+                LogsQueryError
+            ) # pylint: disable=protected-access
         return response
 
     @distributed_trace
-    def query_batch(self, queries, **kwargs):
-        # type: (Union[Sequence[Dict], Sequence[LogsBatchQuery]], Any) -> List[Union[LogsQueryResult, LogsQueryError]]
+    def query_batch(
+        self,
+        queries, # type: Union[Sequence[Dict], Sequence[LogsBatchQuery]]
+        **kwargs # type: Any
+        ):
+        # type: (...) -> List[Union[LogsQueryResult, LogsQueryPartialResult, LogsQueryError]]
         """Execute a list of analytics queries. Each request can be either a LogQueryRequest
         object or an equivalent serialized model.
 
@@ -139,9 +150,6 @@ class LogsQueryClient(object):
 
         :param queries: The list of Kusto queries to execute.
         :type queries: list[dict] or list[~azure.monitor.query.LogsBatchQuery]
-        :keyword bool allow_partial_errors: If set to True, a `LogsQueryResult` object is returned
-         when a partial error occurs. The error can be accessed using the `partial_error`
-         attribute in the object.
         :return: List of LogsQueryResult, or the result of cls(response)
         :rtype: list[~azure.monitor.query.LogsQueryResult or ~azure.monitor.query.LogsQueryError]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -155,7 +163,6 @@ class LogsQueryClient(object):
             :dedent: 0
             :caption: Get a response for multiple Log Queries.
         """
-        allow_partial_errors = kwargs.pop('allow_partial_errors', False)
         try:
             queries = [LogsBatchQuery(**q) for q in queries]
         except (KeyError, TypeError):
@@ -171,9 +178,10 @@ class LogsQueryClient(object):
         return order_results(
             request_order,
             mapping,
-            LogsQueryResult,
-            LogsQueryError,
-            allow_partial_errors)
+            obj=LogsQueryResult,
+            err=LogsQueryError,
+            partial_err=LogsQueryPartialResult,
+            raise_with=LogsQueryError)
 
     def close(self):
         # type: () -> None

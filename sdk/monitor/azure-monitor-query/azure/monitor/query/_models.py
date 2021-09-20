@@ -68,7 +68,7 @@ class LogsTableRow(object):
         self.index = kwargs['row_index']
         _columns = kwargs['columns']
         self._row_dict = {
-            _columns[i]: self.row[i] for i in range(len(self.row))
+            _columns[i]: self._row[i] for i in range(len(self._row))
         }
 
     def __iter__(self):
@@ -211,8 +211,8 @@ class LogsQueryResult(object):
     :ivar partial_error: Any error info. This is none except in the case where `allow_partial_errors`
      is explicitly set to True.
     :vartype partial_error: ~azure.core.exceptions.HttpResponseError
-    :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always False for an instance of a LogsQueryResult.
+    :ivar str status: The status of the resuly. 
+     Always 'Success' for an instance of a LogsQueryResult.
     """
     def __init__(
         self,
@@ -222,7 +222,7 @@ class LogsQueryResult(object):
         self.partial_error = None
         self.statistics = kwargs.get('statistics', None)
         self.visualization = kwargs.get('visualization', None)
-        self.is_error = False
+        self.status = LogsQueryStatus.SUCCESS
 
     def __iter__(self):
         return iter(self.tables)
@@ -567,3 +567,41 @@ class MetricUnit(str, Enum):
     MILLI_CORES = "MilliCores"
     NANO_CORES = "NanoCores"
     BITS_PER_SECOND = "BitsPerSecond"
+
+
+class LogsQueryPartialResult(LogsQueryResult):
+    """The LogsQueryPartialResult.
+
+    :ivar partial_data: The list of tables, columns and rows.
+    :vartype partial_data: list[~azure.monitor.query.LogsTable]
+    :ivar statistics: This will include a statistics property in the response that describes various
+     performance statistics such as query execution time and resource usage.
+    :vartype statistics: object
+    :ivar visualization: This will include a visualization property in the response that specifies the type of
+     visualization selected by the query and any properties for that visualization.
+    :vartype visualization: object
+    :ivar partial_error: The partial errror info
+    :vartype partial_error: ~azure.core.exceptions.HttpResponseError
+    :ivar str status: The status of the resuly. 
+     Always 'PartialError' for an instance of a LogsQueryPartialResult.
+    """
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LogsQueryPartialResult, self).__init__(**kwargs)
+        self.partial_error = kwargs.get('partial_error', None)
+        self.status = LogsQueryStatus.PARTIAL
+
+    @classmethod
+    def _from_generated(cls, generated, error):
+        super_gen = super(LogsQueryPartialResult, cls)._from_generated(generated)
+        super_gen.partial_error = error._from_generated(generated.error)
+        return super_gen
+
+class LogsQueryStatus(str, Enum):
+    """The status of the result object.
+    """
+    PARTIAL = 'PartialError'
+    SUCCESS = 'Success'
+    FAILURE = 'Failure'

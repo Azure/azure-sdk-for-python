@@ -4,7 +4,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import ServiceResponseError
+from ._models import LogsQueryStatus
 
 class LogsQueryError(object):
     """The code and message for an error.
@@ -34,7 +35,7 @@ class LogsQueryError(object):
         self.details = kwargs.get('details', None)
         self.innererror = kwargs.get('innererror', None)
         self.additional_properties = kwargs.get('additional_properties', None)
-        self.is_error = True
+        self.status = LogsQueryStatus.FAILURE
 
     @classmethod
     def _from_generated(cls, generated):
@@ -51,7 +52,7 @@ class LogsQueryError(object):
             details=details,
         )
 
-class QueryPartialErrorException(HttpResponseError):
+class QueryPartialErrorException(ServiceResponseError):
     """There is a partial failure in query operation. This is thrown for a single query operation
      when allow_partial_errors is set to False.
 

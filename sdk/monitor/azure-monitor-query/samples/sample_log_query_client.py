@@ -4,7 +4,7 @@
 import os
 import pandas as pd
 from datetime import timedelta
-from azure.monitor.query import LogsQueryClient, QueryPartialErrorException
+from azure.monitor.query import LogsQueryClient, LogsQueryStatus
 from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
 
@@ -17,20 +17,18 @@ client = LogsQueryClient(credential)
 # Response time trend 
 # request duration over the last 12 hours. 
 # [START send_logs_query]
-query = """let Weight = 92233720368547758;
-AppRequests | take 5;
-range x from 1 to 3 step 1
-| summarize percentilesw(x, Weight * 100, 50)"""
+query = """AppRadfequests | take 5"""
 
 # returns LogsQueryResult 
 try:
-    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=timedelta(days=1), allow_partial_errors=True)
+    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=timedelta(days=1))
+    if response.status == LogsQueryStatus.PARTIAL:
+        # handle error here
+        error = response.partial_error
+        print(error.message)
     for table in response:
         df = pd.DataFrame(data=table.rows, columns=table.columns)
         print(df)
-except QueryPartialErrorException as err:
-    print("this is a partial error")
-    print(err.details)
 except HttpResponseError as err:
     print("something fatal happened")
     print (err)
