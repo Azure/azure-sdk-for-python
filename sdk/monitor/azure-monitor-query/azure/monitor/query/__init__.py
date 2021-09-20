@@ -7,9 +7,7 @@
 from ._logs_query_client import LogsQueryClient
 from ._metrics_query_client import MetricsQueryClient
 
-from ._exceptions import (
-    LogsQueryError
-)
+from ._exceptions import LogsQueryError
 
 from ._models import (
     MetricAggregationType,
@@ -28,7 +26,7 @@ from ._models import (
     Metric,
     MetricValue,
     MetricClass,
-    MetricAvailability
+    MetricAvailability,
 )
 
 from ._version import VERSION
@@ -53,7 +51,7 @@ __all__ = [
     "Metric",
     "MetricValue",
     "MetricClass",
-    "MetricAvailability"
+    "MetricAvailability",
 ]
 
 __version__ = VERSION

@@ -16,7 +16,7 @@ from .._generated.models import BatchRequest, QueryBody as LogsQueryBody
 from .._helpers import construct_iso8601, order_results, process_error, process_prefer
 from .._models import LogsQueryResult, LogsBatchQuery, LogsQueryPartialResult
 from ._helpers_asyc import get_authentication_policy
-from .._exceptions import  LogsQueryError
+from .._exceptions import LogsQueryError
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -32,7 +32,7 @@ class LogsQueryClient(object):
     """
 
     def __init__(self, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
-        self._endpoint = kwargs.pop('endpoint', 'https://api.loganalytics.io/v1')
+        self._endpoint = kwargs.pop("endpoint", "https://api.loganalytics.io/v1")
         self._client = MonitorQueryClient(
             credential=credential,
             authentication_policy=get_authentication_policy(credential),
@@ -47,8 +47,11 @@ class LogsQueryClient(object):
         workspace_id: str,
         query: str,
         *,
-        timespan: Union[timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]],
-        **kwargs: Any) -> LogsQueryResult:
+        timespan: Union[
+            timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]
+        ],
+        **kwargs: Any
+    ) -> LogsQueryResult:
         """Execute an Analytics query.
 
         Executes an Analytics query for data.
@@ -82,40 +85,37 @@ class LogsQueryClient(object):
         server_timeout = kwargs.pop("server_timeout", None)
         additional_workspaces = kwargs.pop("additional_workspaces", None)
 
-        prefer = process_prefer(server_timeout, include_statistics, include_visualization)
+        prefer = process_prefer(
+            server_timeout, include_statistics, include_visualization
+        )
 
         body = LogsQueryBody(
-            query=query,
-            timespan=timespan,
-            workspaces=additional_workspaces,
-            **kwargs
+            query=query, timespan=timespan, workspaces=additional_workspaces, **kwargs
         )
 
         try:
-            generated_response = await self._query_op.execute( # pylint: disable=protected-access
-                workspace_id=workspace_id,
-                body=body,
-                prefer=prefer,
-                **kwargs
+            generated_response = (
+                await self._query_op.execute(  # pylint: disable=protected-access
+                    workspace_id=workspace_id, body=body, prefer=prefer, **kwargs
+                )
             )
         except HttpResponseError as err:
             process_error(err, LogsQueryError)
         response = None
         if not generated_response.error:
-            response = LogsQueryResult._from_generated(generated_response) # pylint: disable=protected-access
+            response = LogsQueryResult._from_generated(
+                generated_response
+            )  # pylint: disable=protected-access
         else:
             response = LogsQueryPartialResult._from_generated(
-                generated_response,
-                LogsQueryError
-            ) # pylint: disable=protected-access
+                generated_response, LogsQueryError
+            )  # pylint: disable=protected-access
         return response
 
     @distributed_trace_async
     async def query_batch(
-        self,
-        queries: Union[Sequence[Dict], Sequence[LogsBatchQuery]],
-        **kwargs: Any
-        ) -> List[Union[LogsQueryResult, LogsQueryError]]:
+        self, queries: Union[Sequence[Dict], Sequence[LogsBatchQuery]], **kwargs: Any
+    ) -> List[Union[LogsQueryResult, LogsQueryError]]:
         """Execute a list of analytics queries. Each request can be either a LogQueryRequest
         object or an equivalent serialized model.
 
@@ -128,14 +128,16 @@ class LogsQueryClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         try:
-            queries = [LogsBatchQuery(**q) for q in queries] # type: ignore
+            queries = [LogsBatchQuery(**q) for q in queries]  # type: ignore
         except (KeyError, TypeError):
             pass
-        queries = [q._to_generated() for q in queries] # pylint: disable=protected-access
+        queries = [
+            q._to_generated() for q in queries
+        ]  # pylint: disable=protected-access
         try:
             request_order = [req.id for req in queries]
         except AttributeError:
-            request_order = [req['id'] for req in queries]
+            request_order = [req["id"] for req in queries]
         batch = BatchRequest(requests=queries)
         generated = await self._query_op.batch(batch, **kwargs)
         mapping = {item.id: item for item in generated.responses}
@@ -145,7 +147,8 @@ class LogsQueryClient(object):
             obj=LogsQueryResult,
             err=LogsQueryError,
             partial_err=LogsQueryPartialResult,
-            raise_with=LogsQueryError)
+            raise_with=LogsQueryError,
+        )
 
     async def __aenter__(self) -> "LogsQueryClient":
         await self._client.__aenter__()

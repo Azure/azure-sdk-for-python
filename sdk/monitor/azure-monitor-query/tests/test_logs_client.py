@@ -3,7 +3,7 @@ import pytest
 import os
 from azure.identity import ClientSecretCredential
 from azure.core.exceptions import HttpResponseError
-from azure.monitor.query import LogsQueryClient, LogsBatchQuery, LogsQueryError, LogsTable, LogsQueryResult, LogsTableRow
+from azure.monitor.query import LogsQueryClient, LogsBatchQuery, LogsQueryError, LogsTable, LogsQueryResult, LogsTableRow, LogsQueryPartialResult
 
 def _credential():
     credential  = ClientSecretCredential(
@@ -58,9 +58,11 @@ def test_logs_single_query_with_partial_success():
     query = """let Weight = 92233720368547758;
     range x from 1 to 3 step 1
     | summarize percentilesw(x, Weight * 100, 50)"""
-    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None, allow_partial_errors=True)
+    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None)
 
     assert response.partial_error is not None
+    assert response.tables is not None
+    assert response.__class__ == LogsQueryPartialResult
 
 @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/19917")
 @pytest.mark.live_test_only

@@ -10,28 +10,32 @@ from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
+
 def get_authentication_policy(
-        credential: 'AsyncTokenCredential'
+    credential: "AsyncTokenCredential",
 ) -> AsyncBearerTokenCredentialPolicy:
-    """Returns the correct authentication policy
-    """
+    """Returns the correct authentication policy"""
 
     if credential is None:
         raise ValueError("Parameter 'credential' must not be None.")
     if hasattr(credential, "get_token"):
-        return AsyncBearerTokenCredentialPolicy(credential, "https://api.loganalytics.io/.default")
+        return AsyncBearerTokenCredentialPolicy(
+            credential, "https://api.loganalytics.io/.default"
+        )
 
     raise TypeError("Unsupported credential")
 
+
 def get_metrics_authentication_policy(
-        credential: 'AsyncTokenCredential'
+    credential: "AsyncTokenCredential",
 ) -> AsyncBearerTokenCredentialPolicy:
-    """Returns the correct authentication policy
-    """
+    """Returns the correct authentication policy"""
 
     if credential is None:
         raise ValueError("Parameter 'credential' must not be None.")
     if hasattr(credential, "get_token"):
-        return AsyncBearerTokenCredentialPolicy(credential, "https://management.azure.com/.default")
+        return AsyncBearerTokenCredentialPolicy(
+            credential, "https://management.azure.com/.default"
+        )
 
     raise TypeError("Unsupported credential")
