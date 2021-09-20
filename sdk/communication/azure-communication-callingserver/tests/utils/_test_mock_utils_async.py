@@ -4,8 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 import json
-import unittest
-
 from . import _test_constants
 from azure.core.credentials import AccessToken
 from azure.communication.callingserver.aio import CallingServerClient as CallingServerClientAsync

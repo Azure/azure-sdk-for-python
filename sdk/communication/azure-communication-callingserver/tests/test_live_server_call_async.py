@@ -3,12 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import time
-import uuid
-import os
-import pytest
+import os, uuid
 import utils._test_constants as CONST
-
 from azure.communication.callingserver.aio import CallingServerClient
 from azure.communication.callingserver import (
     PlayAudioOptions,
@@ -25,15 +21,14 @@ from _shared.utils import get_http_logging_policy
 from utils._live_test_utils_async import CallingServerLiveTestUtilsAsync
 from utils._live_test_utils import CallingServerLiveTestUtils
 from utils._test_mock_utils_async import FakeTokenCredential_Async
-from utils._test_utils import TestUtils
 
 class ServerCallTestAsync(AsyncCommunicationTestCase):
 
     def setUp(self):
         super(ServerCallTestAsync, self).setUp()
 
-        self.from_user = TestUtils.get_new_user_id(self.connection_str)
-        self.to_user = TestUtils.get_new_user_id(self.connection_str)
+        self.from_user = CallingServerLiveTestUtils.get_new_user_id(self.connection_str)
+        self.to_user = CallingServerLiveTestUtils.get_new_user_id(self.connection_str)
 
         if self.is_playback():
             self.from_phone_number = "+15551234567"
@@ -66,7 +61,7 @@ class ServerCallTestAsync(AsyncCommunicationTestCase):
     async def test_join_play_cancel_hangup_scenario_async(self):
         async with self.callingserver_client:
             # create GroupCalls
-            group_id = TestUtils.get_group_id("test_join_play_cancel_hangup_scenario_async")
+            group_id = CallingServerLiveTestUtils.get_group_id("test_join_play_cancel_hangup_scenario_async")
             call_connections = await CallingServerLiveTestUtilsAsync.create_group_calls_async(
                 self.callingserver_client,
                 group_id,
@@ -108,7 +103,7 @@ class ServerCallTestAsync(AsyncCommunicationTestCase):
     async def test_create_add_remove_hangup_scenario_async(self):
         async with self.callingserver_client:
             # create GroupCalls
-            group_id = TestUtils.get_group_id("test_create_add_remove_hangup_scenario_async")
+            group_id = CallingServerLiveTestUtils.get_group_id("test_create_add_remove_hangup_scenario_async")
             call_connections = await CallingServerLiveTestUtilsAsync.create_group_calls_async(
                 self.callingserver_client,
                 group_id,

@@ -28,15 +28,14 @@ from devtools_testutils import is_live
 from _shared.utils import get_http_logging_policy
 from utils._live_test_utils import CallingServerLiveTestUtils
 from utils._test_mock_utils import FakeTokenCredential
-from utils._test_utils import TestUtils
 
 class CallConnectionTest(CommunicationTestCase):
 
     def setUp(self):
         super(CallConnectionTest, self).setUp()
 
-        self.from_user = TestUtils.get_new_user_id(self.connection_str)
-        self.to_user = TestUtils.get_new_user_id(self.connection_str)
+        self.from_user = CallingServerLiveTestUtils.get_new_user_id(self.connection_str)
+        self.to_user = CallingServerLiveTestUtils.get_new_user_id(self.connection_str)
 
         if self.is_playback():
             self.from_phone_number = "+15551234567"

@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
-import pytest
 import utils._test_mock_utils as _mock_utils
 import utils._test_constants as _test_constants
 
@@ -12,11 +11,6 @@ from typing import List
 from parameterized import parameterized
 from azure.communication.callingserver import (CreateCallOptions, MediaType,
     EventSubscriptionType, JoinCallOptions, CommunicationIdentifier, CommunicationUserIdentifier, PhoneNumberIdentifier)
-try:
-    from unittest.mock import Mock, patch
-except ImportError:  # python < 3.3
-    from mock import Mock, patch  # type: ignore
-
 
 def data_source_test_create_connection():
     options = CreateCallOptions(

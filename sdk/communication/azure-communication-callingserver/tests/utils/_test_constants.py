@@ -4,8 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import os, urllib.parse
+import os
 from devtools_testutils import is_live
+try:
+    from urllib.parse import quote
+except ImportError:
+    from urllib import quote
 
 RESOURCE_SOURCE = "8:acs:resource_source"
 RESOURCE_TARGET = "8:acs:resource_target"
@@ -27,9 +31,9 @@ CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON = "SKIP_CALLINGSERVER_INTERACTI
 
 IncomingRequestSecret = "helloworld"
 AppBaseUrl = "https://dummy.ngrok.io"
-AppCallbackUrl = f"{AppBaseUrl}/api/incident/callback?SecretKey={urllib.parse.quote(IncomingRequestSecret)}"
+AppCallbackUrl = "{}/api/incident/callback?SecretKey={}".format(AppBaseUrl,quote(IncomingRequestSecret))
 AudioFileName = "sample-message.wav"
-AudioFileUrl = f"{AppBaseUrl}/audio/{AudioFileName}"
+AudioFileUrl = "{}/audio/{}".format(AppBaseUrl,AudioFileName)
 
 # CreateOrJoinCall
 CreateOrJoinCallPayload={
