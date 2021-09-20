@@ -1,5 +1,23 @@
 # Release History
 
+## 1.0.0b5 (Unreleased)
+
+### Features Added
+
+- Added `QueryPartialErrorException` and `LogsQueryError` to handle errors.
+- Added `partial_error` and `is_error` attributes to `LogsQueryResult`.
+- Added an option `allow_partial_errors` that defaults to False, which can be set to not throw if there are any partial errors.
+- Added a new `LogsTableRow` type that represents a single row in a table.
+
+### Breaking Changes
+
+- `LogsQueryResult` now iterates over the tables directly as a convinience.
+- `metric_namespace` is renamed to `namespace` and is a keyword-only argument in `list_metric_definitions` API.
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.0.0b4 (2021-09-09)
 
 ### Features Added

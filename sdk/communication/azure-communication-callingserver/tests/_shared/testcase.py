@@ -46,17 +46,27 @@ class BodyReplacerProcessor(RecordingProcessor):
 
     def process_response(self, response):
         if is_text_payload(response) and response['body']['string']:
-            response['body'] = self._replace_keys(response['body']['string'])
+            response['body']['string'] = self._replace_keys(response['body']['string'])
 
         return response
-
+    
     def _replace_keys(self, body):
+        def _replace_recursively(dictionary):
+            for key in dictionary:
+                value = dictionary[key]
+                if key in self._keys:
+                    dictionary[key] = self._replacement
+                elif isinstance(value, dict):
+                    _replace_recursively(value)
+                elif key == 'iceServers':
+                    _replace_recursively(value[0])
+                elif key == 'urls':
+                    dictionary[key][0] = "turn.skype.com"
+
         import json
         try:
             body = json.loads(body)
-            for key in self._keys:
-                if key in body:
-                    body[key] = self._replacement
+            _replace_recursively(body)
 
         except (KeyError, ValueError):
             return body
@@ -90,8 +100,7 @@ class CommunicationTestCase(AzureTestCase):
         if self.is_playback():
             self.connection_str = "endpoint=https://sanitized.communication.azure.com/;accesskey=fake==="
         else:
-            #self.connection_str = os.getenv('COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING')
-            self.connection_str = "endpoint=https://acstestbot1.communication.azure.com/;accesskey=wuK/FrGFfWsRhQpBE6VtljXF1GsDaCr2H1ry4EEeQFmlrVDkaUGSLUiqkC8jq1fkqByGJxsvLAJq/9RAU/v7/w=="
+            self.connection_str = os.getenv('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING')
             endpoint, _ = parse_connection_str(self.connection_str)
             self._resource_name = endpoint.split(".")[0]
             self.scrubber.register_name_pair(self._resource_name, "sanitized")

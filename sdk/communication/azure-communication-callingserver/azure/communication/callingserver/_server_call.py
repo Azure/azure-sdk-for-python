@@ -152,8 +152,8 @@ class ServerCall(object):
             self,
             participant,  # type: CommunicationIdentifier
             callback_uri,  # type: str
-            alternate_caller_id,  # type: Optional[str]
-            operation_context,  # type: Optional[str]
+            alternate_caller_id=None,  # type: Optional[str]
+            operation_context=None,  # type: Optional[str]
             **kwargs  # type: Any
         ):  # type: (...) -> AddParticipantResult
 

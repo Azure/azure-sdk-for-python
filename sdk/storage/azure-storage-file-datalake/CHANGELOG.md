@@ -1,5 +1,10 @@
 # Release History
 
+## 12.5.0 (2021-09-15)
+**Stable release of preview features**
+- Added support for service version 2020-10-02 (STG78)
+- Added support for quick query parquet
+
 ## 12.5.0b1 (2021-07-27)
 **New features**
 - Added support for quick query parquet

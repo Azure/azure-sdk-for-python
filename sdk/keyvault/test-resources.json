@@ -23,6 +23,12 @@
                 "description": "The client OID to grant access to test resources."
             }
         },
+        "provisionerApplicationOid": {
+            "type": "string",
+            "metadata": {
+                "description": "The provisioner OID to grant access to test resources."
+            }
+        },
         "location": {
             "type": "string",
             "defaultValue": "[resourceGroup().location]",
@@ -188,9 +194,7 @@
             },
             "properties": {
                 "tenantId": "[parameters('tenantId')]",
-                "initialAdminObjectIds": [
-                    "[parameters('testApplicationOid')]"
-                ],
+                "initialAdminObjectIds": "[union(array(parameters('testApplicationOid')), array(parameters('provisionerApplicationOid')))]",
                 "enablePurgeProtection": false,
                 "enableSoftDelete": true,
                 "publicNetworkAccess": "Enabled",
