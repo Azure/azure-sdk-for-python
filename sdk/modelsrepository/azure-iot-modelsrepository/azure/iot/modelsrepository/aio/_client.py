@@ -8,7 +8,7 @@ import re
 import logging
 import os
 from azure.core.pipeline import Pipeline
-from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline.transport import RequestsTransport
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.pipeline.policies import (
@@ -44,7 +44,7 @@ class ModelsRepositoryClient(object):
         repository_location=DEFAULT_LOCATION,
         **kwargs
     ):  # pylint: disable=missing-client-constructor-parameter-credential
-        # type: (TokenCredential, str, Any) -> None
+        # type: (Any, TokenCredential, str, str) -> None
         """
         :param credential: Credentials to use when connecting to the service.
         :type credential: ~azure.core.credentials.TokenCredential
@@ -71,20 +71,20 @@ class ModelsRepositoryClient(object):
         # Store api version here (for now). Currently doesn't do anything
         self._api_version = kwargs.get("api_version", DEFAULT_API_VERSION)
 
-    def __enter__(self):
-        self.fetcher.__enter__()
+    async def __aenter__(self):
+        self.fetcher.__aenter__()
         return self
 
-    def __exit__(self, *exc_details):
-        self.fetcher.__exit__(*exc_details)
+    async def __aexit__(self, *exc_details):
+        self.fetcher.__aexit__(*exc_details)
 
-    def close(self):
+    async def close(self):
         # type: () -> None
         """Close the client, preventing future operations"""
-        self.__exit__()
+        self.__aexit__()
 
-    @distributed_trace
-    def get_models(self, dtmis, dependency_resolution=DependencyModeType.enabled.value, **kwargs):
+    @distributed_trace_async
+    async def get_models(self, dtmis, dependency_resolution=DependencyModeType.enabled.value, **kwargs):
         # type: (Union[List[str], str], str, Any) -> Dict[str, Any]
         """Retrieve a model from the Models Repository.
 
@@ -119,7 +119,7 @@ class ModelsRepositoryClient(object):
             # Fetch the metadata and ensure dependency resolution is enabled for the repository
             expanded_availiability = False
             try:
-                metadata = self.resolver.resolve_metadata()
+                metadata = await self.resolver.resolve_metadata()
                 print(f"Metadata: {metadata}")
                 if (
                     metadata and
@@ -141,7 +141,7 @@ class ModelsRepositoryClient(object):
 
             try:
                 _LOGGER.debug("Retrieving expanded model(s): %s...", dtmis)
-                model_map = self.resolver.resolve(dtmis, expanded_model=expanded_availiability)
+                model_map = await self.resolver.resolve(dtmis, expanded_model=expanded_availiability)
             except ResourceNotFoundError:
                 # Fallback to manual dependency resolution
                 _LOGGER.debug(
@@ -149,13 +149,13 @@ class ModelsRepositoryClient(object):
                     "fallback to manual dependency resolution mode"
                 )
                 _LOGGER.debug("Retrieving model(s): %s...", dtmis)
-                model_map = self.resolver.resolve(dtmis)
+                model_map = await self.resolver.resolve(dtmis)
 
             # Fetch dependencies manually if needed
             if not expanded_availiability:
                 base_model_list = list(model_map.values())
                 _LOGGER.debug("Retrieving model dependencies for %s...", dtmis)
-                model_map = self._pseudo_parser.expand(base_model_list)
+                model_map = await self._pseudo_parser.expand(base_model_list)
 
         return model_map
 

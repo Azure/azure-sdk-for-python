@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from azure.iot.modelsrepository import (
     ModelsRepositoryClient,
-    DEPENDENCY_MODE_ENABLED,
+    DependencyModeType,
 )
 from azure.core.exceptions import (
     ResourceNotFoundError,
@@ -48,7 +48,7 @@ def get_model_and_dependencies():
     # dependencies on components and interfaces
     # i.e. https://devicemodels.azure.com/dtmi/com/example/temperaturecontroller-1.json
     with ModelsRepositoryClient() as client:
-        model_list = client.get_models(dtmis=[dtmi], dependency_resolution=DEPENDENCY_MODE_ENABLED)
+        model_list = client.get_models(dtmis=[dtmi], dependency_resolution=DependencyModeType.enabled.value)
         pprint.pprint(model_list)
 
 
