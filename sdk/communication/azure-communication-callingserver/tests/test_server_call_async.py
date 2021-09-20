@@ -7,7 +7,6 @@ import pytest
 import utils._test_mock_utils_async as _mock_utils_async
 import utils._test_constants as _test_constants
 
-from typing import List
 from parameterized import parameterized
 from azure.communication.callingserver import (
     AddParticipantResult,
