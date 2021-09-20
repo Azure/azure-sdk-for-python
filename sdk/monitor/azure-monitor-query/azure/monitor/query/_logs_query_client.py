@@ -124,13 +124,13 @@ class LogsQueryClient(object):
             process_error(err, LogsQueryError)
         response = None
         if not generated_response.error:
-            response = LogsQueryResult._from_generated(
+            response = LogsQueryResult._from_generated( # pylint: disable=protected-access
                 generated_response
-            )  # pylint: disable=protected-access
+            )
         else:
-            response = LogsQueryPartialResult._from_generated(
+            response = LogsQueryPartialResult._from_generated( # pylint: disable=protected-access
                 generated_response, LogsQueryError
-            )  # pylint: disable=protected-access
+            )
         return response
 
     @distributed_trace
@@ -165,8 +165,8 @@ class LogsQueryClient(object):
         except (KeyError, TypeError):
             pass
         queries = [
-            cast(LogsBatchQuery, q)._to_generated() for q in queries
-        ]  # pylint: disable=protected-access
+            cast(LogsBatchQuery, q)._to_generated() for q in queries # pylint: disable=protected-access
+        ]
         try:
             request_order = [req.id for req in queries]
         except AttributeError:

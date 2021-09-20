@@ -52,8 +52,8 @@ def order_results(request_order, mapping, **kwargs):
     for item in ordered:
         if not item.body.error:
             results.append(
-                kwargs.get("obj")._from_generated(item.body)
-            )  # pylint: disable=protected-access
+                kwargs.get("obj")._from_generated(item.body) # pylint: disable=protected-access
+            )
         else:
             error = item.body.error
             if error.code == "PartialError":
@@ -65,8 +65,8 @@ def order_results(request_order, mapping, **kwargs):
                 results.append(res)
             else:
                 results.append(
-                    kwargs.get("err")._from_generated(error)
-                )  # pylint: disable=protected-access
+                    kwargs.get("err")._from_generated(error) # pylint: disable=protected-access
+                )
     return results
 
 
@@ -123,9 +123,9 @@ def process_row(col_types, row):
 
 def process_error(error, model):
     try:
-        model = model._from_generated(
+        model = model._from_generated( # pylint: disable=protected-access
             error.model.error
-        )  # pylint: disable=protected-access
+        )
     except AttributeError:  # model can be none
         pass
     raise HttpResponseError(message=error.message, response=error.response, model=model)

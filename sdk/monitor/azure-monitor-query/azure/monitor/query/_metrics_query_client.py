@@ -119,9 +119,9 @@ class MetricsQueryClient(object):
         generated = self._metrics_op.list(
             resource_uri, connection_verify=False, **kwargs
         )
-        return MetricsResult._from_generated(
+        return MetricsResult._from_generated( # pylint: disable=protected-access
             generated
-        )  # pylint: disable=protected-access
+        )
 
     @distributed_trace
     def list_metric_namespaces(self, resource_uri, **kwargs):

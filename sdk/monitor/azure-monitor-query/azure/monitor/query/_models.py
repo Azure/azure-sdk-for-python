@@ -134,8 +134,8 @@ class MetricsResult(object):
             namespace=generated.namespace,
             resource_region=generated.resourceregion,
             metrics=[
-                Metric._from_generated(m) for m in generated.value
-            ],  # pylint: disable=protected-access
+                Metric._from_generated(m) for m in generated.value # pylint: disable=protected-access
+            ],
         )
 
 
@@ -591,7 +591,7 @@ class LogsQueryPartialResult(LogsQueryResult):
         self.status = LogsQueryStatus.PARTIAL
 
     @classmethod
-    def _from_generated(cls, generated, error):
+    def _from_generated(cls, generated, error): # pylint: disable=W0221
         super_gen = super(LogsQueryPartialResult, cls)._from_generated(generated)
         super_gen.partial_error = error._from_generated(generated.error)
         return super_gen
