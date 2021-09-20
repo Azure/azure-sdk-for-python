@@ -78,7 +78,7 @@ class TestCallingServerClient(unittest.TestCase):
         test_name, # type: str
         source_user, # type: CommunicationIdentifier
         target_users, # type: List[CommunicationIdentifier]
-        options, # type: CreateCallOptions,
+        options, # type: CreateCallOptions
         use_managed_identity = False # type: bool
         ):
 
@@ -98,7 +98,7 @@ class TestCallingServerClient(unittest.TestCase):
         test_name, # type: str
         source_user, # type: CommunicationIdentifier
         target_users, # type: List[CommunicationIdentifier]
-        options, # type: CreateCallOptions,
+        options, # type: CreateCallOptions
         use_managed_identity = False # type: bool
         ):
 

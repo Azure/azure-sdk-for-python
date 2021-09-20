@@ -48,6 +48,33 @@ def data_source_test_play_audio():
 
     return parameters
 
+def data_source_test_play_audio_to_participant():
+    play_audio_options = PlayAudioOptions(
+            loop = True,
+            audio_file_id = _test_constants.AUDIO_FILE_ID,
+            callback_uri = _test_constants.CALLBACK_URI,
+            operation_context = _test_constants.OPERATION_CONTEXT
+            )
+    parameters = []
+    parameters.append((
+        _test_constants.ClientType_ConnectionString,
+        _test_constants.SERVER_CALL_ID,
+        _test_constants.PARTICIPANT_ID,
+        _test_constants.AUDIO_FILE_URI,
+        play_audio_options,
+        ))
+
+    parameters.append((
+        _test_constants.ClientType_ManagedIdentity,
+        _test_constants.SERVER_CALL_ID,
+        _test_constants.PARTICIPANT_ID,
+        _test_constants.AUDIO_FILE_URI,
+        play_audio_options,
+        True,
+        ))
+
+    return parameters
+
 def data_source_test_add_participant():
     parameters = []
     parameters.append((
@@ -179,6 +206,52 @@ async def test_play_audio_failed(
     raised = False
     try:
         await server_call.play_audio(audio_file_uri, options)
+    except:
+        raised = True
+    assert raised == True
+
+@parameterized.expand(data_source_test_play_audio_to_participant())
+@pytest.mark.asyncio
+async def test_play_audio_to_participant_succeed(
+    test_name, # type: str
+    server_call_id, # type: str
+    participant_id, # type: str
+    audio_file_uri, # type: str
+    play_audio_options, # type: PlayAudioOptions
+    use_managed_identity = False # type: bool
+    ):
+
+    server_call = _test_utils_async.create_mock_server_call(
+        server_call_id,
+        status_code=202,
+        payload=_test_constants.PlayAudioResponsePayload,
+        use_managed_identity=use_managed_identity
+        )
+
+    result = await server_call.play_audio_to_participant(participant_id, audio_file_uri, play_audio_options)
+    verify_play_audio_result(result)
+
+@parameterized.expand(data_source_test_play_audio_to_participant())
+@pytest.mark.asyncio
+async def test_play_audio_to_participant_failed(
+    test_name, # type: str
+    server_call_id, # type: str
+    participant_id, # type: str
+    audio_file_uri, # type: str
+    play_audio_options, # type: PlayAudioOptions
+    use_managed_identity = False # type: bool
+    ):
+
+    server_call = _test_utils_async.create_mock_server_call(
+        server_call_id,
+        status_code=404,
+        payload=_test_constants.ErrorPayload,
+        use_managed_identity = use_managed_identity
+        )
+
+    raised = False
+    try:
+        await server_call.play_audio_to_participant(participant_id, audio_file_uri, play_audio_options)
     except:
         raised = True
     assert raised == True
