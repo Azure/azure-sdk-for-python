@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
-import pytest
 import utils._test_mock_utils as _mock_utils
 import utils._test_constants as _test_constants
 

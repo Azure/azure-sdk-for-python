@@ -3,9 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import time
 from typing import List
-from devtools_testutils import is_live
 from azure.communication.callingserver.aio import CallingServerClient, CallConnection
 from azure.communication.callingserver import (
     CommunicationUserIdentifier,

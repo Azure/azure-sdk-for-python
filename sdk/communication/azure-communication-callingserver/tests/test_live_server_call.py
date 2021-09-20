@@ -3,11 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import uuid
-import os
-import pytest
+import os, uuid
 import utils._test_constants as CONST
-
 from azure.communication.callingserver import CallingServerClient
 from azure.communication.callingserver import (
     PlayAudioOptions,

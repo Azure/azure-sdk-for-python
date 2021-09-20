@@ -27,9 +27,9 @@ CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON = "SKIP_CALLINGSERVER_INTERACTI
 
 IncomingRequestSecret = "helloworld"
 AppBaseUrl = "https://dummy.ngrok.io"
-AppCallbackUrl = f"{AppBaseUrl}/api/incident/callback?SecretKey={urllib.parse.quote(IncomingRequestSecret)}"
+AppCallbackUrl = "{}/api/incident/callback?SecretKey={}".format(AppBaseUrl,urllib.parse.quote(IncomingRequestSecret))
 AudioFileName = "sample-message.wav"
-AudioFileUrl = f"{AppBaseUrl}/audio/{AudioFileName}"
+AudioFileUrl = "{}/audio/{}".format(AppBaseUrl,AudioFileName)
 
 # CreateOrJoinCall
 CreateOrJoinCallPayload={

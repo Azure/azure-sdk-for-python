@@ -6,7 +6,6 @@
 import unittest
 import utils._test_mock_utils as _mock_utils
 import utils._test_constants as _test_constants
-from typing import List
 from parameterized import parameterized
 
 from azure.communication.callingserver import (

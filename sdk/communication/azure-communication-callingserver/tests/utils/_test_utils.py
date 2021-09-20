@@ -4,8 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import os, uuid
-
+import uuid
 from azure.communication.identity import CommunicationIdentityClient
 from devtools_testutils import is_live
 from ._test_constants import AZURE_TENANT_ID
