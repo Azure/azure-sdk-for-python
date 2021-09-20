@@ -297,7 +297,7 @@ async def test_cancel_media_operation_succeed(
     use_managed_identity = False # type: bool
     ):
 
-    server_call = _test_utils_async.create_mock_server_call(
+    server_call = _mock_utils_async.create_mock_server_call(
         server_call_id,
         status_code=200,
         payload=None,
@@ -318,7 +318,7 @@ async def test_cancel_media_operation_failed(
     use_managed_identity = False # type: bool
     ):
 
-    server_call = _test_utils_async.create_mock_server_call(
+    server_call = _mock_utils_async.create_mock_server_call(
         server_call_id,
         status_code=404,
         payload=_test_constants.ErrorPayload,
@@ -344,7 +344,7 @@ async def test_cancel_participant_media_operation(
     use_managed_identity = False # type: bool
     ):
 
-    server_call = _test_utils_async.create_mock_server_call(
+    server_call = _mock_utils_async.create_mock_server_call(
         server_call_id,
         status_code=200,
         payload=None,
@@ -367,7 +367,7 @@ async def test_cancel_participant_media_operation_failed(
     use_managed_identity = False # type: bool
     ):
 
-    server_call = _test_utils_async.create_mock_server_call(
+    server_call = _mock_utils_async.create_mock_server_call(
         server_call_id,
         status_code=404,
         payload=_test_constants.ErrorPayload,

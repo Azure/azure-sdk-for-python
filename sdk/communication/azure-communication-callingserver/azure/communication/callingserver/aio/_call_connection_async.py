@@ -57,7 +57,7 @@ class CallConnection:
     @distributed_trace_async()
     async def cancel_all_media_operations(
             self,
-            operation_context: Optional[str],
+            operation_context: Optional[str] = None,
             **kwargs: Any
         ) -> CancelAllMediaOperationsResult:
 
@@ -95,8 +95,8 @@ class CallConnection:
     async def add_participant(
             self,
             participant: CommunicationIdentifier,
-            alternate_caller_id: Optional[str],
-            operation_context: Optional[str],
+            alternate_caller_id: Optional[str] = None,
+            operation_context: Optional[str] = None,
             **kwargs: Any
         ) -> AddParticipantResult:
 
@@ -161,7 +161,7 @@ class CallConnection:
     async def transfer_call(
             self,
             target_participant: CommunicationIdentifier,
-            user_to_user_information: Optional[str],
+            user_to_user_information: Optional[str] = None,
             **kwargs: Any
         )-> None:
 

@@ -421,7 +421,7 @@ class TestCallConnection(unittest.TestCase):
         use_managed_identity = False # type: bool
         ):
 
-        call_connection = _test_utils.create_mock_call_connection(
+        call_connection = _mock_utils.create_mock_call_connection(
             call_connection_id,
             status_code=200,
             payload=None,
@@ -444,7 +444,7 @@ class TestCallConnection(unittest.TestCase):
         use_managed_identity = False # type: bool
         ):
 
-        call_connection = _test_utils.create_mock_call_connection(
+        call_connection = _mock_utils.create_mock_call_connection(
             call_connection_id,
             status_code=404,
             payload=None,
@@ -471,7 +471,7 @@ class TestCallConnection(unittest.TestCase):
         use_managed_identity = False # type: bool
         ):
 
-        call_connection = _test_utils.create_mock_call_connection(
+        call_connection = _mock_utils.create_mock_call_connection(
             call_connection_id,
             status_code=202,
             payload=None,
@@ -494,7 +494,7 @@ class TestCallConnection(unittest.TestCase):
         use_managed_identity = False # type: bool
         ):
 
-        call_connection = _test_utils.create_mock_call_connection(
+        call_connection = _mock_utils.create_mock_call_connection(
             call_connection_id,
             status_code=404,
             payload=None,

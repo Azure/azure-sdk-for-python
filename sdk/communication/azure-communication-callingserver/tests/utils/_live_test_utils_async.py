@@ -13,6 +13,7 @@ from azure.communication.callingserver import (
     MediaType,
     EventSubscriptionType
     )
+from utils._live_test_utils import CallingServerLiveTestUtils
 
 class CallingServerLiveTestUtilsAsync:
 
@@ -29,53 +30,44 @@ class CallingServerLiveTestUtilsAsync:
         from_user: str,
         to_user: str,
         call_back_uri: str
-        ):
+        ) -> List[CallConnection]:
+        from_participant = CommunicationUserIdentifier(from_user)
+        to_participant = CommunicationUserIdentifier(to_user)
         group_calls = []
 
+        from_call_connection = None
+        to_call_connection = None
         try:
-            from_participant = CommunicationUserIdentifier(from_user)
-            to_participant = CommunicationUserIdentifier(to_user)
-
-            # create from_participant option
+            # join from_participant to Server Call
             from_options = CreateCallOptions(
                 callback_uri=call_back_uri,
                 requested_media_types=[MediaType.AUDIO],
                 requested_call_events=[EventSubscriptionType.PARTICIPANTS_UPDATED]
             )
+            from_call_connection = await callingserver_client.join_call(group_id, from_participant, from_options)
+            CallingServerLiveTestUtilsAsync.validate_callconnection_Async(from_call_connection)
+            CallingServerLiveTestUtils.sleep_if_in_live_mode()
 
-            async with callingserver_client:
-                from_call_connection = await callingserver_client.join_call(group_id, from_participant, from_options)
+            # join to_participant to Server Call
+            to_options = CreateCallOptions(
+                callback_uri=call_back_uri,
+                requested_media_types=[MediaType.AUDIO],
+                requested_call_events=[EventSubscriptionType.PARTICIPANTS_UPDATED]
+            )
+            to_call_connection = await callingserver_client.join_call(group_id, to_participant, to_options)
+            CallingServerLiveTestUtilsAsync.validate_callconnection_Async(from_call_connection)
+            CallingServerLiveTestUtils.sleep_if_in_live_mode()
 
-                if is_live():
-                    time.sleep(10)
+            group_calls.append(from_call_connection)
+            group_calls.append(to_call_connection)
 
-                CallingServerLiveTestUtilsAsync.validate_callconnection_Async(from_call_connection)
-
-                # create to_participant option
-                to_options = CreateCallOptions(
-                    callback_uri=call_back_uri,
-                    requested_media_types=[MediaType.AUDIO],
-                    requested_call_events=[EventSubscriptionType.PARTICIPANTS_UPDATED]
-                )
-
-                to_call_connection = await callingserver_client.join_call(group_id, to_participant, to_options)
-
-                if is_live():
-                    time.sleep(10)
-
-                CallingServerLiveTestUtilsAsync.validate_callconnection_Async(from_call_connection)
-
-                group_calls.append(from_call_connection)
-                group_calls.append(to_call_connection)
-                return group_calls
+            return group_calls
 
         except Exception as err:
-                print("An exception occurred")
+            print("An exception occurred: ", err)
 
-        finally:
             if from_call_connection is not None:
                 await from_call_connection.hang_up()
-
             if to_call_connection is not None:
                 await to_call_connection.hang_up()
 
@@ -85,23 +77,14 @@ class CallingServerLiveTestUtilsAsync:
     async def cancel_all_media_operations_for_group_call_async(call_connections: List[CallConnection]) -> None:
         if call_connections is None:
             return
-
         for connection in call_connections:
             if connection is not None:
-                try:
-                    await connection.cancel_all_media_operations()
-                except Exception as err:
-                    print("Error cancel group call media operations: " + str(err))
-
+                await connection.cancel_all_media_operations()
 
     @staticmethod
     async def clean_up_connections_async(call_connections: List[CallConnection]) -> None:
         if call_connections is None:
             return
-
         for connection in call_connections:
             if connection is not None:
-                try:
-                    await connection.hang_up()
-                except Exception as err:
-                    print("Error hanging up: " + str(err))
+                await connection.hang_up()

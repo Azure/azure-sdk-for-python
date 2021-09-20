@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import time
 import uuid
 import os
 import pytest
@@ -31,10 +30,6 @@ from utils._live_test_utils import CallingServerLiveTestUtils
 from utils._test_mock_utils_async import FakeTokenCredential_Async
 from utils._test_utils import TestUtils
 
-SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS = is_live and os.getenv("SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS", "false") == "true"
-CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON = "SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS skips certain callingserver tests that required human interaction"
-
-@pytest.mark.skipif(SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
 class CallConnectionTestAsync(AsyncCommunicationTestCase):
 
     def setUp(self):
@@ -54,7 +49,7 @@ class CallConnectionTestAsync(AsyncCommunicationTestCase):
             self.recording_processors.extend([
                 BodyReplacerProcessor(keys=["alternateCallerId", "targets", "source", "callbackUri"]),
                 ResponseReplacerProcessor(keys=[self._resource_name])])
-        
+
         # create CallingServerClient
         endpoint, _ = parse_connection_str(self.connection_str)
         self.endpoint = endpoint
@@ -70,9 +65,10 @@ class CallConnectionTestAsync(AsyncCommunicationTestCase):
             http_logging_policy=get_http_logging_policy()
         )
 
+    @pytest.mark.skipif(CONST.SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_play_cancel_hangup_scenario_async(self):
-        # create option
+        # create call option
         options = CreateCallOptions(
             callback_uri=CONST.AppCallbackUrl,
             requested_media_types=[MediaType.AUDIO],
@@ -85,48 +81,44 @@ class CallConnectionTestAsync(AsyncCommunicationTestCase):
             call_connection_async = await self.callingserver_client.create_call_connection(
                         source=CommunicationUserIdentifier(self.from_user),
                         targets=[PhoneNumberIdentifier(self.to_phone_number)],
-                        options=options,
+                        options=options
                         )
-
             CallingServerLiveTestUtilsAsync.validate_callconnection_Async(call_connection_async)
 
-            if is_live():
-                time.sleep(10)
-
             async with call_connection_async:
-                # Play Audio
-                OperationContext = str(uuid.uuid4())
-                AudioFileId = str(uuid.uuid4())
-                options = PlayAudioOptions(
-                    loop = True,
-                    audio_file_id = AudioFileId,
-                    callback_uri = CONST.AppCallbackUrl,
-                    operation_context = OperationContext
-                    )
+                try:
+                    # Play Audio
+                    CallingServerLiveTestUtils.sleep_if_in_live_mode()
+                    OperationContext = str(uuid.uuid4())
+                    AudioFileId = str(uuid.uuid4())
+                    options = PlayAudioOptions(
+                        loop = True,
+                        audio_file_id = AudioFileId,
+                        callback_uri = CONST.AppCallbackUrl,
+                        operation_context = OperationContext
+                        )
+                    play_audio_result = await call_connection_async.play_audio(
+                        CONST.AudioFileUrl,
+                        options
+                        )
+                    CallingServerLiveTestUtils.validate_play_audio_result(play_audio_result)
 
-                play_audio_result = await call_connection_async.play_audio(
-                    CONST.AudioFileUrl,
-                    options
-                    )
+                    # Cancel All Media Operations
+                    CallingServerLiveTestUtils.sleep_if_in_live_mode()
+                    CancelMediaOperationContext = str(uuid.uuid4())
+                    cancel_all_media_operations_result = await call_connection_async.cancel_all_media_operations(
+                        CancelMediaOperationContext
+                        )
+                    CallingServerLiveTestUtils.validate_cancel_all_media_operations(cancel_all_media_operations_result)
+                finally:
+                    # Hang up
+                    CallingServerLiveTestUtils.sleep_if_in_live_mode()
+                    await call_connection_async.hang_up()
 
-                CallingServerLiveTestUtils.validate_play_audio_result(play_audio_result)
-
-                # Cancel All Media Operations
-                CancelMediaOperationContext = str(uuid.uuid4())
-                cancel_all_media_operations_result = await call_connection_async.cancel_all_media_operations(
-                    CancelMediaOperationContext
-                    )
-
-                CallingServerLiveTestUtils.validate_cancel_all_media_operations(cancel_all_media_operations_result)
-                if is_live():
-                    time.sleep(5)
-
-                # Hang up
-                await call_connection_async.hang_up()
-    
+    @pytest.mark.skipif(CONST.SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_add_remove_hangup_scenario_async(self):
-        # create option
+        # create call option
         options = CreateCallOptions(
             callback_uri=CONST.AppCallbackUrl,
             requested_media_types=[MediaType.AUDIO],
@@ -139,33 +131,27 @@ class CallConnectionTestAsync(AsyncCommunicationTestCase):
             call_connection_async = await self.callingserver_client.create_call_connection(
                         source=CommunicationUserIdentifier(self.from_user),
                         targets=[PhoneNumberIdentifier(self.to_phone_number)],
-                        options=options,
+                        options=options
                         )
-
             CallingServerLiveTestUtils.validate_callconnection(call_connection_async)
 
-            if is_live():
-                time.sleep(10)
-
             async with call_connection_async:
+                try:
+                    # Add Participant
+                    CallingServerLiveTestUtils.sleep_if_in_live_mode()
+                    OperationContext = str(uuid.uuid4())
+                    add_participant_result = await call_connection_async.add_participant(
+                        participant=CommunicationUserIdentifier(CallingServerLiveTestUtils.get_fixed_user_id("0000000c-9f68-6fd6-e57b-254822002248")),
+                        alternate_caller_id=None,
+                        operation_context=OperationContext
+                        )
+                    CallingServerLiveTestUtils.validate_add_participant(add_participant_result)
 
-                # Add Participant
-                OperationContext = str(uuid.uuid4())
-                add_participant_result = await call_connection_async.add_participant(
-                    participant=CommunicationUserIdentifier(self.to_user),
-                    alternate_caller_id=None,
-                    operation_context=OperationContext
-                    )
-
-                CallingServerLiveTestUtils.validate_add_participant(add_participant_result)
-
-                participant_id=add_participant_result.participant_id
-
-                # Remove Participant
-                await call_connection_async.remove_participant(participant_id)
-
-                if is_live():
-                    time.sleep(5)
-
-                # Hang up
-                await call_connection_async.hang_up()
+                    # Remove Participant
+                    participant_id=add_participant_result.participant_id
+                    CallingServerLiveTestUtils.sleep_if_in_live_mode()
+                    await call_connection_async.remove_participant(participant_id)
+                finally:
+                    # Hang up
+                    CallingServerLiveTestUtils.sleep_if_in_live_mode()
+                    await call_connection_async.hang_up()

@@ -50,7 +50,7 @@ class CallConnection(object):
     @distributed_trace()
     def cancel_all_media_operations(
             self,
-            operation_context,  # type: Optional[str]
+            operation_context=None,  # type: Optional[str]
             **kwargs  # type: Any
         ): # type: (...) -> CancelAllMediaOperationsResult
 
@@ -88,8 +88,8 @@ class CallConnection(object):
     def add_participant(
             self,
             participant,  # type: CommunicationIdentifier
-            alternate_caller_id,  # type: Optional[str]
-            operation_context,  # type: Optional[str]
+            alternate_caller_id=None,  # type: Optional[str]
+            operation_context=None,  # type: Optional[str]
             **kwargs  # type: Any
         ): # type: (...) -> AddParticipantResult
 

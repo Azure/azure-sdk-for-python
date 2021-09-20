@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import os, urllib.parse
+from devtools_testutils import is_live
 
 RESOURCE_SOURCE = "8:acs:resource_source"
 RESOURCE_TARGET = "8:acs:resource_target"
@@ -21,6 +22,8 @@ RESOURCE_IDENTIFIER = os.getenv(
     "016a7064-0581-40b9-be73-6dde64d69d72" # From ACS Resource "immutableResourceId".
     )
 AZURE_TENANT_ID = RESOURCE_IDENTIFIER
+SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS = is_live() or os.getenv("SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS", "false") == "true"
+CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON = "SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS skips certain callingserver tests that required human interaction"
 
 IncomingRequestSecret = "helloworld"
 AppBaseUrl = "https://dummy.ngrok.io"

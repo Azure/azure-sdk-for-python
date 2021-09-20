@@ -418,7 +418,7 @@ async def test_cancel_participant_media_operation(
     use_managed_identity = False # type: bool
     ):
 
-    call_connection = _test_utils_async.create_mock_call_connection(
+    call_connection = _mock_utils_async.create_mock_call_connection(
         call_connection_id,
         status_code=200,
         payload=None,
@@ -441,7 +441,7 @@ async def test_cancel_participant_media_operation_failed(
     use_managed_identity = False # type: bool
     ):
 
-    call_connection = _test_utils_async.create_mock_call_connection(
+    call_connection = _mock_utils_async.create_mock_call_connection(
         call_connection_id,
         status_code=404,
         payload=_test_constants.ErrorPayload,
@@ -450,7 +450,7 @@ async def test_cancel_participant_media_operation_failed(
 
     raised = False
     try:
-            await call_connection.cancel_participant_media_operation(
+        await call_connection.cancel_participant_media_operation(
             participant_id = participant_id,
             media_operation_id = media_operation_id
             )
@@ -468,7 +468,7 @@ async def test_transfer_call_succeed(
     use_managed_identity = False # type: bool
     ):
 
-    call_connection = _test_utils_async.create_mock_call_connection(
+    call_connection = _mock_utils_async.create_mock_call_connection(
         call_connection_id,
         status_code=202,
         payload=None,
@@ -491,7 +491,7 @@ async def test_transfer_call_failed(
     use_managed_identity = False # type: bool
     ):
 
-    call_connection = _test_utils_async.create_mock_call_connection(
+    call_connection = _mock_utils_async.create_mock_call_connection(
         call_connection_id,
         status_code=404,
         payload=None,

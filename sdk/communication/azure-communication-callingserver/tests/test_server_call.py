@@ -300,7 +300,7 @@ class TestServerCall(unittest.TestCase):
         use_managed_identity = False # type: bool
         ):
 
-        server_call = _test_utils.create_mock_server_call(
+        server_call = _mock_utils.create_mock_server_call(
             server_call_id,
             status_code=200,
             payload=None,
@@ -321,7 +321,7 @@ class TestServerCall(unittest.TestCase):
         use_managed_identity = False # type: bool
         ):
 
-        server_call = _test_utils.create_mock_server_call(
+        server_call = _mock_utils.create_mock_server_call(
             server_call_id,
             status_code=404,
             payload=_test_constants.ErrorPayload,
@@ -347,7 +347,7 @@ class TestServerCall(unittest.TestCase):
         use_managed_identity = False # type: bool
         ):
 
-        server_call = _test_utils.create_mock_server_call(
+        server_call = _mock_utils.create_mock_server_call(
             server_call_id,
             status_code=200,
             payload=None,
@@ -370,7 +370,7 @@ class TestServerCall(unittest.TestCase):
         use_managed_identity = False # type: bool
         ):
 
-        server_call = _test_utils.create_mock_server_call(
+        server_call = _mock_utils.create_mock_server_call(
             server_call_id,
             status_code=404,
             payload=_test_constants.ErrorPayload,
@@ -379,7 +379,7 @@ class TestServerCall(unittest.TestCase):
 
         raised = False
         try:
-             server_call.cancel_participant_media_operation(
+            server_call.cancel_participant_media_operation(
                 participant_id = participant_id,
                 media_operation_id = media_operation_id
                 )

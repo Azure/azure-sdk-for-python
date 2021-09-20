@@ -66,8 +66,8 @@ class ServerCall:
             self,
             participant: 'CommunicationIdentifier',
             callback_uri: str,
-            alternate_caller_id: Optional[str],
-            operation_context: Optional[str],
+            alternate_caller_id: Optional[str] = None,
+            operation_context: Optional[str] = None,
             **kwargs: Any
         ) -> AddParticipantResult:
 
