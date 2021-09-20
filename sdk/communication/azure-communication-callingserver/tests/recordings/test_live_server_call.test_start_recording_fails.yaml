@@ -15,14 +15,14 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.0.1 Python/3.7.9 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 20 Sep 2021 18:28:04 GMT
+      - Mon, 20 Sep 2021 18:28:08 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
     uri: https://sanitized.communication.azure.com/identities?api-version=2021-03-07
   response:
     body:
-      string: '{"identity":{"id":"8:acs:016a7064-0581-40b9-be73-6dde64d69d72_0000000c-a458-b67f-32fb-343a0d00262f"}}'
+      string: '{"identity":{"id":"8:acs:016a7064-0581-40b9-be73-6dde64d69d72_0000000c-a458-c5f9-4977-254822001cb5"}}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
@@ -30,9 +30,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 20 Sep 2021 18:28:04 GMT
+      - Mon, 20 Sep 2021 18:28:07 GMT
       ms-cv:
-      - LdNZ7C8YPUyezR5XaLDX5w.0
+      - SPIX0qHdTEmQv15l7WsI0Q.0
       request-context:
       - appId=
       strict-transport-security:
@@ -42,7 +42,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 26ms
+      - 138ms
     status:
       code: 201
       message: Created
@@ -62,14 +62,14 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.0.1 Python/3.7.9 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 20 Sep 2021 18:28:05 GMT
+      - Mon, 20 Sep 2021 18:28:09 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
     uri: https://sanitized.communication.azure.com/identities?api-version=2021-03-07
   response:
     body:
-      string: '{"identity":{"id":"8:acs:016a7064-0581-40b9-be73-6dde64d69d72_0000000c-a458-b753-5306-454822001b1c"}}'
+      string: '{"identity":{"id":"8:acs:016a7064-0581-40b9-be73-6dde64d69d72_0000000c-a458-c753-b4f8-343a0d002b72"}}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
@@ -77,9 +77,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 20 Sep 2021 18:28:04 GMT
+      - Mon, 20 Sep 2021 18:28:08 GMT
       ms-cv:
-      - bliJ6H1VjUOQRJNChoO+5g.0
+      - pAVT7ysuE0+cqZk9sR73uQ.0
       request-context:
       - appId=
       strict-transport-security:
@@ -89,7 +89,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 61ms
+      - 25ms
     status:
       code: 201
       message: Created

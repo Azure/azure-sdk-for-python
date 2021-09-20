@@ -21,7 +21,9 @@ from .._converters import (AddParticipantRequestConverter,
 from .._generated.models import (AddParticipantResult,
                                  CallRecordingProperties,
                                  PhoneNumberIdentifierModel,
-                                 PlayAudioResult)
+                                 PlayAudioResult,
+                                 StartCallRecordingRequest,
+                                 StartCallRecordingResult)
 from .._generated.aio._azure_communication_calling_server_service import \
     AzureCommunicationCallingServerService  # pylint: disable=unused-import
 

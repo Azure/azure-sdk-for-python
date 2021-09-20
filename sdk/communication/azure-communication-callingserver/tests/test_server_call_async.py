@@ -290,7 +290,7 @@ async def test_remove_participant_failed(
 @pytest.mark.asyncio
 async def test_start_recording_relative_uri_fails():
     server_call_id = "aHR0cHM6Ly9jb252LXVzd2UtMDguY29udi5za3lwZS5jb20vY29udi8tby1FWjVpMHJrS3RFTDBNd0FST1J3P2k9ODgmZT02Mzc1Nzc0MTY4MDc4MjQyOTM"
-    server_call = _test_utils_async.create_calling_server_client_async().initialize_server_call(server_call_id)
+    server_call = _mock_utils_async.create_calling_server_client_async().initialize_server_call(server_call_id)
     with pytest.raises(ValueError):
         await server_call.start_recording("/not/absolute/uri")
 

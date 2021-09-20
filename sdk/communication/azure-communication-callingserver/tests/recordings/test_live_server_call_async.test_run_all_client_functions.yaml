@@ -1,0 +1,28 @@
+interactions:
+- request:
+    body: '{"source": "sanitized", "callbackUri": "sanitized", "requestedMediaTypes":
+      ["audio"], "requestedCallEvents": ["participantsUpdated"]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '354'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://sanitized.communication.azure.com/calling/serverCalls/sanitized/:join?api-version=2021-09-15-preview
+  response:
+    body:
+      string: '{"error": {"code": "401", "message": "Denied by the resource provider."}}'
+    headers:
+      content-length: '69'
+      content-type: application/json; charset=utf-8
+      date: Mon, 20 Sep 2021 17:17:22 GMT
+      x-cache: CONFIG_NOCACHE
+    status:
+      code: 401
+      message: Unauthorized
+    url: https://sanitized.communication.azure.com/calling/serverCalls/sanitized/:join?api-version=2021-09-15-preview
+version: 1
