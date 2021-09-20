@@ -8,10 +8,9 @@
 from ._client import ModelsRepositoryClient
 
 # Constants
-from ._client import (
-    DEPENDENCY_MODE_DISABLED,
-    DEPENDENCY_MODE_ENABLED,
-    DEPENDENCY_MODE_TRY_FROM_EXPANDED,
+from ._common import (
+    DependencyModeType,
+    VERSION
 )
 
 # Error handling
@@ -20,11 +19,7 @@ from .exceptions import ModelError
 __all__ = [
     "ModelsRepositoryClient",
     "ModelError",
-    "DEPENDENCY_MODE_DISABLED",
-    "DEPENDENCY_MODE_ENABLED",
-    "DEPENDENCY_MODE_TRY_FROM_EXPANDED",
+    "DependencyModeType",
 ]
-
-from ._constants import VERSION
 
 __version__ = VERSION

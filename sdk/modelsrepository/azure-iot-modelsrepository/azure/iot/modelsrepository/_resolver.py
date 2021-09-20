@@ -45,6 +45,8 @@ class DtmiResolver(object):
         """
         model_map = {}
         for dtmi in dtmis:
+            if dtmi in model_map:
+                _LOGGER.debug("Skipping model that is already processed - Request %s", dtmi)
             # pylint: disable=protected-access
             dtdl_path = dtmi_conventions._convert_dtmi_to_path(dtmi)
             if expanded_model:
@@ -72,6 +74,15 @@ class DtmiResolver(object):
                 # Add the model to the map
                 model_map[dtmi] = dtdl
         return model_map
+
+    def resolve_metadata(self):
+        """Resolve and return the metadata from the configured endpoint.
+
+        :returns: A dictionary representing the metadata
+        :rtype: dict
+        """
+        # Errors raised here bubble up
+        return self.fetcher.fetch()
 
 
 @six.add_metaclass(abc.ABCMeta)
@@ -111,7 +122,7 @@ class HttpFetcher(Fetcher):
     def __exit__(self, *exc_details):
         self.pipeline.__exit__(*exc_details)
 
-    def fetch(self, path):
+    def fetch(self, path=""):
         """Fetch and return the contents of a JSON file at a given web path.
 
         :param str path: Path to JSON file (relative to the base_filepath of the Fetcher)
@@ -158,7 +169,7 @@ class FilesystemFetcher(Fetcher):
         # Nothing is required here for filesystem
         pass
 
-    def fetch(self, path):
+    def fetch(self, path=""):
         """Fetch and return the contents of a JSON file at a given filesystem path.
 
         :param str path: Path to JSON file (relative to the base_filepath of the Fetcher)
