@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 from io import BytesIO
-from typing import Any, Dict, Union
+from typing import Any, Dict, Union, Mapping
 import avro
 
 from ._constants import SCHEMA_ID_START_INDEX, SCHEMA_ID_LENGTH, DATA_START_INDEX
@@ -36,20 +36,23 @@ class SchemaRegistryAvroSerializer(object):
     SchemaRegistryAvroSerializer provides the ability to serialize and deserialize data according
     to the given avro schema. It would automatically register, get and cache the schema.
 
-    :param client: The schema registry client
+    :keyword client: Required. The schema registry client
      which is used to register schema and retrieve schema from the service.
-    :type client: ~azure.schemaregistry.SchemaRegistryClient
-    :param str group_name: Schema group under which schema should be registered.
+    :paramtype client: ~azure.schemaregistry.SchemaRegistryClient
+    :keyword str group_name: Required. Schema group under which schema should be registered.
     :keyword bool auto_register_schemas: When true, register new schemas passed to serialize.
      Otherwise, and by default, fail if it has not been pre-registered in the registry.
 
     """
 
-    def __init__(self, client, group_name, **kwargs):
-        # type: ("SchemaRegistryClient", str, Any) -> None
-        self._schema_group = group_name
+    def __init__(self, **kwargs):
+        # type: (Any) -> None
+        try:
+            self._schema_group = kwargs.pop("group_name")
+            self._schema_registry_client = kwargs.pop("client") # type: "SchemaRegistryClient"
+        except KeyError as e:
+            raise ValueError("'{}' is a required keyword.".format(e.args[0]))
         self._avro_serializer = AvroObjectSerializer(codec=kwargs.get("codec"))
-        self._schema_registry_client = client # type: "SchemaRegistryClient"
         self._auto_register_schemas = kwargs.get("auto_register_schemas", False)
         self._auto_register_schema_func = (
                 self._schema_registry_client.register_schema
@@ -119,20 +122,23 @@ class SchemaRegistryAvroSerializer(object):
             self._schema_to_id[schema_str] = schema_id
             return schema_str
 
-    def serialize(self, value, schema, **kwargs):
-        # type: (Dict[str, Any], Union[str, bytes], Any) -> bytes
+    def serialize(self, value, **kwargs):
+        # type: (Mapping[str, Any], Any) -> bytes
         """
         Encode data with the given schema. The returns bytes are consisted of: The first 4 bytes
         denoting record format identifier. The following 32 bytes denoting schema id returned by schema registry
         service. The remaining bytes are the real data payload.
 
         :param value: The data to be encoded.
-        :type value: Dict[str, Any]
-        :param schema: The schema used to encode the data.
-        :type schema: str
+        :type value: Mapping[str, Any]
+        :keyword schema: Required. The schema used to encode the data.
+        :paramtype schema: str
         :rtype: bytes
         """
-        raw_input_schema = schema
+        try:
+            raw_input_schema = kwargs.get("schema")
+        except KeyError as e:
+            raise ValueError("'{}' is a required keyword.".format(e.args[0]))
         try:
             cached_schema = self._user_input_schema_cache[raw_input_schema]
         except KeyError:
