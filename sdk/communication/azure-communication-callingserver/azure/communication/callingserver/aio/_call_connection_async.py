@@ -22,14 +22,19 @@ from .._converters import (
     )
 from .._generated.models import (AddParticipantResult,
                                  CancelAllMediaOperationsResult,
-                                 PhoneNumberIdentifierModel, PlayAudioResult)
+                                 PhoneNumberIdentifierModel,
+                                 PlayAudioResult,
+                                 CancelAllMediaOperationsRequest)
 from .._shared.models import CommunicationIdentifier
 from .._generated.aio._azure_communication_calling_server_service import \
     AzureCommunicationCallingServerService  # pylint: disable=unused-import
 
 if TYPE_CHECKING:
     from .._generated.aio.operations import CallConnectionsOperations
-    from .._models import PlayAudioOptions
+    from .._models import (PlayAudioOptions, 
+                           CancelAllMediaOperationsResult, 
+                           PlayAudioResult, 
+                           AddParticipantResult)
 
 class CallConnection:
     def __init__(
@@ -63,11 +68,13 @@ class CallConnection:
 
         cancel_all_media_operations_request = CancelAllMediaOperationsConverter.convert(operation_context)
 
-        return await self._call_connection_client.cancel_all_media_operations(
+        cancel_all_media_operations_result = await self._call_connection_client.cancel_all_media_operations(
             call_connection_id=self.call_connection_id,
             cancel_all_media_operation_request=cancel_all_media_operations_request,
             **kwargs
         )
+
+        return CancelAllMediaOperationsResult._from_generated(cancel_all_media_operations_result)
 
     @distributed_trace_async()
     async def play_audio(
@@ -76,25 +83,43 @@ class CallConnection:
             play_audio_options: 'PlayAudioOptions',
             **kwargs: Any
         ) -> PlayAudioResult:
-
+        
         if not audio_file_uri:
             raise ValueError("audio_file_uri can not be None")
 
         if not play_audio_options:
             raise ValueError("options can not be None")
 
+        try:
+            if not audio_file_uri.lower().startswith('http'):
+                audio_file_uri = "https://" + audio_file_uri
+        except AttributeError:
+            raise ValueError("URL must be a string.")
+
+        if not play_audio_options.audio_file_id:
+            raise ValueError("audio_file_id can not be None")
+
+        try:
+            callback_uri = play_audio_options.callback_uri
+            if not callback_uri.lower().startswith('http'):
+                callback_uri = "https://" + callback_uri
+        except AttributeError:
+            raise ValueError("URL must be a string.")
+
         play_audio_request = PlayAudioRequestConverter.convert(audio_file_uri, play_audio_options)
 
-        return await self._call_connection_client.play_audio(
+        play_audio_result = self._call_connection_client.play_audio(
             call_connection_id=self.call_connection_id,
             request=play_audio_request,
             **kwargs
         )
 
+        return PlayAudioResult._from_generated(play_audio_result)
+
     @distributed_trace_async()
     async def add_participant(
             self,
-            participant: CommunicationIdentifier,
+            participant: 'CommunicationIdentifier',
             alternate_caller_id: Optional[str] = None,
             operation_context: Optional[str] = None,
             **kwargs: Any
@@ -113,11 +138,13 @@ class CallConnection:
             operation_context=operation_context
             )
 
-        return await self._call_connection_client.add_participant(
+        add_participant_result = await self._call_connection_client.add_participant(
             call_connection_id=self.call_connection_id,
             add_participant_request=add_participant_request,
             **kwargs
         )
+
+        return AddParticipantResult._from_generated(add_participant_result)
 
     @distributed_trace_async()
     async def remove_participant(

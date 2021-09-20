@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Any, Optional  # pylint: disable=unused-import
+from typing import TYPE_CHECKING, Any, List, Optional  # pylint: disable=unused-import
 
 from azure.core.tracing.decorator import distributed_trace
 
@@ -14,12 +14,21 @@ from ._converters import (
     CancelAllMediaOperationsConverter,
     TransferCallRequestConverter,
     CancelMediaOperationRequestConverter,
-    PlayAudioRequestConverter
+    PlayAudioRequestConverter,
+    CreateCallRequestConverter
     )
 from ._generated.models import (AddParticipantResult,
                                 CancelAllMediaOperationsResult,
                                 PhoneNumberIdentifierModel,
-                                PlayAudioResult)
+                                PlayAudioResult,
+                                CancelAllMediaOperationsRequest,
+                                CommunicationIdentifierModel)
+from ._models import (PlayAudioResult,
+                      CancelAllMediaOperationsResult,
+                      AddParticipantResult,
+                      CreateCallResult,
+                      CreateCallOptions)
+
 from ._shared.models import CommunicationIdentifier
 
 if TYPE_CHECKING:
@@ -28,19 +37,42 @@ if TYPE_CHECKING:
 
 class CallConnection(object):
     def __init__(
-            self,
-            call_connection_id,  # type: str
-            call_connection_client  # type: CallConnectionsOperations
-        ): # type: (...) -> None
+        self,
+        call_connection_id,  # type: str
+        call_connection_client  # type: CallConnectionsOperations
+    ): # type: (...) -> None
 
         self.call_connection_id = call_connection_id
         self._call_connection_client = call_connection_client
 
     @distributed_trace()
+    def create_call(
+        self,
+        source,  # type: CommunicationIdentifierModel
+        targets,  # type: List[CommunicationIdentifierModel]
+        alternate_caller_id,  # type:  PhoneNumberIdentifierModel
+        subject,  # type:  str
+        create_call_options,  # type: CreateCallOptions
+        **kwargs: Any
+    ):  # type: (...) -> CreateCallResult
+
+        request = CreateCallRequestConverter.convert(
+            alternate_caller_id=alternate_caller_id,
+            targets=targets,
+            source=source,
+            subject=subject,
+            create_call_options=create_call_options)
+
+        create_call_result = self._call_connection_client.create_call(
+            call_request=request)
+
+        return CreateCallResult._from_generated(create_call_result)
+
+    @distributed_trace()
     def hang_up(
-            self,
-            **kwargs  # type: Any
-        ): # type: (...) -> None
+        self,
+        **kwargs  # type: Any
+    ): # type: (...) -> None
 
         return self._call_connection_client.hangup_call(
             call_connection_id=self.call_connection_id,
@@ -49,26 +81,28 @@ class CallConnection(object):
 
     @distributed_trace()
     def cancel_all_media_operations(
-            self,
-            operation_context=None,  # type: Optional[str]
-            **kwargs  # type: Any
-        ): # type: (...) -> CancelAllMediaOperationsResult
+        self,
+        operation_context=None,  # type: Optional[str]
+        **kwargs  # type: Any
+    ): # type: (...) -> CancelAllMediaOperationsResult
 
         cancel_all_media_operations_request = CancelAllMediaOperationsConverter.convert(operation_context)
 
-        return self._call_connection_client.cancel_all_media_operations(
+        cancel_all_media_operations_result = self._call_connection_client.cancel_all_media_operations(
             call_connection_id=self.call_connection_id,
             cancel_all_media_operation_request=cancel_all_media_operations_request,
             **kwargs
         )
 
+        return CancelAllMediaOperationsResult._from_generated(cancel_all_media_operations_result)
+
     @distributed_trace()
     def play_audio(
-            self,
-            audio_file_uri,  # type: str
-            play_audio_options,  # type: PlayAudioOptions
-            **kwargs  # type: Any
-        ): # type: (...) -> PlayAudioResult
+        self,
+        audio_file_uri,  # type: str
+        play_audio_options,  # type: PlayAudioOptions
+        **kwargs  # type: Any
+    ): # type: (...) -> PlayAudioResult
 
         if not audio_file_uri:
             raise ValueError("audio_file_uri can not be None")
@@ -76,22 +110,40 @@ class CallConnection(object):
         if not play_audio_options:
             raise ValueError("options can not be None")
 
+        try:
+            if not audio_file_uri.lower().startswith('http'):
+                audio_file_uri = "https://" + audio_file_uri
+        except AttributeError:
+            raise ValueError("URL must be a string.")
+
+        if not play_audio_options.audio_file_id:
+            raise ValueError("audio_file_id can not be None")
+
+        try:
+            callback_uri = play_audio_options.callback_uri
+            if not callback_uri.lower().startswith('http'):
+                callback_uri = "https://" + callback_uri
+        except AttributeError:
+            raise ValueError("URL must be a string.")
+
         play_audio_request = PlayAudioRequestConverter.convert(audio_file_uri, play_audio_options)
 
-        return self._call_connection_client.play_audio(
+        play_audio_result = self._call_connection_client.play_audio(
             call_connection_id=self.call_connection_id,
             request=play_audio_request,
             **kwargs
         )
 
+        return PlayAudioResult._from_generated(play_audio_result)
+
     @distributed_trace()
     def add_participant(
-            self,
-            participant,  # type: CommunicationIdentifier
-            alternate_caller_id=None,  # type: Optional[str]
-            operation_context=None,  # type: Optional[str]
-            **kwargs  # type: Any
-        ): # type: (...) -> AddParticipantResult
+        self,
+        participant,  # type: CommunicationIdentifier
+        alternate_caller_id=None,  # type: Optional[str]
+        operation_context=None,  # type: Optional[str]
+        **kwargs  # type: Any
+    ): # type: (...) -> AddParticipantResult
 
         if not participant:
             raise ValueError("participant can not be None")
@@ -106,18 +158,18 @@ class CallConnection(object):
             operation_context=operation_context
             )
 
-        return self._call_connection_client.add_participant(
-            call_connection_id=self.call_connection_id,
-            add_participant_request=add_participant_request,
-            **kwargs
-        )
+        add_participant_result = self._call_connection_client.add_participant(
+                call_connection_id=self.call_connection_id,
+                add_participant_request=add_participant_request)
+
+        return AddParticipantResult._from_generated(add_participant_result)
 
     @distributed_trace()
     def remove_participant(
-            self,
-            participant_id,  # type: str
-            **kwargs  # type: Any
-        ): # type: (...) -> None
+        self,
+        participant_id,  # type: str
+        **kwargs  # type: Any
+    ): # type: (...) -> None
 
         return self._call_connection_client.remove_participant(
             call_connection_id=self.call_connection_id,

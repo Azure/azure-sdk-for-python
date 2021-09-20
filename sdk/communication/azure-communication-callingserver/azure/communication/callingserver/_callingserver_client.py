@@ -24,6 +24,14 @@ if TYPE_CHECKING:
 
     from ._models import CreateCallOptions, JoinCallOptions
 
+from ._content_downloader import ContentDownloader
+from ._generated import models as _models
+from msrest import Deserializer, Serializer
+from azure.core import PipelineClient
+from azure.core.pipeline.transport import HttpResponse
+from ._generated._configuration import AzureCommunicationCallingServerServiceConfiguration
+
+
 class CallingServerClient(object):
     """A client to interact with the AzureCommunicationService Calling Server.
 
@@ -41,11 +49,11 @@ class CallingServerClient(object):
             :dedent: 8
     """
     def __init__(
-            self,
-            endpoint,  # type: str
-            credential,  # type: TokenCredential
-            **kwargs  # type: Any
-        ):  # type: (...) -> None
+        self,
+        endpoint,  # type: str
+        credential,  # type: TokenCredential
+        **kwargs  # type: Any
+    ):  # type: (...) -> None
         try:
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
@@ -57,9 +65,11 @@ class CallingServerClient(object):
                 "You need to provide account shared key to authenticate.")
 
         self._endpoint = endpoint
+        self._authentication_policy = get_authentication_policy(
+            endpoint, credential)
         self._callingserver_service_client = AzureCommunicationCallingServerService(
             self._endpoint,
-            authentication_policy=get_authentication_policy(endpoint, credential),
+            authentication_policy=self._authentication_policy,
             sdk_moniker=SDK_MONIKER,
             **kwargs)
 
@@ -68,10 +78,10 @@ class CallingServerClient(object):
 
     @classmethod
     def from_connection_string(
-            cls,
-            conn_str,  # type: str
-            **kwargs  # type: Any
-        ):  # type: (...) -> CallingServerClient
+        cls,
+        conn_str,  # type: str
+        **kwargs  # type: Any
+    ):  # type: (...) -> CallingServerClient
         """Create CallingServerClient from a Connection String.
 
         :param str conn_str:
@@ -93,9 +103,9 @@ class CallingServerClient(object):
         return cls(endpoint, access_key, **kwargs)
 
     def get_call_connection(
-            self,
-            call_connection_id  # type: str
-        ):  # type: (...) -> CallConnection
+        self,
+        call_connection_id  # type: str
+    ):  # type: (...) -> CallConnection
         """Initializes a new instance of CallConnection.
 
         :param str call_connection_id:
@@ -109,9 +119,9 @@ class CallingServerClient(object):
         return CallConnection(call_connection_id, self._call_connection_client)
 
     def initialize_server_call(
-            self,
-            server_call_id  # type: str
-        ):  # type: (...) -> ServerCall
+        self,
+        server_call_id  # type: str
+    ):  # type: (...) -> ServerCall
         """Initializes a server call.
 
         :param str server_call_id:
@@ -209,3 +219,38 @@ class CallingServerClient(object):
         )
 
         return CallConnection(join_call_response.call_connection_id, self._call_connection_client)
+
+    @distributed_trace()
+    def start_download(
+        self,
+        content_url,  # type: str
+        **kwargs  # type: Any
+    ):  # type: (...) -> HttpResponse
+        """Start download using content url.
+
+        :param str content_url:
+            The content url.
+        :returns: HttpResponse for a successful download request.
+        :rtype: ~HttpResponse
+        """
+        if not content_url:
+            raise ValueError("content_url can not be None")
+        client_models = {k: v for k,
+                         v in _models.__dict__.items() if isinstance(v, type)}
+
+        self._serialize = Serializer(client_models)
+        self._serialize.client_side_validation = False
+        self._deserialize = Deserializer(client_models)
+        self._config = AzureCommunicationCallingServerServiceConfiguration(
+            self._endpoint, authentication_policy=self._authentication_policy)
+
+        base_url = '{endpoint}'
+        self._client = PipelineClient(
+            base_url=base_url, config=self._config, **kwargs)
+        downloader = ContentDownloader(
+            self._client, self._serialize, self._deserialize, self._config)
+        content_url_result = downloader.start_download(
+            content_url=content_url,
+        )
+
+        return content_url_result
