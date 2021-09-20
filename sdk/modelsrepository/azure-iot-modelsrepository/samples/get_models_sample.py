@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 from azure.iot.modelsrepository import (
     ModelsRepositoryClient,
-    DEPENDENCY_MODE_TRY_FROM_EXPANDED,
     DEPENDENCY_MODE_ENABLED,
 )
 from azure.core.exceptions import (
@@ -29,8 +28,8 @@ def get_model():
     # a DTDL document at the specified endpoint
     # i.e. https://devicemodels.azure.com/dtmi/com/example/temperaturecontroller-1.json
     with ModelsRepositoryClient() as client:
-        model_map = client.get_models(dtmi)
-        pprint.pprint(model_map)
+        model_list = client.get_models(dtmi)
+        pprint.pprint(model_list)
 
 
 def get_models():
@@ -39,19 +38,8 @@ def get_models():
     # i.e. https://devicemodels.azure.com/dtmi/com/example/temperaturecontroller-1.json
     # i.e. https://devicemodels.azure.com/dtmi/com/example/temperaturecontroller-2.json
     with ModelsRepositoryClient() as client:
-        model_map = client.get_models([dtmi, dtmi2])
-        pprint.pprint(model_map)
-
-
-def get_model_expanded_dtdl():
-    # This API call will return a dictionary mapping DTMIs to corresponding models for all elements
-    # of an expanded DTDL document at the specified endpoint
-    # i.e. https://devicemodels.azure.com/dtmi/com/example/temperaturecontroller-1.expanded.json
-    with ModelsRepositoryClient() as client:
-        model_map = client.get_models(
-            dtmis=[dtmi], dependency_resolution=DEPENDENCY_MODE_TRY_FROM_EXPANDED
-        )
-        pprint.pprint(model_map)
+        model_list = client.get_models([dtmi, dtmi2])
+        pprint.pprint(model_list)
 
 
 def get_model_and_dependencies():
@@ -60,16 +48,16 @@ def get_model_and_dependencies():
     # dependencies on components and interfaces
     # i.e. https://devicemodels.azure.com/dtmi/com/example/temperaturecontroller-1.json
     with ModelsRepositoryClient() as client:
-        model_map = client.get_models(dtmis=[dtmi], dependency_resolution=DEPENDENCY_MODE_ENABLED)
-        pprint.pprint(model_map)
+        model_list = client.get_models(dtmis=[dtmi], dependency_resolution=DEPENDENCY_MODE_ENABLED)
+        pprint.pprint(model_list)
 
 
 def get_model_error_handling():
     # Various errors that can be raised when fetching models
     try:
         with ModelsRepositoryClient() as client:
-            model_map = client.get_models(dtmi)
-            pprint.pprint(model_map)
+            model_list = client.get_models(dtmi)
+            pprint.pprint(model_list)
     except ResourceNotFoundError as e:
         print("The model could not be found")
         print("{}".format(e.message))
