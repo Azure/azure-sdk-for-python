@@ -63,8 +63,8 @@ class Schema(object):
     """
     The schema content of a schema, along with id and meta properties.
 
-    :ivar content: The content of the schema.
-    :type content: str
+    :ivar schema_definition: The content of the schema.
+    :type schema_definition: str
     :ivar properties: The properties of the schema.
     :type properties: SchemaProperties
 
@@ -81,9 +81,9 @@ class Schema(object):
 
     def __init__(
         self,
-        content,
+        schema_definition,
         properties,
     ):
         # type: (str, SchemaProperties) -> None
-        self.content = content
+        self.schema_definition = schema_definition 
         self.properties = properties

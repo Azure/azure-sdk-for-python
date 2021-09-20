@@ -34,7 +34,7 @@ class SchemaRegistryTests(AzureTestCase):
 
     def create_client(self, endpoint):
         credential = self.get_credential(SchemaRegistryClient)
-        return self.create_client_from_credential(SchemaRegistryClient, credential, endpoint=endpoint)
+        return self.create_client_from_credential(SchemaRegistryClient, credential, fully_qualified_namespace=endpoint)
 
     @SchemaRegistryPowerShellPreparer()
     def test_schema_basic(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
@@ -57,7 +57,7 @@ class SchemaRegistryTests(AzureTestCase):
         assert returned_schema.properties.id == schema_properties.id
         assert returned_schema.properties.version == 1
         assert returned_schema.properties.format == "Avro"
-        assert returned_schema.content == schema_str
+        assert returned_schema.schema_definition == schema_str
 
         # check that same cached properties object is returned by get_schema_properties
         cached_properties = client.get_schema_properties(schemaregistry_group, schema_name, schema_str, format)
@@ -115,7 +115,7 @@ class SchemaRegistryTests(AzureTestCase):
 
         assert new_schema.properties.id != schema_properties.id
         assert new_schema.properties.id == new_schema_properties.id
-        assert new_schema.content == schema_str_new
+        assert new_schema.schema_definition == schema_str_new
         assert new_schema.properties.version == schema_properties.version + 1
         assert new_schema.properties.format == "Avro"
 
@@ -145,7 +145,7 @@ class SchemaRegistryTests(AzureTestCase):
     @SchemaRegistryPowerShellPreparer()
     def test_schema_negative_wrong_credential(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
         credential = ClientSecretCredential(tenant_id="fake", client_id="fake", client_secret="fake")
-        client = SchemaRegistryClient(endpoint=schemaregistry_endpoint, credential=credential)
+        client = SchemaRegistryClient(fully_qualified_namespace=schemaregistry_endpoint, credential=credential)
         schema_name = self.get_resource_name('test-schema-negative')
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         format = "Avro"
