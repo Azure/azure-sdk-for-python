@@ -95,11 +95,7 @@ def play_responses(cassette, vcr_request):
     # If we're following redirects, continue playing until we reach
     # our final destination.
     while 300 <= response.status <= 399:
-        new_location = response.headers["location"]
-        potential_next_url = URL(new_location)
-        next_url = (potential_next_url
-            if potential_next_url.is_absolute()
-            else URL(response.url).with_path(new_location))
+        next_url = URL(response.url).with_path(response.headers["location"])
 
         # Make a stub VCR request that we can then use to look up the recorded
         # VCR request saved to the cassette. This feels a little hacky and
