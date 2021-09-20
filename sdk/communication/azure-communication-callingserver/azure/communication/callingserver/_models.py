@@ -52,6 +52,8 @@ class CreateCallOptions(object):
         self.__callback_uri = callback_uri
         self.__requested_media_types = requested_media_types
         self.__requested_call_events = requested_call_events
+        self.__alternate_Caller_Id = None
+        self.__subject = None
 
     @property
     def callback_uri(self):
@@ -124,6 +126,7 @@ class JoinCallOptions(object):
         self.__callback_uri = callback_uri
         self.__requested_media_types = requested_media_types
         self.__requested_call_events = requested_call_events
+        self.__subject = None
 
     @property
     def callback_uri(self):
@@ -143,11 +146,11 @@ class JoinCallOptions(object):
     @property
     def subject(self):
         # type: () -> Optional[str]
-        return self._subject
+        return self.__subject
     @subject.setter
-    def subject(self, value):
+    def subject(self, subject):
         # type: (str) -> None
-        self._subject = value
+        self.__subject = subject
 
 class PlayAudioOptions(object):
     """The options for playing audio.
@@ -174,12 +177,13 @@ class PlayAudioOptions(object):
         self.operation_context = operation_context
         self.audio_file_id = audio_file_id
         self.callback_uri = callback_uri
+        self.__subject = None
 
     @property
     def subject(self):
         # type: () -> Optional[str]
-        return self._subject
+        return self.__subject
     @subject.setter
-    def subject(self, value):
+    def subject(self, subject):
         # type: (str) -> None
-        self._subject = value
+        self.__subject = subject

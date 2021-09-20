@@ -19,6 +19,8 @@ from .._converters import (AddParticipantRequestConverter,
 from .._generated.models import (AddParticipantResult,
                                  PhoneNumberIdentifierModel,
                                  PlayAudioResult)
+from .._generated.aio._azure_communication_calling_server_service import \
+    AzureCommunicationCallingServerService  # pylint: disable=unused-import
 
 if TYPE_CHECKING:
     from .._generated.aio.operations import ServerCallsOperations
@@ -30,10 +32,12 @@ class ServerCall:
     def __init__(
         self,
         server_call_id: str,
-        server_call_client: 'ServerCallsOperations'
+        server_call_client: 'ServerCallsOperations',
+        callingserver_service_client: 'AzureCommunicationCallingServerService'
     ) -> None:
         self.server_call_id = server_call_id
         self._server_call_client = server_call_client
+        self._callingserver_service_client = callingserver_service_client
 
     @distributed_trace_async()
     async def play_audio(
@@ -62,8 +66,8 @@ class ServerCall:
             self,
             participant: 'CommunicationIdentifier',
             callback_uri: str,
-            alternate_caller_id: Optional[str],
-            operation_context: Optional[str],
+            alternate_caller_id: Optional[str] = None,
+            operation_context: Optional[str] = None,
             **kwargs: Any
         ) -> AddParticipantResult:
 
@@ -172,14 +176,11 @@ class ServerCall:
         )
 
     async def close(self) -> None:
-        """Close the :class:
-        `~azure.communication.callingserver.aio.ServerCall` session.
-        """
-        await self._server_call_client.close()
+        await self._callingserver_service_client.close()
 
-    async def __aenter__(self) -> "ServerCall":
-        await self._server_call_client.__aenter__()
+    async def __aenter__(self) -> 'ServerCall':
+        await self._callingserver_service_client.__aenter__()
         return self
 
     async def __aexit__(self, *args: "Any") -> None:
-        await self._server_call_client.__aexit__(*args)
+        await self._callingserver_service_client.__aexit__(*args)

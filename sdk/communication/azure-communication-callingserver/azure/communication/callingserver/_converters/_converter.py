@@ -2,16 +2,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-# --------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 
 from .._models import JoinCallOptions, PlayAudioOptions
-from .._shared.models import CommunicationIdentifier
 from .._generated.models import (
     JoinCallRequest,
     PlayAudioRequest,
     TransferCallRequest,
     CommunicationIdentifierModel,
     AddParticipantRequest,
+    CancelAllMediaOperationsRequest,
     CancelMediaOperationRequest,
     PhoneNumberIdentifierModel
     )
@@ -76,10 +76,20 @@ class AddParticipantRequestConverter(object):
             callback_uri=callback_uri
             )
 
+class CancelAllMediaOperationsConverter(object):
+    @staticmethod
+    def convert(
+        operation_context=None # type: str
+        ): # type: (...) -> CancelAllMediaOperationsRequest
+
+        return CancelAllMediaOperationsRequest(
+            operation_context=operation_context
+            )
+
 class CancelMediaOperationRequestConverter(object):
     @staticmethod
     def convert(
-        media_operation_id, # type: str
+        media_operation_id # type: str
         ): # type: (...) -> CancelMediaOperationRequest
 
         if not media_operation_id:
@@ -93,7 +103,7 @@ class TransferCallRequestConverter(object):
     @staticmethod
     def convert(
         target_participant, # type: CommunicationIdentifierModel
-        user_to_user_information=None, # type: str
+        user_to_user_information=None # type: str
         ): # type: (...) -> TransferCallRequest
 
         if not target_participant:

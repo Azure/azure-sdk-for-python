@@ -4,20 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
-import pytest
-import _test_utils
-import _test_constants
+import utils._test_mock_utils as _mock_utils
+import utils._test_constants as _test_constants
 
 from typing import List
 from parameterized import parameterized
-from azure.communication.callingserver._shared.models import CommunicationIdentifier, CommunicationUserIdentifier, PhoneNumberIdentifier
-from azure.communication.callingserver._models import (CreateCallOptions, MediaType,
-    EventSubscriptionType, JoinCallOptions)
-try:
-    from unittest.mock import Mock, patch
-except ImportError:  # python < 3.3
-    from mock import Mock, patch  # type: ignore
-
+from azure.communication.callingserver import (CreateCallOptions, MediaType,
+    EventSubscriptionType, JoinCallOptions, CommunicationIdentifier, CommunicationUserIdentifier, PhoneNumberIdentifier)
 
 def data_source_test_create_connection():
     options = CreateCallOptions(
@@ -82,7 +75,7 @@ class TestCallingServerClient(unittest.TestCase):
         use_managed_identity = False # type: bool
         ):
 
-        calling_server_client = _test_utils.create_mock_calling_server_client(
+        calling_server_client = _mock_utils.create_mock_calling_server_client(
             status_code=201,
             payload=_test_constants.CreateOrJoinCallPayload,
             use_managed_identity = use_managed_identity
@@ -102,7 +95,7 @@ class TestCallingServerClient(unittest.TestCase):
         use_managed_identity = False # type: bool
         ):
 
-        calling_server_client = _test_utils.create_mock_calling_server_client(
+        calling_server_client = _mock_utils.create_mock_calling_server_client(
             status_code=404,
             payload=_test_constants.ErrorPayload,
             use_managed_identity = use_managed_identity
@@ -121,11 +114,11 @@ class TestCallingServerClient(unittest.TestCase):
         test_name, # type: str
         servercall_id, # type: str
         source_user, # type: CommunicationIdentifier
-        options, # type: JoinCallOptions,
+        options, # type: JoinCallOptions
         use_managed_identity = False # type: bool
         ):
 
-        calling_server_client = _test_utils.create_mock_calling_server_client(
+        calling_server_client = _mock_utils.create_mock_calling_server_client(
             status_code=202,
             payload=_test_constants.CreateOrJoinCallPayload,
             use_managed_identity = use_managed_identity
@@ -149,7 +142,7 @@ class TestCallingServerClient(unittest.TestCase):
         use_managed_identity = False # type: bool
         ):
 
-        calling_server_client = _test_utils.create_mock_calling_server_client(
+        calling_server_client = _mock_utils.create_mock_calling_server_client(
             status_code=404,
             payload=_test_constants.ErrorPayload,
             use_managed_identity = use_managed_identity

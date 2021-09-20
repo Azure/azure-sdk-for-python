@@ -9,12 +9,14 @@ from typing import TYPE_CHECKING, Any, Optional  # pylint: disable=unused-import
 from azure.core.tracing.decorator import distributed_trace
 
 from ._communication_identifier_serializer import serialize_identifier
-from ._converters import (AddParticipantRequestConverter,
-                          TransferCallRequestConverter,
-                          CancelMediaOperationRequestConverter,
-                          PlayAudioRequestConverter)
+from ._converters import (
+    AddParticipantRequestConverter,
+    CancelAllMediaOperationsConverter,
+    TransferCallRequestConverter,
+    CancelMediaOperationRequestConverter,
+    PlayAudioRequestConverter
+    )
 from ._generated.models import (AddParticipantResult,
-                                CancelAllMediaOperationsRequest,
                                 CancelAllMediaOperationsResult,
                                 PhoneNumberIdentifierModel,
                                 PlayAudioResult)
@@ -48,17 +50,15 @@ class CallConnection(object):
     @distributed_trace()
     def cancel_all_media_operations(
             self,
-            operation_context,  # type: Optional[str]
+            operation_context=None,  # type: Optional[str]
             **kwargs  # type: Any
         ): # type: (...) -> CancelAllMediaOperationsResult
 
-        if operation_context is not None:
-            kwargs['operation_context'] = operation_context
-        request = CancelAllMediaOperationsRequest(**kwargs)
+        cancel_all_media_operations_request = CancelAllMediaOperationsConverter.convert(operation_context)
 
         return self._call_connection_client.cancel_all_media_operations(
             call_connection_id=self.call_connection_id,
-            cancel_all_media_operation_request=request,
+            cancel_all_media_operation_request=cancel_all_media_operations_request,
             **kwargs
         )
 
@@ -88,8 +88,8 @@ class CallConnection(object):
     def add_participant(
             self,
             participant,  # type: CommunicationIdentifier
-            alternate_caller_id,  # type: Optional[str]
-            operation_context,  # type: Optional[str]
+            alternate_caller_id=None,  # type: Optional[str]
+            operation_context=None,  # type: Optional[str]
             **kwargs  # type: Any
         ): # type: (...) -> AddParticipantResult
 
