@@ -70,7 +70,7 @@ setup(
     packages=find_packages(exclude=exclude_packages),
     install_requires=[
         "azure-core<2.0.0,>=1.14.0",
-        "uamqp>=1.4.1,<2.0.0",
+        "uamqp>=1.4.2,<2.0.0",
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg'],

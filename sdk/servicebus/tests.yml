@@ -4,6 +4,7 @@ stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: servicebus
+      InjectedPackages: $(WheelLocationsList)
       TestTimeoutInMinutes: 300
       DeployArmTemplate: true
       MatrixReplace:
