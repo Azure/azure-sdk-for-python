@@ -110,7 +110,7 @@ class ServerCallTestAsync(AsyncCommunicationTestCase):
                     CallingServerLiveTestUtils.sleep_if_in_live_mode()
                     await CallingServerLiveTestUtilsAsync.clean_up_connections_async(call_connections)
 
-
+    @pytest.mark.skipif(CONST.SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_add_remove_hangup_scenario_async(self):
         async with self.callingserver_client:
@@ -155,7 +155,6 @@ class ServerCallTestAsync(AsyncCommunicationTestCase):
                     CallingServerLiveTestUtils.sleep_if_in_live_mode()
                     await CallingServerLiveTestUtilsAsync.clean_up_connections_async(call_connections)
     
-    # @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_run_all_client_functions(self):
         async with self.callingserver_client:

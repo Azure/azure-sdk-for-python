@@ -15,14 +15,14 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.0.1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
       x-ms-date:
-      - Mon, 20 Sep 2021 22:10:32 GMT
+      - Mon, 20 Sep 2021 23:10:02 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
     uri: https://sanitized.communication.azure.com/identities?api-version=2021-03-07
   response:
     body:
-      string: '{"identity":{"id":"8:acs:016a7064-0581-40b9-be73-6dde64d69d72_0000000c-a524-62c5-28df-44482200454d"}}'
+      string: '{"identity":{"id":"8:acs:016a7064-0581-40b9-be73-6dde64d69d72_0000000c-a55a-db98-12f4-343a0d003442"}}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
@@ -30,9 +30,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 20 Sep 2021 22:10:32 GMT
+      - Mon, 20 Sep 2021 23:10:01 GMT
       ms-cv:
-      - 0o7Fai+Tkka/MYlJcZn6RQ.0
+      - 0qgviltsAEiAr6/UQHgt/Q.0
       request-context:
       - appId=
       strict-transport-security:
@@ -42,7 +42,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 64ms
+      - 26ms
     status:
       code: 201
       message: Created
@@ -62,14 +62,14 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.0.1 Python/3.8.2 (macOS-10.15.7-x86_64-i386-64bit)
       x-ms-date:
-      - Mon, 20 Sep 2021 22:10:32 GMT
+      - Mon, 20 Sep 2021 23:10:02 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
     uri: https://sanitized.communication.azure.com/identities?api-version=2021-03-07
   response:
     body:
-      string: '{"identity":{"id":"8:acs:016a7064-0581-40b9-be73-6dde64d69d72_0000000c-a524-63c4-2303-454822001f07"}}'
+      string: '{"identity":{"id":"8:acs:016a7064-0581-40b9-be73-6dde64d69d72_0000000c-a55a-dd36-450f-454822001c8f"}}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
@@ -77,9 +77,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 20 Sep 2021 22:10:32 GMT
+      - Mon, 20 Sep 2021 23:10:02 GMT
       ms-cv:
-      - 3q+uwb6XoE6472W2TVPo7g.0
+      - tRYDR+sM1EuVzzeMlRy5RA.0
       request-context:
       - appId=
       strict-transport-security:
@@ -113,9 +113,9 @@ interactions:
     headers:
       content-length: '93'
       content-type: application/json; charset=utf-8
-      date: Mon, 20 Sep 2021 22:10:33 GMT
+      date: Mon, 20 Sep 2021 23:10:03 GMT
       x-cache: CONFIG_NOCACHE
-      x-microsoft-skype-chain-id: 60e4d9f7-db6a-40fa-b928-d39aa6991d2f
+      x-microsoft-skype-chain-id: 6b748fe9-2bf8-4f64-b2f7-5a426b13e9e4
     status:
       code: 400
       message: Bad Request
