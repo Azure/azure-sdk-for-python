@@ -13,8 +13,13 @@
 - `data` parameter in the `serialize` and `deserialize` methods on `SchemaRegistryAvroSerializer` has been renamed `value`.
 - `schema` parameter in the `serialize` method on `SchemaRegistryAvroSerializer` no longer accepts argument of type `bytes`.
 - `SchemaRegistryAvroSerializer` constructor no longer takes in the `codec` keyword argument.
+- The following positional arguments are now required keyword arguments:
+  - `client` and `group_name` in `SchemaRegistryAvroSerializer` constructor
+  - `schema` in `serialize` on `SchemaRegistryAvroSerializer` 
 
 ### Bugs Fixed
+
+- `value` parameter in `serialize` on `SchemaRegistryAvroSerializer` takes type `Mapping` rather than `Dict`.
 
 ### Other Changes
 

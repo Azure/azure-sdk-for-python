@@ -12,7 +12,11 @@
   - `group_name`, which has been renamed from `schema_group`
   - `name`, which has been renamed from `schema_name`
   - `content`, which has been renamed from `schema_content`
-  - `serialization_type`
+  - `format`, which has been renamed from `serialization_type`
+- `location` instance variable in `SchemaProperties` has been removed.
+- The following positional arguments are now required keyword arguments:
+  - `id`, `serialization_type`, and `version` on `SchemaProperties`
+  - `content` and `properties` on `Schema`
 
 ### Bugs Fixed
 
