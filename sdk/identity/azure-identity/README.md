@@ -1,8 +1,8 @@
 # Azure Identity client library for Python
 
-The Azure Identity library provides a set of credential classes for use with
-Azure SDK clients which support Azure Active Directory (AAD) token authentication.
-This library does not support Azure Active Directory B2C.
+The Azure Identity library provides Azure Active Directory token authentication support across the Azure SDK. It
+provides a set of TokenCredential implementations which can be used to construct Azure SDK clients which support AAD
+token authentication.
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity)
 | [Package (PyPI)](https://pypi.org/project/azure-identity/)
@@ -337,6 +337,10 @@ Client and management libraries listed on the
 which support Azure AD authentication accept credentials from this library. You can learn more
 about using these libraries in their documentation, which is linked from the release page.
 
+### B2C Support
+
+This library does not support [Azure Active Directory B2C][b2c].
+
 ### Provide Feedback
 
 If you encounter bugs or have suggestions, please
@@ -370,6 +374,7 @@ additional questions or comments.
 [azure_keyvault_secrets]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-secrets
 [azure_storage_blob]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-blob
 [azure_storage_queue]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-queue
+[b2c]: https://docs.microsoft.com/azure/active-directory-b2c/overview
 [cert_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.CertificateCredential
 [chain_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.ChainedTokenCredential
 [cli_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.AzureCliCredential
