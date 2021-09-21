@@ -15,7 +15,7 @@ steps:
     displayName: Dump Package properties
     condition: succeeded()
 - pwsh: |
-    $setDailyDevBuild = "false"
+    $setDailyDevBuild = "true"
     if (('$(Build.Reason)' -eq 'Schedule') -and ('$(System.TeamProject)' -eq 'internal')) {
       $setDailyDevBuild = "true"
     }
