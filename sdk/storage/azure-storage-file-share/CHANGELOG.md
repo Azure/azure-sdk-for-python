@@ -1,5 +1,15 @@
 # Release History
 
+## 12.6.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 12.6.0 (2021-09-15)
 **Stable release of preview features**
 - Added support for service version 2020-10-02 (STG78)
