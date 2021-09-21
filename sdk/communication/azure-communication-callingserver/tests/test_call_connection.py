@@ -82,6 +82,33 @@ def data_source_test_play_audio():
 
     return parameters
 
+def data_source_test_play_audio_to_participant():
+    options = PlayAudioOptions(
+            loop = True,
+            audio_file_id = _test_constants.AUDIO_FILE_ID,
+            callback_uri = _test_constants.CALLBACK_URI,
+            operation_context = _test_constants.OPERATION_CONTEXT
+            )
+    parameters = []
+    parameters.append((
+        _test_constants.ClientType_ConnectionString,
+        _test_constants.CALL_ID,
+        _test_constants.PARTICIPANT_ID,
+        _test_constants.AUDIO_FILE_URI,
+        options,
+        ))
+
+    parameters.append((
+        _test_constants.ClientType_ManagedIdentity,
+        _test_constants.CALL_ID,
+        _test_constants.PARTICIPANT_ID,
+        _test_constants.AUDIO_FILE_URI,
+        options,
+        True,
+        ))
+
+    return parameters
+
 def data_source_test_add_participant():
 
     parameters = []
@@ -306,6 +333,53 @@ class TestCallConnection(unittest.TestCase):
         raised = False
         try:
             call_connection.play_audio(audio_file_uri, options)
+        except:
+            raised = True
+        assert raised == True
+
+    @parameterized.expand(data_source_test_play_audio_to_participant())
+    def test_play_audio_to_participant_succeed(
+        self,
+        test_name, # type: str
+        call_connection_id, # type: str
+        participant_id, # type: str
+        audio_file_uri, # type: str
+        options, # type: PlayAudioOptions
+        use_managed_identity = False # type: bool
+        ):
+
+        call_connection = _mock_utils.create_mock_call_connection(
+            call_connection_id,
+            status_code=202,
+            payload=_test_constants.PlayAudioResponsePayload,
+            use_managed_identity=use_managed_identity
+            )
+
+        result = call_connection.play_audio_to_participant(participant_id, audio_file_uri, options)
+
+        verify_play_audio_result(result)
+
+    @parameterized.expand(data_source_test_play_audio_to_participant())
+    def test_play_audio_to_participant_failed(
+        self,
+        test_name, # type: str
+        call_connection_id, # type: str
+        participant_id, # type: str
+        audio_file_uri, # type: str
+        options, # type: PlayAudioOptions
+        use_managed_identity = False # type: bool
+        ):
+
+        call_connection = _mock_utils.create_mock_call_connection(
+            call_connection_id,
+            status_code=404,
+            payload=_test_constants.ErrorPayload,
+            use_managed_identity = use_managed_identity
+            )
+
+        raised = False
+        try:
+            call_connection.play_audio_to_participant(participant_id, audio_file_uri, options)
         except:
             raised = True
         assert raised == True
