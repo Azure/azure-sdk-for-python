@@ -80,6 +80,5 @@ setup(
         "msrest>=0.6.10",
         "opentelemetry-api<2.0.0,>=1.0.0",
         "opentelemetry-sdk<2.0.0,>=1.0.0"
-        "opentelemetry-semantic-conventions<2.0.0,>=1.0.0",
     ],
 )
