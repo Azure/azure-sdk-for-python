@@ -52,7 +52,9 @@ def add_sanitizer(sanitizer, **kwargs):
     """
     request_args = {}
     request_args["value"] = kwargs.get("value") or "fakevalue"
-    request_args["regex"] = kwargs.get("regex") or "[a-z]+(?=(?:-secondary)\\.(?:table|blob|queue)\\.core\\.windows\\.net)"
+    request_args["regex"] = (
+        kwargs.get("regex") or "(?<=\\/\\/)[a-z]+(?=(?:|-secondary)\\.(?:table|blob|queue)\\.core\\.windows\\.net)"
+    )
     request_args["group_for_replace"] = kwargs.get("group_for_replace")
 
     if sanitizer == ProxyRecordingSanitizer.URI:
@@ -62,7 +64,7 @@ def add_sanitizer(sanitizer, **kwargs):
             json={
                 "regex": request_args["regex"],
                 "value": request_args["value"],
-                "groupForReplace": request_args["group_for_replace"]
+                "groupForReplace": request_args["group_for_replace"],
             },
         )
 
