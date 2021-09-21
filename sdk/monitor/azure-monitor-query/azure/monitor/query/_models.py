@@ -591,9 +591,9 @@ class LogsQueryPartialResult(LogsQueryResult):
         self.status = LogsQueryStatus.PARTIAL
 
     @classmethod
-    def _from_generated(cls, generated, error): # pylint: disable=W0221
-        super_gen = super(LogsQueryPartialResult, cls)._from_generated(generated)
-        super_gen.partial_error = error._from_generated(generated.error)
+    def _from_generated(cls, generated, error):
+        super_gen = super(LogsQueryPartialResult, cls)._from_generated(generated) # pylint: disable=W0221
+        super_gen.partial_error = error._from_generated(generated.error) # pylint: disable=W0221
         return super_gen
 
 
