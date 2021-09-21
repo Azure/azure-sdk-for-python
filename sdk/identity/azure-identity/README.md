@@ -294,6 +294,8 @@ client secret and certificate are both present, the client secret will be used.
 
 ## Troubleshooting
 
+See the [troubleshooting guide][troubleshooting_guide] for details on how to diagnose various failure scenarios.
+
 ### Error Handling
 
 Credentials raise `CredentialUnavailableError` when they're unable to attempt
@@ -379,6 +381,7 @@ additional questions or comments.
 [managed_id_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.ManagedIdentityCredential
 [ref_docs]: https://aka.ms/azsdk/python/identity/docs
 [ref_docs_aio]: https://aka.ms/azsdk/python/identity/aio/docs
+[troubleshooting_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/Troubleshoot.md
 [userpass_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.UsernamePasswordCredential
 [vscode_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.VisualStudioCodeCredential
 
