@@ -94,7 +94,7 @@ class AccessControlTests(AdministrationTestCase, KeyVaultTestCase):
 
         async for d in client.list_role_definitions(scope):
             assert (d.id != definition.id), "the role definition should have been deleted"
-        await asyncio.sleep(30)  # additional waiting to avoid conflicts with resources in other tests
+        await asyncio.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
 
     @all_api_versions()
     @access_control_client_setup

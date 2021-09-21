@@ -87,7 +87,7 @@ class AccessControlTests(AdministrationTestCase, KeyVaultTestCase):
         client.delete_role_definition(scope, definition_name)
 
         assert not any(d.id == definition.id for d in client.list_role_definitions(scope))
-        time.sleep(30)  # additional waiting to avoid conflicts with resources in other tests
+        time.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
 
     @all_api_versions()
     @access_control_client_setup
