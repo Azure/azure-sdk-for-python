@@ -146,8 +146,8 @@ class MetricsQueryClient(object):
             cls=kwargs.pop(
                 "cls",
                 lambda objs: [
-                    MetricNamespace._from_generated(x)
-                    for x in objs  # pylint: disable=protected-access
+                    MetricNamespace._from_generated(x) # pylint: disable=protected-access
+                    for x in objs
                 ],
             ),
             **kwargs
@@ -173,8 +173,8 @@ class MetricsQueryClient(object):
             cls=kwargs.pop(
                 "cls",
                 lambda objs: [
-                    MetricDefinition._from_generated(x)
-                    for x in objs  # pylint: disable=protected-access
+                    MetricDefinition._from_generated(x) # pylint: disable=protected-access
+                    for x in objs
                 ],
             ),
             **kwargs

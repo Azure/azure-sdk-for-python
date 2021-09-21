@@ -57,9 +57,7 @@ def order_results(request_order, mapping, **kwargs):
         else:
             error = item.body.error
             if error.code == "PartialError":
-                res = kwargs.get(
-                    "partial_err"
-                )._from_generated(  # pylint: disable=protected-access
+                res = kwargs.get("partial_err")._from_generated(  # pylint: disable=protected-access
                     item.body, kwargs.get("raise_with")
                 )
                 results.append(res)

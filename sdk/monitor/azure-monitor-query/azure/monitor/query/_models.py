@@ -474,8 +474,8 @@ class Metric(object):
             name=generated.name.value,
             unit=generated.unit,
             timeseries=[
-                TimeSeriesElement._from_generated(t)
-                for t in generated.timeseries  # pylint: disable=protected-access
+                TimeSeriesElement._from_generated(t) # pylint: disable=protected-access
+                for t in generated.timeseries
             ],
             display_description=generated.display_description,
         )
@@ -510,8 +510,8 @@ class TimeSeriesElement(object):
                 obj.name.value: obj.value for obj in generated.metadatavalues
             },
             data=[
-                MetricValue._from_generated(val) for val in generated.data
-            ],  # pylint: disable=protected-access
+                MetricValue._from_generated(val) for val in generated.data # pylint: disable=protected-access
+            ],
         )
 
 
