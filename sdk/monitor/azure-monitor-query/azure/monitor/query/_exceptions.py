@@ -30,7 +30,11 @@ class LogsQueryError(object):
         if not generated:
             return None
 
+        innererror = generated
+        while innererror.innererror is not None:
+            innererror = innererror.innererror
+        message = innererror.message
         return cls(
             code=generated.code,
-            message=generated.message,
+            message=message,
         )
