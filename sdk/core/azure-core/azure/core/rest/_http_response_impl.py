@@ -174,6 +174,7 @@ class _HttpResponseBaseImpl(_HttpResponseBase):  # pylint: disable=too-many-inst
         """Sets the response encoding"""
         self._encoding = value
         self._text = None  # clear text cache
+        self._json = None  # clear json cache as well
 
     def text(self, encoding=None):
         # type: (Optional[str]) -> str
