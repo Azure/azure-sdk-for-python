@@ -23,7 +23,7 @@ class TestDownloadAsyncLive(AsyncCommunicationTestCase):
         super().setUp()
         self._document_id = "0-wus-d4-6afafe78b9e313d77933b87578eabc9e"
         self._metadata_url = \
-            f"https://storagehost.com/v1/objects/{self._document_id}/content/acsmetadata"
+            'https://storagehost.com/v1/objects/{}/content/acsmetadata'.format(self._document_id)
         self._calling_server_client = \
             CallingServerClient.from_connection_string(self.connection_str)
 

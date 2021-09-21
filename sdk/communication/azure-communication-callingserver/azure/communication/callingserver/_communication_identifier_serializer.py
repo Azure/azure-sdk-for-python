@@ -29,9 +29,9 @@ def serialize_identifier(identifier):
         if identifier.kind and identifier.kind != CommunicationIdentifierKind.UNKNOWN:
             request_model[identifier.kind] = dict(identifier.properties)
         return request_model
-    except AttributeError as ex:
+    except AttributeError:
         raise TypeError("Unsupported identifier type " +
-                        identifier.__class__.__name__) from ex
+                        identifier.__class__.__name__)
 
 
 def deserialize_identifier(identifier_model):

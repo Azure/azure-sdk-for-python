@@ -36,8 +36,8 @@ class CreateCallOptions(object):
         try:
             if not callback_uri.lower().startswith('http'):
                 callback_uri = "https://" + callback_uri
-        except AttributeError as ex:
-            raise ValueError("Host URL must be a string") from ex
+        except AttributeError:
+            raise ValueError("Host URL must be a string")
 
         parsed_url = urlparse(callback_uri.rstrip('/'))
         if not parsed_url.netloc:
@@ -111,8 +111,8 @@ class JoinCallOptions(object):
         try:
             if not callback_uri.lower().startswith('http'):
                 callback_uri = "https://" + callback_uri
-        except AttributeError as ex:
-            raise ValueError("Host URL must be a string") from ex
+        except AttributeError:
+            raise ValueError("Host URL must be a string")
 
         parsed_url = urlparse(callback_uri.rstrip('/'))
         if not parsed_url.netloc:

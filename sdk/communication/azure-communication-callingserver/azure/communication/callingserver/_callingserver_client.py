@@ -55,8 +55,8 @@ class CallingServerClient():
         try:
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
-        except AttributeError as ex:
-            raise ValueError("Account URL must be a string.") from ex
+        except AttributeError:
+            raise ValueError("Account URL must be a string.")
 
         if not credential:
             raise ValueError(

@@ -81,8 +81,8 @@ def create_access_token(token):
         payload = json.loads(padded_base64_payload)
         return AccessToken(token,
                            _convert_datetime_to_utc_int(datetime.fromtimestamp(payload['exp']).replace(tzinfo=TZ_UTC)))
-    except ValueError as ex:
-        raise ValueError(token_parse_err_msg) from ex
+    except ValueError:
+        raise ValueError(token_parse_err_msg)
 
 def get_authentication_policy(
         endpoint, # type: str
