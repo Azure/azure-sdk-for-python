@@ -7,13 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_create_client.py
+FILE: sample_hello_world.py
 
 DESCRIPTION:
     These samples demonstrate creating a ContainerRegistryClient and a ContainerRepository
 
 USAGE:
-    python sample_create_client.py
+    python sample_hello_world.py
 
     Set the environment variables with your own values before running the sample:
     1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
@@ -21,6 +21,9 @@ USAGE:
 
 from dotenv import find_dotenv, load_dotenv
 import os
+
+from azure.containerregistry import ContainerRegistryClient
+from azure.identity import DefaultAzureCredential
 
 
 class CreateClients(object):
@@ -30,19 +33,12 @@ class CreateClients(object):
     def create_registry_client(self):
         # Instantiate the ContainerRegistryClient
         # [START create_registry_client]
-        from azure.containerregistry import ContainerRegistryClient
-        from azure.identity import DefaultAzureCredential
-
         account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
         client = ContainerRegistryClient(account_url, DefaultAzureCredential())
         # [END create_registry_client]
 
     def basic_sample(self):
-
-        from azure.containerregistry import ContainerRegistryClient
-        from azure.identity import DefaultAzureCredential
-
         account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
         # Instantiate the client

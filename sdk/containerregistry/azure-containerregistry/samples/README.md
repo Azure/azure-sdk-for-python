@@ -1,5 +1,3 @@
-# Samples for Azure Container Registry
-
 ---
 page_type: sample
 languages:
@@ -10,13 +8,15 @@ products:
 urlFragment: containerregistry-samples
 ---
 
+# Samples for Azure Container Registry
+
 These code samples show common scenario operations with the Azure Container Registry client library. The code samples assume an environment variable `CONTAINERREGISTRY_ENDPOINT` is set, which includes the name of the login server and the `https://` prefix. For more information on using AAD with Azure Container Registry, please see the service's [Authentication Overview](https://docs.microsoft.com/azure/container-registry/container-registry-authentication).
 The async versions of the samples require Python 3.6 or later.
 
 
 |**File Name**|**Description**|
 |-------------|---------------|
-|[sample_create_client.py][create_client] ([async version][create_client_async]) |Instantiate a client | Authorizing a `ContainerRegistryClient` object and `ContainerRepositoryClient` object |
+|[sample_hello_world.py][create_client] ([sample_hello_world_async.py][create_client_async]) |Instantiate a `ContainerRegistryClient` object and `ContainerRepositoryClient` object |
 |[sample_delete_old_tags.py][delete_old_tags] and [sample_delete_old_tags_async.py][delete_old_tags_async] | Delete tags from a repository |
 
 ### Prerequisites
