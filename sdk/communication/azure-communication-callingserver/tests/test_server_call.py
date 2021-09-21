@@ -328,7 +328,7 @@ class TestServerCall(unittest.TestCase):
         use_managed_identity = False # type: bool
         ):
 
-        server_call = _test_utils.create_mock_server_call(
+        server_call = _mock_utils.create_mock_server_call(
             server_call_id,
             status_code=202,
             payload=_test_constants.PlayAudioResponsePayload,
@@ -349,7 +349,7 @@ class TestServerCall(unittest.TestCase):
         use_managed_identity = False # type: bool
         ):
 
-        server_call = _test_utils.create_mock_server_call(
+        server_call = _mock_utils.create_mock_server_call(
             server_call_id,
             status_code=404,
             payload=_test_constants.ErrorPayload,

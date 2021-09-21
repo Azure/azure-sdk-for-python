@@ -220,7 +220,7 @@ async def test_play_audio_to_participant_succeed(
     use_managed_identity = False # type: bool
     ):
 
-    server_call = _test_utils_async.create_mock_server_call(
+    server_call = _mock_utils_async.create_mock_server_call(
         server_call_id,
         status_code=202,
         payload=_test_constants.PlayAudioResponsePayload,
@@ -241,7 +241,7 @@ async def test_play_audio_to_participant_failed(
     use_managed_identity = False # type: bool
     ):
 
-    server_call = _test_utils_async.create_mock_server_call(
+    server_call = _mock_utils_async.create_mock_server_call(
         server_call_id,
         status_code=404,
         payload=_test_constants.ErrorPayload,
