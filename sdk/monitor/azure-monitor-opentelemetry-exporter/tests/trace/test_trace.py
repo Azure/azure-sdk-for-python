@@ -552,7 +552,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             envelope.name, "Microsoft.ApplicationInsights.Request"
         )
         self.assertEqual(envelope.data.base_type, "RequestData")
-        self.assertEqual(envelope.data.base_data.name, "test")
+        self.assertEqual(envelope.data.base_data.name, "GET test")
         self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
         self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
         self.assertEqual(envelope.data.base_data.response_code, "200")
@@ -562,7 +562,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.tags["ai.user.userAgent"], "agent")
         self.assertEqual(envelope.tags["ai.location.ip"], "client_ip")
         self.assertEqual(envelope.data.base_data.url, "https://www.wikipedia.org/wiki/Rabbit")
-        self.assertEqual(envelope.data.base_data.properties["request.name"], "test")
+        self.assertEqual(envelope.data.base_data.properties["request.name"], "GET test")
         self.assertEqual(envelope.data.base_data.properties["request.url"], "https://www.wikipedia.org/wiki/Rabbit")
         
         # location

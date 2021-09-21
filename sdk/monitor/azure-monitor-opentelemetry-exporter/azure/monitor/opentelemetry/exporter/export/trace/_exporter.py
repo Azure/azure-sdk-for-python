@@ -6,6 +6,8 @@ import platform
 from typing import Sequence, Any
 from urllib.parse import urlparse
 
+from opentelemetry.semconv.resource import ResourceAttributes
+from opentelemetry.semconv.trace import DbSystemValues, SpanAttributes
 from opentelemetry.sdk.trace.export import SpanExporter, SpanExportResult
 from opentelemetry.sdk.util import ns_to_iso_str
 from opentelemetry.trace import Span, SpanKind
@@ -91,9 +93,9 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
         time=ns_to_iso_str(span.start_time),
     )
     if span.resource and span.resource.attributes:
-        service_name = span.resource.attributes.get("service.name")
-        service_namespace = span.resource.attributes.get("service.namespace")
-        service_instance_id = span.resource.attributes.get("service.instance.id")
+        service_name = span.resource.attributes.get(ResourceAttributes.SERVICE_NAME)
+        service_namespace = span.resource.attributes.get(ResourceAttributes.SERVICE_NAMESPACE)
+        service_instance_id = span.resource.attributes.get(ResourceAttributes.SERVICE_INSTANCE_ID)
         if service_name:
             if service_namespace:
                 envelope.tags["ai.cloud.role"] = service_namespace + \
@@ -106,8 +108,8 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
             envelope.tags["ai.cloud.roleInstance"] = platform.node()  # hostname default
         envelope.tags["ai.internal.nodeName"] = envelope.tags["ai.cloud.roleInstance"]
     envelope.tags["ai.operation.id"] = "{:032x}".format(span.context.trace_id)
-    if "enduser.id" in span.attributes:
-        envelope.tags["ai.user.id"] = span.attributes["enduser.id"]
+    if SpanAttributes.ENDUSER_ID in span.attributes:
+        envelope.tags["ai.user.id"] = span.attributes[SpanAttributes.ENDUSER_ID]
     if span.parent and span.parent.span_id:
         envelope.tags["ai.operation.parentId"] = "{:016x}".format(
             span.parent.span_id
@@ -116,7 +118,7 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
     if span.kind in (SpanKind.CONSUMER, SpanKind.SERVER):
         envelope.name = "Microsoft.ApplicationInsights.Request"
         data = RequestData(
-            name=span.name[:1024],  # Breeze max length
+            name=span.name,
             id="{:016x}".format(span.context.span_id),
             duration=_utils.ns_to_duration(span.end_time - span.start_time),
             response_code="0",
@@ -124,44 +126,44 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
             properties={},
         )
         envelope.data = MonitorBase(base_data=data, base_type="RequestData")
-        if "http.method" in span.attributes:  # HTTP
+        if SpanAttributes.HTTP_METHOD in span.attributes:  # HTTP
             envelope.tags["ai.operation.name"] = "{} {}".format(
-                span.attributes["http.method"],
+                span.attributes[SpanAttributes.HTTP_METHOD],
                 span.name,
             )
-            data.properties["request.name"] = data.name
+            data.properties["request.name"] = envelope.tags["ai.operation.name"]
             url = ""
-            if "http.user_agent" in span.attributes:
+            if SpanAttributes.HTTP_USER_AGENT in span.attributes:
                 # TODO: Not exposed in Swagger, need to update def
-                envelope.tags["ai.user.userAgent"] = span.attributes["http.user_agent"]
-            if "http.client_ip" in span.attributes:
-                envelope.tags["ai.location.ip"] = span.attributes["http.client_ip"]
-            elif "net.peer.ip" in span.attributes:
-                envelope.tags["ai.location.ip"] = span.attributes["net.peer.ip"]
+                envelope.tags["ai.user.userAgent"] = span.attributes[SpanAttributes.HTTP_USER_AGENT]
+            if SpanAttributes.HTTP_CLIENT_IP in span.attributes:
+                envelope.tags["ai.location.ip"] = span.attributes[SpanAttributes.HTTP_CLIENT_IP]
+            elif SpanAttributes.NET_PEER_IP in span.attributes:
+                envelope.tags["ai.location.ip"] = span.attributes[SpanAttributes.NET_PEER_IP]
             # url
-            if "http.url" in span.attributes:
-                url = span.attributes["http.url"]
-            elif "http.scheme" in span.attributes and "http.target" in span.attributes:
-                scheme = span.attributes["http.scheme"]
-                http_target = span.attributes["http.target"]
-                if "http.host" in span.attributes:
+            if SpanAttributes.HTTP_URL in span.attributes:
+                url = span.attributes[SpanAttributes.HTTP_URL]
+            elif SpanAttributes.HTTP_SCHEME in span.attributes and SpanAttributes.HTTP_TARGET in span.attributes:
+                scheme = span.attributes[SpanAttributes.HTTP_SCHEME]
+                http_target = span.attributes[SpanAttributes.HTTP_TARGET]
+                if SpanAttributes.HTTP_HOST in span.attributes:
                     url = "{}://{}{}".format(
                         scheme,
-                        span.attributes["http.host"],
+                        span.attributes[SpanAttributes.HTTP_HOST],
                         http_target,
                     )
-                elif "net.host.port" in span.attributes:
-                    host_port = span.attributes["net.host.port"]
-                    if "http.server_name" in span.attributes:
-                        server_name = span.attributes["http.server_name"]
+                elif SpanAttributes.NET_HOST_PORT in span.attributes:
+                    host_port = span.attributes[SpanAttributes.NET_HOST_PORT]
+                    if SpanAttributes.HTTP_SERVER_NAME in span.attributes:
+                        server_name = span.attributes[SpanAttributes.HTTP_SERVER_NAME]
                         url = "{}://{}:{}{}".format(
                             scheme,
                             server_name,
                             host_port,
                             http_target,
                         )
-                    elif "net.host.name" in span.attributes:
-                        host_name = span.attributes["net.host.name"]
+                    elif SpanAttributes.NET_HOST_NAME in span.attributes:
+                        host_name = span.attributes[SpanAttributes.NET_HOST_NAME]
                         url = "{}://{}:{}{}".format(
                             scheme,
                             host_name,
@@ -172,31 +174,32 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
                 url = url[:2048]  # Breeze max length
             data.url = url
             data.properties["request.url"] = url
-            if "http.status_code" in span.attributes:
-                status_code = span.attributes["http.status_code"]
+            if SpanAttributes.HTTP_STATUS_CODE in span.attributes:
+                status_code = span.attributes[SpanAttributes.HTTP_STATUS_CODE]
                 data.response_code = str(status_code)
-        elif "messaging.system" in span.attributes:  # Messaging
+        elif SpanAttributes.MESSAGING_SYSTEM in span.attributes:  # Messaging
             envelope.tags["ai.operation.name"] = span.name
-            if "net.peer.ip" in span.attributes:
-                envelope.tags["ai.location.ip"] = span.attributes["net.peer.ip"]
-            if "messaging.destination" in span.attributes:
-                if "net.peer.name" in span.attributes:
+            if SpanAttributes.NET_PEER_IP in span.attributes:
+                envelope.tags["ai.location.ip"] = span.attributes[SpanAttributes.NET_PEER_IP]
+            if SpanAttributes.MESSAGING_DESTINATION in span.attributes:
+                if SpanAttributes.NET_PEER_NAME in span.attributes:
                     data.properties["source"] = "{}/{}".format(
-                        span.attributes["net.peer.name"],
-                        span.attributes["messaging.destination"],
+                        span.attributes[SpanAttributes.NET_PEER_NAME],
+                        span.attributes[SpanAttributes.MESSAGING_DESTINATION],
                     )
-                elif "net.peer.ip" in span.attributes:
+                elif SpanAttributes.NET_PEER_IP in span.attributes:
                     data.properties["source"] = "{}/{}".format(
-                        span.attributes["net.peer.ip"],
-                        span.attributes["messaging.destination"],
+                        span.attributes[SpanAttributes.NET_PEER_IP],
+                        span.attributes[SpanAttributes.MESSAGING_DESTINATION],
                     )
                 else:
-                    data.properties["source"] = span.attributes["messaging.destination"]
+                    data.properties["source"] = span.attributes[SpanAttributes.MESSAGING_DESTINATION]
         else:  # Other
             envelope.tags["ai.operation.name"] = span.name
-            if "net.peer.ip" in span.attributes:
-                envelope.tags["ai.location.ip"] = span.attributes["net.peer.ip"]
+            if SpanAttributes.NET_PEER_IP in span.attributes:
+                envelope.tags["ai.location.ip"] = span.attributes[SpanAttributes.NET_PEER_IP]
         data.response_code = data.response_code[:1024]  # Breeze max length
+        data.name = envelope.tags["ai.operation.name"][:1024]  # Breeze max length
     else:  # INTERNAL, CLIENT, PRODUCER
         envelope.name = "Microsoft.ApplicationInsights.RemoteDependency"
         # TODO: ai.operation.name for non-server spans
@@ -212,33 +215,33 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
             base_data=data, base_type="RemoteDependencyData"
         )
         target = None
-        if "peer.service" in span.attributes:
-            target = span.attributes["peer.service"]
+        if SpanAttributes.PEER_SERVICE in span.attributes:
+            target = span.attributes[SpanAttributes.PEER_SERVICE]
         else:
-            if "net.peer.name" in span.attributes:
-                target = span.attributes["net.peer.name"]
-            elif "net.peer.ip" in span.attributes:
-                target = span.attributes["net.peer.ip"]
-            if "net.peer.port" in span.attributes:
-                port = span.attributes["net.peer.port"]
+            if SpanAttributes.NET_PEER_NAME in span.attributes:
+                target = span.attributes[SpanAttributes.NET_PEER_NAME]
+            elif SpanAttributes.NET_PEER_IP in span.attributes:
+                target = span.attributes[SpanAttributes.NET_PEER_IP]
+            if SpanAttributes.NET_PEER_PORT in span.attributes:
+                port = span.attributes[SpanAttributes.NET_PEER_PORT]
                 # TODO: check default port for rpc
                 # This logic assumes default ports never conflict across dependency types
-                if port != _get_default_port_http(span.attributes.get("http.scheme")) and \
-                    port != _get_default_port_db(span.attributes.get("db.system")):
+                if port != _get_default_port_http(span.attributes.get(SpanAttributes.HTTP_SCHEME)) and \
+                    port != _get_default_port_db(span.attributes.get(SpanAttributes.DB_SYSTEM)):
                     target = "{}:{}".format(target, port)
         if span.kind is SpanKind.CLIENT:
-            if "http.method" in span.attributes:  # HTTP
+            if SpanAttributes.HTTP_METHOD in span.attributes:  # HTTP
                 data.type = "HTTP"
-                if "http.user_agent" in span.attributes:
+                if SpanAttributes.HTTP_USER_AGENT in span.attributes:
                     # TODO: Not exposed in Swagger, need to update def
-                    envelope.tags["ai.user.userAgent"] = span.attributes["http.user_agent"]
-                scheme = span.attributes.get("http.scheme")
+                    envelope.tags["ai.user.userAgent"] = span.attributes[SpanAttributes.HTTP_USER_AGENT]
+                scheme = span.attributes.get(SpanAttributes.HTTP_SCHEME)
                 url = ""
                 # Target
-                if "http.url" in span.attributes:
-                    url = span.attributes["http.url"]
+                if SpanAttributes.HTTP_URL in span.attributes:
+                    url = span.attributes[SpanAttributes.HTTP_URL]
                     # http specific logic for target
-                    if "peer.service" not in span.attributes:
+                    if SpanAttributes.PEER_SERVICE not in span.attributes:
                         try:
                             parse_url = urlparse(url)
                             if parse_url.port == _get_default_port_http(scheme):
@@ -248,8 +251,8 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
                         except Exception:  # pylint: disable=broad-except
                             logger.warning("Error while parsing url.")
                 # http specific logic for target
-                if "peer.service" not in span.attributes and "http.host" in span.attributes:
-                    host = span.attributes["http.host"]
+                if SpanAttributes.PEER_SERVICE not in span.attributes and SpanAttributes.HTTP_HOST in span.attributes:
+                    host = span.attributes[SpanAttributes.HTTP_HOST]
                     try:
                         # urlparse insists on absolute URLs starting with "//"
                         # This logic assumes host does not include a "//"
@@ -262,26 +265,26 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
                         logger.warning("Error while parsing hostname.")
                 # url
                 if not url:
-                    if scheme and "http.target" in span.attributes:
-                        http_target = span.attributes["http.target"]
-                        if "http.host" in span.attributes:
+                    if scheme and SpanAttributes.HTTP_TARGET in span.attributes:
+                        http_target = span.attributes[SpanAttributes.HTTP_TARGET]
+                        if SpanAttributes.HTTP_HOST in span.attributes:
                             url = "{}://{}{}".format(
                                 scheme,
-                                span.attributes["http.host"],
+                                span.attributes[SpanAttributes.HTTP_HOST],
                                 http_target,
                             )
-                        elif "net.peer.port" in span.attributes:
-                            peer_port = span.attributes["net.peer.port"]
-                            if "net.peer.name" in span.attributes:
-                                peer_name = span.attributes["net.peer.name"]
+                        elif SpanAttributes.NET_PEER_PORT in span.attributes:
+                            peer_port = span.attributes[SpanAttributes.NET_PEER_PORT]
+                            if SpanAttributes.NET_PEER_NAME in span.attributes:
+                                peer_name = span.attributes[SpanAttributes.NET_PEER_NAME]
                                 url = "{}://{}:{}{}".format(
                                     scheme,
                                     peer_name,
                                     peer_port,
                                     http_target,
                                 )
-                            elif "net.peer.ip" in span.attributes:
-                                peer_ip = span.attributes["net.peer.ip"]
+                            elif SpanAttributes.NET_PEER_IP in span.attributes:
+                                peer_ip = span.attributes[SpanAttributes.NET_PEER_IP]
                                 url = "{}://{}:{}{}".format(
                                     scheme,
                                     peer_ip,
@@ -290,32 +293,32 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
                                 )
                 # data is url
                 data.data = url
-                if "http.status_code" in span.attributes:
-                    status_code = span.attributes["http.status_code"]
+                if SpanAttributes.HTTP_STATUS_CODE in span.attributes:
+                    status_code = span.attributes[SpanAttributes.HTTP_STATUS_CODE]
                     data.result_code = str(status_code)
-            elif "db.system" in span.attributes:  # Database
-                db_system = span.attributes["db.system"]
+            elif SpanAttributes.DB_SYSTEM in span.attributes:  # Database
+                db_system = span.attributes[SpanAttributes.DB_SYSTEM]
                 if _is_relational_db(db_system):
                     data.type = "SQL"
                 else:
                     data.type = db_system
                 # data is the full statement
-                if "db.statement" in span.attributes:
-                    data.data = span.attributes["db.statement"]
+                if SpanAttributes.DB_STATEMENT in span.attributes:
+                    data.data = span.attributes[SpanAttributes.DB_STATEMENT]
                 # db specific logic for target
-                if "db.name" in span.attributes:
-                    db_name = span.attributes["db.name"]
+                if SpanAttributes.DB_NAME in span.attributes:
+                    db_name = span.attributes[SpanAttributes.DB_NAME]
                     if target is None:
                         target = db_name
                     else:
                         target = "{}/{}".format(target, db_name)
                 if target is None:
                     target = db_system
-            elif "rpc.system" in span.attributes:  # Rpc
-                data.type = "rpc.system"
+            elif SpanAttributes.RPC_SYSTEM in span.attributes:  # Rpc
+                data.type = SpanAttributes.RPC_SYSTEM
                 # TODO: data.data for rpc
                 if target is None:
-                    target = span.attributes["rpc.system"]
+                    target = span.attributes[SpanAttributes.RPC_SYSTEM]
             else:
                 # TODO: Azure specific types
                 data.type = "N/A"
@@ -362,15 +365,15 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
 
 
 def _get_default_port_db(dbsystem):
-    if dbsystem == "postgresql":
+    if dbsystem == DbSystemValues.POSTGRESQL.value:
         return 5432
-    if dbsystem == "mysql":
+    if dbsystem == DbSystemValues.MYSQL.value:
         return 3306
-    if dbsystem == "memcached":
+    if dbsystem == DbSystemValues.MEMCACHED.value:
         return 11211
-    if dbsystem == "mongodb":
+    if dbsystem == DbSystemValues.MONGODB.value:
         return 27017
-    if dbsystem == "redis":
+    if dbsystem == DbSystemValues.REDIS.value:
         return 6379
     return 0
 
@@ -384,4 +387,4 @@ def _get_default_port_http(scheme):
 
 
 def _is_relational_db(dbsystem):
-    return dbsystem in ["postgresql", "mysql"]
+    return dbsystem in (DbSystemValues.POSTGRESQL.value, DbSystemValues.MYSQL.value)
