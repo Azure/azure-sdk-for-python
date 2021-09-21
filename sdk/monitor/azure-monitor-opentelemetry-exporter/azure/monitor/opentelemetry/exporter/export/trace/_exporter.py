@@ -374,8 +374,8 @@ def _get_default_port_db(dbsystem):
         return 3306
     if dbsystem == DbSystemValues.MSSQL.value:
         return 1433
-    # if dbsystem == DbSystemValues.MEMCACHED.value:
-    #     return 11211
+    if dbsystem == DbSystemValues.MEMCACHED.value:
+        return 11211
     if dbsystem == DbSystemValues.DB2.value:
         return 50000
     if dbsystem == DbSystemValues.ORACLE.value:
