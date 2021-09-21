@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Any, Optional, List  # pylint: disable=unused-import
+from typing import TYPE_CHECKING, Any, Optional  # pylint: disable=unused-import
 
 from azure.core.tracing.decorator import distributed_trace
 
@@ -18,11 +18,6 @@ from ._converters import (
     )
 from ._generated.models import (AddParticipantResult,
                                 CancelAllMediaOperationsResult,
-                                CreateCallRequest,
-                                CreateCallResult,
-                                CommunicationIdentifierModel,
-                                EventSubscriptionType,
-                                MediaType,
                                 PhoneNumberIdentifierModel,
                                 PlayAudioResult)
 from ._shared.models import CommunicationIdentifier
@@ -40,32 +35,6 @@ class CallConnection(object):
 
         self.call_connection_id = call_connection_id
         self._call_connection_client = call_connection_client
-
-    @distributed_trace()
-    def create_call(self,
-                    source: CommunicationIdentifierModel,
-                    targets: List[CommunicationIdentifierModel],
-                    alternate_caller_id: PhoneNumberIdentifierModel,
-                    subject: str,
-                    callback_uri: str,
-                    requested_media_types: List[MediaType],
-                    requested_call_events: List[EventSubscriptionType],
-                    **kwargs: Any
-                    ):
-        # type: (...) -> CreateCallResult
-
-        request = CreateCallRequest(
-            alternate_caller_id=alternate_caller_id,
-            targets=targets,
-            source=source,
-            subject=subject,
-            callback_uri=callback_uri,
-            requested_media_types=requested_media_types,
-            requested_call_events=requested_call_events,
-            **kwargs)
-
-        return self._call_connection_client.create_call(
-            call_request=request)
 
     @distributed_trace()
     def hang_up(

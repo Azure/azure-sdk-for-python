@@ -32,7 +32,7 @@ class ContentDownloader():
     async def download(
         self,
         content_url, #type: str
-        http_range = None, #type: Optional[str]
+        http_range=None, #type: Optional[str]
         **kwargs #type: Any
     ) -> IO:
         """The Download operation downloads content.

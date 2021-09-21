@@ -239,12 +239,6 @@ class ContentStreamDownloader(): # pylint: disable=too-many-instance-attributes
     """A streaming object to download recording content.
     :ivar str endpoint:
         The url where the content is located.
-    :ivar ~azure.communication.callingserver.ContentProperties properties:
-        The properties of the content being downloaded. If only a range of the data is being
-        downloaded, this will be reflected in the properties.
-    :ivar int size:
-        The size of the total data in the stream. This will be the byte range if speficied,
-        otherwise the total size of the requested content.
     """
     def __init__(
         self,
@@ -330,8 +324,7 @@ class ContentStreamDownloader(): # pylint: disable=too-many-instance-attributes
             self._download_complete = True
         return response
 
-    def chunks(self):
-        # type: () -> AsyncIterator[bytes]
+    def chunks(self) -> AsyncIterator[bytes]:
         """Iterate over chunks in the download stream.
         :rtype: AsyncIterator[bytes]
         """
@@ -368,7 +361,7 @@ class ContentStreamDownloader(): # pylint: disable=too-many-instance-attributes
         await self.readinto(stream)
         return stream.getvalue()
 
-    async def readinto(self, stream):
+    async def readinto(self, stream) -> int:
         """Download the contents into a stream.
         :param stream:
             The stream to download to. This can be an open file-handle,
