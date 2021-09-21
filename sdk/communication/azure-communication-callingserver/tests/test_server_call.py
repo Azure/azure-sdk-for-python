@@ -47,6 +47,33 @@ def data_source_test_play_audio():
 
     return parameters
 
+def data_source_test_play_audio_to_participant():
+    options = PlayAudioOptions(
+            loop = True,
+            audio_file_id = _test_constants.AUDIO_FILE_ID,
+            callback_uri = _test_constants.CALLBACK_URI,
+            operation_context = _test_constants.OPERATION_CONTEXT
+            )
+    parameters = []
+    parameters.append((
+        _test_constants.ClientType_ConnectionString,
+        _test_constants.SERVER_CALL_ID,
+        _test_constants.PARTICIPANT_ID,
+        _test_constants.AUDIO_FILE_URI,
+        options,
+        ))
+
+    parameters.append((
+        _test_constants.ClientType_ManagedIdentity,
+        _test_constants.SERVER_CALL_ID,
+        _test_constants.PARTICIPANT_ID,
+        _test_constants.AUDIO_FILE_URI,
+        options,
+        True,
+        ))
+
+    return parameters
+
 def data_source_test_add_participant():
 
     parameters = []
@@ -290,11 +317,51 @@ class TestServerCall(unittest.TestCase):
             raised = True
         assert raised == True
 
-    def test_start_recording_relative_uri_fails(self):
-        server_call_id = "aHR0cHM6Ly9jb252LXVzd2UtMDguY29udi5za3lwZS5jb20vY29udi8tby1FWjVpMHJrS3RFTDBNd0FST1J3P2k9ODgmZT02Mzc1Nzc0MTY4MDc4MjQyOTM"
-        server_call = _mock_utils.create_calling_server_client().initialize_server_call(server_call_id)
-        with self.assertRaises(ValueError):
-            server_call.start_recording("/not/absolute/uri")
+    @parameterized.expand(data_source_test_play_audio_to_participant())
+    def test_play_audio_to_participant_succeed(
+        self,
+        test_name, # type: str
+        server_call_id, # type: str
+        participant_id, # type: str
+        audio_file_uri, # type: str
+        options, # type: PlayAudioOptions
+        use_managed_identity = False # type: bool
+        ):
+
+        server_call = _mock_utils.create_mock_server_call(
+            server_call_id,
+            status_code=202,
+            payload=_test_constants.PlayAudioResponsePayload,
+            use_managed_identity=use_managed_identity
+            )
+
+        result = server_call.play_audio_to_participant(participant_id,audio_file_uri, options)
+        verify_play_audio_result(result)
+
+    @parameterized.expand(data_source_test_play_audio_to_participant())
+    def test_play_audio_to_participant_failed(
+        self,
+        test_name, # type: str
+        server_call_id, # type: str
+        participant_id, # type: str
+        audio_file_uri, # type: str
+        options, # type: PlayAudioOptions
+        use_managed_identity = False # type: bool
+        ):
+
+        server_call = _mock_utils.create_mock_server_call(
+            server_call_id,
+            status_code=404,
+            payload=_test_constants.ErrorPayload,
+            use_managed_identity = use_managed_identity
+            )
+
+        raised = False
+        try:
+            server_call.play_audio_to_participant(participant_id,audio_file_uri, options)
+        except:
+            raised = True
+        assert raised == True
 
     @parameterized.expand(data_source_test_cancel_media_operation())
     def test_cancel_media_operation_succeed(
@@ -391,3 +458,9 @@ class TestServerCall(unittest.TestCase):
         except:
             raised = True
         assert raised == True
+
+    def test_start_recording_relative_uri_fails(self):
+        server_call_id = "aHR0cHM6Ly9jb252LXVzd2UtMDguY29udi5za3lwZS5jb20vY29udi8tby1FWjVpMHJrS3RFTDBNd0FST1J3P2k9ODgmZT02Mzc1Nzc0MTY4MDc4MjQyOTM"
+        server_call = _mock_utils.create_calling_server_client().initialize_server_call(server_call_id)
+        with self.assertRaises(ValueError):
+            server_call.start_recording("/not/absolute/uri")

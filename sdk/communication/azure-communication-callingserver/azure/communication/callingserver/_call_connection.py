@@ -157,6 +157,33 @@ class CallConnection(object):
         )
 
     @distributed_trace()
+    def play_audio_to_participant(
+            self,
+            participant_id,  # type: str
+            audio_file_uri,  # type: str
+            play_audio_options,  # type: PlayAudioOptions
+            **kwargs  # type: Any
+        ): # type: (...) -> PlayAudioResult
+
+        if not participant_id:
+            raise ValueError("participant_id can not be None")
+
+        if not audio_file_uri:
+            raise ValueError("audio_file_uri can not be None")
+
+        if not play_audio_options:
+            raise ValueError("options can not be None")
+
+        play_audio_request = PlayAudioRequestConverter.convert(audio_file_uri, play_audio_options)
+
+        return self._call_connection_client.participant_play_audio(
+            call_connection_id=self.call_connection_id,
+            participant_id=participant_id,
+            play_audio_request=play_audio_request,
+            **kwargs
+        )
+
+    @distributed_trace()
     def cancel_participant_media_operation(
             self,
             participant_id,  # type: str
