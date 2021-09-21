@@ -21,6 +21,7 @@ from ._content_downloader_async import ContentDownloader
 from ._download_async import ContentStreamDownloader
 from ._call_connection_async import CallConnection
 from ._server_call_async import ServerCall
+from .._models import ParallelDownloadOptions
 from .._converters import JoinCallRequestConverter
 from .._shared.utils import get_authentication_policy, parse_connection_str
 from .._version import SDK_MONIKER
@@ -229,6 +230,7 @@ class CallingServerClient:
             content_url: str,
             start_range: int = None,
             end_range: int = None,
+            parallel_download_options: ParallelDownloadOptions = None,
             **kwargs: Any
         ) -> ContentStreamDownloader:
 
@@ -245,6 +247,7 @@ class CallingServerClient:
             start_range,
             end_range,
             endpoint=content_url,
+            parallel_download_options=parallel_download_options,
             **kwargs
         )
         await stream_downloader._setup()

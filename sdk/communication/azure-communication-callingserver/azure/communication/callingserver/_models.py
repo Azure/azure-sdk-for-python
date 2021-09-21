@@ -189,3 +189,29 @@ class PlayAudioOptions(object):
     def subject(self, subject):
         # type: (str) -> None
         self.__subject = subject
+
+class ParallelDownloadOptions(object):
+    """The options to configure parallel downloads.
+
+    :ivar max_concurrency: Max number of threads used to download.
+    :type max_concurrency: int
+    :ivar block_size: Block size to download on each request.
+    :type block_size: int
+    """
+    def __init__(
+        self,
+        max_concurrency=1, # type: int
+        block_size=4*1024*1024, # type: int
+    ):  # type: (...) -> None
+        self.__max_concurrency = max_concurrency
+        self.__block_size = block_size
+
+    @property
+    def max_concurrency(self):
+        # type: () -> int
+        return self.__max_concurrency
+
+    @property
+    def block_size(self):
+        # type: () -> int
+        return self.__block_size

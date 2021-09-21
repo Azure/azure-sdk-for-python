@@ -8,11 +8,11 @@
 '''
 from io import BytesIO
 import pytest
-
 import utils._test_constants as CONST
 from _shared.asynctestcase import AsyncCommunicationTestCase
 
 from azure.communication.callingserver.aio import CallingServerClient
+from azure.communication.callingserver._models import ParallelDownloadOptions
 
 class TestDownloadAsyncLive(AsyncCommunicationTestCase):
     '''
@@ -39,7 +39,7 @@ class TestDownloadAsyncLive(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     #pylint: disable=missing-function-docstring
     async def test_download_content_to_stream_on_chunks(self):
-        stream = await self._execute_test(block_size=400)
+        stream = await self._execute_test(ParallelDownloadOptions(block_size=400))
         metadata = stream.getvalue()
         self._verify_metadata(metadata)
 
@@ -48,8 +48,10 @@ class TestDownloadAsyncLive(AsyncCommunicationTestCase):
     #pylint: disable=missing-function-docstring
     async def test_download_content_to_stream_on_chunks_parallel(self):
         stream = await self._execute_test(
-            max_concurrency=3,
-            block_size=100)
+                ParallelDownloadOptions(
+                    max_concurrency=3,
+                    block_size=100)
+            )
         metadata = stream.getvalue()
         self._verify_metadata(metadata)
 
@@ -61,9 +63,9 @@ class TestDownloadAsyncLive(AsyncCommunicationTestCase):
         metadata = stream.getvalue()
         self._verify_metadata(metadata)
 
-    async def _execute_test(self, **download_options):
+    async def _execute_test(self, download_options=None):
         downloader = await self._calling_server_client.download(self._metadata_url,
-            **download_options)
+            parallel_download_options=download_options)
         stream = BytesIO()
         await downloader.readinto(stream)
         return stream
