@@ -358,7 +358,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertTrue(envelope.data.base_data.success)
 
         self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
-        self.assertEqual(envelope.data.base_data.type, "SQL")
+        self.assertEqual(envelope.data.base_data.type, "postgresql")
         self.assertEqual(envelope.data.base_data.target, "service")
         self.assertEqual(envelope.data.base_data.data, "SELECT")
         self.assertEqual(envelope.data.base_data.result_code, "1")
@@ -386,6 +386,16 @@ class TestAzureTraceExporter(unittest.TestCase):
         }
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.target, "postgresql")
+
+        # Type
+        span._attributes = {
+            "db.system": "mssql",
+            "db.statement": "SELECT",
+            "db.name": "testDb",
+            "peer.service": "service",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.type, "SQL")
 
     def test_span_to_envelope_client_rpc(self):
         exporter = self._exporter

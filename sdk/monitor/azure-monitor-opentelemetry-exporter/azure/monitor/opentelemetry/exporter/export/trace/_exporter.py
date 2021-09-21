@@ -298,10 +298,10 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
                     data.result_code = str(status_code)
             elif SpanAttributes.DB_SYSTEM in span.attributes:  # Database
                 db_system = span.attributes[SpanAttributes.DB_SYSTEM]
-                if _is_relational_db(db_system):
-                    data.type = "SQL"
-                else:
+                if not _is_sql_db(db_system):
                     data.type = db_system
+                else:
+                    data.type = "SQL"
                 # data is the full statement
                 if SpanAttributes.DB_STATEMENT in span.attributes:
                     data.data = span.attributes[SpanAttributes.DB_STATEMENT]
@@ -367,12 +367,23 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
 def _get_default_port_db(dbsystem):
     if dbsystem == DbSystemValues.POSTGRESQL.value:
         return 5432
-    if dbsystem == DbSystemValues.MYSQL.value:
+    if dbsystem == DbSystemValues.CASSANDRA.value:
+        return 9042
+    if dbsystem == DbSystemValues.MARIADB.value or \
+        dbsystem == DbSystemValues.MYSQL.value:
         return 3306
+    if dbsystem == DbSystemValues.MSSQL.value:
+        return 1433
     if dbsystem == DbSystemValues.MEMCACHED.value:
         return 11211
-    if dbsystem == DbSystemValues.MONGODB.value:
-        return 27017
+    if dbsystem == DbSystemValues.DB2.value:
+        return 50000
+    if dbsystem == DbSystemValues.ORACLE.value:
+        return 1521
+    if dbsystem == DbSystemValues.H2.value:
+        return 8082
+    if dbsystem == DbSystemValues.DERBY.value:
+        return 1527
     if dbsystem == DbSystemValues.REDIS.value:
         return 6379
     return 0
@@ -386,5 +397,15 @@ def _get_default_port_http(scheme):
     return 0
 
 
-def _is_relational_db(dbsystem):
-    return dbsystem in (DbSystemValues.POSTGRESQL.value, DbSystemValues.MYSQL.value)
+def _is_sql_db(dbsystem):
+    return dbsystem in (
+        DbSystemValues.DB2.value,
+        DbSystemValues.DERBY.value,
+        DbSystemValues.MARIADB.value,
+        DbSystemValues.MSSQL.value,
+        DbSystemValues.ORACLE.value,
+        DbSystemValues.SQLITE.value,
+        DbSystemValues.OTHER_SQL.value,
+        DbSystemValues.HSQLDB.value,
+        DbSystemValues.H2.value,
+      )
