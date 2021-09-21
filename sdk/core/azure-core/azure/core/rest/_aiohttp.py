@@ -126,7 +126,7 @@ class RestAioHttpTransportResponse(AsyncHttpResponseImpl):
             internal_response=internal_response,
             status_code=internal_response.status,
             headers=_CIMultiDict(internal_response.headers),
-            content_type=internal_response.headers.get('content-type'),
+            content_type=internal_response.headers.get('content-type', ""),
             reason=internal_response.reason,
             stream_download_generator=AioHttpStreamDownloadGenerator,
             content=None,

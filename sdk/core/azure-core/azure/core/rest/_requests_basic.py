@@ -67,7 +67,7 @@ class _RestRequestsTransportResponseBase(_HttpResponseBaseImpl):
             status_code=internal_response.status_code,
             headers=_CaseInsensitiveDict(internal_response.headers),
             reason=internal_response.reason,
-            content_type=internal_response.headers.get('content-type'),
+            content_type=internal_response.headers.get('content-type', ""),
             content=content,
             **kwargs
         )
