@@ -106,9 +106,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-language-questionanswering/1.0.0b2 Python/3.9.5 (macOS-11.5.2-x86_64-i386-64bit)
     method: POST
-    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-text?api-version=2021-05-01-preview
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-text?api-version=2021-07-15-preview
   response:
     body:
       string: "{\n  \"answers\": [\n    {\n      \"answer\": \"Battery Life  Get an
@@ -138,23 +138,25 @@ interactions:
         that checks all the right boxes --- as long as you buy the 1080p model.\",\n
         \     \"confidenceScore\": 0.007057250943034887,\n      \"id\": \"doc3\",\n
         \     \"answerSpan\": {\n        \"text\": \"battery life\",\n        \"confidenceScore\":
-        0.59143245,\n        \"offset\": 98,\n        \"length\": 13\n      },\n      \"offset\":
+        0.5914322,\n        \"offset\": 98,\n        \"length\": 13\n      },\n      \"offset\":
         5391,\n      \"length\": 393\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - eae82c61-0d7f-4130-8c21-680060b8a75d
+      - 77da498d-0205-4cdb-a4ea-034ac73ea176
       content-length:
-      - '2147'
+      - '2146'
       content-type:
       - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
       date:
-      - Fri, 25 Jun 2021 19:41:19 GMT
+      - Tue, 21 Sep 2021 21:06:56 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '287'
+      - '474'
     status:
       code: 200
       message: OK
