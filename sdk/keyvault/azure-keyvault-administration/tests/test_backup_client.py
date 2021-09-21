@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from functools import partial
+import time
 
 from azure.core.exceptions import ResourceExistsError
 from azure.keyvault.administration._internal import parse_folder_url
@@ -30,6 +31,7 @@ class BackupClientTests(AdministrationTestCase, KeyVaultTestCase):
         # restore the backup
         restore_poller = client.begin_restore(backup_operation.folder_url, self.sas_token)
         restore_poller.wait()
+        time.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
 
     @all_api_versions()
     @backup_client_setup
@@ -58,6 +60,7 @@ class BackupClientTests(AdministrationTestCase, KeyVaultTestCase):
 
         rehydrated.wait()
         restore_poller.wait()
+        time.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
 
     @all_api_versions()
     @backup_client_setup
@@ -80,6 +83,7 @@ class BackupClientTests(AdministrationTestCase, KeyVaultTestCase):
         delete_poller = self._poll_until_no_exception(delete_function, ResourceExistsError)
         delete_poller.wait()
         key_client.purge_deleted_key(key_name)
+        time.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
 
     @all_api_versions()
     @backup_client_setup
@@ -127,6 +131,8 @@ class BackupClientTests(AdministrationTestCase, KeyVaultTestCase):
         assert rehydrated.status() == "Succeeded" and rehydrated.polling_method().status() == "Succeeded"
         restore_poller.wait()
         assert restore_poller.status() == "Succeeded" and restore_poller.polling_method().status() == "Succeeded"
+
+        time.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
 
 
 @pytest.mark.parametrize(

@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import time
+
 from _shared.test_case import KeyVaultTestCase
 from _test_case import AdministrationTestCase, backup_client_setup, get_decorator
 
@@ -45,6 +47,8 @@ class TestExamplesTests(AdministrationTestCase, KeyVaultTestCase):
         restore_poller.wait()
         # [END begin_restore]
 
+        time.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
+
     @all_api_versions()
     @backup_client_setup
     def test_example_selective_key_restore(self, client):
@@ -69,3 +73,5 @@ class TestExamplesTests(AdministrationTestCase, KeyVaultTestCase):
         # wait for the restore to complete
         restore_poller.wait()
         # [END begin_selective_restore]
+
+        time.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
