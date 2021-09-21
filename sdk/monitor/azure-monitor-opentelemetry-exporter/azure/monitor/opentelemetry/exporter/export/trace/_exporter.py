@@ -364,13 +364,13 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
     return envelope
 
 
+# pylint:disable=too-many-return-statements
 def _get_default_port_db(dbsystem):
     if dbsystem == DbSystemValues.POSTGRESQL.value:
         return 5432
     if dbsystem == DbSystemValues.CASSANDRA.value:
         return 9042
-    if dbsystem == DbSystemValues.MARIADB.value or \
-        dbsystem == DbSystemValues.MYSQL.value:
+    if dbsystem in (DbSystemValues.MARIADB.value, DbSystemValues.MYSQL.value):
         return 3306
     if dbsystem == DbSystemValues.MSSQL.value:
         return 1433
