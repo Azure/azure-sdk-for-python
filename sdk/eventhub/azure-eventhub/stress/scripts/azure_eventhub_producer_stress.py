@@ -9,6 +9,7 @@ import threading
 import time
 import asyncio
 from argparse import ArgumentParser
+from dotenv import load_dotenv
 
 from azure.eventhub import EventHubProducerClient, EventData, EventHubSharedKeyCredential, TransportType
 from azure.eventhub.exceptions import EventHubError
@@ -19,6 +20,8 @@ from azure.identity.aio import ClientSecretCredential as ClientSecretCredentialA
 from logger import get_logger
 from process_monitor import ProcessMonitor
 from app_insights_metric import AzureMonitorMetric
+
+ENV_FILE = os.environ.get('ENV_FILE')
 
 
 def handle_exception(error, ignore_send_failure, stress_logger, azure_monitor_metric):
@@ -89,9 +92,9 @@ async def stress_send_list_async(producer: EventHubProducerClientAsync, args, st
 class StressTestRunner(object):
     def __init__(self, argument_parser):
         self.argument_parser = argument_parser
-        self.argument_parser.add_argument("-m", "--method", required=True)
-        self.argument_parser.add_argument("--output_interval", type=float, default=1000)
-        self.argument_parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=30)
+        self.argument_parser.add_argument("-m", "--method", default="stress_send_list_sync")
+        self.argument_parser.add_argument("--output_interval", type=float, default=int(os.environ.get("OUTPUT_INTERVAL", 5000)))
+        self.argument_parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=int(os.environ.get("DURATION", 999999999)))
         self.argument_parser.add_argument(
             "--partitions",
             help="Number of partitions. 0 means to get partitions from eventhubs",
@@ -109,9 +112,9 @@ class StressTestRunner(object):
             type=str
         )
         self.argument_parser.add_argument("--conn_str", help="EventHub connection string",
-                                          default=os.environ.get('EVENT_HUB_PERF_32_CONN_STR'))
+                                          default=os.environ.get('EVENT_HUB_CONN_STR'))
         parser.add_argument("--auth_timeout", help="Authorization Timeout", type=float, default=60)
-        self.argument_parser.add_argument("--eventhub", help="Name of EventHub")
+        self.argument_parser.add_argument("--eventhub", help="Name of EventHub", default=os.environ.get('EVENT_HUB_NAME'))
         self.argument_parser.add_argument(
             "--transport_type",
             help="Transport type, 0 means AMQP, 1 means AMQP over WebSocket",
@@ -412,6 +415,7 @@ class StressTestRunner(object):
 
 
 if __name__ == '__main__':
+    load_dotenv(dotenv_path=ENV_FILE, override=True)
     parser = ArgumentParser()
     runner = StressTestRunner(parser)
     runner.run()
