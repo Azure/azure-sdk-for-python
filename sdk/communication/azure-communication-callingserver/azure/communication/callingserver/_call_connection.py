@@ -27,6 +27,8 @@ if TYPE_CHECKING:
     from ._generated.operations import CallConnectionsOperations
     from ._models import PlayAudioOptions
 
+from ._helper import is_valid_url
+
 class CallConnection(object):
     def __init__(
         self,
@@ -74,24 +76,17 @@ class CallConnection(object):
         if not audio_file_uri:
             raise ValueError("audio_file_uri can not be None")
 
+        if not is_valid_url(audio_file_uri):
+            raise ValueError("audio_file_uri is invalid")
+
         if not play_audio_options:
             raise ValueError("options can not be None")
-
-        try:
-            if not audio_file_uri.lower().startswith('http'):
-                audio_file_uri = "https://" + audio_file_uri
-        except AttributeError:
-            raise ValueError("URL must be a string.")
 
         if not play_audio_options.audio_file_id:
             raise ValueError("audio_file_id can not be None")
 
-        try:
-            callback_uri = play_audio_options.callback_uri
-            if not callback_uri.lower().startswith('http'):
-                callback_uri = "https://" + callback_uri
-        except AttributeError:
-            raise ValueError("URL must be a string.")
+        if not is_valid_url(play_audio_options.callback_uri):
+            raise ValueError("callback_uri is invalid")
 
         play_audio_request = PlayAudioRequestConverter.convert(audio_file_uri, play_audio_options)
 

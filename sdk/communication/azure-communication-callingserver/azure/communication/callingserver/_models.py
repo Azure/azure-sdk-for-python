@@ -31,8 +31,6 @@ try:
 except ImportError:
     from urlparse import urlparse  # type: ignore
 
-from typing import Any
-
 class _CaseInsensitiveEnumMeta(EnumMeta):
     def __getitem__(self, name):
         return super().__getitem__(name.upper())
