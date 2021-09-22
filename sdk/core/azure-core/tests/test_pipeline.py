@@ -50,21 +50,23 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.pipeline.transport._base import PipelineClientBase
 from azure.core.pipeline.transport import (
-    HttpRequest,
     HttpTransport,
     RequestsTransport,
 )
+from utils import HTTP_REQUESTS, is_rest
 
 from azure.core.exceptions import AzureError
 
-def test_default_http_logging_policy():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_default_http_logging_policy(http_request):
     config = Configuration()
     pipeline_client = PipelineClient(base_url="test")
     pipeline = pipeline_client._build_pipeline(config)
     http_logging_policy = pipeline._impl_policies[-1]._policy
     assert http_logging_policy.allowed_header_names == HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST
 
-def test_pass_in_http_logging_policy():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_pass_in_http_logging_policy(http_request):
     config = Configuration()
     http_logging_policy = HttpLoggingPolicy()
     http_logging_policy.allowed_header_names.update(
@@ -78,7 +80,8 @@ def test_pass_in_http_logging_policy():
     assert http_logging_policy.allowed_header_names == HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST.union({"x-ms-added-header"})
 
 
-def test_sans_io_exception():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_sans_io_exception(http_request):
     class BrokenSender(HttpTransport):
         def send(self, request, **config):
             raise ValueError("Broken")
@@ -95,7 +98,7 @@ def test_sans_io_exception():
 
     pipeline = Pipeline(BrokenSender(), [SansIOHTTPPolicy()])
 
-    req = HttpRequest("GET", "/")
+    req = http_request("GET", "/")
     with pytest.raises(ValueError):
         pipeline.run(req)
 
@@ -108,9 +111,10 @@ def test_sans_io_exception():
     with pytest.raises(NotImplementedError):
         pipeline.run(req)
 
-def test_requests_socket_timeout():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_requests_socket_timeout(http_request):
     conf = Configuration()
-    request = HttpRequest("GET", "https://bing.com")
+    request = http_request("GET", "https://bing.com")
     policies = [
         UserAgentPolicy("myusergant"),
         RedirectPolicy()
@@ -179,26 +183,29 @@ def test_format_incorrect_endpoint():
         client.format_url("foo/bar")
     assert str(exp.value) == "The value provided for the url part Endpoint was incorrect, and resulted in an invalid url"
 
-def test_request_json():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_request_json(http_request):
 
-    request = HttpRequest("GET", "/")
+    request = http_request("GET", "/")
     data = "Lots of dataaaa"
     request.set_json_body(data)
 
     assert request.data == json.dumps(data)
     assert request.headers.get("Content-Length") == "17"
 
-def test_request_data():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_request_data(http_request):
 
-    request = HttpRequest("GET", "/")
+    request = http_request("GET", "/")
     data = "Lots of dataaaa"
     request.set_bytes_body(data)
 
     assert request.data == data
     assert request.headers.get("Content-Length") == "15"
 
-def test_request_stream():
-    request = HttpRequest("GET", "/")
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_request_stream(http_request):
+    request = http_request("GET", "/")
 
     data = b"Lots of dataaaa"
     request.set_streamed_data_body(data)
@@ -216,45 +223,51 @@ def test_request_stream():
     assert request.data == data
 
 
-def test_request_xml():
-    request = HttpRequest("GET", "/")
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_request_xml(http_request):
+    request = http_request("GET", "/")
     data = ET.Element("root")
     request.set_xml_body(data)
 
     assert request.data == b"<?xml version='1.0' encoding='utf-8'?>\n<root />"
 
-def test_request_url_with_params():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_request_url_with_params(http_request):
 
-    request = HttpRequest("GET", "/")
+    request = http_request("GET", "/")
     request.url = "a/b/c?t=y"
     request.format_parameters({"g": "h"})
 
     assert request.url in ["a/b/c?g=h&t=y", "a/b/c?t=y&g=h"]
 
-def test_request_url_with_params_as_list():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_request_url_with_params_as_list(http_request):
 
-    request = HttpRequest("GET", "/")
+    request = http_request("GET", "/")
     request.url = "a/b/c?t=y"
     request.format_parameters({"g": ["h","i"]})
 
     assert request.url in ["a/b/c?g=h&g=i&t=y", "a/b/c?t=y&g=h&g=i"]
 
-def test_request_url_with_params_with_none_in_list():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_request_url_with_params_with_none_in_list(http_request):
 
-    request = HttpRequest("GET", "/")
+    request = http_request("GET", "/")
     request.url = "a/b/c?t=y"
     with pytest.raises(ValueError):
         request.format_parameters({"g": ["h",None]})
 
-def test_request_url_with_params_with_none():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_request_url_with_params_with_none(http_request):
 
-    request = HttpRequest("GET", "/")
+    request = http_request("GET", "/")
     request.url = "a/b/c?t=y"
     with pytest.raises(ValueError):
         request.format_parameters({"g": None})
 
-def test_repr():
-    request = HttpRequest("GET", "hello.com")
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_repr(http_request):
+    request = http_request("GET", "hello.com")
     assert repr(request) == "<HttpRequest [GET], url: 'hello.com'>"
 
 def test_add_custom_policy():
@@ -355,10 +368,11 @@ def test_add_custom_policy():
     with pytest.raises(ValueError):
         client = PipelineClient(base_url="test", policies=policies, per_retry_policies=[foo_policy])
 
-def test_basic_requests(port):
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_basic_requests(port, http_request):
 
     conf = Configuration()
-    request = HttpRequest("GET", "http://localhost:{}/basic/string".format(port))
+    request = http_request("GET", "http://localhost:{}/basic/string".format(port))
     policies = [
         UserAgentPolicy("myusergant"),
         RedirectPolicy()
@@ -369,9 +383,10 @@ def test_basic_requests(port):
     assert pipeline._transport.session is None
     assert isinstance(response.http_response.status_code, int)
 
-def test_basic_options_requests(port):
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_basic_options_requests(port, http_request):
 
-    request = HttpRequest("OPTIONS", "http://localhost:{}/basic/string".format(port))
+    request = http_request("OPTIONS", "http://localhost:{}/basic/string".format(port))
     policies = [
         UserAgentPolicy("myusergant"),
         RedirectPolicy()
@@ -382,10 +397,11 @@ def test_basic_options_requests(port):
     assert pipeline._transport.session is None
     assert isinstance(response.http_response.status_code, int)
 
-def test_basic_requests_separate_session(port):
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_basic_requests_separate_session(port, http_request):
 
     session = requests.Session()
-    request = HttpRequest("GET", "http://localhost:{}/basic/string".format(port))
+    request = http_request("GET", "http://localhost:{}/basic/string".format(port))
     policies = [
         UserAgentPolicy("myusergant"),
         RedirectPolicy()
@@ -400,21 +416,28 @@ def test_basic_requests_separate_session(port):
     assert transport.session
     transport.session.close()
 
-def test_request_text(port):
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_request_text(port, http_request):
     client = PipelineClientBase("http://localhost:{}".format(port))
-    request = client.get(
-        "/",
-        content="foo"
-    )
+    if is_rest(http_request):
+        request = http_request("GET", "/", json="foo")
+    else:
+        request = client.get(
+            "/",
+            content="foo"
+        )
 
     # In absence of information, everything is JSON (double quote added)
     assert request.data == json.dumps("foo")
 
-    request = client.post(
-        "/",
-        headers={'content-type': 'text/whatever'},
-        content="foo"
-    )
+    if is_rest(http_request):
+        request = http_request("POST", "/", headers={'content-type': 'text/whatever'}, content="foo")
+    else:
+        request = client.post(
+            "/",
+            headers={'content-type': 'text/whatever'},
+            content="foo"
+        )
 
     # We want a direct string
     assert request.data == "foo"
