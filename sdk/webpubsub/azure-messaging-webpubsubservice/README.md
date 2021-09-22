@@ -99,7 +99,7 @@ Use the returned token credential to authenticate the client:
 >>> client = WebPubSubServiceClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 >>> with open('file.json', 'r') as f:
     try:
-        client.web_pub_sub.send_to_all('ahub', content=f, content_type='application/json')
+        client.send_to_all('ahub', content=f, content_type='application/json')
     except HttpResponseError as e:
         print('service responds error: {}'.format(e.response.json()))
 
@@ -159,7 +159,7 @@ Similarly, `logging_enable` can enable detailed logging for a single call,
 even when it isn't enabled for the client:
 
 ```python
-result = client.web_pub_sub.send_to_all(..., logging_enable=True)
+result = client.send_to_all(..., logging_enable=True)
 ```
 
 Http request and response details are printed to stdout with this logging config.

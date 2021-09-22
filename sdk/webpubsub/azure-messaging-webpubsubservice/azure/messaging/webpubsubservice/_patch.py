@@ -94,15 +94,15 @@ def build_authentication_token(endpoint, hub, **kwargs):
     """Build an authentication token for the given endpoint, hub using the provided key.
 
     :keyword endpoint: connetion string or HTTP or HTTPS endpoint for the WebPubSub service instance.
-    :type endpoint: ~str
+    :type endpoint: str
     :keyword hub: The hub to give access to.
-    :type hub: ~str
+    :type hub: str
     :keyword accesskey: Key to sign the token with. Required if endpoint is not a connection string
-    :type accesskey: ~str
+    :type accesskey: str
     :keyword ttl: Optional ttl timedelta for the token. Default is 1 hour.
     :type ttl: ~datetime.timedelta
     :keyword user: Optional user name (subject) for the token. Default is no user.
-    :type user: ~str
+    :type user: str
     :keyword roles: Roles for the token.
     :type roles: typing.List[str]. Default is no roles.
     :returns: ~dict containing the web socket endpoint, the token and a url with the generated access token.
@@ -314,7 +314,7 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         """Create a new WebPubSubServiceClient from a connection string.
 
         :param connection_string: Connection string
-        :type connection_string: ~str
+        :type connection_string: str
         :rtype: WebPubSubServiceClient
         """
         kwargs = _parse_connection_string(connection_string, **kwargs)
