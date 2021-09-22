@@ -229,6 +229,7 @@ def main():
         elif (item.comment_num == 0 or 'Configured' in item.labels) and 'Python' in item.labels:
             item.bot_advice = 'new issue and better to confirm quickly.'
             if 'assigned' not in item.labels:
+                time.sleep(0.1)
                 assign_count = int(str(time.time())[-1]) % 2
                 if assign_count == 1:
                     item.issue_object.remove_from_assignees(*['RAY-316'])
