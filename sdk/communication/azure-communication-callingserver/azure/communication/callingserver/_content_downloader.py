@@ -105,6 +105,9 @@ class ContentDownloader(object):
 
         return deserialized
 
-    def get_url_to_sign_request_with(self, content_url: str):
+    def get_url_to_sign_request_with(
+            self,
+            content_url # type: str
+        ):
         path = urlparse(content_url).path
         return self._config.endpoint + path
