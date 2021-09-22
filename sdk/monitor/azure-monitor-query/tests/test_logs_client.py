@@ -3,7 +3,7 @@ import pytest
 import os
 from azure.identity import ClientSecretCredential
 from azure.core.exceptions import HttpResponseError
-from azure.monitor.query import LogsQueryClient, LogsBatchQuery
+from azure.monitor.query import LogsQueryClient, LogsBatchQuery, LogsQueryError, LogsTable, LogsQueryResult, LogsTableRow
 
 def _credential():
     credential  = ClientSecretCredential(
@@ -22,10 +22,22 @@ def test_logs_single_query():
     summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
 
     # returns LogsQueryResult 
-    response = client.query(os.environ['LOG_WORKSPACE_ID'], query)
+    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None)
 
     assert response is not None
     assert response.tables is not None
+
+@pytest.mark.live_test_only
+def test_logs_single_query_raises_no_timespan():
+    credential = _credential()
+    client = LogsQueryClient(credential)
+    query = """AppRequests | 
+    where TimeGenerated > ago(12h) | 
+    summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
+
+    # returns LogsQueryResult 
+    with pytest.raises(TypeError):
+        client.query(os.environ['LOG_WORKSPACE_ID'], query)
 
 @pytest.mark.live_test_only
 def test_logs_single_query_with_non_200():
@@ -43,11 +55,12 @@ def test_logs_single_query_with_non_200():
 def test_logs_single_query_with_partial_success():
     credential = _credential()
     client = LogsQueryClient(credential)
-    query = "set truncationmaxrecords=1; union * | project TimeGenerated | take 10"
+    query = """let Weight = 92233720368547758;
+    range x from 1 to 3 step 1
+    | summarize percentilesw(x, Weight * 100, 50)"""
+    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None, allow_partial_errors=True)
 
-    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None)
-
-    assert response is not None
+    assert response.partial_error is not None
 
 @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/19917")
 @pytest.mark.live_test_only
@@ -64,7 +77,7 @@ def test_logs_server_timeout():
     assert 'Gateway timeout' in e.value.message
 
 @pytest.mark.live_test_only
-def test_logs_query_batch():
+def test_logs_query_batch_default():
     client = LogsQueryClient(_credential())
 
     requests = [
@@ -80,7 +93,7 @@ def test_logs_query_batch():
             workspace_id= os.environ['LOG_WORKSPACE_ID']
         ),
         LogsBatchQuery(
-            query= "AppRequests | take 2",
+            query= "Wrong query | take 2",
             workspace_id= os.environ['LOG_WORKSPACE_ID'],
             timespan=None
         ),
@@ -88,6 +101,15 @@ def test_logs_query_batch():
     response = client.query_batch(requests)
 
     assert len(response) == 3
+    
+    r0 = response[0]
+    assert r0.tables[0].columns == ['count_']
+    r1 = response[1]
+    assert r1.tables[0].columns[0] == 'TimeGenerated'
+    assert r1.tables[0].columns[1] == '_ResourceId'
+    assert r1.tables[0].columns[2] == 'avgRequestDuration'
+    r2 = response[2]
+    assert r2.__class__ == LogsQueryError
 
 @pytest.mark.live_test_only
 def test_logs_single_query_with_statistics():
@@ -107,7 +129,7 @@ def test_logs_single_query_with_render():
     query = """AppRequests"""
 
     # returns LogsQueryResult 
-    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, include_visualization=True)
+    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None, include_visualization=True)
 
     assert response.visualization is not None
 
@@ -200,3 +222,45 @@ def test_logs_query_batch_additional_workspaces():
 
     for resp in response:
         assert len(resp.tables[0].rows) == 2
+
+@pytest.mark.live_test_only
+def test_logs_query_result_iterate_over_tables():
+    client = LogsQueryClient(_credential())
+
+    query = "AppRequests; AppRequests | take 5"
+
+    response = client.query(
+        os.environ['LOG_WORKSPACE_ID'],
+        query,
+        timespan=None,
+        include_statistics=True,
+        include_visualization=True
+    )
+
+    ## should iterate over tables
+    for item in response:
+        assert item.__class__ == LogsTable
+    
+    assert response.statistics is not None
+    assert response.visualization is not None
+    assert len(response.tables) == 2
+    assert response.__class__ == LogsQueryResult
+
+@pytest.mark.live_test_only
+def test_logs_query_result_row_type():
+    client = LogsQueryClient(_credential())
+
+    query = "AppRequests | take 5"
+
+    response = client.query(
+        os.environ['LOG_WORKSPACE_ID'],
+        query,
+        timespan=None,
+    )
+
+    ## should iterate over tables
+    for table in response:
+        assert table.__class__ == LogsTable
+
+        for row in table.rows:
+            assert row.__class__ == LogsTableRow

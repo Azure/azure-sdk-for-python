@@ -6,16 +6,17 @@
 # --------------------------------------------------------------------------
 
 from datetime import datetime, timedelta
-from typing import Any, Tuple, Union, Sequence, Dict, Optional, TYPE_CHECKING
-from azure.core.exceptions import HttpResponseError
+from typing import Any, Tuple, Union, Sequence, Dict, List, TYPE_CHECKING
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.exceptions import HttpResponseError
 
 from .._generated.aio._monitor_query_client import MonitorQueryClient
 
 from .._generated.models import BatchRequest, QueryBody as LogsQueryBody
-from .._helpers import process_error, construct_iso8601, order_results
-from .._models import LogsQueryResult, LogsBatchQuery, LogsBatchQueryResult
+from .._helpers import construct_iso8601, order_results, process_error, process_prefer
+from .._models import LogsQueryResult, LogsBatchQuery
 from ._helpers_asyc import get_authentication_policy
+from .._exceptions import  LogsQueryError, QueryPartialErrorException
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -45,7 +46,8 @@ class LogsQueryClient(object):
         self,
         workspace_id: str,
         query: str,
-        timespan: Optional[Union[timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]] = None,
+        *,
+        timespan: Union[timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]],
         **kwargs: Any) -> LogsQueryResult:
         """Execute an Analytics query.
 
@@ -54,8 +56,8 @@ class LogsQueryClient(object):
         :param workspace_id: ID of the workspace. This is Workspace ID from the Properties blade in the
          Azure portal.
         :type workspace_id: str
-        :param query: The Analytics query. Learn more about the `Analytics query syntax
-         <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
+        :param query: The Kusto query. Learn more about the `Kusto query syntax
+         <https://docs.microsoft.com/azure/data-explorer/kusto/query/>`_.
         :type query: str
         :param timespan: The timespan for which to query the data. This can be a timedelta,
          a timedelta and a start datetime, or a start datetime/end datetime.
@@ -68,29 +70,20 @@ class LogsQueryClient(object):
          visualization options. By default, the API does not return information regarding the type of
          visualization to show. If your client requires this information, specify the preference
         :keyword additional_workspaces: A list of workspaces that are included in the query.
-         These can be qualified workspace names, workspsce Ids or Azure resource Ids.
+         These can be qualified workspace names, workspace Ids or Azure resource Ids.
         :paramtype additional_workspaces: list[str]
         :return: QueryResults, or the result of cls(response)
         :rtype: ~azure.monitor.query.LogsQueryResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        allow_partial_errors = kwargs.pop('allow_partial_errors', False)
         timespan = construct_iso8601(timespan)
         include_statistics = kwargs.pop("include_statistics", False)
         include_visualization = kwargs.pop("include_visualization", False)
         server_timeout = kwargs.pop("server_timeout", None)
         additional_workspaces = kwargs.pop("additional_workspaces", None)
 
-        prefer = ""
-        if server_timeout:
-            prefer += "wait=" + str(server_timeout)
-        if include_statistics:
-            if len(prefer) > 0:
-                prefer += ","
-            prefer += "include-statistics=true"
-        if include_visualization:
-            if len(prefer) > 0:
-                prefer += ","
-            prefer += "include-render=true"
+        prefer = process_prefer(server_timeout, include_statistics, include_visualization)
 
         body = LogsQueryBody(
             query=query,
@@ -100,32 +93,45 @@ class LogsQueryClient(object):
         )
 
         try:
-            return LogsQueryResult._from_generated(await self._query_op.execute( # pylint: disable=protected-access
+            generated_response = await self._query_op.execute( # pylint: disable=protected-access
                 workspace_id=workspace_id,
                 body=body,
                 prefer=prefer,
                 **kwargs
-            ))
-        except HttpResponseError as e:
-            process_error(e)
+            )
+        except HttpResponseError as err:
+            process_error(err, LogsQueryError)
+        response = LogsQueryResult._from_generated(generated_response) # pylint: disable=protected-access
+        if not generated_response.error:
+            return response
+        if not allow_partial_errors:
+            raise QueryPartialErrorException(error=generated_response.error)
+        response.partial_error = LogsQueryError._from_generated( # pylint: disable=protected-access
+            generated_response.error
+            )
+        return response
 
     @distributed_trace_async
     async def query_batch(
         self,
         queries: Union[Sequence[Dict], Sequence[LogsBatchQuery]],
         **kwargs: Any
-        ) -> Sequence[LogsBatchQueryResult]:
+        ) -> List[LogsQueryResult]:
         """Execute a list of analytics queries. Each request can be either a LogQueryRequest
         object or an equivalent serialized model.
 
         The response is returned in the same order as that of the requests sent.
 
-        :param queries: The list of queries that should be processed
+        :param queries: The list of Kusto queries to execute.
         :type queries: list[dict] or list[~azure.monitor.query.LogsBatchQuery]
-        :return: list of LogsBatchQueryResult objects, or the result of cls(response)
-        :rtype: ~list[~azure.monitor.query.LogsBatchQueryResult]
+        :keyword bool allow_partial_errors: If set to True, a `LogsQueryResult` object is returned
+         when a partial error occurs. The error can be accessed using the `partial_error`
+         attribute in the object.
+        :return: list of LogsQueryResult objects, or the result of cls(response)
+        :rtype: list[~azure.monitor.query.LogsQueryResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        allow_partial_errors = kwargs.pop('allow_partial_errors', False)
         try:
             queries = [LogsBatchQuery(**q) for q in queries]
         except (KeyError, TypeError):
@@ -137,11 +143,13 @@ class LogsQueryClient(object):
             request_order = [req['id'] for req in queries]
         batch = BatchRequest(requests=queries)
         generated = await self._query_op.batch(batch, **kwargs)
+        mapping = {item.id: item for item in generated.responses}
         return order_results(
             request_order,
-            [
-                LogsBatchQueryResult._from_generated(rsp) for rsp in generated.responses # pylint: disable=protected-access
-            ])
+            mapping,
+            LogsQueryResult,
+            LogsQueryError,
+            allow_partial_errors)
 
     async def __aenter__(self) -> "LogsQueryClient":
         await self._client.__aenter__()

@@ -43,17 +43,21 @@ async def test_metrics_granularity():
     assert response.granularity == timedelta(minutes=5)
 
 @pytest.mark.live_test_only
+@pytest.mark.asyncio
 async def test_metrics_namespaces():
     client = MetricsQueryClient(_credential())
 
-    response = await client.list_metric_namespaces(os.environ['METRICS_RESOURCE_URI'])
+    async with client:
+        response = client.list_metric_namespaces(os.environ['METRICS_RESOURCE_URI'])
 
-    assert response is not None
+        assert response is not None
 
 @pytest.mark.live_test_only
+@pytest.mark.asyncio
 async def test_metrics_definitions():
     client = MetricsQueryClient(_credential())
 
-    response = await client.list_metric_definitions(os.environ['METRICS_RESOURCE_URI'], metric_namespace='microsoft.eventgrid/topics')
+    async with client:
+        response = client.list_metric_definitions(os.environ['METRICS_RESOURCE_URI'], namespace='microsoft.eventgrid/topics')
 
-    assert response is not None
+        assert response is not None

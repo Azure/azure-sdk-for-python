@@ -3,9 +3,9 @@
 
 import os
 import pandas as pd
-from datetime import datetime, timedelta
-from msrest.serialization import UTC
-from azure.monitor.query import LogsQueryClient
+from datetime import timedelta
+from azure.monitor.query import LogsQueryClient, QueryPartialErrorException
+from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
 
 # [START client_auth_with_token_cred]
@@ -17,29 +17,21 @@ client = LogsQueryClient(credential)
 # Response time trend 
 # request duration over the last 12 hours. 
 # [START send_logs_query]
-query = """AppRequests |
-summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
-
-query = """
-AppRequests
-| where TimeGenerated > ago(1h)
-| fork
-    ( summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId )
-"""
+query = """AppRequests | take 5"""
 
 # returns LogsQueryResult 
-response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=timedelta(days=1))
-
-if not response.tables:
-    print("No results for the query")
-
-for table in response.tables:
-    try:
-        print ([col.name for col in table.columns])
-        df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
+try:
+    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=timedelta(days=1))
+    for table in response:
+        df = pd.DataFrame(data=table.rows, columns=table.columns)
         print(df)
-    except TypeError:
-        print(response.error)
+except QueryPartialErrorException as err:
+    print("this is a partial error")
+    print(err.details)
+except HttpResponseError as err:
+    print("something fatal happened")
+    print (err)
+
 # [END send_logs_query]
 """
     TimeGenerated                                        _ResourceId          avgRequestDuration

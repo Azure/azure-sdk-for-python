@@ -23,13 +23,10 @@
 # THE SOFTWARE.
 #
 #--------------------------------------------------------------------------
-import sys
-
 from azure.core.pipeline.transport import (
     HttpRequest,
     AioHttpTransport,
     AioHttpTransportResponse,
-    AsyncHttpTransport,
     AsyncioRequestsTransport,
     TrioRequestsTransport)
 
@@ -37,13 +34,12 @@ import aiohttp
 import trio
 
 import pytest
-from unittest import mock
 
 
 @pytest.mark.asyncio
-async def test_basic_aiohttp():
+async def test_basic_aiohttp(port):
 
-    request = HttpRequest("GET", "https://www.bing.com/")
+    request = HttpRequest("GET", "http://localhost:{}/basic/string".format(port))
     async with AioHttpTransport() as sender:
         response = await sender.send(request)
         assert response.body() is not None
@@ -52,18 +48,18 @@ async def test_basic_aiohttp():
     assert isinstance(response.status_code, int)
 
 @pytest.mark.asyncio
-async def test_aiohttp_auto_headers():
+async def test_aiohttp_auto_headers(port):
 
-    request = HttpRequest("POST", "https://www.bing.com/")
+    request = HttpRequest("POST", "http://localhost:{}/basic/string".format(port))
     async with AioHttpTransport() as sender:
         response = await sender.send(request)
         auto_headers = response.internal_response.request_info.headers
         assert 'Content-Type' not in auto_headers
 
 @pytest.mark.asyncio
-async def test_basic_async_requests():
+async def test_basic_async_requests(port):
 
-    request = HttpRequest("GET", "https://www.bing.com/")
+    request = HttpRequest("GET", "http://localhost:{}/basic/string".format(port))
     async with AsyncioRequestsTransport() as sender:
         response = await sender.send(request)
         assert response.body() is not None
@@ -71,19 +67,19 @@ async def test_basic_async_requests():
     assert isinstance(response.status_code, int)
 
 @pytest.mark.asyncio
-async def test_conf_async_requests():
+async def test_conf_async_requests(port):
 
-    request = HttpRequest("GET", "https://www.bing.com/")
+    request = HttpRequest("GET", "http://localhost:{}/basic/string".format(port))
     async with AsyncioRequestsTransport() as sender:
         response = await sender.send(request)
         assert response.body() is not None
 
     assert isinstance(response.status_code, int)
 
-def test_conf_async_trio_requests():
+def test_conf_async_trio_requests(port):
 
     async def do():
-        request = HttpRequest("GET", "https://www.bing.com/")
+        request = HttpRequest("GET", "http://localhost:{}/basic/string".format(port))
         async with TrioRequestsTransport() as sender:
             return await sender.send(request)
             assert response.body() is not None

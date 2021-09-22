@@ -812,3 +812,62 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
                 self.table.submit_transaction(batch)
         finally:
             self._tear_down()
+
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
+    @tables_decorator
+    def test_batch_with_specialchar_partitionkey(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            table2_name = self._get_table_reference('table2')
+            table2 = self.ts.get_table_client(table2_name)
+            table2.create_table()
+
+            # Act
+            entity1 = {
+                'PartitionKey': "A'aaa\"_bbbb2",
+                'RowKey': '"A\'aaa"_bbbb2',
+                'test': '"A\'aaa"_bbbb2'
+            }
+            self.table.submit_transaction([("create", entity1)])
+            get_entity = self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
+
+            self.table.submit_transaction([("upsert", entity1, {'mode': 'merge'})])
+            get_entity = self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
+
+            self.table.submit_transaction([("upsert", entity1, {'mode': 'replace'})])
+            get_entity = self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
+
+            self.table.submit_transaction([("update", entity1, {'mode': 'merge'})])
+            get_entity = self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
+
+            self.table.submit_transaction([("update", entity1, {'mode': 'replace'})])
+            get_entity = self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
+
+            entity_results = list(self.table.list_entities())
+            assert entity_results[0] == entity1
+            for entity in entity_results:
+                get_entity = self.table.get_entity(
+                    partition_key=entity['PartitionKey'],
+                    row_key=entity['RowKey'])
+                assert get_entity == entity1
+
+            self.table.submit_transaction([("delete", entity1)])
+
+        finally:
+            self._tear_down()

@@ -43,7 +43,7 @@ class DeletedAccountsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DeletedAccountListResult"]:
         """Lists deleted accounts under the subscription.
 
@@ -112,7 +112,7 @@ class DeletedAccountsOperations:
         self,
         deleted_account_name: str,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeletedAccount":
         """Get properties of specified deleted account resource.
 

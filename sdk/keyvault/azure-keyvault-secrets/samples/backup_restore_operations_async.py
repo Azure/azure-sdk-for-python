@@ -39,50 +39,42 @@ async def run_sample():
     VAULT_URL = os.environ["VAULT_URL"]
     credential = DefaultAzureCredential()
     client = SecretClient(vault_url=VAULT_URL, credential=credential)
-    try:
-        # Let's create a secret holding storage account credentials.
-        # if the secret already exists in the Key Vault, then a new version of the secret is created.
-        print("\n.. Create Secret")
-        secret = await client.set_secret("backupRestoreSecretName", "backupRestoreSecretValue")
-        print("Secret with name '{0}' created with value '{1}'".format(secret.name, secret.value))
 
-        # Backups are good to have, if in case secrets gets deleted accidentally.
-        # For long term storage, it is ideal to write the backup to a file.
-        print("\n.. Create a backup for an existing Secret")
-        secret_backup = await client.backup_secret(secret.name)
-        print("Backup created for secret with name '{0}'.".format(secret.name))
+    # Let's create a secret holding storage account credentials.
+    # if the secret already exists in the Key Vault, then a new version of the secret is created.
+    print("\n.. Create Secret")
+    secret = await client.set_secret("backupRestoreSecretName", "backupRestoreSecretValue")
+    print("Secret with name '{0}' created with value '{1}'".format(secret.name, secret.value))
 
-        # The storage account secret is no longer in use, so you delete it.
-        print("\n.. Deleting secret...")
-        await client.delete_secret(secret.name)
-        print("Deleted secret with name '{0}'".format(secret.name))
+    # Backups are good to have, if in case secrets gets deleted accidentally.
+    # For long term storage, it is ideal to write the backup to a file.
+    print("\n.. Create a backup for an existing Secret")
+    secret_backup = await client.backup_secret(secret.name)
+    print("Backup created for secret with name '{0}'.".format(secret.name))
 
-        # Purge the deleted secret.
-        # The purge will take some time, so wait before restoring the backup to avoid a conflict.
-        print("\n.. Purge the secret")
-        await client.purge_deleted_secret(secret.name)
-        await asyncio.sleep(60)
-        print("Purged secret with name '{0}'".format(secret.name))
+    # The storage account secret is no longer in use, so you delete it.
+    print("\n.. Deleting secret...")
+    await client.delete_secret(secret.name)
+    print("Deleted secret with name '{0}'".format(secret.name))
 
-        # In the future, if the secret is required again, we can use the backup value to restore it in the Key Vault.
-        print("\n.. Restore the secret using the backed up secret bytes")
-        secret = await client.restore_secret_backup(secret_backup)
-        print("Restored secret with name '{0}'".format(secret.name))
+    # Purge the deleted secret.
+    # The purge will take some time, so wait before restoring the backup to avoid a conflict.
+    print("\n.. Purge the secret")
+    await client.purge_deleted_secret(secret.name)
+    await asyncio.sleep(60)
+    print("Purged secret with name '{0}'".format(secret.name))
 
-    except HttpResponseError as e:
-        print("\nrun_sample has caught an error. {0}".format(e.message))
+    # In the future, if the secret is required again, we can use the backup value to restore it in the Key Vault.
+    print("\n.. Restore the secret using the backed up secret bytes")
+    secret = await client.restore_secret_backup(secret_backup)
+    print("Restored secret with name '{0}'".format(secret.name))
 
-    finally:
-        print("\nrun_sample done")
-        await credential.close()
-        await client.close()
+    print("\nrun_sample done")
+    await credential.close()
+    await client.close()
 
 
 if __name__ == "__main__":
-    try:
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(run_sample())
-        loop.close()
-
-    except Exception as e:
-        print("Top level Error: {0}".format(str(e)))
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(run_sample())
+    loop.close()

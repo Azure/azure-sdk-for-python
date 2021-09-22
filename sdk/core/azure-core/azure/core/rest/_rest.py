@@ -33,7 +33,6 @@ from azure.core.exceptions import HttpResponseError
 from ..utils._utils import _case_insensitive_dict
 from ._helpers import (
     FilesType,
-    parse_lines_from_text,
     set_content_body,
     set_json_body,
     set_multipart_body,
@@ -307,7 +306,9 @@ class HttpResponse(_HttpResponseBase):  # pylint: disable=too-many-instance-attr
     :keyword request: The request that resulted in this response.
     :paramtype request: ~azure.core.rest.HttpRequest
     :ivar int status_code: The status code of this response
-    :ivar mapping headers: The response headers
+    :ivar mapping headers: The case-insensitive response headers.
+     While looking up headers is case-insensitive, when looking up
+     keys in `header.keys()`, we recommend using lowercase.
     :ivar str reason: The reason phrase for this response
     :ivar bytes content: The response content in bytes.
     :ivar str url: The URL that resulted in this response
@@ -356,21 +357,6 @@ class HttpResponse(_HttpResponseBase):  # pylint: disable=too-many-instance-attr
         """Iterate over the response bytes
         """
         raise NotImplementedError()
-
-    def iter_text(self):
-        # type: () -> Iterator[str]
-        """Iterate over the response text
-        """
-        for byte in self.iter_bytes():
-            text = byte.decode(self.encoding or "utf-8")
-            yield text
-
-    def iter_lines(self):
-        # type: () -> Iterator[str]
-        for text in self.iter_text():
-            lines = parse_lines_from_text(text)
-            for line in lines:
-                yield line
 
     def _close_stream(self):
         # type: (...) -> None

@@ -44,7 +44,7 @@ _SUPPORTED_API_VERSIONS = [
 
 
 def _get_match_headers(kwargs, match_param, etag_param):
-    # type: (str) -> Tuple(Dict[str, Any], Optional[str], Optional[str])
+    # type: (Dict[str, Any], str, str) -> Tuple(Dict[str, Any], Optional[str], Optional[str])
     if_match = None
     if_none_match = None
     match_condition = kwargs.pop(match_param, None)
@@ -126,13 +126,13 @@ def get_container_cpk_scope_info(kwargs):
     return None
 
 
-def get_api_version(kwargs, default):
-    # type: (Dict[str, Any]) -> str
-    api_version = kwargs.pop('api_version', None)
+def get_api_version(kwargs):
+    # type: (Dict[str, Any], str) -> str
+    api_version = kwargs.get('api_version', None)
     if api_version and api_version not in _SUPPORTED_API_VERSIONS:
         versions = '\n'.join(_SUPPORTED_API_VERSIONS)
         raise ValueError("Unsupported API version '{}'. Please select from:\n{}".format(api_version, versions))
-    return api_version or default
+    return api_version or _SUPPORTED_API_VERSIONS[-1]
 
 
 def serialize_blob_tags_header(tags=None):

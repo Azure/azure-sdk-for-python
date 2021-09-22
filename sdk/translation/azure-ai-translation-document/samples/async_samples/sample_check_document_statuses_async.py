@@ -30,7 +30,7 @@ import asyncio
 
 
 async def sample_document_status_checks_async():
-    # [START list_all_document_statuses_async]
+    # [START list_document_statuses_async]
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.translation.document.aio import DocumentTranslationClient
@@ -49,7 +49,7 @@ async def sample_document_status_checks_async():
         while poller.status() in ["Running", "NotStarted"]:
             await asyncio.sleep(30)
 
-            doc_statuses = client.list_all_document_statuses(poller.id)
+            doc_statuses = client.list_document_statuses(poller.id)
             async for document in doc_statuses:
                 if document.id not in completed_docs:
                     if document.status == "Succeeded":
@@ -68,7 +68,7 @@ async def sample_document_status_checks_async():
                         ))
 
         print("\nTranslation completed.")
-    # [END list_all_document_statuses_async]
+    # [END list_document_statuses_async]
 
 
 async def main():

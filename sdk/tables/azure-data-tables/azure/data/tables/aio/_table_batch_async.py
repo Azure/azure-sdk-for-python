@@ -13,6 +13,7 @@ from .._models import UpdateMode
 from .._entity import TableEntity
 from .._table_batch import EntityType
 from .._serialize import (
+    _prepare_key,
     _get_match_headers,
     _add_entity_properties,
 )
@@ -230,8 +231,8 @@ class TableBatchOperations(object):
             match_condition=match_condition or MatchConditions.Unconditionally,
         )
 
-        partition_key = temp["PartitionKey"]
-        row_key = temp["RowKey"]
+        partition_key = _prepare_key(temp["PartitionKey"])
+        row_key = _prepare_key(temp["RowKey"])
         temp = _add_entity_properties(temp)
         if mode == UpdateMode.REPLACE:
             self._batch_update_entity(
@@ -490,8 +491,8 @@ class TableBatchOperations(object):
         """
         self._verify_partition_key(entity)
         temp = entity.copy()  # type: ignore
-        partition_key = temp["PartitionKey"]
-        row_key = temp["RowKey"]
+        partition_key = _prepare_key(temp["PartitionKey"])
+        row_key = _prepare_key(temp["RowKey"])
 
         match_condition = kwargs.pop("match_condition", None)
         etag = kwargs.pop("etag", None)
@@ -629,8 +630,8 @@ class TableBatchOperations(object):
         self._verify_partition_key(entity)
         temp = entity.copy()  # type: ignore
 
-        partition_key = temp["PartitionKey"]
-        row_key = temp["RowKey"]
+        partition_key = _prepare_key(temp["PartitionKey"])
+        row_key = _prepare_key(temp["RowKey"])
         temp = _add_entity_properties(temp)
 
         if mode == UpdateMode.MERGE:

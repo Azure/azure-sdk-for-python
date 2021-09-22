@@ -1,6 +1,23 @@
 # Release History
 
-## 11.3.0b3 (Unreleased)
+## 11.3.0b4 (Unreleased)
+
+### Features Added
+
+- Added properties to `SearchClient`: `query_answer`, `query_answer_count`,
+  `query_caption`, `query_caption_highlight` and `semantic_fields`.
+
+### Breaking Changes
+
+- Renamed `SearchClient.speller` to `SearchClient.query_speller`.
+- Removed keyword arguments from `SearchClient`: `answers` and `captions`.
+- `SentimentSkill`, `EntityRecognitionSkill`: added client-side validation to prevent sending unsupported parameters.
+
+### Bugs Fixed
+
+### Other Changes
+
+## 11.3.0b3 (2021-09-08)
 
 ### Features Added
 
@@ -8,6 +25,7 @@
   - `azure.search.documents.models.Captions`
   - `azure.search.documents.models.CaptionResult`
   - `azure.search.documents.indexes.models.CustomEntityLookupSkillLanguage`
+  - `azure.search.documents.indexes.models.EntityRecognitionSkillVersion`
   - `azure.search.documents.indexes.models.LexicalNormalizerName`
   - `azure.search.documents.indexes.models.PIIDetectionSkill`
   - `azure.search.documents.indexes.models.PIIDetectionSkillMaskingMode`
@@ -15,6 +33,22 @@
   - `azure.search.documents.indexes.models.SearchIndexerDataIdentity`
   - `azure.search.documents.indexes.models.SearchIndexerDataNoneIdentity`
   - `azure.search.documents.indexes.models.SearchIndexerDataUserAssignedIdentity`
+  - `azure.search.documents.indexes.models.SentimentSkillVersion`
+- Added `normalizer_name` property to `AnalyzeTextOptions` model.
+
+### Breaking Changes
+
+- Removed:
+  - `azure.search.documents.indexes.models.SentimentSkillV3`
+  - `azure.search.documents.indexes.models.EntityRecognitionSkillV3`
+- Renamed:
+  - `SearchField.normalizer` renamed to `SearchField.normalizer_name`.
+
+### Other Changes
+- `SentimentSkill` and `EntityRecognitionSkill` can now be created by specifying
+  the `skill_version` keyword argument with a `SentimentSkillVersion` or
+  `EntityRecognitionSkillVersion`, respectively. The default behavior if `skill_version`
+  is not specified is to create a version 1 skill.
 
 ## 11.3.0b2 (2021-08-10)
 

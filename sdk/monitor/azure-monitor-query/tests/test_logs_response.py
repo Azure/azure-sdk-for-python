@@ -27,5 +27,3 @@ def test_query_response_types():
     assert isinstance(result.tables[0].rows[0][1], six.string_types) # _ResourceId generated is a string
     assert isinstance(result.tables[0].rows[0][2], bool) # Success generated is a bool
     assert isinstance(result.tables[0].rows[0][3], int) # ItemCount generated is a int
-    assert isinstance(result.tables[0].rows[0][4], float) # DurationMs generated is a real
-
