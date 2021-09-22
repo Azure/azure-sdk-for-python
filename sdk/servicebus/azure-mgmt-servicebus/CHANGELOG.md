@@ -1,5 +1,12 @@
 # Release History
 
+## 7.1.0 (2021-09-22)
+
+**Features**
+
+  - Model SBNamespace has a new parameter status
+  - Model SBNamespaceUpdateParameters has a new parameter status
+
 ## 7.0.0 (2021-08-19)
 
 **Features**
