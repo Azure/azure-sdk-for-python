@@ -32,7 +32,7 @@ class RequestReplacerProcessor(RecordingProcessor):
 
     def process_request(self, request):
         request.uri = re.sub('/calling/serverCalls/([^/?]+)',
-            f"/calling/serverCalls/{self._replacement}", request.uri)
+            '/calling/serverCalls/{}'.format(self._replacement), request.uri)
         return request
 
 class CallingServerLiveTestUtils:
