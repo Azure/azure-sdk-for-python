@@ -1,4 +1,4 @@
-# coding=utf-8
+ # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -53,6 +53,8 @@ class UsageDetailsOperations(object):
         skiptoken=None,  # type: Optional[str]
         top=None,  # type: Optional[int]
         metric=None,  # type: Optional[Union[str, "_models.Metrictype"]]
+        start_date=None, # type: Optional[str]
+        end_date=None, # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.UsageDetailsListResult"]
@@ -99,6 +101,14 @@ class UsageDetailsOperations(object):
         :type top: int
         :param metric: Allows to select different type of cost/usage records.
         :type metric: str or ~azure.mgmt.consumption.models.Metrictype
+        :param start_date: May be used to specify the beginning of the interval you want usageDetails from. 
+         If start_date and end_date are not included, then the call will return the usageDetails for 
+         the current billing month. Must be in the format YYYY-MM-DD.
+        :type start_date: str
+        :param end_date: May be used to specify the end of the interval you want usageDetails from. 
+         If start_date and end_date are not included, then the call will return the usageDetails for 
+         the current billing month. Must be in the format YYYY-MM-DD.
+        :type end_date: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either UsageDetailsListResult or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.consumption.models.UsageDetailsListResult]
@@ -137,6 +147,10 @@ class UsageDetailsOperations(object):
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
                 if metric is not None:
                     query_parameters['metric'] = self._serialize.query("metric", metric, 'str')
+                if start_date is not None:
+                    query_parameters['startDate'] = self._serialize.query("startDate", start_date, 'str')
+                if end_date is not None:
+                    query_parameters['endDate'] = self._serialize.query("endDate", end_date, 'str')
 
                 request = self._client.get(url, query_parameters, header_parameters)
             else:
