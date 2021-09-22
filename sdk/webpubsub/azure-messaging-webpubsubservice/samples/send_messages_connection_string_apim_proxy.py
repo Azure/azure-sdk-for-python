@@ -42,7 +42,8 @@ except KeyError:
     exit()
 
 # Build a client from the connection string. And for this example, we have enabled debug
-# tracing. For production code, this should be turned off. 
+# tracing. For production code, this should be turned off.
+# If you want to know more about the effect of `reverse_proxy_endpoint`, please reference: https://github.com/Azure/azure-webpubsub/issues/194
 client = WebPubSubServiceClient.from_connection_string(connection_string, logging_enable=True, reverse_proxy_endpoint=reverse_proxy_endpoint)
 
 try:
