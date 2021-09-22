@@ -7,7 +7,6 @@
 from typing import TYPE_CHECKING, Any, Optional  # pylint: disable=unused-import
 
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.pipeline.transport import AsyncHttpResponse
 
 from ._communication_identifier_serializer import serialize_identifier
 from ._converters import (AddParticipantRequestConverter,
@@ -91,7 +90,7 @@ class ServerCall(object):
             self,
             recording_id, # type: str
             **kwargs # type: Any
-    ): # type: (...) -> AsyncHttpResponse
+    ): # type: (...) -> None
 
         if not recording_id:
             raise ValueError("recording_id cannot be None")
@@ -107,7 +106,7 @@ class ServerCall(object):
             self,
             recording_id, # type: str
             **kwargs # type: Any
-    ): # type: (...) -> AsyncHttpResponse
+    ): # type: (...) -> None
 
         if not recording_id:
             raise ValueError("recording_id cannot be None")
@@ -123,7 +122,7 @@ class ServerCall(object):
             self,
             recording_id, # type: str
             **kwargs # type: Any
-    ): # type: (...) -> AsyncHttpResponse
+    ): # type: (...) -> None
 
         if not recording_id:
             raise ValueError("recording_id cannot be None")
