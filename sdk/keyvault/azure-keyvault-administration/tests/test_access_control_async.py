@@ -136,3 +136,4 @@ class AccessControlTests(AdministrationTestCase, KeyVaultTestCase):
             assert (
                 assignment.role_assignment_id != created.role_assignment_id
             ), "the role assignment should have been deleted"
+        await asyncio.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
