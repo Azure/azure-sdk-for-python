@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 
 from typing import TYPE_CHECKING, Any, Optional  # pylint: disable=unused-import
-from urllib.parse import urlparse
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.transport import AsyncHttpResponse
@@ -20,6 +19,11 @@ from ._generated.models import (AddParticipantResult,
                                 PlayAudioResult,
                                 StartCallRecordingRequest,
                                 StartCallRecordingResult)
+
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse  # type: ignore
 
 if TYPE_CHECKING:
     from ._generated.operations import ServerCallsOperations
