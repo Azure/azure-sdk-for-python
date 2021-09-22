@@ -1,5 +1,20 @@
 # Release History
 
+## 16.2.0 (2021-09-09)
+
+**Features**
+
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter creation_data
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter workload_runtime
+  - Model ManagedClusterLoadBalancerProfile has a new parameter enable_multiple_standard_load_balancers
+  - Model ManagedClusterAgentPoolProfile has a new parameter creation_data
+  - Model ManagedClusterAgentPoolProfile has a new parameter workload_runtime
+  - Model ManagedCluster has a new parameter public_network_access
+  - Model ManagedClusterAPIServerAccessProfile has a new parameter disable_run_command
+  - Model AgentPool has a new parameter creation_data
+  - Model AgentPool has a new parameter workload_runtime
+  - Added operation group SnapshotsOperations
+
 ## 16.1.0 (2021-08-06)
 
 **Features**

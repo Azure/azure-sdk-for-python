@@ -1,6 +1,6 @@
 # Release History
 
-## 4.5.0b3 (Unreleased)
+## 4.5.0b4 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 4.5.0b3 (2021-09-09)
+
+### Other Changes
+- Updated type hints to fix mypy errors
+  ([#19158](https://github.com/Azure/azure-sdk-for-python/issues/19158))
 
 ## 4.5.0b2 (2021-08-10)
 

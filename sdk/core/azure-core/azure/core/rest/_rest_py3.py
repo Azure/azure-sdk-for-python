@@ -43,9 +43,8 @@ from ._helpers import (
     set_json_body,
     set_multipart_body,
     set_urlencoded_body,
-    format_parameters,
-    to_pipeline_transport_request_helper,
-    from_pipeline_transport_request_helper,
+    _format_parameters_helper,
+    HttpRequestBackcompatMixin,
 )
 from ._helpers_py3 import set_content_body
 
@@ -53,7 +52,7 @@ ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
 
 ################################## CLASSES ######################################
 
-class HttpRequest:
+class HttpRequest(HttpRequestBackcompatMixin):
     """**Provisional** object that represents an HTTP request.
 
     **This object is provisional**, meaning it may be changed in a future release.
@@ -106,7 +105,7 @@ class HttpRequest:
         self.method = method
 
         if params:
-            self.url = format_parameters(self.url, params)
+            _format_parameters_helper(self, params)
         self._files = None
         self._data = None  # type: Any
 
@@ -128,10 +127,10 @@ class HttpRequest:
 
     def _set_body(
         self,
-        content: Optional[ContentType],
-        data: Optional[dict],
-        files: Optional[FilesType],
-        json: Any,
+        content: Optional[ContentType] = None,
+        data: Optional[dict] = None,
+        files: Optional[FilesType] = None,
+        json: Any = None,
     ) -> MutableMapping[str, str]:
         """Sets the body of the request, and returns the default headers
         """
@@ -177,13 +176,6 @@ class HttpRequest:
             return request
         except (ValueError, TypeError):
             return copy.copy(self)
-
-    def _to_pipeline_transport_request(self):
-        return to_pipeline_transport_request_helper(self)
-
-    @classmethod
-    def _from_pipeline_transport_request(cls, pipeline_transport_request):
-        return from_pipeline_transport_request_helper(cls, pipeline_transport_request)
 
 class _HttpResponseBase(abc.ABC):
     """Base abstract base class for HttpResponses.

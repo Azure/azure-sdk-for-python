@@ -1497,7 +1497,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         copyblob = self.bsc.get_blob_client(container_name, 'blob1copy')
 
         immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
-                                                 policy_mode=BlobImmutabilityPolicyMode.UNLOCKED)
+                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
 
         copy = await copyblob.start_copy_from_url(sourceblob, immutability_policy=immutability_policy,
                                                   legal_hold=True,
@@ -2594,7 +2594,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         await blob.upload_blob(b"abc", overwrite=True)
 
         immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
-                                                 policy_mode=BlobImmutabilityPolicyMode.UNLOCKED)
+                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
         resp = await blob.set_immutability_policy(
             immutability_policy=immutability_policy)
 
@@ -2677,7 +2677,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         content = b"abcedfg"
 
         immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
-                                                 policy_mode=BlobImmutabilityPolicyMode.UNLOCKED)
+                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
         await blob.upload_blob(content,
                                immutability_policy=immutability_policy,
                                legal_hold=True,
@@ -2722,7 +2722,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         content = b"abcedfg"
 
         immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
-                                                 policy_mode=BlobImmutabilityPolicyMode.UNLOCKED)
+                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
         await blob.upload_blob(content,
                                immutability_policy=immutability_policy,
                                legal_hold=True,

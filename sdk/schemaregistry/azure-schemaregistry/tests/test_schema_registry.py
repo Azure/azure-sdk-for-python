@@ -42,47 +42,25 @@ class SchemaRegistryTests(AzureTestCase):
         schema_name = self.get_resource_name('test-schema-basic')
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         serialization_type = "Avro"
-        assert len(client._id_to_schema) == 0
-        assert len(client._description_to_properties) == 0
-        schema_properties = client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
-        assert len(client._id_to_schema) == 1
-        assert len(client._description_to_properties) == 1
+        schema_properties = client.register_schema(schemaregistry_group, schema_name, schema_str, serialization_type)
 
-        assert schema_properties.schema_id is not None
+        assert schema_properties.id is not None
         assert schema_properties.location is not None
-        assert schema_properties.location_by_id is not None
         assert schema_properties.version is 1
         assert schema_properties.serialization_type == "Avro"
 
-        returned_schema = client.get_schema(schema_id=schema_properties.schema_id)
+        returned_schema = client.get_schema(id=schema_properties.id)
 
-        assert returned_schema.schema_properties.schema_id == schema_properties.schema_id
-        assert returned_schema.schema_properties.location is not None
-        assert returned_schema.schema_properties.location_by_id is not None
-        assert returned_schema.schema_properties.version == 1
-        assert returned_schema.schema_properties.serialization_type == "Avro"
-        assert returned_schema.schema_content == schema_str
+        assert returned_schema.properties.id == schema_properties.id
+        assert returned_schema.properties.location is not None
+        assert returned_schema.properties.version == 1
+        assert returned_schema.properties.serialization_type == "Avro"
+        assert returned_schema.content == schema_str
 
-        # check that same cached properties object is returned by get_schema_id
-        cached_properties = client.get_schema_id(schemaregistry_group, schema_name, serialization_type, schema_str)
-        assert client.get_schema_id(schemaregistry_group, schema_name, serialization_type, schema_str) == cached_properties
+        returned_schema_properties = client.get_schema_properties(schemaregistry_group, schema_name, schema_str, serialization_type)
 
-        # check if schema is added to cache when it does not exist in the cache
-        cached_properties = client._description_to_properties[
-            (schemaregistry_group, schema_name, serialization_type, schema_str)
-        ]
-        properties_cache_length = len(client._description_to_properties)
-        del client._description_to_properties[
-            (schemaregistry_group, schema_name, serialization_type, schema_str)
-        ]
-        assert len(client._description_to_properties) == properties_cache_length - 1
-
-        returned_schema_properties = client.get_schema_id(schemaregistry_group, schema_name, serialization_type, schema_str)
-        assert len(client._description_to_properties) == properties_cache_length
-
-        assert returned_schema_properties.schema_id == schema_properties.schema_id
+        assert returned_schema_properties.id == schema_properties.id
         assert returned_schema_properties.location is not None
-        assert returned_schema_properties.location_by_id is not None
         assert returned_schema_properties.version == 1
         assert returned_schema_properties.serialization_type == "Avro"
 
@@ -92,51 +70,29 @@ class SchemaRegistryTests(AzureTestCase):
         schema_name = self.get_resource_name('test-schema-update')
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         serialization_type = "Avro"
-        schema_properties = client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
+        schema_properties = client.register_schema(schemaregistry_group, schema_name, schema_str, serialization_type)
 
-        assert schema_properties.schema_id is not None
+        assert schema_properties.id is not None
         assert schema_properties.location is not None
-        assert schema_properties.location_by_id is not None
         assert schema_properties.version != 0
         assert schema_properties.serialization_type == "Avro"
 
         schema_str_new = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_food","type":["string","null"]}]}"""
-        new_schema_properties = client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str_new)
+        new_schema_properties = client.register_schema(schemaregistry_group, schema_name, schema_str_new, serialization_type)
 
-        assert new_schema_properties.schema_id is not None
+        assert new_schema_properties.id is not None
         assert new_schema_properties.location is not None
-        assert new_schema_properties.location_by_id is not None
         assert new_schema_properties.version == schema_properties.version + 1
         assert new_schema_properties.serialization_type == "Avro"
 
-        # check that same cached schema object is returned by get_schema
-        cached_schema = client.get_schema(schema_id=new_schema_properties.schema_id)
-        assert client.get_schema(schema_id=new_schema_properties.schema_id) == cached_schema
+        new_schema = client.get_schema(id=new_schema_properties.id)
 
-        # check if schema is added to cache when it does not exist in the cache
-        cached_schema = client._id_to_schema[new_schema_properties.schema_id]
-        schema_cache_length = len(client._id_to_schema)
-        del client._id_to_schema[new_schema_properties.schema_id]
-        assert len(client._id_to_schema) == schema_cache_length - 1
-
-        new_schema = client.get_schema(schema_id=new_schema_properties.schema_id)
-        assert len(client._id_to_schema) == schema_cache_length
-        assert cached_schema != new_schema  # assert not same object after deletion from cache
-
-        assert new_schema.schema_properties.schema_id != schema_properties.schema_id
-        assert new_schema.schema_properties.schema_id == new_schema_properties.schema_id
-        assert new_schema.schema_properties.location is not None
-        assert new_schema.schema_properties.location_by_id is not None
-        assert new_schema.schema_content == schema_str_new
-        assert new_schema.schema_properties.version == schema_properties.version + 1
-        assert new_schema.schema_properties.serialization_type == "Avro"
-
-        # check that properties object is the same in caches
-        client._id_to_schema = {}
-        client._description_to_properties = {}
-        new_schema = client.get_schema(schema_id=new_schema_properties.schema_id)
-        new_schema_properties = client.get_schema_id(schemaregistry_group, schema_name, serialization_type, schema_str_new)
-        assert new_schema.schema_properties == new_schema_properties
+        assert new_schema.properties.id != schema_properties.id
+        assert new_schema.properties.id == new_schema_properties.id
+        assert new_schema.properties.location is not None
+        assert new_schema.content == schema_str_new
+        assert new_schema.properties.version == schema_properties.version + 1
+        assert new_schema.properties.serialization_type == "Avro"
 
     @SchemaRegistryPowerShellPreparer()
     def test_schema_same_twice(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
@@ -144,15 +100,9 @@ class SchemaRegistryTests(AzureTestCase):
         schema_name = self.get_resource_name('test-schema-twice')
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"age","type":["int","null"]},{"name":"city","type":["string","null"]}]}"""
         serialization_type = "Avro"
-        schema_properties = client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
-        schema_cache_length = len(client._id_to_schema)
-        desc_cache_length = len(client._description_to_properties)
-        schema_properties_second = client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
-        schema_cache_second_length = len(client._id_to_schema)
-        desc_cache_second_length = len(client._description_to_properties)
-        assert schema_properties.schema_id == schema_properties_second.schema_id
-        assert schema_cache_length == schema_cache_second_length
-        assert desc_cache_length == desc_cache_second_length
+        schema_properties = client.register_schema(schemaregistry_group, schema_name, schema_str, serialization_type)
+        schema_properties_second = client.register_schema(schemaregistry_group, schema_name, schema_str, serialization_type)
+        assert schema_properties.id == schema_properties_second.id
 
     @SchemaRegistryPowerShellPreparer()
     def test_schema_negative_wrong_credential(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
@@ -162,7 +112,7 @@ class SchemaRegistryTests(AzureTestCase):
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         serialization_type = "Avro"
         with pytest.raises(ClientAuthenticationError):
-            client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
+            client.register_schema(schemaregistry_group, schema_name, schema_str, serialization_type)
 
     @SchemaRegistryPowerShellPreparer()
     def test_schema_negative_wrong_endpoint(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
@@ -171,7 +121,7 @@ class SchemaRegistryTests(AzureTestCase):
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         serialization_type = "Avro"
         with pytest.raises(ServiceRequestError):
-            client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
+            client.register_schema(schemaregistry_group, schema_name, schema_str, serialization_type)
 
     @SchemaRegistryPowerShellPreparer()
     def test_schema_negative_no_schema(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):

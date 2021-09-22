@@ -148,8 +148,8 @@ class MetricsQueryClient(object):
             **kwargs)
 
     @distributed_trace
-    def list_metric_definitions(self, resource_uri, metric_namespace=None, **kwargs):
-        # type: (str, str, Any) -> ItemPaged[MetricDefinition]
+    def list_metric_definitions(self, resource_uri, **kwargs):
+        # type: (str, Any) -> ItemPaged[MetricDefinition]
         """Lists the metric definitions for the resource.
 
         :param resource_uri: The identifier of the resource.

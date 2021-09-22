@@ -4,7 +4,6 @@
 # ------------------------------------
 import requests
 from azure.core.pipeline.transport import (
-    HttpRequest,
     AsyncHttpResponse,
     AsyncHttpTransport,
     AsyncioRequestsTransportResponse,
@@ -14,9 +13,11 @@ from azure.core.pipeline import AsyncPipeline, PipelineResponse
 from azure.core.pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
 from unittest import mock
 import pytest
+from utils import HTTP_REQUESTS
 
 @pytest.mark.asyncio
-async def test_connection_error_response():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_connection_error_response(http_request):
     class MockSession(object):
         def __init__(self):
             self.auto_decompress = True
@@ -38,7 +39,7 @@ async def test_connection_error_response():
             pass
 
         async def send(self, request, **kwargs):
-            request = HttpRequest('GET', 'http://localhost/')
+            request = http_request('GET', 'http://localhost/')
             response = AsyncHttpResponse(request, None)
             response.status_code = 200
             return response
@@ -65,7 +66,7 @@ async def test_connection_error_response():
         async def __call__(self, *args, **kwargs):
             return super(AsyncMock, self).__call__(*args, **kwargs)
 
-    http_request = HttpRequest('GET', 'http://localhost/')
+    http_request = http_request('GET', 'http://localhost/')
     pipeline = AsyncPipeline(MockTransport())
     http_response = AsyncHttpResponse(http_request, None)
     http_response.internal_response = MockInternalResponse()

@@ -138,7 +138,7 @@ class RestAioHttpTransportResponse(AsyncHttpResponseImpl):
     def __getstate__(self):
         state = self.__dict__.copy()
         # Remove the unpicklable entries.
-        state['internal_response'] = None  # aiohttp response are not pickable (see headers comments)
+        state['_internal_response'] = None  # aiohttp response are not pickable (see headers comments)
         state['headers'] = CIMultiDict(self.headers)  # MultiDictProxy is not pickable
         return state
 
