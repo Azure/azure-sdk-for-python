@@ -229,7 +229,7 @@ class _HttpResponseBase(ABC):
     @property
     @abc.abstractmethod
     def content_type(self):
-        # type: (...) -> str
+        # type: (...) -> Optional[str]
         """The content type of the response.
 
         :rtype: str

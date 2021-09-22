@@ -136,10 +136,10 @@ class _HttpResponseBaseImpl(_HttpResponseBase):  # pylint: disable=too-many-inst
 
     @property
     def content_type(self):
-        # type: (...) -> str
+        # type: (...) -> Optional[str]
         """The content type of the response.
 
-        :rtype: str
+        :rtype: optional[str]
         """
         return self._content_type
 

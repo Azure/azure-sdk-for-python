@@ -62,12 +62,13 @@ class _RestRequestsTransportResponseBase(_HttpResponseBaseImpl):
         content = None
         if internal_response._content_consumed:
             content = internal_response.content
+        headers = _CaseInsensitiveDict(internal_response.headers)
         super(_RestRequestsTransportResponseBase, self).__init__(
             internal_response=internal_response,
             status_code=internal_response.status_code,
-            headers=_CaseInsensitiveDict(internal_response.headers),
+            headers=headers,
             reason=internal_response.reason,
-            content_type=internal_response.headers.get('content-type', ""),
+            content_type=headers.get('content-type'),
             content=content,
             **kwargs
         )
