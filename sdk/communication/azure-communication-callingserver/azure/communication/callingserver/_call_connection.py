@@ -20,30 +20,29 @@ from ._generated.models import (AddParticipantResult,
                                 CancelAllMediaOperationsResult,
                                 PhoneNumberIdentifierModel,
                                 PlayAudioResult)
-
 from ._shared.models import CommunicationIdentifier
 
 if TYPE_CHECKING:
     from ._generated.operations import CallConnectionsOperations
     from ._models import PlayAudioOptions
 
-from ._helper import is_valid_url
+from .utils._utils import CallingServerUtils
 
 class CallConnection(object):
     def __init__(
-        self,
-        call_connection_id,  # type: str
-        call_connection_client  # type: CallConnectionsOperations
-    ): # type: (...) -> None
+            self,
+            call_connection_id,  # type: str
+            call_connection_client  # type: CallConnectionsOperations
+        ): # type: (...) -> None
 
         self.call_connection_id = call_connection_id
         self._call_connection_client = call_connection_client
 
     @distributed_trace()
     def hang_up(
-        self,
-        **kwargs  # type: Any
-    ): # type: (...) -> None
+            self,
+            **kwargs  # type: Any
+        ): # type: (...) -> None
 
         return self._call_connection_client.hangup_call(
             call_connection_id=self.call_connection_id,
@@ -52,10 +51,10 @@ class CallConnection(object):
 
     @distributed_trace()
     def cancel_all_media_operations(
-        self,
-        operation_context=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ): # type: (...) -> CancelAllMediaOperationsResult
+            self,
+            operation_context=None,  # type: Optional[str]
+            **kwargs  # type: Any
+        ): # type: (...) -> CancelAllMediaOperationsResult
 
         cancel_all_media_operations_request = CancelAllMediaOperationsConverter.convert(operation_context)
 
@@ -67,16 +66,16 @@ class CallConnection(object):
 
     @distributed_trace()
     def play_audio(
-        self,
-        audio_file_uri,  # type: str
-        play_audio_options,  # type: PlayAudioOptions
-        **kwargs  # type: Any
-    ): # type: (...) -> PlayAudioResult
+            self,
+            audio_file_uri,  # type: str
+            play_audio_options,  # type: PlayAudioOptions
+            **kwargs  # type: Any
+        ): # type: (...) -> PlayAudioResult
 
         if not audio_file_uri:
             raise ValueError("audio_file_uri can not be None")
 
-        if not is_valid_url(audio_file_uri):
+        if not CallingServerUtils.is_valid_url(audio_file_uri):
             raise ValueError("audio_file_uri is invalid")
 
         if not play_audio_options:
@@ -85,7 +84,7 @@ class CallConnection(object):
         if not play_audio_options.audio_file_id:
             raise ValueError("audio_file_id can not be None")
 
-        if not is_valid_url(play_audio_options.callback_uri):
+        if not CallingServerUtils.is_valid_url(play_audio_options.callback_uri):
             raise ValueError("callback_uri is invalid")
 
         play_audio_request = PlayAudioRequestConverter.convert(audio_file_uri, play_audio_options)
@@ -98,12 +97,12 @@ class CallConnection(object):
 
     @distributed_trace()
     def add_participant(
-        self,
-        participant,  # type: CommunicationIdentifier
-        alternate_caller_id=None,  # type: Optional[str]
-        operation_context=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ): # type: (...) -> AddParticipantResult
+            self,
+            participant,  # type: CommunicationIdentifier
+            alternate_caller_id=None,  # type: Optional[str]
+            operation_context=None,  # type: Optional[str]
+            **kwargs  # type: Any
+        ): # type: (...) -> AddParticipantResult
 
         if not participant:
             raise ValueError("participant can not be None")
@@ -126,10 +125,10 @@ class CallConnection(object):
 
     @distributed_trace()
     def remove_participant(
-        self,
-        participant_id,  # type: str
-        **kwargs  # type: Any
-    ): # type: (...) -> None
+            self,
+            participant_id,  # type: str
+            **kwargs  # type: Any
+        ): # type: (...) -> None
 
         return self._call_connection_client.remove_participant(
             call_connection_id=self.call_connection_id,

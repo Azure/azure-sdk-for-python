@@ -4,7 +4,6 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from typing import List
 from .._models import JoinCallOptions, PlayAudioOptions
 from .._generated.models import (
     JoinCallRequest,

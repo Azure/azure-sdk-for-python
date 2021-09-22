@@ -6,10 +6,15 @@
 
 import validators
 
-def is_valid_url(url: str) -> bool:
-    result = validators.url(url)
+class CallingServerUtils(object):
 
-    if isinstance(result, validators.utils.ValidationFailure):
-        return False
+    @staticmethod
+    def is_valid_url(
+        url, # type: str
+    ): # type: (...) -> bool
+        result = validators.url(url)
 
-    return True
+        if isinstance(result, validators.utils.ValidationFailure):
+            return False
+
+        return True

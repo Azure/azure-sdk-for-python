@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     from .._models import PlayAudioOptions
     from .._shared.models import CommunicationIdentifier
 
-from .._helper import is_valid_url
+from ..utils._utils import CallingServerUtils
 
 class ServerCall:
 
@@ -43,16 +43,16 @@ class ServerCall:
 
     @distributed_trace_async()
     async def play_audio(
-        self,
-        audio_file_uri: str,
-        play_audio_options: 'PlayAudioOptions',
-        **kwargs: Any
-    ) -> PlayAudioResult:
+            self,
+            audio_file_uri: str,
+            play_audio_options: 'PlayAudioOptions',
+            **kwargs: Any
+        ) -> PlayAudioResult:
 
         if not audio_file_uri:
             raise ValueError("audio_file_uri can not be None")
 
-        if not is_valid_url(audio_file_uri):
+        if not CallingServerUtils.is_valid_url(audio_file_uri):
             raise ValueError("audio_file_uri is invalid")
 
         if not play_audio_options:
@@ -61,7 +61,7 @@ class ServerCall:
         if not play_audio_options.audio_file_id:
             raise ValueError("audio_file_id can not be None")
 
-        if not is_valid_url(play_audio_options.callback_uri):
+        if not CallingServerUtils.is_valid_url(play_audio_options.callback_uri):
             raise ValueError("callback_uri is invalid")
 
         if not play_audio_options.operation_context:
@@ -69,23 +69,21 @@ class ServerCall:
 
         play_audio_request = PlayAudioRequestConverter.convert(audio_file_uri, play_audio_options)
 
-        play_audio_result = await self._server_call_client.play_audio(
+        return await self._server_call_client.play_audio(
             server_call_id=self.server_call_id,
             request=play_audio_request,
             **kwargs
         )
 
-        return PlayAudioResult._from_generated(play_audio_result)
-
     @distributed_trace_async()
     async def add_participant(
-        self,
-        participant: 'CommunicationIdentifier',
-        callback_uri: str,
-        alternate_caller_id: Optional[str] = None,
-        operation_context: Optional[str] = None,
-        **kwargs: Any
-    ) -> AddParticipantResult:
+            self,
+            participant: 'CommunicationIdentifier',
+            callback_uri: str,
+            alternate_caller_id: Optional[str] = None,
+            operation_context: Optional[str] = None,
+            **kwargs: Any
+        ) -> AddParticipantResult:
 
         if not participant:
             raise ValueError("participant can not be None")
@@ -101,20 +99,18 @@ class ServerCall:
             callback_uri=callback_uri
         )
 
-        add_participant_result = await self._server_call_client.add_participant(
+        return await self._server_call_client.add_participant(
             server_call_id=self.server_call_id,
             add_participant_request=add_participant_request,
             **kwargs
         )
 
-        return AddParticipantResult._from_generated(add_participant_result)
-
     @distributed_trace_async()
     async def remove_participant(
-        self,
-        participant_id: str,
-        **kwargs: Any
-    ) -> None:
+            self,
+            participant_id: str,
+            **kwargs: Any
+        ) -> None:
 
         return await self._server_call_client.remove_participant(
             server_call_id=self.server_call_id,

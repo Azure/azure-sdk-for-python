@@ -26,6 +26,8 @@ if TYPE_CHECKING:
     from ._models import PlayAudioOptions
     from ._shared.models import CommunicationIdentifier
 
+from .utils._utils import CallingServerUtils
+
 class ServerCall(object):
 
     def __init__(
@@ -38,11 +40,11 @@ class ServerCall(object):
 
     @distributed_trace()
     def play_audio(
-        self,
-        audio_file_uri,  # type: str
-        play_audio_options,  # type: PlayAudioOptions
-        **kwargs  # type: Any
-    ):  # type: (...) -> PlayAudioResult
+            self,
+            audio_file_uri,  # type: str
+            play_audio_options,  # type: PlayAudioOptions
+            **kwargs  # type: Any
+        ):  # type: (...) -> PlayAudioResult
 
         if not audio_file_uri:
             raise ValueError("audio_file_uri can not be None")
@@ -50,21 +52,14 @@ class ServerCall(object):
         if not play_audio_options:
             raise ValueError("options can not be None")
 
-        try:
-            if not audio_file_uri.lower().startswith('http'):
-                audio_file_uri = "https://" + audio_file_uri
-        except AttributeError:
-            raise ValueError("URL must be a string.")
+        if not CallingServerUtils.is_valid_url(audio_file_uri):
+            raise ValueError("audio_file_uri is invalid")
 
         if not play_audio_options.audio_file_id:
             raise ValueError("audio_file_id can not be None")
 
-        try:
-            callback_uri = play_audio_options.callback_uri
-            if not callback_uri.lower().startswith('http'):
-                callback_uri = "https://" + callback_uri
-        except AttributeError:
-            raise ValueError("URL must be a string.")
+        if not CallingServerUtils.is_valid_url(play_audio_options.callback_uri):
+            raise ValueError("callback_uri is invalid")
 
         if not play_audio_options.operation_context:
             raise ValueError("operation_context can not be None")
@@ -182,27 +177,27 @@ class ServerCall(object):
 
     @distributed_trace()
     def add_participant(
-        self,
-        participant,  # type: CommunicationIdentifier
-        callback_uri,  # type: str
-        alternate_caller_id=None,  # type: Optional[str]
-        operation_context=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):  # type: (...) -> AddParticipantResult
+            self,
+            participant,  # type: CommunicationIdentifier
+            callback_uri,  # type: str
+            alternate_caller_id=None,  # type: Optional[str]
+            operation_context=None,  # type: Optional[str]
+            **kwargs  # type: Any
+        ):  # type: (...) -> AddParticipantResult
 
         if not participant:
             raise ValueError("participant can not be None")
 
         alternate_caller_id = (None
-                               if alternate_caller_id is None
-                               else PhoneNumberIdentifierModel(value=alternate_caller_id))
+            if alternate_caller_id is None
+            else PhoneNumberIdentifierModel(value=alternate_caller_id))
 
         add_participant_request = AddParticipantRequestConverter.convert(
             participant=serialize_identifier(participant),
             alternate_caller_id=alternate_caller_id,
             operation_context=operation_context,
             callback_uri=callback_uri
-        )
+            )
 
         return self._server_call_client.add_participant(
             server_call_id=self.server_call_id,
@@ -212,10 +207,10 @@ class ServerCall(object):
 
     @distributed_trace()
     def remove_participant(
-        self,
-        participant_id,  # type: str
-        **kwargs  # type: Any
-    ):  # type: (...) -> None
+            self,
+            participant_id,  # type: str
+            **kwargs  # type: Any
+        ):  # type: (...) -> None
 
         return self._server_call_client.remove_participant(
             server_call_id=self.server_call_id,

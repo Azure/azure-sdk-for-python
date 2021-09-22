@@ -32,7 +32,7 @@ if TYPE_CHECKING:
     from .._generated.aio.operations import CallConnectionsOperations
     from .._models import PlayAudioOptions
 
-from .._helper import is_valid_url
+from ..utils._utils import CallingServerUtils
 
 class CallConnection:
     def __init__(
@@ -79,11 +79,11 @@ class CallConnection:
             play_audio_options: 'PlayAudioOptions',
             **kwargs: Any
         ) -> PlayAudioResult:
-        
+
         if not audio_file_uri:
             raise ValueError("audio_file_uri can not be None")
 
-        if not is_valid_url(audio_file_uri):
+        if not CallingServerUtils.is_valid_url(audio_file_uri):
             raise ValueError("audio_file_uri is invalid")
 
         if not play_audio_options:
@@ -92,12 +92,12 @@ class CallConnection:
         if not play_audio_options.audio_file_id:
             raise ValueError("audio_file_id can not be None")
 
-        if not is_valid_url(play_audio_options.callback_uri):
+        if not CallingServerUtils.is_valid_url(play_audio_options.callback_uri):
             raise ValueError("callback_uri is invalid")
 
         play_audio_request = PlayAudioRequestConverter.convert(audio_file_uri, play_audio_options)
 
-        return self._call_connection_client.play_audio(
+        return await self._call_connection_client.play_audio(
             call_connection_id=self.call_connection_id,
             request=play_audio_request,
             **kwargs
